@@ -1,0 +1,23 @@
+{
+  ServiceReference serviceRef=context.getServiceReference("org.openhab.core.events.EventPublisher");
+  if (serviceRef != null) {
+    EventPublisher eventPublisher=(EventPublisher)context.getService(serviceRef);
+    if (eventPublisher != null)     eventPublisher.postCommand(new GenericItem(){
+      @Override public void setState(      DataType newState){
+      }
+      @Override public void initialize(){
+      }
+      @Override public DataType getState(){
+        return null;
+      }
+      @Override public String getName(){
+        return "TestItem";
+      }
+      @Override public void dispose(){
+      }
+    }
+,new DataType(){
+    }
+);
+  }
+}
