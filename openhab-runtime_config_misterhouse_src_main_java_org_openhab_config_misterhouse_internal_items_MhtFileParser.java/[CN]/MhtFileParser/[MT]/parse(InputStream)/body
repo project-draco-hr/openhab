@@ -1,0 +1,13 @@
+{
+  List<GenericItem> items=new ArrayList<GenericItem>();
+  LineIterator iterator=IOUtils.lineIterator(is,"UTF-8");
+  checkCorrectFormat(iterator);
+  while (iterator.hasNext()) {
+    String line=iterator.nextLine();
+    Map<String,?> lineContents=parseLine(line);
+    if (lineContents != null && !lineContents.isEmpty()) {
+      items.add((GenericItem)lineContents.get(MAP_ITEM));
+    }
+  }
+  return items.toArray(new GenericItem[items.size()]);
+}
