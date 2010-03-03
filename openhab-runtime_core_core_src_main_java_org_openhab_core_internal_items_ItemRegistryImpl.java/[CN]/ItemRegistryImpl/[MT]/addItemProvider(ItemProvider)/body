@@ -1,11 +1,12 @@
 {
   if (!itemMap.containsKey(itemProvider)) {
-    logger.debug("Item provider '{}' has been added.",itemProvider.getClass().getSimpleName());
     GenericItem[] items=itemProvider.getItems();
     for (    GenericItem item : items) {
       item.setEventPublisher(eventPublisher);
       item.initialize();
     }
+    itemProvider.addItemChangeListener(this);
     itemMap.put(itemProvider,items);
+    logger.debug("Item provider '{}' has been added.",itemProvider.getClass().getSimpleName());
   }
 }
