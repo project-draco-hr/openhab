@@ -1,6 +1,12 @@
 {
-  eventPublisher.sendCommand(this.getName(),command);
+  if (eventPublisher != null) {
+    eventPublisher.sendCommand(this.getName(),command);
+  }
   if (autoupdate && getAcceptedDataTypes().contains(command.getClass())) {
-    setState((DataType)command);
+    DataType newState=(DataType)command;
+    setState(newState);
+    if (eventPublisher != null) {
+      eventPublisher.postUpdate(getName(),newState);
+    }
   }
 }
