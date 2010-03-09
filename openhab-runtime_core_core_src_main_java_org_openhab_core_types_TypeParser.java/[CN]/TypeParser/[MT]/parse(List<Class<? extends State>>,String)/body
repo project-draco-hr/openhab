@@ -1,0 +1,12 @@
+{
+  for (  Class<? extends Type> type : types) {
+    try {
+      Method valueOf=type.getMethod("valueOf",String.class);
+      State state=(State)valueOf.invoke(type,stateName);
+      if (state != null)       return state;
+    }
+ catch (    Exception e) {
+    }
+  }
+  return null;
+}

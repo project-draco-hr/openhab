@@ -1,0 +1,12 @@
+{
+  for (  Class<? extends Command> type : types) {
+    try {
+      Method valueOf=type.getMethod("valueOf",String.class);
+      Command value=(Command)valueOf.invoke(type,commandName);
+      if (value != null)       return value;
+    }
+ catch (    Exception e) {
+    }
+  }
+  return null;
+}

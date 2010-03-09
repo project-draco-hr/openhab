@@ -7,11 +7,11 @@
   }
   String operation=topicParts[1];
   if (operation.equals(EventType.UPDATE)) {
-    DataType newState=(DataType)event.getProperty("state");
+    State newState=(State)event.getProperty("state");
     if (newState != null)     receiveUpdate(itemName,newState);
   }
   if (operation.equals(EventType.COMMAND)) {
-    CommandType command=(CommandType)event.getProperty("command");
+    Command command=(Command)event.getProperty("command");
     if (command != null)     receiveCommand(itemName,command);
   }
 }
