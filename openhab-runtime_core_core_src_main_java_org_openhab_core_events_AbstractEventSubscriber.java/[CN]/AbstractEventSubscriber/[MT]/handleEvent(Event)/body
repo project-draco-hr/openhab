@@ -6,14 +6,11 @@
     return;
   }
   String operation=topicParts[1];
-  if (operation.equals(REFRESH_COMMAND)) {
-    refresh(itemName);
-  }
-  if (operation.equals(UPDATE_COMMAND)) {
+  if (operation.equals(EventType.UPDATE)) {
     DataType newState=(DataType)event.getProperty("state");
     if (newState != null)     receiveUpdate(itemName,newState);
   }
-  if (operation.equals(SEND_COMMAND)) {
+  if (operation.equals(EventType.COMMAND)) {
     CommandType command=(CommandType)event.getProperty("command");
     if (command != null)     receiveCommand(itemName,command);
   }
