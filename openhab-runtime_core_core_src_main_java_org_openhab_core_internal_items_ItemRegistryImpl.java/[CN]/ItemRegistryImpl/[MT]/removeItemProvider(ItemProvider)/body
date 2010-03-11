@@ -1,6 +1,10 @@
 {
   if (itemMap.containsKey(itemProvider)) {
-    for (    GenericItem item : itemMap.get(itemProvider))     item.dispose();
+    for (    Item item : itemMap.get(itemProvider)) {
+      if (item instanceof GenericItem) {
+        ((GenericItem)item).dispose();
+      }
+    }
     itemMap.remove(itemProvider);
     itemProvider.removeItemChangeListener(this);
     logger.debug("Item provider '{}' has been removed.",itemProvider.getClass().getSimpleName());

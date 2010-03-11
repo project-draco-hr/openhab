@@ -1,9 +1,12 @@
 {
   if (!itemMap.containsKey(itemProvider)) {
-    GenericItem[] items=itemProvider.getItems();
-    for (    GenericItem item : items) {
-      item.setEventPublisher(eventPublisher);
-      item.initialize();
+    Item[] items=itemProvider.getItems();
+    for (    Item item : items) {
+      if (item instanceof GenericItem) {
+        GenericItem genericItem=(GenericItem)item;
+        genericItem.setEventPublisher(eventPublisher);
+        genericItem.initialize();
+      }
     }
     itemProvider.addItemChangeListener(this);
     itemMap.put(itemProvider,items);
