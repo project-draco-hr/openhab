@@ -9,7 +9,7 @@
           Item item=registry.getItem(itemName);
           String commandName=interpreter.nextArgument();
           if (commandName != null) {
-            Command command=TypeParser.parse(item.getAcceptedCommandTypes(),commandName);
+            Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandName);
             if (command != null) {
               publisher.sendCommand(itemName,command);
               interpreter.println("Command has been sent successfully.");

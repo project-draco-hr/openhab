@@ -9,7 +9,7 @@
           Item item=registry.getItem(itemName);
           String stateName=interpreter.nextArgument();
           if (stateName != null) {
-            State state=TypeParser.parse(item.getAcceptedDataTypes(),stateName);
+            State state=TypeParser.parseState(item.getAcceptedDataTypes(),stateName);
             if (state != null) {
               publisher.postUpdate(itemName,state);
               interpreter.println("Update has been sent successfully.");
