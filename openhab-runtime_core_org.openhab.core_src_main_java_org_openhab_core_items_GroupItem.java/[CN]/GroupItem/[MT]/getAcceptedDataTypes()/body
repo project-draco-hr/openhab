@@ -1,5 +1,12 @@
 {
+  List<Class<? extends State>> acceptedDataTypes=null;
   for (  Item item : members) {
+    if (acceptedDataTypes == null) {
+      acceptedDataTypes=item.getAcceptedDataTypes();
+    }
+ else {
+      acceptedDataTypes=ListUtils.intersection(acceptedDataTypes,item.getAcceptedDataTypes());
+    }
   }
-  return null;
+  return acceptedDataTypes == null ? ListUtils.EMPTY_LIST : acceptedDataTypes;
 }

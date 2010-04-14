@@ -1,0 +1,14 @@
+{
+  line=line.trim();
+  if (line.isEmpty())   return null;
+  if (line.startsWith("#"))   return null;
+  String[] segments=line.split(",");
+  String type=segments[0].trim();
+  if (type.equalsIgnoreCase("GROUP"))   return processGroup(segments,groups);
+  if (type.equalsIgnoreCase("EIB1"))   return processEIB1(segments,groups);
+  if (type.equalsIgnoreCase("EIB1G"))   return processEIB1G(segments,groups);
+  if (type.equalsIgnoreCase("EIB2"))   return processEIB2(segments,groups);
+  if (type.equalsIgnoreCase("EIB5"))   return processEIB5(segments,groups);
+  if (type.equalsIgnoreCase("EIB7"))   return processEIB7(segments,groups);
+  return null;
+}

@@ -1,0 +1,13 @@
+{
+  for (  String groupName : groupsSegment.split("\\|")) {
+    groupName=groupName.trim();
+    if (groupName.isEmpty())     continue;
+    GroupItem group=groups.get(groupName);
+    if (group != null) {
+      group.addMember(item);
+    }
+ else {
+      throw new ParserException("Item '" + item.getName() + "' is associated to a group that does not exist: '"+ groupName+ "'");
+    }
+  }
+}

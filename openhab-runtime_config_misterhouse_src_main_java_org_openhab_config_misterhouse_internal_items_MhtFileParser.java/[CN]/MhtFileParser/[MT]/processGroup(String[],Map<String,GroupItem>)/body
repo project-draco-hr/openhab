@@ -1,0 +1,14 @@
+{
+  String groupName=segments[1].trim();
+  GroupItem groupItem=new GroupItem(groupName);
+  if (segments.length > 2) {
+    GroupItem parentGroupItem=groups.get(segments[2].trim());
+    if (parentGroupItem != null) {
+      parentGroupItem.addMember(groupItem);
+    }
+  }
+  groups.put(groupName,groupItem);
+  Map<String,Object> lineContents=new HashMap<String,Object>();
+  lineContents.put(MAP_ITEM,groupItem);
+  return lineContents;
+}

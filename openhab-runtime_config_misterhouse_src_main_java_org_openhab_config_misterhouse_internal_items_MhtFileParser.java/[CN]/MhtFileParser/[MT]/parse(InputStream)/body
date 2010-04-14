@@ -1,10 +1,11 @@
 {
   List<GenericItem> items=new ArrayList<GenericItem>();
+  Map<String,GroupItem> groups=new HashMap<String,GroupItem>();
   LineIterator iterator=IOUtils.lineIterator(is,"ISO-8859-1");
   checkCorrectFormat(iterator);
   while (iterator.hasNext()) {
     String line=iterator.nextLine();
-    Map<String,?> lineContents=parseLine(line);
+    Map<String,?> lineContents=parseLine(line,groups);
     if (lineContents != null && !lineContents.isEmpty()) {
       items.add((GenericItem)lineContents.get(MAP_ITEM));
     }
