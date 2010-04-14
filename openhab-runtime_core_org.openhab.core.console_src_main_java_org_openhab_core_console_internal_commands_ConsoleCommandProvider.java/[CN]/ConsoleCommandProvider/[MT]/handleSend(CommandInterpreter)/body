@@ -25,6 +25,12 @@
  catch (        ItemNotFoundException e) {
           interpreter.println("Error: Item '" + itemName + "' does not exist.");
         }
+catch (        ItemNotUniqueException e) {
+          interpreter.print("Error: Multiple items match this pattern: ");
+          for (          Item item : e.getMatchingItems()) {
+            interpreter.print(item.getName() + " ");
+          }
+        }
       }
  else {
         interpreter.println("Usage: " + getCommandUsage());

@@ -1,8 +1,10 @@
 {
   ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
   if (registry != null) {
-    for (    Item item : registry.getItems()) {
-      interpreter.println(item.getNamespace() + ":" + item.getName()+ " ("+ item.getClass().getSimpleName()+ ")");
+    String pattern=interpreter.nextArgument();
+    if (pattern == null || pattern.isEmpty())     pattern="*";
+    for (    Item item : registry.getItems(pattern)) {
+      interpreter.println(item.toString());
     }
   }
  else {

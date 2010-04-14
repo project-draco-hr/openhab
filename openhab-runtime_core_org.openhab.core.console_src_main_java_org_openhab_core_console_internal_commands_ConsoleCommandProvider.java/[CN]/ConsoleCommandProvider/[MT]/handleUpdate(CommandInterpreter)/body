@@ -11,11 +11,16 @@
           if (stateName != null) {
             State state=TypeParser.parseState(item.getAcceptedDataTypes(),stateName);
             if (state != null) {
-              publisher.postUpdate(itemName,state);
+              publisher.postUpdate(item.getName(),state);
               interpreter.println("Update has been sent successfully.");
             }
  else {
               interpreter.println("Error: State '" + stateName + "' is not valid for item '"+ itemName+ "'");
+              interpreter.print("Valid data types are: ( ");
+              for (              Class<? extends State> acceptedType : item.getAcceptedDataTypes()) {
+                interpreter.print(acceptedType.getSimpleName() + " ");
+              }
+              interpreter.println(")");
             }
           }
  else {
@@ -24,6 +29,12 @@
         }
  catch (        ItemNotFoundException e) {
           interpreter.println("Error: Item '" + itemName + "' does not exist.");
+        }
+catch (        ItemNotUniqueException e) {
+          interpreter.print("Error: Multiple items match this pattern: ");
+          for (          Item item : e.getMatchingItems()) {
+            interpreter.print(item.getName() + " ");
+          }
         }
       }
  else {
