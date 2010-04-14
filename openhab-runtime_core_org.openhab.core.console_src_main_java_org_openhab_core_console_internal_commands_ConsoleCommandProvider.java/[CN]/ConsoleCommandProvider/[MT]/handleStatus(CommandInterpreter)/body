@@ -1,0 +1,16 @@
+{
+  ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    String itemName=interpreter.nextArgument();
+    try {
+      Item item=registry.getItem(itemName);
+      interpreter.println(item.getState().toString());
+    }
+ catch (    ItemNotFoundException e) {
+      interpreter.println("Error: Item '" + itemName + "' does not exist.");
+    }
+  }
+ else {
+    interpreter.println("Sorry, no item registry service available!");
+  }
+}
