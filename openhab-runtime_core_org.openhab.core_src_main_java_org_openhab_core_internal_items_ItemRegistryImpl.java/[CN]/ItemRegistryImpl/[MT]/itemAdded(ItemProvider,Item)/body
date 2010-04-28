@@ -1,4 +1,7 @@
 {
   Item[] items=itemMap.get(provider);
   itemMap.put(provider,(GenericItem[])ArrayUtils.add(items,item));
+  for (  ItemChangeListener listener : listeners) {
+    listener.itemAdded(provider,item);
+  }
 }
