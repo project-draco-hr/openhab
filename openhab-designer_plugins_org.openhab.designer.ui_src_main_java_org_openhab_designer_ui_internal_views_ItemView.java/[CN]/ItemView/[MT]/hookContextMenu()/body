@@ -1,0 +1,13 @@
+{
+  MenuManager menuMgr=new MenuManager("#PopupMenu");
+  menuMgr.setRemoveAllWhenShown(true);
+  menuMgr.addMenuListener(new IMenuListener(){
+    public void menuAboutToShow(    IMenuManager manager){
+      ItemView.this.fillContextMenu(manager);
+    }
+  }
+);
+  Menu menu=menuMgr.createContextMenu(viewer.getControl());
+  viewer.getControl().setMenu(menu);
+  getSite().registerContextMenu(menuMgr,viewer);
+}

@@ -1,0 +1,20 @@
+{
+  List<GroupItem> allGroups=new LinkedList<GroupItem>();
+  List<GroupItem> rootGroups=new LinkedList<GroupItem>();
+  for (  Item item : items) {
+    if (item instanceof GroupItem) {
+      allGroups.add((GroupItem)item);
+    }
+  }
+  for (  GroupItem group1 : allGroups) {
+    boolean found=false;
+    for (    GroupItem group2 : allGroups) {
+      if (ArrayUtils.contains(group2.getMembers(),group1)) {
+        found=true;
+        break;
+      }
+    }
+    if (!found)     rootGroups.add(group1);
+  }
+  return rootGroups.toArray(new GroupItem[rootGroups.size()]);
+}
