@@ -1,0 +1,15 @@
+{
+  IWorkbenchPage activePage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+  FileEditorInput editorInput=null;
+  if (editorInput == null) {
+    editorInput=new FileEditorInput(file);
+  }
+  IEditorDescriptor editor=PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+  String editorId=editor == null ? "org.eclipse.ui.DefaultTextEditor" : editor.getId();
+  try {
+    activePage.openEditor(editorInput,editorId);
+  }
+ catch (  PartInitException e1) {
+    e1.printStackTrace();
+  }
+}

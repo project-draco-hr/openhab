@@ -1,0 +1,19 @@
+{
+  if (obj instanceof IFolder) {
+    return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+  }
+ else   if (obj instanceof IFile) {
+    IFile file=(IFile)obj;
+    String fileExt=file.getFileExtension();
+    Image image=imageCache.get(fileExt);
+    if (image == null) {
+      ImageDescriptor imageDesc=PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor("." + fileExt);
+      image=imageDesc.createImage();
+      imageCache.put(fileExt,image);
+    }
+    return image;
+  }
+ else {
+    return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+  }
+}
