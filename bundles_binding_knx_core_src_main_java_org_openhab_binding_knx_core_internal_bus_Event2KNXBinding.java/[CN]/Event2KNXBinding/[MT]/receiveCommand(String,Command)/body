@@ -1,2 +1,14 @@
 {
+  ProcessCommunicator pc=KNXConnection.getCommunicator();
+  if (pc != null) {
+    Datapoint dataPoint=getDataPoint(itemName,command);
+    if (dataPoint != null) {
+      try {
+        pc.write(dataPoint,command.toString());
+      }
+ catch (      KNXException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 }
