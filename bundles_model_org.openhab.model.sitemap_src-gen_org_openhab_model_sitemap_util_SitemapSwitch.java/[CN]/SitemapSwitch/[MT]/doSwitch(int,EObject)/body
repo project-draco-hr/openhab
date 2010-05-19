@@ -1,0 +1,60 @@
+{
+switch (classifierID) {
+case SitemapPackage.MODEL:
+{
+      Model model=(Model)theEObject;
+      T result=caseModel(model);
+      if (result == null)       result=defaultCase(theEObject);
+      return result;
+    }
+case SitemapPackage.SITEMAP:
+{
+    Sitemap sitemap=(Sitemap)theEObject;
+    T result=caseSitemap(sitemap);
+    if (result == null)     result=caseModel(sitemap);
+    if (result == null)     result=defaultCase(theEObject);
+    return result;
+  }
+case SitemapPackage.WIDGET:
+{
+  Widget widget=(Widget)theEObject;
+  T result=caseWidget(widget);
+  if (result == null)   result=defaultCase(theEObject);
+  return result;
+}
+case SitemapPackage.TEXT:
+{
+Text text=(Text)theEObject;
+T result=caseText(text);
+if (result == null) result=caseWidget(text);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.GROUP:
+{
+Group group=(Group)theEObject;
+T result=caseGroup(group);
+if (result == null) result=caseWidget(group);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.IMAGE:
+{
+Image image=(Image)theEObject;
+T result=caseImage(image);
+if (result == null) result=caseWidget(image);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.SWITCH:
+{
+Switch switch_=(Switch)theEObject;
+T result=caseSwitch(switch_);
+if (result == null) result=caseWidget(switch_);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+default :
+return defaultCase(theEObject);
+}
+}

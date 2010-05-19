@@ -1,0 +1,12 @@
+{
+  try {
+    if (editorInput instanceof IStorageEditorInput) {
+      IStorage storage=((IStorageEditorInput)editorInput).getStorage();
+      return createResourceFor(storage);
+    }
+    throw new IllegalArgumentException("Couldn't create EMF Resource for input " + editorInput);
+  }
+ catch (  CoreException e) {
+    throw new WrappedException(e);
+  }
+}

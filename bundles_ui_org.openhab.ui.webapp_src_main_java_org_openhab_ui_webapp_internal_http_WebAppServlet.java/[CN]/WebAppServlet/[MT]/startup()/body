@@ -1,0 +1,12 @@
+{
+  try {
+    logger.debug("Starting up webapp at " + WEBAPP_ALIAS);
+    httpService.registerResources(WEBAPP_ALIAS,"src/main/resources",null);
+    Hashtable<String,String> props=new Hashtable<String,String>();
+    props.put("applicationClassName",MainApplication.class.getName());
+    props.put("pattern","xxx/.*");
+  }
+ catch (  NamespaceException e) {
+    logger.error("Error during servlet startup",e);
+  }
+}

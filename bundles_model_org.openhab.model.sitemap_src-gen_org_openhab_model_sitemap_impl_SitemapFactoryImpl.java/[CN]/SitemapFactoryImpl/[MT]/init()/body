@@ -1,0 +1,12 @@
+{
+  try {
+    SitemapFactory theSitemapFactory=(SitemapFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.openhab.org/model/Sitemap");
+    if (theSitemapFactory != null) {
+      return theSitemapFactory;
+    }
+  }
+ catch (  Exception exception) {
+    EcorePlugin.INSTANCE.log(exception);
+  }
+  return new SitemapFactoryImpl();
+}
