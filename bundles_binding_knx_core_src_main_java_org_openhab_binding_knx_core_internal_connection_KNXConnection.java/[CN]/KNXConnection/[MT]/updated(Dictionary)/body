@@ -1,0 +1,26 @@
+{
+  if (config != null) {
+    String ip=(String)config.get("ip");
+    if (ip != null) {
+      try {
+        KNXNetworkLinkIP link=new KNXNetworkLinkIP(ip,new KNXMediumSettings(null){
+          public short getMedium(){
+            return KNXMediumSettings.MEDIUM_TP1;
+          }
+        }
+);
+        pc=new ProcessCommunicatorImpl(link);
+        pc.addProcessListener(new KNX2EventBinding());
+      }
+ catch (      KNXException e) {
+        logger.error("Error connecting to KNX bus",e);
+      }
+    }
+ else {
+      logger.error("No IP address could be found in configuration!");
+    }
+  }
+ else {
+    pc=null;
+  }
+}
