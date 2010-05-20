@@ -1,0 +1,14 @@
+{
+  try {
+    logger.debug("Starting up webapp at " + WEBAPP_ALIAS);
+    httpService.registerResources(WEBAPP_ALIAS,"web",null);
+    Hashtable<String,String> props=new Hashtable<String,String>();
+    httpService.registerServlet(WEBAPP_ALIAS + "openhab",new WebAppServlet(),props,null);
+  }
+ catch (  NamespaceException e) {
+    logger.error("Error during servlet startup",e);
+  }
+catch (  ServletException e) {
+    logger.error("Error during servlet startup",e);
+  }
+}
