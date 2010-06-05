@@ -1,0 +1,34 @@
+{
+  Widget w=null;
+  if (itemType == null) {
+    for (    Item item : getItems()) {
+      if (item.getName().equals(itemName))       itemType=item.getClass();
+    }
+    if (itemType == null)     return null;
+  }
+  if (itemType.equals(SwitchItem.class)) {
+    Switch s=SitemapFactory.eINSTANCE.createSwitch();
+    s.setItem(itemName);
+    w=s;
+  }
+  if (itemType.equals(GroupItem.class)) {
+    Group g=SitemapFactory.eINSTANCE.createGroup();
+    g.setItem(itemName);
+    w=g;
+  }
+  if (itemType.equals(MeasurementItem.class)) {
+    Text t=SitemapFactory.eINSTANCE.createText();
+    t.setItem(itemName);
+    w=t;
+  }
+  if (itemType.equals(ContactItem.class)) {
+    Text t=SitemapFactory.eINSTANCE.createText();
+    t.setItem(itemName);
+    w=t;
+  }
+  if (itemType.equals(RollerblindItem.class)) {
+    Switch s=SitemapFactory.eINSTANCE.createSwitch();
+    s.setItem(itemName);
+  }
+  return w;
+}
