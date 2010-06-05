@@ -1,0 +1,17 @@
+{
+  String snippet=service.getSnippet(w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1));
+  snippet=snippet.replaceAll("%id%",service.getWidgetId(w));
+  snippet=snippet.replaceAll("%icon%",service.getIcon(w));
+  snippet=snippet.replaceAll("%item%",service.getItem(w));
+  snippet=snippet.replaceAll("%label%",service.getLabel(w));
+  snippet=snippet.replaceAll("%servletname%",SERVLET_NAME);
+  if (w instanceof Image) {
+    snippet=snippet.replaceAll("%url%",((Image)w).getUrl());
+  }
+  if (w instanceof Frame) {
+    processChildren(snippet,sb,service.getChildren(w));
+  }
+ else {
+    sb.append(snippet);
+  }
+}

@@ -1,0 +1,36 @@
+{
+  String widgetTypeName=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+  String icon=widgetTypeName.toLowerCase();
+  if (w.getIcon() != null) {
+    icon=w.getIcon();
+  }
+ else {
+    String itemName=getItem(w);
+    if (itemName != null) {
+      String result=delegatingItemUIProvider.getIcon(itemName);
+      if (result != null)       icon=result;
+    }
+  }
+  if (!icon.contains("-")) {
+    String itemName=getItem(w);
+    if (itemName != null) {
+      try {
+        Item item=getItemRegistry().getItem(itemName);
+        String state=item.getState().toString();
+        icon+="-" + state.toLowerCase();
+      }
+ catch (      ItemNotFoundException e) {
+        logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
+      }
+catch (      ItemNotUniqueException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  if (iconExists(icon) || !icon.contains("-")) {
+    return icon;
+  }
+ else {
+    return icon.substring(0,icon.indexOf("-"));
+  }
+}

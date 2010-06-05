@@ -1,0 +1,14 @@
+{
+  if (w.getLabel() != null) {
+    return w.getLabel();
+  }
+ else {
+    String itemName=getItem(w);
+    if (itemName != null) {
+      String label=delegatingItemUIProvider.getLabel(itemName);
+      if (label != null)       return label;
+      return itemName;
+    }
+  }
+  return "";
+}

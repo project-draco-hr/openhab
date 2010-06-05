@@ -1,3 +1,28 @@
 {
   logger.debug("Servlet request received!");
+  String sitemapName=(String)req.getParameter("sitemap");
+  String widgetId=(String)req.getParameter("w");
+  boolean async="true".equalsIgnoreCase((String)req.getParameter("__async"));
+  if (sitemapName == null)   sitemapName="default";
+  StringBuilder sb=new StringBuilder();
+  Sitemap sitemap=service.getSitemapProvider().getSitemap(sitemapName);
+  if (sitemap != null) {
+    logger.debug("reading sitemap {}",sitemap.getName());
+    if (widgetId == null) {
+      String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
+      processPage("Home",label,sitemap.getChildren(),async,sb);
+    }
+ else {
+      Widget w=service.getWidget(sitemap,widgetId);
+      String label=service.getLabel(w);
+      if (label == null)       label="undefined";
+      EList<Widget> children=service.getChildren((Group)w);
+      processPage(service.getWidgetId(w),label,children,async,sb);
+    }
+  }
+ else {
+    throw new ServletException("Sitemap '" + sitemapName + "' could not be found");
+  }
+  res.getWriter().append(sb);
+  res.getWriter().close();
 }
