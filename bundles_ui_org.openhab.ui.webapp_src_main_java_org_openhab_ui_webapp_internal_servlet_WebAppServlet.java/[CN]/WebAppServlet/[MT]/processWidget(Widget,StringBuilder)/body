@@ -1,15 +1,51 @@
 {
-  String snippet=service.getSnippet(w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1));
+  String snippetName;
+  if (w instanceof Switch) {
+    Item item;
+    try {
+      item=service.getItemRegistry().getItem(service.getItem(w));
+      if (item instanceof RollerblindItem) {
+        snippetName="rollerblind";
+      }
+ else {
+        snippetName="switch";
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.warn("Cannot determine item type of '{}'",service.getItem(w),e);
+      snippetName="switch";
+    }
+catch (    ItemNotUniqueException e) {
+      logger.warn("Cannot determine item type of '{}'",service.getItem(w),e);
+      snippetName="switch";
+    }
+  }
+ else {
+    snippetName=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+  }
+  if (!(w instanceof Frame) && (w instanceof LinkableWidget) && ((LinkableWidget)w).getChildren().size() > 0) {
+    snippetName+="_link";
+  }
+  String snippet=service.getSnippet(snippetName);
   snippet=snippet.replaceAll("%id%",service.getWidgetId(w));
   snippet=snippet.replaceAll("%icon%",service.getIcon(w));
   snippet=snippet.replaceAll("%item%",service.getItem(w));
   snippet=snippet.replaceAll("%label%",service.getLabel(w));
   snippet=snippet.replaceAll("%servletname%",SERVLET_NAME);
+  if (w instanceof Switch) {
+    State state=service.getState(w);
+    if (state.equals(OnOffType.ON)) {
+      snippet=snippet.replaceAll("%checked%","checked=true");
+    }
+ else {
+      snippet=snippet.replaceAll("%checked%","x");
+    }
+  }
   if (w instanceof Image) {
     snippet=snippet.replaceAll("%url%",((Image)w).getUrl());
   }
   if (w instanceof Frame) {
-    processChildren(snippet,sb,service.getChildren(w));
+    processChildren(snippet,sb,service.getChildren((Frame)w));
   }
  else {
     sb.append(snippet);

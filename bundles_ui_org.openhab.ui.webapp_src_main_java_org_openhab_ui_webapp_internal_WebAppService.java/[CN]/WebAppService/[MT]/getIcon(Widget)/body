@@ -12,19 +12,9 @@
     }
   }
   if (!icon.contains("-")) {
-    String itemName=getItem(w);
-    if (itemName != null) {
-      try {
-        Item item=getItemRegistry().getItem(itemName);
-        String state=item.getState().toString();
-        icon+="-" + state.toLowerCase();
-      }
- catch (      ItemNotFoundException e) {
-        logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
-      }
-catch (      ItemNotUniqueException e) {
-        e.printStackTrace();
-      }
+    Object state=getState(w);
+    if (!state.equals(UnDefType.UNDEF)) {
+      icon+="-" + state.toString().toLowerCase();
     }
   }
   if (iconExists(icon) || !icon.contains("-")) {
