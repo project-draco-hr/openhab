@@ -23,7 +23,7 @@ catch (    ItemNotUniqueException e) {
  else {
     snippetName=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
   }
-  if (!(w instanceof Frame) && (w instanceof LinkableWidget) && ((LinkableWidget)w).getChildren().size() > 0) {
+  if (!(w instanceof Frame || w instanceof Group) && (w instanceof LinkableWidget) && ((LinkableWidget)w).getChildren().size() > 0) {
     snippetName+="_link";
   }
   String snippet=service.getSnippet(snippetName);

@@ -1,5 +1,13 @@
 {
   String label=widget.getLabel();
-  if (label == null)   return null;
+  if (label == null) {
+    try {
+      Method method=widget.getClass().getMethod("getItem");
+      label=(String)method.invoke(widget);
+    }
+ catch (    Exception e) {
+      label="";
+    }
+  }
   return widget.eClass().getName() + " " + label;
 }
