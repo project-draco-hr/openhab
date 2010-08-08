@@ -1,0 +1,43 @@
+{
+  ConfigurationAdmin configurationAdmin=(ConfigurationAdmin)ConfigActivator.configurationAdminTracker.getService();
+  if (configurationAdmin != null) {
+    String configFilePath=getConfigurationFilePath();
+    File configFile=new File(configFilePath);
+    try {
+      Map<Configuration,Dictionary> configsToUpdate=new HashMap<Configuration,Dictionary>();
+      Map<String,Configuration> configMap=new HashMap<String,Configuration>();
+      List<String> lines=IOUtils.readLines(new FileInputStream(configFile));
+      for (      String line : lines) {
+        String[] contents=parseLine(configFilePath,line);
+        if (contents == null)         continue;
+        String pid=contents[0];
+        String property=contents[1];
+        String value=contents[2];
+        Configuration configuration=configMap.get(pid);
+        if (configuration == null) {
+          configuration=configurationAdmin.getConfiguration(pid,null);
+          configMap.put(pid,configuration);
+        }
+        if (configuration != null) {
+          Dictionary configProperties=configuration.getProperties();
+          if (configProperties == null) {
+            configProperties=new Properties();
+          }
+          if (!value.equals(configProperties.get(property))) {
+            configProperties.put(property,value);
+            configsToUpdate.put(configuration,configProperties);
+          }
+        }
+      }
+      for (      Entry<Configuration,Dictionary> entry : configsToUpdate.entrySet()) {
+        entry.getKey().update(entry.getValue());
+      }
+    }
+ catch (    FileNotFoundException e) {
+      logger.warn("Main openHAB configuration file '{}' does not exist.",configFilePath);
+    }
+catch (    IOException e) {
+      logger.error("Main openHAB configuration file '{}' cannot be read.",configFilePath,e);
+    }
+  }
+}
