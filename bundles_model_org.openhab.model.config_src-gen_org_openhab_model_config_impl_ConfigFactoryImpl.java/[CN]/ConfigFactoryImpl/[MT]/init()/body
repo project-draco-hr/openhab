@@ -1,0 +1,12 @@
+{
+  try {
+    ConfigFactory theConfigFactory=(ConfigFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.openhab.org/model/Config");
+    if (theConfigFactory != null) {
+      return theConfigFactory;
+    }
+  }
+ catch (  Exception exception) {
+    EcorePlugin.INSTANCE.log(exception);
+  }
+  return new ConfigFactoryImpl();
+}

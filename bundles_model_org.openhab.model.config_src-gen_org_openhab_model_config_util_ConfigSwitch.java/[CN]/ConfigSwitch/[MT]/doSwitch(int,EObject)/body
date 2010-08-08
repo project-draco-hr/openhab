@@ -1,0 +1,43 @@
+{
+switch (classifierID) {
+case ConfigPackage.MODEL:
+{
+      Model model=(Model)theEObject;
+      T result=caseModel(model);
+      if (result == null)       result=defaultCase(theEObject);
+      return result;
+    }
+case ConfigPackage.ITEM:
+{
+    Item item=(Item)theEObject;
+    T result=caseItem(item);
+    if (result == null)     result=defaultCase(theEObject);
+    return result;
+  }
+case ConfigPackage.GROUP_ITEM:
+{
+  GroupItem groupItem=(GroupItem)theEObject;
+  T result=caseGroupItem(groupItem);
+  if (result == null)   result=caseItem(groupItem);
+  if (result == null)   result=defaultCase(theEObject);
+  return result;
+}
+case ConfigPackage.NORMAL_ITEM:
+{
+NormalItem normalItem=(NormalItem)theEObject;
+T result=caseNormalItem(normalItem);
+if (result == null) result=caseItem(normalItem);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case ConfigPackage.BINDING:
+{
+Binding binding=(Binding)theEObject;
+T result=caseBinding(binding);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+default :
+return defaultCase(theEObject);
+}
+}

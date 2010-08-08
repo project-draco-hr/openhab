@@ -1,0 +1,14 @@
+{
+  if ((value=eObjectConsumer.getConsumable("bindings",false)) == null)   return null;
+  IEObjectConsumer obj=eObjectConsumer.cloneAndConsume("bindings");
+  if (value instanceof EObject) {
+    IEObjectConsumer param=createEObjectConsumer((EObject)value);
+    if (param.isInstanceOf(grammarAccess.getBindingRule().getType().getClassifier())) {
+      type=AssignmentType.PARSER_RULE_CALL;
+      element=grammarAccess.getNormalItemAccess().getBindingsBindingParserRuleCall_5_2_1_0();
+      consumed=obj;
+      return param;
+    }
+  }
+  return null;
+}
