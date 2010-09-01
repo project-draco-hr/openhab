@@ -1,0 +1,17 @@
+{
+  Resource resource=getResource(name);
+  if (resource == null) {
+    resource=resourceSet.createResource(URI.createURI(name));
+    try {
+      resource.load(inputStream,Collections.EMPTY_MAP);
+      notifyListeners(name,EventType.ADDED);
+    }
+ catch (    IOException e) {
+      logger.warn("File '{}' cannot be parsed correctly!",name,e);
+    }
+  }
+ else {
+    resource.unload();
+    notifyListeners(name,EventType.MODIFIED);
+  }
+}

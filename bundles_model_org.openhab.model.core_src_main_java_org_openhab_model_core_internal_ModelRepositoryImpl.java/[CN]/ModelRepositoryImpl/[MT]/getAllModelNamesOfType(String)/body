@@ -1,0 +1,14 @@
+{
+  Iterable<Resource> matchingResources=Iterables.filter(resourceSet.getResources(),new Predicate<Resource>(){
+    public boolean apply(    Resource input){
+      return input.getURI().fileExtension().equalsIgnoreCase(modelType);
+    }
+  }
+);
+  return Iterables.transform(matchingResources,new Function<Resource,String>(){
+    public String apply(    Resource from){
+      return from.getURI().path();
+    }
+  }
+);
+}

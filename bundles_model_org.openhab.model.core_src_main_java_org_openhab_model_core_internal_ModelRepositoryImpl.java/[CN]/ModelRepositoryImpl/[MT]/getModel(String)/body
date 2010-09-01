@@ -1,0 +1,16 @@
+{
+  Resource resource=getResource(name);
+  if (resource != null) {
+    if (resource.getContents().size() > 0) {
+      return resource.getContents().get(0);
+    }
+ else {
+      logger.warn("File '{}' cannot be parsed correctly!",name);
+      return null;
+    }
+  }
+ else {
+    logger.warn("File '{}' can not be found in folder {}");
+    return null;
+  }
+}
