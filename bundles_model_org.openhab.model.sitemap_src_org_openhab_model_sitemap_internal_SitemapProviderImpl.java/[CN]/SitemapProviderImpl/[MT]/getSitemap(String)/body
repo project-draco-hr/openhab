@@ -1,20 +1,16 @@
 {
-  if (sitemapFolder != null) {
-    new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
-    Injector injector=new SitemapStandaloneSetup().createInjectorAndDoEMFRegistration();
-    XtextResourceSet resourceSet=injector.getInstance(XtextResourceSet.class);
-    resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL,Boolean.TRUE);
-    Resource resource=resourceSet.getResource(URI.createFileURI(sitemapFolder + "/" + sitemapName+ ".sitemap"),true);
-    if (resource.getContents().size() > 0) {
-      return (Sitemap)resource.getContents().get(0);
+  if (modelRepo != null) {
+    Sitemap sitemap=(Sitemap)modelRepo.getModel(sitemapName + ".sitemap");
+    if (sitemap != null) {
+      return sitemap;
     }
  else {
-      logger.debug("Sitemap {} can not be found in folder {}",sitemapName,sitemapFolder);
+      logger.debug("Sitemap {} can not be found",sitemapName);
       return null;
     }
   }
  else {
-    logger.debug("No sitemap folder has been configured");
+    logger.debug("No model repository service is available");
     return null;
   }
 }
