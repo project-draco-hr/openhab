@@ -1,0 +1,14 @@
+{
+  ProcessCommunicator pc=KNXConnection.getCommunicator();
+  if (pc != null) {
+    Datapoint datapoint=getDatapoint(itemName,newState.getClass());
+    if (datapoint != null) {
+      try {
+        pc.write(datapoint,toDPTValue(newState));
+      }
+ catch (      KNXException e) {
+        logger.error("Update could not be sent to the KNX bus!",e);
+      }
+    }
+  }
+}

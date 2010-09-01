@@ -1,13 +1,13 @@
 {
   ProcessCommunicator pc=KNXConnection.getCommunicator();
   if (pc != null) {
-    Datapoint dataPoint=getDataPoint(itemName,command);
-    if (dataPoint != null) {
+    Datapoint datapoint=getDatapoint(itemName,command.getClass());
+    if (datapoint != null) {
       try {
-        pc.write(dataPoint,command.toString());
+        pc.write(datapoint,toDPTValue(command));
       }
  catch (      KNXException e) {
-        e.printStackTrace();
+        logger.error("Command could not be sent to the KNX bus!",e);
       }
     }
   }

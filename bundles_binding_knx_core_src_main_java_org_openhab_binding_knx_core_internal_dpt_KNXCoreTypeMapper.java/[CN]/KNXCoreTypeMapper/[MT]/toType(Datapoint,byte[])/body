@@ -1,0 +1,19 @@
+{
+  try {
+    DPTXlator translator=TranslatorTypes.createTranslator(datapoint.getMainNumber(),datapoint.getDPT());
+    translator.setData(data);
+    String value=translator.getValue();
+    String id=translator.getType().getID();
+    if (id.equals(DPTXlatorBoolean.DPT_UPDOWN.getID()))     return UpDownType.valueOf(value.toUpperCase());
+    if (id.equals(DPTXlatorBoolean.DPT_SWITCH.getID()))     return OnOffType.valueOf(value.toUpperCase());
+    if (id.equals(DPTXlator8BitUnsigned.DPT_PERCENT_U8.getID()))     return PercentType.valueOf(mapToPercent(value));
+    if (datapoint.getMainNumber() == 9)     return DecimalType.valueOf(value.substring(0,value.indexOf(" ")));
+    if (id.equals(DPTXlatorString.DPT_STRING_8859_1.getID()))     return StringType.valueOf(value);
+    if (id.equals(DPTXlatorBoolean.DPT_OPENCLOSE.getID()))     return value.equals("open") ? OpenCloseType.OPEN : OpenCloseType.CLOSE;
+    if (id.equals(DPTXlatorBoolean.DPT_START.getID()))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
+  }
+ catch (  KNXException e) {
+    e.printStackTrace();
+  }
+  return null;
+}

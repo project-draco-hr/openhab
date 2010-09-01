@@ -1,7 +1,7 @@
 {
   if (config != null) {
     String ip=(String)config.get("ip");
-    if (ip != null) {
+    if (ip != null && !ip.isEmpty()) {
       try {
         KNXNetworkLinkIP link=new KNXNetworkLinkIP(ip,new KNXMediumSettings(null){
           public short getMedium(){
@@ -10,7 +10,9 @@
         }
 );
         pc=new ProcessCommunicatorImpl(link);
-        pc.addProcessListener(new KNX2EventBinding());
+        if (listener != null) {
+          pc.addProcessListener(listener);
+        }
       }
  catch (      KNXException e) {
         logger.error("Error connecting to KNX bus",e);

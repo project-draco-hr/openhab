@@ -1,3 +1,14 @@
 {
-  e.getDestination();
+  GroupAddress destination=e.getDestination();
+  byte[] asdu=e.getASDU();
+  for (  String itemName : getItemNames(destination)) {
+    Datapoint datapoint=getDatapoint(itemName,destination);
+    Type type=getType(datapoint,asdu);
+    if (datapoint instanceof CommandDP) {
+      eventPublisher.postCommand(itemName,(Command)type);
+    }
+ else     if (datapoint instanceof StateDP) {
+      eventPublisher.postUpdate(itemName,(State)type);
+    }
+  }
 }
