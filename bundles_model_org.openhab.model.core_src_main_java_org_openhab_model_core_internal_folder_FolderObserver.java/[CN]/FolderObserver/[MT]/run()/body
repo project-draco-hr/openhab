@@ -1,0 +1,17 @@
+{
+  while (!folderRefreshMap.isEmpty()) {
+    for (    String foldername : folderRefreshMap.keySet()) {
+      if (refreshCount % folderRefreshMap.get(foldername) > 0)       continue;
+      logger.debug("Refreshing folder '{}'",foldername);
+      checkFolder(foldername);
+    }
+    refreshCount=(refreshCount + gcdRefresh) % lcmRefresh;
+    try {
+      if (gcdRefresh <= 0)       break;
+      sleep(gcdRefresh * 1000L);
+    }
+ catch (    InterruptedException e) {
+      break;
+    }
+  }
+}

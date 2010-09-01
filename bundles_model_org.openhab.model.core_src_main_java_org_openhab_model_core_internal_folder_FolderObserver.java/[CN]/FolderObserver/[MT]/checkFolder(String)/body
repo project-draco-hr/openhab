@@ -1,0 +1,38 @@
+{
+  File folder=getFolder(foldername);
+  String[] extensions=folderFileExtMap.get(foldername);
+  Set<String> currentFileNames=new HashSet<String>();
+  for (  File file : folder.listFiles()) {
+    if (file.isDirectory())     continue;
+    if (!file.getName().contains("."))     continue;
+    String fileExt=file.getName().substring(file.getName().lastIndexOf(".") + 1);
+    if (extensions != null && extensions.length > 0 && !ArrayUtils.contains(extensions,fileExt))     continue;
+    currentFileNames.add(file.getName());
+    Long timeLastCheck=lastCheckedMap.get(file.getName());
+    if (timeLastCheck == null)     timeLastCheck=0L;
+    if (FileUtils.isFileNewer(file,timeLastCheck)) {
+      logger.info("Loading file '{}'",file.getName());
+      if (modelRepo != null) {
+        try {
+          modelRepo.addOrRefreshModel(file.getName(),FileUtils.openInputStream(file));
+        }
+ catch (        IOException e) {
+          logger.warn("Cannot open file '{}' for reading.",file.getAbsolutePath(),e);
+        }
+      }
+      lastCheckedMap.put(file.getName(),new Date().getTime());
+    }
+  }
+  if (lastFileNames.get(foldername) != null) {
+    ;
+    for (    String fileName : lastFileNames.get(foldername)) {
+      if (!currentFileNames.contains(fileName)) {
+        logger.info("File '{}' has been deleted",fileName);
+        if (modelRepo != null) {
+          modelRepo.removeModel(fileName);
+        }
+      }
+    }
+  }
+  lastFileNames.put(foldername,currentFileNames);
+}

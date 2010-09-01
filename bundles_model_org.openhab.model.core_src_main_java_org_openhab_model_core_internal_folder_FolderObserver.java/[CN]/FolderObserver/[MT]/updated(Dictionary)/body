@@ -1,0 +1,39 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String foldername=(String)keys.nextElement();
+      if (foldername.equals("service.pid"))       continue;
+      String[] values=((String)config.get(foldername)).split(",");
+      try {
+        Integer refreshValue=Integer.valueOf(values[0]);
+        String[] fileExts=(String[])ArrayUtils.remove(values,0);
+        File folder=getFolder(foldername);
+        if (folder.exists() && folder.isDirectory()) {
+          folderFileExtMap.put(foldername,fileExts);
+          if (refreshValue > 0) {
+            folderRefreshMap.put(foldername,refreshValue);
+            if (!this.isAlive()) {
+              this.start();
+            }
+          }
+ else {
+            folderRefreshMap.remove(foldername);
+          }
+        }
+ else {
+          logger.warn("Directory '{}??? does not exist in '{}'. Please check your configuration settings!",foldername,ConfigConstants.MAIN_CONFIG_FOLDER);
+        }
+        Integer[] refreshValues=folderRefreshMap.values().toArray(new Integer[0]);
+        if (refreshValues.length > 0) {
+          gcdRefresh=MathUtils.gcd(refreshValues);
+          lcmRefresh=MathUtils.lcm(refreshValues);
+        }
+        refreshCount=0;
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Invalid value ???{}??? for configuration ???{}???. Integer value expected!",values[0],ModelCoreConstants.SERVICE_PID + ":" + foldername);
+      }
+    }
+  }
+}
