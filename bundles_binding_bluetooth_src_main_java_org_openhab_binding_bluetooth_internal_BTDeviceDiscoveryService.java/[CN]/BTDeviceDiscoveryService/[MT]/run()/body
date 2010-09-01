@@ -1,0 +1,75 @@
+{
+  try {
+    LocalDevice localDevice=LocalDevice.getLocalDevice();
+    logger.info("Initializing local bluetooth device ({}, {})",localDevice.getBluetoothAddress(),localDevice.getFriendlyName());
+    DiscoveryAgent agent=localDevice.getDiscoveryAgent();
+    final Object inquiryCompletedEvent=new Object();
+    DiscoveryListener listener=new DiscoveryListener(){
+      public void deviceDiscovered(      RemoteDevice btDevice,      DeviceClass cod){
+        if (!newDevices.contains(btDevice)) {
+          newDevices.add(btDevice);
+          if (!oldDevices.contains(btDevice)) {
+            try {
+              logger.debug("Device discovered: {} ({})",btDevice.getBluetoothAddress(),btDevice.getFriendlyName(true));
+            }
+ catch (            IOException e) {
+            }
+          }
+        }
+      }
+      public void inquiryCompleted(      int discType){
+        for (        RemoteDevice device : oldDevices) {
+          if (newDevices.contains(device))           continue;
+          try {
+            logger.debug("Device out of range: {} ({})",device.getBluetoothAddress(),device.getFriendlyName(false));
+          }
+ catch (          IOException e) {
+          }
+        }
+        oldDevices=new HashSet<RemoteDevice>(newDevices);
+        newDevices.clear();
+synchronized (inquiryCompletedEvent) {
+          inquiryCompletedEvent.notifyAll();
+        }
+      }
+      public void serviceSearchCompleted(      int transID,      int respCode){
+      }
+      public void servicesDiscovered(      int transID,      ServiceRecord[] servRecord){
+      }
+    }
+;
+    while (!interrupted) {
+      long starttime=new Date().getTime();
+synchronized (inquiryCompletedEvent) {
+        try {
+          logger.debug("Launching bluetooth device discovery...");
+          boolean started=agent.startInquiry(DiscoveryAgent.GIAC,listener);
+          if (started) {
+            inquiryCompletedEvent.wait();
+          }
+        }
+ catch (        BluetoothStateException e) {
+          logger.error("Error while starting the bluetooth agent",e);
+        }
+catch (        InterruptedException e) {
+          interrupted=true;
+        }
+      }
+      if (!interrupted) {
+        long sleeptime=BluetoothConfig.refreshRate * 1000L - (new Date().getTime() - starttime);
+        if (sleeptime > 0) {
+          logger.debug("Sleeping for {} s...",sleeptime / 1000.0);
+          try {
+            Thread.sleep(sleeptime);
+          }
+ catch (          InterruptedException e) {
+            interrupted=true;
+          }
+        }
+      }
+    }
+  }
+ catch (  BluetoothStateException e) {
+    logger.error("Error while initializing local bluetooth device.",e);
+  }
+}

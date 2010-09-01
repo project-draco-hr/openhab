@@ -1,0 +1,12 @@
+{
+  if (config != null) {
+    String value=(String)config.get(REFRESH_RATE);
+    try {
+      int newRefreshRate=Integer.parseInt(value);
+      refreshRate=newRefreshRate;
+    }
+ catch (    NumberFormatException e) {
+      logger.warn("Invalid configuration value '{}' for parameter '" + SERVICE_PID + ":"+ REFRESH_RATE+ "'",value);
+    }
+  }
+}
