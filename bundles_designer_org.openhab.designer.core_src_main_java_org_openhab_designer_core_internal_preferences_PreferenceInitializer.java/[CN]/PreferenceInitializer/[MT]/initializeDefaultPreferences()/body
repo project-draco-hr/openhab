@@ -1,12 +1,6 @@
 {
   IScopeContext context=new DefaultScope();
   IEclipsePreferences node=context.getNode(CoreActivator.getDefault().getBundle().getSymbolicName());
-  String folderPath=System.getProperty(OPENHAB_CONFIG_DIR);
-  if (folderPath == null) {
-    logger.warn("System property '" + OPENHAB_CONFIG_DIR + "' has not been set!");
-  }
- else {
-    logger.debug("System property '" + OPENHAB_CONFIG_DIR + "' set to {}.",folderPath);
-  }
+  String folderPath=ConfigConstants.MAIN_CONFIG_FOLDER;
   node.put(DesignerCoreConstants.CONFIG_FOLDER_PREFERENCE,folderPath);
 }
