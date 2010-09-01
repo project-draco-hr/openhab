@@ -5,7 +5,7 @@
     File configFile=new File(configFilePath);
     try {
       Map<Configuration,Dictionary> configsToUpdate=new HashMap<Configuration,Dictionary>();
-      Map<String,Configuration> configMap=new HashMap<String,Configuration>();
+      Map<Configuration,Dictionary> configMap=new HashMap<Configuration,Dictionary>();
       List<String> lines=IOUtils.readLines(new FileInputStream(configFile));
       for (      String line : lines) {
         String[] contents=parseLine(configFilePath,line);
@@ -13,15 +13,12 @@
         String pid=contents[0];
         String property=contents[1];
         String value=contents[2];
-        Configuration configuration=configMap.get(pid);
-        if (configuration == null) {
-          configuration=configurationAdmin.getConfiguration(pid,null);
-          configMap.put(pid,configuration);
-        }
+        Configuration configuration=configurationAdmin.getConfiguration(pid,null);
         if (configuration != null) {
-          Dictionary configProperties=configuration.getProperties();
+          Dictionary configProperties=configMap.get(configuration);
           if (configProperties == null) {
             configProperties=new Properties();
+            configMap.put(configuration,configProperties);
           }
           if (!value.equals(configProperties.get(property))) {
             configProperties.put(property,value);
