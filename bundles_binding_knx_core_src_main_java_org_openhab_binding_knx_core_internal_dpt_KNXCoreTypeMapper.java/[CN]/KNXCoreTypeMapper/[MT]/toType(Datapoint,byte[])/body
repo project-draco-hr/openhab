@@ -4,16 +4,18 @@
     translator.setData(data);
     String value=translator.getValue();
     String id=translator.getType().getID();
-    if (id.equals(DPTXlatorBoolean.DPT_UPDOWN.getID()))     return UpDownType.valueOf(value.toUpperCase());
-    if (id.equals(DPTXlatorBoolean.DPT_SWITCH.getID()))     return OnOffType.valueOf(value.toUpperCase());
-    if (id.equals(DPTXlator8BitUnsigned.DPT_PERCENT_U8.getID()))     return PercentType.valueOf(mapToPercent(value));
-    if (datapoint.getMainNumber() == 9)     return DecimalType.valueOf(value.substring(0,value.indexOf(" ")));
-    if (id.equals(DPTXlatorString.DPT_STRING_8859_1.getID()))     return StringType.valueOf(value);
-    if (id.equals(DPTXlatorBoolean.DPT_OPENCLOSE.getID()))     return value.equals("open") ? OpenCloseType.OPEN : OpenCloseType.CLOSE;
-    if (id.equals(DPTXlatorBoolean.DPT_START.getID()))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
+    if (datapoint.getMainNumber() == 9)     id="9.001";
+    Class<? extends Type> typeClass=toTypeClass(id);
+    if (typeClass.equals(UpDownType.class))     return UpDownType.valueOf(value.toUpperCase());
+    if (typeClass.equals(OnOffType.class))     return OnOffType.valueOf(value.toUpperCase());
+    if (typeClass.equals(PercentType.class))     return PercentType.valueOf(mapToPercent(value));
+    if (typeClass.equals(DecimalType.class))     return DecimalType.valueOf(value.substring(0,value.indexOf(" ")));
+    if (typeClass.equals(StringType.class))     return StringType.valueOf(value);
+    if (typeClass.equals(OpenCloseType.class))     return value.equals("open") ? OpenCloseType.OPEN : OpenCloseType.CLOSE;
+    if (typeClass.equals(StopMoveType.class))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
   }
  catch (  KNXException e) {
-    e.printStackTrace();
+    logger.warn("Failed creating a translator for datapoint type ???{}???.",datapoint.getDPT(),e);
   }
   return null;
 }

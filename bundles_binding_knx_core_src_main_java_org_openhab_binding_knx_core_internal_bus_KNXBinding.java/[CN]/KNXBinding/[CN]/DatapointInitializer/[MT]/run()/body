@@ -1,0 +1,14 @@
+{
+  while (!interrupted) {
+    if (datapointsToInitialize.size() > 0) {
+      Collection<Datapoint> clonedList=new HashSet<Datapoint>(datapointsToInitialize);
+      initializeDatapoints(clonedList);
+    }
+    try {
+      sleep(1000L);
+    }
+ catch (    InterruptedException e) {
+      interrupted=true;
+    }
+  }
+}

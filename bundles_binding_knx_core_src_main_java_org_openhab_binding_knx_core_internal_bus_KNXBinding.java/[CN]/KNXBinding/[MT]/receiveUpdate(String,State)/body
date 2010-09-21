@@ -1,0 +1,19 @@
+{
+  if (ignoreEventList.contains(itemName + newState.toString())) {
+    ignoreEventList.remove(itemName + newState.toString());
+  }
+ else {
+    Datapoint datapoint=getDatapoint(itemName,newState.getClass());
+    if (datapoint != null) {
+      ProcessCommunicator pc=KNXConnection.getCommunicator();
+      if (pc != null) {
+        try {
+          pc.write(datapoint,toDPTValue(newState));
+        }
+ catch (        KNXException e) {
+          logger.error("Update could not be sent to the KNX bus!",e);
+        }
+      }
+    }
+  }
+}

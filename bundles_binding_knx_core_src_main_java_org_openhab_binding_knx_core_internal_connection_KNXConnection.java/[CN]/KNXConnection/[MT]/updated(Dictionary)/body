@@ -1,26 +1,8 @@
 {
   if (config != null) {
-    String ip=(String)config.get("ip");
-    if (ip != null && !ip.isEmpty()) {
-      try {
-        KNXNetworkLinkIP link=new KNXNetworkLinkIP(ip,new KNXMediumSettings(null){
-          public short getMedium(){
-            return KNXMediumSettings.MEDIUM_TP1;
-          }
-        }
-);
-        pc=new ProcessCommunicatorImpl(link);
-        if (listener != null) {
-          pc.addProcessListener(listener);
-        }
-      }
- catch (      KNXException e) {
-        logger.error("Error connecting to KNX bus",e);
-      }
-    }
- else {
-      logger.error("No IP address could be found in configuration!");
-    }
+    ip=(String)config.get("ip");
+    readingPause=Long.parseLong((String)config.get("pause"));
+    connect();
   }
  else {
     pc=null;
