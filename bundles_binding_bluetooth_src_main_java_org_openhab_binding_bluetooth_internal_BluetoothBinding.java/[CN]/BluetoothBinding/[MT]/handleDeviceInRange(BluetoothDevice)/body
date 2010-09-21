@@ -1,0 +1,12 @@
+{
+  if (eventPublisher != null) {
+    String itemName=null;
+    for (    Map<String,String> map : switchItems.values()) {
+      itemName=map.get(device.getAddress());
+      if (itemName != null)       break;
+    }
+    if (itemName != null) {
+      eventPublisher.postUpdate(itemName,OnOffType.ON);
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  String address=btDevice.getBluetoothAddress();
+  String friendlyName="";
+  try {
+    friendlyName=btDevice.getFriendlyName(false);
+  }
+ catch (  IOException e) {
+  }
+  boolean paired=btDevice.isTrustedDevice();
+  return new BluetoothDevice(address,friendlyName,paired);
+}

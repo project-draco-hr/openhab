@@ -9,24 +9,33 @@
         if (!newDevices.contains(btDevice)) {
           newDevices.add(btDevice);
           if (!oldDevices.contains(btDevice)) {
-            try {
-              logger.debug("Device discovered: {} ({})",btDevice.getBluetoothAddress(),btDevice.getFriendlyName(true));
-            }
- catch (            IOException e) {
+            BluetoothDevice device=toBluetoothDevice(btDevice);
+            logger.debug("Device discovered: {}",device.toString());
+            for (            BluetoothEventHandler handler : eventHandler) {
+              handler.handleDeviceInRange(device);
             }
           }
         }
       }
       public void inquiryCompleted(      int discType){
-        for (        RemoteDevice device : oldDevices) {
-          if (newDevices.contains(device))           continue;
-          try {
-            logger.debug("Device out of range: {} ({})",device.getBluetoothAddress(),device.getFriendlyName(false));
-          }
- catch (          IOException e) {
+        for (        RemoteDevice btDevice : oldDevices) {
+          if (newDevices.contains(btDevice))           continue;
+          BluetoothDevice device=toBluetoothDevice(btDevice);
+          logger.debug("Device out of range: {}",device.toString());
+          for (          BluetoothEventHandler handler : eventHandler) {
+            handler.handleDeviceOutOfRange(device);
           }
         }
         oldDevices=new HashSet<RemoteDevice>(newDevices);
+        Iterable<BluetoothDevice> devices=Iterables.transform(newDevices,new Function<RemoteDevice,BluetoothDevice>(){
+          public BluetoothDevice apply(          RemoteDevice from){
+            return toBluetoothDevice(from);
+          }
+        }
+);
+        for (        BluetoothEventHandler handler : eventHandler) {
+          handler.handleAllDevicesInRange(devices);
+        }
         newDevices.clear();
 synchronized (inquiryCompletedEvent) {
           inquiryCompletedEvent.notifyAll();
@@ -40,19 +49,28 @@ synchronized (inquiryCompletedEvent) {
 ;
     while (!interrupted) {
       long starttime=new Date().getTime();
+      boolean runDiscovery=false;
+      for (      BluetoothEventHandler handler : eventHandler) {
+        if (handler.isActive()) {
+          runDiscovery=true;
+          break;
+        }
+      }
+      if (runDiscovery) {
 synchronized (inquiryCompletedEvent) {
-        try {
-          logger.debug("Launching bluetooth device discovery...");
-          boolean started=agent.startInquiry(DiscoveryAgent.GIAC,listener);
-          if (started) {
-            inquiryCompletedEvent.wait();
+          try {
+            logger.debug("Launching bluetooth device discovery...");
+            boolean started=agent.startInquiry(DiscoveryAgent.GIAC,listener);
+            if (started) {
+              inquiryCompletedEvent.wait();
+            }
           }
-        }
- catch (        BluetoothStateException e) {
-          logger.error("Error while starting the bluetooth agent",e);
-        }
-catch (        InterruptedException e) {
-          interrupted=true;
+ catch (          BluetoothStateException e) {
+            logger.error("Error while starting the bluetooth agent",e);
+          }
+catch (          InterruptedException e) {
+            interrupted=true;
+          }
         }
       }
       if (!interrupted) {

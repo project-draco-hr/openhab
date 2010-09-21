@@ -1,0 +1,13 @@
+{
+  if (item instanceof SwitchItem) {
+    Map<String,String> entry=switchItems.get(context);
+    if (entry == null) {
+      entry=new HashMap<String,String>();
+    }
+    entry.put(bindingConfig,item.getName());
+    switchItems.put(context,entry);
+  }
+  if (item instanceof StringItem && bindingConfig.equals("*")) {
+    stringItems.put(context,item.getName());
+  }
+}

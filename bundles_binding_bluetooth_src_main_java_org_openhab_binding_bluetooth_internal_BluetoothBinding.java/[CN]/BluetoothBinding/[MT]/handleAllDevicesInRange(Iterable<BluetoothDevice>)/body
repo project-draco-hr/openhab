@@ -1,0 +1,21 @@
+{
+  if (eventPublisher != null) {
+    StringBuilder sb=new StringBuilder();
+    for (    BluetoothDevice device : devices) {
+      if (!device.getFriendlyName().trim().isEmpty()) {
+        sb.append(device.getFriendlyName());
+      }
+ else {
+        sb.append(device.getAddress());
+      }
+      if (device.isPaired()) {
+        sb.append(" !");
+      }
+      sb.append(", ");
+    }
+    String deviceList=sb.length() > 0 ? sb.substring(0,sb.length() - 2) : "-";
+    for (    String itemName : stringItems.values()) {
+      eventPublisher.postUpdate(itemName,StringType.valueOf(deviceList));
+    }
+  }
+}
