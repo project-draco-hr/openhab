@@ -7,7 +7,9 @@
     String line=iterator.nextLine();
     Map<String,?> lineContents=parseLine(line,groups);
     if (lineContents != null && !lineContents.isEmpty()) {
-      items.add((GenericItem)lineContents.get(MAP_ITEM));
+      GenericItem item=(GenericItem)lineContents.get(MAP_ITEM);
+      items.add(item);
+      allItems.add(item.getName());
     }
   }
   return items.toArray(new GenericItem[items.size()]);

@@ -1,0 +1,10 @@
+{
+  List<Datapoint> datapoints=new ArrayList<Datapoint>();
+  for (  Entry<String,Datapoint> entry : MhtFileParser.datapointMap.entrySet()) {
+    String[] parts=entry.getKey().split(",");
+    if (MhtFileParser.readableItems.contains(parts[0])) {
+      datapoints.add(entry.getValue());
+    }
+  }
+  return datapoints;
+}
