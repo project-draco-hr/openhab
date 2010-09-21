@@ -13,29 +13,38 @@
   if (label == null)   label="";
   String itemName=getItem(w);
   if (itemName != null && label.contains("%")) {
-    try {
-      Item item=getItemRegistry().getItem(itemName);
-      State state=item.getState();
-      if (state instanceof DecimalType) {
-        label=((DecimalType)state).format(label);
-      }
-      if (state instanceof StringType) {
-        label=((StringType)state).format(label);
-      }
-      if (state instanceof UnDefType) {
-        if (label.contains("%s")) {
-          label=String.format(label,"undefined");
+    int indexPercent=label.indexOf("%");
+    int indexSpace=label.indexOf(' ',label.indexOf("%"));
+    if (indexSpace == -1) {
+      indexSpace=label.length();
+    }
+    if (indexSpace - indexPercent > 2) {
+      String formatPattern=label.substring(indexPercent,indexSpace);
+      try {
+        Item item=getItemRegistry().getItem(itemName);
+        State state=item.getState();
+        if (state instanceof DecimalType) {
+          formatPattern=((DecimalType)state).format(formatPattern);
         }
+        if (state instanceof StringType) {
+          formatPattern=((StringType)state).format(formatPattern);
+        }
+        if (state instanceof UnDefType) {
+          if (label.contains("%s")) {
+            formatPattern=String.format(formatPattern,"undefined");
+          }
  else {
-          label=String.format(label,0f);
+            formatPattern=String.format(formatPattern,0f);
+          }
         }
       }
-    }
- catch (    ItemNotFoundException e) {
-      logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
-    }
-catch (    ItemNotUniqueException e) {
-      logger.error("Item with name '{}' is not unique.",itemName,e);
+ catch (      ItemNotFoundException e) {
+        logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
+      }
+catch (      ItemNotUniqueException e) {
+        logger.error("Item with name '{}' is not unique.",itemName,e);
+      }
+      label=label.substring(0,indexPercent) + formatPattern + label.substring(indexSpace);
     }
   }
   if (label.contains("[") && label.endsWith("]")) {
