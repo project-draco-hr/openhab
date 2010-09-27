@@ -14,6 +14,9 @@
  catch (        KNXException e) {
           logger.warn("Cannot read value for item '{}' from KNX bus!",datapoint.getName(),e);
         }
+catch (        KNXIllegalArgumentException e) {
+          logger.warn("Error sending KNX read request for '{}'!",datapoint.getName(),e);
+        }
       }
       datapointsToInitialize.remove(datapoint);
       long pause=KNXConnection.getReadingPause();
