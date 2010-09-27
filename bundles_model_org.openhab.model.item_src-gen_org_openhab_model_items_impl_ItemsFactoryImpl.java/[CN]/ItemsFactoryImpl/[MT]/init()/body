@@ -1,0 +1,12 @@
+{
+  try {
+    ItemsFactory theItemsFactory=(ItemsFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.openhab.org/model/Items");
+    if (theItemsFactory != null) {
+      return theItemsFactory;
+    }
+  }
+ catch (  Exception exception) {
+    EcorePlugin.INSTANCE.log(exception);
+  }
+  return new ItemsFactoryImpl();
+}

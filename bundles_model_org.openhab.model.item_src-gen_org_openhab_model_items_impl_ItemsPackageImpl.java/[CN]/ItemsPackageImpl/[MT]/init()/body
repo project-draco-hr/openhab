@@ -1,0 +1,10 @@
+{
+  if (isInited)   return (ItemsPackage)EPackage.Registry.INSTANCE.getEPackage(ItemsPackage.eNS_URI);
+  ItemsPackageImpl theItemsPackage=(ItemsPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ItemsPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ItemsPackageImpl());
+  isInited=true;
+  theItemsPackage.createPackageContents();
+  theItemsPackage.initializePackageContents();
+  theItemsPackage.freeze();
+  EPackage.Registry.INSTANCE.put(ItemsPackage.eNS_URI,theItemsPackage);
+  return theItemsPackage;
+}

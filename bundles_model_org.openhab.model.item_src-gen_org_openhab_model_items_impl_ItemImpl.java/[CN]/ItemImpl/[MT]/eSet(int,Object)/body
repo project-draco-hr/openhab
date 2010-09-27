@@ -1,0 +1,22 @@
+{
+switch (featureID) {
+case ItemsPackage.ITEM__NAME:
+    setName((String)newValue);
+  return;
+case ItemsPackage.ITEM__LABEL:
+setLabel((String)newValue);
+return;
+case ItemsPackage.ITEM__ICON:
+setIcon((String)newValue);
+return;
+case ItemsPackage.ITEM__GROUPS:
+getGroups().clear();
+getGroups().addAll((Collection<? extends GroupItem>)newValue);
+return;
+case ItemsPackage.ITEM__BINDINGS:
+getBindings().clear();
+getBindings().addAll((Collection<? extends Binding>)newValue);
+return;
+}
+super.eSet(featureID,newValue);
+}
