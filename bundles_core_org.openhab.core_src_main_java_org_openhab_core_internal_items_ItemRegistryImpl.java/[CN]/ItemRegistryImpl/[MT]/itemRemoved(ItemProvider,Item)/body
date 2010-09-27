@@ -1,7 +1,9 @@
 {
-  Item[] items=itemMap.get(provider);
-  itemMap.put(provider,(GenericItem[])ArrayUtils.removeElement(items,item));
-  for (  ItemChangeListener listener : listeners) {
+  Collection<Item> items=itemMap.get(provider);
+  if (items != null) {
+    items.remove(item);
+  }
+  for (  ItemsChangeListener listener : listeners) {
     listener.itemRemoved(provider,item);
   }
 }

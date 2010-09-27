@@ -1,6 +1,6 @@
 {
   if (!itemMap.containsKey(itemProvider)) {
-    Item[] items=itemProvider.getItems();
+    Collection<Item> items=Collections.synchronizedCollection(itemProvider.getItems());
     for (    Item item : items) {
       if (isValidItemName(item.getName())) {
         if (item instanceof GenericItem) {

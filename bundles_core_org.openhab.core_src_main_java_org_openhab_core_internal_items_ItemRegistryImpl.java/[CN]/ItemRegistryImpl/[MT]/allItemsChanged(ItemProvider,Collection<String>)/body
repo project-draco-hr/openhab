@@ -1,0 +1,15 @@
+{
+  if (oldItemNames == null || oldItemNames.isEmpty()) {
+    Collection<Item> oldItems=itemMap.get(provider);
+    if (oldItems != null && oldItems.size() > 0) {
+      oldItemNames=new HashSet<String>();
+      for (      Item oldItem : oldItems) {
+        oldItemNames.add(oldItem.getName());
+      }
+    }
+  }
+  itemMap.put(provider,Collections.synchronizedCollection(provider.getItems()));
+  for (  ItemsChangeListener listener : listeners) {
+    listener.allItemsChanged(provider,oldItemNames);
+  }
+}
