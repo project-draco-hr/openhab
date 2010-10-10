@@ -1,11 +1,16 @@
 {
   while (!folderRefreshMap.isEmpty()) {
-    for (    String foldername : folderRefreshMap.keySet()) {
-      if (refreshCount % folderRefreshMap.get(foldername) > 0)       continue;
-      logger.debug("Refreshing folder '{}'",foldername);
-      checkFolder(foldername);
+    try {
+      for (      String foldername : folderRefreshMap.keySet()) {
+        if (refreshCount % folderRefreshMap.get(foldername) > 0)         continue;
+        logger.debug("Refreshing folder '{}'",foldername);
+        checkFolder(foldername);
+      }
+      refreshCount=(refreshCount + gcdRefresh) % lcmRefresh;
     }
-    refreshCount=(refreshCount + gcdRefresh) % lcmRefresh;
+ catch (    Throwable e) {
+      logger.error("An unexpected exception has occured",e);
+    }
     try {
       if (gcdRefresh <= 0)       break;
       sleep(gcdRefresh * 1000L);

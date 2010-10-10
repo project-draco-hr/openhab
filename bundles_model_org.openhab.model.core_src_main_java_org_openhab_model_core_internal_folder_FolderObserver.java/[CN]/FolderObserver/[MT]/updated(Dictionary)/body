@@ -16,13 +16,17 @@
             if (!this.isAlive()) {
               this.start();
             }
+ else {
+              checkFolder(foldername);
+            }
           }
  else {
             folderRefreshMap.remove(foldername);
+            checkFolder(foldername);
           }
         }
  else {
-          logger.warn("Directory '{}??? does not exist in '{}'. Please check your configuration settings!",foldername,ConfigConstants.MAIN_CONFIG_FOLDER);
+          logger.warn("Directory '{}' does not exist in '{}'. Please check your configuration settings!",foldername,ConfigConstants.MAIN_CONFIG_FOLDER);
         }
         Integer[] refreshValues=folderRefreshMap.values().toArray(new Integer[0]);
         if (refreshValues.length > 0) {
@@ -32,7 +36,7 @@
         refreshCount=0;
       }
  catch (      NumberFormatException e) {
-        logger.warn("Invalid value ???{}??? for configuration ???{}???. Integer value expected!",values[0],ModelCoreConstants.SERVICE_PID + ":" + foldername);
+        logger.warn("Invalid value '{}' for configuration '{}'. Integer value expected!",values[0],ModelCoreConstants.SERVICE_PID + ":" + foldername);
       }
     }
   }
