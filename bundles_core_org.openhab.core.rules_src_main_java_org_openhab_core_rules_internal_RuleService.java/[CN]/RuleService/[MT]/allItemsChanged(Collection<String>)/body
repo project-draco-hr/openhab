@@ -1,0 +1,12 @@
+{
+  if (ksession != null) {
+    for (    String oldItemName : oldItemNames) {
+      internalItemRemoved(oldItemName);
+    }
+    Collection<Item> items=itemRegistry.getItems();
+    for (    Item item : items) {
+      internalItemAdded(item);
+    }
+    ksession.fireAllRules();
+  }
+}

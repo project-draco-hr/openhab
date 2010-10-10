@@ -1,0 +1,30 @@
+{
+  try {
+    InputStream is=new FileInputStream(SOUND_DIR + File.separator + filename);
+    if (filename.toLowerCase().endsWith(".mp3")) {
+      Player player=new Player(is);
+      playInThread(player);
+    }
+ else {
+      AudioInputStream ais=AudioSystem.getAudioInputStream(is);
+      Clip clip=AudioSystem.getClip();
+      clip.open(ais);
+      playInThread(clip);
+    }
+  }
+ catch (  FileNotFoundException e) {
+    logger.error("Cannot play sound '{}'.",filename,e);
+  }
+catch (  JavaLayerException e) {
+    logger.error("Cannot play sound '{}'.",filename,e);
+  }
+catch (  UnsupportedAudioFileException e) {
+    logger.error("Format of sound file '{}' is not supported.",filename,e);
+  }
+catch (  IOException e) {
+    logger.error("Cannot play sound '{}'.",filename,e);
+  }
+catch (  LineUnavailableException e) {
+    logger.error("Cannot play sound '{}'.",filename,e);
+  }
+}
