@@ -1,0 +1,19 @@
+{
+  Set<String> itemNames=contextMap.get(context);
+  if (itemNames != null) {
+    for (    String itemName : itemNames) {
+      SerialDevice serialDevice=serialDevices.get(itemMap.get(itemName));
+      if (itemName.equals(serialDevice.getStringItemName())) {
+        serialDevice.setStringItemName(null);
+      }
+      if (itemName.equals(serialDevice.getSwitchItemName())) {
+        serialDevice.setSwitchItemName(null);
+      }
+      if (serialDevice.getStringItemName() == null && serialDevice.getSwitchItemName() == null) {
+        serialDevice.close();
+        serialDevices.remove(serialDevice.getPort());
+      }
+    }
+    contextMap.remove(context);
+  }
+}

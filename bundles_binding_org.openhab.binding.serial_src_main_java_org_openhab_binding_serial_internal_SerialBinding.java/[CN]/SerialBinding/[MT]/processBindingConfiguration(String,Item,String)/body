@@ -1,0 +1,44 @@
+{
+  if (item instanceof SwitchItem || item instanceof StringItem) {
+    String port=bindingConfig;
+    SerialDevice serialDevice=serialDevices.get(port);
+    if (serialDevice == null) {
+      serialDevice=new SerialDevice(port);
+      serialDevice.setEventPublisher(eventPublisher);
+      try {
+        serialDevice.initialize();
+      }
+ catch (      InitializationException e) {
+        throw new BindingConfigParseException("Could not open serial port " + port + ": "+ e.getMessage());
+      }
+catch (      Throwable e) {
+        throw new BindingConfigParseException("Could not open serial port " + port + ": "+ e.getMessage());
+      }
+    }
+    if (item instanceof StringItem) {
+      if (serialDevice.getStringItemName() == null) {
+        serialDevice.setStringItemName(item.getName());
+      }
+ else {
+        throw new BindingConfigParseException("There is already another StringItem assigned to serial port " + port);
+      }
+    }
+ else {
+      if (serialDevice.getSwitchItemName() == null) {
+        serialDevice.setSwitchItemName(item.getName());
+      }
+ else {
+        throw new BindingConfigParseException("There is already another SwitchItem assigned to serial port " + port);
+      }
+    }
+    Set<String> itemNames=contextMap.get(context);
+    if (itemNames == null) {
+      itemNames=new HashSet<String>();
+      contextMap.put(context,itemNames);
+    }
+    itemNames.add(item.getName());
+  }
+ else {
+    throw new BindingConfigParseException("Serial binding only supports Switch and String items!");
+  }
+}
