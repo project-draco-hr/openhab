@@ -4,6 +4,19 @@
     imageKey=ISharedImages.IMG_OBJ_FOLDER;
   }
  else {
+    String imgName=obj.getClass().getSimpleName().replace("Item","").toLowerCase();
+    Image image=imageCache.get(imgName);
+    if (image == null) {
+      ImageDescriptor imageDesc=UIActivator.getImageDescriptor("icons/" + imgName + ".png");
+      if (imageDesc != null) {
+        image=imageDesc.createImage();
+        imageCache.put(imgName,image);
+        return image;
+      }
+    }
+ else {
+      return image;
+    }
     imageKey=ISharedImages.IMG_OBJ_ELEMENT;
   }
   return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);

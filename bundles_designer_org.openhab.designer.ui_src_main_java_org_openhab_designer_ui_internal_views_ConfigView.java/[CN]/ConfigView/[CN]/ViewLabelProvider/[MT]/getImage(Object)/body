@@ -1,5 +1,19 @@
 {
   if (obj instanceof IFolder) {
+    IFolder folder=(IFolder)obj;
+    String name=folder.getName().toLowerCase();
+    Image image=imageCache.get(name);
+    if (image == null) {
+      ImageDescriptor imageDesc=UIActivator.getImageDescriptor("icons/" + name + ".png");
+      if (imageDesc != null) {
+        image=imageDesc.createImage();
+        imageCache.put(name,image);
+        return image;
+      }
+    }
+ else {
+      return image;
+    }
     return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
   }
  else   if (obj instanceof IFile) {
