@@ -1,4 +1,9 @@
 {
   Class<? extends Type> typeClass=MhtFileParser.typeMap.get(groupAddress);
-  return MhtFileParser.datapointMap.get(itemName + "," + typeClass.getSimpleName());
+  if (typeClass != null) {
+    return MhtFileParser.datapointMap.get(itemName + "," + typeClass.getSimpleName());
+  }
+ else {
+    return null;
+  }
 }
