@@ -1,0 +1,13 @@
+{
+  ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    String pattern=interpreter.nextArgument();
+    if (pattern == null || pattern.isEmpty())     pattern="*";
+    for (    Item item : registry.getItems(pattern)) {
+      interpreter.println(item.toString());
+    }
+  }
+ else {
+    interpreter.println("Sorry, no item registry service available!");
+  }
+}
