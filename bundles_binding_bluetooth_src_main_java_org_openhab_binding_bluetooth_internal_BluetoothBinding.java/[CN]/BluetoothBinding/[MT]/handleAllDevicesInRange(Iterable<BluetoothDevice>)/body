@@ -1,7 +1,9 @@
 {
   if (eventPublisher != null) {
     StringBuilder sb=new StringBuilder();
+    int noOfDevices=0;
     for (    BluetoothDevice device : devices) {
+      noOfDevices++;
       if (!device.getFriendlyName().trim().isEmpty()) {
         sb.append(device.getFriendlyName());
       }
@@ -16,6 +18,9 @@
     String deviceList=sb.length() > 0 ? sb.substring(0,sb.length() - 2) : "-";
     for (    String itemName : stringItems.values()) {
       eventPublisher.postUpdate(itemName,StringType.valueOf(deviceList));
+    }
+    for (    String itemName : measurementItems.values()) {
+      eventPublisher.postUpdate(itemName,new DecimalType(noOfDevices));
     }
   }
 }
