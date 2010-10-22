@@ -6,24 +6,22 @@
     }
   }
   if (itemType == null) {
-    for (    Item item : service.getItemRegistry().getItems()) {
-      if (item.getName().equals(itemName))       itemType=item.getClass();
-    }
-    if (itemType == null)     return null;
+    itemType=getItemType(itemName);
   }
+  if (itemType == null)   return null;
   if (itemType.equals(SwitchItem.class)) {
     return SitemapFactory.eINSTANCE.createSwitch();
   }
   if (itemType.equals(GroupItem.class)) {
     return SitemapFactory.eINSTANCE.createGroup();
   }
-  if (itemType.equals(MeasurementItem.class)) {
+  if (itemType.equals(NumberItem.class)) {
     return SitemapFactory.eINSTANCE.createText();
   }
   if (itemType.equals(ContactItem.class)) {
     return SitemapFactory.eINSTANCE.createText();
   }
-  if (itemType.equals(RollerblindItem.class)) {
+  if (itemType.equals(RollershutterItem.class)) {
     return SitemapFactory.eINSTANCE.createSwitch();
   }
   if (itemType.equals(StringItem.class)) {

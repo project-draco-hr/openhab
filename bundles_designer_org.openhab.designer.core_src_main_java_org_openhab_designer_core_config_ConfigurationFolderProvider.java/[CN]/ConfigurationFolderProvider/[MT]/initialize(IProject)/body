@@ -1,0 +1,18 @@
+{
+  try {
+    IProjectDescription desc=project.getDescription();
+    desc.setNatureIds(new String[]{"org.eclipse.xtext.ui.shared.xtextNature","org.eclipse.pde.PluginNature"});
+    project.setDescription(desc,null);
+    IFolder metaInfFolder=project.getFolder("META-INF");
+    metaInfFolder.create(true,true,null);
+    IFile manifestFile=metaInfFolder.getFile("MANIFEST.MF");
+    InputStream is=FileLocator.openStream(CoreActivator.getDefault().getBundle(),new Path("resources/MANIFEST.MF"),false);
+    manifestFile.create(is,true,null);
+  }
+ catch (  CoreException e) {
+    e.printStackTrace();
+  }
+catch (  IOException e) {
+    e.printStackTrace();
+  }
+}

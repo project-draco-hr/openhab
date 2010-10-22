@@ -2,8 +2,11 @@
   if (folder == null) {
     IProject defaultProject=ResourcesPlugin.getWorkspace().getRoot().getProject("config");
     try {
-      if (!defaultProject.exists())       defaultProject.create(null);
-      defaultProject.open(null);
+      if (!defaultProject.exists()) {
+        defaultProject.create(null);
+        defaultProject.open(null);
+        initialize(defaultProject);
+      }
       folder=defaultProject.getFolder("config");
       folder.createLink(getFileFromPreferences().toURI(),IResource.BACKGROUND_REFRESH | IResource.REPLACE,null);
     }
