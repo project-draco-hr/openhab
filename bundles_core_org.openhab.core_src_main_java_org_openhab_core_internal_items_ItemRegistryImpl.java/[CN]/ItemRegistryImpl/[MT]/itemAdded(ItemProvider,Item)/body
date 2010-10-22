@@ -1,9 +1,14 @@
 {
   Collection<Item> items=itemMap.get(provider);
   if (items != null) {
-    items.add(item);
+    if (initializeItem(item)) {
+      items.add(item);
+    }
+ else {
+      return;
+    }
   }
-  for (  ItemsChangeListener listener : listeners) {
-    listener.itemAdded(provider,item);
+  for (  ItemRegistryChangeListener listener : listeners) {
+    listener.itemAdded(item);
   }
 }
