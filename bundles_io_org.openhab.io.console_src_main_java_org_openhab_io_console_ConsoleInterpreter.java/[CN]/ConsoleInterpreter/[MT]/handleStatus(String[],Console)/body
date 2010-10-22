@@ -1,0 +1,27 @@
+{
+  ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    if (args.length > 0) {
+      String itemName=args[0];
+      try {
+        Item item=registry.getItem(itemName);
+        console.println(item.getState().toString());
+      }
+ catch (      ItemNotFoundException e) {
+        console.println("Error: Item '" + itemName + "' does not exist.");
+      }
+catch (      ItemNotUniqueException e) {
+        console.print("Error: Multiple items match this pattern: ");
+        for (        Item item : e.getMatchingItems()) {
+          console.print(item.getName() + " ");
+        }
+      }
+    }
+ else {
+      console.printUsage(ConsoleInterpreter.getStatusUsage());
+    }
+  }
+ else {
+    console.println("Sorry, no item registry service available!");
+  }
+}

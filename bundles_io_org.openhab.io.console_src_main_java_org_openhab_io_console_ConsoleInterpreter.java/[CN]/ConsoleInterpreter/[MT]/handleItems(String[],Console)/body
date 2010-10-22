@@ -1,0 +1,19 @@
+{
+  ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    String pattern=args[0];
+    if (args.length == 0)     pattern="*";
+    Collection<Item> items=registry.getItems(pattern);
+    if (items.size() > 0) {
+      for (      Item item : items) {
+        console.println(item.toString());
+      }
+    }
+ else {
+      console.println("No items found for this pattern.");
+    }
+  }
+ else {
+    console.println("Sorry, no item registry service available!");
+  }
+}

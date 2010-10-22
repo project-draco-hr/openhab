@@ -1,0 +1,35 @@
+{
+  String arg=interpreter.nextArgument();
+  if (arg == null) {
+    interpreter.println(getHelp());
+    return null;
+  }
+  Console console=new OSGiConsole(interpreter);
+  List<String> argsList=new ArrayList<String>();
+  while (true) {
+    String narg=interpreter.nextArgument();
+    if (!StringUtils.isEmpty(narg)) {
+      argsList.add(narg);
+    }
+ else {
+      break;
+    }
+  }
+  String[] args=argsList.toArray(new String[argsList.size()]);
+  if (arg.equals("items")) {
+    ConsoleInterpreter.handleItems(args,console);
+  }
+ else   if (arg.equals("send")) {
+    ConsoleInterpreter.handleSend(args,console);
+  }
+ else   if (arg.equals("update")) {
+    ConsoleInterpreter.handleUpdate(args,console);
+  }
+ else   if (arg.equals("status")) {
+    ConsoleInterpreter.handleStatus(args,console);
+  }
+ else {
+    interpreter.println(getHelp());
+  }
+  return null;
+}

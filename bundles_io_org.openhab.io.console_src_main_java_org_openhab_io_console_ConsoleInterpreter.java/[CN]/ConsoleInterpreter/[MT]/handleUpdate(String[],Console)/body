@@ -1,0 +1,51 @@
+{
+  ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+  EventPublisher publisher=(EventPublisher)ConsoleActivator.eventPublisherTracker.getService();
+  if (publisher != null) {
+    if (registry != null) {
+      if (args.length > 0) {
+        String itemName=args[0];
+        try {
+          Item item=registry.getItem(itemName);
+          if (args.length > 1) {
+            String stateName=args[1];
+            State state=TypeParser.parseState(item.getAcceptedDataTypes(),stateName);
+            if (state != null) {
+              publisher.postUpdate(item.getName(),state);
+              console.println("Update has been sent successfully.");
+            }
+ else {
+              console.println("Error: State '" + stateName + "' is not valid for item '"+ itemName+ "'");
+              console.print("Valid data types are: ( ");
+              for (              Class<? extends State> acceptedType : item.getAcceptedDataTypes()) {
+                console.print(acceptedType.getSimpleName() + " ");
+              }
+              console.println(")");
+            }
+          }
+ else {
+            console.printUsage(ConsoleInterpreter.getUpdateUsage());
+          }
+        }
+ catch (        ItemNotFoundException e) {
+          console.println("Error: Item '" + itemName + "' does not exist.");
+        }
+catch (        ItemNotUniqueException e) {
+          console.print("Error: Multiple items match this pattern: ");
+          for (          Item item : e.getMatchingItems()) {
+            console.print(item.getName() + " ");
+          }
+        }
+      }
+ else {
+        console.printUsage(ConsoleInterpreter.getUpdateUsage());
+      }
+    }
+ else {
+      console.println("Sorry, no item registry service available!");
+    }
+  }
+ else {
+    console.println("Sorry, no event publisher service available!");
+  }
+}
