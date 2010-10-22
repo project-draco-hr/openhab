@@ -3,6 +3,9 @@
   if (itemNames != null) {
     for (    String itemName : itemNames) {
       SerialDevice serialDevice=serialDevices.get(itemMap.get(itemName));
+      if (serialDevice == null) {
+        continue;
+      }
       if (itemName.equals(serialDevice.getStringItemName())) {
         serialDevice.setStringItemName(null);
       }
