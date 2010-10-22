@@ -1,0 +1,13 @@
+{
+  ConnectionConfiguration config=new ConnectionConfiguration(servername,port);
+  connection=new XMPPConnection(config);
+  try {
+    connection.connect();
+    connection.login(username,password);
+    logger.debug("Connection to XMPP as '{}' has been established.",username);
+    initialized=true;
+  }
+ catch (  XMPPException e) {
+    logger.error("Could not establish connection to XMPP server '" + servername + ":"+ port+ "'",e);
+  }
+}

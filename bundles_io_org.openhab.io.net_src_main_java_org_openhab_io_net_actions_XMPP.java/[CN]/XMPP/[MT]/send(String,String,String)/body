@@ -1,0 +1,39 @@
+{
+  try {
+    XMPPConnection conn=XMPPConnect.getConnection();
+    if (attachmentUrl == null) {
+      ChatManager chatmanager=conn.getChatManager();
+      Chat newChat=chatmanager.createChat(to,new MessageListener(){
+        public void processMessage(        Chat chat,        Message message){
+          logger.debug("Received message on XMPP: {}",message.getBody());
+        }
+      }
+);
+      try {
+        newChat.sendMessage(message);
+        logger.debug("Sent message '{}' to '{}'.",message,to);
+      }
+ catch (      XMPPException e) {
+        System.out.println("Error Delivering block");
+      }
+    }
+ else {
+      FileTransferManager manager=new FileTransferManager(conn);
+      OutgoingFileTransfer transfer=manager.createOutgoingFileTransfer(to);
+      try {
+        URL url=new URL(attachmentUrl);
+        InputStream is=url.openStream();
+        OutgoingFileTransfer.setResponseTimeout(10000);
+        transfer.sendStream(is,url.getFile(),is.available(),message);
+        logger.debug("Sent message '{}' with attachment '{}' to '{}'.",new String[]{message,attachmentUrl,to});
+        is.close();
+      }
+ catch (      IOException e) {
+        logger.error("Could not open url '{}' for sending it via XMPP",attachmentUrl,e);
+      }
+    }
+  }
+ catch (  NotInitializedException e) {
+    logger.warn("Could not send XMPP message as connection is not correctly initialized!");
+  }
+}

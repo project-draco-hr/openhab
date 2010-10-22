@@ -1,0 +1,19 @@
+{
+  if (config != null) {
+    Mail.hostname=(String)config.get("hostname");
+    String portString=(String)config.get("port");
+    if (portString != null) {
+      Mail.port=Integer.valueOf(portString);
+    }
+    Mail.username=(String)config.get("username");
+    Mail.password=(String)config.get("password");
+    Mail.from=(String)config.get("from");
+    Mail.tls=((String)config.get("tls")).equalsIgnoreCase("true");
+    if (hostname == null || hostname.isEmpty())     return;
+    if (from == null || from.isEmpty())     return;
+    if (port == null) {
+      port=tls ? 587 : 25;
+    }
+    initialized=true;
+  }
+}

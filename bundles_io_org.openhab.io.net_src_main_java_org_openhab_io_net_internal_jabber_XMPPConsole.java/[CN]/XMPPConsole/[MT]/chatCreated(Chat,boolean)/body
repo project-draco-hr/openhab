@@ -1,0 +1,16 @@
+{
+  String chatUser=chat.getParticipant();
+  if (chatUser.contains("/"))   chatUser=chatUser.substring(0,chatUser.indexOf("/"));
+  if (ArrayUtils.contains(allowedUsers,chatUser)) {
+    chat.addMessageListener(this);
+  }
+ else {
+    try {
+      chat.sendMessage("Sorry, you are not allowed to send messages.");
+      logger.warn("Received chat request from the unknown user '{}'.",chatUser);
+    }
+ catch (    XMPPException e) {
+      logger.warn("Error sending XMPP message: {}",e.getMessage());
+    }
+  }
+}

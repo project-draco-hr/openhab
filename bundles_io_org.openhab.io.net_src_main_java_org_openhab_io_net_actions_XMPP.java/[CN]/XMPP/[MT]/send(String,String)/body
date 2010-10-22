@@ -1,0 +1,17 @@
+{
+  try {
+    XMPPConnection conn=XMPPConnect.getConnection();
+    ChatManager chatmanager=conn.getChatManager();
+    Chat newChat=chatmanager.createChat(to,null);
+    try {
+      newChat.sendMessage(message);
+      logger.debug("Sent message '{}' to '{}'.",message,to);
+    }
+ catch (    XMPPException e) {
+      System.out.println("Error Delivering block");
+    }
+  }
+ catch (  NotInitializedException e) {
+    logger.warn("Could not send XMPP message as connection is not correctly initialized!");
+  }
+}
