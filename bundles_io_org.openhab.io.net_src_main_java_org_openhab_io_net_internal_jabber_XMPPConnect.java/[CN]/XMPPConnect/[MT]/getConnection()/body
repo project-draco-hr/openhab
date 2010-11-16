@@ -1,8 +1,9 @@
 {
-  if (initialized) {
-    return connection;
+  if (!initialized) {
+    establishConnection();
+    if (!initialized) {
+      throw new NotInitializedException();
+    }
   }
- else {
-    throw new NotInitializedException();
-  }
+  return connection;
 }

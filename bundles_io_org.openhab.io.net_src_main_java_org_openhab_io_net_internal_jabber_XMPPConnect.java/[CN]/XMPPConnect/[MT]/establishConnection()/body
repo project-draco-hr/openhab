@@ -4,6 +4,9 @@
   try {
     connection.connect();
     connection.login(username,password);
+    if (consoleUsers.length > 0) {
+      connection.getChatManager().addChatListener(new XMPPConsole(consoleUsers));
+    }
     logger.debug("Connection to XMPP as '{}' has been established.",username);
     initialized=true;
   }
