@@ -14,6 +14,8 @@
 catch (      Throwable e) {
         throw new BindingConfigParseException("Could not open serial port " + port + ": "+ e.getMessage());
       }
+      itemMap.put(item.getName(),port);
+      serialDevices.put(port,serialDevice);
     }
     if (item instanceof StringItem) {
       if (serialDevice.getStringItemName() == null) {
