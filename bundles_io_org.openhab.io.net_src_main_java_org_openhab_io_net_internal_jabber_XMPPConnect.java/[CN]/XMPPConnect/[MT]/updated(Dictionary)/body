@@ -7,6 +7,10 @@
     }
     XMPPConnect.username=(String)config.get("username");
     XMPPConnect.password=(String)config.get("password");
+    String users=(String)config.get("consoleusers");
+    if (!StringUtils.isEmpty(users)) {
+      XMPPConnect.consoleUsers=users.split(",");
+    }
     if (servername == null || servername.isEmpty())     return;
     if (username == null || username.isEmpty())     return;
     if (password == null || password.isEmpty())     return;
@@ -14,12 +18,5 @@
       port=5222;
     }
     establishConnection();
-    if (initialized) {
-      String users=(String)config.get("consoleusers");
-      if (!StringUtils.isEmpty(users)) {
-        String[] userArray=users.split(",");
-        connection.getChatManager().addChatListener(new XMPPConsole(userArray));
-      }
-    }
   }
 }
