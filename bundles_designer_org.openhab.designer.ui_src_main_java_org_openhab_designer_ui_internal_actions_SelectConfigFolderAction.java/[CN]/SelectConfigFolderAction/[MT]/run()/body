@@ -1,0 +1,16 @@
+{
+  Shell shell=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+  DirectoryDialog dialog=new DirectoryDialog(shell,SWT.OPEN);
+  dialog.setMessage("Select the configuration folder of the openHAB runtime");
+  String selection=dialog.open();
+  if (selection != null) {
+    try {
+      ConfigurationFolderProvider.setRootConfigurationFolder(new File(selection));
+      viewer.setInput(ConfigurationFolderProvider.getRootConfigurationFolder());
+    }
+ catch (    CoreException e) {
+      IStatus status=new Status(IStatus.ERROR,UIActivator.PLUGIN_ID,"An error occurred while opening the configuration folder",e);
+      ErrorDialog.openError(shell,"Cannot open configuration folder!",null,status);
+    }
+  }
+}
