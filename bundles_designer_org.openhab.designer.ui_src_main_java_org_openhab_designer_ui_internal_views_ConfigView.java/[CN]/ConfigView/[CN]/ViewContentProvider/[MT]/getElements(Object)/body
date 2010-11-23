@@ -1,7 +1,20 @@
 {
   if (parent.equals(getViewSite())) {
-    if (configRootFolder == null)     initialize();
-    return getChildren(configRootFolder);
+    if (configRootFolder == null) {
+      try {
+        initialize();
+        if (configRootFolder != null) {
+          return getChildren(configRootFolder);
+        }
+ else {
+          return new String[]{"<drop your config folder here>"};
+        }
+      }
+ catch (      CoreException e) {
+        logger.error("Cannot initialize configuration project in workspace",e);
+        return new Object[0];
+      }
+    }
   }
   return getChildren(parent);
 }

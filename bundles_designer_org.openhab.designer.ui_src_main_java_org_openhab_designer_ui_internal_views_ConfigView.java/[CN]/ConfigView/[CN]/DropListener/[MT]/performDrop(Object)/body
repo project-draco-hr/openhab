@@ -1,0 +1,16 @@
+{
+  if (data instanceof File) {
+    File file=(File)data;
+    if (file.isDirectory()) {
+      try {
+        ConfigurationFolderProvider.setRootConfigurationFolder(file);
+        return true;
+      }
+ catch (      CoreException e) {
+        IStatus status=new Status(IStatus.ERROR,UIActivator.PLUGIN_ID,"Cannot set configuration folder",e);
+        StatusManager.getManager().handle(status);
+      }
+    }
+  }
+  return false;
+}
