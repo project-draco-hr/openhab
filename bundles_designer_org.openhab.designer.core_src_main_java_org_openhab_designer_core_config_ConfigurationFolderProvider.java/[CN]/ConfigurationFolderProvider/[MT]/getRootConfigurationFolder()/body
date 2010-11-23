@@ -1,17 +1,15 @@
 {
   if (folder == null) {
     IProject defaultProject=ResourcesPlugin.getWorkspace().getRoot().getProject("config");
-    try {
-      if (!defaultProject.exists()) {
-        defaultProject.create(null);
-        defaultProject.open(null);
-        initialize(defaultProject);
-      }
-      folder=defaultProject.getFolder("config");
-      folder.createLink(getFileFromPreferences().toURI(),IResource.BACKGROUND_REFRESH | IResource.REPLACE,null);
+    if (!defaultProject.exists()) {
+      defaultProject.create(null);
+      defaultProject.open(null);
+      initialize(defaultProject);
     }
- catch (    CoreException e) {
-      e.printStackTrace();
+    File configFolder=getFolderFromPreferences();
+    if (configFolder != null) {
+      folder=defaultProject.getFolder("config");
+      folder.createLink(configFolder.toURI(),IResource.BACKGROUND_REFRESH | IResource.REPLACE,null);
     }
   }
   return folder;
