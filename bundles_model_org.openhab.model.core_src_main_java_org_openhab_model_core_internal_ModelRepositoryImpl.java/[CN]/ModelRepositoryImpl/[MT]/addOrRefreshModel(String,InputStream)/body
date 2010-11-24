@@ -5,11 +5,14 @@ synchronized (resourceSet) {
       resource=resourceSet.createResource(URI.createURI(name));
       if (resource != null) {
         try {
-          resource.load(inputStream,Collections.EMPTY_MAP);
+          Map<String,String> options=new HashMap<String,String>();
+          options.put(XtextResource.OPTION_ENCODING,"UTF-8");
+          resource.load(inputStream,options);
           notifyListeners(name,EventType.ADDED);
+          return true;
         }
  catch (        IOException e) {
-          logger.warn("File '" + name + "' cannot be parsed correctly!",e);
+          logger.warn("Configuration model '" + name + "' cannot be parsed correctly!",e);
           resourceSet.getResources().remove(resource);
         }
       }
@@ -20,12 +23,14 @@ synchronized (resourceSet) {
       resource.unload();
       try {
         resource.load(inputStream,Collections.EMPTY_MAP);
+        return true;
       }
  catch (      IOException e) {
-        logger.warn("File '" + name + "' cannot be parsed correctly!",e);
+        logger.warn("Configuration model '" + name + "' cannot be parsed correctly!",e);
         resourceSet.getResources().remove(resource);
       }
       notifyListeners(name,EventType.MODIFIED);
     }
   }
+  return false;
 }
