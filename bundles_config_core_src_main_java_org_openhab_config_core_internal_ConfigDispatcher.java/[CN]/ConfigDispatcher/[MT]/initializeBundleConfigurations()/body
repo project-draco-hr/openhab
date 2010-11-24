@@ -1,40 +1,23 @@
 {
-  ConfigurationAdmin configurationAdmin=(ConfigurationAdmin)ConfigActivator.configurationAdminTracker.getService();
-  if (configurationAdmin != null) {
-    String configFilePath=getConfigurationFilePath();
-    File configFile=new File(configFilePath);
-    try {
-      Map<Configuration,Dictionary> configsToUpdate=new HashMap<Configuration,Dictionary>();
-      Map<Configuration,Dictionary> configMap=new HashMap<Configuration,Dictionary>();
-      List<String> lines=IOUtils.readLines(new FileInputStream(configFile));
-      for (      String line : lines) {
-        String[] contents=parseLine(configFilePath,line);
-        if (contents == null)         continue;
-        String pid=contents[0];
-        String property=contents[1];
-        String value=contents[2];
-        Configuration configuration=configurationAdmin.getConfiguration(pid,null);
-        if (configuration != null) {
-          Dictionary configProperties=configMap.get(configuration);
-          if (configProperties == null) {
-            configProperties=new Properties();
-            configMap.put(configuration,configProperties);
-          }
-          if (!value.equals(configProperties.get(property))) {
-            configProperties.put(property,value);
-            configsToUpdate.put(configuration,configProperties);
-          }
-        }
-      }
-      for (      Entry<Configuration,Dictionary> entry : configsToUpdate.entrySet()) {
-        entry.getKey().update(entry.getValue());
-      }
-    }
- catch (    FileNotFoundException e) {
-      logger.warn("Main openHAB configuration file '{}' does not exist.",configFilePath);
-    }
-catch (    IOException e) {
-      logger.error("Main openHAB configuration file '{}' cannot be read.",configFilePath,e);
-    }
+  String defaultConfigFilePath=getDefaultConfigurationFilePath();
+  File defaultConfigFile=new File(defaultConfigFilePath);
+  try {
+    processConfigFile(defaultConfigFile);
+  }
+ catch (  FileNotFoundException e) {
+  }
+catch (  IOException e) {
+    logger.error("Default openHAB configuration file '{}' cannot be read.",defaultConfigFilePath,e);
+  }
+  String mainConfigFilePath=getMainConfigurationFilePath();
+  File mainConfigFile=new File(mainConfigFilePath);
+  try {
+    processConfigFile(mainConfigFile);
+  }
+ catch (  FileNotFoundException e) {
+    logger.warn("Main openHAB configuration file '{}' does not exist.",mainConfigFilePath);
+  }
+catch (  IOException e) {
+    logger.error("Main openHAB configuration file '{}' cannot be read.",mainConfigFilePath,e);
   }
 }
