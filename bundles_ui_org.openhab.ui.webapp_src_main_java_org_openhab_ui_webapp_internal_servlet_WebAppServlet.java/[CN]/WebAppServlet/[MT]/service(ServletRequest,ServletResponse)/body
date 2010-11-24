@@ -10,7 +10,7 @@
     logger.debug("reading sitemap {}",sitemap.getName());
     if (widgetId == null) {
       String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
-      processPage("Home",label,sitemap.getChildren(),async,sb);
+      processPage("Home",sitemapName,label,sitemap.getChildren(),async,sb);
     }
  else {
       Widget w=service.getWidget(sitemap,widgetId);
@@ -18,7 +18,7 @@
       if (label == null)       label="undefined";
       if (w instanceof LinkableWidget) {
         EList<Widget> children=service.getChildren((LinkableWidget)w);
-        processPage(service.getWidgetId(w),label,children,async,sb);
+        processPage(service.getWidgetId(w),sitemapName,label,children,async,sb);
       }
  else {
         throw new ServletException("Widget '" + w + "' can not have any content");

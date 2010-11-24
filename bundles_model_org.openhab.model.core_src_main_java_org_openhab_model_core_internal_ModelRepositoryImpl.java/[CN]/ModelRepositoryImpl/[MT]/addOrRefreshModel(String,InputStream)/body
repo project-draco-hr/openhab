@@ -1,25 +1,31 @@
 {
   Resource resource=getResource(name);
   if (resource == null) {
-    resource=resourceSet.createResource(URI.createURI(name));
-    try {
-      resource.load(inputStream,Collections.EMPTY_MAP);
-      notifyListeners(name,EventType.ADDED);
-    }
- catch (    IOException e) {
-      logger.warn("File '" + name + "' cannot be parsed correctly!",e);
-      resourceSet.getResources().remove(resource);
+synchronized (resourceSet) {
+      resource=resourceSet.createResource(URI.createURI(name));
+      if (resource != null) {
+        try {
+          resource.load(inputStream,Collections.EMPTY_MAP);
+          notifyListeners(name,EventType.ADDED);
+        }
+ catch (        IOException e) {
+          logger.warn("File '" + name + "' cannot be parsed correctly!",e);
+          resourceSet.getResources().remove(resource);
+        }
+      }
     }
   }
  else {
-    resource.unload();
-    try {
-      resource.load(inputStream,Collections.EMPTY_MAP);
+synchronized (resourceSet) {
+      resource.unload();
+      try {
+        resource.load(inputStream,Collections.EMPTY_MAP);
+      }
+ catch (      IOException e) {
+        logger.warn("File '" + name + "' cannot be parsed correctly!",e);
+        resourceSet.getResources().remove(resource);
+      }
+      notifyListeners(name,EventType.MODIFIED);
     }
- catch (    IOException e) {
-      logger.warn("File '" + name + "' cannot be parsed correctly!",e);
-      resourceSet.getResources().remove(resource);
-    }
-    notifyListeners(name,EventType.MODIFIED);
   }
 }

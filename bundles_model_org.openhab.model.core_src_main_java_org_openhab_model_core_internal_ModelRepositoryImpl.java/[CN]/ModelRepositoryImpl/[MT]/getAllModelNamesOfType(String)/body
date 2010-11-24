@@ -1,19 +1,21 @@
 {
-  Iterable<Resource> matchingResources=Iterables.filter(resourceSet.getResources(),new Predicate<Resource>(){
-    public boolean apply(    Resource input){
-      if (input != null) {
-        return input.getURI().fileExtension().equalsIgnoreCase(modelType);
-      }
+synchronized (resourceSet) {
+    Iterable<Resource> matchingResources=Iterables.filter(resourceSet.getResources(),new Predicate<Resource>(){
+      public boolean apply(      Resource input){
+        if (input != null) {
+          return input.getURI().fileExtension().equalsIgnoreCase(modelType);
+        }
  else {
-        return false;
+          return false;
+        }
       }
     }
-  }
 );
-  return Iterables.transform(matchingResources,new Function<Resource,String>(){
-    public String apply(    Resource from){
-      return from.getURI().path();
+    return Iterables.transform(matchingResources,new Function<Resource,String>(){
+      public String apply(      Resource from){
+        return from.getURI().path();
+      }
     }
-  }
 );
+  }
 }
