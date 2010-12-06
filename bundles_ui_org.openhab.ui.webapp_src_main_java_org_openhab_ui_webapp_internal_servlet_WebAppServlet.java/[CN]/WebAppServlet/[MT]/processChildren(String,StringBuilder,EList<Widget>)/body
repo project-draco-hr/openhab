@@ -1,8 +1,11 @@
 {
-  if (!children.isEmpty() && !(children.get(0).eContainer() instanceof Frame || children.get(0).eContainer() instanceof Sitemap)) {
-    String frameSnippet=service.getSnippet("frame");
-    frameSnippet=frameSnippet.replace("%label%","");
-    snippet=snippet.replace("%children%",frameSnippet);
+  if (!children.isEmpty()) {
+    EObject firstChild=children.get(0).eContainer();
+    if (!(firstChild instanceof Frame || firstChild instanceof Sitemap || firstChild instanceof List)) {
+      String frameSnippet=service.getSnippet("frame");
+      frameSnippet=frameSnippet.replace("%label%","");
+      snippet=snippet.replace("%children%",frameSnippet);
+    }
   }
   String[] parts=snippet.split("%children%");
   sb.append(parts[0]);

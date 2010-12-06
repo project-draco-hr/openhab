@@ -44,6 +44,16 @@ catch (    ItemNotUniqueException e) {
   if (w instanceof Image) {
     snippet=snippet.replaceAll("%url%",((Image)w).getUrl());
   }
+  if (w instanceof List) {
+    String rowSnippet=service.getSnippet("list_row");
+    String state=service.getState(w).toString();
+    String[] rowContents=state.split(((List)w).getSeparator());
+    StringBuilder rowSB=new StringBuilder();
+    for (    String row : rowContents) {
+      rowSB.append(rowSnippet.replace("%title%",row));
+    }
+    snippet=snippet.replace("%rows%",rowSB.toString());
+  }
   if (w instanceof Frame) {
     processChildren(snippet,sb,service.getChildren((Frame)w));
   }

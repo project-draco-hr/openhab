@@ -1,0 +1,28 @@
+{
+  Set<GenericItem> items=new HashSet<GenericItem>();
+  ItemRegistry registry=service.getItemRegistry();
+  if (registry != null) {
+    for (    Widget widget : widgets) {
+      String itemName=service.getItem(widget);
+      if (itemName != null) {
+        try {
+          Item item=registry.getItem(itemName);
+          if (item instanceof GenericItem) {
+            final GenericItem gItem=(GenericItem)item;
+            items.add(gItem);
+          }
+        }
+ catch (        ItemNotFoundException e) {
+        }
+catch (        ItemNotUniqueException e) {
+        }
+      }
+ else {
+        if (widget instanceof Frame) {
+          items.addAll(getAllItems(service.getChildren((Frame)widget)));
+        }
+      }
+    }
+  }
+  return items;
+}

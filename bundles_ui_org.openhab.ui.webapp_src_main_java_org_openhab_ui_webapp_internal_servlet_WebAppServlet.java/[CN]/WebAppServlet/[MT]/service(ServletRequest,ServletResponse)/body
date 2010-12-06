@@ -3,13 +3,16 @@
   String sitemapName=(String)req.getParameter("sitemap");
   String widgetId=(String)req.getParameter("w");
   boolean async="true".equalsIgnoreCase((String)req.getParameter("__async"));
+  boolean poll="true".equalsIgnoreCase((String)req.getParameter("poll"));
   if (sitemapName == null)   sitemapName="default";
   StringBuilder sb=new StringBuilder();
   Sitemap sitemap=service.getSitemapProvider().getSitemap(sitemapName);
   if (sitemap != null) {
     logger.debug("reading sitemap {}",sitemap.getName());
-    if (widgetId == null) {
+    if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
       String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
+      EList<Widget> children=sitemap.getChildren();
+      if (poll)       waitForChanges(children);
       processPage("Home",sitemapName,label,sitemap.getChildren(),async,sb);
     }
  else {
@@ -18,6 +21,7 @@
       if (label == null)       label="undefined";
       if (w instanceof LinkableWidget) {
         EList<Widget> children=service.getChildren((LinkableWidget)w);
+        if (poll)         waitForChanges(children);
         processPage(service.getWidgetId(w),sitemapName,label,children,async,sb);
       }
  else {
