@@ -1,19 +1,23 @@
 {
   long startTime=(new Date()).getTime();
+  boolean timeout=false;
   BlockingStateChangeListener listener=new BlockingStateChangeListener();
   Set<GenericItem> items=getAllItems(widgets);
   for (  GenericItem item : items) {
     item.addStateChangeListener(listener);
   }
-  while (!listener.hasChangeOccurred() && (new Date()).getTime() - startTime < 20000L) {
+  while (!listener.hasChangeOccurred() && !timeout) {
+    timeout=(new Date()).getTime() - startTime > TIMEOUT_IN_MS;
     try {
       Thread.sleep(300);
     }
  catch (    InterruptedException e) {
+      timeout=true;
       break;
     }
   }
   for (  GenericItem item : items) {
     item.removeStateChangeListener(listener);
   }
+  return !timeout;
 }

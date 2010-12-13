@@ -12,7 +12,12 @@
     if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
       String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
       EList<Widget> children=sitemap.getChildren();
-      if (poll)       waitForChanges(children);
+      if (poll) {
+        if (waitForChanges(children) == false) {
+          res.getWriter().append("<timeout/>").close();
+          return;
+        }
+      }
       processPage("Home",sitemapName,label,sitemap.getChildren(),async,sb);
     }
  else {
@@ -21,7 +26,12 @@
       if (label == null)       label="undefined";
       if (w instanceof LinkableWidget) {
         EList<Widget> children=service.getChildren((LinkableWidget)w);
-        if (poll)         waitForChanges(children);
+        if (poll) {
+          if (waitForChanges(children) == false) {
+            res.getWriter().append("<timeout/>").close();
+            return;
+          }
+        }
         processPage(service.getWidgetId(w),sitemapName,label,children,async,sb);
       }
  else {
