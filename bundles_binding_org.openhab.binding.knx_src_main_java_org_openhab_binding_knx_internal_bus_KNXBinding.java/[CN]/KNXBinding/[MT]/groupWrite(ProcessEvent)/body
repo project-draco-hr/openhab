@@ -10,15 +10,27 @@
       if (datapoint != null) {
         Type type=getType(datapoint,asdu);
         if (type != null) {
-          ignoreEventList.add(itemName + type.toString());
-          if (datapoint instanceof CommandDP) {
-            eventPublisher.postCommand(itemName,(Command)type);
+          if (ignoreEventList.contains(itemName + type.toString())) {
+            ignoreEventList.remove(itemName + type.toString());
           }
- else           if (datapoint instanceof StateDP) {
-            eventPublisher.postUpdate(itemName,(State)type);
+ else {
+            ignoreEventList.add(itemName + type.toString());
+            if (type instanceof State) {
+              eventPublisher.postUpdate(itemName,(State)type);
+            }
+ else {
+              eventPublisher.postCommand(itemName,(Command)type);
+            }
+            if (logger.isTraceEnabled()) {
+              logger.trace("Processed event: " + destination.toString() + ":"+ type.toString()+ " -> "+ itemName);
+            }
           }
+          return;
         }
       }
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("Received telegram for unknown group address " + destination.toString());
     }
   }
  catch (  RuntimeException re) {

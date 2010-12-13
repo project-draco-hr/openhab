@@ -1,25 +1,18 @@
 {
   for (  Datapoint datapoint : readableDatapoints) {
-    if (datapoint instanceof StateDP) {
-      try {
-        ProcessCommunicator pc=KNXConnection.getCommunicator();
-        if (pc != null) {
-          logger.debug("Sending read request to KNX for item {}",datapoint.getName());
-          String value=pc.read(datapoint);
-          DPTXlator translator=TranslatorTypes.createTranslator(datapoint.getMainNumber(),datapoint.getDPT());
-          translator.setValue(value);
-          byte[] data=translator.getData();
-          Type state=getType(datapoint,data);
-          eventPublisher.postUpdate(datapoint.getName(),(org.openhab.core.types.State)state);
-        }
+    try {
+      ProcessCommunicator pc=KNXConnection.getCommunicator();
+      if (pc != null) {
+        logger.debug("Sending read request to KNX for item {}",datapoint.getName());
+        pc.read(datapoint);
       }
- catch (      KNXException e) {
-        logger.warn("Cannot read value for item '{}' from KNX bus!",datapoint.getName(),e);
-        logger.error(e.getMessage());
-      }
-catch (      KNXIllegalArgumentException e) {
-        logger.warn("Error sending KNX read request for '{}'!",datapoint.getName(),e);
-      }
+    }
+ catch (    KNXException e) {
+      logger.warn("Cannot read value for item '{}' from KNX bus!",datapoint.getName(),e);
+      logger.error(e.getMessage());
+    }
+catch (    KNXIllegalArgumentException e) {
+      logger.warn("Error sending KNX read request for '{}'!",datapoint.getName(),e);
     }
     datapointsToInitialize.remove(datapoint);
     long pause=KNXConnection.getReadingPause();
