@@ -18,13 +18,15 @@
         config.readable=true;
         str=str.trim().substring(1);
       }
-      List<GroupAddress> gas=new ArrayList<GroupAddress>();
-      for (      String ga : str.trim().split("\\+")) {
-        gas.add(new GroupAddress(ga.trim()));
+      if (!str.trim().isEmpty()) {
+        List<GroupAddress> gas=new ArrayList<GroupAddress>();
+        for (        String ga : str.trim().split("\\+")) {
+          gas.add(new GroupAddress(ga.trim()));
+        }
+        config.groupAddresses=gas.toArray(new GroupAddress[gas.size()]);
+        config.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
+        configs.add(config);
       }
-      config.groupAddresses=gas.toArray(new GroupAddress[gas.size()]);
-      config.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
-      configs.add(config);
     }
  catch (    IndexOutOfBoundsException e) {
       throw new BindingConfigParseException("No more than " + i + " datapoint definitions are allowed for this item.");
