@@ -1,0 +1,17 @@
+{
+  if (step <= 0 || step > 1) {
+    throw new IllegalArgumentException("Step size must be in the range (0,1]!");
+  }
+  runVolumeCommand(new Closure(){
+    public void execute(    Object input){
+      FloatControl volumeControl=(FloatControl)input;
+      float volume=volumeControl.getValue();
+      float newVolume=volume + step;
+      if (newVolume > 1) {
+        newVolume=1;
+      }
+      volumeControl.setValue(newVolume);
+    }
+  }
+);
+}
