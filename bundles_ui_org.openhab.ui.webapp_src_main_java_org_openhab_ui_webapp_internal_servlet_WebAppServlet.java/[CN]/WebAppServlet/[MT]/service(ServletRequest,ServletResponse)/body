@@ -14,7 +14,7 @@
       EList<Widget> children=sitemap.getChildren();
       if (poll) {
         if (waitForChanges(children) == false) {
-          res.getWriter().append("<timeout/>").close();
+          res.getWriter().append("<root><timeout/></root>").close();
           return;
         }
       }
@@ -28,7 +28,7 @@
         EList<Widget> children=service.getChildren((LinkableWidget)w);
         if (poll) {
           if (waitForChanges(children) == false) {
-            res.getWriter().append("<timeout/>").close();
+            res.getWriter().append("<root><timeout/></root>").close();
             return;
           }
         }
