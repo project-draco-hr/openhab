@@ -1,15 +1,12 @@
 {
-  if (step <= 0 || step > 1) {
-    throw new IllegalArgumentException("Step size must be in the range (0,1]!");
+  if (percent <= 0 || percent > 100) {
+    throw new IllegalArgumentException("Percent must be in the range (0,100]!");
   }
   runVolumeCommand(new Closure(){
     public void execute(    Object input){
       FloatControl volumeControl=(FloatControl)input;
       float volume=volumeControl.getValue();
-      float newVolume=volume - step;
-      if (newVolume < 0) {
-        newVolume=0;
-      }
+      float newVolume=volume * (1f - percent / 100f);
       volumeControl.setValue(newVolume);
     }
   }
