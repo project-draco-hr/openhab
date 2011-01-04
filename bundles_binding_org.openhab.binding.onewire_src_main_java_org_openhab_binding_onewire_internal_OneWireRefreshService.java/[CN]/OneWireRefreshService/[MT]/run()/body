@@ -1,0 +1,30 @@
+{
+  while (!interrupted) {
+    connect(OneWireConfiguration.ip,OneWireConfiguration.port);
+    if (owc != null) {
+      for (      OneWireBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames()) {
+          String sensorId=provider.getSensorId(itemName);
+          Reading unitId=provider.getUnitId(itemName);
+          OwSensor sensor;
+          try {
+            sensor=owc.find(sensorId);
+            double value=sensor.read(unitId);
+            eventPublisher.postUpdate(itemName,DecimalType.valueOf("" + value));
+            logger.debug("Found sensor {} with value {}",sensor.getId().toString(),value);
+          }
+ catch (          UnsupportedDeviceException e) {
+            e.printStackTrace();
+          }
+catch (          DeviceNotFoundException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
+ else {
+      logger.warn("OneWireClient is null => refresh cycle aborted!");
+    }
+    pause(OneWireConfiguration.refreshInterval);
+  }
+}
