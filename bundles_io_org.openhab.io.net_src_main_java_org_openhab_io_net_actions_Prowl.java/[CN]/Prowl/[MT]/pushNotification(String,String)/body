@@ -1,0 +1,17 @@
+{
+  if (initialized) {
+    ProwlClient c=new ProwlClient();
+    ProwlEvent e=new DefaultProwlEvent(Prowl.apiKey,"openhab",subject,message,Prowl.priority);
+    String returnMessage;
+    try {
+      returnMessage=c.pushEvent(e);
+      System.out.println(returnMessage);
+    }
+ catch (    ProwlException pe) {
+      pe.printStackTrace();
+    }
+  }
+ else {
+    logger.error("Cannot push Prowl notification because of missing configuration settings. The current settings are: " + "apiKey: '{}', username: '{}', password: '{}', priority: {}, url: '{}'",new String[]{apiKey,username,password,String.valueOf(priority),url});
+  }
+}
