@@ -2,10 +2,10 @@
   if (item instanceof NumberItem) {
     String[] configParts=bindingConfig.trim().split("#");
     if (configParts.length != 2) {
-      throw new IllegalArgumentException("Onewire sensor configuration must contain of two parts separated by a '#'");
+      throw new BindingConfigParseException("Onewire sensor configuration must contain of two parts separated by a '#'");
     }
     if (!checkSensorId(configParts[0])) {
-      throw new IllegalArgumentException("SensorId '" + configParts[0] + "' isn't a correct id-pattern. A correct pattern looks like '26.AF9C32000000' (<familycode 8bit>.<serialid 48bit>)");
+      throw new BindingConfigParseException("SensorId '" + configParts[0] + "' isn't a correct id-pattern. A correct pattern looks like '26.AF9C32000000' (<familycode 8bit>.<serialid 48bit>)");
     }
     BindingConfig config=new BindingConfig();
     config.sensorId=configParts[0];
