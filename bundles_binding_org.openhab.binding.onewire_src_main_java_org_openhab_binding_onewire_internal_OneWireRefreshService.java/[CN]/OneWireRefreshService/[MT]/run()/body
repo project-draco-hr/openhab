@@ -1,6 +1,6 @@
 {
+  logger.info("refresh thread started [refresh interval {}ms]",OneWireRefreshService.refreshInterval);
   while (!interrupted) {
-    connect(OneWireConfiguration.ip,OneWireConfiguration.port);
     if (owc != null) {
       for (      OneWireBindingProvider provider : providers) {
         for (        String itemName : provider.getItemNames()) {
@@ -29,6 +29,6 @@ catch (          DeviceNotFoundException dnfe) {
  else {
       logger.warn("OneWireClient is null => refresh cycle aborted!");
     }
-    pause(OneWireConfiguration.refreshInterval);
+    pause(OneWireRefreshService.refreshInterval);
   }
 }
