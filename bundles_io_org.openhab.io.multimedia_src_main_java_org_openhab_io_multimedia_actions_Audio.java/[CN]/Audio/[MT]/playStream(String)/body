@@ -6,6 +6,16 @@
     return;
   }
   try {
+    if (url.toLowerCase().endsWith(".m3u")) {
+      InputStream is=new URL(url).openStream();
+      String urls=IOUtils.toString(is);
+      for (      String line : urls.split("\n")) {
+        if (!line.isEmpty() && !line.startsWith("#")) {
+          url=line;
+          break;
+        }
+      }
+    }
     InputStream is=new URL(url).openStream();
     Player player=new Player(is);
     streamPlayer=player;
