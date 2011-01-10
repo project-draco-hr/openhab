@@ -54,6 +54,31 @@ catch (    ItemNotUniqueException e) {
     }
     snippet=snippet.replace("%rows%",rowSB.toString());
   }
+  if (w instanceof Selection) {
+    String state=service.getState(w).toString();
+    String[] labels=service.getLabel(w).split(";");
+    if (labels.length > 0) {
+      snippet=snippet.replace("%label_header%",labels[0]);
+      StringBuilder rowSB=new StringBuilder();
+      for (int i=1; i < labels.length; i++) {
+        String valuelabel=labels[i];
+        String rowSnippet=service.getSnippet("selection_row");
+        String value=StringUtils.substringBefore(valuelabel,"=");
+        String label=StringUtils.substringAfter(valuelabel,"=");
+        rowSnippet=rowSnippet.replace("%item%",service.getItem(w));
+        rowSnippet=rowSnippet.replace("%value%",value);
+        rowSnippet=rowSnippet.replace("%label%",label);
+        if (value.equals(state)) {
+          rowSnippet=rowSnippet.replace("%checked%","checked=\"true\"");
+        }
+ else {
+          rowSnippet=rowSnippet.replace("%checked%","");
+        }
+        rowSB.append(rowSnippet);
+      }
+      snippet=snippet.replace("%rows%",rowSB.toString());
+    }
+  }
   if (w instanceof Frame) {
     processChildren(snippet,sb,service.getChildren((Frame)w));
   }
