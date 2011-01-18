@@ -1,7 +1,10 @@
 {
   if (ip != null && port > 0) {
-    OWNet ownet=new OWNet(ip,port);
-    owc=new OwClient(ownet);
+    owc=OwfsClientFactory.newOwfsClient(ip,port,false);
+    owc.setDeviceDisplayFormat(OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
+    owc.setBusReturn(OwBusReturn.OWNET_BUSRETURN_ON);
+    owc.setPersistence(OwPersistence.OWNET_PERSISTENCE_ON);
+    owc.setTemperatureScale(OwTemperatureScale.OWNET_TS_CELSIUS);
     logger.info("Established connection to OwServer on IP '{}' Port '{}'.",ip,port);
   }
  else {
