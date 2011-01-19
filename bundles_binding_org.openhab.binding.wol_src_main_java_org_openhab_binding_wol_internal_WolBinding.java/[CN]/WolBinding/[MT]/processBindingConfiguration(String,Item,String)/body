@@ -3,7 +3,7 @@
     String target=bindingConfig;
     String[] configParts=target.split("#");
     if (configParts.length != 2) {
-      throw new BindingConfigParseException("WoL configuration must contain of two parts (ip and macaddress separated by a '#'");
+      throw new BindingConfigParseException("WoL configuration must contain two parts (ip and macaddress separated by a '#'");
     }
     WolBindingConfig wolBindingConfig=new WolBindingConfig();
     wolBindingConfig.address=getInetAdress(configParts[0]);
@@ -14,7 +14,6 @@
       itemNames=new HashSet<String>();
       contextMap.put(context,itemNames);
     }
-    itemNames.add(item.getName());
   }
  else {
     throw new BindingConfigParseException("WoL binding only supports Switch and String items!");
