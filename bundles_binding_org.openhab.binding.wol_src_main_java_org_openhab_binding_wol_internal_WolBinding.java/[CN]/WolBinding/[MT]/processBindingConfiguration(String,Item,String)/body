@@ -1,0 +1,22 @@
+{
+  if (item instanceof SwitchItem || item instanceof StringItem) {
+    String target=bindingConfig;
+    String[] configParts=target.split("#");
+    if (configParts.length != 2) {
+      throw new BindingConfigParseException("WoL configuration must contain of two parts (ip and macaddress separated by a '#'");
+    }
+    WolBindingConfig wolBindingConfig=new WolBindingConfig();
+    wolBindingConfig.address=getInetAdress(configParts[0]);
+    wolBindingConfig.macBytes=getMacBytes(configParts[1]);
+    itemMap.put(item.getName(),wolBindingConfig);
+    Set<String> itemNames=contextMap.get(context);
+    if (itemNames == null) {
+      itemNames=new HashSet<String>();
+      contextMap.put(context,itemNames);
+    }
+    itemNames.add(item.getName());
+  }
+ else {
+    throw new BindingConfigParseException("WoL binding only supports Switch and String items!");
+  }
+}
