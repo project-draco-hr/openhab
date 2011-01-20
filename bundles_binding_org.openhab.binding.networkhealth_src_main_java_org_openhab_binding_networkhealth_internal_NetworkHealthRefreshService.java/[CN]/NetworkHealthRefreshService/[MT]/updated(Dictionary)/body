@@ -1,0 +1,17 @@
+{
+  if (config != null) {
+    String portString=(String)config.get("port");
+    if (portString != null && !portString.isEmpty()) {
+      NetworkHealthRefreshService.port=Integer.parseInt(portString);
+    }
+    String timeoutString=(String)config.get("timeout");
+    if (timeoutString != null && !timeoutString.isEmpty()) {
+      NetworkHealthRefreshService.timeout=Integer.parseInt(timeoutString);
+    }
+    String refreshIntervalString=(String)config.get("refresh");
+    if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
+      NetworkHealthRefreshService.refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    start();
+  }
+}

@@ -1,0 +1,30 @@
+{
+  logger.info("refresh thread started [refresh interval {}ms]",NetworkHealthRefreshService.refreshInterval);
+  while (!interrupted) {
+    for (    NetworkHealthBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String hostname=provider.getHostname(itemName);
+        if (provider.getPort(itemName) > 0) {
+          port=provider.getPort(itemName);
+        }
+        if (provider.getTimeout(itemName) > 0) {
+          timeout=provider.getTimeout(itemName);
+        }
+        boolean isSuccesful=false;
+        try {
+          Socket socket=openSocket(hostname,port,timeout);
+          isSuccesful=(socket != null);
+          logger.debug("established connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
+        }
+ catch (        SocketTimeoutException se) {
+          logger.debug("timed out while connecting to host '{}' port '{}' timeout '{}'",new Object[]{hostname,port,timeout});
+        }
+catch (        IOException ioe) {
+          logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
+        }
+        eventPublisher.postUpdate(itemName,isSuccesful ? OnOffType.ON : OnOffType.OFF);
+      }
+    }
+    pause(NetworkHealthRefreshService.refreshInterval);
+  }
+}
