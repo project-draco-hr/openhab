@@ -4,16 +4,13 @@
     for (    NetworkHealthBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         String hostname=provider.getHostname(itemName);
-        if (provider.getPort(itemName) > 0) {
-          port=provider.getPort(itemName);
-        }
+        int port=provider.getPort(itemName);
         if (provider.getTimeout(itemName) > 0) {
           timeout=provider.getTimeout(itemName);
         }
-        boolean isSuccesful=false;
+        boolean success=false;
         try {
-          Socket socket=openSocket(hostname,port,timeout);
-          isSuccesful=(socket != null);
+          success=checkReachability(hostname,port,timeout);
           logger.debug("established connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
         }
  catch (        SocketTimeoutException se) {
@@ -22,7 +19,7 @@
 catch (        IOException ioe) {
           logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
         }
-        eventPublisher.postUpdate(itemName,isSuccesful ? OnOffType.ON : OnOffType.OFF);
+        eventPublisher.postUpdate(itemName,success ? OnOffType.ON : OnOffType.OFF);
       }
     }
     pause(NetworkHealthRefreshService.refreshInterval);
