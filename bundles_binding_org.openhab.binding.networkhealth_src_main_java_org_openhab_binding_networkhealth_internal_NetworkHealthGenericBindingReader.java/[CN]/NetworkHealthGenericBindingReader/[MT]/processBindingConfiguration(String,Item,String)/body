@@ -14,11 +14,12 @@
       config.timeout=Integer.valueOf(configParts[2]);
     }
     bindingConfigs.put(item.getName(),config);
+    notifyListeners(item);
   }
-  Set<String> itemNames=contextMap.get(context);
-  if (itemNames == null) {
-    itemNames=new HashSet<String>();
-    contextMap.put(context,itemNames);
+  Set<Item> items=contextMap.get(context);
+  if (items == null) {
+    items=new HashSet<Item>();
+    contextMap.put(context,items);
   }
-  itemNames.add(item.getName());
+  items.add(item);
 }

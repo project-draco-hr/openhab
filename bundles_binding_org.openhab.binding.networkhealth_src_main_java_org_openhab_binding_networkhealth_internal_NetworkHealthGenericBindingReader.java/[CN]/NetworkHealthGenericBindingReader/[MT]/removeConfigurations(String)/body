@@ -1,0 +1,11 @@
+{
+  Set<Item> items=contextMap.get(context);
+  if (items != null) {
+    for (    Item item : items) {
+      BindingConfig config=bindingConfigs.get(item.getName());
+      bindingConfigs.remove(config);
+      notifyListeners(item);
+    }
+    contextMap.remove(context);
+  }
+}

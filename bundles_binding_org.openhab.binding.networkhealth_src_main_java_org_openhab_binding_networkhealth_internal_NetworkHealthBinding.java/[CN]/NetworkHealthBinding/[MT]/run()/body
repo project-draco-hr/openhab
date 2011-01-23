@@ -1,5 +1,5 @@
 {
-  logger.info("refresh thread started [refresh interval {}ms]",NetworkHealthRefreshService.refreshInterval);
+  logger.info("refresh thread started [refresh interval {}ms]",NetworkHealthBinding.refreshInterval);
   while (!interrupted) {
     for (    NetworkHealthBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
@@ -22,6 +22,6 @@ catch (        IOException ioe) {
         eventPublisher.postUpdate(itemName,success ? OnOffType.ON : OnOffType.OFF);
       }
     }
-    pause(NetworkHealthRefreshService.refreshInterval);
+    pause(NetworkHealthBinding.refreshInterval);
   }
 }
