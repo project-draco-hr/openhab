@@ -1,0 +1,16 @@
+{
+synchronized (bindingConfigs) {
+    Iterable<KNXBindingConfigItem> filteredBindingConfigs=Iterables.filter(Iterables.filter(Iterables.concat(bindingConfigs.values()),KNXBindingConfigItem.class),new Predicate<KNXBindingConfigItem>(){
+      public boolean apply(      KNXBindingConfigItem input){
+        return input.readable;
+      }
+    }
+);
+    return Iterables.transform(filteredBindingConfigs,new Function<KNXBindingConfigItem,Datapoint>(){
+      public Datapoint apply(      KNXBindingConfigItem from){
+        return from.datapoint;
+      }
+    }
+);
+  }
+}

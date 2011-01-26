@@ -1,0 +1,39 @@
+{
+  KNXBindingConfig config=new KNXBindingConfig();
+  String[] datapointConfigs=bindingConfig.trim().split(",");
+  for (int i=0; i < datapointConfigs.length; i++) {
+    try {
+      String datapointConfig=datapointConfigs[i];
+      KNXBindingConfigItem configItem=new KNXBindingConfigItem();
+      configItem.itemName=item.getName();
+      String[] segments=datapointConfig.trim().split(":");
+      Class<? extends Command> cmdType=item.getAcceptedCommandTypes().get(i);
+      String dptId=segments.length == 1 ? getDefaultDPTId(cmdType) : segments[0];
+      if (dptId == null || dptId.trim().isEmpty()) {
+        throw new BindingConfigParseException("No DPT could be determined for the command type '" + cmdType.getSimpleName() + "'.");
+      }
+      configItem.dpt=new DPT(dptId,null,null,null);
+      String str=segments.length == 1 ? segments[0] : segments[1];
+      if (str.trim().startsWith("<")) {
+        configItem.readable=true;
+        str=str.trim().substring(1);
+      }
+      if (!str.trim().isEmpty()) {
+        List<GroupAddress> gas=new ArrayList<GroupAddress>();
+        for (        String ga : str.trim().split("\\+")) {
+          gas.add(new GroupAddress(ga.trim()));
+        }
+        configItem.groupAddresses=gas.toArray(new GroupAddress[gas.size()]);
+        configItem.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
+        config.add(configItem);
+      }
+    }
+ catch (    IndexOutOfBoundsException e) {
+      throw new BindingConfigParseException("No more than " + i + " datapoint definitions are allowed for this item.");
+    }
+catch (    KNXFormatException e) {
+      throw new BindingConfigParseException(e.getMessage());
+    }
+  }
+  return config;
+}

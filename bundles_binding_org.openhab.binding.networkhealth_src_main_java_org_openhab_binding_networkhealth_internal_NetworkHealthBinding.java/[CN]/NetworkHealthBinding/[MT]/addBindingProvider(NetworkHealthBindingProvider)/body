@@ -1,4 +1,9 @@
 {
   this.providers.add(provider);
   provider.addBindingChangeListener(this);
+  if (provider.containsBindings()) {
+    if (!this.isAlive()) {
+      start();
+    }
+  }
 }
