@@ -5,7 +5,7 @@
   boolean async="true".equalsIgnoreCase((String)req.getParameter("__async"));
   boolean poll="true".equalsIgnoreCase((String)req.getParameter("poll"));
   if (sitemapName == null)   sitemapName="default";
-  StringBuilder sb=new StringBuilder();
+  StringBuilder result=new StringBuilder();
   Sitemap sitemap=service.getSitemapProvider().getSitemap(sitemapName);
   if (sitemap != null) {
     logger.debug("reading sitemap {}",sitemap.getName());
@@ -18,7 +18,7 @@
           return;
         }
       }
-      processPage("Home",sitemapName,label,sitemap.getChildren(),async,sb);
+      result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
     }
  else {
       Widget w=service.getWidget(sitemap,widgetId);
@@ -32,7 +32,7 @@
             return;
           }
         }
-        processPage(service.getWidgetId(w),sitemapName,label,children,async,sb);
+        result.append(renderer.processPage(service.getWidgetId(w),sitemapName,label,children,async));
       }
  else {
         throw new ServletException("Widget '" + w + "' can not have any content");
@@ -48,6 +48,6 @@
  else {
     res.setContentType("text/html;charset=UTF-8");
   }
-  res.getWriter().append(sb);
+  res.getWriter().append(result);
   res.getWriter().close();
 }
