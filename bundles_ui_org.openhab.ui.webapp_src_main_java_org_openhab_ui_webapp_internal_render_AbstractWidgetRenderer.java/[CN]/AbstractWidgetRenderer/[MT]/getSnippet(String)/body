@@ -1,0 +1,21 @@
+{
+  elementType=elementType.toLowerCase();
+  String snippet=snippetCache.get(elementType);
+  if (snippet == null) {
+    String snippetLocation=SNIPPET_LOCATION + elementType + SNIPPET_EXT;
+    URL entry=WebAppActivator.getContext().getBundle().getEntry(snippetLocation);
+    if (entry != null) {
+      try {
+        snippet=IOUtils.toString(entry.openStream());
+        snippetCache.put(elementType,snippet);
+      }
+ catch (      IOException e) {
+        logger.warn("Cannot load snippet for element type '{}'",elementType,e);
+      }
+    }
+ else {
+      throw new RenderException("Cannot find a snippet for element type '" + elementType + "'");
+    }
+  }
+  return snippet;
+}

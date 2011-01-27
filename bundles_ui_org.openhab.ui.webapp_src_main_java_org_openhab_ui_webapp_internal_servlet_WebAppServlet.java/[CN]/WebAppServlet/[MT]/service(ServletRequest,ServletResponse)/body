@@ -5,42 +5,47 @@
   boolean async="true".equalsIgnoreCase((String)req.getParameter("__async"));
   boolean poll="true".equalsIgnoreCase((String)req.getParameter("poll"));
   if (sitemapName == null)   sitemapName="default";
-  StringBuilder sb=new StringBuilder();
-  Sitemap sitemap=service.getSitemapProvider().getSitemap(sitemapName);
-  if (sitemap != null) {
-    logger.debug("reading sitemap {}",sitemap.getName());
-    if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
-      String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
-      EList<Widget> children=sitemap.getChildren();
-      if (poll) {
-        if (waitForChanges(children) == false) {
-          res.getWriter().append(getTimeoutResponse()).close();
-          return;
-        }
-      }
-      processPage("Home",sitemapName,label,sitemap.getChildren(),async,sb);
-    }
- else {
-      Widget w=service.getWidget(sitemap,widgetId);
-      String label=service.getLabel(w);
-      if (label == null)       label="undefined";
-      if (w instanceof LinkableWidget) {
-        EList<Widget> children=service.getChildren((LinkableWidget)w);
+  StringBuilder result=new StringBuilder();
+  Sitemap sitemap=sitemapProvider.getSitemap(sitemapName);
+  try {
+    if (sitemap != null) {
+      logger.debug("reading sitemap {}",sitemap.getName());
+      if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
+        String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
+        EList<Widget> children=sitemap.getChildren();
         if (poll) {
           if (waitForChanges(children) == false) {
             res.getWriter().append(getTimeoutResponse()).close();
             return;
           }
         }
-        processPage(service.getWidgetId(w),sitemapName,label,children,async,sb);
+        result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
       }
  else {
-        throw new ServletException("Widget '" + w + "' can not have any content");
+        Widget w=renderer.getWidget(sitemap,widgetId);
+        String label=renderer.getLabel(w);
+        if (label == null)         label="undefined";
+        if (w instanceof LinkableWidget) {
+          EList<Widget> children=renderer.getChildren((LinkableWidget)w);
+          if (poll) {
+            if (waitForChanges(children) == false) {
+              res.getWriter().append(getTimeoutResponse()).close();
+              return;
+            }
+          }
+          result.append(renderer.processPage(renderer.getWidgetId(w),sitemapName,label,children,async));
+        }
+ else {
+          throw new RenderException("Widget '" + w + "' can not have any content");
+        }
       }
     }
-  }
  else {
-    throw new ServletException("Sitemap '" + sitemapName + "' could not be found");
+      throw new RenderException("Sitemap '" + sitemapName + "' could not be found");
+    }
+  }
+ catch (  RenderException e) {
+    throw new ServletException(e.getMessage(),e);
   }
   if (async) {
     res.setContentType("application/xml;charset=UTF-8");
@@ -48,6 +53,6 @@
  else {
     res.setContentType("text/html;charset=UTF-8");
   }
-  res.getWriter().append(sb);
+  res.getWriter().append(result);
   res.getWriter().close();
 }

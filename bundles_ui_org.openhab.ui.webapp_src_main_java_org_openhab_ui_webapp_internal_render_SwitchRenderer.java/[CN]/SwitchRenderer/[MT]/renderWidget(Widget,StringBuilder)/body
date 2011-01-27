@@ -1,0 +1,36 @@
+{
+  String snippetName=null;
+  Item item;
+  try {
+    item=itemRegistry.getItem(getItem(w));
+    if (item instanceof RollershutterItem) {
+      snippetName="rollerblind";
+    }
+ else {
+      snippetName="switch";
+    }
+  }
+ catch (  ItemNotFoundException e) {
+    logger.warn("Cannot determine item type of '{}'",getItem(w),e);
+    snippetName="switch";
+  }
+catch (  ItemNotUniqueException e) {
+    logger.warn("Cannot determine item type of '{}'",getItem(w),e);
+    snippetName="switch";
+  }
+  String snippet=getSnippet(snippetName);
+  snippet=snippet.replaceAll("%id%",getWidgetId(w));
+  snippet=snippet.replaceAll("%icon%",getIcon(w));
+  snippet=snippet.replaceAll("%item%",getItem(w));
+  snippet=snippet.replaceAll("%label%",getLabel(w));
+  snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
+  State state=getState(w);
+  if (state.equals(OnOffType.ON)) {
+    snippet=snippet.replaceAll("%checked%","checked=true");
+  }
+ else {
+    snippet=snippet.replaceAll("%checked%","");
+  }
+  sb.append(snippet);
+  return null;
+}
