@@ -2,12 +2,18 @@
 synchronized (bindingConfigs) {
     Iterable<KNXBindingConfigItem> filteredBindingConfigs=Iterables.filter(Iterables.filter(Iterables.concat(bindingConfigs.values()),KNXBindingConfigItem.class),new Predicate<KNXBindingConfigItem>(){
       public boolean apply(      KNXBindingConfigItem input){
+        if (input == null) {
+          return false;
+        }
         return ArrayUtils.contains(input.groupAddresses,groupAddress);
       }
     }
 );
     return Iterables.transform(filteredBindingConfigs,new Function<KNXBindingConfigItem,String>(){
       public String apply(      KNXBindingConfigItem from){
+        if (from == null) {
+          return null;
+        }
         return from.itemName;
       }
     }

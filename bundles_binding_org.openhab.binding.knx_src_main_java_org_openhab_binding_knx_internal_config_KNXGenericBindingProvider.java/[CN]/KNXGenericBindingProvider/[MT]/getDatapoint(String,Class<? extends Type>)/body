@@ -3,6 +3,9 @@ synchronized (bindingConfigs) {
     try {
       KNXBindingConfigItem bindingConfig=Iterables.find(Iterables.filter(Iterables.concat(bindingConfigs.values()),KNXBindingConfigItem.class),new Predicate<KNXBindingConfigItem>(){
         public boolean apply(        KNXBindingConfigItem input){
+          if (input == null) {
+            return false;
+          }
           return input.itemName.equals(itemName) && KNXCoreTypeMapper.toTypeClass(input.dpt.getID()).equals(typeClass);
         }
       }
