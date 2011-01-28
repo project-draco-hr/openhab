@@ -1,0 +1,19 @@
+{
+  if (config == null) {
+    logger.error("given parameter 'config' must not be null");
+    return;
+  }
+  InetAddress address=config.address;
+  byte[] macBytes=config.macBytes;
+  try {
+    byte[] bytes=fillMagicBytes(macBytes);
+    DatagramPacket packet=new DatagramPacket(bytes,bytes.length,address,PORT);
+    DatagramSocket socket=new DatagramSocket();
+    socket.send(packet);
+    socket.close();
+    logger.info("Wake-on-LAN packet sent [broadcastIp={}, macaddress={}]",address.getHostName(),macBytes);
+  }
+ catch (  Exception e) {
+    logger.error("Failed to send Wake-on-LAN packet [broadcastIp=" + address.getHostAddress() + ", macaddress="+ macBytes+ "]",e);
+  }
+}

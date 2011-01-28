@@ -1,0 +1,17 @@
+{
+  byte[] bytes=new byte[6];
+  String[] hex=macStr.split("(\\:|\\-)");
+  if (hex.length != 6) {
+    throw new BindingConfigParseException("Invalid MAC address [macStr=" + macStr + "]");
+  }
+  int hexIndex=0;
+  try {
+    for (hexIndex=0; hexIndex < 6; hexIndex++) {
+      bytes[hexIndex]=(byte)Integer.parseInt(hex[hexIndex],16);
+    }
+  }
+ catch (  NumberFormatException e) {
+    throw new BindingConfigParseException("Invalid hex digit in MAC address [digit=" + hex[hexIndex]);
+  }
+  return bytes;
+}
