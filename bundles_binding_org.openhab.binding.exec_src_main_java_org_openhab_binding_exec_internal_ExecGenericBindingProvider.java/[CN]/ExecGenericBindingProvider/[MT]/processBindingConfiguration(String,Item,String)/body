@@ -1,0 +1,17 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (item instanceof SwitchItem) {
+    String[] configParts=bindingConfig.trim().split(",");
+    ExecBindingConfig config=new ExecBindingConfig();
+    for (    String configPart : configParts) {
+      String[] configPartDetails=configPart.trim().split(":");
+      if (configParts.length != 2) {
+        throw new BindingConfigParseException("each Exec configuration must contain two parts");
+      }
+      String command=configPartDetails[0];
+      String commandLine=configPartDetails[1];
+      config.put(command,commandLine);
+    }
+    addBindingConfig(item,config);
+  }
+}
