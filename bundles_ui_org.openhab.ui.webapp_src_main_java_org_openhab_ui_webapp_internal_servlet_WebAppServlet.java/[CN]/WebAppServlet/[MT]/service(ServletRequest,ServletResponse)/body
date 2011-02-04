@@ -8,40 +8,32 @@
   StringBuilder result=new StringBuilder();
   Sitemap sitemap=sitemapProvider.getSitemap(sitemapName);
   try {
-    if (sitemap != null) {
-      logger.debug("reading sitemap {}",sitemap.getName());
-      if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
-        String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
-        EList<Widget> children=sitemap.getChildren();
-        if (poll) {
-          if (waitForChanges(children) == false) {
-            res.getWriter().append(getTimeoutResponse()).close();
-            return;
-          }
-        }
-        result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
+    if (sitemap == null) {
+      throw new RenderException("Sitemap '" + sitemapName + "' could not be found");
+    }
+    logger.debug("reading sitemap {}",sitemap.getName());
+    if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
+      String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
+      EList<Widget> children=sitemap.getChildren();
+      if (poll && waitForChanges(children) == false) {
+        res.getWriter().append(getTimeoutResponse()).close();
+        return;
       }
- else {
-        Widget w=renderer.getWidget(sitemap,widgetId);
-        String label=renderer.getLabel(w);
-        if (label == null)         label="undefined";
-        if (w instanceof LinkableWidget) {
-          EList<Widget> children=renderer.getChildren((LinkableWidget)w);
-          if (poll) {
-            if (waitForChanges(children) == false) {
-              res.getWriter().append(getTimeoutResponse()).close();
-              return;
-            }
-          }
-          result.append(renderer.processPage(renderer.getWidgetId(w),sitemapName,label,children,async));
-        }
- else {
-          throw new RenderException("Widget '" + w + "' can not have any content");
-        }
-      }
+      result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
     }
  else {
-      throw new RenderException("Sitemap '" + sitemapName + "' could not be found");
+      Widget w=renderer.getWidget(sitemap,widgetId);
+      String label=renderer.getLabel(w);
+      if (label == null)       label="undefined";
+      if (!(w instanceof LinkableWidget)) {
+        throw new RenderException("Widget '" + w + "' can not have any content");
+      }
+      EList<Widget> children=renderer.getChildren((LinkableWidget)w);
+      if (poll && waitForChanges(children) == false) {
+        res.getWriter().append(getTimeoutResponse()).close();
+        return;
+      }
+      result.append(renderer.processPage(renderer.getWidgetId(w),sitemapName,label,children,async));
     }
   }
  catch (  RenderException e) {

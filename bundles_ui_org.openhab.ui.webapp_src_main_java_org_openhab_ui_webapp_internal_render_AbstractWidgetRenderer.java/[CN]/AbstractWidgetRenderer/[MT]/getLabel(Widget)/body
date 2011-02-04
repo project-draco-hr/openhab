@@ -1,13 +1,10 @@
 {
-  if (w == null) {
-    return null;
-  }
   String label=null;
   if (w.getLabel() != null) {
     label=w.getLabel();
   }
  else {
-    String itemName=getItem(w);
+    String itemName=w.getItem();
     if (itemName != null) {
       if (delegatingItemUIProvider != null) {
         label=delegatingItemUIProvider.getLabel(itemName);
@@ -16,7 +13,7 @@
     }
   }
   if (label == null)   label="";
-  String itemName=getItem(w);
+  String itemName=w.getItem();
   if (itemName != null && label.contains("%")) {
     int indexPercent=label.indexOf("%");
     int indexSpace=label.indexOf(' ',label.indexOf("%"));
