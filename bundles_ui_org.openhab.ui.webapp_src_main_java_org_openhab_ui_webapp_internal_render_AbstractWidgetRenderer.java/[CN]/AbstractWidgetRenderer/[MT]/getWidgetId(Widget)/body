@@ -1,0 +1,21 @@
+{
+  String id="";
+  while (w.eContainer() instanceof Widget) {
+    Widget parent=(Widget)w.eContainer();
+    String index=String.valueOf(((LinkableWidget)parent).getChildren().indexOf(w));
+    if (index.length() == 1)     index="0" + index;
+    id=index + id;
+    w=parent;
+  }
+  if (w.eContainer() instanceof Sitemap) {
+    Sitemap sitemap=(Sitemap)w.eContainer();
+    String index=String.valueOf(sitemap.getChildren().indexOf(w));
+    if (index.length() == 1)     index="0" + index;
+    id=index + id;
+  }
+  if (w.eContainer() == null) {
+    String itemName=w.getItem();
+    id=itemName;
+  }
+  return id;
+}

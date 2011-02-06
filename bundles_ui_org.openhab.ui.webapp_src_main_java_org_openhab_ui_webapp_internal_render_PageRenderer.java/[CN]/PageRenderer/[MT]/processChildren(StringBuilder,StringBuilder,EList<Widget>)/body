@@ -1,0 +1,45 @@
+{
+  if (!children.isEmpty()) {
+    EObject firstChild=children.get(0).eContainer();
+    if (!(firstChild instanceof Frame || firstChild instanceof Sitemap || firstChild instanceof List)) {
+      String frameSnippet=getSnippet("frame");
+      frameSnippet=frameSnippet.replace("%label%","");
+      String[] parts=frameSnippet.split("%children%");
+      if (parts.length > 1) {
+        sb_pre.append(parts[0]);
+      }
+      if (parts.length > 2) {
+        sb_post.insert(0,parts[1]);
+      }
+      if (parts.length > 2) {
+        logger.error("Snippet 'frame' contains multiple %children% sections, but only one is allowed!");
+      }
+    }
+  }
+  for (  Widget w : children) {
+    StringBuilder new_pre=new StringBuilder();
+    StringBuilder new_post=new StringBuilder();
+    StringBuilder widgetSB=new StringBuilder();
+    EList<Widget> nextChildren=renderWidget(w,widgetSB);
+    if (nextChildren != null) {
+      String[] parts=widgetSB.toString().split("%children%");
+      if (parts.length == 1) {
+        new_pre.append(widgetSB);
+      }
+      if (parts.length > 1) {
+        new_pre.append(parts[0]);
+        new_post.insert(0,parts[1]);
+      }
+      if (parts.length > 2) {
+        String widgetType=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+        logger.error("Snippet for widget '{}' contains multiple %children% sections, but only one is allowed!",widgetType);
+      }
+      processChildren(new_pre,new_post,nextChildren);
+      sb_pre.append(new_pre);
+      sb_pre.append(new_post);
+    }
+ else {
+      sb_pre.append(widgetSB);
+    }
+  }
+}

@@ -1,12 +1,14 @@
 {
-  if (oldState.equals(newState)) {
-    for (    StateChangeListener listener : listeners) {
-      listener.stateUpdated(this,newState);
+synchronized (listeners) {
+    if (oldState.equals(newState)) {
+      for (      StateChangeListener listener : listeners) {
+        listener.stateUpdated(this,newState);
+      }
     }
-  }
  else {
-    for (    StateChangeListener listener : listeners) {
-      listener.stateChanged(this,oldState,newState);
+      for (      StateChangeListener listener : listeners) {
+        listener.stateChanged(this,oldState,newState);
+      }
     }
   }
 }

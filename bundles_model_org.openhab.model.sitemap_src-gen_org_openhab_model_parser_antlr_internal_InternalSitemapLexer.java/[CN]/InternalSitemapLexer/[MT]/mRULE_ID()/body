@@ -14,14 +14,7 @@ case 1:
         }
       break;
   }
-  if ((input.LA(1) >= 'A' && input.LA(1) <= 'Z') || input.LA(1) == '_' || (input.LA(1) >= 'a' && input.LA(1) <= 'z')) {
-    input.consume();
-  }
- else {
-    MismatchedSetException mse=new MismatchedSetException(null,input);
-    recover(mse);
-    throw mse;
-  }
+  int cnt2=0;
   loop2:   do {
     int alt2=2;
     int LA2_0=input.LA(1);
@@ -42,8 +35,11 @@ case 1:
       }
     break;
 default :
-  break loop2;
+  if (cnt2 >= 1)   break loop2;
+EarlyExitException eee=new EarlyExitException(2,input);
+throw eee;
 }
+cnt2++;
 }
  while (true);
 }
