@@ -1,5 +1,12 @@
 {
-  ExecBindingProvider provider=this.providers.iterator().next();
+  if (!containsBinding(itemName)) {
+    return;
+  }
+  ExecBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  if (provider == null) {
+    logger.warn("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
   String commandLine=provider.getCommandLine(itemName,command.toString());
   if (commandLine != null && !commandLine.isEmpty()) {
     executeCommand(commandLine);
