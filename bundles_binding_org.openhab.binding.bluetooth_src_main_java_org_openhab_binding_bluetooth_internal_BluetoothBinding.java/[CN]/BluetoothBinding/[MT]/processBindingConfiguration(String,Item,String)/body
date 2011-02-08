@@ -7,10 +7,26 @@
     entry.put(bindingConfig,item.getName());
     switchItems.put(context,entry);
   }
-  if (item instanceof StringItem && bindingConfig.equals("*")) {
-    stringItems.put(context,item.getName());
+  if (item instanceof StringItem) {
+    if (bindingConfig.equals("!")) {
+      authStringItems.put(context,item.getName());
+    }
+ else     if (bindingConfig.equals("?")) {
+      unauthStringItems.put(context,item.getName());
+    }
+ else     if (bindingConfig.equals("*")) {
+      allStringItems.put(context,item.getName());
+    }
   }
-  if (item instanceof NumberItem && bindingConfig.equals("*")) {
-    measurementItems.put(context,item.getName());
+  if (item instanceof NumberItem) {
+    if (bindingConfig.equals("!")) {
+      authMeasurementItems.put(context,item.getName());
+    }
+ else     if (bindingConfig.equals("?")) {
+      unauthMeasurementItems.put(context,item.getName());
+    }
+ else     if (bindingConfig.equals("*")) {
+      allMeasurementItems.put(context,item.getName());
+    }
   }
 }
