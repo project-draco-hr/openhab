@@ -1,0 +1,26 @@
+{
+  String command=StringUtils.substringBefore(bindingConfig,":").trim();
+  String tmpCommandLine=StringUtils.substringAfter(bindingConfig,":").trim();
+  if (StringUtils.isBlank(command) && StringUtils.isBlank(tmpCommandLine)) {
+    return;
+  }
+  String commandLine;
+  if (tmpCommandLine.startsWith("'")) {
+    commandLine=tmpCommandLine.substring(1).split("(?<!\\\\)'")[0];
+    String tmp=tmpCommandLine.replaceAll(".*(?<!\\\\)',","").trim();
+    if (!tmp.isEmpty()) {
+      parseBindingConfig(tmp,config);
+    }
+  }
+ else {
+    int indexOfComma=tmpCommandLine.indexOf(",");
+    if (indexOfComma == -1) {
+      commandLine=tmpCommandLine;
+    }
+ else {
+      commandLine=tmpCommandLine.substring(0,indexOfComma);
+      parseBindingConfig(tmpCommandLine.substring(indexOfComma + 1),config);
+    }
+  }
+  config.put(command,commandLine);
+}
