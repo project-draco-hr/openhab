@@ -1,20 +1,20 @@
 {
-  ExecBindingProvider firstMatchingPovider=null;
+  ExecBindingProvider firstMatchingProvider=null;
   for (  ExecBindingProvider provider : this.providers) {
     String commandLine=provider.getCommandLine(itemName,command);
     if (commandLine != null) {
-      firstMatchingPovider=provider;
+      firstMatchingProvider=provider;
       break;
     }
   }
-  if (firstMatchingPovider == null) {
+  if (firstMatchingProvider == null) {
     for (    ExecBindingProvider provider : this.providers) {
       String commandLine=provider.getCommandLine(itemName,"*");
       if (commandLine != null) {
-        firstMatchingPovider=provider;
+        firstMatchingProvider=provider;
         break;
       }
     }
   }
-  return firstMatchingPovider;
+  return firstMatchingProvider;
 }
