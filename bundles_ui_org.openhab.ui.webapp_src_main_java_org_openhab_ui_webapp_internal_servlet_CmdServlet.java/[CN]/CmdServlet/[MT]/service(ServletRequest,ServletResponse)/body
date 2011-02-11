@@ -3,16 +3,14 @@
     String itemName=key.toString();
     if (!itemName.startsWith("__")) {
       String commandName=req.getParameter(itemName);
-      EventPublisher publisher=service.getEventPublisher();
-      ItemRegistry registry=service.getItemRegistry();
       try {
-        Item item=registry.getItem(itemName);
+        Item item=itemRegistry.getItem(itemName);
         if (item instanceof SwitchItem && commandName.equals("TOGGLE")) {
           commandName=item.getState().equals(OnOffType.ON) ? "OFF" : "ON";
         }
         Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandName);
         if (command != null) {
-          publisher.sendCommand(itemName,command);
+          eventPublisher.sendCommand(itemName,command);
         }
  else {
           logger.warn("Received unknown command '{}' for item '{}'",commandName,itemName);

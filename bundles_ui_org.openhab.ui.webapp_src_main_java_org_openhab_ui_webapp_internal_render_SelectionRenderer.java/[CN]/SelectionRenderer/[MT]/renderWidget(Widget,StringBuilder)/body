@@ -1,0 +1,24 @@
+{
+  String snippet=getSnippet("selection");
+  snippet=snippet.replaceAll("%icon%",getIcon(w));
+  snippet=snippet.replace("%label_header%",getLabel(w));
+  String state=getState(w).toString();
+  Selection selection=(Selection)w;
+  StringBuilder rowSB=new StringBuilder();
+  for (  Mapping mapping : selection.getMappings()) {
+    String rowSnippet=getSnippet("selection_row");
+    rowSnippet=rowSnippet.replace("%item%",w.getItem());
+    rowSnippet=rowSnippet.replace("%cmd%",mapping.getCmd());
+    rowSnippet=rowSnippet.replace("%label%",mapping.getLabel());
+    if (mapping.getCmd().equals(state)) {
+      rowSnippet=rowSnippet.replace("%checked%","checked=\"true\"");
+    }
+ else {
+      rowSnippet=rowSnippet.replace("%checked%","");
+    }
+    rowSB.append(rowSnippet);
+  }
+  snippet=snippet.replace("%rows%",rowSB.toString());
+  sb.append(snippet);
+  return null;
+}

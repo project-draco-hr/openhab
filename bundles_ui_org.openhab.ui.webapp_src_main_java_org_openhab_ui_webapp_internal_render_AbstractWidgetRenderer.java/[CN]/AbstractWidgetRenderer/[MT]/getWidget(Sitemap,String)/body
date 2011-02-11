@@ -1,0 +1,23 @@
+{
+  if (id.length() > 0) {
+    Widget w=delegatingItemUIProvider.getWidget(id);
+    if (w == null) {
+      w=delegatingItemUIProvider.getDefaultWidget(null,id);
+    }
+    if (w != null) {
+      w.setItem(id);
+      return w;
+    }
+ else {
+      w=sitemap.getChildren().get(Integer.valueOf(id.substring(0,2)));
+      for (int i=2; i < id.length(); i+=2) {
+        w=((LinkableWidget)w).getChildren().get(Integer.valueOf(id.substring(i,i + 2)));
+      }
+      return w;
+    }
+  }
+ else {
+    logger.warn("Cannot find widget for id {}.",id);
+    return null;
+  }
+}

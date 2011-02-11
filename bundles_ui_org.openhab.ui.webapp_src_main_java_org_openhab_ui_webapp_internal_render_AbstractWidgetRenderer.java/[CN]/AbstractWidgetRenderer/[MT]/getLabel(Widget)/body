@@ -1,0 +1,56 @@
+{
+  String label=null;
+  if (w.getLabel() != null) {
+    label=w.getLabel();
+  }
+ else {
+    String itemName=w.getItem();
+    if (itemName != null) {
+      if (delegatingItemUIProvider != null) {
+        label=delegatingItemUIProvider.getLabel(itemName);
+      }
+      if (label == null)       label=itemName;
+    }
+  }
+  if (label == null)   label="";
+  String itemName=w.getItem();
+  if (itemName != null && label.contains("%")) {
+    int indexPercent=label.indexOf("%");
+    int indexSpace=label.indexOf(' ',label.indexOf("%"));
+    if (indexSpace == -1) {
+      indexSpace=label.length();
+    }
+    if (indexSpace - indexPercent > 2 && itemRegistry != null) {
+      String formatPattern=label.substring(indexPercent,indexSpace);
+      try {
+        Item item=itemRegistry.getItem(itemName);
+        State state=item.getState();
+        if (state instanceof UnDefType) {
+          if (label.contains("%s")) {
+            formatPattern=String.format(formatPattern,"undefined");
+          }
+ else           if (label.contains("%d")) {
+            formatPattern=String.format(formatPattern,0);
+          }
+ else {
+            formatPattern=String.format(formatPattern,0f);
+          }
+        }
+ else         if (state instanceof PrimitiveType) {
+          formatPattern=((PrimitiveType)state).format(formatPattern);
+        }
+      }
+ catch (      ItemNotFoundException e) {
+        logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
+      }
+catch (      ItemNotUniqueException e) {
+        logger.error("Item with name '{}' is not unique.",itemName,e);
+      }
+      label=label.substring(0,indexPercent) + formatPattern + label.substring(indexSpace);
+    }
+  }
+  if (label.contains("[") && label.endsWith("]")) {
+    label=label.replaceAll("\\[","<span>").replaceAll("\\]","</span>");
+  }
+  return label;
+}
