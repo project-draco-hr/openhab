@@ -1,0 +1,11 @@
+{
+  HttpBindingConfig config=provider.new HttpBindingConfig();
+  String bindingConfig="[ON:POST:\"http://www.domain.org/home/lights/23871/?status=on&type=\\\"text\\\"\", OFF:GET:\"http://www.domain.org/home/lights/23871/?status=off\"]";
+  provider.parseOutBindingConfig(bindingConfig,config);
+  Assert.assertEquals(true,config.containsKey("ON"));
+  Assert.assertEquals("POST",config.get("ON").httpMethod);
+  Assert.assertEquals("http://www.domain.org/home/lights/23871/?status=on&type=\"text\"",config.get("ON").url);
+  Assert.assertEquals(true,config.containsKey("OFF"));
+  Assert.assertEquals("GET",config.get("OFF").httpMethod);
+  Assert.assertEquals("http://www.domain.org/home/lights/23871/?status=off",config.get("OFF").url);
+}

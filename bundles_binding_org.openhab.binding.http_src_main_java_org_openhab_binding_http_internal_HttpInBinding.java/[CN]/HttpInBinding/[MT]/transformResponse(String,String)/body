@@ -1,0 +1,14 @@
+{
+  String regex=extractRegexTransformation(transformation);
+  Matcher matcher=Pattern.compile("^" + regex + "$",Pattern.DOTALL).matcher(response.trim());
+  if (!matcher.matches() && matcher.groupCount() != 1) {
+    logger.warn("the given regex must contain exactly one group");
+    return null;
+  }
+  matcher.reset();
+  String result=null;
+  while (matcher.find()) {
+    result=matcher.group(1);
+  }
+  return result;
+}

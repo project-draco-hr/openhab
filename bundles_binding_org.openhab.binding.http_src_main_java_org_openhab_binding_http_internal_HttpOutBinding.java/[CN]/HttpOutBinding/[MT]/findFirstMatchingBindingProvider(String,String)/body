@@ -1,0 +1,11 @@
+{
+  HttpBindingProvider firstMatchingProvider=null;
+  for (  HttpBindingProvider provider : this.providers) {
+    String url=provider.getUrl(itemName,command);
+    if (url != null) {
+      firstMatchingProvider=provider;
+      break;
+    }
+  }
+  return firstMatchingProvider;
+}

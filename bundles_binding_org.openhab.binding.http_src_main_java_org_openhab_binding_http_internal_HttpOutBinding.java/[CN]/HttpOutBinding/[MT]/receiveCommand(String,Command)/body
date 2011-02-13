@@ -1,0 +1,15 @@
+{
+  if (!providesBindingFor(itemName)) {
+    return;
+  }
+  HttpBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  if (provider == null) {
+    logger.warn("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  String httpMethod=provider.getHttpMethod(itemName,command.toString());
+  String url=provider.getUrl(itemName,command.toString());
+  if (StringUtils.isNotBlank(httpMethod) && StringUtils.isNotBlank(url)) {
+    HttpUtil.executeUrl(httpMethod,url,SO_TIMEOUT);
+  }
+}

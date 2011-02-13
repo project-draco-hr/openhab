@@ -1,0 +1,15 @@
+{
+  HttpBindingConfig config=new HttpBindingConfig();
+  String direction=StringUtils.substring(bindingConfig,0,1);
+  String bindingConfigTail=StringUtils.substring(bindingConfig,1);
+  if (direction.equals("<")) {
+    config=parseInBindingConfig(bindingConfigTail,config);
+  }
+ else   if (direction.equals(">")) {
+    config=parseOutBindingConfig(bindingConfigTail,config);
+  }
+ else {
+    throw new BindingConfigParseException("Unknown command given! Configuration must start with '<' or '>' ");
+  }
+  addBindingConfig(item,config);
+}

@@ -1,0 +1,16 @@
+{
+  Matcher matcher=Pattern.compile("\\[?\"(.*?)(?<!\\\\)\":(\\d*):\"(.*?)(?<!\\\\)\"\\]?").matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid in-binding-configuration");
+  }
+  matcher.reset();
+  HttpBindingConfigElement configElement;
+  while (matcher.find()) {
+    configElement=new HttpBindingConfigElement();
+    configElement.url=matcher.group(1).replaceAll("(?<!\\\\)\\\\","");
+    configElement.refreshInterval=Integer.valueOf(matcher.group(2)).intValue();
+    configElement.transformation=matcher.group(3);
+    config.put(IN_BINDING_KEY,configElement);
+  }
+  return config;
+}

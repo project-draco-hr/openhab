@@ -1,0 +1,17 @@
+{
+  if ("GET".equals(httpMethodString)) {
+    return new GetMethod(url);
+  }
+ else   if ("PUT".equals(httpMethodString)) {
+    return new PutMethod(url);
+  }
+ else   if ("POST".equals(httpMethodString)) {
+    return new PostMethod(url);
+  }
+ else   if ("DELETE".equals(httpMethodString)) {
+    return new DeleteMethod(url);
+  }
+ else {
+    throw new IllegalArgumentException("given httpMethod '" + httpMethodString + "' is unknown");
+  }
+}
