@@ -1,0 +1,13 @@
+{
+  logger.debug("XMPP connection has been closed on error.",e);
+  try {
+    if (!connection.isConnected()) {
+      initialized=false;
+      getConnection();
+    }
+    logger.debug("XMPP re-connection succeeded.");
+  }
+ catch (  NotInitializedException nie) {
+    logger.debug("XMPP re-connection failed, giving up.",nie);
+  }
+}

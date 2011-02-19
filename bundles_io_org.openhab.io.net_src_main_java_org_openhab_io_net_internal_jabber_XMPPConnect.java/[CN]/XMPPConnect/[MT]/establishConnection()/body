@@ -1,12 +1,16 @@
 {
   if (servername != null) {
     ConnectionConfiguration config=new ConnectionConfiguration(servername,port);
+    if (connection != null && connection.isConnected()) {
+      connection.disconnect();
+    }
     connection=new XMPPConnection(config);
     try {
       connection.connect();
       connection.login(username,password);
       if (consoleUsers.length > 0) {
         connection.getChatManager().addChatListener(new XMPPConsole(consoleUsers));
+        connection.addConnectionListener(new XMPPConnectionListener());
       }
       logger.debug("Connection to XMPP as '{}' has been established.",username);
       initialized=true;
