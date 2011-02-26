@@ -1,0 +1,24 @@
+{
+  for (  HttpBindingProvider provider : providers) {
+    for (    String itemName : provider.getInBindingItemNames()) {
+      String url=provider.getUrl(itemName);
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      String transformation=provider.getTransformation(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        logger.debug("item '{}' is about to be refreshed now",itemName);
+        String response=HttpUtil.executeUrl("GET",url,timeout);
+        String transformedResponse=transformResponse(transformation,response);
+        String abbreviatedResponse=StringUtils.abbreviate(transformedResponse,256);
+        logger.debug("transformed response is '{}'",transformedResponse);
+        eventPublisher.postUpdate(itemName,StringType.valueOf(abbreviatedResponse));
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}

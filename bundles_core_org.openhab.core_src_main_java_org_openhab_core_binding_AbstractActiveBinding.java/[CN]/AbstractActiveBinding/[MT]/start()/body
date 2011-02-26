@@ -1,0 +1,11 @@
+{
+  if (this.refreshThread == null) {
+    this.refreshThread=new RefreshThread(getName(),getRefreshInterval());
+    this.refreshThread.start();
+  }
+ else {
+    if (!this.refreshThread.isAlive()) {
+      this.refreshThread.start();
+    }
+  }
+}

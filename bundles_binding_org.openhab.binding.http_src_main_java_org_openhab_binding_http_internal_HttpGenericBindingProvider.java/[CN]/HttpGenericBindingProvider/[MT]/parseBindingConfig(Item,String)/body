@@ -1,15 +1,22 @@
 {
   HttpBindingConfig config=new HttpBindingConfig();
-  String direction=StringUtils.substring(bindingConfig,0,1);
-  String bindingConfigTail=StringUtils.substring(bindingConfig,1);
-  if (direction.equals("<")) {
-    config=parseInBindingConfig(bindingConfigTail,config);
+  Matcher matcher=Pattern.compile("(<|>)\\[(.*?)\\]").matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid binding configuration");
   }
- else   if (direction.equals(">")) {
-    config=parseOutBindingConfig(bindingConfigTail,config);
-  }
+  matcher.reset();
+  while (matcher.find()) {
+    String direction=matcher.group(1);
+    String bindingConfigPart=matcher.group(2);
+    if (direction.equals("<")) {
+      config=parseInBindingConfig(item,bindingConfigPart,config);
+    }
+ else     if (direction.equals(">")) {
+      config=parseOutBindingConfig(item,bindingConfigPart,config);
+    }
  else {
-    throw new BindingConfigParseException("Unknown command given! Configuration must start with '<' or '>' ");
+      throw new BindingConfigParseException("Unknown command given! Configuration must start with '<' or '>' ");
+    }
   }
-  addBindingConfig(item,config);
+  return config;
 }

@@ -1,0 +1,15 @@
+{
+  Matcher matcher=Pattern.compile("http://(.*?):(.*?)@.*").matcher(url);
+  if (matcher.matches()) {
+    matcher.reset();
+    String username="";
+    String password="";
+    while (matcher.find()) {
+      username=matcher.group(1);
+      password=matcher.group(2);
+    }
+    Credentials credentials=new UsernamePasswordCredentials(username,password);
+    return credentials;
+  }
+  return null;
+}

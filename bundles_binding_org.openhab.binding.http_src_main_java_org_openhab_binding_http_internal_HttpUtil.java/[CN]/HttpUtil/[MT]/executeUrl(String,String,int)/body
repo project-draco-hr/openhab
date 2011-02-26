@@ -3,6 +3,10 @@
   HttpMethod method=HttpUtil.createHttpMethod(httpMethod,url);
   method.getParams().setSoTimeout(timeout);
   method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  Credentials credentials=extractCredentials(url);
+  if (credentials != null) {
+    client.getState().setCredentials(AuthScope.ANY,credentials);
+  }
   if (logger.isDebugEnabled()) {
     try {
       logger.debug("About to execute '" + method.getURI().toString() + "'");
