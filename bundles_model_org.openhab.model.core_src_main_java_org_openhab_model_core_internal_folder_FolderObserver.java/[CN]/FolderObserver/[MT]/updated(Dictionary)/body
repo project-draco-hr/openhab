@@ -1,5 +1,9 @@
 {
   if (config != null) {
+    lastFileNames.clear();
+    lastCheckedMap.clear();
+    folderFileExtMap.clear();
+    folderRefreshMap.clear();
     Enumeration keys=config.keys();
     while (keys.hasMoreElements()) {
       String foldername=(String)keys.nextElement();
@@ -17,7 +21,9 @@
               this.start();
             }
  else {
-              checkFolder(foldername);
+synchronized (this) {
+                notify();
+              }
             }
           }
  else {
@@ -26,7 +32,7 @@
           }
         }
  else {
-          logger.warn("Directory '{}' does not exist in '{}'. Please check your configuration settings!",foldername,ConfigConstants.MAIN_CONFIG_FOLDER);
+          logger.warn("Directory '{}' does not exist in '{}'. Please check your configuration settings!",foldername,ConfigDispatcher.getConfigFolder());
         }
         Integer[] refreshValues=folderRefreshMap.values().toArray(new Integer[0]);
         if (refreshValues.length > 0) {

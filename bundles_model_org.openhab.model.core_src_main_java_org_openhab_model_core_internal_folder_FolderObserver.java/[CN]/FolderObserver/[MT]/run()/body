@@ -13,7 +13,9 @@
     }
     try {
       if (gcdRefresh <= 0)       break;
-      sleep(gcdRefresh * 1000L);
+synchronized (this) {
+        wait(gcdRefresh * 1000L);
+      }
     }
  catch (    InterruptedException e) {
       break;

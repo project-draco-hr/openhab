@@ -5,8 +5,14 @@
   String selection=dialog.open();
   if (selection != null) {
     try {
-      ConfigurationFolderProvider.setRootConfigurationFolder(new File(selection));
-      viewer.setInput(ConfigurationFolderProvider.getRootConfigurationFolder());
+      File file=new File(selection);
+      if (isValidConfigurationFolder(file)) {
+        ConfigurationFolderProvider.setRootConfigurationFolder(new File(selection));
+        viewer.setInput(ConfigurationFolderProvider.getRootConfigurationFolder());
+      }
+ else {
+        MessageDialog.openError(shell,"No valid configuration directory","The chosen directory is not a valid openHAB configuration" + " directory. Please choose a different one.");
+      }
     }
  catch (    CoreException e) {
       IStatus status=new Status(IStatus.ERROR,UIActivator.PLUGIN_ID,"An error occurred while opening the configuration folder",e);

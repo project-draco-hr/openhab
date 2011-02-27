@@ -1,12 +1,15 @@
 {
   File folder=getFolder(foldername);
+  if (!folder.exists()) {
+    return;
+  }
   String[] extensions=folderFileExtMap.get(foldername);
   Set<String> currentFileNames=new HashSet<String>();
   for (  File file : folder.listFiles()) {
     if (file.isDirectory())     continue;
     if (!file.getName().contains("."))     continue;
     if (file.getName().startsWith("."))     continue;
-    String fileExt=file.getName().substring(file.getName().lastIndexOf(".") + 1);
+    String fileExt=getExtension(file.getName());
     if (extensions != null && extensions.length > 0 && !ArrayUtils.contains(extensions,fileExt))     continue;
     currentFileNames.add(file.getName());
     Long timeLastCheck=lastCheckedMap.get(file.getName());
