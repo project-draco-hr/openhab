@@ -1,5 +1,5 @@
 {
-  Matcher matcher=Pattern.compile("([A-Z]*):([A-Z]*):(.*)").matcher(bindingConfig);
+  Matcher matcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
   if (!matcher.matches()) {
     throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid in-binding-configuration");
   }
@@ -8,7 +8,7 @@
   while (matcher.find()) {
     configElement=new HttpBindingConfigElement();
     String commandAsString=matcher.group(1);
-    Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
+    Command command=createCommandFromString(item,commandAsString);
     configElement.httpMethod=matcher.group(2);
     configElement.url=matcher.group(3).replaceAll("\\\\\"","");
     config.put(command,configElement);
