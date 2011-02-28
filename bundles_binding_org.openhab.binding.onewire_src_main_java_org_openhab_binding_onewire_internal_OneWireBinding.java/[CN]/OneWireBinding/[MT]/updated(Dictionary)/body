@@ -1,15 +1,15 @@
 {
   if (config != null) {
-    OneWireRefreshService.ip=(String)config.get("ip");
+    OneWireBinding.ip=(String)config.get("ip");
     String portString=(String)config.get("port");
     if (portString != null && !portString.isEmpty()) {
-      OneWireRefreshService.port=Integer.parseInt(portString);
+      OneWireBinding.port=Integer.parseInt(portString);
     }
     String refreshIntervalString=(String)config.get("refresh");
     if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
-      OneWireRefreshService.refreshInterval=Long.parseLong(refreshIntervalString);
+      OneWireBinding.refreshInterval=Long.parseLong(refreshIntervalString);
     }
-    connect(OneWireRefreshService.ip,OneWireRefreshService.port);
+    connect(OneWireBinding.ip,OneWireBinding.port);
     start();
   }
 }
