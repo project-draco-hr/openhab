@@ -6,9 +6,14 @@
     return null;
   }
   matcher.reset();
-  String result=null;
+  String result="";
   while (matcher.find()) {
-    result=matcher.group(1);
+    if (matcher.groupCount() == 1) {
+      result=matcher.group(1);
+    }
+ else {
+      logger.warn("the given regular expression '" + transformation + "' must contain exactly one group -> couldn't compute transformation");
+    }
   }
   return result;
 }

@@ -16,7 +16,9 @@
         String transformedResponse=transformResponse(transformation,response);
         String abbreviatedResponse=StringUtils.abbreviate(transformedResponse,256);
         logger.debug("transformed response is '{}'",transformedResponse);
-        eventPublisher.postUpdate(itemName,StringType.valueOf(abbreviatedResponse));
+        Item item=getItemFromItemName(itemName);
+        State state=createState(item,abbreviatedResponse);
+        eventPublisher.postUpdate(itemName,state);
         lastUpdateMap.put(itemName,System.currentTimeMillis());
       }
     }
