@@ -1,0 +1,23 @@
+{
+  for (  NetworkHealthBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String hostname=provider.getHostname(itemName);
+      int port=provider.getPort(itemName);
+      if (provider.getTimeout(itemName) > 0) {
+        timeout=provider.getTimeout(itemName);
+      }
+      boolean success=false;
+      try {
+        success=checkReachability(hostname,port,timeout);
+        logger.debug("established connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
+      }
+ catch (      SocketTimeoutException se) {
+        logger.debug("timed out while connecting to host '{}' port '{}' timeout '{}'",new Object[]{hostname,port,timeout});
+      }
+catch (      IOException ioe) {
+        logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
+      }
+      eventPublisher.postUpdate(itemName,success ? OnOffType.ON : OnOffType.OFF);
+    }
+  }
+}
