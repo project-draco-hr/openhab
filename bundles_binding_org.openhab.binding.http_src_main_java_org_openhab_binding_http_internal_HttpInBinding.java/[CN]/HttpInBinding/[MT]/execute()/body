@@ -13,7 +13,20 @@
       if (needsUpdate) {
         logger.debug("item '{}' is about to be refreshed now",itemName);
         String response=HttpUtil.executeUrl("GET",url,timeout);
-        String transformedResponse=transformResponse(transformation,response);
+        String transformedResponse;
+        try {
+          if (transformationService != null) {
+            transformedResponse=transformationService.transform(transformation,response);
+          }
+ else {
+            transformedResponse=response;
+            logger.warn("couldn't transform response because transformationService is unavailable");
+          }
+        }
+ catch (        TransformationException te) {
+          logger.error("transformation throws exception [transformation=" + transformation + ", response="+ response+ "]",te);
+          transformedResponse=response;
+        }
         String abbreviatedResponse=StringUtils.abbreviate(transformedResponse,256);
         logger.debug("transformed response is '{}'",transformedResponse);
         Item item=getItemFromItemName(itemName);

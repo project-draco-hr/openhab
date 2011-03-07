@@ -1,0 +1,29 @@
+{
+  if (filename == null || source == null) {
+    throw new TransformationException("the given parameters 'filename' and 'source' must not be null");
+  }
+  Source xsl=null;
+  try {
+    String path=ConfigDispatcher.getConfigFolder() + File.pathSeparator + filename;
+    xsl=new StreamSource(new File(path));
+  }
+ catch (  Exception e) {
+    String message="opening file '" + filename + "' throws exception";
+    logger.error(message,e);
+    throw new TransformationException(message,e);
+  }
+  logger.debug("about to transform '{}' by the function '{}'",source,xsl);
+  StringReader xml=new StringReader(source);
+  StringWriter out=new StringWriter();
+  Transformer transformer;
+  try {
+    transformer=TransformerFactory.newInstance().newTransformer(xsl);
+    transformer.transform(new StreamSource(xml),new StreamResult(out));
+  }
+ catch (  Exception e) {
+    logger.error("transformation throws exception",e);
+    throw new TransformationException("transformation throws exception",e);
+  }
+  logger.debug("transformation resulted in '{}'",out.toString());
+  return out.toString();
+}
