@@ -1,5 +1,10 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  HttpBindingConfig config=parseBindingConfig(item,bindingConfig);
-  addBindingConfig(item,config);
+  if (bindingConfig != null) {
+    HttpBindingConfig config=parseBindingConfig(item,bindingConfig);
+    addBindingConfig(item,config);
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> process bindingConfig aborted!");
+  }
 }
