@@ -15,12 +15,16 @@
         String response=HttpUtil.executeUrl("GET",url,timeout);
         String transformedResponse;
         try {
-          if (tsAggregator != null) {
-            transformedResponse=tsAggregator.transform(transformation,response);
+          String[] parts=splitTransformationConfig(transformation);
+          String transformationType=parts[0];
+          String transformationFunction=parts[1];
+          TransformationService transformationService=getTransformationService(transformationType);
+          if (transformationService != null) {
+            transformedResponse=transformationService.transform(transformationFunction,response);
           }
  else {
             transformedResponse=response;
-            logger.warn("couldn't transform response because transformationService is unavailable");
+            logger.warn("couldn't transform response because transformationService of type '{}' is unavailable",transformationType);
           }
         }
  catch (        TransformationException te) {

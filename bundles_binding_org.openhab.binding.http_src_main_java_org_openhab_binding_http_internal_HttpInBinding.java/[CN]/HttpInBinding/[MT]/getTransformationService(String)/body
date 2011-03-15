@@ -1,0 +1,19 @@
+{
+  BundleContext context=HttpActivator.getContext();
+  if (context != null) {
+    String filter="(openhab.transform=" + transformationType + ")";
+    try {
+      ServiceReference[] refs=context.getServiceReferences(TransformationService.class.getName(),filter);
+      if (refs != null && refs.length > 0) {
+        return (TransformationService)context.getService(refs[0]);
+      }
+ else {
+        logger.warn("Cannot get service reference for transformation service of type " + transformationType);
+      }
+    }
+ catch (    InvalidSyntaxException e) {
+      logger.warn("Cannot get service reference for transformation service of type " + transformationType,e);
+    }
+  }
+  return null;
+}
