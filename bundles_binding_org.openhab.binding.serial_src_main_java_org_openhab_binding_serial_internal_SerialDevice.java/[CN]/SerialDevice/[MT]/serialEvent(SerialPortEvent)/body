@@ -11,24 +11,20 @@ case SerialPortEvent.RI:
 case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
     break;
 case SerialPortEvent.DATA_AVAILABLE:
-  byte[] readBuffer=new byte[20];
-try {
-  while (inputStream.available() > 0) {
-    inputStream.read(readBuffer);
+  try {
+    String result=IOUtils.toString(inputStream);
+    logger.debug("Received message '{}' on serial port {}",new String[]{result,port});
+    if (eventPublisher != null && stringItemName != null) {
+      eventPublisher.postUpdate(stringItemName,new StringType(result));
+    }
+    if (eventPublisher != null && switchItemName != null && result.trim().isEmpty()) {
+      eventPublisher.postUpdate(switchItemName,OnOffType.ON);
+      eventPublisher.postUpdate(switchItemName,OnOffType.OFF);
+    }
   }
-  String result=new String(readBuffer);
-  logger.debug("Received message '{}' on serial port {}",new String[]{result,port});
-  if (eventPublisher != null && stringItemName != null) {
-    eventPublisher.postUpdate(stringItemName,new StringType(result));
+ catch (  IOException e) {
+    logger.debug("Error receiving data on serial port {}: {}",new String[]{port,e.getMessage()});
   }
-  if (eventPublisher != null && switchItemName != null && result.trim().isEmpty()) {
-    eventPublisher.postUpdate(switchItemName,OnOffType.ON);
-    eventPublisher.postUpdate(switchItemName,OnOffType.OFF);
-  }
-}
- catch (IOException e) {
-  logger.debug("Error receiving data on serial port {}: {}",new String[]{port,e.getMessage()});
-}
 break;
 }
 }

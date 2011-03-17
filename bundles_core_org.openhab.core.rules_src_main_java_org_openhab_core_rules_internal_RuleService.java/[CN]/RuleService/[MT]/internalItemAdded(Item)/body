@@ -1,2 +1,22 @@
 {
+  if (item == null) {
+    logger.debug("Item must not be null here!");
+    return;
+  }
+  FactHandle handle=factHandleMap.get(item.getName());
+  if (handle != null) {
+    try {
+      ksession.update(handle,item);
+    }
+ catch (    NullPointerException e) {
+    }
+  }
+ else {
+    handle=ksession.insert(item);
+    factHandleMap.put(item.getName(),handle);
+    if (item instanceof GenericItem) {
+      GenericItem genericItem=(GenericItem)item;
+      genericItem.addStateChangeListener(this);
+    }
+  }
 }
