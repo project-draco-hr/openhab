@@ -1,0 +1,19 @@
+{
+  if (widget instanceof Frame) {
+    return;
+  }
+  boolean containsFrames=false;
+  boolean containsOtherWidgets=false;
+  for (  Widget w : widget.getChildren()) {
+    if (w instanceof Frame) {
+      containsFrames=true;
+    }
+ else {
+      containsOtherWidgets=true;
+    }
+    if (containsFrames && containsOtherWidgets) {
+      error("Linkable widget should contain either only frames or none at all",SitemapPackage.LINKABLE_WIDGET__CHILDREN);
+      break;
+    }
+  }
+}

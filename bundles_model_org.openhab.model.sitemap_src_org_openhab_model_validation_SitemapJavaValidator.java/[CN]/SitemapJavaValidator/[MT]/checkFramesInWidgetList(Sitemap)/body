@@ -1,0 +1,16 @@
+{
+  boolean containsFrames=false;
+  boolean containsOtherWidgets=false;
+  for (  Widget w : sitemap.getChildren()) {
+    if (w instanceof Frame) {
+      containsFrames=true;
+    }
+ else {
+      containsOtherWidgets=true;
+    }
+    if (containsFrames && containsOtherWidgets) {
+      error("Sitemap should contain either only frames or none at all",SitemapPackage.SITEMAP__CHILDREN);
+      break;
+    }
+  }
+}
