@@ -2,7 +2,12 @@
   if (itemRegistry != null) {
     try {
       GenericItem item=(GenericItem)itemRegistry.getItem(itemName);
-      item.setState(newStatus);
+      if (item.getAcceptedDataTypes().contains(newStatus.getClass())) {
+        item.setState(newStatus);
+      }
+ else {
+        logger.debug("Received update of a not accepted type (" + newStatus.getClass().getSimpleName() + ") for item "+ itemName);
+      }
     }
  catch (    ItemNotFoundException e) {
       logger.debug("Received update for non-existing item: {}",e.getMessage());

@@ -14,7 +14,18 @@
   if (!icon.contains("-")) {
     Object state=getState(w);
     if (!state.equals(UnDefType.UNDEF)) {
-      icon+="-" + state.toString().toLowerCase();
+      if (state instanceof PercentType) {
+        int iconState=((PercentType)state).toBigDecimal().intValue();
+        String testIcon;
+        do {
+          testIcon=icon + "-" + String.valueOf(iconState--);
+        }
+ while (!iconExists(testIcon) && iconState >= 0);
+        icon=testIcon;
+      }
+ else {
+        icon+="-" + state.toString().toLowerCase();
+      }
     }
   }
   if (iconExists(icon) || !icon.contains("-")) {

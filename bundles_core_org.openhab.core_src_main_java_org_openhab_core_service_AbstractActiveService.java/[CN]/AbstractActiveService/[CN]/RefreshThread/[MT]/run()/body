@@ -1,0 +1,11 @@
+{
+  while (!interrupted) {
+    try {
+      execute();
+    }
+ catch (    RuntimeException e) {
+      logger.error("Error while executing background thread " + getName(),e);
+    }
+    pause(refreshInterval);
+  }
+}

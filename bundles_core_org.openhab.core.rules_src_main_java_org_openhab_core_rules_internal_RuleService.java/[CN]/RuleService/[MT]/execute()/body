@@ -1,0 +1,17 @@
+{
+  final Calendar cal=GregorianCalendar.getInstance();
+  ksession.fireAllRules();
+  Collection<FactHandle> handles=ksession.getFactHandles(new ObjectFilter(){
+    public boolean accept(    Object obj){
+      if (obj instanceof RuleEvent) {
+        RuleEvent event=(RuleEvent)obj;
+        return event.getTimestamp().before(cal);
+      }
+      return false;
+    }
+  }
+);
+  for (  FactHandle handle : handles) {
+    ksession.retract(handle);
+  }
+}
