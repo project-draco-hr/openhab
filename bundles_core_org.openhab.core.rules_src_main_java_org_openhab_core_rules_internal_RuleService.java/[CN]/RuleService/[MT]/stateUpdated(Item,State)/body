@@ -1,15 +1,10 @@
 {
   if (ksession != null && item != null) {
-    FactHandle handle=factHandleMap.get(item.getName());
-    if (handle != null) {
-      if (item instanceof GenericItem) {
-        GenericItem genericItem=(GenericItem)item;
-        genericItem.setUpdated(true);
-        ksession.update(handle,item);
-        ksession.fireAllRules();
-        genericItem.setUpdated(false);
-        ksession.update(handle,item);
-      }
+    FactHandle factHandle=factHandleMap.get(item.getName());
+    if (factHandle != null) {
+      ksession.update(factHandle,item);
+      StateEvent event=new StateEvent(item,state);
+      ksession.insert(event);
     }
   }
 }
