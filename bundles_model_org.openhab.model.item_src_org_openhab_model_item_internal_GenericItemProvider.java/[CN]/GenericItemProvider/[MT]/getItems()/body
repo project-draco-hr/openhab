@@ -7,35 +7,64 @@
       for (      BindingConfigReader reader : bindingConfigReaders.values()) {
         reader.removeConfigurations(modelName);
       }
-      for (      org.openhab.model.items.Item modelItem : model.getItems()) {
+      for (      ModelItem modelItem : model.getItems()) {
         Item item=null;
-        if (modelItem instanceof GroupItem) {
-          GroupItem groupItem=(GroupItem)modelItem;
-          item=new org.openhab.core.items.GroupItem(groupItem.getName());
-          items.put(groupItem.getName(),item);
-        }
+        if (modelItem instanceof ModelGroupItem) {
+          ModelGroupItem modelGroupItem=(ModelGroupItem)modelItem;
+          String baseItemType=modelGroupItem.getType();
+          Item baseItem=getItemOfType(baseItemType,modelGroupItem.getName());
+          if (baseItem != null) {
+            ModelGroupFunction function=modelGroupItem.getFunction();
+            if (function == null) {
+              item=new GroupItem(modelGroupItem.getName(),baseItem);
+            }
  else {
-          NormalItem normalItem=(NormalItem)modelItem;
-          String itemName=normalItem.getName();
-          if (normalItem.getType().equals("Switch"))           item=new SwitchItem(itemName);
-          if (normalItem.getType().equals("Rollershutter"))           item=new RollershutterItem(itemName);
-          if (normalItem.getType().equals("Contact"))           item=new ContactItem(itemName);
-          if (normalItem.getType().equals("String"))           item=new StringItem(itemName);
-          if (normalItem.getType().equals("Number"))           item=new NumberItem(itemName);
-          if (normalItem.getType().equals("Dimmer"))           item=new DimmerItem(itemName);
-          if (item != null)           items.put(itemName,item);
-        }
-        if (item != null) {
-          dispatchBindings(modelName,item,modelItem.getBindings());
-        }
-      }
-      for (      org.openhab.model.items.Item modelItem : model.getItems()) {
-        for (        GroupItem groupItem : modelItem.getGroups()) {
-          org.openhab.core.items.GroupItem group=(org.openhab.core.items.GroupItem)items.get(groupItem.getName());
-          group.addMember(items.get(modelItem.getName()));
-        }
-      }
+              State activeState=TypeParser.parseState(baseItem.getAcceptedDataTypes(),modelGroupItem.getActiveState());
+              State passiveState=TypeParser.parseState(baseItem.getAcceptedDataTypes(),modelGroupItem.getPassiveState());
+              if (activeState == null) {
+                logger.warn("State '" + modelGroupItem.getActiveState() + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
+              }
+              if (passiveState == null) {
+                logger.warn("State '" + modelGroupItem.getPassiveState() + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
+              }
+              GroupFunction groupFunction;
+switch (function) {
+case AND:
+                groupFunction=new GroupFunction.And(activeState,passiveState);
+              break;
+case OR:
+            groupFunction=new GroupFunction.Or(activeState,passiveState);
+          break;
+default :
+        groupFunction=new GroupFunction.UnDef();
     }
+    item=new GroupItem(modelGroupItem.getName(),baseItem,groupFunction);
   }
-  return items.values();
+}
+ else {
+  item=new GroupItem(modelGroupItem.getName());
+}
+if (item != null) {
+  items.put(modelGroupItem.getName(),item);
+}
+}
+ else {
+ModelNormalItem normalItem=(ModelNormalItem)modelItem;
+String itemName=normalItem.getName();
+item=getItemOfType(normalItem.getType(),itemName);
+if (item != null) items.put(itemName,item);
+}
+if (item != null) {
+dispatchBindings(modelName,item,modelItem.getBindings());
+}
+}
+for (ModelItem modelItem : model.getItems()) {
+for (ModelGroupItem groupItem : modelItem.getGroups()) {
+GroupItem group=(GroupItem)items.get(groupItem.getName());
+group.addMember(items.get(modelItem.getName()));
+}
+}
+}
+}
+return items.values();
 }
