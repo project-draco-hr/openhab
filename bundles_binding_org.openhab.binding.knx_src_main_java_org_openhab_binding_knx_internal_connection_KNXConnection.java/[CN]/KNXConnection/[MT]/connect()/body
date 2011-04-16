@@ -1,12 +1,17 @@
 {
-  if (ip != null && !ip.isEmpty()) {
+  if ((ip != null && !ip.isEmpty()) || (port != null && !port.isEmpty())) {
     try {
-      link=new KNXNetworkLinkIP(ip,new KNXMediumSettings(null){
-        public short getMedium(){
-          return KNXMediumSettings.MEDIUM_TP1;
+      if (ip != null) {
+        link=new KNXNetworkLinkIP(ip,new KNXMediumSettings(null){
+          public short getMedium(){
+            return KNXMediumSettings.MEDIUM_TP1;
+          }
         }
-      }
 );
+      }
+ else {
+        link=new KNXNetworkLinkFT12(Integer.parseInt(port),new TPSettings(true));
+      }
       link.addLinkListener(new NetworkLinkListener(){
         public void linkClosed(        CloseEvent e){
           if (!e.isUserRequest()) {
@@ -39,6 +44,6 @@
     }
   }
  else {
-    logger.error("No IP address could be found in configuration!");
+    logger.error("No IP address or serial port could be found in configuration!");
   }
 }
