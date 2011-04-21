@@ -12,40 +12,66 @@
         if (modelItem instanceof ModelGroupItem) {
           ModelGroupItem modelGroupItem=(ModelGroupItem)modelItem;
           String baseItemType=modelGroupItem.getType();
-          Item baseItem=getItemOfType(baseItemType,modelGroupItem.getName());
+          GenericItem baseItem=getItemOfType(baseItemType,modelGroupItem.getName());
           if (baseItem != null) {
             ModelGroupFunction function=modelGroupItem.getFunction();
             if (function == null) {
               item=new GroupItem(modelGroupItem.getName(),baseItem);
             }
  else {
-              State activeState=TypeParser.parseState(baseItem.getAcceptedDataTypes(),modelGroupItem.getActiveState());
-              State passiveState=TypeParser.parseState(baseItem.getAcceptedDataTypes(),modelGroupItem.getPassiveState());
-              if (activeState == null) {
-                logger.warn("State '" + modelGroupItem.getActiveState() + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
+              List<State> args=new ArrayList<State>();
+              for (              String arg : modelGroupItem.getArgs()) {
+                State state=TypeParser.parseState(baseItem.getAcceptedDataTypes(),arg);
+                if (state == null) {
+                  logger.warn("State '" + arg + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
+                  args.clear();
+                  break;
+                }
+ else {
+                  args.add(state);
+                }
               }
-              if (passiveState == null) {
-                logger.warn("State '" + modelGroupItem.getPassiveState() + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
-              }
-              GroupFunction groupFunction;
+              GroupFunction groupFunction=null;
 switch (function) {
 case AND:
-                groupFunction=new GroupFunction.And(activeState,passiveState);
-              break;
+                if (args.size() == 2) {
+                  groupFunction=new ArithmeticGroupFunction.And(args.get(0),args.get(1));
+                  break;
+                }
+ else {
+                  logger.error("Group function 'AND' requires two arguments. Using Equality instead.");
+                }
 case OR:
-            groupFunction=new GroupFunction.Or(activeState,passiveState);
+              if (args.size() == 2) {
+                groupFunction=new ArithmeticGroupFunction.Or(args.get(0),args.get(1));
+                break;
+              }
+ else {
+                logger.error("Group function 'OR' requires two arguments. Using Equality instead.");
+              }
+case AVG:
+            groupFunction=new ArithmeticGroupFunction.Avg();
           break;
+case MIN:
+        groupFunction=new ArithmeticGroupFunction.Min();
+      break;
+case MAX:
+    groupFunction=new ArithmeticGroupFunction.Max();
+  break;
 default :
-        groupFunction=new GroupFunction.UnDef();
-    }
-    item=new GroupItem(modelGroupItem.getName(),baseItem,groupFunction);
-  }
+logger.error("Unknown group function '" + function.getName() + "'. Using Equality instead.");
+}
+if (groupFunction == null) {
+groupFunction=new GroupFunction.Equality();
+}
+item=new GroupItem(modelGroupItem.getName(),baseItem,groupFunction);
+}
 }
  else {
-  item=new GroupItem(modelGroupItem.getName());
+item=new GroupItem(modelGroupItem.getName());
 }
 if (item != null) {
-  items.put(modelGroupItem.getName(),item);
+items.put(modelGroupItem.getName(),item);
 }
 }
  else {

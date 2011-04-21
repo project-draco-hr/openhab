@@ -24,8 +24,14 @@
       String formatPattern=label.substring(indexPercent,indexSpace);
       try {
         Item item=itemRegistry.getItem(itemName);
-        State state=item.getState();
-        if (state instanceof UnDefType) {
+        State state;
+        if (label.contains("%s")) {
+          state=item.getState();
+        }
+ else {
+          state=item.getStateAs(DecimalType.class);
+        }
+        if (state == null || state instanceof UnDefType) {
           if (label.contains("%s")) {
             formatPattern=String.format(formatPattern,"undefined");
           }
