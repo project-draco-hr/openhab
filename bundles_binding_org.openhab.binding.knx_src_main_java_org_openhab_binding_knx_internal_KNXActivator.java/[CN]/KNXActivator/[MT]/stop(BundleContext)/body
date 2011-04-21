@@ -1,3 +1,11 @@
 {
+  ProcessCommunicator pc=KNXConnection.getCommunicator();
+  if (pc != null) {
+    KNXNetworkLink link=pc.detach();
+    if (link != null) {
+      logger.info("Closing KNX connection");
+      link.close();
+    }
+  }
   logger.debug("KNX binding has been stopped.");
 }
