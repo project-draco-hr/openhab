@@ -1,12 +1,12 @@
 {
   String bindingConfig=">[ON:POST:http://www.domain.org:1234/home/lights/23871/?status=on&type=\"text\"] >[OFF:GET:http://www.domain.org:1234/home/lights/23871/?status=off] <[http://www.google.com:1234/ig/api?weather=Krefeld+Germany&hl=de:60000:REGEX(.*?<current_conditions>.*?<temp_c data=\\\"(.*?)\\\".*)]";
   Item testItem=new GenericItem("TEST"){
-    @Override public List<Class<? extends State>> getAcceptedDataTypes(){
+    public List<Class<? extends State>> getAcceptedDataTypes(){
       List<Class<? extends State>> list=new ArrayList<Class<? extends State>>();
       list.add(StringType.class);
       return list;
     }
-    @Override public List<Class<? extends Command>> getAcceptedCommandTypes(){
+    public List<Class<? extends Command>> getAcceptedCommandTypes(){
       List<Class<? extends Command>> list=new ArrayList<Class<? extends Command>>();
       list.add(StringType.class);
       return list;
