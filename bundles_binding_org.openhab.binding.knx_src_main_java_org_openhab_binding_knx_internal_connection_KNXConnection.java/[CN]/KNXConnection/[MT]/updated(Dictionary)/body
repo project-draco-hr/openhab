@@ -1,6 +1,14 @@
 {
   if (config != null) {
     ip=(String)config.get("ip");
+    String portConfig=(String)config.get("port");
+    if (portConfig != null && !portConfig.isEmpty()) {
+      port=Integer.parseInt(portConfig);
+    }
+ else {
+      port=KNXnetIPConnection.IP_PORT;
+    }
+    localIp=(String)config.get("localIp");
     String readingPauseString=(String)config.get("pause");
     if (readingPauseString != null && !readingPauseString.isEmpty()) {
       readingPause=Long.parseLong(readingPauseString);
