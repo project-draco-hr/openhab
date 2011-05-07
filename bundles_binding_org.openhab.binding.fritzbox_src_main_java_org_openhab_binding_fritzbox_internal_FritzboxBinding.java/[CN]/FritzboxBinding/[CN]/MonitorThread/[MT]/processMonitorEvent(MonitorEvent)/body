@@ -1,0 +1,13 @@
+{
+  if (event.eventType.equals("RING")) {
+    handleEventType(event,FritzboxBindingProvider.TYPE_INBOUND);
+  }
+  if (event.eventType.equals("CALL")) {
+    handleEventType(event,FritzboxBindingProvider.TYPE_OUTBOUND);
+  }
+  if (event.eventType.equals("CONNECT") || event.eventType.equals("DISCONNECT")) {
+    handleEventType(event,FritzboxBindingProvider.TYPE_INBOUND);
+    handleEventType(event,FritzboxBindingProvider.TYPE_ACTIVE);
+    handleEventType(event,FritzboxBindingProvider.TYPE_OUTBOUND);
+  }
+}
