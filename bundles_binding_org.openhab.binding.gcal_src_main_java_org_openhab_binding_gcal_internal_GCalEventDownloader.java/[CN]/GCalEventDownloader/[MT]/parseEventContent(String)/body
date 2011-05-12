@@ -1,0 +1,15 @@
+{
+  Matcher matcher=EXTRACT_START_END_COMMANDS.matcher(content);
+  String startCommands="";
+  String endCommands="";
+  if (!matcher.matches()) {
+    startCommands=content.toString();
+  }
+ else {
+    matcher.reset();
+    matcher.find();
+    startCommands=matcher.group(1);
+    endCommands=matcher.group(2);
+  }
+  return new String[]{startCommands,endCommands};
+}

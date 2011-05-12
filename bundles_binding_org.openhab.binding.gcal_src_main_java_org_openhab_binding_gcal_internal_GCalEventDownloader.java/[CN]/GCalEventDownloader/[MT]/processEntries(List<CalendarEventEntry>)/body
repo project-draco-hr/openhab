@@ -1,0 +1,9 @@
+{
+  for (  CalendarEventEntry event : entries) {
+    String[] content=parseEventContent(event.getPlainTextContent());
+    JobDetail startJob=createAndScheduleJob(content[0],event,true);
+    createAndScheduleTrigger(startJob,event,true);
+    JobDetail endJob=createAndScheduleJob(content[1],event,false);
+    createAndScheduleTrigger(endJob,event,false);
+  }
+}

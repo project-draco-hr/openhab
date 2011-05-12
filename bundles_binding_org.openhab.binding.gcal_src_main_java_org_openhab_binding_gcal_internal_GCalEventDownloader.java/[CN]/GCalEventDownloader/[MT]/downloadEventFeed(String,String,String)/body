@@ -1,0 +1,17 @@
+{
+  try {
+    URL feedUrl=new URL(url);
+    CalendarService myService=new CalendarService("openHAB-event-downloader");
+    myService.setUserCredentials(username,password);
+    CalendarQuery myQuery=new CalendarQuery(feedUrl);
+    myQuery.setMinimumStartTime(DateTime.now());
+    return myService.getFeed(myQuery,CalendarEventFeed.class);
+  }
+ catch (  AuthenticationException ae) {
+    logger.error("authentication failed!",ae);
+  }
+catch (  Exception e) {
+    logger.error("downloading CalenerEventFeed throws exception",e);
+  }
+  return null;
+}

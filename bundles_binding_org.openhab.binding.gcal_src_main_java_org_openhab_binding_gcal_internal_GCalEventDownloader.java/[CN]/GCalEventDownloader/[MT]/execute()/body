@@ -1,0 +1,23 @@
+{
+  if (StringUtils.isBlank(username) && StringUtils.isBlank(password)) {
+    logger.warn("username and password must not be blank -> gcal calendar login aborted");
+    return;
+  }
+  CalendarEventFeed myFeed=downloadEventFeed(url,username,password);
+  if (myFeed != null) {
+    List<CalendarEventEntry> entries=myFeed.getEntries();
+    logger.info("found {} corresponding calendar events to process",entries.size());
+    if (entries.size() > 0) {
+      try {
+        cleanJobs();
+        processEntries(entries);
+      }
+ catch (      SchedulerException se) {
+        logger.error("scheduling job throws exception",se);
+      }
+    }
+ else {
+      logger.info("gcal feed contains no entries ...");
+    }
+  }
+}

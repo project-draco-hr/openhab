@@ -1,0 +1,10 @@
+{
+  String content=(String)context.getJobDetail().getJobDataMap().get(JOB_DATA_CONTENT_KEY);
+  if (StringUtils.isNotBlank(content)) {
+    String[] commands=parseCommands(content);
+    for (    String command : commands) {
+      String[] args=command.split(" ");
+      ConsoleInterpreter.handleRequest(args,new LogConsole());
+    }
+  }
+}

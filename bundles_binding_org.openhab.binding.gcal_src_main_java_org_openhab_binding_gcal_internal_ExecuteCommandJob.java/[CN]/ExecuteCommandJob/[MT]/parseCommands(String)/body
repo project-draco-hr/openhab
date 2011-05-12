@@ -1,0 +1,23 @@
+{
+  Collection<String> parsedCommands=new ArrayList<String>();
+  BufferedReader in=new BufferedReader(new StringReader(content));
+  try {
+    String command;
+    while ((command=in.readLine()) != null) {
+      if (StringUtils.isNotBlank(command)) {
+        parsedCommands.add(command.trim());
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.error("reading event content throws exception",ioe);
+  }
+ finally {
+    try {
+      in.close();
+    }
+ catch (    IOException ioe) {
+    }
+  }
+  return parsedCommands.toArray(new String[0]);
+}

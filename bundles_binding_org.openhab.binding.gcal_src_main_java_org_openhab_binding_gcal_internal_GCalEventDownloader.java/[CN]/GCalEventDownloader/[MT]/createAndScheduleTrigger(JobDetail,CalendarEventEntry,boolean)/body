@@ -1,0 +1,21 @@
+{
+  if (job == null) {
+    logger.debug("job is null -> no triggers are created");
+    return;
+  }
+  String jobIdentity=event.getIcalUID() + (isStartEvent ? "_start" : "_end");
+  StringBuilder sb=new StringBuilder();
+  List<When> times=event.getTimes();
+  for (  When time : times) {
+    DateTime date=isStartEvent ? time.getStartTime() : time.getEndTime();
+    long dateValue=date.getValue();
+    if (dateValue >= DateTime.now().getValue()) {
+      Trigger trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).build();
+      sb.append(date).append(", ");
+      scheduler.scheduleJob(trigger);
+    }
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("created new job '" + jobIdentity + "' with content '"+ event.getPlainTextContent()+ "' and triggers '"+ sb.toString()+ "'");
+  }
+}

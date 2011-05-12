@@ -1,0 +1,10 @@
+{
+  String jobIdentity=event.getIcalUID() + (isStartEvent ? "_start" : "_end");
+  if (StringUtils.isBlank(content)) {
+    logger.debug("content of job '" + jobIdentity + "' is empty -> no task will be created!");
+    return null;
+  }
+  JobDetail job=newJob(ExecuteCommandJob.class).usingJobData(ExecuteCommandJob.JOB_DATA_CONTENT_KEY,content).withIdentity(jobIdentity,GCAL_SCHEDULER_GROUP).build();
+  scheduler.addJob(job,true);
+  return job;
+}
