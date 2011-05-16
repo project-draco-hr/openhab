@@ -1,9 +1,13 @@
 {
   for (  CalendarEventEntry event : entries) {
-    String[] content=parseEventContent(event.getPlainTextContent());
+    String[] content=parseEventContent(event.getTextContent().getContent().getPlainText());
     JobDetail startJob=createAndScheduleJob(content[0],event,true);
     createAndScheduleTrigger(startJob,event,true);
-    JobDetail endJob=createAndScheduleJob(content[1],event,false);
-    createAndScheduleTrigger(endJob,event,false);
+    logger.info("created new startJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(startJob));
+    if (StringUtils.isNotBlank(content[1])) {
+      JobDetail endJob=createAndScheduleJob(content[1],event,false);
+      createAndScheduleTrigger(endJob,event,false);
+      logger.info("created new endJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(endJob));
+    }
   }
 }

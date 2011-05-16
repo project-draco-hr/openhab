@@ -1,0 +1,22 @@
+{
+  if (job == null) {
+    return "SchedulerJob [null]";
+  }
+  StringBuffer sb=new StringBuffer();
+  sb.append("SchedulerJob [jobKey=").append(job.getKey().getName());
+  sb.append(", jobGroup=").append(job.getKey().getGroup());
+  sb.append(", trigger=[");
+  try {
+    List<? extends Trigger> triggers=scheduler.getTriggersOfJob(job.getKey());
+    for (    Trigger trigger : triggers) {
+      sb.append(trigger.getStartTime()).append(", ");
+    }
+    if (triggers.size() == 0) {
+      sb.append("there are no triggers - probably event lies in the past");
+    }
+  }
+ catch (  SchedulerException e) {
+  }
+  sb.append("]");
+  return sb.toString();
+}
