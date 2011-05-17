@@ -1,13 +1,24 @@
 {
+  checkForFullCalendarFeed(entries);
   for (  CalendarEventEntry event : entries) {
-    String[] content=parseEventContent(event.getTextContent().getContent().getPlainText());
-    JobDetail startJob=createAndScheduleJob(content[0],event,true);
-    createAndScheduleTrigger(startJob,event,true);
-    logger.info("created new startJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(startJob));
-    if (StringUtils.isNotBlank(content[1])) {
-      JobDetail endJob=createAndScheduleJob(content[1],event,false);
-      createAndScheduleTrigger(endJob,event,false);
-      logger.info("created new endJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(endJob));
+    String plainText=event.getPlainTextContent();
+    if (StringUtils.isBlank(plainText)) {
+      logger.debug("skipped event '{}' with no content",event.getTitle().getPlainText());
+    }
+ else {
+      String[] content=parseEventContent(plainText);
+      JobDetail startJob=createAndScheduleJob(content[0],event,true);
+      boolean triggersCreated=createAndScheduleTrigger(startJob,event,true);
+      if (triggersCreated) {
+        logger.info("created new startJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(event,startJob));
+      }
+      if (StringUtils.isNotBlank(content[1])) {
+        JobDetail endJob=createAndScheduleJob(content[1],event,false);
+        triggersCreated=createAndScheduleTrigger(endJob,event,false);
+        if (triggersCreated) {
+          logger.info("created new endJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(event,endJob));
+        }
+      }
     }
   }
 }

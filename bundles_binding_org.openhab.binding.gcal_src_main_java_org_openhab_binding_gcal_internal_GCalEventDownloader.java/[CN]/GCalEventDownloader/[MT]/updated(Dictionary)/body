@@ -15,12 +15,12 @@
     if (StringUtils.isBlank(url)) {
       throw new ConfigurationException("gcal:url","url must not be blank - please configure an aproppriate url in openhab.cfg");
     }
-    isProperlyConfigured=true;
-    start();
     String refreshString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshString)) {
       refreshInterval=Integer.parseInt(refreshString);
     }
+    isProperlyConfigured=true;
+    start();
     try {
       scheduler=StdSchedulerFactory.getDefaultScheduler();
     }

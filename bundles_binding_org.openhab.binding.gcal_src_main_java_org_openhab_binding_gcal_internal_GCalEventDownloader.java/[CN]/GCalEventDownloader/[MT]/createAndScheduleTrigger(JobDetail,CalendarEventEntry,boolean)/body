@@ -1,7 +1,8 @@
 {
+  boolean triggersCreated=false;
   if (job == null) {
     logger.debug("job is null -> no triggers are created");
-    return;
+    return false;
   }
   String jobIdentity=event.getIcalUID() + (isStartEvent ? "_start" : "_end");
   List<When> times=event.getTimes();
@@ -11,6 +12,8 @@
     if (dateValue >= DateTime.now().getValue()) {
       Trigger trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).build();
       scheduler.scheduleJob(trigger);
+      triggersCreated=true;
     }
   }
+  return triggersCreated;
 }
