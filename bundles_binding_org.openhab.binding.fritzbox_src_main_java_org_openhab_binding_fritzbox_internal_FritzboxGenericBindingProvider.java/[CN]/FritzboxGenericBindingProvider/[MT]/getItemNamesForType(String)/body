@@ -1,0 +1,10 @@
+{
+  Set<String> itemNames=new HashSet<String>();
+  for (  Entry<String,BindingConfig> entry : bindingConfigs.entrySet()) {
+    FritzboxBindingConfig fbConfig=(FritzboxBindingConfig)entry.getValue();
+    if (fbConfig.getType().equals(eventType)) {
+      itemNames.add(entry.getKey());
+    }
+  }
+  return itemNames.toArray(new String[itemNames.size()]);
+}

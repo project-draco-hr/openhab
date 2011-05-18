@@ -1,12 +1,17 @@
 {
-  List<Class<? extends Command>> acceptedCommandTypes=null;
-  for (  Item item : members) {
-    if (acceptedCommandTypes == null) {
-      acceptedCommandTypes=item.getAcceptedCommandTypes();
-    }
- else {
-      acceptedCommandTypes=ListUtils.intersection(acceptedCommandTypes,item.getAcceptedCommandTypes());
-    }
+  if (baseItem != null) {
+    return baseItem.getAcceptedCommandTypes();
   }
-  return acceptedCommandTypes == null ? ListUtils.EMPTY_LIST : acceptedCommandTypes;
+ else {
+    List<Class<? extends Command>> acceptedCommandTypes=null;
+    for (    Item item : members) {
+      if (acceptedCommandTypes == null) {
+        acceptedCommandTypes=item.getAcceptedCommandTypes();
+      }
+ else {
+        acceptedCommandTypes=ListUtils.intersection(acceptedCommandTypes,item.getAcceptedCommandTypes());
+      }
+    }
+    return acceptedCommandTypes == null ? ListUtils.EMPTY_LIST : acceptedCommandTypes;
+  }
 }

@@ -1,0 +1,16 @@
+{
+  if (config != null) {
+    String ip=(String)config.get("ip");
+    if (StringUtils.isNotBlank(ip)) {
+      if (!ip.equals(FritzboxBinding.ip)) {
+        FritzboxBinding.ip=ip;
+        if (monitorThread != null) {
+          monitorThread.interrupt();
+          monitorThread=null;
+        }
+        monitorThread=new MonitorThread();
+        monitorThread.start();
+      }
+    }
+  }
+}
