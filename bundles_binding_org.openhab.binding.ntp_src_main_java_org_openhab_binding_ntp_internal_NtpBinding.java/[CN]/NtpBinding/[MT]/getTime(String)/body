@@ -1,0 +1,15 @@
+{
+  try {
+    NTPUDPClient timeClient=new NTPUDPClient();
+    InetAddress inetAddress=InetAddress.getByName(hostname);
+    TimeInfo timeInfo=timeClient.getTime(inetAddress);
+    return timeInfo.getReturnTime();
+  }
+ catch (  UnknownHostException uhe) {
+    logger.warn("the given hostname '{}' of the timeserver is unknown",hostname);
+  }
+catch (  IOException ioe) {
+    logger.debug("couldn't establish network connection [host '{}']",hostname);
+  }
+  return System.currentTimeMillis();
+}
