@@ -6,10 +6,10 @@
     return timeInfo.getReturnTime();
   }
  catch (  UnknownHostException uhe) {
-    logger.warn("the given hostname '{}' of the timeserver is unknown",hostname);
+    logger.warn("the given hostname '{}' of the timeserver is unknown -> returning current sytem time instead",hostname);
   }
 catch (  IOException ioe) {
-    logger.debug("couldn't establish network connection [host '{}']",hostname);
+    logger.warn("couldn't establish network connection [host '{}'] -> returning current sytem time instead",hostname);
   }
   return System.currentTimeMillis();
 }
