@@ -4,6 +4,7 @@
     return;
   }
   long networkTimeInMillis=getTime(hostname);
+  logger.info("got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
   for (  NtpBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       TimeZone timeZone=provider.getTimeZone(itemName);
@@ -11,7 +12,6 @@
       Locale locale=provider.getLocale(itemName);
       Calendar calendar=Calendar.getInstance(timeZone,locale);
       calendar.setTimeInMillis(networkTimeInMillis);
-      logger.info("got time from {}: {}",hostname,sdf.format(calendar.getTime()));
 switch (modus) {
 case DATE:
         eventPublisher.postUpdate(itemName,new DateType(calendar));

@@ -1,12 +1,11 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  if (item instanceof StringItem) {
+  if (item instanceof DateTimeItem) {
     String[] configParts=bindingConfig.trim().split(":");
     if (configParts.length > 3) {
       throw new BindingConfigParseException("NTP binding configuration must not contain more than three parts");
     }
     NTPBindingConfig config=new NTPBindingConfig();
-    item.getName();
     try {
       config.modus=DateTimeModus.valueOf(configParts[0]);
     }
