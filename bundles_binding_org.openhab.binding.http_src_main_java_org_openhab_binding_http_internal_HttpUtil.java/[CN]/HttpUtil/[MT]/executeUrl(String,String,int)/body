@@ -5,6 +5,7 @@
   method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
   Credentials credentials=extractCredentials(url);
   if (credentials != null) {
+    client.getParams().setAuthenticationPreemptive(true);
     client.getState().setCredentials(AuthScope.ANY,credentials);
   }
   if (logger.isDebugEnabled()) {
