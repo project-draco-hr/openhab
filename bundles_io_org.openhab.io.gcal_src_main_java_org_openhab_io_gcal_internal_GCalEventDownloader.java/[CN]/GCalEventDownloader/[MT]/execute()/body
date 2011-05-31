@@ -6,8 +6,8 @@
   CalendarEventFeed myFeed=downloadEventFeed(url,username,password);
   if (myFeed != null) {
     List<CalendarEventEntry> entries=myFeed.getEntries();
-    logger.info("found {} calendar events to process",entries.size());
     if (entries.size() > 0) {
+      logger.info("found {} calendar events to process",entries.size());
       try {
         cleanJobs();
         processEntries(entries);
