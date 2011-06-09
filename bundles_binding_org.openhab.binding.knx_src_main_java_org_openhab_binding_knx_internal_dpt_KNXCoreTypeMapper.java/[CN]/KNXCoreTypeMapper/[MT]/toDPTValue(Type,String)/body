@@ -1,0 +1,13 @@
+{
+  if (type instanceof OnOffType)   return type.toString().toLowerCase();
+  if (type instanceof UpDownType)   return type.toString().toLowerCase();
+  if (type instanceof IncreaseDecreaseType)   return type.toString().toLowerCase() + " 5";
+  if (type instanceof PercentType)   return mapTo8bit((PercentType)type);
+  if (type instanceof DecimalType)   return type.toString();
+  if (type instanceof StringType)   return type.toString();
+  if (type instanceof OpenClosedType)   return type.toString().toLowerCase();
+  if (type == StopMoveType.MOVE)   return "start";
+  if (type == StopMoveType.STOP)   return "stop";
+  if (type instanceof DateTimeType)   return formatDateTime((DateTimeType)type,dpt);
+  return null;
+}

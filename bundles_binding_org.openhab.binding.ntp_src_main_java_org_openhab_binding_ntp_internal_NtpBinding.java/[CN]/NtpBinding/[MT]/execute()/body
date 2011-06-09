@@ -8,18 +8,11 @@
   for (  NtpBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       TimeZone timeZone=provider.getTimeZone(itemName);
-      DateTimeModus modus=provider.getModus(itemName);
       Locale locale=provider.getLocale(itemName);
       Calendar calendar=Calendar.getInstance(timeZone,locale);
       calendar.setTimeInMillis(networkTimeInMillis);
-switch (modus) {
-case DATE:
-        eventPublisher.postUpdate(itemName,new DateType(calendar));
+      eventPublisher.postUpdate(itemName,new DateTimeType(calendar));
       break;
-case TIME:
-    eventPublisher.postUpdate(itemName,new TimeType(calendar));
-  break;
-}
-}
-}
+    }
+  }
 }

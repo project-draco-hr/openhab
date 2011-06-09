@@ -3,21 +3,26 @@
     ignoreEventList.remove(itemName + command.toString());
   }
  else {
-    Datapoint datapoint=getDatapoint(itemName,command.getClass());
-    if (datapoint != null) {
+    Iterable<Datapoint> datapoints=getDatapoint(itemName,command.getClass());
+    if (datapoints != null) {
       ProcessCommunicator pc=KNXConnection.getCommunicator();
       if (pc != null) {
-        try {
-          pc.write(datapoint,toDPTValue(command));
-        }
- catch (        KNXException e) {
-          logger.warn("Command could not be sent to the KNX bus - retrying one time",e);
+        for (        Datapoint datapoint : datapoints) {
           try {
-            pc=KNXConnection.getCommunicator();
-            pc.write(datapoint,toDPTValue(command));
+            pc.write(datapoint,toDPTValue(command,datapoint.getDPT()));
+            if (logger.isDebugEnabled()) {
+              logger.debug("wrote value '{}' to datapoint '{}'",command,datapoint);
+            }
           }
- catch (          KNXException e1) {
-            logger.error("Command could not be sent to the KNX bus - giving up",e);
+ catch (          KNXException e) {
+            logger.warn("Command could not be sent to the KNX bus - retrying one time",e);
+            try {
+              pc=KNXConnection.getCommunicator();
+              pc.write(datapoint,toDPTValue(command,datapoint.getDPT()));
+            }
+ catch (            KNXException e1) {
+              logger.error("Command could not be sent to the KNX bus - giving up",e);
+            }
           }
         }
       }

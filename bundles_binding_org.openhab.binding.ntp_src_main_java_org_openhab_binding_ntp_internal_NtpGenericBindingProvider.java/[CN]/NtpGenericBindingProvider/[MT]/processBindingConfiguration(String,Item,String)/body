@@ -2,18 +2,12 @@
   super.processBindingConfiguration(context,item,bindingConfig);
   if (item instanceof DateTimeItem) {
     String[] configParts=bindingConfig.trim().split(":");
-    if (configParts.length > 3) {
+    if (configParts.length > 2) {
       throw new BindingConfigParseException("NTP binding configuration must not contain more than three parts");
     }
     NTPBindingConfig config=new NTPBindingConfig();
-    try {
-      config.modus=DateTimeModus.valueOf(configParts[0]);
-    }
- catch (    IllegalArgumentException iae) {
-      throw new BindingConfigParseException("couldn't instantiate DateTimeModus '" + configParts[0] + "'");
-    }
-    config.timeZone=configParts.length > 1 ? TimeZone.getTimeZone(configParts[1]) : TimeZone.getDefault();
-    config.locale=configParts.length > 2 ? new Locale(configParts[2]) : Locale.getDefault();
+    config.timeZone=configParts.length > 0 ? TimeZone.getTimeZone(configParts[0]) : TimeZone.getDefault();
+    config.locale=configParts.length > 1 ? new Locale(configParts[1]) : Locale.getDefault();
     addBindingConfig(item,config);
   }
 }
