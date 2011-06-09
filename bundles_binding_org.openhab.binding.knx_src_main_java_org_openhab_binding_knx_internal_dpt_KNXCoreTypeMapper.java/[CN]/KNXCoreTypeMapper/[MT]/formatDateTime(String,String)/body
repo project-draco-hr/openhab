@@ -1,0 +1,15 @@
+{
+  Date date=null;
+  try {
+    if (DPTXlatorDate.DPT_DATE.getID().equals(dpt)) {
+      date=DATE_FORMATTER.parse(value);
+    }
+ else     if (DPTXlatorTime.DPT_TIMEOFDAY.getID().equals(dpt)) {
+      date=TIME_FORMATTER.parse(value);
+    }
+  }
+ catch (  ParseException pe) {
+    logger.warn("Could not parse '{}' to a valid date",value);
+  }
+  return date != null ? DateTimeType.DATE_FORMATTER.format(date) : "";
+}

@@ -14,18 +14,18 @@
   }
   if (label == null)   label="";
   String itemName=w.getItem();
-  if (itemName != null && label.contains("%")) {
-    int indexPercent=label.indexOf("%");
-    int indexSpace=label.indexOf(' ',label.indexOf("%"));
-    if (indexSpace == -1) {
-      indexSpace=label.length();
-    }
-    if (indexSpace - indexPercent >= 2 && itemRegistry != null) {
-      String formatPattern=label.substring(indexPercent,indexSpace);
+  if (itemName != null && label.contains("[")) {
+    int indexOpenBracket=label.indexOf("[");
+    int indexCloseBracket=label.indexOf("]");
+    if (itemRegistry != null) {
+      String formatPattern=label.substring(indexOpenBracket + 1,indexCloseBracket);
       try {
         Item item=itemRegistry.getItem(itemName);
         State state;
         if (label.contains("%s")) {
+          state=item.getState();
+        }
+ else         if (label.contains("%t") || label.contains("%1$t")) {
           state=item.getState();
         }
  else {
@@ -34,6 +34,9 @@
         if (state == null || state instanceof UnDefType) {
           if (label.contains("%s")) {
             formatPattern=String.format(formatPattern,"undefined");
+          }
+ else           if (label.contains("%t") || label.contains("%1$t")) {
+            formatPattern=String.format(formatPattern,Calendar.getInstance());
           }
  else           if (label.contains("%d")) {
             formatPattern=String.format(formatPattern,0);
@@ -52,7 +55,7 @@
 catch (      ItemNotUniqueException e) {
         logger.error("Item with name '{}' is not unique.",itemName,e);
       }
-      label=label.substring(0,indexPercent) + formatPattern + label.substring(indexSpace);
+      label=label.substring(0,indexOpenBracket + 1) + formatPattern + label.substring(indexCloseBracket);
     }
   }
   if (label.contains("[") && label.endsWith("]")) {

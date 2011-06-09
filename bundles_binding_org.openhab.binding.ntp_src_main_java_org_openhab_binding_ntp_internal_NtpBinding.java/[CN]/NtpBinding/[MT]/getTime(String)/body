@@ -1,6 +1,7 @@
 {
   try {
     NTPUDPClient timeClient=new NTPUDPClient();
+    timeClient.setDefaultTimeout(NTP_TIMEOUT);
     InetAddress inetAddress=InetAddress.getByName(hostname);
     TimeInfo timeInfo=timeClient.getTime(inetAddress);
     return timeInfo.getReturnTime();

@@ -1,0 +1,24 @@
+{
+synchronized (bindingConfigs) {
+    try {
+      Iterable<KNXBindingConfig> configList=Iterables.filter(Iterables.concat(bindingConfigs.values()),KNXBindingConfig.class);
+      Iterable<KNXBindingConfigItem> configItemList=Iterables.filter(Iterables.concat(configList),KNXBindingConfigItem.class);
+      Iterable<KNXBindingConfigItem> bindingConfigs=Iterables.filter(configItemList,new Predicate<KNXBindingConfigItem>(){
+        public boolean apply(        KNXBindingConfigItem input){
+          return input.itemName.equals(itemName) && ArrayUtils.contains(input.groupAddresses,groupAddress);
+        }
+      }
+);
+      Iterable<Datapoint> datapoints=Iterables.transform(bindingConfigs,new Function<KNXBindingConfigItem,Datapoint>(){
+        public Datapoint apply(        KNXBindingConfigItem configItem){
+          return configItem.datapoint;
+        }
+      }
+);
+      return datapoints;
+    }
+ catch (    NoSuchElementException e) {
+      return null;
+    }
+  }
+}

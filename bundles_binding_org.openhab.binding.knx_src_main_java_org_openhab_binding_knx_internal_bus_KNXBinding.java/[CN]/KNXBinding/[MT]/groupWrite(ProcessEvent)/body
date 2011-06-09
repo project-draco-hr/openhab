@@ -6,26 +6,28 @@
       return;
     }
     for (    String itemName : getItemNames(destination)) {
-      Datapoint datapoint=getDatapoint(itemName,destination);
-      if (datapoint != null) {
-        Type type=getType(datapoint,asdu);
-        if (type != null) {
-          if (ignoreEventList.contains(itemName + type.toString())) {
-            ignoreEventList.remove(itemName + type.toString());
-          }
- else {
-            ignoreEventList.add(itemName + type.toString());
-            if (type instanceof State) {
-              eventPublisher.postUpdate(itemName,(State)type);
+      Iterable<Datapoint> datapoints=getDatapoints(itemName,destination);
+      if (datapoints != null) {
+        for (        Datapoint datapoint : datapoints) {
+          Type type=getType(datapoint,asdu);
+          if (type != null) {
+            if (ignoreEventList.contains(itemName + type.toString())) {
+              ignoreEventList.remove(itemName + type.toString());
             }
  else {
-              eventPublisher.postCommand(itemName,(Command)type);
+              ignoreEventList.add(itemName + type.toString());
+              if (type instanceof State) {
+                eventPublisher.postUpdate(itemName,(State)type);
+              }
+ else {
+                eventPublisher.postCommand(itemName,(Command)type);
+              }
+              if (logger.isTraceEnabled()) {
+                logger.trace("Processed event: " + destination.toString() + ":"+ type.toString()+ " -> "+ itemName);
+              }
             }
-            if (logger.isTraceEnabled()) {
-              logger.trace("Processed event: " + destination.toString() + ":"+ type.toString()+ " -> "+ itemName);
-            }
+            return;
           }
-          return;
         }
       }
     }

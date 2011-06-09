@@ -1,25 +1,18 @@
 {
   if (!bindingsExist()) {
-    logger.debug("there is no existing NTP binding configuration -> execution aborted");
+    logger.debug("There is no existing NTP binding configuration -> execution aborted");
     return;
   }
   long networkTimeInMillis=getTime(hostname);
-  logger.info("got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
+  logger.info("Got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
   for (  NtpBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       TimeZone timeZone=provider.getTimeZone(itemName);
-      DateTimeModus modus=provider.getModus(itemName);
       Locale locale=provider.getLocale(itemName);
       Calendar calendar=Calendar.getInstance(timeZone,locale);
       calendar.setTimeInMillis(networkTimeInMillis);
-switch (modus) {
-case DATE:
-        eventPublisher.postUpdate(itemName,new DateType(calendar));
+      eventPublisher.postUpdate(itemName,new DateTimeType(calendar));
       break;
-case TIME:
-    eventPublisher.postUpdate(itemName,new TimeType(calendar));
-  break;
-}
-}
-}
+    }
+  }
 }
