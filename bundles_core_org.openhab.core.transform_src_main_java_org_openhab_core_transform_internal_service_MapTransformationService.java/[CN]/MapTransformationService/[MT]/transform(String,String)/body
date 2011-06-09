@@ -1,0 +1,29 @@
+{
+  if (filename == null || source == null) {
+    throw new TransformationException("the given parameters 'filename' and 'source' must not be null");
+  }
+  Reader reader=null;
+  try {
+    String path=ConfigDispatcher.getConfigFolder() + File.separator + TransformationActivator.TRANSFORM_FOLDER_NAME+ File.separator+ filename;
+    Properties properties=new Properties();
+    reader=new FileReader(path);
+    properties.load(reader);
+    String target=properties.getProperty(source);
+    if (target != null) {
+      logger.debug("transformation resulted in '{}'",target);
+      return target;
+    }
+ else {
+      logger.warn("Could not find a mapping for '{}' in the file '{}'.",source,filename);
+      return source;
+    }
+  }
+ catch (  IOException e) {
+    String message="opening file '" + filename + "' throws exception";
+    logger.error(message,e);
+    throw new TransformationException(message,e);
+  }
+ finally {
+    IOUtils.closeQuietly(reader);
+  }
+}
