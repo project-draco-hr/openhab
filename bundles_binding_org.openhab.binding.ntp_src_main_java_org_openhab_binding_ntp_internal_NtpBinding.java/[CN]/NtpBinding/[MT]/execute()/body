@@ -1,10 +1,10 @@
 {
   if (!bindingsExist()) {
-    logger.debug("there is no existing NTP binding configuration -> execution aborted");
+    logger.debug("There is no existing NTP binding configuration -> execution aborted");
     return;
   }
   long networkTimeInMillis=getTime(hostname);
-  logger.info("got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
+  logger.info("Got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
   for (  NtpBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       TimeZone timeZone=provider.getTimeZone(itemName);

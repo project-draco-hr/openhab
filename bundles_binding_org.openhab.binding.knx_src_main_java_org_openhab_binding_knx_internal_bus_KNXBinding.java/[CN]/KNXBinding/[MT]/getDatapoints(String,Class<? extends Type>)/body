@@ -1,0 +1,9 @@
+{
+  Iterable<Datapoint> datapoints=Iterables.concat(Iterables.transform(providers,new Function<KNXBindingProvider,Iterable<Datapoint>>(){
+    public Iterable<Datapoint> apply(    KNXBindingProvider provider){
+      return provider.getDatapoints(itemName,typeClass);
+    }
+  }
+));
+  return datapoints;
+}
