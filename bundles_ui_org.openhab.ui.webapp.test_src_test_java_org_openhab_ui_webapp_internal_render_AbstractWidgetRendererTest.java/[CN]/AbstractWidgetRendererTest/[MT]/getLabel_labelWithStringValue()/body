@@ -1,0 +1,11 @@
+{
+  String testLabel="Label [%s]";
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  when(w.getLabel()).thenReturn(testLabel);
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  when(item.getState()).thenReturn(new StringType("State"));
+  String label=renderer.getLabel(w);
+  assertEquals("Label <span>State</span>",label);
+}

@@ -1,0 +1,11 @@
+{
+  String testLabel="Label [%1$tT]";
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  when(w.getLabel()).thenReturn(testLabel);
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  when(item.getState()).thenReturn(new DateTimeType("2011-06-01T15:30:59"));
+  String label=renderer.getLabel(w);
+  assertEquals("Label <span>15:30:59</span>",label);
+}

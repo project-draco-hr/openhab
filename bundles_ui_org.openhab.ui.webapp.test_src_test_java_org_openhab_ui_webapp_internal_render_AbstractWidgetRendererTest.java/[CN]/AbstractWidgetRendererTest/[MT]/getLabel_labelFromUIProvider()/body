@@ -1,0 +1,12 @@
+{
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  ItemUIProvider provider=mock(ItemUIProvider.class);
+  renderer.addItemUIProvider(provider);
+  when(provider.getLabel(anyString())).thenReturn("ProviderLabel");
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  String label=renderer.getLabel(w);
+  assertEquals("ProviderLabel",label);
+  renderer.removeItemUIProvider(provider);
+}
