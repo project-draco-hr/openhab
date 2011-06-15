@@ -1,0 +1,19 @@
+{
+  BundleContext bc=mock(BundleContext.class);
+  ServiceReference serviceRef=mock(ServiceReference.class);
+  TransformationService service=mock(TransformationService.class);
+  when(bc.getServiceReferences(anyString(),anyString())).thenReturn(new ServiceReference[]{serviceRef});
+  when(bc.getService(any(ServiceReference.class))).thenReturn(service);
+  when(service.transform("de.map","State")).thenReturn("Transformed");
+  WebAppActivator activator=new WebAppActivator();
+  activator.start(bc);
+  String testLabel="Label [MAP(de.map):%s]";
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  when(w.getLabel()).thenReturn(testLabel);
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  when(item.getState()).thenReturn(new StringType("State"));
+  String label=renderer.getLabel(w);
+  assertEquals("Label <span>Transformed</span>",label);
+}
