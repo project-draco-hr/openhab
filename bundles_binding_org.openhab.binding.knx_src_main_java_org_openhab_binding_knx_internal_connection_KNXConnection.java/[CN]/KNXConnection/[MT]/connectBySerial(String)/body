@@ -1,0 +1,24 @@
+{
+  try {
+    RXTXVersion.getVersion();
+    return new KNXNetworkLinkFT12(serialPort,new TPSettings(true));
+  }
+ catch (  NoClassDefFoundError e) {
+    throw new KNXException("The serial FT1.2 KNX connection requires the serial binding to be installed!");
+  }
+catch (  KNXException knxe) {
+    if (knxe.getMessage().startsWith("can not open serial port")) {
+      StringBuilder sb=new StringBuilder("Available ports are:\n");
+      Enumeration portList=CommPortIdentifier.getPortIdentifiers();
+      while (portList.hasMoreElements()) {
+        CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+        if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+          sb.append(id.getName() + "\n");
+        }
+      }
+      sb.deleteCharAt(sb.length() - 1);
+      knxe=new KNXException("Serial port '" + serialPort + "' could not be opened. "+ sb.toString());
+    }
+    throw knxe;
+  }
+}
