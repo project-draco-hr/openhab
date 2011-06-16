@@ -1,0 +1,20 @@
+{
+  if (voiceName == null) {
+    voiceName="kevin16";
+  }
+  Voice voice=voices.get(voiceName);
+  if (voice != null) {
+    if (!voice.isLoaded()) {
+      voice.allocate();
+    }
+    voice.speak(text);
+  }
+ else {
+    logger.error("Could not find voice: " + voiceName);
+    StringBuilder sb=new StringBuilder();
+    for (    String name : voices.keySet()) {
+      sb.append(name + " ");
+    }
+    logger.info("Available voices are: [ {}]",sb.toString());
+  }
+}
