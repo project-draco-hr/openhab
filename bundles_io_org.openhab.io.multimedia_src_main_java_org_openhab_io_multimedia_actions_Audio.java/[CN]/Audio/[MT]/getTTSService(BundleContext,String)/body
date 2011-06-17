@@ -1,0 +1,17 @@
+{
+  if (context != null) {
+    String filter=os != null ? "(os=" + os + ")" : null;
+    try {
+      ServiceReference[] refs=context.getServiceReferences(TTSService.class.getName(),filter);
+      if (refs != null && refs.length > 0) {
+        return (TTSService)context.getService(refs[0]);
+      }
+ else {
+        return null;
+      }
+    }
+ catch (    InvalidSyntaxException e) {
+    }
+  }
+  return null;
+}
