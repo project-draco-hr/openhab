@@ -1,8 +1,26 @@
 {
   if (config != null) {
     ip=(String)config.get("ip");
+    String connectionTypeString=(String)config.get("type");
+    if (StringUtils.isNotBlank(connectionTypeString)) {
+      if ("TUNNEL".equals(connectionTypeString)) {
+        ipConnectionType=KNXNetworkLinkIP.TUNNEL;
+      }
+ else       if ("ROUTER".equals(connectionTypeString)) {
+        ipConnectionType=KNXNetworkLinkIP.ROUTER;
+        if (StringUtils.isBlank(ip)) {
+          ip=DEFAULT_MULTICAST_IP;
+        }
+      }
+ else {
+        throw new ConfigurationException("type","unknown IP connection type '" + connectionTypeString + "'! Known types are either 'TUNNEL' or 'ROUTER'");
+      }
+    }
+ else {
+      ipConnectionType=KNXNetworkLinkIP.TUNNEL;
+    }
     String portConfig=(String)config.get("port");
-    if (portConfig != null && !portConfig.isEmpty()) {
+    if (StringUtils.isNotBlank(portConfig)) {
       port=Integer.parseInt(portConfig);
     }
  else {
@@ -11,7 +29,7 @@
     localIp=(String)config.get("localIp");
     serialPort=(String)config.get("serialPort");
     String readingPauseString=(String)config.get("pause");
-    if (readingPauseString != null && !readingPauseString.isEmpty()) {
+    if (StringUtils.isNotBlank(readingPauseString)) {
       readingPause=Long.parseLong(readingPauseString);
     }
     if (pc == null)     connect();
