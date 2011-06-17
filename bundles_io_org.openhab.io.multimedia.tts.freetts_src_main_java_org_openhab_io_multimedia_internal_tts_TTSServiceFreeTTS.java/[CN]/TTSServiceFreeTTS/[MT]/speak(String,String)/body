@@ -1,4 +1,7 @@
 {
+  if (text == null) {
+    return;
+  }
   if (voiceName == null) {
     voiceName="kevin16";
   }
@@ -12,9 +15,11 @@
  else {
     logger.error("Could not find voice: " + voiceName);
     StringBuilder sb=new StringBuilder();
-    for (    String name : voices.keySet()) {
-      sb.append(name + " ");
+    if (logger.isInfoEnabled()) {
+      for (      String name : voices.keySet()) {
+        sb.append(name + " ");
+      }
+      logger.info("Available voices are: [ {}]",sb.toString());
     }
-    logger.info("Available voices are: [ {}]",sb.toString());
   }
 }
