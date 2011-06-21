@@ -1,0 +1,16 @@
+{
+  final Float[] volumes=new Float[1];
+  runVolumeCommand(new Closure(){
+    public void execute(    Object input){
+      FloatControl volumeControl=(FloatControl)input;
+      volumes[0]=volumeControl.getValue();
+    }
+  }
+);
+  if (volumes[0] != null) {
+    return volumes[0];
+  }
+ else {
+    throw new IOException("Cannot determine master volume level");
+  }
+}

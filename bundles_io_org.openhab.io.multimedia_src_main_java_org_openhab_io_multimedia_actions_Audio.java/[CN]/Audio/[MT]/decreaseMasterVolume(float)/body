@@ -2,13 +2,7 @@
   if (percent <= 0 || percent > 100) {
     throw new IllegalArgumentException("Percent must be in the range (0,100]!");
   }
-  runVolumeCommand(new Closure(){
-    public void execute(    Object input){
-      FloatControl volumeControl=(FloatControl)input;
-      float volume=volumeControl.getValue();
-      float newVolume=volume * (1f - percent / 100f);
-      volumeControl.setValue(newVolume);
-    }
-  }
-);
+  float volume=getMasterVolume();
+  float newVolume=volume * (1f - percent / 100f);
+  setMasterVolume(newVolume);
 }

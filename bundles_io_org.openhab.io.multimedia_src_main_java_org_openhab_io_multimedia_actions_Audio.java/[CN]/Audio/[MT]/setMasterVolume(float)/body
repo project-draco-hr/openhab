@@ -2,11 +2,10 @@
   if (volume < 0 || volume > 1) {
     throw new IllegalArgumentException("Volume value must be in the range [0,1]!");
   }
-  runVolumeCommand(new Closure(){
-    public void execute(    Object input){
-      FloatControl volumeControl=(FloatControl)input;
-      volumeControl.setValue(volume);
-    }
+  if (isMacOSX()) {
+    setMasterVolumeMac(volume * 100f);
   }
-);
+ else {
+    setMasterVolumeJavaSound(volume);
+  }
 }
