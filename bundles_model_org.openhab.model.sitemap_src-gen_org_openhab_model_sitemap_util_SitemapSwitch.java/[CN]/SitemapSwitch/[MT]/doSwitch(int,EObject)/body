@@ -1,0 +1,111 @@
+{
+switch (classifierID) {
+case SitemapPackage.SITEMAP_MODEL:
+{
+      SitemapModel sitemapModel=(SitemapModel)theEObject;
+      T result=caseSitemapModel(sitemapModel);
+      if (result == null)       result=defaultCase(theEObject);
+      return result;
+    }
+case SitemapPackage.SITEMAP:
+{
+    Sitemap sitemap=(Sitemap)theEObject;
+    T result=caseSitemap(sitemap);
+    if (result == null)     result=caseSitemapModel(sitemap);
+    if (result == null)     result=defaultCase(theEObject);
+    return result;
+  }
+case SitemapPackage.WIDGET:
+{
+  Widget widget=(Widget)theEObject;
+  T result=caseWidget(widget);
+  if (result == null)   result=defaultCase(theEObject);
+  return result;
+}
+case SitemapPackage.LINKABLE_WIDGET:
+{
+LinkableWidget linkableWidget=(LinkableWidget)theEObject;
+T result=caseLinkableWidget(linkableWidget);
+if (result == null) result=caseWidget(linkableWidget);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.FRAME:
+{
+Frame frame=(Frame)theEObject;
+T result=caseFrame(frame);
+if (result == null) result=caseLinkableWidget(frame);
+if (result == null) result=caseWidget(frame);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.TEXT:
+{
+Text text=(Text)theEObject;
+T result=caseText(text);
+if (result == null) result=caseLinkableWidget(text);
+if (result == null) result=caseWidget(text);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.GROUP:
+{
+Group group=(Group)theEObject;
+T result=caseGroup(group);
+if (result == null) result=caseLinkableWidget(group);
+if (result == null) result=caseWidget(group);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.IMAGE:
+{
+Image image=(Image)theEObject;
+T result=caseImage(image);
+if (result == null) result=caseLinkableWidget(image);
+if (result == null) result=caseWidget(image);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.SWITCH:
+{
+org.openhab.model.sitemap.Switch switch_=(org.openhab.model.sitemap.Switch)theEObject;
+T result=caseSwitch(switch_);
+if (result == null) result=caseWidget(switch_);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.SLIDER:
+{
+Slider slider=(Slider)theEObject;
+T result=caseSlider(slider);
+if (result == null) result=caseWidget(slider);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.SELECTION:
+{
+Selection selection=(Selection)theEObject;
+T result=caseSelection(selection);
+if (result == null) result=caseWidget(selection);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.LIST:
+{
+List list=(List)theEObject;
+T result=caseList(list);
+if (result == null) result=caseWidget(list);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case SitemapPackage.MAPPING:
+{
+Mapping mapping=(Mapping)theEObject;
+T result=caseMapping(mapping);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+default :
+return defaultCase(theEObject);
+}
+}

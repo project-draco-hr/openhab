@@ -1,9 +1,7 @@
 {
   EObject current=null;
   EObject lv_items_0_0=null;
-  EObject temp=null;
-  setCurrentLookahead();
-  resetLookahead();
+  enterRule();
   try {
 {
       loop1:       do {
@@ -16,21 +14,15 @@ switch (alt1) {
 case 1:
 {
 {
-              currentNode=createCompositeNode(grammarAccess.getItemModelAccess().getItemsModelItemParserRuleCall_0(),currentNode);
+              newCompositeNode(grammarAccess.getItemModelAccess().getItemsModelItemParserRuleCall_0());
               pushFollow(FOLLOW_ruleModelItem_in_ruleItemModel130);
               lv_items_0_0=ruleModelItem();
-              _fsp--;
+              state._fsp--;
               if (current == null) {
-                current=factory.create(grammarAccess.getItemModelRule().getType().getClassifier());
-                associateNodeWithAstElement(currentNode.getParent(),current);
+                current=createModelElementForParent(grammarAccess.getItemModelRule());
               }
-              try {
-                add(current,"items",lv_items_0_0,"ModelItem",currentNode);
-              }
- catch (              ValueConverterException vce) {
-                handleValueConverterException(vce);
-              }
-              currentNode=currentNode.getParent();
+              add(current,"items",lv_items_0_0,"ModelItem");
+              afterParserOrEnumRuleCall();
             }
           }
         break;
@@ -40,8 +32,7 @@ default :
 }
  while (true);
 }
-resetLookahead();
-lastConsumedNode=currentNode;
+leaveRule();
 }
  catch (RecognitionException re) {
 recover(input,re);

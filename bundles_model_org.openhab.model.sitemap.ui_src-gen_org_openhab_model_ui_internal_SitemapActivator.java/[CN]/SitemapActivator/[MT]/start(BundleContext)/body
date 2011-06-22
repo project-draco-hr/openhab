@@ -2,7 +2,7 @@
   super.start(context);
   INSTANCE=this;
   try {
-    injectors.put("org.openhab.model.Sitemap",Guice.createInjector(Modules.override(Modules.override(getRuntimeModule("org.openhab.model.Sitemap")).with(getUiModule("org.openhab.model.Sitemap"))).with(getSharedStateModule())));
+    registerInjectorFor("org.openhab.model.Sitemap");
   }
  catch (  Exception e) {
     Logger.getLogger(getClass()).error(e.getMessage(),e);
