@@ -3,7 +3,7 @@
   String snippetName=null;
   Item item;
   try {
-    item=itemRegistry.getItem(w.getItem());
+    item=itemUIRegistry.getItem(w.getItem());
     if (s.getMappings().size() == 0) {
       if (item instanceof RollershutterItem) {
         snippetName="rollerblind";
@@ -25,12 +25,12 @@ catch (  ItemNotUniqueException e) {
     snippetName="switch";
   }
   String snippet=getSnippet(snippetName);
-  snippet=snippet.replaceAll("%id%",getWidgetId(w));
-  snippet=snippet.replaceAll("%icon%",getIcon(w));
+  snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(w));
+  snippet=snippet.replaceAll("%icon%",itemUIRegistry.getIcon(w));
   snippet=snippet.replaceAll("%item%",w.getItem());
-  snippet=snippet.replaceAll("%label%",getLabel(w));
+  snippet=snippet.replaceAll("%label%",itemUIRegistry.getLabel(w));
   snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
-  State state=getState(w);
+  State state=itemUIRegistry.getState(w);
   if (s.getMappings().size() == 0) {
     if (state.equals(OnOffType.ON)) {
       snippet=snippet.replaceAll("%checked%","checked=true");

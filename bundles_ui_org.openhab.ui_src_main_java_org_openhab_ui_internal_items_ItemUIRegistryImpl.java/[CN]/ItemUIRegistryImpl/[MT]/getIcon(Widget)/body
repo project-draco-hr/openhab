@@ -1,0 +1,37 @@
+{
+  String widgetTypeName=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+  String icon=widgetTypeName.toLowerCase();
+  if (w.getIcon() != null) {
+    icon=w.getIcon();
+  }
+ else {
+    String itemName=w.getItem();
+    if (itemName != null) {
+      String result=getIcon(itemName);
+      if (result != null)       icon=result;
+    }
+  }
+  if (!icon.contains("-")) {
+    Object state=getState(w);
+    if (!state.equals(UnDefType.UNDEF)) {
+      if (state instanceof PercentType) {
+        int iconState=((PercentType)state).toBigDecimal().intValue();
+        String testIcon;
+        do {
+          testIcon=icon + "-" + String.valueOf(iconState--);
+        }
+ while (!iconExists(testIcon) && iconState >= 0);
+        icon=testIcon;
+      }
+ else {
+        icon+="-" + state.toString().toLowerCase();
+      }
+    }
+  }
+  if (iconExists(icon) || !icon.contains("-")) {
+    return icon;
+  }
+ else {
+    return icon.substring(0,icon.indexOf("-"));
+  }
+}

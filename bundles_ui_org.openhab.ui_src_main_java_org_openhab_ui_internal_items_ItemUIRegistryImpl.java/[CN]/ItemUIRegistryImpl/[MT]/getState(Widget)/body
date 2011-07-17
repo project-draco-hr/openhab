@@ -1,0 +1,16 @@
+{
+  String itemName=w.getItem();
+  if (itemName != null) {
+    try {
+      Item item=getItem(itemName);
+      return item.getState();
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("Cannot retrieve item '{}' for widget {}",new String[]{itemName,w.eClass().getInstanceTypeName()});
+    }
+catch (    ItemNotUniqueException e) {
+      logger.error("Item with name '{}' is not unique.",itemName,e);
+    }
+  }
+  return UnDefType.UNDEF;
+}
