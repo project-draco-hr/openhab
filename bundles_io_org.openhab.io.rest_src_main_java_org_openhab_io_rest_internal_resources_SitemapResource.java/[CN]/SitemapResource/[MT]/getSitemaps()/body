@@ -1,0 +1,11 @@
+{
+  Collection<SitemapBean> beans=new LinkedList<SitemapBean>();
+  ModelRepository modelRepository=RESTApplication.getModelRepository();
+  for (  String modelName : modelRepository.getAllModelNamesOfType("sitemap")) {
+    SitemapBean bean=new SitemapBean();
+    bean.name=StringUtils.removeEnd(modelName,SITEMAP_FILEEXT);
+    bean.link=uriInfo.getAbsolutePathBuilder().path(bean.name).build().toASCIIString();
+    beans.add(bean);
+  }
+  return beans;
+}

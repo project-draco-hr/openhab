@@ -1,0 +1,16 @@
+{
+  ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
+  Sitemap sitemap=getSitemap(sitemapName);
+  if (sitemap != null) {
+    Widget pageWidget=itemUIRegistry.getWidget(sitemap,pageId);
+    if (pageWidget instanceof LinkableWidget) {
+      return createPageBean(sitemapName,pageId,(itemUIRegistry.getChildren((LinkableWidget)pageWidget)));
+    }
+ else {
+      throw new WebApplicationException(404);
+    }
+  }
+ else {
+    throw new WebApplicationException(404);
+  }
+}

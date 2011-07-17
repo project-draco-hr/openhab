@@ -1,0 +1,14 @@
+{
+  Item item=getItem(itemname);
+  if (item != null) {
+    Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
+    if (command != null) {
+      RESTApplication.getEventPublisher().postCommand(itemname,command);
+      return Response.created(localUriInfo.getAbsolutePathBuilder().path("state").build()).build();
+    }
+ else {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+  }
+  return Response.serverError().build();
+}

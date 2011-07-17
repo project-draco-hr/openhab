@@ -1,0 +1,14 @@
+{
+  Item item=getItem(itemname);
+  if (item != null) {
+    State state=TypeParser.parseState(item.getAcceptedDataTypes(),value);
+    if (state != null) {
+      RESTApplication.getEventPublisher().postUpdate(itemname,state);
+      return Response.ok().build();
+    }
+ else {
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+  }
+  return Response.serverError().build();
+}
