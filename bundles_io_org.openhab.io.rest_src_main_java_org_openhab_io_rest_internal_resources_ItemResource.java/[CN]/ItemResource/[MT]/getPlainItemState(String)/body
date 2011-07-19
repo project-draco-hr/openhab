@@ -1,9 +1,11 @@
 {
   Item item=getItem(itemname);
   if (item != null) {
+    logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
     return item.getState().toString();
   }
  else {
+    logger.info("Received HTTP GET request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
     throw new WebApplicationException(404);
   }
 }
