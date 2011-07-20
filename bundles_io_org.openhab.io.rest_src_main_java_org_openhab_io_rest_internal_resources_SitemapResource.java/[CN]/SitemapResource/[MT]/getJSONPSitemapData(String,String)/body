@@ -1,9 +1,11 @@
 {
   Sitemap sitemap=getSitemap(sitemapname);
   if (sitemap != null) {
+    logger.debug("Received HTTP GET request at '{}' for JSONP.",uriInfo.getPath());
     return new JSONWithPadding(createSitemapBean(sitemapname,sitemap,true),callback);
   }
  else {
+    logger.info("Received HTTP GET request at '{}' for the unknown sitemap '{}'.",uriInfo.getPath(),sitemapname);
     throw new WebApplicationException(404);
   }
 }
