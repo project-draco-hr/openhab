@@ -1,0 +1,19 @@
+{
+  Item item=getItem(itemname);
+  if (item != null) {
+    State state=TypeParser.parseState(item.getAcceptedDataTypes(),value);
+    if (state != null) {
+      logger.debug("Received HTTP PUT request at '{}' with value '{}'.",uriInfo.getPath(),value);
+      RESTApplication.getEventPublisher().postUpdate(itemname,state);
+      return Response.ok().build();
+    }
+ else {
+      logger.warn("Received HTTP PUT request at '{}' with an invalid status value '{}'.",uriInfo.getPath(),value);
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+  }
+ else {
+    logger.info("Received HTTP PUT request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
+    throw new WebApplicationException(404);
+  }
+}

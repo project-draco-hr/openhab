@@ -1,0 +1,9 @@
+{
+  List<ItemBean> beans=new LinkedList<ItemBean>();
+  ItemUIRegistry registry=RESTApplication.getItemUIRegistry();
+  for (  Item item : registry.getItems()) {
+    beans.add(createItemBean(item,false,uriInfo.getBaseUri().toASCIIString()));
+  }
+  logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
+  return beans;
+}

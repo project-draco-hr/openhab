@@ -1,0 +1,9 @@
+{
+  PageBean bean=new PageBean();
+  bean.id=pageId;
+  bean.link=uriInfo.getBaseUriBuilder().path(PATH_SITEMAPS).path(sitemapName).path(pageId).build().toASCIIString();
+  for (  Widget widget : children) {
+    bean.widgets.add(createWidgetBean(sitemapName,widget));
+  }
+  return bean;
+}

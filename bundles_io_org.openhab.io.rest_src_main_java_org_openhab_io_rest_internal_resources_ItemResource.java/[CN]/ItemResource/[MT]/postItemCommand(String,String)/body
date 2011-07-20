@@ -1,0 +1,19 @@
+{
+  Item item=getItem(itemname);
+  if (item != null) {
+    Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
+    if (command != null) {
+      logger.debug("Received HTTP POST request at '{}' with value '{}'.",uriInfo.getPath(),value);
+      RESTApplication.getEventPublisher().postCommand(itemname,command);
+      return Response.created(localUriInfo.getAbsolutePathBuilder().path("state").build()).build();
+    }
+ else {
+      logger.warn("Received HTTP POST request at '{}' with an invalid status value '{}'.",uriInfo.getPath(),value);
+      return Response.status(Status.BAD_REQUEST).build();
+    }
+  }
+ else {
+    logger.info("Received HTTP POST request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
+    throw new WebApplicationException(404);
+  }
+}

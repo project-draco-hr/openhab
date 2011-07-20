@@ -1,0 +1,11 @@
+{
+  String testLabel="Label [%1$td.%1$tm.%1$tY]";
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  when(w.getLabel()).thenReturn(testLabel);
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  when(item.getState()).thenReturn(UnDefType.UNDEF);
+  String label=uiRegistry.getLabel(w);
+  assertEquals("Label [" + String.format("%1$td.%1$tm.%1$tY",Calendar.getInstance()) + "]",label);
+}

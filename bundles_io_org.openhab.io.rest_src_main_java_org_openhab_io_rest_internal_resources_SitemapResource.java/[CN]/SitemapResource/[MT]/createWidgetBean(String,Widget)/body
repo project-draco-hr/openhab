@@ -1,0 +1,27 @@
+{
+  ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
+  WidgetBean bean=new WidgetBean();
+  if (widget.getItem() != null) {
+    Item item=ItemResource.getItem(widget.getItem());
+    if (item != null) {
+      bean.item=ItemResource.createItemBean(item,false,uriInfo.getBaseUri().toASCIIString());
+    }
+  }
+  bean.icon=itemUIRegistry.getIcon(widget);
+  bean.label=itemUIRegistry.getLabel(widget);
+  bean.type=widget.eClass().getName();
+  if (widget instanceof LinkableWidget) {
+    LinkableWidget linkableWidget=(LinkableWidget)widget;
+    EList<Widget> children=itemUIRegistry.getChildren(linkableWidget);
+    if (widget instanceof Frame) {
+      for (      Widget child : children) {
+        bean.widgets.add(createWidgetBean(sitemapName,child));
+      }
+    }
+ else     if (children.size() > 0) {
+      String pageName=itemUIRegistry.getWidgetId(linkableWidget);
+      bean.linkedPage=createPageBean(sitemapName,pageName,itemUIRegistry.getChildren(linkableWidget));
+    }
+  }
+  return bean;
+}
