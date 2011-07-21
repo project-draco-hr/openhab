@@ -1,0 +1,31 @@
+{
+  if (config != null) {
+    disconnectPlayersAndMonitors();
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      Matcher matcher=EXTRACT_PLAYER_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given mpd player-config-key '" + key + "' does not follow the expected pattern '<playername>.<host|port>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String playerId=matcher.group(1);
+      MpdPlayerConfig playerConfig=playerConfigCache.get(playerId);
+      if (playerConfig == null) {
+        playerConfig=new MpdPlayerConfig();
+        playerConfigCache.put(playerId,playerConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("host".equals(configKey)) {
+        playerConfig.host=value;
+      }
+ else {
+        playerConfig.port=Integer.valueOf(value);
+      }
+    }
+    connectAllPlayersAndMonitors();
+  }
+}

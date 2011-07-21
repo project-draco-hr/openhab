@@ -1,0 +1,14 @@
+{
+  try {
+    MPD mpd=findMPDInstance(playerId);
+    if (mpd != null) {
+      mpd.close();
+    }
+  }
+ catch (  MPDConnectionException ce) {
+    logger.warn("couldn't disconnect player {}",playerId);
+  }
+catch (  MPDResponseException re) {
+    logger.warn("received response error",re.getLocalizedMessage());
+  }
+}

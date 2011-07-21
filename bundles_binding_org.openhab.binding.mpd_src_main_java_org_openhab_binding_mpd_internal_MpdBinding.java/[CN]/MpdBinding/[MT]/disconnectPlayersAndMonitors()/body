@@ -1,0 +1,10 @@
+{
+  for (  String playerId : playerConfigCache.keySet()) {
+    MpdPlayerConfig config=playerConfigCache.get(playerId);
+    MPDStandAloneMonitor monitor=config.monitor;
+    if (monitor != null) {
+      monitor.stop();
+    }
+    disconnect(playerId);
+  }
+}

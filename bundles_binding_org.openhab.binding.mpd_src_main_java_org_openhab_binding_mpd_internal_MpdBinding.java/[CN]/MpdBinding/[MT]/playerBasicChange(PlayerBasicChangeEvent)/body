@@ -1,0 +1,12 @@
+{
+  String playerId=findPlayerId(pbce.getSource());
+  String itemName=findStartStopItemName(playerId);
+  if (StringUtils.isNotBlank(itemName)) {
+    if (PlayerChangeEvent.PLAYER_STARTED == pbce.getId()) {
+      eventPublisher.postUpdate(itemName,OnOffType.ON);
+    }
+ else     if (PlayerChangeEvent.PLAYER_PAUSED == pbce.getId() || PlayerChangeEvent.PLAYER_STOPPED == pbce.getId()) {
+      eventPublisher.postUpdate(itemName,OnOffType.OFF);
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  MpdPlayerConfig config=null;
+  try {
+    config=playerConfigCache.get(playerId);
+    if (config != null && config.instance == null) {
+      MPD mpd=new MPD(config.host,config.port);
+      MPDStandAloneMonitor mpdStandAloneMonitor=new MPDStandAloneMonitor(mpd,500);
+      mpdStandAloneMonitor.addVolumeChangeListener(this);
+      mpdStandAloneMonitor.addPlayerChangeListener(this);
+      Thread monitorThread=new Thread(mpdStandAloneMonitor,"MPD Monitor for Player '" + playerId + "'");
+      monitorThread.start();
+      config.instance=mpd;
+      config.monitor=mpdStandAloneMonitor;
+      logger.debug("Connected to player '{}' with config {}",playerId,config);
+    }
+  }
+ catch (  MPDConnectionException ce) {
+    logger.error("Error connecting to player '" + playerId + "' with config {}",config,ce);
+  }
+catch (  UnknownHostException uhe) {
+    logger.error("Wrong connection details for player {}",playerId,uhe);
+  }
+}

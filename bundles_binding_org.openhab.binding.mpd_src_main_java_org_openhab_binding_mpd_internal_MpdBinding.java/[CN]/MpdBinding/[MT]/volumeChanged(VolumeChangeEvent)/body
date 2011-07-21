@@ -1,0 +1,7 @@
+{
+  String playerId=findPlayerId(vce.getSource());
+  String itemName=findVolumeItemName(playerId);
+  if (StringUtils.isNotBlank(itemName)) {
+    eventPublisher.postUpdate(itemName,new DecimalType(vce.getVolume()));
+  }
+}
