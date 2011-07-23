@@ -1,0 +1,38 @@
+{
+  StringBuilder msg=new StringBuilder();
+  for (  String word : args) {
+    if (word.startsWith("%") && word.endsWith("%") && word.length() > 2) {
+      String itemName=word.substring(1,word.length() - 1);
+      ItemRegistry registry=(ItemRegistry)ConsoleActivator.itemRegistryTracker.getService();
+      if (registry != null) {
+        try {
+          Item item=registry.getItem(itemName);
+          msg.append(item.getState().toString());
+        }
+ catch (        ItemNotFoundException e) {
+          console.println("Error: Item '" + itemName + "' does not exist.");
+        }
+catch (        ItemNotUniqueException e) {
+          console.print("Error: Multiple items match this pattern: ");
+          for (          Item item : e.getMatchingItems()) {
+            console.print(item.getName() + " ");
+          }
+        }
+      }
+ else {
+        console.println("Sorry, no item registry service available!");
+      }
+    }
+ else {
+      msg.append(word);
+    }
+    msg.append(" ");
+  }
+  try {
+    Audio.speak(msg.toString());
+    console.println("Said: " + msg);
+  }
+ catch (  NoClassDefFoundError e) {
+    console.println("Could not perform command as no TTS service is available.");
+  }
+}
