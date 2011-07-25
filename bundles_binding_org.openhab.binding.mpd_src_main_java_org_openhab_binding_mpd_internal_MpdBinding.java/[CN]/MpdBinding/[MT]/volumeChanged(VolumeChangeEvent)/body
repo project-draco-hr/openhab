@@ -1,7 +1,9 @@
 {
   String playerId=findPlayerId(vce.getSource());
-  String itemName=findVolumeItemName(playerId);
-  if (StringUtils.isNotBlank(itemName)) {
-    eventPublisher.postUpdate(itemName,new DecimalType(vce.getVolume()));
+  String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.VOLUME);
+  for (  String itemName : itemNames) {
+    if (StringUtils.isNotBlank(itemName)) {
+      eventPublisher.postUpdate(itemName,new PercentType(vce.getVolume()));
+    }
   }
 }

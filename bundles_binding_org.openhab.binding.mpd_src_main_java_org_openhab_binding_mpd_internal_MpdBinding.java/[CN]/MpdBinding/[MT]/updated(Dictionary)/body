@@ -4,6 +4,9 @@
     Enumeration keys=config.keys();
     while (keys.hasMoreElements()) {
       String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
       Matcher matcher=EXTRACT_PLAYER_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
         logger.debug("given mpd player-config-key '" + key + "' does not follow the expected pattern '<playername>.<host|port>'");
@@ -22,8 +25,11 @@
       if ("host".equals(configKey)) {
         playerConfig.host=value;
       }
- else {
+ else       if ("port".equals(configKey)) {
         playerConfig.port=Integer.valueOf(value);
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }
     }
     connectAllPlayersAndMonitors();

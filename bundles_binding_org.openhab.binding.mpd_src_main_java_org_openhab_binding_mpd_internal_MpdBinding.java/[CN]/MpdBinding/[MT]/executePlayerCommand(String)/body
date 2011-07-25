@@ -4,9 +4,9 @@
   String playerCommand=commandParts[1];
   MPD daemon=findMPDInstance(playerId);
   if (daemon != null) {
-    PlayerCommands pCommand=null;
+    PlayerCommandTypeMapping pCommand=null;
     try {
-      pCommand=PlayerCommands.valueOf(playerCommand);
+      pCommand=PlayerCommandTypeMapping.fromString(playerCommand);
       MPDPlayer player=daemon.getMPDPlayer();
 switch (pCommand) {
 case PLAY:
@@ -21,14 +21,19 @@ break;
 case VOLUME_DECREASE:
 player.setVolume(player.getVolume() - 5);
 break;
+case SKIP_NEXT:
+player.playNext();
+break;
+case SKIP_PREVIOUS:
+player.playPrev();
+break;
 }
 }
  catch (MPDPlayerException pe) {
-logger.error("");
+logger.error("error while executing {} command",pCommand,pe);
 }
 catch (Exception e) {
 logger.warn("unknow playerCommand '{}'",playerCommand);
-return;
 }
 }
  else {
