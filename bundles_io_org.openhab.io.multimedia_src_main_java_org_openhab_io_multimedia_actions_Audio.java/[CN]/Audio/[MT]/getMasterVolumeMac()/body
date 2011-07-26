@@ -1,5 +1,8 @@
 {
-  Process p=Runtime.getRuntime().exec(new String[]{"osascript","-e","output volume of (get volume settings)"});
-  String value=IOUtils.toString(p.getInputStream()).trim();
-  return Float.valueOf(value) / 100f;
+  if (macVolumeValue == null) {
+    Process p=Runtime.getRuntime().exec(new String[]{"osascript","-e","output volume of (get volume settings)"});
+    String value=IOUtils.toString(p.getInputStream()).trim();
+    macVolumeValue=Float.valueOf(value) / 100f;
+  }
+  return macVolumeValue;
 }

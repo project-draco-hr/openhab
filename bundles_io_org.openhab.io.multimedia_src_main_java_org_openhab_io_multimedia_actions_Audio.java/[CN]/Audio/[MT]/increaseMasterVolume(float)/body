@@ -7,6 +7,9 @@
     volume=0.001f;
   }
   float newVolume=volume * (1f + percent / 100f);
+  if (isMacOSX() && newVolume - volume < .01) {
+    newVolume+=.01;
+  }
   if (newVolume > 1) {
     newVolume=1;
   }

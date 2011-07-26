@@ -4,5 +4,11 @@
   }
   float volume=getMasterVolume();
   float newVolume=volume * (1f - percent / 100f);
+  if (isMacOSX() && newVolume > 0 && volume - newVolume < .01) {
+    newVolume-=.01;
+  }
+  if (newVolume < 0) {
+    newVolume=0;
+  }
   setMasterVolume(newVolume);
 }
