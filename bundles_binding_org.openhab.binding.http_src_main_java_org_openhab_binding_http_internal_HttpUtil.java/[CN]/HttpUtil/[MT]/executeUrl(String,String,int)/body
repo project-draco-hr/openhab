@@ -21,7 +21,7 @@
     if (statusCode != HttpStatus.SC_OK) {
       logger.warn("Method failed: " + method.getStatusLine());
     }
-    String responseBody=method.getResponseBodyAsString();
+    String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
     if (!responseBody.isEmpty()) {
       logger.debug(responseBody);
     }
