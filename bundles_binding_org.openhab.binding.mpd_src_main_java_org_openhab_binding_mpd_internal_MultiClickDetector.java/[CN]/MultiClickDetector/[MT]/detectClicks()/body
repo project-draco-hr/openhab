@@ -1,0 +1,22 @@
+{
+  int clickCount=0;
+  for (  T type : cache.keySet()) {
+    List<Long> list=cache.get(type);
+    if (list != null && !list.isEmpty()) {
+      long currentTime=System.currentTimeMillis();
+      Iterator<Long> cacheIterator=list.iterator();
+      while (cacheIterator.hasNext()) {
+        if (currentTime - cacheIterator.next() <= multiClickResolution) {
+          clickCount++;
+          if (clickCount == 2) {
+            listener.onDoubleClick(type);
+          }
+        }
+ else {
+          cacheIterator.remove();
+        }
+      }
+    }
+    listener.onClick(type);
+  }
+}
