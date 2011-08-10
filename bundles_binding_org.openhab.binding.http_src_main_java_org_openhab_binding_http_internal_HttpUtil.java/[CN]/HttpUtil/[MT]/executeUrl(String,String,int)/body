@@ -1,7 +1,22 @@
 {
-  String proxyHost=System.getProperty("http.proxyHost");
-  String proxyPort=System.getProperty("http.proxyPort");
-  String proxyUser=System.getProperty("http.proxyUser");
-  String proxyPassword=System.getProperty("http.proxyPassword");
-  return executeUrl(httpMethod,url,timeout,proxyHost,proxyPort,proxyUser,proxyPassword);
+  String proxySet=System.getProperty("http.proxySet");
+  if ("true".equalsIgnoreCase(proxySet)) {
+    String proxyHost=System.getProperty("http.proxyHost");
+    String proxyPortString=System.getProperty("http.proxyPort");
+    int proxyPort=80;
+    if (proxyPortString != null) {
+      try {
+        proxyPort=Integer.valueOf(proxyPortString);
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("'{}' is not a valid proxy port - using port 80 instead");
+      }
+    }
+    String proxyUser=System.getProperty("http.proxyUser");
+    String proxyPassword=System.getProperty("http.proxyPassword");
+    return executeUrl(httpMethod,url,timeout,proxyHost,proxyPort,proxyUser,proxyPassword);
+  }
+ else {
+    return executeUrl(httpMethod,url,timeout,null,null,null,null);
+  }
 }

@@ -1,7 +1,7 @@
 {
   HttpClient client=new HttpClient();
-  if (StringUtils.isNotBlank(proxyHost) && StringUtils.isNotBlank(proxyPort)) {
-    client.getHostConfiguration().setProxy(proxyHost,Integer.valueOf(proxyPort));
+  if (StringUtils.isNotBlank(proxyHost)) {
+    client.getHostConfiguration().setProxy(proxyHost,proxyPort);
     if (StringUtils.isNotBlank(proxyUser)) {
       client.getState().setProxyCredentials(AuthScope.ANY,new UsernamePasswordCredentials(proxyUser,proxyPassword));
     }
