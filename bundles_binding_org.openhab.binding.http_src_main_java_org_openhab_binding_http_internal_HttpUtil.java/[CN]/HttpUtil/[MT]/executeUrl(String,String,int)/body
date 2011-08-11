@@ -1,10 +1,14 @@
 {
   String proxySet=System.getProperty("http.proxySet");
+  String proxyHost=null;
+  int proxyPort=80;
+  String proxyUser=null;
+  String proxyPassword=null;
+  String nonProxyHosts=null;
   if ("true".equalsIgnoreCase(proxySet)) {
-    String proxyHost=System.getProperty("http.proxyHost");
+    proxyHost=System.getProperty("http.proxyHost");
     String proxyPortString=System.getProperty("http.proxyPort");
-    int proxyPort=80;
-    if (proxyPortString != null) {
+    if (StringUtils.isNotBlank(proxyPortString)) {
       try {
         proxyPort=Integer.valueOf(proxyPortString);
       }
@@ -12,11 +16,9 @@
         logger.warn("'{}' is not a valid proxy port - using port 80 instead");
       }
     }
-    String proxyUser=System.getProperty("http.proxyUser");
-    String proxyPassword=System.getProperty("http.proxyPassword");
-    return executeUrl(httpMethod,url,timeout,proxyHost,proxyPort,proxyUser,proxyPassword);
+    proxyUser=System.getProperty("http.proxyUser");
+    proxyPassword=System.getProperty("http.proxyPassword");
+    nonProxyHosts=System.getProperty("http.nonProxyHosts");
   }
- else {
-    return executeUrl(httpMethod,url,timeout,null,null,null,null);
-  }
+  return executeUrl(httpMethod,url,timeout,proxyHost,proxyPort,proxyUser,proxyPassword,nonProxyHosts);
 }
