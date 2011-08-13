@@ -1,7 +1,7 @@
 {
   HttpClient client=new HttpClient();
-  if (StringUtils.isNotBlank(proxyHost) && StringUtils.isNotBlank(proxyPort)) {
-    client.getHostConfiguration().setProxy(proxyHost,Integer.valueOf(proxyPort));
+  if (StringUtils.isNotBlank(proxyHost) && proxyPort != null && shouldUseProxy(url,nonProxyHosts)) {
+    client.getHostConfiguration().setProxy(proxyHost,proxyPort);
     if (StringUtils.isNotBlank(proxyUser)) {
       client.getState().setProxyCredentials(AuthScope.ANY,new UsernamePasswordCredentials(proxyUser,proxyPassword));
     }
@@ -19,7 +19,7 @@
       logger.debug("About to execute '" + method.getURI().toString() + "'");
     }
  catch (    URIException e) {
-      logger.debug(e.getLocalizedMessage());
+      logger.debug(e.getMessage());
     }
   }
   try {
@@ -34,10 +34,10 @@
     return responseBody;
   }
  catch (  HttpException he) {
-    logger.error("Fatal protocol violation: ",he);
+    logger.error("Fatal protocol violation: ",he.getMessage());
   }
-catch (  IOException e) {
-    logger.error("Fatal transport error: {}",e.toString());
+catch (  IOException ioe) {
+    logger.error("Fatal transport error: {}",ioe.getMessage());
   }
  finally {
     method.releaseConnection();
