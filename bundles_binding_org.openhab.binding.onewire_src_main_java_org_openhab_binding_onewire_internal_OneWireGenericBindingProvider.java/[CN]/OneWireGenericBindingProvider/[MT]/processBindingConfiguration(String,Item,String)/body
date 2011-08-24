@@ -7,15 +7,9 @@
     if (!checkSensorId(configParts[0])) {
       throw new BindingConfigParseException("SensorId '" + configParts[0] + "' isn't a correct id-pattern. A correct pattern looks like '26.AF9C32000000' (<familycode 8bit>.<serialid 48bit>)");
     }
-    BindingConfig config=new BindingConfig();
+    OneWireBindingConfig config=new OneWireBindingConfig();
     config.sensorId=configParts[0];
     config.unit=configParts[1];
-    owDeviceConfigs.put(item.getName(),config);
+    addBindingConfig(item,config);
   }
-  Set<String> itemNames=contextMap.get(context);
-  if (itemNames == null) {
-    itemNames=new HashSet<String>();
-    contextMap.put(context,itemNames);
-  }
-  itemNames.add(item.getName());
 }
