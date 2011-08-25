@@ -1,6 +1,11 @@
 {
   try {
-    MPD mpd=findMPDInstance(playerId);
+    MpdPlayerConfig playerConfig=playerConfigCache.get(playerId);
+    MPDStandAloneMonitor monitor=playerConfig.monitor;
+    if (monitor != null) {
+      monitor.stop();
+    }
+    MPD mpd=playerConfig.instance;
     if (mpd != null) {
       mpd.close();
     }

@@ -3,6 +3,9 @@
   String playerId=commandParts[0];
   String playerCommand=commandParts[1];
   MPD daemon=findMPDInstance(playerId);
+  if (daemon == null) {
+    reconnect(playerId);
+  }
   if (daemon != null) {
     PlayerCommandTypeMapping pCommand=null;
     try {
@@ -13,7 +16,7 @@ case PLAY:
         player.play();
       break;
 case STOP:
-    player.stop();
+    player.pause();
   break;
 case VOLUME_INCREASE:
 player.setVolume(player.getVolume() + VOLUME_CHANGE_SIZE);
