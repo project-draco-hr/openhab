@@ -2,7 +2,10 @@
   while (!folderRefreshMap.isEmpty()) {
     try {
       for (      String foldername : folderRefreshMap.keySet()) {
-        if (refreshCount % folderRefreshMap.get(foldername) > 0)         continue;
+        if (lastFileNames.get(foldername) != null && (refreshCount % folderRefreshMap.get(foldername) > 0)) {
+          logger.debug("skipping refresh of folder '{}' folderRefreshMap={}",foldername,folderRefreshMap.get(foldername));
+          continue;
+        }
         logger.debug("Refreshing folder '{}'",foldername);
         checkFolder(foldername);
       }
