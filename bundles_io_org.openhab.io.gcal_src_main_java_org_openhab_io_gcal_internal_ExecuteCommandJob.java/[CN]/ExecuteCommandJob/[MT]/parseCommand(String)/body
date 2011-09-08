@@ -1,0 +1,22 @@
+{
+  logger.trace("going to parse command '{}'",command);
+  StreamTokenizer tokenizer=new StreamTokenizer(new StringReader(command));
+  List<String> tokens=new ArrayList<String>();
+  try {
+    int tokenType=0;
+    while (tokenType != StreamTokenizer.TT_EOF && tokenType != StreamTokenizer.TT_EOL) {
+      tokenType=tokenizer.nextToken();
+switch (tokenType) {
+case StreamTokenizer.TT_WORD:
+case 34:
+        String token=tokenizer.sval;
+      tokens.add(token);
+    logger.trace("read the word {} from the given command",token);
+  break;
+}
+}
+}
+ catch (IOException ioe) {
+}
+return tokens.toArray(new String[0]);
+}
