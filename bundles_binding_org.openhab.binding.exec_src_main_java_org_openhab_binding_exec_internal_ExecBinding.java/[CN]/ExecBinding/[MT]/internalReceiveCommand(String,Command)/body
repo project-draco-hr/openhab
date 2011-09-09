@@ -5,6 +5,9 @@
     return;
   }
   String commandLine=provider.getCommandLine(itemName,command.toString());
+  if (commandLine == null) {
+    commandLine=provider.getCommandLine(itemName,"*");
+  }
   if (commandLine != null && !commandLine.isEmpty()) {
     executeCommand(commandLine);
   }
