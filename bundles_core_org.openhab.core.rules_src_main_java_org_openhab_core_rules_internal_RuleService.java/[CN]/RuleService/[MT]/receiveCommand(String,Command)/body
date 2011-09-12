@@ -1,13 +1,10 @@
 {
-  if (ksession != null) {
-    try {
-      Item item=itemRegistry.getItem(itemName);
-      CommandEvent event=new CommandEvent(item,command);
-      ksession.insert(event);
-    }
- catch (    ItemNotFoundException e) {
-    }
-catch (    ItemNotUniqueException e) {
-    }
+  try {
+    Item item=itemRegistry.getItem(itemName);
+    eventQueue.add(new CommandEvent(item,command));
+  }
+ catch (  ItemNotFoundException e) {
+  }
+catch (  ItemNotUniqueException e) {
   }
 }

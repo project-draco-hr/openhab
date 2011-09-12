@@ -1,11 +1,8 @@
 {
-  final Calendar cal=GregorianCalendar.getInstance();
-  ksession.fireAllRules();
   Collection<FactHandle> handles=ksession.getFactHandles(new ObjectFilter(){
     public boolean accept(    Object obj){
       if (obj instanceof RuleEvent) {
-        RuleEvent event=(RuleEvent)obj;
-        return event.getTimestamp().before(cal);
+        return true;
       }
       return false;
     }
@@ -14,4 +11,19 @@
   for (  FactHandle handle : handles) {
     ksession.retract(handle);
   }
+  ArrayList<RuleEvent> clonedQueue=new ArrayList<RuleEvent>(eventQueue);
+  eventQueue.clear();
+  for (  RuleEvent event : clonedQueue) {
+    Item item=event.getItem();
+    if (ksession != null && item != null) {
+      if (event instanceof StateEvent) {
+        FactHandle factHandle=factHandleMap.get(item.getName());
+        if (factHandle != null) {
+          ksession.update(factHandle,item);
+        }
+        ksession.insert(event);
+      }
+    }
+  }
+  ksession.fireAllRules();
 }
