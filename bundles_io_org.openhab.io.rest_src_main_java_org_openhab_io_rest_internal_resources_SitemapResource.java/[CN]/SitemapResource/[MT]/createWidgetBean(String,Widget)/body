@@ -23,5 +23,32 @@
       bean.linkedPage=createPageBean(sitemapName,pageName,itemUIRegistry.getChildren(linkableWidget));
     }
   }
+  if (widget instanceof Switch) {
+    Switch switchWidget=(Switch)widget;
+    for (    Mapping mapping : switchWidget.getMappings()) {
+      MappingBean mappingBean=new MappingBean();
+      mappingBean.command=mapping.getCmd();
+      mappingBean.label=mapping.getLabel();
+      bean.mappings.add(mappingBean);
+    }
+  }
+  if (widget instanceof Selection) {
+    Selection selectionWidget=(Selection)widget;
+    for (    Mapping mapping : selectionWidget.getMappings()) {
+      MappingBean mappingBean=new MappingBean();
+      mappingBean.command=mapping.getCmd();
+      mappingBean.label=mapping.getLabel();
+      bean.mappings.add(mappingBean);
+    }
+  }
+  if (widget instanceof Slider) {
+    Slider sliderWidget=(Slider)widget;
+    bean.sendFrequency=sliderWidget.getFrequency();
+    bean.switchSupport=sliderWidget.isSwitchEnabled();
+  }
+  if (widget instanceof List) {
+    List listWidget=(List)widget;
+    bean.separator=listWidget.getSeparator();
+  }
   return bean;
 }
