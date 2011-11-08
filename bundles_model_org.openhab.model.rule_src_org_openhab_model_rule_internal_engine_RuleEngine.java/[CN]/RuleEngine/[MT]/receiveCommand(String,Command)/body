@@ -1,0 +1,14 @@
+{
+  Set<Rule> rules=commandEventTriggeredRules.get(itemName);
+  if (rules == null)   return;
+  for (  Rule rule : rules) {
+    for (    EventTrigger t : rule.getEventtrigger()) {
+      if (t instanceof CommandEventTrigger) {
+        CommandEventTrigger ct=(CommandEventTrigger)t;
+        if (ct.getItem().equals(itemName) && (ct.getCommand() == null || command.equals(ct.getCommand()))) {
+          executeScript(rule);
+        }
+      }
+    }
+  }
+}

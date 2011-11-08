@@ -1,0 +1,15 @@
+{
+  for (  Collection<Rule> ruleSet : ruleSets) {
+    if (model != null) {
+      for (      Rule rule : model.getRules()) {
+        ruleSet.remove(rule);
+      }
+    }
+    Set<Rule> clonedSet=new HashSet<Rule>(ruleSet);
+    for (    Rule rule : clonedSet) {
+      if (rule.eIsProxy()) {
+        ruleSet.remove(rule);
+      }
+    }
+  }
+}

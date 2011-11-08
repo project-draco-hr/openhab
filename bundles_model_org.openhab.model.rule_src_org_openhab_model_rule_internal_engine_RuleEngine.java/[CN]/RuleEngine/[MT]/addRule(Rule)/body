@@ -1,0 +1,37 @@
+{
+  for (  EventTrigger t : rule.getEventtrigger()) {
+    if (t instanceof SystemOnStartupTrigger) {
+      systemStartupTriggeredRules.add(rule);
+    }
+    if (t instanceof SystemOnShutdownTrigger) {
+      systemShutdownTriggeredRules.add(rule);
+    }
+    if (t instanceof CommandEventTrigger) {
+      CommandEventTrigger ceTrigger=(CommandEventTrigger)t;
+      Set<Rule> rules=commandEventTriggeredRules.get(ceTrigger.getItem());
+      if (rules == null) {
+        rules=new HashSet<Rule>();
+        commandEventTriggeredRules.put(ceTrigger.getItem(),rules);
+      }
+      rules.add(rule);
+    }
+    if (t instanceof UpdateEventTrigger) {
+      UpdateEventTrigger ueTrigger=(UpdateEventTrigger)t;
+      Set<Rule> rules=updateEventTriggeredRules.get(ueTrigger.getItem());
+      if (rules == null) {
+        rules=new HashSet<Rule>();
+        updateEventTriggeredRules.put(ueTrigger.getItem(),rules);
+      }
+      rules.add(rule);
+    }
+    if (t instanceof ChangedEventTrigger) {
+      ChangedEventTrigger ceTrigger=(ChangedEventTrigger)t;
+      Set<Rule> rules=changedEventTriggeredRules.get(ceTrigger.getItem());
+      if (rules == null) {
+        rules=new HashSet<Rule>();
+        changedEventTriggeredRules.put(ceTrigger.getItem(),rules);
+      }
+      rules.add(rule);
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  stateUpdated(item,newState);
+  Set<Rule> rules=changedEventTriggeredRules.get(item.getName());
+  if (rules == null)   return;
+  for (  Rule rule : rules) {
+    for (    EventTrigger t : rule.getEventtrigger()) {
+      if (t instanceof ChangedEventTrigger) {
+        ChangedEventTrigger ct=(ChangedEventTrigger)t;
+        if (ct.getItem().equals(item.getName())) {
+          if (ct.getOldState() != null) {
+            State triggerOldState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getOldState());
+            if (!oldState.equals(triggerOldState)) {
+              continue;
+            }
+          }
+          if (ct.getNewState() != null) {
+            State triggerNewState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getNewState());
+            if (!newState.equals(triggerNewState)) {
+              continue;
+            }
+          }
+          executeScript(rule);
+        }
+      }
+    }
+  }
+}

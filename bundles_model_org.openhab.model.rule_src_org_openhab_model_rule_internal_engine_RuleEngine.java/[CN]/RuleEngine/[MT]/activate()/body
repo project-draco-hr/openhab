@@ -1,0 +1,17 @@
+{
+  if (!isEnabled())   return;
+  logger.info("Started rule engine");
+  Iterable<String> ruleModelNames=modelRepository.getAllModelNamesOfType("rules");
+  for (  String ruleModelName : ruleModelNames) {
+    EObject model=modelRepository.getModel(ruleModelName);
+    if (model instanceof RuleModel) {
+      RuleModel ruleModel=(RuleModel)model;
+      initializeRules(ruleModel);
+    }
+  }
+  if (itemRegistry != null) {
+    for (    Item item : itemRegistry.getItems()) {
+      itemAdded(item);
+    }
+  }
+}
