@@ -1,0 +1,12 @@
+{
+  Object value=super._featureCallJvmIdentifyableElement(identifiable,featureCall,receiver,context,indicator);
+  if (value == null && receiver == null) {
+    for (    Type type : stateAndCommandProvider.getAllTypes()) {
+      if (type.toString().equals(featureCall.toString())) {
+        return type;
+      }
+    }
+    value=getItem(featureCall.toString());
+  }
+  return value;
+}

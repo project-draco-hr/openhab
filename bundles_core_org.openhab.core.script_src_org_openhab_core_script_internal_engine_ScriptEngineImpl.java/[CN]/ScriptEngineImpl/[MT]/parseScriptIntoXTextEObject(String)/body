@@ -1,0 +1,26 @@
+{
+  Resource resource=resourceSet.createResource(computeUnusedUri(resourceSet));
+  try {
+    resource.load(new StringInputStream(scriptAsString),resourceSet.getLoadOptions());
+  }
+ catch (  IOException e) {
+    throw new ScriptParsingException("Unexpected IOException; from close() of a String-based ByteArrayInputStream, no real I/O; how is that possible???",scriptAsString,e);
+  }
+  List<Diagnostic> errors=resource.getErrors();
+  if (errors.size() != 0) {
+    throw new ScriptParsingException("Failed to parse expression (due to managed SyntaxError/s)",scriptAsString).addDiagnosticErrors(errors);
+  }
+  EList<EObject> contents=resource.getContents();
+  if (!contents.isEmpty()) {
+    Iterable<Issue> validationErrors=getValidationErrors(contents.get(0));
+    if (!validationErrors.iterator().hasNext()) {
+      return (XExpression)contents.get(0);
+    }
+ else {
+      throw new ScriptParsingException("Failed to parse expression (due to managed ValidationError/s)",scriptAsString).addValidationIssues(validationErrors);
+    }
+  }
+ else {
+    return null;
+  }
+}

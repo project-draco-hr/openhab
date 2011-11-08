@@ -1,0 +1,10 @@
+{
+  Object thisElement=null;
+  IEvaluationContext evaluationContext=contextProvider.get();
+  evaluationContext.newValue(XbaseScopeProvider.THIS,thisElement);
+  IEvaluationResult result=interpreter.evaluate(xExpression,evaluationContext,CancelIndicator.NullImpl);
+  if (result.getException() != null) {
+    throw new ScriptExecutionException("Error executing script",result.getException());
+  }
+  return result.getResult();
+}

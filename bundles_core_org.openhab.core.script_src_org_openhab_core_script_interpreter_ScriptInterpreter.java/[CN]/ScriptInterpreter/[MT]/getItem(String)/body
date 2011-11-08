@@ -1,0 +1,12 @@
+{
+  ItemRegistry itemRegistry=itemRegistryProvider.get();
+  try {
+    return itemRegistry.getItem(itemName);
+  }
+ catch (  ItemNotFoundException e) {
+    throw new EvaluationException(e);
+  }
+catch (  ItemNotUniqueException e) {
+    throw new EvaluationException(e);
+  }
+}

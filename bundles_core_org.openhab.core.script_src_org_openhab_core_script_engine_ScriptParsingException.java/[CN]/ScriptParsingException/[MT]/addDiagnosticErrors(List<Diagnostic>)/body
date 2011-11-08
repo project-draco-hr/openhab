@@ -1,0 +1,16 @@
+{
+  for (  Diagnostic emfDiagnosticError : errors) {
+    if (emfDiagnosticError instanceof AbstractDiagnostic) {
+      AbstractDiagnostic e=(AbstractDiagnostic)emfDiagnosticError;
+      this.getErrors().add(new ScriptError(e.getMessage(),e.getLine(),e.getOffset(),e.getLength()));
+    }
+ else     if (emfDiagnosticError instanceof ExceptionDiagnostic) {
+      ExceptionDiagnostic e=(ExceptionDiagnostic)emfDiagnosticError;
+      this.getErrors().add(new ScriptError(e.getMessage(),e.getLine(),e.getOffset(),e.getLength()));
+    }
+ else {
+      this.getErrors().add(new ScriptError(emfDiagnosticError.getMessage(),-1,-1,-1));
+    }
+  }
+  return this;
+}
