@@ -1,0 +1,23 @@
+{
+  Iterable<Rule> result;
+switch (type) {
+case STARTUP:
+    result=systemStartupTriggeredRules;
+  break;
+case SHUTDOWN:
+result=systemShutdownTriggeredRules;
+break;
+case UPDATE:
+result=Iterables.concat(updateEventTriggeredRules.values());
+break;
+case CHANGE:
+result=Iterables.concat(changedEventTriggeredRules.values());
+break;
+case COMMAND:
+result=Iterables.concat(commandEventTriggeredRules.values());
+break;
+default :
+result=Sets.newHashSet();
+}
+return Iterables.unmodifiableIterable(result);
+}

@@ -1,0 +1,11 @@
+{
+  IJvmTypeProvider provider=typeProviderFactory.findOrCreateTypeProvider(rs);
+  List<IEObjectDescription> descriptions=new ArrayList<IEObjectDescription>();
+  ItemRegistry itemRegistry=itemRegistryProvider.get();
+  if (itemRegistry != null) {
+    for (    Item item : itemRegistry.getItems()) {
+      descriptions.add(EObjectDescription.create(item.getName(),provider.findTypeByName(item.getClass().getCanonicalName())));
+    }
+  }
+  return descriptions;
+}

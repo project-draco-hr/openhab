@@ -1,5 +1,8 @@
 {
   for (  Rule rule : ruleModel.getRules()) {
-    addRule(rule);
+    triggerManager.addRule(rule);
   }
+  Iterable<Rule> startupRules=triggerManager.getRules(STARTUP);
+  executeScripts(startupRules);
+  triggerManager.clear(STARTUP);
 }

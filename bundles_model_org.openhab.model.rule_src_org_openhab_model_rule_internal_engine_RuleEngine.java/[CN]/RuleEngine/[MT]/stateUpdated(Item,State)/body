@@ -1,20 +1,6 @@
 {
-  Set<Rule> rules=updateEventTriggeredRules.get(item.getName());
-  if (rules == null)   return;
+  Iterable<Rule> rules=triggerManager.getRules(UPDATE,item,state);
   for (  Rule rule : rules) {
-    for (    EventTrigger t : rule.getEventtrigger()) {
-      if (t instanceof UpdateEventTrigger) {
-        UpdateEventTrigger ut=(UpdateEventTrigger)t;
-        if (ut.getItem().equals(item.getName())) {
-          if (ut.getState() != null) {
-            State triggerState=TypeParser.parseState(item.getAcceptedDataTypes(),ut.getState());
-            if (!state.equals(triggerState)) {
-              continue;
-            }
-          }
-          executeScript(rule);
-        }
-      }
-    }
+    executeRule(rule);
   }
 }

@@ -1,0 +1,78 @@
+{
+  List<Rule> result=Lists.newArrayList();
+  Iterable<Rule> rules=getAllRules(triggerType,item.getName());
+  if (rules == null) {
+    rules=Lists.newArrayList();
+  }
+switch (triggerType) {
+case STARTUP:
+    return systemStartupTriggeredRules;
+case SHUTDOWN:
+  return systemShutdownTriggeredRules;
+case UPDATE:
+if (type1 instanceof State) {
+  State state=(State)type1;
+  for (  Rule rule : rules) {
+    for (    EventTrigger t : rule.getEventtrigger()) {
+      if (t instanceof UpdateEventTrigger) {
+        UpdateEventTrigger ut=(UpdateEventTrigger)t;
+        if (ut.getItem().equals(item.getName())) {
+          if (ut.getState() != null) {
+            State triggerState=TypeParser.parseState(item.getAcceptedDataTypes(),ut.getState());
+            if (!state.equals(triggerState)) {
+              continue;
+            }
+          }
+          result.add(rule);
+        }
+      }
+    }
+  }
+}
+break;
+case CHANGE:
+if (type1 instanceof State && type2 instanceof State) {
+State newState=(State)type1;
+State oldState=(State)type2;
+for (Rule rule : rules) {
+for (EventTrigger t : rule.getEventtrigger()) {
+  if (t instanceof ChangedEventTrigger) {
+    ChangedEventTrigger ct=(ChangedEventTrigger)t;
+    if (ct.getItem().equals(item.getName())) {
+      if (ct.getOldState() != null) {
+        State triggerOldState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getOldState());
+        if (!oldState.equals(triggerOldState)) {
+          continue;
+        }
+      }
+      if (ct.getNewState() != null) {
+        State triggerNewState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getNewState());
+        if (!newState.equals(triggerNewState)) {
+          continue;
+        }
+      }
+      result.add(rule);
+    }
+  }
+}
+}
+}
+break;
+case COMMAND:
+if (type1 instanceof Command) {
+Command command=(Command)type1;
+for (Rule rule : rules) {
+for (EventTrigger t : rule.getEventtrigger()) {
+if (t instanceof CommandEventTrigger) {
+CommandEventTrigger ct=(CommandEventTrigger)t;
+if (ct.getItem().equals(item.getName()) && (ct.getCommand() == null || command.equals(ct.getCommand()))) {
+  result.add(rule);
+}
+}
+}
+}
+}
+break;
+}
+return result;
+}
