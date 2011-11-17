@@ -2,19 +2,14 @@
   if (parent instanceof IFolder) {
     IFolder folder=(IFolder)parent;
     try {
-      IResource[] children=folder.members();
-      List<IResource> sortedChildren=new ArrayList<IResource>(children.length);
-      for (      IResource child : children) {
-        if (child instanceof IFolder) {
-          sortedChildren.add(child);
+      IResource[] resources=folder.members();
+      List<IResource> children=new ArrayList<IResource>(resources.length);
+      for (      IResource child : resources) {
+        if (!child.getName().startsWith(".")) {
+          children.add(child);
         }
       }
-      for (      IResource child : children) {
-        if (child instanceof IFile) {
-          sortedChildren.add(child);
-        }
-      }
-      return sortedChildren.toArray(new IResource[sortedChildren.size()]);
+      return children.toArray(new IResource[children.size()]);
     }
  catch (    CoreException e) {
       logger.warn("Error getting children for folder '{}'",folder.getName(),e);
