@@ -1,18 +1,20 @@
 {
   triggerManager=new RuleTriggerManager();
-  if (!isEnabled())   return;
+  if (!isEnabled()) {
+    logger.info("Rule engine is disabled. I guess we are running in the openHAB designer");
+    return;
+  }
   logger.info("Started rule engine");
   Iterable<String> ruleModelNames=modelRepository.getAllModelNamesOfType("rules");
   for (  String ruleModelName : ruleModelNames) {
     EObject model=modelRepository.getModel(ruleModelName);
     if (model instanceof RuleModel) {
       RuleModel ruleModel=(RuleModel)model;
-      initializeRules(ruleModel);
+      triggerManager.addRuleModel(ruleModel);
     }
   }
-  if (itemRegistry != null) {
-    for (    Item item : itemRegistry.getItems()) {
-      itemAdded(item);
-    }
+  for (  Item item : itemRegistry.getItems()) {
+    internalItemAdded(item);
   }
+  runStartupRules();
 }

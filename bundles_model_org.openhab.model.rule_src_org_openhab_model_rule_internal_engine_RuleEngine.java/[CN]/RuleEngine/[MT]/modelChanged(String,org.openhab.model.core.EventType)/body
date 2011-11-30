@@ -5,7 +5,8 @@
       triggerManager.removeRuleModel(model);
     }
     if (model != null && (type == org.openhab.model.core.EventType.ADDED || type == org.openhab.model.core.EventType.MODIFIED)) {
-      initializeRules(model);
+      triggerManager.addRuleModel(model);
+      runStartupRules();
     }
   }
 }
