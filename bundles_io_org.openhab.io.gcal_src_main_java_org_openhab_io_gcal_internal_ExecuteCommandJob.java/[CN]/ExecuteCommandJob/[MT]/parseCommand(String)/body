@@ -4,6 +4,9 @@
     return new String[]{">",command.substring(1).trim()};
   }
   StreamTokenizer tokenizer=new StreamTokenizer(new StringReader(command));
+  tokenizer.wordChars('_','_');
+  tokenizer.wordChars('-','-');
+  tokenizer.wordChars('.','.');
   List<String> tokens=new ArrayList<String>();
   try {
     int tokenType=0;
@@ -20,7 +23,7 @@ case StreamTokenizer.TT_NUMBER:
   break;
 }
 tokens.add(token);
-logger.trace("read the value {} from the given command",token);
+logger.trace("read value {} from the given command",token);
 }
 }
  catch (IOException ioe) {
