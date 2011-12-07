@@ -2,7 +2,10 @@
   if (element instanceof RuleModel) {
     _infer((RuleModel)element,acceptor,isPrelinkingPhase);
   }
- else {
+ else   if (element != null) {
     _infer(element,acceptor,isPrelinkingPhase);
+  }
+ else {
+    throw new IllegalArgumentException("Unhandled parameter types: " + Arrays.<Object>asList(element,acceptor,isPrelinkingPhase).toString());
   }
 }
