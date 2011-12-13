@@ -1,0 +1,19 @@
+{
+  boolean authenticationResult=false;
+  try {
+    String authHeader=request.getHeader(HTTP_HEADER__AUTHORIZATION);
+    if (StringUtils.isBlank(authHeader)) {
+      sendAuthenticationHeader(response,realm);
+    }
+ else {
+      authenticationResult=computeAuthHeader(request,authHeader,realm);
+      if (!authenticationResult) {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.debug("sending response failed",ioe.getLocalizedMessage());
+  }
+  return authenticationResult;
+}
