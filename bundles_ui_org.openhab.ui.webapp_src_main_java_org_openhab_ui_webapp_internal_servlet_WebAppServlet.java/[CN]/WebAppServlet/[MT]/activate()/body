@@ -2,8 +2,7 @@
   try {
     logger.debug("Starting up WebApp servlet at " + WEBAPP_ALIAS + SERVLET_NAME);
     Hashtable<String,String> props=new Hashtable<String,String>();
-    HttpContext context=createHttpContext();
-    httpService.registerServlet(WEBAPP_ALIAS + SERVLET_NAME,this,props,context);
+    httpService.registerServlet(WEBAPP_ALIAS + SERVLET_NAME,this,props,createHttpContext());
     httpService.registerResources(WEBAPP_ALIAS,"web",null);
   }
  catch (  NamespaceException e) {

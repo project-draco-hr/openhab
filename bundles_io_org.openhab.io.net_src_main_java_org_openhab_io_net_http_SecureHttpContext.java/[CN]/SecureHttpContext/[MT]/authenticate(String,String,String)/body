@@ -1,0 +1,27 @@
+{
+  try {
+    Subject subject=new Subject();
+    LoginContext lContext=new LoginContext(realm,subject,new CallbackHandler(){
+      public void handle(      Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (int i=0; i < callbacks.length; i++) {
+          if (callbacks[i] instanceof NameCallback) {
+            ((NameCallback)callbacks[i]).setName(username);
+          }
+ else           if (callbacks[i] instanceof ObjectCallback) {
+            ((ObjectCallback)callbacks[i]).setObject(password);
+          }
+ else {
+            throw new UnsupportedCallbackException(callbacks[i]);
+          }
+        }
+      }
+    }
+);
+    lContext.login();
+    return subject;
+  }
+ catch (  LoginException le) {
+    logger.warn("Login of user '" + username + "' failed",le);
+    return null;
+  }
+}
