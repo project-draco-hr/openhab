@@ -1,0 +1,10 @@
+{
+  Sitemap sitemap=getSitemap(sitemapname);
+  if (sitemap != null) {
+    return createSitemapBean(sitemapname,sitemap,true);
+  }
+ else {
+    logger.info("Received HTTP GET request at '{}' for the unknown sitemap '{}'.",uriInfo.getPath(),sitemapname);
+    throw new WebApplicationException(404);
+  }
+}
