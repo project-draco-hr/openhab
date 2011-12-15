@@ -10,7 +10,7 @@
     if (typeClass.equals(IncreaseDecreaseType.class))     return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
     if (typeClass.equals(OnOffType.class))     return OnOffType.valueOf(value.toUpperCase());
     if (typeClass.equals(PercentType.class))     return PercentType.valueOf(mapToPercent(value));
-    if (typeClass.equals(DecimalType.class))     return DecimalType.valueOf(value.substring(0,value.indexOf(" ")));
+    if (typeClass.equals(DecimalType.class))     return DecimalType.valueOf(value.split(" ")[0]);
     if (typeClass.equals(StringType.class))     return StringType.valueOf(value);
     if (typeClass.equals(OpenClosedType.class))     return OpenClosedType.valueOf(value.toUpperCase());
     if (typeClass.equals(StopMoveType.class))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
