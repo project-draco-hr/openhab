@@ -1,31 +1,24 @@
 {
-  logger.debug("received authentication request '{}'",authHeader);
+  logger.trace("received authentication request '{}'",authHeader);
   String[] authHeaders=authHeader.trim().split(" ");
   if (authHeaders.length == 2) {
     String authType=StringUtils.trim(authHeaders[0]);
     String authInfo=StringUtils.trim(authHeaders[1]);
     if (HttpServletRequest.BASIC_AUTH.equalsIgnoreCase(authType)) {
-      try {
-        String authInfoString=new String(Base64.decodeBase64(authInfo));
-        String[] authInfos=authInfoString.split(":");
-        if (authInfos.length < 2) {
-          logger.debug("authInfos '{}' must contain two elements separated by a colon",authInfoString);
-          return false;
-        }
-        String username=authInfos[0];
-        String password=authInfos[1];
-        logger.debug("extraced user '{}' -> going to authenticate!",username);
-        Subject subject=authenticate(realm,username,password);
-        if (subject != null) {
-          request.setAttribute(HttpContext.AUTHENTICATION_TYPE,HttpServletRequest.BASIC_AUTH);
-          request.setAttribute(HttpContext.REMOTE_USER,username);
-          request.setAttribute("openHAB subject",subject);
-          logger.info("login of user '{}' succeeded!",username);
-          return true;
-        }
+      String authInfoString=new String(Base64.decodeBase64(authInfo));
+      String[] authInfos=authInfoString.split(":");
+      if (authInfos.length < 2) {
+        logger.warn("authInfos '{}' must contain two elements separated by a colon",authInfoString);
+        return false;
       }
- catch (      Exception e) {
-        logger.error("authentication request '" + authInfo + "' went wrong",e);
+      String username=authInfos[0];
+      String password=authInfos[1];
+      Subject subject=authenticate(realm,username,password);
+      if (subject != null) {
+        request.setAttribute(HttpContext.AUTHENTICATION_TYPE,HttpServletRequest.BASIC_AUTH);
+        request.setAttribute(HttpContext.REMOTE_USER,username);
+        logger.trace("authentication of user '{}' succeeded!",username);
+        return true;
       }
     }
  else {

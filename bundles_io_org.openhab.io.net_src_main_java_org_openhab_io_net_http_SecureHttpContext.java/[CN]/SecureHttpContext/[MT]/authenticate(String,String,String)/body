@@ -1,5 +1,6 @@
 {
   try {
+    logger.trace("going to authenticate user '{}', real '{}'",username,realm);
     Subject subject=new Subject();
     LoginContext lContext=new LoginContext(realm,subject,new CallbackHandler(){
       public void handle(      Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -21,7 +22,7 @@
     return subject;
   }
  catch (  LoginException le) {
-    logger.warn("Login of user '" + username + "' failed",le);
+    logger.warn("authentication of user '" + username + "' failed",le);
     return null;
   }
 }
