@@ -1,0 +1,13 @@
+{
+  CallType call=new CallType(new StringType(event.getCallerIdNum()),new StringType(event.getExten()),new StringType(event.getChannelStateDesc()));
+  eventCache.put(event.getUniqueId(),call);
+  if (item instanceof SwitchItem) {
+    eventPublisher.postUpdate(item.getName(),OnOffType.ON);
+  }
+ else   if (item instanceof CallItem) {
+    eventPublisher.postUpdate(item.getName(),call);
+  }
+ else {
+    logger.warn("handleCall - postUpdate for itemType '{}' is undefined",item);
+  }
+}

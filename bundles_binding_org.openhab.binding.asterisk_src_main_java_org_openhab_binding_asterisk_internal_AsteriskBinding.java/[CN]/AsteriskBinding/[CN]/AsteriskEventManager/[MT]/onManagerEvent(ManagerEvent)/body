@@ -1,0 +1,18 @@
+{
+  if (itemRegistry != null) {
+    for (    AsteriskBindingProvider provider : providers) {
+      for (      AsteriskBindingTypes type : AsteriskBindingTypes.values()) {
+        for (        String itemName : provider.getItemNamesForType(type)) {
+          try {
+            Item item=itemRegistry.getItem(itemName);
+            handleManagerEvent(item,managerEvent);
+          }
+ catch (          ItemNotFoundException e) {
+          }
+catch (          ItemNotUniqueException e) {
+          }
+        }
+      }
+    }
+  }
+}

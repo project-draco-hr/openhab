@@ -1,0 +1,14 @@
+{
+  if (config != null) {
+    disconnect();
+    AsteriskBinding.host=(String)config.get("host");
+    AsteriskBinding.username=(String)config.get("username");
+    AsteriskBinding.password=(String)config.get("password");
+    if (StringUtils.isNotBlank(AsteriskBinding.host) && StringUtils.isNotBlank(AsteriskBinding.username)) {
+      connect(AsteriskBinding.host,AsteriskBinding.username,AsteriskBinding.password);
+    }
+ else {
+      logger.warn("cannot connect to asterisk manager interface because of missing " + "parameters (host={}, username={})",AsteriskBinding.host,AsteriskBinding.username);
+    }
+  }
+}

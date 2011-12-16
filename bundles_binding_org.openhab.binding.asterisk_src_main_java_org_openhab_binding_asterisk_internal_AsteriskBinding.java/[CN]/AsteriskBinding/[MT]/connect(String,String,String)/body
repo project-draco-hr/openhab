@@ -1,0 +1,23 @@
+{
+  ManagerConnectionFactory factory=new ManagerConnectionFactory(host,username,password);
+  AsteriskBinding.managerConnection=factory.createManagerConnection();
+  AsteriskBinding.managerConnection.addEventListener(new AsteriskEventManager());
+  try {
+    AsteriskBinding.managerConnection.login();
+  }
+ catch (  AuthenticationFailedException afe) {
+    logger.error("authentication failed, please verify username and password");
+  }
+catch (  IOException ioe) {
+    logger.error("Could not connect to ManagerInterface on {}: {}",host,ioe.toString());
+  }
+catch (  Exception e) {
+    logger.error("Login to Asterisk Manager-Interface on {} throws exception: {}",host,e.toString());
+  }
+  try {
+    AsteriskBinding.managerConnection.sendAction(new StatusAction());
+  }
+ catch (  Exception e) {
+    logger.error("registering for status update throws exception: {}",e.toString());
+  }
+}

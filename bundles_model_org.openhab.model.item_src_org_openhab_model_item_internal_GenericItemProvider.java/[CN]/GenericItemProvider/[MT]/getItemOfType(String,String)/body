@@ -1,11 +1,12 @@
 {
-  if (itemType == null)   return null;
-  if (itemType.equals("Switch"))   return new SwitchItem(itemName);
-  if (itemType.equals("Rollershutter"))   return new RollershutterItem(itemName);
-  if (itemType.equals("Contact"))   return new ContactItem(itemName);
-  if (itemType.equals("String"))   return new StringItem(itemName);
-  if (itemType.equals("Number"))   return new NumberItem(itemName);
-  if (itemType.equals("Dimmer"))   return new DimmerItem(itemName);
-  if (itemType.equals("DateTime"))   return new DateTimeItem(itemName);
+  if (itemType == null) {
+    return null;
+  }
+  for (  ItemTypeFactory factory : itemTypeFactorys) {
+    GenericItem item=factory.createItemType(itemType,itemName);
+    if (item != null) {
+      return item;
+    }
+  }
   return null;
 }
