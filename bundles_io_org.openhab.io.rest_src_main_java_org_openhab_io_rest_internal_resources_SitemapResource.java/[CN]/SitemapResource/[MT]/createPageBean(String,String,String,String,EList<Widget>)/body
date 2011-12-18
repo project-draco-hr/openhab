@@ -1,0 +1,16 @@
+{
+  PageBean bean=new PageBean();
+  bean.id=pageId;
+  bean.title=title;
+  bean.icon=icon;
+  bean.link=uriInfo.getBaseUriBuilder().path(PATH_SITEMAPS).path(sitemapName).path(pageId).build().toASCIIString();
+  if (children != null) {
+    for (    Widget widget : children) {
+      bean.widgets.add(createWidgetBean(sitemapName,widget));
+    }
+  }
+ else {
+    bean.widgets=null;
+  }
+  return bean;
+}
