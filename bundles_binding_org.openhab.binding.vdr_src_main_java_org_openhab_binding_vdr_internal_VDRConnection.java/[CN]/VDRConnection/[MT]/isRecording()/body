@@ -1,0 +1,36 @@
+{
+  Response response=send(new LSTT());
+  Boolean ret=Boolean.FALSE;
+  if (response != null && response.getMessage() != null) {
+    List<VDRTimer> timerList=TimerParser.parse(response.getMessage());
+    if (timerList != null && !timerList.isEmpty()) {
+      for (      VDRTimer vdrTimer : timerList) {
+        if (vdrTimer.isActive() && vdrTimer.hasState(VDRTimer.RECORDING)) {
+          ret=Boolean.TRUE;
+          break;
+        }
+ else {
+          boolean recording=false;
+          Calendar startNow=Calendar.getInstance();
+          Calendar endNow=Calendar.getInstance();
+          startNow.add(Calendar.MINUTE,6);
+          if (startNow.after(vdrTimer.getStartTime()) && endNow.before(vdrTimer.getEndTime())) {
+            recording=vdrTimer.hasState(VDRTimer.ACTIVE);
+          }
+          if (recording) {
+            if (!vdrTimer.isRepeating()) {
+              ret=Boolean.TRUE;
+              break;
+            }
+ else             if (vdrTimer.isDaySet(Calendar.getInstance())) {
+              ret=Boolean.TRUE;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  logger.trace("VDR (" + mIp + ") recording state: "+ ret);
+  return ret;
+}

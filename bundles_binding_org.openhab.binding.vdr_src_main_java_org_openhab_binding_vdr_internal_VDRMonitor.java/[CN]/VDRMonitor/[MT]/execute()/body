@@ -1,0 +1,21 @@
+{
+  logger.debug("VDRMonitor execute called");
+  if (vdrBinding != null) {
+    for (    VDRConfig vdrConfig : vdrBinding.vdrConfigCache.values()) {
+      Boolean recording=checkRecording(vdrConfig);
+      if (recording != null) {
+        if (eventPublisher != null) {
+          VDRBindingProvider bindingProvider=vdrBinding.findFirstMatchingBindingProviderByVDRId(vdrConfig.vdrId);
+          if (bindingProvider != null) {
+            String itemName=bindingProvider.getBindingItemName(vdrConfig.vdrId,VDRCommandType.RECORDING);
+            State newState=recording.booleanValue() ? OnOffType.ON : OnOffType.OFF;
+            eventPublisher.postUpdate(itemName,newState);
+          }
+        }
+      }
+    }
+  }
+ else {
+    logger.info("VDRBinding not available");
+  }
+}

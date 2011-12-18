@@ -1,0 +1,23 @@
+{
+  VDRBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  if (provider == null) {
+    logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  List<String> vdrCommands=provider.getVDRCommand(itemName);
+  List<String> ids=provider.getVDRId(itemName);
+  if (ids != null) {
+    int i=0;
+    for (    String vdrId : ids) {
+      String vdrCommand=vdrCommands.get(i);
+      VDRCommandType vdrCmdType=VDRCommandType.create(vdrCommand,command);
+      if (vdrCmdType != null) {
+        executeCommand(vdrId,vdrCmdType,command);
+      }
+ else {
+        logger.error("wrong command type for binding [vdrId={}, command={}]",itemName,command);
+      }
+      i++;
+    }
+  }
+}
