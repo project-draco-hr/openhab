@@ -15,12 +15,12 @@
     EList<Widget> children=itemUIRegistry.getChildren(linkableWidget);
     if (widget instanceof Frame) {
       for (      Widget child : children) {
-        bean.widgets.add(createWidgetBean(sitemapName,child));
+        bean.widgets.add(createWidgetBean(sitemapName,child,drillDown));
       }
     }
  else     if (children.size() > 0) {
       String pageName=itemUIRegistry.getWidgetId(linkableWidget);
-      bean.linkedPage=createPageBean(sitemapName,itemUIRegistry.getLabel(widget),itemUIRegistry.getIcon(widget),pageName,null);
+      bean.linkedPage=createPageBean(sitemapName,itemUIRegistry.getLabel(widget),itemUIRegistry.getIcon(widget),pageName,drillDown ? itemUIRegistry.getChildren(linkableWidget) : null,drillDown);
     }
   }
   if (widget instanceof Switch) {

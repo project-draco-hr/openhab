@@ -3,22 +3,24 @@
   Sitemap sitemap=getSitemap(sitemapName);
   if (sitemap != null) {
     if (pageId.equals(sitemapName)) {
-      return createPageBean(sitemapName,sitemap.getLabel(),sitemap.getIcon(),sitemap.getName(),drillDown ? sitemap.getChildren() : null);
+      return createPageBean(sitemapName,sitemap.getLabel(),sitemap.getIcon(),sitemap.getName(),sitemap.getChildren(),false);
     }
  else {
       Widget pageWidget=itemUIRegistry.getWidget(sitemap,pageId);
       if (pageWidget instanceof LinkableWidget) {
-        PageBean pageBean=createPageBean(sitemapName,itemUIRegistry.getLabel(pageWidget),itemUIRegistry.getIcon(pageWidget),pageId,drillDown ? (itemUIRegistry.getChildren((LinkableWidget)pageWidget)) : null);
+        PageBean pageBean=createPageBean(sitemapName,itemUIRegistry.getLabel(pageWidget),itemUIRegistry.getIcon(pageWidget),pageId,itemUIRegistry.getChildren((LinkableWidget)pageWidget),false);
         EObject parentPage=pageWidget.eContainer();
         while (parentPage instanceof Frame) {
           parentPage=parentPage.eContainer();
         }
         if (parentPage instanceof Widget) {
           String parentId=itemUIRegistry.getWidgetId((Widget)pageWidget);
-          pageBean.parent=getPageBean(sitemapName,parentId,false);
+          pageBean.parent=getPageBean(sitemapName,parentId);
+          pageBean.parent.widgets=null;
         }
  else         if (parentPage instanceof Sitemap) {
-          pageBean.parent=getPageBean(sitemapName,sitemapName,false);
+          pageBean.parent=getPageBean(sitemapName,sitemapName);
+          pageBean.parent.widgets=null;
         }
         return pageBean;
       }
