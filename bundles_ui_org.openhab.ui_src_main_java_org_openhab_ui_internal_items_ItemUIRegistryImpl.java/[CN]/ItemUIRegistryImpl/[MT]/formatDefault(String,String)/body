@@ -1,0 +1,30 @@
+{
+  String formattedValue=null;
+  int maxIndex=0;
+  Matcher countMatcher=BASE_FORMAT_PATTERN.matcher(formatPattern);
+  while (countMatcher.find()) {
+    String currentValue=countMatcher.group(2);
+    maxIndex=Math.max(maxIndex,currentValue != null ? Integer.valueOf(currentValue) : 1);
+  }
+  if (formatPattern.matches(".*?%((\\d{1})\\$)?\\.\\d{1}f.*")) {
+    Object[] values=new Object[maxIndex + 1];
+    Arrays.fill(values,0f);
+    formattedValue=String.format(formatPattern,values);
+  }
+ else   if (formatPattern.matches(".*?%((\\d{1})\\$)?d.*")) {
+    Object[] values=new Object[maxIndex + 1];
+    Arrays.fill(values,0);
+    formattedValue=String.format(formatPattern,values);
+  }
+ else   if (formatPattern.matches(".*?%((\\d{1})\\$)?t.*")) {
+    Calendar[] values=new Calendar[maxIndex + 1];
+    Arrays.fill(values,Calendar.getInstance());
+    formattedValue=String.format(formatPattern,values);
+  }
+ else   if (formatPattern.matches(".*?%((\\d{1})\\$)?.*")) {
+    String[] values=new String[maxIndex + 1];
+    Arrays.fill(values,"undefined");
+    formattedValue=String.format(formatPattern,values);
+  }
+  return formattedValue != null ? formattedValue : "";
+}
