@@ -1,6 +1,17 @@
 {
   try {
-    httpService.registerServlet(REST_SERVLET_ALIAS,new ServletContainer(),getJerseyServletParams(),createHttpContext());
+    com.sun.jersey.core.osgi.Activator jerseyActivator=new com.sun.jersey.core.osgi.Activator();
+    BundleContext bundleContext=FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+    try {
+      jerseyActivator.start(bundleContext);
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+    httpService.registerServlet(REST_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
+    for (    Item item : getItemUIRegistry().getItems()) {
+      ((GenericItem)item).addStateChangeListener(this);
+    }
     logger.info("Registered REST servlet as /rest");
   }
  catch (  ServletException se) {
