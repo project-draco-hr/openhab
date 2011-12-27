@@ -1,0 +1,25 @@
+{
+  VDRConnection connection=getVDRConnection(vdrId);
+  if (connection != null && vdrCommandType != null) {
+switch (vdrCommandType) {
+case MESSAGE:
+      connection.send(new MESG(command.toString()));
+    break;
+case POWEROFF:
+  connection.send(new HITK("Power"));
+break;
+case CHANNEL_INCREASE:
+connection.send(new CHAN("+"));
+break;
+case CHANNEL_DECREASE:
+connection.send(new CHAN("-"));
+break;
+case VOLUME_INCREASE:
+connection.send(new VOLU("+"));
+break;
+case VOLUME_DECREASE:
+connection.send(new VOLU("-"));
+break;
+}
+}
+}

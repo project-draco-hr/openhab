@@ -1,0 +1,13 @@
+{
+  VDRBindingConfig config=(VDRBindingConfig)bindingConfigs.get(itemName);
+  List<String> ret=null;
+  if (config != null) {
+    ret=new ArrayList<String>();
+    ret.add(config.getCommand());
+    while (config.getNext() != null) {
+      config=config.getNext();
+      ret.add(config.getCommand());
+    }
+  }
+  return ret;
+}

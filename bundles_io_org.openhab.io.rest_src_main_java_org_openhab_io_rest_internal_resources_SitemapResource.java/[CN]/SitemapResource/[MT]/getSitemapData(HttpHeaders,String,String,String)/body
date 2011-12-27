@@ -1,0 +1,11 @@
+{
+  logger.debug("Received HTTP GET request at '{}' for media type '{}'.",new String[]{uriInfo.getPath(),type});
+  String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
+  if (responseType != null) {
+    Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getSitemapBean(sitemapname),callback) : getSitemapBean(sitemapname);
+    return Response.ok(responseObject,responseType).build();
+  }
+ else {
+    return Response.notAcceptable(null).build();
+  }
+}

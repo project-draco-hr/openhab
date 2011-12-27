@@ -1,0 +1,20 @@
+{
+  String bindingConfig=StringUtils.substringBefore(bindingConfigs,",");
+  String bindingConfigTail=StringUtils.substringAfter(bindingConfigs,",");
+  String[] configParts=bindingConfig.split(":");
+  if (configParts.length != 2) {
+    throw new BindingConfigParseException("VDR binding configuration must consist of two parts [config=" + configParts + "]");
+  }
+  String vdrId=StringUtils.trim(configParts[0]);
+  String command=StringUtils.trim(configParts[1]);
+  if (command != null) {
+    VDRBindingConfig vdrBindingConfig=new VDRBindingConfig(vdrId,command,item,parent);
+    if (StringUtils.isNotBlank(bindingConfigTail)) {
+      parseBindingConfig(item,bindingConfigTail,vdrBindingConfig);
+    }
+    return vdrBindingConfig;
+  }
+ else {
+    throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
+  }
+}
