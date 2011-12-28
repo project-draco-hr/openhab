@@ -8,14 +8,11 @@
     String formatPattern=label.substring(indexOpenBracket + 1,indexCloseBracket);
     try {
       Item item=getItem(itemName);
-      if (label.contains("%s")) {
-        state=item.getState();
-      }
- else       if (label.contains("%t") || label.contains("%1$t")) {
-        state=item.getState();
+      if (label.contains("%d")) {
+        state=item.getStateAs(DecimalType.class);
       }
  else {
-        state=item.getStateAs(DecimalType.class);
+        state=item.getState();
       }
     }
  catch (    ItemNotFoundException e) {
