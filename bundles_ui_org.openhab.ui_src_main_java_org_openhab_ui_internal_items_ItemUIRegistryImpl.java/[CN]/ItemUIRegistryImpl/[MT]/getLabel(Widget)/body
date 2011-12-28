@@ -8,7 +8,15 @@
     String formatPattern=label.substring(indexOpenBracket + 1,indexCloseBracket);
     try {
       Item item=getItem(itemName);
-      state=item.getState();
+      if (label.contains("%s")) {
+        state=item.getState();
+      }
+ else       if (label.contains("%t") || label.contains("%1$t")) {
+        state=item.getState();
+      }
+ else {
+        state=item.getStateAs(DecimalType.class);
+      }
     }
  catch (    ItemNotFoundException e) {
       logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
