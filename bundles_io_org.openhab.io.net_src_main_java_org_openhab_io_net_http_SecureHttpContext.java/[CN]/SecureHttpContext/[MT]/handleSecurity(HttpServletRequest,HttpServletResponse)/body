@@ -8,7 +8,15 @@
  else {
       authenticationResult=computeAuthHeader(request,authHeader,realm);
       if (!authenticationResult) {
-        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        if (computeRetriesLeft(request) > 0) {
+          sendAuthenticationHeader(response,realm);
+        }
+ else {
+          response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
+      }
+ else {
+        request.getSession().setAttribute(RETRIES_ATTRIBUTE,MAX_RETRIES);
       }
     }
   }
