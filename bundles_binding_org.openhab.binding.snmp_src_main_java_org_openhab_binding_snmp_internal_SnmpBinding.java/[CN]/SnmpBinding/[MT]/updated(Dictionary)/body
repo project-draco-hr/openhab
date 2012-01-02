@@ -1,0 +1,19 @@
+{
+  if (config != null) {
+    stopListening();
+    SnmpBinding.community=(String)config.get("community");
+    if (StringUtils.isBlank(SnmpBinding.community)) {
+      SnmpBinding.community="public";
+      logger.info("didn't find SNMP community configuration -> listen to SNMP community {}",SnmpBinding.community);
+    }
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString)) {
+      SnmpBinding.port=Integer.valueOf(portString).intValue();
+    }
+ else {
+      SnmpBinding.port=162;
+      logger.info("didn't find SNMP port configuration -> listen to SNMP default port {}",SnmpBinding.port);
+    }
+    listen();
+  }
+}

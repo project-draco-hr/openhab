@@ -1,0 +1,14 @@
+{
+  PDU pdu=event.getPDU();
+  if (pdu != null) {
+    logger.debug("Received PDU '{}'",event.getPDU());
+    for (    SnmpBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        OID oid=provider.getOID(itemName);
+        Variable variable=pdu.getVariable(oid);
+        eventPublisher.postUpdate(itemName,new StringType(variable.toString()));
+        break;
+      }
+    }
+  }
+}

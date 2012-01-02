@@ -1,0 +1,20 @@
+{
+  UdpAddress address=new UdpAddress(SnmpBinding.port);
+  try {
+    transport=new DefaultUdpTransportMapping(address);
+    MessageDispatcher mDispatcher=new MessageDispatcherImpl();
+    mDispatcher.addMessageProcessingModel(new MPv1());
+    mDispatcher.addMessageProcessingModel(new MPv2c());
+    SecurityProtocols.getInstance().addDefaultProtocols();
+    SecurityProtocols.getInstance().addPrivacyProtocol(new Priv3DES());
+    CommunityTarget target=new CommunityTarget();
+    target.setCommunity(new OctetString(SnmpBinding.community));
+    Snmp snmp=new Snmp(mDispatcher,transport);
+    snmp.addCommandResponder(this);
+    transport.listen();
+    logger.debug("SNMP binding is listening on " + address);
+  }
+ catch (  IOException ioe) {
+    logger.error("couldn't listen to " + address,ioe);
+  }
+}
