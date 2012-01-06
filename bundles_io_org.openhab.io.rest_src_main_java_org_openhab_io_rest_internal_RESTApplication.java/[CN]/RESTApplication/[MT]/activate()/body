@@ -6,12 +6,9 @@
       jerseyActivator.start(bundleContext);
     }
  catch (    Exception e) {
-      e.printStackTrace();
+      logger.error("Could not start Jersey framework",e);
     }
     httpService.registerServlet(REST_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
-    for (    Item item : getItemUIRegistry().getItems()) {
-      ((GenericItem)item).addStateChangeListener(this);
-    }
     logger.info("Registered REST servlet as /rest");
   }
  catch (  ServletException se) {
