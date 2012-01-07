@@ -1,0 +1,21 @@
+{
+  String cronExpression=trigger.getCron();
+  if (trigger.getTime() != null) {
+    if (trigger.getTime().equals("noon")) {
+      cronExpression="0 0 12 * * ?";
+    }
+ else     if (trigger.getTime().equals("midnight")) {
+      cronExpression="0 0 0 * * ?";
+    }
+  }
+  String jobIdentity=getJobIdentityString(rule);
+  try {
+    JobDetail job=newJob(ExecuteRuleJob.class).usingJobData(ExecuteRuleJob.JOB_DATA_RULEMODEL,rule.eResource().getURI().path()).usingJobData(ExecuteRuleJob.JOB_DATA_RULENAME,rule.getName()).withIdentity(jobIdentity).build();
+    Trigger quartzTrigger=newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+    scheduler.scheduleJob(job,quartzTrigger);
+    logger.debug("Scheduled rule {} with cron expression {}",new String[]{rule.getName(),cronExpression});
+  }
+ catch (  RuntimeException e) {
+    throw new SchedulerException(e.getMessage());
+  }
+}
