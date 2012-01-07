@@ -1,0 +1,24 @@
+{
+  if (config != null) {
+    String securityOptionsString=(String)config.get("option");
+    if (StringUtils.isNotBlank(securityOptionsString)) {
+      try {
+        SecureHttpContext.securityOptions=SecurityOptions.valueOf(securityOptionsString.toUpperCase());
+      }
+ catch (      IllegalArgumentException iae) {
+        logger.warn("couldn't create SecurityOption '{}' - valid values are {}",securityOptionsString,SecurityOptions.values());
+        SecureHttpContext.securityOptions=SecurityOptions.OFF;
+      }
+    }
+ else {
+      SecureHttpContext.securityOptions=SecurityOptions.OFF;
+    }
+    String netmask=(String)config.get("netmask");
+    if (StringUtils.isNotBlank(netmask)) {
+      SecureHttpContext.subnetUtils=new SubnetUtils(netmask).getInfo();
+    }
+ else {
+      logger.debug("couldn't find netmask configuration -> using '{}' instead",SecureHttpContext.subnetUtils.getCidrSignature());
+    }
+  }
+}

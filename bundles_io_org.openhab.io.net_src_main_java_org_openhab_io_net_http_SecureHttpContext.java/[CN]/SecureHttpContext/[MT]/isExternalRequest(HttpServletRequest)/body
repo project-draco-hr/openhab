@@ -1,0 +1,14 @@
+{
+  String remoteAddr=request.getRemoteAddr();
+  try {
+    InetAddress remoteIp=InetAddress.getByName(remoteAddr);
+    if (remoteIp.isLoopbackAddress()) {
+      return false;
+    }
+    return !subnetUtils.isInRange(remoteAddr);
+  }
+ catch (  UnknownHostException uhe) {
+    logger.error(uhe.getLocalizedMessage());
+  }
+  return true;
+}

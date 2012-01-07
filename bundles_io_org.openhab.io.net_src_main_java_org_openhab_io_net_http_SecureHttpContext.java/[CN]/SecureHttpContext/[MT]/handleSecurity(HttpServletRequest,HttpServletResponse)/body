@@ -1,4 +1,8 @@
 {
+  if (!isSecurityEnabled(request)) {
+    logger.debug("security is disabled - processing aborted!");
+    return true;
+  }
   boolean authenticationResult=false;
   try {
     String authHeader=request.getHeader(HTTP_HEADER__AUTHORIZATION);
@@ -8,15 +12,12 @@
  else {
       authenticationResult=computeAuthHeader(request,authHeader,realm);
       if (!authenticationResult) {
-        if (computeRetriesLeft(request) > 0) {
-          sendAuthenticationHeader(response,realm);
+        try {
+          Thread.sleep(5000);
         }
- else {
-          response.sendError(HttpServletResponse.SC_FORBIDDEN);
+ catch (        InterruptedException e) {
         }
-      }
- else {
-        request.getSession().setAttribute(RETRIES_ATTRIBUTE,MAX_RETRIES);
+        sendAuthenticationHeader(response,realm);
       }
     }
   }

@@ -1,0 +1,16 @@
+{
+  Set<String> itemNames=new HashSet<String>();
+  for (  Widget child : children) {
+    if (child instanceof Frame) {
+      Frame frame=(Frame)child;
+      itemNames.addAll(getRelevantItemNamesForWidgets(frame.getChildren()));
+    }
+ else {
+      String itemName=child.getItem();
+      if (itemName != null) {
+        itemNames.add(itemName);
+      }
+    }
+  }
+  return itemNames;
+}

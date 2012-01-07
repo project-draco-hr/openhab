@@ -14,9 +14,10 @@
           parentPage=parentPage.eContainer();
         }
         if (parentPage instanceof Widget) {
-          String parentId=itemUIRegistry.getWidgetId((Widget)pageWidget);
+          String parentId=itemUIRegistry.getWidgetId((Widget)parentPage);
           pageBean.parent=getPageBean(sitemapName,parentId,uri);
           pageBean.parent.widgets=null;
+          pageBean.parent.parent=null;
         }
  else         if (parentPage instanceof Sitemap) {
           pageBean.parent=getPageBean(sitemapName,sitemapName,uri);
@@ -27,10 +28,10 @@
  else {
         if (logger.isDebugEnabled()) {
           if (pageWidget == null) {
-            logger.debug("Received HTTP GET request at '{}' for the unknown page id '{}'.",uriInfo.getPath(),pageId);
+            logger.debug("Received HTTP GET request at '{}' for the unknown page id '{}'.",uri,pageId);
           }
  else {
-            logger.debug("Received HTTP GET request at '{}' for the page id '{}'. " + "This id refers to a non-linkable widget and is therefore no valid page id.",uriInfo.getPath(),pageId);
+            logger.debug("Received HTTP GET request at '{}' for the page id '{}'. " + "This id refers to a non-linkable widget and is therefore no valid page id.",uri,pageId);
           }
         }
         throw new WebApplicationException(404);
@@ -38,7 +39,7 @@
     }
   }
  else {
-    logger.info("Received HTTP GET request at '{}' for the unknown sitemap '{}'.",uriInfo.getPath(),sitemapName);
+    logger.info("Received HTTP GET request at '{}' for the unknown sitemap '{}'.",uri,sitemapName);
     throw new WebApplicationException(404);
   }
 }

@@ -1,12 +1,13 @@
 {
 synchronized (listeners) {
+    HashSet<StateChangeListener> clonedListeners=new HashSet<StateChangeListener>(listeners);
     if (oldState.equals(newState)) {
-      for (      StateChangeListener listener : listeners) {
+      for (      StateChangeListener listener : clonedListeners) {
         listener.stateUpdated(this,newState);
       }
     }
  else {
-      for (      StateChangeListener listener : listeners) {
+      for (      StateChangeListener listener : clonedListeners) {
         listener.stateChanged(this,oldState,newState);
       }
     }

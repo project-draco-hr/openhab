@@ -33,5 +33,14 @@
       }
       rules.add(rule);
     }
+ else     if (t instanceof TimerTrigger) {
+      timerEventTriggeredRules.add(rule);
+      try {
+        createTimer(rule,(TimerTrigger)t);
+      }
+ catch (      SchedulerException e) {
+        logger.error("Cannot create timer for rule '{}': {}",rule.getName(),e.getMessage());
+      }
+    }
   }
 }

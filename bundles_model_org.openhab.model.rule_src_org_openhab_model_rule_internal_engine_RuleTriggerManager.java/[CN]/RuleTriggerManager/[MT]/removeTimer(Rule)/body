@@ -1,0 +1,9 @@
+{
+  JobKey jobKey=JobKey.jobKey(getJobIdentityString(rule));
+  if (jobKey != null) {
+    boolean success=scheduler.deleteJob(jobKey);
+    if (!success) {
+      logger.warn("Failed to delete cron job '{}'",jobKey.getName());
+    }
+  }
+}
