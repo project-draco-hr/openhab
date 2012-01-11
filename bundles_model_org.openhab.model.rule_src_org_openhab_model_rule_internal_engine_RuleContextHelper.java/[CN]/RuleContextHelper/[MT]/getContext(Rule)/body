@@ -6,8 +6,17 @@
     }
   }
   IEvaluationContext evaluationContext=contextProvider.get();
-  for (  Variable var : ruleModel.getVariables()) {
-    evaluationContext.newValue(QualifiedName.create(var.getName()),null);
+  for (  XExpression expr : ruleModel.getVariables()) {
+    if (expr instanceof XVariableDeclaration) {
+      XVariableDeclaration var=(XVariableDeclaration)expr;
+      try {
+        Object initialValue=var.getRight() == null ? null : scriptEngine.newScriptFromXExpression(var.getRight()).execute();
+        evaluationContext.newValue(QualifiedName.create(var.getName()),initialValue);
+      }
+ catch (      ScriptExecutionException e) {
+        logger.warn("Variable '{}' on rule file '{}' cannot be initialized with value '{}': {}",new String[]{var.getName(),ruleModel.eResource().getURI().path(),var.getRight().toString(),e.getMessage()});
+      }
+    }
   }
   ruleModel.eAdapters().add(new RuleContextAdapter(evaluationContext));
   return evaluationContext;

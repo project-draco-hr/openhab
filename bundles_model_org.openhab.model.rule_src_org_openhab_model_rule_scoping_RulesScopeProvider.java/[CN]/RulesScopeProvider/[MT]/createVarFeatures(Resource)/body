@@ -2,8 +2,13 @@
   List<IEObjectDescription> descriptions=new ArrayList<IEObjectDescription>();
   if (resource.getContents().size() > 0 && resource.getContents().get(0) instanceof RuleModel) {
     RuleModel ruleModel=(RuleModel)resource.getContents().get(0);
-    for (    Variable var : ruleModel.getVariables()) {
-      descriptions.add(EObjectDescription.create(var.getName(),var.getType()));
+    for (    XExpression expr : ruleModel.getVariables()) {
+      if (expr instanceof XVariableDeclaration) {
+        XVariableDeclaration var=(XVariableDeclaration)expr;
+        if (var.getName() != null && var.getType() != null) {
+          descriptions.add(createLocalVarDescription(var));
+        }
+      }
     }
   }
   return descriptions;
