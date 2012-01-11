@@ -1,0 +1,14 @@
+{
+  RuleModel ruleModel=(RuleModel)rule.eContainer();
+  for (  Adapter adapter : ruleModel.eAdapters()) {
+    if (adapter instanceof RuleContextAdapter) {
+      return ((RuleContextAdapter)adapter).getContext();
+    }
+  }
+  IEvaluationContext evaluationContext=contextProvider.get();
+  for (  Variable var : ruleModel.getVariables()) {
+    evaluationContext.newValue(QualifiedName.create(var.getName()),null);
+  }
+  ruleModel.eAdapters().add(new RuleContextAdapter(evaluationContext));
+  return evaluationContext;
+}

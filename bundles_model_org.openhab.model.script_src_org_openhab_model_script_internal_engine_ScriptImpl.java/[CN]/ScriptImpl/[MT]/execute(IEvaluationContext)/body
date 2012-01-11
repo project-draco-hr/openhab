@@ -1,0 +1,10 @@
+{
+  IEvaluationResult result=interpreter.evaluate(xExpression,evaluationContext,CancelIndicator.NullImpl);
+  if (result == null) {
+    return null;
+  }
+  if (result.getException() != null) {
+    throw new ScriptExecutionException("Error executing script",result.getException());
+  }
+  return result.getResult();
+}
