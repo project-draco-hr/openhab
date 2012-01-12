@@ -8,11 +8,22 @@
   String vdrId=StringUtils.trim(configParts[0]);
   String command=StringUtils.trim(configParts[1]);
   if (command != null) {
-    VDRBindingConfig vdrBindingConfig=new VDRBindingConfig(vdrId,command,item,parent);
-    if (StringUtils.isNotBlank(bindingConfigTail)) {
-      parseBindingConfig(item,bindingConfigTail,vdrBindingConfig);
+    if (VDRCommandType.validateBinding(command,item.getClass())) {
+      VDRBindingConfig vdrBindingConfig=new VDRBindingConfig(vdrId,command,item,parent);
+      if (StringUtils.isNotBlank(bindingConfigTail)) {
+        parseBindingConfig(item,bindingConfigTail,vdrBindingConfig);
+      }
+      return vdrBindingConfig;
     }
-    return vdrBindingConfig;
+ else {
+      String validItemType=VDRCommandType.getValidItemTypes(command);
+      if (StringUtils.isEmpty(validItemType)) {
+        throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
+      }
+ else {
+        throw new BindingConfigParseException("'" + bindingConfig + "' is not bound to a valid item type. Valid item type(s): "+ validItemType);
+      }
+    }
   }
  else {
     throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
