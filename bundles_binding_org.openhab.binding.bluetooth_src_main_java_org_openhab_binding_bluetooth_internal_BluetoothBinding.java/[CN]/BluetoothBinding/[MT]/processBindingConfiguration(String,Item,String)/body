@@ -7,7 +7,7 @@
     entry.put(bindingConfig,item.getName());
     switchItems.put(context,entry);
   }
-  if (item instanceof StringItem) {
+ else   if (item instanceof StringItem) {
     if (bindingConfig.equals("!")) {
       authStringItems.put(context,item.getName());
     }
@@ -18,7 +18,7 @@
       allStringItems.put(context,item.getName());
     }
   }
-  if (item instanceof NumberItem) {
+ else   if (item instanceof NumberItem) {
     if (bindingConfig.equals("!")) {
       authMeasurementItems.put(context,item.getName());
     }
@@ -28,5 +28,8 @@
  else     if (bindingConfig.equals("*")) {
       allMeasurementItems.put(context,item.getName());
     }
+  }
+ else {
+    throw new BindingConfigParseException("item '" + item.getName() + "' is of type '"+ item.getClass().getSimpleName()+ "', only Switch-, String- and NumberItems are allowed - please check your *.items configuration");
   }
 }
