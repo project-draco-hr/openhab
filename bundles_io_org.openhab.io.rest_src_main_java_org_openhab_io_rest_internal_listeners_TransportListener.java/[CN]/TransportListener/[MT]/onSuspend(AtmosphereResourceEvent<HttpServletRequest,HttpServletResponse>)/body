@@ -7,10 +7,16 @@
     return;
   }
   stateChangeListener=new StateChangeListener(){
+    private volatile Boolean fired=false;
     public void stateUpdated(    Item item,    State state){
     }
     public void stateChanged(    Item item,    State oldState,    State newState){
-      event.getResource().getBroadcaster().broadcast(getResponseObject(event));
+synchronized (fired) {
+        if (!fired) {
+          fired=true;
+          event.getResource().getBroadcaster().broadcast(getResponseObject(event));
+        }
+      }
     }
   }
 ;
