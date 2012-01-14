@@ -2,7 +2,7 @@
   ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
   Sitemap sitemap=getSitemap(sitemapName);
   if (sitemap != null) {
-    if (pageId.equals(sitemapName)) {
+    if (pageId.equals(sitemap.getName())) {
       return createPageBean(sitemapName,sitemap.getLabel(),sitemap.getIcon(),sitemap.getName(),sitemap.getChildren(),false,uri);
     }
  else {
@@ -20,7 +20,7 @@
           pageBean.parent.parent=null;
         }
  else         if (parentPage instanceof Sitemap) {
-          pageBean.parent=getPageBean(sitemapName,sitemapName,uri);
+          pageBean.parent=getPageBean(sitemapName,sitemap.getName(),uri);
           pageBean.parent.widgets=null;
         }
         return pageBean;
