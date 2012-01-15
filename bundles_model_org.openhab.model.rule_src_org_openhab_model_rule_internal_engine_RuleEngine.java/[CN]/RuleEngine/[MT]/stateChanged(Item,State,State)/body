@@ -2,6 +2,9 @@
   stateUpdated(item,newState);
   if (triggerManager != null) {
     Iterable<Rule> rules=triggerManager.getRules(CHANGE,item,newState,oldState);
+    RuleEvaluationContext context=new RuleEvaluationContext();
+    context.newValue(QualifiedName.create(RuleContextHelper.VAR_PREVIOUS_STATE),oldState);
+    executeRules(rules,context);
     executeRules(rules);
   }
 }

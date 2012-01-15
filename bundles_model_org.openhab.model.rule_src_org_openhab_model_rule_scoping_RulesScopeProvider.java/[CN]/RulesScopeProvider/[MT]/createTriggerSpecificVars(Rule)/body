@@ -1,0 +1,20 @@
+{
+  List<IEObjectDescription> descriptions=new ArrayList<IEObjectDescription>();
+  if (containsCommandTrigger(rule)) {
+    JvmTypeReference commandTypeRef=typeReferences.getTypeForName(Command.class,rule);
+    XVariableDeclaration varDecl=XbaseFactory.eINSTANCE.createXVariableDeclaration();
+    varDecl.setName(RuleContextHelper.VAR_RECEIVED_COMMAND);
+    varDecl.setType(commandTypeRef);
+    varDecl.setWriteable(false);
+    descriptions.add(new LocalVarDescription(QualifiedName.create(varDecl.getName()),varDecl));
+  }
+  if (containsStateChangeTrigger(rule)) {
+    JvmTypeReference stateTypeRef=typeReferences.getTypeForName(State.class,rule);
+    XVariableDeclaration varDecl=XbaseFactory.eINSTANCE.createXVariableDeclaration();
+    varDecl.setName(RuleContextHelper.VAR_PREVIOUS_STATE);
+    varDecl.setType(stateTypeRef);
+    varDecl.setWriteable(false);
+    descriptions.add(new LocalVarDescription(QualifiedName.create(varDecl.getName()),varDecl));
+  }
+  return descriptions;
+}
