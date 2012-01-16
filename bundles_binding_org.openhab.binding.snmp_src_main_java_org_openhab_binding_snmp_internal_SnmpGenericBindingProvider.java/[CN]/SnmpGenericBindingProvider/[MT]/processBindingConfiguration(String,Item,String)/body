@@ -1,15 +1,10 @@
 {
-  if (item instanceof StringItem) {
-    super.processBindingConfiguration(context,item,bindingConfig);
-    if (bindingConfig != null) {
-      SnmpBindingConfig config=parseBindingConfig(item,bindingConfig);
-      addBindingConfig(item,config);
-    }
- else {
-      logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
-    }
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    SnmpBindingConfig config=parseBindingConfig(item,bindingConfig);
+    addBindingConfig(item,config);
   }
  else {
-    throw new BindingConfigParseException("item '" + item.getName() + "' is of type '"+ item.getClass().getSimpleName()+ "', only StringItems are allowed - please check your *.items configuration");
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
   }
 }
