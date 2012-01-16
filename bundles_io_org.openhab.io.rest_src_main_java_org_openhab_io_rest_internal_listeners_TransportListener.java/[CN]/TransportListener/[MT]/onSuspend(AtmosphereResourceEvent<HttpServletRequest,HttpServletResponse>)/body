@@ -1,8 +1,6 @@
 {
   final HttpServletRequest request=event.getResource().getRequest();
-  String transport=request.getHeader("X-Atmosphere-Transport");
-  String upgrade=request.getHeader("Upgrade");
-  if ((transport == null || transport.isEmpty()) && (upgrade == null || !upgrade.equalsIgnoreCase("websocket"))) {
+  if (!isAtmosphereTransport(request)) {
     event.getResource().resume();
     return;
   }
@@ -12,7 +10,7 @@
     }
     public void stateChanged(    Item item,    State oldState,    State newState){
 synchronized (fired) {
-        if (!fired) {
+        if (!fired || !isResumingTransport(request)) {
           fired=true;
           event.getResource().getBroadcaster().broadcast(getResponseObject(event));
         }

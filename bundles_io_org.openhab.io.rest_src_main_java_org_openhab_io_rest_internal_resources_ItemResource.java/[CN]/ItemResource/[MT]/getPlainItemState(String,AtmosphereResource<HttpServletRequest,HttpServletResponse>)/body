@@ -1,5 +1,5 @@
 {
-  if ((transport == null || transport.isEmpty()) && (upgrade == null || !upgrade.equalsIgnoreCase("websocket"))) {
+  if (!TransportListener.isAtmosphereTransport((HttpServletRequest)resource.getRequest())) {
     Item item=getItem(itemname);
     if (item != null) {
       logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
