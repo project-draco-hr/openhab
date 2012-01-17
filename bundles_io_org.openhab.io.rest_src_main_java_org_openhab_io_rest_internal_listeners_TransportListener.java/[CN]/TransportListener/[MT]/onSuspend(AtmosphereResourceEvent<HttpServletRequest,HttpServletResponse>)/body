@@ -12,6 +12,11 @@
 synchronized (fired) {
         if (!fired || !isResumingTransport(request)) {
           fired=true;
+          try {
+            Thread.sleep(200);
+          }
+ catch (          InterruptedException e) {
+          }
           event.getResource().getBroadcaster().broadcast(getResponseObject(event));
         }
       }
