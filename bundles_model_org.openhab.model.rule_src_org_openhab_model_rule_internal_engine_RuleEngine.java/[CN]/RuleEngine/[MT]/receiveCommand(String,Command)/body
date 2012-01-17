@@ -1,6 +1,8 @@
 {
   if (triggerManager != null) {
     Iterable<Rule> rules=triggerManager.getRules(COMMAND,itemName,command);
-    executeRules(rules);
+    RuleEvaluationContext context=new RuleEvaluationContext();
+    context.newValue(QualifiedName.create(RuleContextHelper.VAR_RECEIVED_COMMAND),command);
+    executeRules(rules,context);
   }
 }

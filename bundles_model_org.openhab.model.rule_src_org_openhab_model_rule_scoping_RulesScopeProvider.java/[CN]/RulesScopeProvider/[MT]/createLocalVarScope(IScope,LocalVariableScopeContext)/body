@@ -1,0 +1,12 @@
+{
+  if (scopeContext.getContext() instanceof Rule) {
+    IScope parent=super.createLocalVarScope(parentScope,scopeContext);
+    List<IEObjectDescription> descriptions=new ArrayList<IEObjectDescription>();
+    descriptions.addAll(createVarFeatures(scopeContext.getContext().eResource()));
+    descriptions.addAll(createTriggerSpecificVars((Rule)scopeContext.getContext()));
+    return MapBasedScope.createScope(parent,descriptions);
+  }
+ else {
+    return super.createLocalVarScope(parentScope,scopeContext);
+  }
+}
