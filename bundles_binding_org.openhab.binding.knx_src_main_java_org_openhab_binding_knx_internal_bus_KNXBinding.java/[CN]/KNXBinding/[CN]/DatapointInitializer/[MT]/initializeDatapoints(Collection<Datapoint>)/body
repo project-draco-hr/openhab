@@ -8,8 +8,7 @@
       }
     }
  catch (    KNXException e) {
-      logger.warn("Cannot read value for item '{}' from KNX bus!",datapoint.getName(),e);
-      logger.error(e.getMessage());
+      logger.warn("Cannot read value for item '{}' from KNX bus: {}",new String[]{datapoint.getName(),e.getMessage()});
     }
 catch (    KNXIllegalArgumentException e) {
       logger.warn("Error sending KNX read request for '{}': {}",new String[]{datapoint.getName(),e.getMessage()});
@@ -21,7 +20,7 @@ catch (    KNXIllegalArgumentException e) {
         sleep(pause);
       }
  catch (      InterruptedException e) {
-        logger.debug("KNX reading pause has been interrupted!",e);
+        logger.debug("KNX reading pause has been interrupted: {}",e.getMessage());
       }
     }
   }

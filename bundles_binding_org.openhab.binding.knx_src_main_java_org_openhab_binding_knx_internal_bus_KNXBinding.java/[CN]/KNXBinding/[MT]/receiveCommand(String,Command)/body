@@ -15,13 +15,13 @@
             }
           }
  catch (          KNXException e) {
-            logger.warn("Command could not be sent to the KNX bus - retrying one time",e);
+            logger.warn("Command could not be sent to the KNX bus - retrying one time: {}",e.getMessage());
             try {
               pc=KNXConnection.getCommunicator();
               pc.write(datapoint,toDPTValue(command,datapoint.getDPT()));
             }
  catch (            KNXException e1) {
-              logger.error("Command could not be sent to the KNX bus - giving up",e);
+              logger.error("Command could not be sent to the KNX bus - giving up: {}",e.getMessage());
             }
           }
         }
