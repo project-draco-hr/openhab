@@ -1,9 +1,9 @@
 {
   try {
-    logger.debug("Starting up WebApp servlet at " + WEBAPP_ALIAS + SERVLET_NAME);
     Hashtable<String,String> props=new Hashtable<String,String>();
     httpService.registerServlet(WEBAPP_ALIAS + SERVLET_NAME,this,props,createHttpContext());
     httpService.registerResources(WEBAPP_ALIAS,"web",null);
+    logger.info("Started Classic UI at " + WEBAPP_ALIAS + SERVLET_NAME);
   }
  catch (  NamespaceException e) {
     logger.error("Error during servlet startup",e);
