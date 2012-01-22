@@ -1,21 +1,23 @@
 {
-  Iterable<Rule> startupRules=triggerManager.getRules(STARTUP);
-  List<Rule> executedRules=Lists.newArrayList();
-  for (  Rule rule : startupRules) {
-    try {
-      executeRule(rule);
-      executedRules.add(rule);
-    }
- catch (    ScriptExecutionException e) {
-      if (e.getCause() instanceof ItemNotFoundException) {
-      }
- else {
-        logger.error("Error during the execution of rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
+  if (triggerManager != null) {
+    Iterable<Rule> startupRules=triggerManager.getRules(STARTUP);
+    List<Rule> executedRules=Lists.newArrayList();
+    for (    Rule rule : startupRules) {
+      try {
+        executeRule(rule);
         executedRules.add(rule);
       }
+ catch (      ScriptExecutionException e) {
+        if (e.getCause() instanceof ItemNotFoundException) {
+        }
+ else {
+          logger.error("Error during the execution of rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
+          executedRules.add(rule);
+        }
+      }
     }
-  }
-  for (  Rule rule : executedRules) {
-    triggerManager.removeRule(STARTUP,rule);
+    for (    Rule rule : executedRules) {
+      triggerManager.removeRule(STARTUP,rule);
+    }
   }
 }

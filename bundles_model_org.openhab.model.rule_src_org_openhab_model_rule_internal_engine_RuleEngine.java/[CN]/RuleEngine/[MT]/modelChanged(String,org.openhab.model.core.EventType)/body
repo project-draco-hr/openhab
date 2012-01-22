@@ -1,12 +1,14 @@
 {
-  if (isEnabled() && modelName.endsWith("rules")) {
-    RuleModel model=(RuleModel)modelRepository.getModel(modelName);
-    if (type == org.openhab.model.core.EventType.REMOVED || type == org.openhab.model.core.EventType.MODIFIED) {
-      triggerManager.removeRuleModel(model);
-    }
-    if (model != null && (type == org.openhab.model.core.EventType.ADDED || type == org.openhab.model.core.EventType.MODIFIED)) {
-      triggerManager.addRuleModel(model);
-      runStartupRules();
+  if (triggerManager != null) {
+    if (isEnabled() && modelName.endsWith("rules")) {
+      RuleModel model=(RuleModel)modelRepository.getModel(modelName);
+      if (type == org.openhab.model.core.EventType.REMOVED || type == org.openhab.model.core.EventType.MODIFIED) {
+        triggerManager.removeRuleModel(model);
+      }
+      if (model != null && (type == org.openhab.model.core.EventType.ADDED || type == org.openhab.model.core.EventType.MODIFIED)) {
+        triggerManager.addRuleModel(model);
+        runStartupRules();
+      }
     }
   }
 }
