@@ -65,7 +65,8 @@ for (Rule rule : rules) {
 for (EventTrigger t : rule.getEventtrigger()) {
 if (t instanceof CommandEventTrigger) {
 CommandEventTrigger ct=(CommandEventTrigger)t;
-if (ct.getItem().equals(item.getName()) && (ct.getCommand() == null || command.equals(ct.getCommand()))) {
+Command triggerCommand=TypeParser.parseCommand(item.getAcceptedCommandTypes(),ct.getCommand());
+if (ct.getItem().equals(item.getName()) && (triggerCommand == null || command.equals(triggerCommand))) {
   result.add(rule);
 }
 }
