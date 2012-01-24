@@ -10,8 +10,8 @@ case STARTUP:
 case SHUTDOWN:
   return systemShutdownTriggeredRules;
 case UPDATE:
-if (type1 instanceof State) {
-  State state=(State)type1;
+if (newType instanceof State) {
+  State state=(State)newType;
   for (  Rule rule : rules) {
     for (    EventTrigger t : rule.getEventtrigger()) {
       if (t instanceof UpdateEventTrigger) {
@@ -31,9 +31,9 @@ if (type1 instanceof State) {
 }
 break;
 case CHANGE:
-if (type1 instanceof State && type2 instanceof State) {
-State newState=(State)type1;
-State oldState=(State)type2;
+if (newType instanceof State && oldType instanceof State) {
+State newState=(State)newType;
+State oldState=(State)oldType;
 for (Rule rule : rules) {
 for (EventTrigger t : rule.getEventtrigger()) {
   if (t instanceof ChangedEventTrigger) {
@@ -59,8 +59,8 @@ for (EventTrigger t : rule.getEventtrigger()) {
 }
 break;
 case COMMAND:
-if (type1 instanceof Command) {
-Command command=(Command)type1;
+if (newType instanceof Command) {
+Command command=(Command)newType;
 for (Rule rule : rules) {
 for (EventTrigger t : rule.getEventtrigger()) {
 if (t instanceof CommandEventTrigger) {
