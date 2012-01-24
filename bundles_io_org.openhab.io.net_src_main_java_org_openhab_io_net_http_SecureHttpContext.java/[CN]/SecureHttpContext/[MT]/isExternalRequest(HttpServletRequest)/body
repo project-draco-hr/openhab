@@ -1,4 +1,5 @@
 {
+  long startTime=System.currentTimeMillis();
   String remoteAddr=request.getRemoteAddr();
   try {
     InetAddress remoteIp=InetAddress.getByName(remoteAddr);
@@ -9,6 +10,9 @@
   }
  catch (  UnknownHostException uhe) {
     logger.error(uhe.getLocalizedMessage());
+  }
+ finally {
+    logger.debug("checking ip is in range took {}ms",System.currentTimeMillis() - startTime);
   }
   return true;
 }
