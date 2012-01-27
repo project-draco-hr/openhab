@@ -5,7 +5,7 @@
       String commandName=req.getParameter(itemName);
       try {
         Item item=itemRegistry.getItem(itemName);
-        if (item instanceof SwitchItem && commandName.equals("TOGGLE")) {
+        if ((item instanceof SwitchItem || item instanceof GroupItem) && commandName.equals("TOGGLE")) {
           commandName=item.getState().equals(OnOffType.ON) ? "OFF" : "ON";
         }
         Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandName);
