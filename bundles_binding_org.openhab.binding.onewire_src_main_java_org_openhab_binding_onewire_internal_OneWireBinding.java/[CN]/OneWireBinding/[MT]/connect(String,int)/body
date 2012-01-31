@@ -1,13 +1,25 @@
 {
   if (ip != null && port > 0) {
-    owc=OwfsClientFactory.newOwfsClient(ip,port,false);
+    owc=(OwfsClientImpl)OwfsClientFactory.newOwfsClient(ip,port,false);
     owc.setDeviceDisplayFormat(OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
     owc.setBusReturn(OwBusReturn.OWNET_BUSRETURN_ON);
     owc.setPersistence(OwPersistence.OWNET_PERSISTENCE_ON);
     owc.setTemperatureScale(OwTemperatureScale.OWNET_TS_CELSIUS);
-    logger.info("Established connection to OwServer on IP '{}' Port '{}'.",ip,port);
+    owc.setTimeout(5000);
+    try {
+      boolean isConnected=owc.connect();
+      if (isConnected) {
+        logger.info("Established connection to OwServer on IP '{}' Port '{}'.",ip,port);
+      }
+ else {
+        logger.warn("Establishing connection to OwServer [IP '{}' Port '{}'] timed out.",ip,port);
+      }
+    }
+ catch (    IOException ioe) {
+      logger.error("Couldn't connect to OwServer [IP '" + ip + "' Port '"+ port+ "']: ",ioe.getLocalizedMessage());
+    }
   }
  else {
-    logger.warn("Couldn't establish connection to OwServer [IP '{}' Port '{}'].",ip,port);
+    logger.warn("Couldn't connect to OwServer because of missing connection parameters [IP '{}' Port '{}'].",ip,port);
   }
 }
