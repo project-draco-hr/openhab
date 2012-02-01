@@ -2,5 +2,6 @@
   Script script=scriptEngine.newScriptFromXExpression(rule.getScript());
   logger.debug("Executing rule '{}'",rule.getName());
   context.setGlobalContext(RuleContextHelper.getContext(rule));
-  script.execute(context);
+  ScriptExecutionThread thread=new ScriptExecutionThread(rule.getName(),script,context);
+  thread.start();
 }

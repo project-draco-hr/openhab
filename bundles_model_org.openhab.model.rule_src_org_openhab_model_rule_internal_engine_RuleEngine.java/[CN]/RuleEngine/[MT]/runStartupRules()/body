@@ -4,14 +4,18 @@
     List<Rule> executedRules=Lists.newArrayList();
     for (    Rule rule : startupRules) {
       try {
-        executeRule(rule);
+        Script script=scriptEngine.newScriptFromXExpression(rule.getScript());
+        logger.debug("Executing startup rule '{}'",rule.getName());
+        RuleEvaluationContext context=new RuleEvaluationContext();
+        context.setGlobalContext(RuleContextHelper.getContext(rule));
+        script.execute(context);
         executedRules.add(rule);
       }
  catch (      ScriptExecutionException e) {
         if (e.getCause() instanceof ItemNotFoundException) {
         }
  else {
-          logger.error("Error during the execution of rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
+          logger.error("Error during the execution of startup rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
           executedRules.add(rule);
         }
       }
