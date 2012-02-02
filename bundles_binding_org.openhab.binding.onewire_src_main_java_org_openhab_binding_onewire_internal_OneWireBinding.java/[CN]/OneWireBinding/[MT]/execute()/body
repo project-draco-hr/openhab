@@ -8,12 +8,12 @@
           logger.warn("sensorId or unitId isn't configured properly " + "for the given itemName [itemName={}, sensorId={}, unitId={}] => querying bus for values aborted!",new Object[]{itemName,sensorId,unitId});
           continue;
         }
-        double value=0;
+        State value=UnDefType.UNDEF;
         try {
           if (owc.exists("/" + sensorId)) {
             String valueString=owc.read("/" + sensorId + "/"+ unitId);
             if (valueString != null) {
-              value=Double.valueOf(valueString);
+              value=new DecimalType(Double.valueOf(valueString));
             }
           }
  else {
@@ -26,13 +26,12 @@
           if (logger.isDebugEnabled()) {
             logger.debug("reading from path " + sensorId + " throws exception",oe);
           }
-          value=Double.valueOf("-273");
         }
 catch (        IOException ioe) {
           logger.error("couldn't establish network connection while reading '" + sensorId + "'",ioe);
         }
  finally {
-          eventPublisher.postUpdate(itemName,new DecimalType(value));
+          eventPublisher.postUpdate(itemName,value);
         }
       }
     }
