@@ -1,7 +1,11 @@
 {
   ModelRepository repo=ScriptActivator.modelRepositoryTracker.getService();
   if (repo != null) {
-    XExpression expr=(XExpression)repo.getModel(scriptName + "." + ScriptActivator.SCRIPT_FILEEXT);
+    String scriptNameWithExt=scriptName;
+    if (!StringUtils.endsWith(scriptName,Script.SCRIPT_FILEEXT)) {
+      scriptNameWithExt=scriptName + "." + Script.SCRIPT_FILEEXT;
+    }
+    XExpression expr=(XExpression)repo.getModel(scriptNameWithExt);
     if (expr != null) {
       ScriptEngine scriptEngine=ScriptActivator.scriptEngineTracker.getService();
       if (scriptEngine != null) {

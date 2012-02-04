@@ -4,8 +4,14 @@
     String scriptString=Joiner.on(" ").join(args);
     Script script;
     try {
-      script=scriptEngine.newScriptFromString(scriptString);
-      Object result=script.execute();
+      Object result=null;
+      if (scriptString.endsWith(Script.SCRIPT_FILEEXT)) {
+        result=ScriptExecution.callScript(scriptString);
+      }
+ else {
+        script=scriptEngine.newScriptFromString(scriptString);
+        result=script.execute();
+      }
       if (result != null) {
         console.println(result.toString());
       }
