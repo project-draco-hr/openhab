@@ -9,6 +9,10 @@
   HttpMethod method=HttpUtil.createHttpMethod(httpMethod,url);
   method.getParams().setSoTimeout(timeout);
   method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  if (method instanceof EntityEnclosingMethod && content != null) {
+    EntityEnclosingMethod eeMethod=(EntityEnclosingMethod)method;
+    eeMethod.setRequestEntity(new InputStreamRequestEntity(content,contentType));
+  }
   Credentials credentials=extractCredentials(url);
   if (credentials != null) {
     client.getParams().setAuthenticationPreemptive(true);

@@ -1,0 +1,9 @@
+{
+  if (initialized) {
+    JSONSerializer serializer=new JSONSerializer().transform(new SenseEventTransformer(),SenseEventBean.class);
+    String res=serializer.serialize(new SenseEventBean(feedId,value));
+    String serviceUrl=SenseService.url + SenseService.apiKey;
+    String responseBody=HttpUtil.executeUrl("POST",serviceUrl,IOUtils.toInputStream(res),"application/json",5000);
+    logger.debug("Sent event to Sen.se with response message: " + responseBody);
+  }
+}
