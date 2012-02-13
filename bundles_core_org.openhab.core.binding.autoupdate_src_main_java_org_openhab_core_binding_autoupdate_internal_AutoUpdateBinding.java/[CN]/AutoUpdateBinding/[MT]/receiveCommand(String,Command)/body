@@ -1,0 +1,11 @@
+{
+  for (  AutoUpdateBindingProvider provider : providers) {
+    boolean autoUpdate=provider.autoUpdate(itemName);
+    if (autoUpdate && command instanceof State) {
+      eventPublisher.postUpdate(itemName,(State)command);
+    }
+ else {
+      logger.trace("Item '{}' is not configured to updated it's State automatically -> please update State manually");
+    }
+  }
+}
