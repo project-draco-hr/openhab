@@ -1,0 +1,18 @@
+{
+  Boolean autoUpdate=null;
+  for (  AutoUpdateBindingProvider provider : providers) {
+    Boolean au=provider.autoUpdate(itemName);
+    if (au != null) {
+      autoUpdate=(autoUpdate == null ? au : autoUpdate || au);
+    }
+  }
+  if (autoUpdate == null) {
+    autoUpdate=Boolean.TRUE;
+  }
+  if (autoUpdate && command instanceof State) {
+    eventPublisher.postUpdate(itemName,(State)command);
+  }
+ else {
+    logger.trace("Item '{}' is not configured to updated it's State automatically -> please update State manually");
+  }
+}

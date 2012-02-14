@@ -1,0 +1,10 @@
+{
+  if (StringUtils.isNotBlank(bindingConfig)) {
+    try {
+      config.autoupdate=Boolean.valueOf(bindingConfig.trim());
+    }
+ catch (    IllegalArgumentException iae) {
+      throw new BindingConfigParseException("The given parameter '" + bindingConfig.trim() + "' couldn't be parsed as Boolean");
+    }
+  }
+}
