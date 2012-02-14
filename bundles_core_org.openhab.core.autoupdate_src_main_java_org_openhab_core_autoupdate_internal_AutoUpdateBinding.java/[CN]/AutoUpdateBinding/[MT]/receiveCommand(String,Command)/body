@@ -1,9 +1,12 @@
 {
   Boolean autoUpdate=null;
   for (  AutoUpdateBindingProvider provider : providers) {
-    autoUpdate=provider.autoUpdate(itemName);
-    if (Boolean.TRUE.equals(autoUpdate)) {
-      break;
+    Boolean au=provider.autoUpdate(itemName);
+    if (au != null) {
+      autoUpdate=au;
+      if (Boolean.TRUE.equals(autoUpdate)) {
+        break;
+      }
     }
   }
   if (autoUpdate == null) {
