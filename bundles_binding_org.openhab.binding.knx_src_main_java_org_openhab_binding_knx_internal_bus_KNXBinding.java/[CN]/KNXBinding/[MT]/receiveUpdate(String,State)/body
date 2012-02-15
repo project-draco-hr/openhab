@@ -1,26 +1,3 @@
 {
-  if (ignoreEventList.contains(itemName + newState.toString())) {
-    ignoreEventList.remove(itemName + newState.toString());
-  }
- else {
-    Iterable<Datapoint> datapoints=getDatapoints(itemName,newState.getClass());
-    if (datapoints != null) {
-      ProcessCommunicator pc=KNXConnection.getCommunicator();
-      if (pc != null) {
-        for (        Datapoint datapoint : datapoints) {
-          try {
-            pc.write(datapoint,toDPTValue(newState,datapoint.getDPT()));
-            ignoreEventList.add(itemName + newState.toString());
-            if (logger.isDebugEnabled()) {
-              logger.debug("wrote value '{}' to datapoint '{}'",newState,datapoint);
-            }
-          }
- catch (          KNXException e) {
-            logger.error("Update could not be sent to the KNX bus!",e);
-            KNXConnection.connect();
-          }
-        }
-      }
-    }
-  }
+  handleReceiveEvent(itemName,newState);
 }
