@@ -1,0 +1,14 @@
+{
+  if (config != null) {
+    SenseService.url=(String)config.get("url");
+    if (StringUtils.isBlank(SenseService.url)) {
+      SenseService.url=DEFAULT_EVENT_URL;
+    }
+    SenseService.apiKey=(String)config.get("apikey");
+    if (StringUtils.isBlank(SenseService.apiKey)) {
+      logger.warn("The Open.Sen.se API-Key is missing - please configure it in openhab.cfg");
+      return;
+    }
+    initialized=true;
+  }
+}
