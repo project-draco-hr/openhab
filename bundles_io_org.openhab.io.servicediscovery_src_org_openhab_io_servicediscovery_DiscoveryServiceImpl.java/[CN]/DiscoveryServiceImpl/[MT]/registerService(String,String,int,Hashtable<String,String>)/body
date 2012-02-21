@@ -1,0 +1,10 @@
+{
+  ServiceInfo serviceInfo=ServiceInfo.create(serviceType,serviceName,servicePort,0,0,serviceProperties);
+  try {
+    logger.info("registering new service " + serviceType + " at port "+ String.valueOf(servicePort));
+    jmdns.registerService(serviceInfo);
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
+}

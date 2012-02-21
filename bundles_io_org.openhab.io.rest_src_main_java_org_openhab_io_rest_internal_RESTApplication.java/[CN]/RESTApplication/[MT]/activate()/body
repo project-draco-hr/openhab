@@ -10,6 +10,19 @@
     }
     httpService.registerServlet(REST_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
     logger.info("Started REST API at /rest");
+    String httpPort=bundleContext.getProperty("jetty.port");
+    String httpSslPort=bundleContext.getProperty("jetty.port.ssl");
+    Hashtable<String,String> serviceProperties=new Hashtable<String,String>();
+    serviceProperties.put("uri",REST_SERVLET_ALIAS);
+    logger.debug("Server is running on " + httpPort + " and "+ httpSslPort);
+    discoveryServiceReference=bundleContext.getServiceReference(DiscoveryService.class.getName());
+    discoveryService=(DiscoveryService)bundleContext.getService(discoveryServiceReference);
+    if (httpPort != null && discoveryService != null) {
+      discoveryService.registerService("_openhab-server._tcp.local.","openHAB",Integer.parseInt(httpPort),serviceProperties);
+    }
+    if (httpSslPort != null && discoveryService != null) {
+      discoveryService.registerService("_openhab-server._tcp.local.","openHAB-ssl",Integer.parseInt(httpSslPort),serviceProperties);
+    }
   }
  catch (  ServletException se) {
     throw new RuntimeException(se);
