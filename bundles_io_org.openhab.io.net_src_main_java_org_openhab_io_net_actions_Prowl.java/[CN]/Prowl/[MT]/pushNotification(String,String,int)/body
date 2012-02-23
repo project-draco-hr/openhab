@@ -1,0 +1,28 @@
+{
+  int normalizedPriority=priority;
+  if (priority < -2) {
+    normalizedPriority=-2;
+    logger.info("Prowl-Notification priority '{}' is invalid - normalized value to '{}'",priority,normalizedPriority);
+  }
+  if (priority > 2) {
+    normalizedPriority=2;
+    logger.info("Prowl-Notification priority '{}' is invalid - normalized value to '{}'",priority,normalizedPriority);
+  }
+  if (initialized) {
+    ProwlClient client=new ProwlClient();
+    if (Prowl.url != null && !Prowl.url.isEmpty()) {
+      client.setProwlUrl(Prowl.url);
+    }
+    ProwlEvent event=new DefaultProwlEvent(Prowl.apiKey,"openhab",subject,message,normalizedPriority);
+    try {
+      String returnMessage=client.pushEvent(event);
+      logger.info(returnMessage);
+    }
+ catch (    ProwlException pe) {
+      logger.error("pushing prowl event throws exception",pe);
+    }
+  }
+ else {
+    logger.error("Cannot push Prowl notification because of missing configuration settings. The current settings are: " + "apiKey: '{}', priority: {}, url: '{}'",new String[]{apiKey,String.valueOf(normalizedPriority),url});
+  }
+}

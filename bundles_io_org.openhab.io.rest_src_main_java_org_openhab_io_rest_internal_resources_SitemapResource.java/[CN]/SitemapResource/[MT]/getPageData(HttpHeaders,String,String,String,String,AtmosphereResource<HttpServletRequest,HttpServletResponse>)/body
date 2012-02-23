@@ -4,11 +4,11 @@
     String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
     if (responseType != null) {
       Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getPageBean(sitemapname,pageId,uriInfo.getBaseUriBuilder().build()),callback) : getPageBean(sitemapname,pageId,uriInfo.getBaseUriBuilder().build());
-      return Response.ok(responseObject,responseType).build();
+      throw new WebApplicationException(Response.ok(responseObject,responseType).build());
     }
  else {
-      return Response.notAcceptable(null).build();
+      throw new WebApplicationException(Response.notAcceptable(null).build());
     }
   }
-  return null;
+  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).addListener(new SitemapTransportListener()).outputComments(true).build();
 }
