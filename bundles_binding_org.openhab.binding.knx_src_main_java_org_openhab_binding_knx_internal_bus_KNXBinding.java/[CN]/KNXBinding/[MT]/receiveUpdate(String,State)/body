@@ -1,6 +1,7 @@
 {
-  if (ignoreEventList.contains(itemName + newState.toString())) {
-    ignoreEventList.remove(itemName + newState.toString());
+  String ignoreEventListKey=itemName + newState.toString();
+  if (ignoreEventList.contains(ignoreEventListKey)) {
+    ignoreEventList.remove(ignoreEventListKey);
   }
  else {
     Iterable<Datapoint> datapoints=getDatapoints(itemName,newState.getClass());
@@ -10,7 +11,7 @@
         for (        Datapoint datapoint : datapoints) {
           try {
             pc.write(datapoint,toDPTValue(newState,datapoint.getDPT()));
-            ignoreEventList.add(itemName + newState.toString());
+            ignoreEventList.add(ignoreEventListKey);
             if (logger.isDebugEnabled()) {
               logger.debug("wrote value '{}' to datapoint '{}'",newState,datapoint);
             }

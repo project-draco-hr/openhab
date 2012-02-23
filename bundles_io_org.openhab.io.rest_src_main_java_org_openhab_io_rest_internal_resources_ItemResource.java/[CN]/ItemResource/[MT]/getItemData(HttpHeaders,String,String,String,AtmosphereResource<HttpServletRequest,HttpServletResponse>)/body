@@ -1,14 +1,14 @@
 {
   logger.debug("Received HTTP GET request at '{}' for media type '{}'.",new String[]{uriInfo.getPath(),type});
   if (!TransportListener.isAtmosphereTransport((HttpServletRequest)resource.getRequest())) {
-    String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
+    final String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
     if (responseType != null) {
-      Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getItemDataBean(itemname),callback) : getItemDataBean(itemname);
-      return Response.ok(responseObject,responseType).build();
+      final Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getItemDataBean(itemname),callback) : getItemDataBean(itemname);
+      throw new WebApplicationException(Response.ok(responseObject,responseType).build());
     }
  else {
-      return Response.notAcceptable(null).build();
+      throw new WebApplicationException(Response.notAcceptable(null).build());
     }
   }
-  return null;
+  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).addListener(new ItemTransportListener()).outputComments(true).build();
 }

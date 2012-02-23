@@ -1,0 +1,20 @@
+{
+  if (itemRegistry != null) {
+    try {
+      GenericItem item=(GenericItem)itemRegistry.getItem(itemName);
+      if (item.getAcceptedDataTypes().contains(newStatus.getClass())) {
+        item.setState(newStatus);
+        logger.trace("Received update for item {}: {}",itemName,newStatus.toString());
+      }
+ else {
+        logger.debug("Received update of a not accepted type ({}) for item {}",newStatus.getClass().getSimpleName(),itemName);
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.debug("Received update for non-existing item: {}",e.getMessage());
+    }
+catch (    ItemNotUniqueException e) {
+      logger.debug("Received update for a not uniquely identifiable item: {}",e.getMessage());
+    }
+  }
+}
