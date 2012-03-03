@@ -1,7 +1,7 @@
 {
   Matcher matcher=IN_BINDING_PATTERN.matcher(bindingConfig);
   if (!matcher.matches()) {
-    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid in-binding-configuration");
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't represent a valid in-binding-configuration. A valid configuration is matched by the RegExp '(.*?):(?!//)(\\d*):(.*)'");
   }
   matcher.reset();
   HttpBindingConfigElement configElement;
