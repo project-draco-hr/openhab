@@ -14,30 +14,21 @@
     client.getParams().setAuthenticationPreemptive(true);
     client.getState().setCredentials(AuthScope.ANY,credentials);
   }
-  if (logger.isDebugEnabled()) {
-    try {
-      logger.debug("About to execute '" + method.getURI().toString() + "'");
-    }
- catch (    URIException e) {
-      logger.debug(e.getMessage());
-    }
-  }
   try {
+    logger.debug("About to execute '{}'",method.getURI().toString());
     int statusCode=client.executeMethod(method);
     if (statusCode != HttpStatus.SC_OK) {
       logger.warn("Method failed: " + method.getStatusLine());
     }
     String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
-    if (!responseBody.isEmpty()) {
-      logger.debug(responseBody);
-    }
+    logger.debug("Response body after executing '{}' is '{}'",method.getURI().toString(),responseBody);
     return responseBody;
   }
  catch (  HttpException he) {
-    logger.error("Fatal protocol violation: {}",he.toString());
+    logger.error("Fatal protocol violation: {}",he);
   }
 catch (  IOException ioe) {
-    logger.error("Fatal transport error: {}",ioe.toString());
+    logger.error("Fatal transport error: {}",ioe);
   }
  finally {
     method.releaseConnection();
