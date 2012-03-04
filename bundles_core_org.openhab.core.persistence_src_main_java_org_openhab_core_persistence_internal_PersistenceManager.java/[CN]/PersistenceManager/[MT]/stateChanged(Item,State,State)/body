@@ -1,0 +1,10 @@
+{
+  for (  Entry<String,List<PersistenceConfiguration>> entry : persistenceConfigurations.entrySet()) {
+    String serviceName=entry.getKey();
+    if (persistenceServices.containsKey(serviceName)) {
+      if (shouldTriggerOnChangeEvent(item,entry.getValue())) {
+        persistenceServices.get(serviceName).store(item);
+      }
+    }
+  }
+}
