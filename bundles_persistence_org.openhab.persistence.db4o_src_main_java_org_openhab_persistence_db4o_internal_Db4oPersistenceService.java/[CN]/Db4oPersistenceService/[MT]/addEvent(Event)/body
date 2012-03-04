@@ -1,0 +1,10 @@
+{
+  try {
+    getDatabase().store(e);
+    getDatabase().commit();
+    logger.debug("Stored event: " + e.toString());
+  }
+ catch (  Db4oException dbe) {
+    getDatabase().rollback();
+  }
+}

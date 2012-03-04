@@ -1,0 +1,24 @@
+{
+  try {
+    Query query=getDatabase().query();
+    query.constrain(Event.class);
+    if (null != e) {
+      if (null != e.getItemName() && !e.getItemName().trim().isEmpty()) {
+        query.descend("itemName").constrain(e.getItemName()).equal();
+      }
+      if (null != e.getState() && !e.getState().trim().isEmpty()) {
+        query.descend("state").constrain(e.getState()).equal();
+      }
+      if (null != e.getTimeMillis()) {
+        query.descend("timeMillis").constrain(e.getTimeMillis().longValue()).greater();
+      }
+    }
+    query.descend("timeMillis").orderAscending();
+    List<Event> result=query.execute();
+    return result;
+  }
+ catch (  Db4oException dbe) {
+    getDatabase().rollback();
+    return null;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  List<Event> queryEvents=this.queryEvents(searchEvent);
+  if (queryEvents.size() == 1) {
+    Event eEvent=(Event)queryEvents.get(0);
+    eEvent.setItemName(updatedEvent.getItemName());
+    eEvent.setState(updatedEvent.getState());
+    eEvent.setTimeMillis(updatedEvent.getTimeMillis());
+    try {
+      getDatabase().store(eEvent);
+      getDatabase().commit();
+      logger.info("Updated event: " + eEvent.toString());
+      return eEvent;
+    }
+ catch (    Db4oException dbe) {
+      getDatabase().rollback();
+      return null;
+    }
+  }
+ else {
+    logger.error("Unable to update event, too much results.");
+    return null;
+  }
+}

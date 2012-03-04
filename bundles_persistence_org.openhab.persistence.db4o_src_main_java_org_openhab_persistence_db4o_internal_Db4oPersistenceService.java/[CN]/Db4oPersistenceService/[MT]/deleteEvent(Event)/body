@@ -1,0 +1,13 @@
+{
+  try {
+    List<Event> queryEvents=this.queryEvents(e);
+    for (    Event de : queryEvents) {
+      getDatabase().delete(de);
+      logger.debug("Deleted event: " + de.toString());
+    }
+    getDatabase().commit();
+  }
+ catch (  Db4oException dbe) {
+    getDatabase().rollback();
+  }
+}

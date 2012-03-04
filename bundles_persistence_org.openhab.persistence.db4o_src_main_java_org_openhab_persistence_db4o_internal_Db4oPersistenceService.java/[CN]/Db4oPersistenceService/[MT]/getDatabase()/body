@@ -1,0 +1,10 @@
+{
+  if (null == database) {
+    database=Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),DB_FILE_NAME);
+    database.ext().configure().objectClass(Event.class).objectField("itemName").indexed(true);
+    database.ext().configure().objectClass(Event.class).objectField("timeMillis").indexed(true);
+    database.ext().configure().objectClass(Event.class).cascadeOnUpdate(false);
+    database.ext().configure().objectClass(Event.class).cascadeOnDelete(true);
+  }
+  return database;
+}
