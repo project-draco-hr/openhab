@@ -28,6 +28,7 @@
         waitBeforeRetry+=60000L;
       }
       if (reader != null) {
+        logger.info("Connected to FritzBox on {}",ip + ":" + MONITOR_PORT);
         while (!interrupted) {
           try {
             String line=reader.readLine();
@@ -37,7 +38,7 @@
             }
           }
  catch (          IOException e) {
-            logger.warn("Lost connection to FritzBox on {}: {}",ip + ":" + MONITOR_PORT,e.toString());
+            logger.warn("Lost connection to FritzBox on {}: {}",ip + ":" + MONITOR_PORT,e.getMessage());
             break;
           }
         }
