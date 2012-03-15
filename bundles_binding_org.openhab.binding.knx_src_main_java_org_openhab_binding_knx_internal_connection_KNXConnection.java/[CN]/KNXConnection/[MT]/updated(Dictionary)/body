@@ -34,7 +34,10 @@
     }
     String responseTimeoutString=(String)config.get("timeout");
     if (StringUtils.isNotBlank(responseTimeoutString)) {
-      responseTimeout=Long.parseLong(responseTimeoutString);
+      long timeout=Long.parseLong(responseTimeoutString);
+      if (timeout > 0) {
+        responseTimeout=timeout;
+      }
     }
     if (pc == null)     connect();
   }
