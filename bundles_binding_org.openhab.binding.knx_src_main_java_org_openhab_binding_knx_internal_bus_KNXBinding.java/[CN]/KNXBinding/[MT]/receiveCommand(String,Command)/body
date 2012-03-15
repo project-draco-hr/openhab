@@ -2,6 +2,7 @@
   String ignoreEventListKey=itemName + command.toString();
   if (ignoreEventList.contains(ignoreEventListKey)) {
     ignoreEventList.remove(ignoreEventListKey);
+    logger.trace("we received this command (item='{}', state='{}') from KNX, so we don't send it back again -> ignore!",itemName,command.toString());
   }
  else {
     Iterable<Datapoint> datapoints=getDatapoints(itemName,command.getClass());
