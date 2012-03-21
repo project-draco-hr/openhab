@@ -9,12 +9,12 @@
     }
   }
   Collection<Item> items=Collections.synchronizedCollection(new HashSet<Item>());
+  itemMap.put(provider,items);
   for (  Item item : provider.getItems()) {
     if (initializeItem(item)) {
       items.add(item);
     }
   }
-  itemMap.put(provider,items);
   for (  ItemRegistryChangeListener listener : listeners) {
     listener.allItemsChanged(oldItemNames);
   }
