@@ -1,10 +1,10 @@
 {
-  Collection<Item> items=getItems(name);
-  if (items.isEmpty()) {
-    throw new ItemNotFoundException(name);
+  for (  Collection<Item> items : itemMap.values()) {
+    for (    Item item : items) {
+      if (item.getName().matches(name)) {
+        return item;
+      }
+    }
   }
-  if (items.size() > 1) {
-    throw new ItemNotUniqueException(name,items);
-  }
-  return items.iterator().next();
+  throw new ItemNotFoundException(name);
 }
