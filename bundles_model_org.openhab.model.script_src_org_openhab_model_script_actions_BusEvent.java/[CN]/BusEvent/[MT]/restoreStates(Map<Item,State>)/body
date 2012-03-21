@@ -1,0 +1,11 @@
+{
+  for (  Entry<Item,State> entry : statesMap.entrySet()) {
+    if (entry.getValue() instanceof Command) {
+      sendCommand(entry.getKey(),(Command)entry.getValue());
+    }
+ else {
+      postUpdate(entry.getKey(),entry.getValue());
+    }
+  }
+  return null;
+}
