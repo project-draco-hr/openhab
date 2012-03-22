@@ -1,9 +1,3 @@
 {
-  if (initialized) {
-    JSONSerializer serializer=new JSONSerializer().transform(new SenseEventTransformer(),SenseEventBean.class);
-    String res=serializer.serialize(new SenseEventBean(item.getName(),item.getState().toString()));
-    String serviceUrl=SenseService.url + SenseService.apiKey;
-    String responseBody=HttpUtil.executeUrl("POST",serviceUrl,IOUtils.toInputStream(res),"application/json",5000);
-    logger.debug("Sent event to Sen.se with response message: " + responseBody);
-  }
+  throw new UnsupportedOperationException("The sense service requires aliases for persistence configurations that should match the feed id");
 }

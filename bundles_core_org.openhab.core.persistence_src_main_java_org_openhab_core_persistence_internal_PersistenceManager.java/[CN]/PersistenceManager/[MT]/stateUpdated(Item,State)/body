@@ -2,8 +2,12 @@
   for (  Entry<String,List<PersistenceConfiguration>> entry : persistenceConfigurations.entrySet()) {
     String serviceName=entry.getKey();
     if (persistenceServices.containsKey(serviceName)) {
-      if (shouldTriggerOnUpdateEvent(item,entry.getValue())) {
-        persistenceServices.get(serviceName).store(item);
+      for (      PersistenceConfiguration config : entry.getValue()) {
+        if (hasUpdateEventStrategy(config)) {
+          if (appliesToItem(config,item)) {
+            persistenceServices.get(serviceName).store(item,config.getAlias());
+          }
+        }
       }
     }
   }

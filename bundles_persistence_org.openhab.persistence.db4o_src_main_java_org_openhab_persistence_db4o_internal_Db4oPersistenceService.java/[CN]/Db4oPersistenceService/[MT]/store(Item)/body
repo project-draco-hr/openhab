@@ -1,15 +1,3 @@
 {
-  ItemState itemState=new ItemState();
-  itemState.setItemName(item.getName());
-  itemState.setState(item.getState());
-  itemState.setTimeStamp(new Date().getTime());
-  try {
-    db.store(itemState);
-    db.commit();
-    logger.debug("Stored item state: " + itemState.toString());
-  }
- catch (  Db4oException e) {
-    db.rollback();
-    logger.warn("Error storing state for item '{}': {}",item.getName(),e.getMessage());
-  }
+  store(item,null);
 }
