@@ -9,26 +9,39 @@
   HttpMethod method=HttpUtil.createHttpMethod(httpMethod,url);
   method.getParams().setSoTimeout(timeout);
   method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  if (method instanceof EntityEnclosingMethod && content != null) {
+    EntityEnclosingMethod eeMethod=(EntityEnclosingMethod)method;
+    eeMethod.setRequestEntity(new InputStreamRequestEntity(content,contentType));
+  }
   Credentials credentials=extractCredentials(url);
   if (credentials != null) {
     client.getParams().setAuthenticationPreemptive(true);
     client.getState().setCredentials(AuthScope.ANY,credentials);
   }
+  if (logger.isDebugEnabled()) {
+    try {
+      logger.debug("About to execute '" + method.getURI().toString() + "'");
+    }
+ catch (    URIException e) {
+      logger.debug(e.getMessage());
+    }
+  }
   try {
-    logger.debug("About to execute '{}'",method.getURI().toString());
     int statusCode=client.executeMethod(method);
     if (statusCode != HttpStatus.SC_OK) {
       logger.warn("Method failed: " + method.getStatusLine());
     }
     String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
-    logger.debug("Response body after executing '{}' is '{}'",method.getURI().toString(),responseBody);
+    if (!responseBody.isEmpty()) {
+      logger.debug(responseBody);
+    }
     return responseBody;
   }
  catch (  HttpException he) {
-    logger.error("Fatal protocol violation: {}",he);
+    logger.error("Fatal protocol violation: {}",he.toString());
   }
 catch (  IOException ioe) {
-    logger.error("Fatal transport error: {}",ioe);
+    logger.error("Fatal transport error: {}",ioe.toString());
   }
  finally {
     method.releaseConnection();
