@@ -5,6 +5,23 @@
       genericItem.setEventPublisher(eventPublisher);
       genericItem.initialize();
     }
+    if (item instanceof GroupItem) {
+      for (      Item i : getItems()) {
+        if (i.getGroupNames().contains(item.getName())) {
+          ((GroupItem)item).addMember(i);
+        }
+      }
+    }
+    for (    String groupName : item.getGroupNames()) {
+      try {
+        Item groupItem=getItem(groupName);
+        if (groupItem instanceof GroupItem) {
+          ((GroupItem)groupItem).addMember(item);
+        }
+      }
+ catch (      ItemNotFoundException e) {
+      }
+    }
     return true;
   }
  else {

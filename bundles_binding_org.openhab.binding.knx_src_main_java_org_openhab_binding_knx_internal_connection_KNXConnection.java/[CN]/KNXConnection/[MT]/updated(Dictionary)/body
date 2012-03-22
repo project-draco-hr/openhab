@@ -32,6 +32,13 @@
     if (StringUtils.isNotBlank(readingPauseString)) {
       readingPause=Long.parseLong(readingPauseString);
     }
+    String responseTimeoutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(responseTimeoutString)) {
+      long timeout=Long.parseLong(responseTimeoutString);
+      if (timeout > 0) {
+        responseTimeout=timeout;
+      }
+    }
     if (pc == null)     connect();
   }
 }

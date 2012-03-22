@@ -4,12 +4,18 @@
     if (StringUtils.isNotBlank(ip)) {
       if (!ip.equals(FritzboxBinding.ip)) {
         FritzboxBinding.ip=ip;
-        if (monitorThread != null) {
-          monitorThread.interrupt();
-          monitorThread=null;
+        reconnect();
+        try {
+          SchedulerFactory sf=new StdSchedulerFactory();
+          Scheduler sched=sf.getScheduler();
+          JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect","FritzBox").build();
+          CronTrigger trigger=newTrigger().withIdentity("Reconnect","FritzBox").withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
+          sched.scheduleJob(job,trigger);
+          logger.debug("Scheduled a daily reconnection to FritzBox on {}",ip + ":" + MONITOR_PORT);
         }
-        monitorThread=new MonitorThread();
-        monitorThread.start();
+ catch (        SchedulerException e) {
+          logger.warn("Could not create daily reconnection job: {}",e.getMessage());
+        }
       }
     }
   }

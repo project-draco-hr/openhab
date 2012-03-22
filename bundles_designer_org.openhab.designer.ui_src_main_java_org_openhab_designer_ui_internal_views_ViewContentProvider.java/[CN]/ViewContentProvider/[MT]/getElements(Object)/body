@@ -1,0 +1,18 @@
+{
+  if (parent instanceof IProject) {
+    try {
+      configRootFolder=ConfigurationFolderProvider.getRootConfigurationFolder();
+      if (configRootFolder != null) {
+        return getChildren(configRootFolder);
+      }
+ else {
+        return new String[]{"<select a configuration folder>"};
+      }
+    }
+ catch (    CoreException e) {
+      logger.error("Cannot initialize configuration project in workspace",e);
+      return new Object[0];
+    }
+  }
+  return getChildren(parent);
+}
