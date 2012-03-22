@@ -1,0 +1,15 @@
+{
+  ItemRegistry itemReg=ScriptEngineActivator.itemRegistryTracker.getService();
+  if (itemReg != null) {
+    try {
+      return itemReg.getItem(groupItemName);
+    }
+ catch (    ItemNotFoundException e) {
+      e.printStackTrace();
+    }
+catch (    ItemNotUniqueException e) {
+      e.printStackTrace();
+    }
+  }
+  return null;
+}
