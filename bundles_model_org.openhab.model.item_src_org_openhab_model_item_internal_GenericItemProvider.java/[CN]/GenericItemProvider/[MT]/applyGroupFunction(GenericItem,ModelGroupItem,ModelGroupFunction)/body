@@ -1,0 +1,65 @@
+{
+  List<State> args=new ArrayList<State>();
+  for (  String arg : modelGroupItem.getArgs()) {
+    State state=TypeParser.parseState(baseItem.getAcceptedDataTypes(),arg);
+    if (state == null) {
+      logger.warn("State '" + arg + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ modelGroupItem.getType()+ "'");
+      args.clear();
+      break;
+    }
+ else {
+      args.add(state);
+    }
+  }
+  GroupFunction groupFunction=null;
+switch (function) {
+case AND:
+    if (args.size() == 2) {
+      groupFunction=new ArithmeticGroupFunction.And(args.get(0),args.get(1));
+      break;
+    }
+ else {
+      logger.error("Group function 'AND' requires two arguments. Using Equality instead.");
+    }
+case OR:
+  if (args.size() == 2) {
+    groupFunction=new ArithmeticGroupFunction.Or(args.get(0),args.get(1));
+    break;
+  }
+ else {
+    logger.error("Group function 'OR' requires two arguments. Using Equality instead.");
+  }
+case NAND:
+if (args.size() == 2) {
+  groupFunction=new ArithmeticGroupFunction.NAnd(args.get(0),args.get(1));
+  break;
+}
+ else {
+  logger.error("Group function 'NOT AND' requires two arguments. Using Equality instead.");
+}
+break;
+case NOR:
+if (args.size() == 2) {
+groupFunction=new ArithmeticGroupFunction.NOr(args.get(0),args.get(1));
+break;
+}
+ else {
+logger.error("Group function 'NOT OR' requires two arguments. Using Equality instead.");
+}
+case AVG:
+groupFunction=new ArithmeticGroupFunction.Avg();
+break;
+case MIN:
+groupFunction=new ArithmeticGroupFunction.Min();
+break;
+case MAX:
+groupFunction=new ArithmeticGroupFunction.Max();
+break;
+default :
+logger.error("Unknown group function '" + function.getName() + "'. Using Equality instead.");
+}
+if (groupFunction == null) {
+groupFunction=new GroupFunction.Equality();
+}
+return new GroupItem(modelGroupItem.getName(),baseItem,groupFunction);
+}

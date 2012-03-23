@@ -3,7 +3,9 @@
   if (modelRepository != null) {
     for (    String modelName : modelRepository.getAllModelNamesOfType("items")) {
       ItemModel model=(ItemModel)modelRepository.getModel(modelName);
-      if (model == null)       continue;
+      if (model == null) {
+        continue;
+      }
       for (      BindingConfigReader reader : bindingConfigReaders.values()) {
         reader.removeConfigurations(modelName);
       }
@@ -19,75 +21,27 @@
               item=new GroupItem(modelGroupItem.getName(),baseItem);
             }
  else {
-              List<State> args=new ArrayList<State>();
-              for (              String arg : modelGroupItem.getArgs()) {
-                State state=TypeParser.parseState(baseItem.getAcceptedDataTypes(),arg);
-                if (state == null) {
-                  logger.warn("State '" + arg + "' is not valid for group item '"+ modelGroupItem.getName()+ "' with base type '"+ baseItemType+ "'");
-                  args.clear();
-                  break;
-                }
+              item=applyGroupFunction(baseItem,modelGroupItem,function);
+            }
+          }
  else {
-                  args.add(state);
-                }
-              }
-              GroupFunction groupFunction=null;
-switch (function) {
-case AND:
-                if (args.size() == 2) {
-                  groupFunction=new ArithmeticGroupFunction.And(args.get(0),args.get(1));
-                  break;
-                }
+            item=new GroupItem(modelGroupItem.getName());
+          }
+        }
  else {
-                  logger.error("Group function 'AND' requires two arguments. Using Equality instead.");
-                }
-case OR:
-              if (args.size() == 2) {
-                groupFunction=new ArithmeticGroupFunction.Or(args.get(0),args.get(1));
-                break;
-              }
- else {
-                logger.error("Group function 'OR' requires two arguments. Using Equality instead.");
-              }
-case AVG:
-            groupFunction=new ArithmeticGroupFunction.Avg();
-          break;
-case MIN:
-        groupFunction=new ArithmeticGroupFunction.Min();
-      break;
-case MAX:
-    groupFunction=new ArithmeticGroupFunction.Max();
-  break;
-case SCRIPT:
-groupFunction=new ScriptGroupFunction(modelGroupItem.getName());
-break;
-default :
-logger.error("Unknown group function '" + function.getName() + "'. Using Equality instead.");
-}
-if (groupFunction == null) {
-groupFunction=new GroupFunction.Equality();
-}
-item=new GroupItem(modelGroupItem.getName(),baseItem,groupFunction);
-}
-}
- else {
-item=new GroupItem(modelGroupItem.getName());
-}
-}
- else {
-ModelNormalItem normalItem=(ModelNormalItem)modelItem;
-String itemName=normalItem.getName();
-item=getItemOfType(normalItem.getType(),itemName);
-}
-if (item != null) {
-for (String groupName : modelItem.getGroups()) {
-item.getGroupNames().add(groupName);
-}
-items.put(modelItem.getName(),item);
-dispatchBindings(modelName,item,modelItem.getBindings());
-}
-}
-}
-}
-return items.values();
+          ModelNormalItem normalItem=(ModelNormalItem)modelItem;
+          String itemName=normalItem.getName();
+          item=getItemOfType(normalItem.getType(),itemName);
+        }
+        if (item != null) {
+          for (          String groupName : modelItem.getGroups()) {
+            item.getGroupNames().add(groupName);
+          }
+          items.put(modelItem.getName(),item);
+          dispatchBindings(modelName,item,modelItem.getBindings());
+        }
+      }
+    }
+  }
+  return items.values();
 }
