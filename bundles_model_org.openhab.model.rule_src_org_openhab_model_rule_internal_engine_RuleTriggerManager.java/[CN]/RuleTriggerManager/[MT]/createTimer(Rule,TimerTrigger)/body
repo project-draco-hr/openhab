@@ -12,7 +12,7 @@
       return;
     }
   }
-  String jobIdentity=getJobIdentityString(rule);
+  String jobIdentity=getJobIdentityString(rule,trigger);
   try {
     JobDetail job=newJob(ExecuteRuleJob.class).usingJobData(ExecuteRuleJob.JOB_DATA_RULEMODEL,rule.eResource().getURI().path()).usingJobData(ExecuteRuleJob.JOB_DATA_RULENAME,rule.getName()).withIdentity(jobIdentity).build();
     Trigger quartzTrigger=newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();

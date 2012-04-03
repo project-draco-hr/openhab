@@ -1,9 +1,12 @@
 {
-  JobKey jobKey=JobKey.jobKey(getJobIdentityString(rule));
-  if (jobKey != null) {
-    boolean success=scheduler.deleteJob(jobKey);
-    if (!success) {
-      logger.warn("Failed to delete cron job '{}'",jobKey.getName());
+  Set<JobKey> jobKeys=scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Scheduler.DEFAULT_GROUP));
+  for (  JobKey jobKey : jobKeys) {
+    String jobIdentityString=getJobIdentityString(rule,null);
+    if (jobKey.getName().startsWith(jobIdentityString)) {
+      boolean success=scheduler.deleteJob(jobKey);
+      if (!success) {
+        logger.warn("Failed to delete cron job '{}'",jobKey.getName());
+      }
     }
   }
 }
