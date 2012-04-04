@@ -1,16 +1,22 @@
 {
-  Matcher matcher=EXTRACT_START_END_COMMANDS.matcher(content);
-  String startCommands="";
-  String endCommands="";
-  if (!matcher.matches()) {
-    startCommands=content.toString();
-    logger.debug("given event content doesn't match regular expression for " + "extracting start- and stopCommands -> using whole content as startCommand instead ({})",content.toString());
+  CalendarEventContent eventContent=new CalendarEventContent();
+  String commandContent;
+  Matcher modifiedByMatcher=EXTRACT_MODIFIEDBY_CONTENT.matcher(content);
+  if (modifiedByMatcher.find()) {
+    commandContent=modifiedByMatcher.group(1);
+    eventContent.modifiedByEvent=StringUtils.trimToEmpty(modifiedByMatcher.group(2));
   }
  else {
-    matcher.reset();
-    matcher.find();
-    startCommands=matcher.group(1);
-    endCommands=matcher.group(2);
+    commandContent=content;
   }
-  return new String[]{startCommands,endCommands};
+  Matcher startEndMatcher=EXTRACT_STARTEND_CONTENT.matcher(commandContent);
+  if (startEndMatcher.find()) {
+    eventContent.startCommands=StringUtils.trimToEmpty(startEndMatcher.group(1));
+    eventContent.endCommands=StringUtils.trimToEmpty(startEndMatcher.group(2));
+  }
+ else {
+    eventContent.startCommands=StringUtils.trimToEmpty(commandContent);
+    logger.debug("given event content doesn't match regular expression to " + "extract start-, end commands - using whole content as startCommand ({})",commandContent);
+  }
+  return eventContent;
 }

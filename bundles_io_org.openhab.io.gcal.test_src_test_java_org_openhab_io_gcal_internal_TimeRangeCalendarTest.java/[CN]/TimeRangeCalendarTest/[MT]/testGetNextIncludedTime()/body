@@ -1,0 +1,9 @@
+{
+  Date startTime=DATE_FORMATTER.parse("04.04.2012 16:00:00:000");
+  Date endTime=DATE_FORMATTER.parse("04.04.2012 19:15:00:000");
+  Date included=DATE_FORMATTER.parse("04.04.2012 17:23:21:000");
+  Date expected=DATE_FORMATTER.parse("04.04.2012 19:15:00:001");
+  LongRange timeRange=new LongRange(startTime.getTime(),endTime.getTime());
+  calendar.addTimeRange(timeRange);
+  Assert.assertEquals(expected.getTime(),calendar.getNextIncludedTime(included.getTime()));
+}

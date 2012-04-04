@@ -8,6 +8,7 @@
     List<CalendarEventEntry> entries=myFeed.getEntries();
     if (entries.size() > 0) {
       logger.debug("found {} calendar events to process",entries.size());
+      checkIfFullCalendarFeed(entries);
       try {
         cleanJobs();
         processEntries(entries);

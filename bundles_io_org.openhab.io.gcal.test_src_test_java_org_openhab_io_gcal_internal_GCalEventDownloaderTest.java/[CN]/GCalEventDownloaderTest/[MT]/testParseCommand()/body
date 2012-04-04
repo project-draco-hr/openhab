@@ -1,0 +1,19 @@
+{
+  CalendarEventContent content;
+  content=downloader.parseEventContent("normalContent");
+  Assert.assertEquals("normalContent",content.startCommands);
+  Assert.assertEquals("",content.endCommands);
+  Assert.assertEquals("",content.modifiedByEvent);
+  content=downloader.parseEventContent("normalContent\nmodified by {\n\nholidays\n}");
+  Assert.assertEquals("normalContent",content.startCommands);
+  Assert.assertEquals("",content.endCommands);
+  Assert.assertEquals("holidays",content.modifiedByEvent);
+  content=downloader.parseEventContent("start{startCommand  }\nend\n{  endCommand\n}");
+  Assert.assertEquals("startCommand",content.startCommands);
+  Assert.assertEquals("endCommand",content.endCommands);
+  Assert.assertEquals("",content.modifiedByEvent);
+  content=downloader.parseEventContent("start{startCommand  }\nend\n{  endCommand\n}\nmodified by {\n\nholidays\n}");
+  Assert.assertEquals("startCommand",content.startCommands);
+  Assert.assertEquals("endCommand",content.endCommands);
+  Assert.assertEquals("holidays",content.modifiedByEvent);
+}

@@ -1,0 +1,16 @@
+{
+  long nextIncludedTime=timeStamp + ONE_MILLI;
+  while (isTimeIncluded(nextIncludedTime)) {
+    LongRange timeRange=findTimeRange(timeStamp);
+    if (nextIncludedTime >= timeRange.getMinimumLong() && nextIncludedTime <= timeRange.getMaximumLong()) {
+      nextIncludedTime=timeRange.getMaximumLong() + ONE_MILLI;
+    }
+ else     if ((getBaseCalendar() != null) && (!getBaseCalendar().isTimeIncluded(nextIncludedTime))) {
+      nextIncludedTime=getBaseCalendar().getNextIncludedTime(nextIncludedTime);
+    }
+ else {
+      nextIncludedTime++;
+    }
+  }
+  return nextIncludedTime;
+}

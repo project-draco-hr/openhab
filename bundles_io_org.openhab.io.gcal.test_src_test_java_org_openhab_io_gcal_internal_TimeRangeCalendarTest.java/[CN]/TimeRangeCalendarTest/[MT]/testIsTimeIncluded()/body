@@ -1,0 +1,12 @@
+{
+  Date startTime=DATE_FORMATTER.parse("04.04.2012 16:00:00:000");
+  Date endTime=DATE_FORMATTER.parse("04.04.2012 19:15:00:000");
+  Date included=DATE_FORMATTER.parse("04.04.2012 19:00:00:000");
+  Date excluded_before=DATE_FORMATTER.parse("04.04.2012 15:59:59:999");
+  Date excluded_after=DATE_FORMATTER.parse("04.04.2012 19:15:00:001");
+  LongRange timeRange=new LongRange(startTime.getTime(),endTime.getTime());
+  calendar.addTimeRange(timeRange);
+  Assert.assertEquals(true,calendar.isTimeIncluded(included.getTime()));
+  Assert.assertEquals(false,calendar.isTimeIncluded(excluded_before.getTime()));
+  Assert.assertEquals(false,calendar.isTimeIncluded(excluded_after.getTime()));
+}

@@ -1,24 +1,35 @@
 {
-  checkForFullCalendarFeed(entries);
+  Map<String,TimeRangeCalendar> calendarCache=new HashMap<String,TimeRangeCalendar>();
   for (  CalendarEventEntry event : entries) {
-    String plainText=event.getPlainTextContent();
-    if (StringUtils.isBlank(plainText)) {
-      logger.debug("skipped event '{}' with no content",event.getTitle().getPlainText());
+    String eventContent=event.getPlainTextContent();
+    String eventTitle=event.getTitle().getPlainText();
+    if (StringUtils.isBlank(eventContent)) {
+      logger.debug("found event '{}' with no content, add this event to the excluded " + "TimeRangesCalendar - this event could be referenced by the modifiedBy clause",eventTitle);
+      if (!calendarCache.containsKey(eventTitle)) {
+        calendarCache.put(eventTitle,new TimeRangeCalendar());
+      }
+      TimeRangeCalendar timeRangeCalendar=calendarCache.get(eventTitle);
+      for (      When when : event.getTimes()) {
+        timeRangeCalendar.addTimeRange(new LongRange(when.getStartTime().getValue(),when.getEndTime().getValue()));
+      }
     }
  else {
-      String[] content=parseEventContent(plainText);
-      JobDetail startJob=createAndScheduleJob(content[0],event,true);
-      boolean triggersCreated=createAndScheduleTrigger(startJob,event,true);
+      CalendarEventContent cec=parseEventContent(eventContent);
+      JobDetail startJob=createAndScheduleJob(cec.startCommands,event,true);
+      boolean triggersCreated=createAndScheduleTrigger(startJob,event,cec.modifiedByEvent,true);
       if (triggersCreated) {
-        logger.info("created new startJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(event,startJob));
+        logger.info("created new startJob '{}' with details '{}'",eventTitle,createJobInfo(event,startJob));
       }
-      if (StringUtils.isNotBlank(content[1])) {
-        JobDetail endJob=createAndScheduleJob(content[1],event,false);
-        triggersCreated=createAndScheduleTrigger(endJob,event,false);
+      if (StringUtils.isNotBlank(cec.endCommands)) {
+        JobDetail endJob=createAndScheduleJob(cec.endCommands,event,false);
+        triggersCreated=createAndScheduleTrigger(endJob,event,cec.modifiedByEvent,false);
         if (triggersCreated) {
-          logger.info("created new endJob '{}' with details '{}'",event.getTitle().getPlainText(),createJobInfo(event,endJob));
+          logger.info("created new endJob '{}' with details '{}'",eventTitle,createJobInfo(event,endJob));
         }
       }
     }
+  }
+  for (  Entry<String,TimeRangeCalendar> entry : calendarCache.entrySet()) {
+    scheduler.addCalendar(entry.getKey(),entry.getValue(),true,true);
   }
 }

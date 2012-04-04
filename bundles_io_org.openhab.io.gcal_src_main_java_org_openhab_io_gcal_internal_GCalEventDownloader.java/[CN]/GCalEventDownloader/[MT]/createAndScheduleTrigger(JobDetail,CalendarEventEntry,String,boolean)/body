@@ -10,7 +10,13 @@
     DateTime date=isStartEvent ? time.getStartTime() : time.getEndTime();
     long dateValue=date.getValue();
     if (dateValue >= DateTime.now().getValue()) {
-      Trigger trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).build();
+      Trigger trigger;
+      if (StringUtils.isBlank(modifiedByEvent)) {
+        trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).build();
+      }
+ else {
+        trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).modifiedByCalendar(modifiedByEvent).build();
+      }
       scheduler.scheduleJob(trigger);
       triggersCreated=true;
     }
