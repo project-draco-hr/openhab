@@ -17,8 +17,13 @@
  else {
         trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).modifiedByCalendar(modifiedByEvent).build();
       }
-      scheduler.scheduleJob(trigger);
-      triggersCreated=true;
+      try {
+        scheduler.scheduleJob(trigger);
+        triggersCreated=true;
+      }
+ catch (      SchedulerException se) {
+        logger.warn("scheduling Trigger '" + trigger + "' throws an exception.",se);
+      }
     }
   }
   return triggersCreated;

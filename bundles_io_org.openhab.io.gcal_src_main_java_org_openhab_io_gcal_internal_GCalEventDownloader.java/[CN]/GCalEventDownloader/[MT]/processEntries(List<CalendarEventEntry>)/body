@@ -13,23 +13,31 @@
         timeRangeCalendar.addTimeRange(new LongRange(when.getStartTime().getValue(),when.getEndTime().getValue()));
       }
     }
- else {
+  }
+  for (  Entry<String,TimeRangeCalendar> entry : calendarCache.entrySet()) {
+    scheduler.addCalendar(entry.getKey(),entry.getValue(),true,true);
+  }
+  for (  CalendarEventEntry event : entries) {
+    String eventContent=event.getPlainTextContent();
+    String eventTitle=event.getTitle().getPlainText();
+    if (StringUtils.isNotBlank(eventContent)) {
       CalendarEventContent cec=parseEventContent(eventContent);
+      String modifiedByEvent=null;
+      if (calendarCache.containsKey(cec.modifiedByEvent)) {
+        modifiedByEvent=cec.modifiedByEvent;
+      }
       JobDetail startJob=createAndScheduleJob(cec.startCommands,event,true);
-      boolean triggersCreated=createAndScheduleTrigger(startJob,event,cec.modifiedByEvent,true);
+      boolean triggersCreated=createAndScheduleTrigger(startJob,event,modifiedByEvent,true);
       if (triggersCreated) {
         logger.info("created new startJob '{}' with details '{}'",eventTitle,createJobInfo(event,startJob));
       }
       if (StringUtils.isNotBlank(cec.endCommands)) {
         JobDetail endJob=createAndScheduleJob(cec.endCommands,event,false);
-        triggersCreated=createAndScheduleTrigger(endJob,event,cec.modifiedByEvent,false);
+        triggersCreated=createAndScheduleTrigger(endJob,event,modifiedByEvent,false);
         if (triggersCreated) {
           logger.info("created new endJob '{}' with details '{}'",eventTitle,createJobInfo(event,endJob));
         }
       }
     }
-  }
-  for (  Entry<String,TimeRangeCalendar> entry : calendarCache.entrySet()) {
-    scheduler.addCalendar(entry.getKey(),entry.getValue(),true,true);
   }
 }
