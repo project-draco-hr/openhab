@@ -1,12 +1,13 @@
 {
-  if (o instanceof SenseEventBean) {
-    SenseEventBean seb=(SenseEventBean)o;
-    getContext().writeOpenObject();
-    getContext().writeName("feed_id");
-    getContext().write("" + seb.getFeedId());
-    getContext().writeComma();
-    getContext().writeName("value");
-    getContext().write("\"" + seb.getValue() + "\"");
-    getContext().writeCloseObject();
+  if (obj instanceof SenseEventBean) {
+    SenseEventBean senseEventBean=(SenseEventBean)obj;
+    JSONContext context=getContext();
+    context.writeOpenObject();
+    context.writeName("feed_id");
+    context.write("" + senseEventBean.getFeedId());
+    context.writeComma();
+    context.writeName("value");
+    context.write("\"" + senseEventBean.getValue() + "\"");
+    context.writeCloseObject();
   }
 }
