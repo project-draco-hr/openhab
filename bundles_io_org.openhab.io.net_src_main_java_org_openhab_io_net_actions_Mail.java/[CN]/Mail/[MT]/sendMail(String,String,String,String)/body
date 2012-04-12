@@ -1,4 +1,5 @@
 {
+  boolean success=false;
   if (initialized) {
     Email email=new SimpleEmail();
     if (attachmentUrl != null) {
@@ -30,6 +31,7 @@ catch (      EmailException e) {
       if (!StringUtils.isEmpty(message))       email.setMsg(message);
       email.send();
       logger.debug("Sent email to '{}' with subject '{}'.",to,subject);
+      success=true;
     }
  catch (    EmailException e) {
       logger.error("Could not send e-mail to '" + to + "???.",e);
@@ -38,4 +40,5 @@ catch (      EmailException e) {
  else {
     logger.error("Cannot send e-mail because of missing configuration settings. The current settings are: " + "Host: '{}', port '{}', from '{}', useTLS: {}, username: '{}', password '{}'",new String[]{hostname,String.valueOf(port),from,String.valueOf(tls),username,password});
   }
+  return success;
 }
