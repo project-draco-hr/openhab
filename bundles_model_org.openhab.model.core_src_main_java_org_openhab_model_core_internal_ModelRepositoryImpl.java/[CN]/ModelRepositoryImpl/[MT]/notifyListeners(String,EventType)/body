@@ -1,7 +1,6 @@
 {
-synchronized (listeners) {
-    for (    ModelRepositoryChangeListener listener : listeners) {
-      listener.modelChanged(name,type);
-    }
+  for (  Object listener : listeners.getListeners()) {
+    ModelRepositoryChangeListener changeListener=(ModelRepositoryChangeListener)listener;
+    changeListener.modelChanged(name,type);
   }
 }
