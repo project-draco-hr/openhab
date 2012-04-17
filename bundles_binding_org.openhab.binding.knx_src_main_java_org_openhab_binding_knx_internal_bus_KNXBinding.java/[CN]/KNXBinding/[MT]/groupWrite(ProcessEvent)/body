@@ -17,7 +17,7 @@
             }
  else {
               ignoreEventList.add(itemName + type.toString());
-              logger.trace("added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
+              logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
               if (type instanceof Command && isCommandGA(destination)) {
                 eventPublisher.postCommand(itemName,(Command)type);
               }
@@ -25,11 +25,9 @@
                 eventPublisher.postUpdate(itemName,(State)type);
               }
  else {
-                throw new IllegalClassException("cannot process datapoint of type " + type.toString());
+                throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
               }
-              if (logger.isTraceEnabled()) {
-                logger.trace("Processed event: " + destination.toString() + ":"+ type.toString()+ " -> "+ itemName);
-              }
+              logger.trace("Processed event (item='{}', type='{}', destination='{}')",new String[]{itemName,type.toString(),destination.toString()});
             }
             return;
           }

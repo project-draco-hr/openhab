@@ -39,6 +39,13 @@
         responseTimeout=timeout;
       }
     }
+    String readRetriesLimitString=(String)config.get("readRetries");
+    if (StringUtils.isNotBlank(readRetriesLimitString)) {
+      int readRetries=Integer.parseInt(readRetriesLimitString);
+      if (readRetries > 0) {
+        readRetriesLimit=readRetries;
+      }
+    }
     if (pc == null)     connect();
   }
 }

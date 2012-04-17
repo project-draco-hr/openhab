@@ -1,23 +1,31 @@
 {
-  for (  Datapoint datapoint : readableDatapoints) {
+  for (  Datapoint datapoint : clonedMap.keySet()) {
     try {
       ProcessCommunicator pc=KNXConnection.getCommunicator();
       if (pc != null) {
         logger.debug("Sending read request to KNX for item {}",datapoint.getName());
         pc.read(datapoint);
       }
+      datapointsToInitialize.remove(datapoint);
     }
  catch (    KNXException e) {
       logger.warn("Cannot read value for item '{}' from KNX bus: {}",new String[]{datapoint.getName(),e.getMessage()});
+      increaseReadLimitCounter(datapoint);
     }
 catch (    KNXIllegalArgumentException e) {
       logger.warn("Error sending KNX read request for '{}': {}",new String[]{datapoint.getName(),e.getMessage()});
+      increaseReadLimitCounter(datapoint);
     }
-    datapointsToInitialize.remove(datapoint);
-    long pause=KNXConnection.getReadingPause();
-    if (pause > 0) {
+    int retriesLimit=KNXConnection.getReadRetriesLimit();
+    int retriesCounter=datapointsToInitialize.get(datapoint) != null ? datapointsToInitialize.get(datapoint) : Integer.MIN_VALUE;
+    if (retriesLimit < retriesCounter) {
+      datapointsToInitialize.remove(datapoint);
+      logger.debug("Giving up initialization of item {} - retries ({}) exeeded.",datapoint.getName(),retriesLimit);
+    }
+    long readingPause=KNXConnection.getReadingPause();
+    if (readingPause > 0) {
       try {
-        sleep(pause);
+        sleep(readingPause);
       }
  catch (      InterruptedException e) {
         logger.debug("KNX reading pause has been interrupted: {}",e.getMessage());

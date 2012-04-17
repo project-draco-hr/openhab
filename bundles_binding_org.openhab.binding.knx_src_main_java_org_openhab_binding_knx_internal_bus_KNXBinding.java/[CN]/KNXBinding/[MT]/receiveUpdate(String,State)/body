@@ -2,7 +2,7 @@
   String ignoreEventListKey=itemName + newState.toString();
   if (ignoreEventList.contains(ignoreEventListKey)) {
     ignoreEventList.remove(ignoreEventListKey);
-    logger.trace("we received this update (item='{}', state='{}') from KNX, so we don't send it back again -> ignore!",itemName,newState.toString());
+    logger.trace("We received this update (item='{}', state='{}') from KNX, so we don't send it back again -> ignore!",itemName,newState.toString());
   }
  else {
     Iterable<Datapoint> datapoints=getDatapoints(itemName,newState.getClass());
@@ -12,11 +12,9 @@
         for (        Datapoint datapoint : datapoints) {
           try {
             pc.write(datapoint,toDPTValue(newState,datapoint.getDPT()));
+            logger.debug("Wrote value '{}' to datapoint '{}'",newState,datapoint);
             ignoreEventList.add(ignoreEventListKey);
-            logger.trace("added event (item='{}', type='{}') to the ignore event list while receiving update",itemName,newState.toString());
-            if (logger.isDebugEnabled()) {
-              logger.debug("wrote value '{}' to datapoint '{}'",newState,datapoint);
-            }
+            logger.trace("Added event (item='{}', type='{}') to the ignore event list while receiving update",itemName,newState.toString());
           }
  catch (          KNXException e) {
             logger.error("Update could not be sent to the KNX bus!",e);
