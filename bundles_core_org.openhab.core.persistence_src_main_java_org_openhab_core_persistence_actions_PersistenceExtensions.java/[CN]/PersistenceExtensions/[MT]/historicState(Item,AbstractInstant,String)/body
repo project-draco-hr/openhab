@@ -1,0 +1,21 @@
+{
+  PersistenceService service=services.get(serviceName);
+  if (service instanceof QueryablePersistenceService) {
+    QueryablePersistenceService qService=(QueryablePersistenceService)service;
+    FilterCriteria filter=new FilterCriteria();
+    filter.setEndDate(timestamp.toDate());
+    filter.setItemName(item.getName());
+    filter.setPageNumber(0).setPageSize(1);
+    Iterable<HistoricItem> result=qService.query(filter);
+    if (result.iterator().hasNext()) {
+      return result.iterator().next().getState();
+    }
+ else {
+      return UnDefType.NULL;
+    }
+  }
+ else {
+    logger.warn("There is no queryable persistence service registered with the name '{}'",serviceName);
+    return UnDefType.NULL;
+  }
+}

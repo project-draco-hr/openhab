@@ -1,13 +1,13 @@
 {
   if (alias == null)   alias=item.getName();
-  ItemState itemState=new ItemState();
-  itemState.setItemName(alias);
-  itemState.setState(item.getState());
-  itemState.setTimeStamp(new Date().getTime());
+  Db4oItem historicItem=new Db4oItem();
+  historicItem.setName(alias);
+  historicItem.setState(item.getState());
+  historicItem.setTimestamp(new Date());
   try {
-    db.store(itemState);
+    db.store(historicItem);
     db.commit();
-    logger.debug("Stored item state: " + itemState.toString());
+    logger.debug("Stored item: " + historicItem.toString());
   }
  catch (  Db4oException e) {
     db.rollback();

@@ -1,0 +1,51 @@
+{
+  Query query=db.query();
+  query.constrain(Db4oItem.class);
+  if (filter == null) {
+    filter=new FilterCriteria();
+  }
+  if (filter.getBeginDate() != null) {
+    query.descend("timestamp").constrain(filter.getBeginDate()).greater();
+  }
+  if (filter.getEndDate() != null) {
+    query.descend("timestamp").constrain(filter.getEndDate()).smaller();
+  }
+  if (filter.getItemName() != null) {
+    query.descend("name").constrain(filter.getItemName()).equal();
+  }
+  if (filter.getState() != null && filter.getOperator() != null) {
+switch (filter.getOperator()) {
+case EQ:
+      query.descend("state").constrain(filter.getState()).equal();
+    break;
+case GT:
+  query.descend("state").constrain(filter.getState()).greater();
+break;
+case LT:
+query.descend("state").constrain(filter.getState()).smaller();
+break;
+case NEQ:
+query.descend("state").constrain(filter.getState()).equal().not();
+break;
+case GTE:
+query.descend("state").constrain(filter.getState()).smaller().not();
+break;
+case LTE:
+query.descend("state").constrain(filter.getState()).greater().not();
+break;
+}
+}
+query.descend("timestamp").orderDescending();
+ObjectSet<HistoricItem> results=query.execute();
+int startIndex=filter.getPageNumber() * filter.getPageSize();
+if (startIndex < results.size()) {
+int endIndex=startIndex + filter.getPageSize();
+if (endIndex > results.size()) {
+endIndex=results.size();
+}
+return results.subList(startIndex,endIndex);
+}
+ else {
+return Collections.emptyList();
+}
+}
