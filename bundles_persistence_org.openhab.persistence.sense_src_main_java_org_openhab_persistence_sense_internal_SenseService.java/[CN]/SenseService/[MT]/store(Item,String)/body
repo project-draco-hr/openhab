@@ -1,0 +1,9 @@
+{
+  if (initialized) {
+    JSONSerializer serializer=new JSONSerializer().transform(new SenseEventTransformer(),SenseEventBean.class);
+    String serializedBean=serializer.serialize(new SenseEventBean(alias,item.getState().toString()));
+    String serviceUrl=url + apiKey;
+    String response=HttpUtil.executeUrl("POST",serviceUrl,IOUtils.toInputStream(serializedBean),"application/json",5000);
+    logger.debug("Stored item '{}' as '{}' in Sen.se and received response: {} ",new String[]{item.getName(),alias,response});
+  }
+}

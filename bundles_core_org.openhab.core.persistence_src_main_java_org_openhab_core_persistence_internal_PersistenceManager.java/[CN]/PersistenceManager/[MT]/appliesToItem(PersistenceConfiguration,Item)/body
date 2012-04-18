@@ -1,0 +1,29 @@
+{
+  for (  EObject itemCfg : config.getItems()) {
+    if (itemCfg instanceof AllConfig) {
+      return true;
+    }
+    if (itemCfg instanceof ItemConfig) {
+      ItemConfig singleItemConfig=(ItemConfig)itemCfg;
+      if (item.getName().equals(singleItemConfig.getItem())) {
+        return true;
+      }
+    }
+    if (itemCfg instanceof GroupConfig) {
+      GroupConfig groupItemCfg=(GroupConfig)itemCfg;
+      String groupName=groupItemCfg.getGroup();
+      try {
+        Item gItem=itemRegistry.getItem(groupName);
+        if (gItem instanceof GroupItem) {
+          GroupItem groupItem=(GroupItem)gItem;
+          if (ArrayUtils.contains(groupItem.getAllMembers(),item)) {
+            return true;
+          }
+        }
+      }
+ catch (      Exception e) {
+      }
+    }
+  }
+  return false;
+}

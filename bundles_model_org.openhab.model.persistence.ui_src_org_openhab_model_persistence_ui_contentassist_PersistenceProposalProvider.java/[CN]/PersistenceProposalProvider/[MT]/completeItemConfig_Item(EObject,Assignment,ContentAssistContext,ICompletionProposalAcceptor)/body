@@ -1,0 +1,9 @@
+{
+  ItemRegistry registry=(ItemRegistry)UIActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    for (    Item item : registry.getItems(context.getPrefix() + "*")) {
+      ICompletionProposal completionProposal=createCompletionProposal(item.getName(),context);
+      acceptor.accept(completionProposal);
+    }
+  }
+}

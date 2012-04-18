@@ -1,0 +1,11 @@
+{
+  if (modelName.endsWith(".persist")) {
+    String serviceName=modelName.substring(0,modelName.length() - ".persist".length());
+    if (type == EventType.REMOVED || type == EventType.MODIFIED) {
+      stopEventHandling(serviceName);
+    }
+    if (type == EventType.ADDED || type == EventType.MODIFIED) {
+      startEventHandling(serviceName);
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  String modelName=(String)context.getJobDetail().getJobDataMap().get(JOB_DATA_PERSISTMODEL);
+  String strategyName=(String)context.getJobDetail().getJobDataMap().get(JOB_DATA_STRATEGYNAME);
+  PersistenceManager persistenceManager=PersistenceManager.getInstance();
+  if (persistenceManager != null) {
+    ModelRepository modelRepository=persistenceManager.modelRepository;
+    PersistenceService persistenceService=persistenceManager.persistenceServices.get(modelName);
+    if (modelRepository != null && persistenceService != null) {
+      EObject model=modelRepository.getModel(modelName + ".persist");
+      if (model instanceof PersistenceModel) {
+        PersistenceModel persistModel=(PersistenceModel)model;
+        for (        PersistenceConfiguration config : persistModel.getConfigs()) {
+          if (hasStrategy(config,strategyName)) {
+            for (            Item item : persistenceManager.getAllItems(config)) {
+              persistenceService.store(item,config.getAlias());
+            }
+          }
+        }
+      }
+ else {
+        logger.debug("Persistence file '{}' does not exist",modelName);
+      }
+    }
+  }
+ else {
+    logger.warn("Persistence manager is not available!");
+  }
+}
