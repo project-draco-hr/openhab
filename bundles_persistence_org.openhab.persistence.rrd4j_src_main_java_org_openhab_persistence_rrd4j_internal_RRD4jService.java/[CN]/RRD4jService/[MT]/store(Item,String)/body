@@ -1,0 +1,22 @@
+{
+  if (alias == null) {
+    alias=item.getName();
+  }
+  RrdDb db=getDB(alias);
+  if (db != null) {
+    try {
+      Sample sample=db.createSample();
+      sample.setTime(System.currentTimeMillis() / 1000);
+      DecimalType state=(DecimalType)item.getStateAs(DecimalType.class);
+      if (state != null) {
+        double value=state.toBigDecimal().doubleValue();
+        sample.setValue("state",value);
+        sample.update();
+        logger.debug("Stored item '{}' as '{}' in rrd4j database",new String[]{item.getName(),alias});
+      }
+    }
+ catch (    Exception e) {
+      logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+    }
+  }
+}
