@@ -1,4 +1,16 @@
 {
+  changeListener=new IResourceChangeListener(){
+    public void resourceChanged(    IResourceChangeEvent event){
+      Display.getDefault().asyncExec(new Runnable(){
+        public void run(){
+          getCommonViewer().refresh();
+        }
+      }
+);
+    }
+  }
+;
+  ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener);
   try {
     return ConfigurationFolderProvider.getRootConfigurationFolder().getProject();
   }
