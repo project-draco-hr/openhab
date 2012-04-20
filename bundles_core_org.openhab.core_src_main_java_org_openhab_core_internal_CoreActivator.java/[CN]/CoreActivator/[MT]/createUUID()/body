@@ -3,9 +3,8 @@
   if (!uuidFile.exists()) {
     uuidFile.getParentFile().mkdirs();
     String uuidString=UUID.randomUUID().toString();
-    String uuidFileContent=UUID_HTML_TEMPLATE.replaceAll(UUID_REPLACE_PATTERN,uuidString);
     try {
-      IOUtils.write(uuidFileContent,new FileOutputStream(uuidFile));
+      IOUtils.write(uuidString,new FileOutputStream(uuidFile));
       logger.info("Created openHAB UUID '{}' and wrote it to '{}'",uuidString,uuidFile.getAbsolutePath());
     }
  catch (    FileNotFoundException e) {
