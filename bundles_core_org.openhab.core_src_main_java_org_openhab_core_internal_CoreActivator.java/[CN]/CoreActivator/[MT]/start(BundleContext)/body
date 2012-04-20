@@ -1,5 +1,11 @@
 {
-  logger.info("openHAB runtime has been started.");
+  createUUID();
+  String versionString=context.getBundle().getVersion().toString();
+  if (StringUtils.countMatches(versionString,".") == 3) {
+    versionString=StringUtils.substringBeforeLast(versionString,".");
+  }
+  checkVersion(versionString);
+  logger.info("openHAB runtime has been started (v{}).",versionString);
   java.util.logging.Logger rootLogger=java.util.logging.LogManager.getLogManager().getLogger("");
   Handler[] handlers=rootLogger.getHandlers();
   for (  Handler handler : handlers) {

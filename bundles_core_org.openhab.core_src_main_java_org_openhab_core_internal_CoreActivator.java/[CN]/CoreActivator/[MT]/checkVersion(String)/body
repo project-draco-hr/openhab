@@ -1,0 +1,33 @@
+{
+  HttpClient client=new HttpClient();
+  HttpMethod method=new GetMethod(VERSION_URL);
+  method.getParams().setSoTimeout(3000);
+  method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  try {
+    int statusCode=client.executeMethod(method);
+    if (statusCode != HttpStatus.SC_OK) {
+      logger.debug("Executing url failed: " + method.getStatusLine());
+    }
+    String versionFromWeb=StringUtils.trimToEmpty(IOUtils.toString(method.getResponseBodyAsStream()));
+    if (versionFromWeb.matches("\\d\\.\\d\\.\\d")) {
+      if (Collator.getInstance().compare(versionFromWeb,version) > 1) {
+        logger.info("A newer version of openHAB is available 'v{}'. Please check http://www.openhab.org for further information.",versionFromWeb);
+      }
+ else       if (Collator.getInstance().compare(versionFromWeb,version) < 1) {
+        logger.info("You are running a potentially unstable version of openHAB. The current stable version is 'v{}'.",versionFromWeb);
+      }
+    }
+ else {
+      logger.debug("Received version number from '{}' which doesn't match the required format '#.#.#' ({})",VERSION_URL,versionFromWeb);
+    }
+  }
+ catch (  HttpException he) {
+    logger.debug("Fatal protocol violation: {}",he);
+  }
+catch (  IOException ioe) {
+    logger.debug("Fatal transport error: {}",ioe);
+  }
+ finally {
+    method.releaseConnection();
+  }
+}
