@@ -10,6 +10,9 @@
       logger.debug("found {} calendar events to process",entries.size());
       checkIfFullCalendarFeed(entries);
       try {
+        if (scheduler.isShutdown()) {
+          logger.warn("Scheduler has been shut down - probably due to exceptions?");
+        }
         cleanJobs();
         processEntries(entries);
       }
