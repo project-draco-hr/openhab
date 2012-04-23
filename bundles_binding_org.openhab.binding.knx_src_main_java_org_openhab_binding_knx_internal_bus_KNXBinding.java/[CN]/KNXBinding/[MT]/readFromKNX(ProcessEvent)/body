@@ -11,21 +11,16 @@
         for (        Datapoint datapoint : datapoints) {
           Type type=getType(datapoint,asdu);
           if (type != null) {
-            if (isGroupWrite) {
-              ignoreEventList.add(itemName + type.toString());
-              logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
-              if (type instanceof Command && isCommandGA(destination)) {
-                eventPublisher.postCommand(itemName,(Command)type);
-              }
- else               if (type instanceof State) {
-                eventPublisher.postUpdate(itemName,(State)type);
-              }
- else {
-                throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
-              }
+            ignoreEventList.add(itemName + type.toString());
+            logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
+            if (type instanceof Command && isCommandGA(destination)) {
+              eventPublisher.postCommand(itemName,(Command)type);
+            }
+ else             if (type instanceof State) {
+              eventPublisher.postUpdate(itemName,(State)type);
             }
  else {
-              postUpdate(itemName,(State)type);
+              throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
             }
             logger.trace("Processed event (item='{}', type='{}', destination='{}')",new String[]{itemName,type.toString(),destination.toString()});
             return;

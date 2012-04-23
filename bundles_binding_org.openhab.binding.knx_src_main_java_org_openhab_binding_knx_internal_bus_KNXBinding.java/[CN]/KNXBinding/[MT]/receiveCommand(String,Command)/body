@@ -1,4 +1,6 @@
 {
   logger.trace("Received command (item='{}', command='{}')",itemName,command.toString());
-  writeToKNX(itemName,command);
+  if (!isEcho(itemName,command)) {
+    writeToKNX(itemName,command);
+  }
 }

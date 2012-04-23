@@ -1,4 +1,6 @@
 {
   logger.trace("Received update (item='{}', state='{}')",itemName,newState.toString());
-  writeToKNX(itemName,newState);
+  if (!isEcho(itemName,newState)) {
+    writeToKNX(itemName,newState);
+  }
 }
