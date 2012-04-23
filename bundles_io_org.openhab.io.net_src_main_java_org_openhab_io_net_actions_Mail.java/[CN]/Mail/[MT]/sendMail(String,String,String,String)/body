@@ -21,8 +21,13 @@ catch (      EmailException e) {
     email.setHostName(hostname);
     email.setSmtpPort(port);
     email.setTLS(tls);
-    if (username != null && !username.isEmpty()) {
-      email.setAuthenticator(new DefaultAuthenticator(username,password));
+    if (StringUtils.isNotBlank(username)) {
+      if (popBeforeSmtp) {
+        email.setPopBeforeSmtp(true,hostname,username,password);
+      }
+ else {
+        email.setAuthenticator(new DefaultAuthenticator(username,password));
+      }
     }
     try {
       email.setFrom(from);
