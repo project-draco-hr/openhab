@@ -1,8 +1,5 @@
 {
-  if (alias == null) {
-    alias=item.getName();
-  }
-  RrdDb db=getDB(alias);
+  RrdDb db=getDB(item.getName());
   if (db != null) {
     try {
       Sample sample=db.createSample();
@@ -12,8 +9,9 @@
         double value=state.toBigDecimal().doubleValue();
         sample.setValue("state",value);
         sample.update();
-        logger.debug("Stored item '{}' as '{}' in rrd4j database",new String[]{item.getName(),alias});
+        logger.debug("Stored item '{}' in rrd4j database",item.getName());
       }
+      db.close();
     }
  catch (    Exception e) {
       logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
