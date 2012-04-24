@@ -1,0 +1,10 @@
+{
+  File file=new File(STATIC_CONTENT_DIR + File.separator + UUID_FILE_NAME);
+  if (!file.exists()) {
+    String uuidString=UUID.randomUUID().toString();
+    writeFile(file,uuidString);
+  }
+ else {
+    logger.debug("UUID file already exists at '{}'",file.getAbsolutePath());
+  }
+}
