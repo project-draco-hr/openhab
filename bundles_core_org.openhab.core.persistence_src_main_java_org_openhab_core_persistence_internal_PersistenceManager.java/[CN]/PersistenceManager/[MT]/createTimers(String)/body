@@ -4,7 +4,7 @@
     for (    Strategy strategy : persistModel.getStrategies()) {
       if (strategy instanceof CronStrategy) {
         CronStrategy cronStrategy=(CronStrategy)strategy;
-        String cronExpression=cronStrategy.getDefinition();
+        String cronExpression=cronStrategy.getCronExpression();
         JobKey jobKey=new JobKey(strategy.getName(),modelName);
         try {
           JobDetail job=newJob(PersistenceJob.class).usingJobData(PersistenceJob.JOB_DATA_PERSISTMODEL,cronStrategy.eResource().getURI().trimFileExtension().path()).usingJobData(PersistenceJob.JOB_DATA_STRATEGYNAME,cronStrategy.getName()).withIdentity(jobKey).build();

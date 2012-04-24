@@ -10,7 +10,7 @@
       if (model instanceof PersistenceModel) {
         PersistenceModel persistModel=(PersistenceModel)model;
         for (        PersistenceConfiguration config : persistModel.getConfigs()) {
-          if (hasStrategy(config,strategyName)) {
+          if (hasStrategy(persistModel,config,strategyName)) {
             for (            Item item : persistenceManager.getAllItems(config)) {
               persistenceService.store(item,config.getAlias());
             }

@@ -3,7 +3,7 @@
     String serviceName=entry.getKey();
     if (persistenceServices.containsKey(serviceName)) {
       for (      PersistenceConfiguration config : entry.getValue()) {
-        if (hasChangeEventStrategy(config)) {
+        if (hasStrategy(serviceName,config,GlobalStrategies.CHANGE)) {
           if (appliesToItem(config,item)) {
             persistenceServices.get(serviceName).store(item,config.getAlias());
           }
