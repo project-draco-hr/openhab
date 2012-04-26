@@ -1,0 +1,34 @@
+{
+  int counter=0;
+  String itemList=req.getParameter("items");
+  if (itemList != null) {
+    String[] itemNames=itemList.split(",");
+    for (    String itemName : itemNames) {
+      addLine(graphDef,itemName,counter++);
+    }
+  }
+  String groupList=req.getParameter("groups");
+  if (groupList != null) {
+    String[] groupNames=groupList.split(",");
+    for (    String groupName : groupNames) {
+      try {
+        Item item=itemUIRegistry.getItem(groupName);
+        if (item instanceof GroupItem) {
+          GroupItem groupItem=(GroupItem)item;
+          for (          Item member : groupItem.getMembers()) {
+            addLine(graphDef,member.getName(),counter++);
+          }
+        }
+ else {
+          throw new ServletException("Item '" + groupName + "' is no group item!");
+        }
+      }
+ catch (      ItemNotFoundException e) {
+        throw new ServletException("Group item '" + groupName + "' does not exist!");
+      }
+    }
+  }
+  if (counter == 0) {
+    throw new ServletException("At least one item must be specified using either the 'items' or 'groups' parameter in the request!");
+  }
+}
