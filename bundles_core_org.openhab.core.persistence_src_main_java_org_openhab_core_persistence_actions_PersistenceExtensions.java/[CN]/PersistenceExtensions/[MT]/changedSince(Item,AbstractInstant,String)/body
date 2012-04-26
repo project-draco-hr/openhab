@@ -1,22 +1,11 @@
 {
-  PersistenceService service=services.get(serviceName);
-  if (service instanceof QueryablePersistenceService) {
-    QueryablePersistenceService qService=(QueryablePersistenceService)service;
-    FilterCriteria filter=new FilterCriteria();
-    filter.setBeginDate(timestamp.toDate());
-    filter.setItemName(item.getName());
-    Iterable<HistoricItem> result=qService.query(filter);
-    Iterator<HistoricItem> it=result.iterator();
-    while (it.hasNext()) {
-      HistoricItem hItem=it.next();
-      if (!hItem.getState().equals(item.getState())) {
-        return true;
-      }
+  Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
+  Iterator<HistoricItem> it=result.iterator();
+  while (it.hasNext()) {
+    HistoricItem hItem=it.next();
+    if (!hItem.getState().equals(item.getState())) {
+      return true;
     }
-    return false;
   }
- else {
-    logger.warn("There is no queryable persistence service registered with the name '{}'",serviceName);
-    return null;
-  }
+  return false;
 }
