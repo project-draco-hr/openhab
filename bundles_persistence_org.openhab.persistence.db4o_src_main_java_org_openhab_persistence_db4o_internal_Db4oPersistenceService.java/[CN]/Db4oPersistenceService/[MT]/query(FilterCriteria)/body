@@ -5,10 +5,10 @@
     filter=new FilterCriteria();
   }
   if (filter.getBeginDate() != null) {
-    query.descend("timestamp").constrain(filter.getBeginDate()).greater();
+    query.descend("timestamp").constrain(filter.getBeginDate()).greater().equal();
   }
   if (filter.getEndDate() != null) {
-    query.descend("timestamp").constrain(filter.getEndDate()).smaller();
+    query.descend("timestamp").constrain(filter.getEndDate()).smaller().equal();
   }
   if (filter.getItemName() != null) {
     query.descend("name").constrain(filter.getItemName()).equal();
@@ -28,10 +28,10 @@ case NEQ:
 query.descend("state").constrain(filter.getState()).equal().not();
 break;
 case GTE:
-query.descend("state").constrain(filter.getState()).smaller().not();
+query.descend("state").constrain(filter.getState()).greater().equal();
 break;
 case LTE:
-query.descend("state").constrain(filter.getState()).greater().not();
+query.descend("state").constrain(filter.getState()).smaller().equal();
 break;
 }
 }

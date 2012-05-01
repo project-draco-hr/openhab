@@ -1,4 +1,8 @@
 {
-  db=Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),DB_FILE_NAME);
+  File folder=new File(DB_FOLDER_NAME);
+  if (!folder.exists()) {
+    folder.mkdir();
+  }
+  db=Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),DB_FOLDER_NAME + File.separator + DB_FILE_NAME);
   Db4oItem.configure(db.ext().configure());
 }

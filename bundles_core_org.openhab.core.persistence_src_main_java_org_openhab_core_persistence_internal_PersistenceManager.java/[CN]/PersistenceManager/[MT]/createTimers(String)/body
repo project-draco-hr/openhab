@@ -7,7 +7,7 @@
         String cronExpression=cronStrategy.getCronExpression();
         JobKey jobKey=new JobKey(strategy.getName(),modelName);
         try {
-          JobDetail job=newJob(PersistenceJob.class).usingJobData(PersistenceJob.JOB_DATA_PERSISTMODEL,cronStrategy.eResource().getURI().trimFileExtension().path()).usingJobData(PersistenceJob.JOB_DATA_STRATEGYNAME,cronStrategy.getName()).withIdentity(jobKey).build();
+          JobDetail job=newJob(PersistItemsJob.class).usingJobData(PersistItemsJob.JOB_DATA_PERSISTMODEL,cronStrategy.eResource().getURI().trimFileExtension().path()).usingJobData(PersistItemsJob.JOB_DATA_STRATEGYNAME,cronStrategy.getName()).withIdentity(jobKey).build();
           Trigger quartzTrigger=newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
           scheduler.scheduleJob(job,quartzTrigger);
           logger.debug("Scheduled strategy {} with cron expression {}",new String[]{jobKey.toString(),cronExpression});
