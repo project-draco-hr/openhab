@@ -1,0 +1,22 @@
+{
+  try {
+    Set<JobKey> jobKeys=scheduler.getJobKeys(GroupMatcher.jobGroupEquals(persistModelName));
+    for (    JobKey jobKey : jobKeys) {
+      try {
+        boolean success=scheduler.deleteJob(jobKey);
+        if (success) {
+          logger.debug("Removed scheduled cron job for strategy '{}'",jobKey.toString());
+        }
+ else {
+          logger.warn("Failed to delete cron jobs '{}'",jobKey.getName());
+        }
+      }
+ catch (      SchedulerException e) {
+        logger.warn("Failed to delete cron jobs '{}'",jobKey.getName());
+      }
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Failed to delete cron jobs of group '{}'",persistModelName);
+  }
+}

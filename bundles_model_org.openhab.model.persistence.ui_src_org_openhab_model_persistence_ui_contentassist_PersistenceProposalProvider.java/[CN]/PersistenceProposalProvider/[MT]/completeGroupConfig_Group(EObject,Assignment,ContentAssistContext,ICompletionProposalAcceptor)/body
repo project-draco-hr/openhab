@@ -1,0 +1,12 @@
+{
+  super.completeGroupConfig_Group(model,assignment,context,acceptor);
+  ItemRegistry registry=(ItemRegistry)UIActivator.itemRegistryTracker.getService();
+  if (registry != null) {
+    for (    Item item : registry.getItems(context.getPrefix() + "*")) {
+      if (item instanceof GroupItem) {
+        ICompletionProposal completionProposal=createCompletionProposal(item.getName(),context);
+        acceptor.accept(completionProposal);
+      }
+    }
+  }
+}

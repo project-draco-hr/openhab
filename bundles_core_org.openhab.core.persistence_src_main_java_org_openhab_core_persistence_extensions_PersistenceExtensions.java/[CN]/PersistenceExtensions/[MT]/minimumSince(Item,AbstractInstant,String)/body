@@ -1,0 +1,15 @@
+{
+  Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
+  Iterator<HistoricItem> it=result.iterator();
+  DecimalType minimum=null;
+  while (it.hasNext()) {
+    State state=it.next().getState();
+    if (state instanceof DecimalType) {
+      DecimalType value=(DecimalType)state;
+      if (minimum == null || value.compareTo(minimum) < 0) {
+        minimum=value;
+      }
+    }
+  }
+  return minimum;
+}

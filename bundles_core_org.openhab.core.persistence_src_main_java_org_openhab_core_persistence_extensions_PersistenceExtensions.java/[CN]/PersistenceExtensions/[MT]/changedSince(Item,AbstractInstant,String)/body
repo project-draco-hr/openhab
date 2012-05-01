@@ -1,0 +1,11 @@
+{
+  Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
+  Iterator<HistoricItem> it=result.iterator();
+  while (it.hasNext()) {
+    HistoricItem hItem=it.next();
+    if (!hItem.getState().equals(item.getState())) {
+      return true;
+    }
+  }
+  return false;
+}

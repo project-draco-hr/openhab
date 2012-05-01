@@ -1,0 +1,30 @@
+{
+  RrdDb db=null;
+  File file=new File(DB_FOLDER + File.separator + alias+ ".rrd");
+  try {
+    if (file.exists()) {
+      db=new RrdDb(file.getAbsolutePath());
+    }
+ else {
+      File folder=new File(DB_FOLDER);
+      if (!folder.exists()) {
+        folder.mkdir();
+      }
+      RrdDef rrdDef=new RrdDef(file.getAbsolutePath());
+      rrdDef.setStep(60);
+      rrdDef.setStartTime(System.currentTimeMillis() / 1000 - 1);
+      rrdDef.addDatasource("state",DsType.GAUGE,60,Double.NaN,Double.NaN);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,1,480);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,4,360);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,15,644);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,60,720);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,720,730);
+      rrdDef.addArchive(ConsolFun.AVERAGE,0.5,10080,520);
+      db=new RrdDb(rrdDef);
+    }
+  }
+ catch (  IOException e) {
+    logger.error("Could not create rrd4j database file '{}': {}",new String[]{file.getAbsolutePath(),e.getMessage()});
+  }
+  return db;
+}

@@ -1,0 +1,26 @@
+{
+  int width=480;
+  try {
+    width=Integer.parseInt(req.getParameter("w"));
+  }
+ catch (  Exception e) {
+  }
+  int height=240;
+  try {
+    height=Integer.parseInt(req.getParameter("h"));
+  }
+ catch (  Exception e) {
+  }
+  Long period=PERIODS.get(req.getParameter("period"));
+  if (period == null) {
+    period=PERIODS.get("D");
+  }
+  graphDef.setWidth(width);
+  graphDef.setHeight(height);
+  graphDef.setAntiAliasing(true);
+  graphDef.setImageFormat("PNG");
+  graphDef.setStartTime(period);
+  graphDef.setTextAntiAliasing(true);
+  graphDef.setLargeFont(new Font("SansSerif",Font.PLAIN,15));
+  graphDef.setSmallFont(new Font("SansSerif",Font.PLAIN,11));
+}

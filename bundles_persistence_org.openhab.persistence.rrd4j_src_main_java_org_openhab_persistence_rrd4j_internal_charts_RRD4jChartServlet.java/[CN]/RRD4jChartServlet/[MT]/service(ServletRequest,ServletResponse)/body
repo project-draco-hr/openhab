@@ -1,0 +1,14 @@
+{
+  RrdGraphDef graphDef=new RrdGraphDef();
+  configureImageParameters(graphDef,req);
+  configureContents(graphDef,req);
+  try {
+    RrdGraph graph=new RrdGraph(graphDef);
+    BufferedImage bi=new BufferedImage(graph.getRrdGraphInfo().getWidth(),graph.getRrdGraphInfo().getHeight(),BufferedImage.TYPE_INT_RGB);
+    graph.render(bi.getGraphics());
+    javax.imageio.ImageIO.write(bi,"png",res.getOutputStream());
+  }
+ catch (  FileNotFoundException e) {
+    throw new ServletException("Could not read database files for all requested items.",e);
+  }
+}
