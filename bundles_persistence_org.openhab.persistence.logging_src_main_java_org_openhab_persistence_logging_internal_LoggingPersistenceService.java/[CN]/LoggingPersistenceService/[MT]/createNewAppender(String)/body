@@ -1,0 +1,17 @@
+{
+  FileAppender<ILoggingEvent> appender;
+  appender=new FileAppender<ILoggingEvent>();
+  appender.setAppend(true);
+  appender.setFile(LOG_FOLDER + File.separator + alias+ LOG_FILEEXT);
+  appender.setEncoder(encoder);
+  try {
+    LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
+    Method setContext=appender.getClass().getMethod("setContext",Context.class);
+    setContext.invoke(appender,context);
+  }
+ catch (  Exception e) {
+    logger.warn("Could not set context on logging appender, persistence logging might not work as expected!");
+  }
+  appender.start();
+  return appender;
+}

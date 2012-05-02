@@ -1,0 +1,15 @@
+{
+  if (initialized) {
+    FileAppender<ILoggingEvent> appender=appenders.get(alias);
+    if (appender == null) {
+synchronized (appenders) {
+        if (!appenders.containsKey(alias)) {
+          appender=createNewAppender(alias);
+        }
+      }
+    }
+    ItemLoggingEvent event=new ItemLoggingEvent(item);
+    appender.doAppend(event);
+    logger.debug("Logged item '{}' to file '{}.log'",new String[]{item.getName(),alias});
+  }
+}
