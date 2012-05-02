@@ -4,19 +4,11 @@
     if (StringUtils.isBlank(pattern)) {
       pattern=DEFAULT_PATTERN;
     }
-    try {
-      encoder=new PatternLayoutEncoder();
-      LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
-      Method setContext=encoder.getClass().getMethod("setContext",Context.class);
-      setContext.invoke(encoder,context);
-      Method setPattern=encoder.getClass().getMethod("setPattern",String.class);
-      setPattern.invoke(encoder,pattern);
-      Method start=encoder.getClass().getMethod("start");
-      start.invoke(encoder);
-      initialized=true;
-    }
- catch (    Exception e) {
-      logger.error("Cannot initialize logging encoder - deactivating logging persistence service");
-    }
+    encoder=new PatternLayoutEncoder();
+    LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
+    encoder.setContext(context);
+    encoder.setPattern(pattern);
+    encoder.start();
+    initialized=true;
   }
 }
