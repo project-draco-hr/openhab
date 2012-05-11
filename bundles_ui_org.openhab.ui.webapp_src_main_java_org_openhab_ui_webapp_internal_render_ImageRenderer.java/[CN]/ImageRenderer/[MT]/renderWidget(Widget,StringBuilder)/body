@@ -1,6 +1,12 @@
 {
   Image image=(Image)w;
   String snippet=(image.getChildren().size() > 0) ? getSnippet("image_link") : getSnippet("image");
+  if (image.getRefresh() > 0) {
+    snippet=StringUtils.replace(snippet,"%refresh%","id=\"%id%\" onload=\"setTimeout('document.getElementById(\\'%id%\\').src=\\'%url%?\\'+new Date().getMilliseconds()', " + image.getRefresh() + ")\"");
+  }
+ else {
+    snippet=snippet.replaceAll("%refresh%","");
+  }
   snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(w));
   snippet=snippet.replaceAll("%url%",image.getUrl());
   sb.append(snippet);

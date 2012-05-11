@@ -1,0 +1,17 @@
+{
+  super.complete_Icon(model,ruleCall,context,acceptor);
+  try {
+    String iconsFolder=ConfigurationFolderProvider.getRootConfigurationFolder().getLocation().toFile().getAbsolutePath() + File.separator + IMAGE_LOCATION;
+    File folder=new File(iconsFolder);
+    if (folder.isDirectory()) {
+      for (      String filename : folder.list()) {
+        if (filename.toLowerCase().endsWith(".png")) {
+          ICompletionProposal completionProposal=createCompletionProposal(filename.substring(0,filename.length() - 4),context);
+          acceptor.accept(completionProposal);
+        }
+      }
+    }
+  }
+ catch (  CoreException e) {
+  }
+}

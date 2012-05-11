@@ -53,6 +53,31 @@
   if (widget instanceof Image) {
     Image imageWidget=(Image)widget;
     bean.url=imageWidget.getUrl();
+    if (imageWidget.getRefresh() > 0) {
+      bean.refresh=imageWidget.getRefresh();
+    }
+  }
+  if (widget instanceof Video) {
+    Video videoWidget=(Video)widget;
+    bean.url=videoWidget.getUrl();
+  }
+  if (widget instanceof Webview) {
+    Webview webViewWidget=(Webview)widget;
+    bean.url=webViewWidget.getUrl();
+  }
+  if (widget instanceof Chart) {
+    Chart chartWidget=(Chart)widget;
+    bean.service=chartWidget.getService();
+    bean.period=chartWidget.getPeriod();
+    if (chartWidget.getRefresh() > 0) {
+      bean.refresh=chartWidget.getRefresh();
+    }
+  }
+  if (widget instanceof Setpoint) {
+    Setpoint setpointWidget=(Setpoint)widget;
+    bean.minValue=setpointWidget.getMinValue();
+    bean.maxValue=setpointWidget.getMaxValue();
+    bean.step=setpointWidget.getStep();
   }
   return bean;
 }

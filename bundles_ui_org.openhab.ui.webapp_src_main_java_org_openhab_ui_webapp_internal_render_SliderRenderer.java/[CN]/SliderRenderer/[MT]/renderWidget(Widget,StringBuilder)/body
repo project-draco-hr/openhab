@@ -2,7 +2,7 @@
   Slider s=(Slider)w;
   String snippetName="slider";
   String snippet=getSnippet(snippetName);
-  String frequency=StringUtils.isEmpty(s.getFrequency()) ? "200" : s.getFrequency();
+  String frequency=s.getFrequency() == 0 ? "200" : Integer.toString(s.getFrequency());
   snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(s));
   snippet=snippet.replaceAll("%icon%",itemUIRegistry.getIcon(s));
   snippet=snippet.replaceAll("%item%",w.getItem());

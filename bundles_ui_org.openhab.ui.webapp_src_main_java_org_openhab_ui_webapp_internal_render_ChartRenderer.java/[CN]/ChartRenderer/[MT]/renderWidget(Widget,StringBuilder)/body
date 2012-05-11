@@ -1,0 +1,26 @@
+{
+  Chart chart=(Chart)w;
+  if (chart.getService() != null && !chart.getService().equals("rrd4j")) {
+    logger.warn("Chart service '{}' is not supported by the Classic UI, using rrd4j as fallback instead.");
+  }
+  try {
+    String itemParam=null;
+    Item item=itemUIRegistry.getItem(chart.getItem());
+    if (item instanceof GroupItem) {
+      itemParam="groups=" + chart.getItem();
+    }
+ else {
+      itemParam="items=" + chart.getItem();
+    }
+    String url="/rrdchart.png?" + itemParam + "&period="+ chart.getPeriod();
+    String snippet=getSnippet("image");
+    snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(w));
+    snippet=snippet.replaceAll("%url%",url);
+    snippet=snippet.replaceAll("%refresh%",Integer.toString(chart.getRefresh()));
+    sb.append(snippet);
+  }
+ catch (  ItemNotFoundException e) {
+    logger.warn("Chart cannot be rendered as item '{}' does not exist.",chart.getItem());
+  }
+  return null;
+}
