@@ -1,3 +1,14 @@
 {
-  return DateTime.now().isAfter(startTime) && !terminated;
+  try {
+    for (    JobExecutionContext context : scheduler.getCurrentlyExecutingJobs()) {
+      if (context.getJobDetail().getKey().equals(jobKey)) {
+        return true;
+      }
+    }
+    return false;
+  }
+ catch (  SchedulerException e) {
+    logger.debug("An error occured getting currently running jobs: {}",e.getMessage());
+    return DateTime.now().isAfter(startTime) && !terminated;
+  }
 }
