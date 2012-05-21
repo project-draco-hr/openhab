@@ -1,0 +1,9 @@
+{
+  if (StringUtils.isBlank(GCalConfiguration.username) || StringUtils.isBlank(GCalConfiguration.password) || StringUtils.isBlank(GCalConfiguration.url)) {
+    logger.warn("username, password and url must not be blank -> gcal calendar login aborted");
+    return null;
+  }
+  CalendarEventFeed feed=downloadEventFeed(GCalConfiguration.url,GCalConfiguration.username,GCalConfiguration.password);
+  checkIfFullCalendarFeed(feed.getEntries());
+  return feed;
+}

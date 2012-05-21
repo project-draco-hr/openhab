@@ -1,0 +1,16 @@
+{
+  if (GCalConfiguration.isInitialized()) {
+    String newAlias=alias != null ? alias : item.getName();
+    CalendarEventEntry myEntry=new CalendarEventEntry();
+    myEntry.setTitle(new PlainTextConstruct(newAlias));
+    myEntry.setContent(new PlainTextConstruct("send " + item.getName() + " "+ item.getState()));
+    DateTime nowPlusOffset=new DateTime().plusDays(GCalConfiguration.offset);
+    com.google.gdata.data.DateTime time=com.google.gdata.data.DateTime.parseDateTime(nowPlusOffset.toString());
+    When eventTimes=new When();
+    eventTimes.setStartTime(time);
+    eventTimes.setEndTime(time);
+    myEntry.addTime(eventTimes);
+    CalendarEventEntry createdEvent=GCalConnector.createCalendarEvent(myEntry);
+    logger.debug("succesfully created new calendar event (title='{}', date='{}')",createdEvent.getTitle().getPlainText(),createdEvent.getTimes().get(0).getStartTime());
+  }
+}
