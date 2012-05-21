@@ -1,14 +1,9 @@
 {
-  if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(url)) {
-    logger.warn("username, password and url must not be blank -> gcal calendar login aborted");
-    return;
-  }
-  CalendarEventFeed myFeed=downloadEventFeed(url,username,password);
+  CalendarEventFeed myFeed=GCalConnector.downloadEventFeed();
   if (myFeed != null) {
     List<CalendarEventEntry> entries=myFeed.getEntries();
     if (entries.size() > 0) {
       logger.debug("found {} calendar events to process",entries.size());
-      checkIfFullCalendarFeed(entries);
       try {
         if (scheduler.isShutdown()) {
           logger.warn("Scheduler has been shut down - probably due to exceptions?");

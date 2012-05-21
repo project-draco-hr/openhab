@@ -19,13 +19,15 @@
     if (StringUtils.isNotBlank(refreshString)) {
       refreshInterval=Integer.parseInt(refreshString);
     }
-    try {
-      scheduler=StdSchedulerFactory.getDefaultScheduler();
-      isProperlyConfigured=true;
-      start();
+    String offsetString=(String)config.get("offset");
+    if (StringUtils.isNotBlank(offsetString)) {
+      try {
+        offset=Integer.valueOf(offsetString);
+      }
+ catch (      IllegalArgumentException iae) {
+        logger.warn("couldn't parse '{}' to an integer");
+      }
     }
- catch (    SchedulerException se) {
-      logger.error("initializing scheduler throws exception",se);
-    }
+    initialized=true;
   }
 }
