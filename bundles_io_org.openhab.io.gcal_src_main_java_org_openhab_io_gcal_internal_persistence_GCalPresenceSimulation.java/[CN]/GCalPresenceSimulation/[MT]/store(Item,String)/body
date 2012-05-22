@@ -3,7 +3,7 @@
     String newAlias=alias != null ? alias : item.getName();
     CalendarEventEntry myEntry=new CalendarEventEntry();
     myEntry.setTitle(new PlainTextConstruct("[PresenceSimulation] " + newAlias));
-    myEntry.setContent(new PlainTextConstruct(String.format(COMMAND,item.getName(),item.getState().toString())));
+    myEntry.setContent(new PlainTextConstruct(String.format(GCalConfiguration.executeScript,item.getName(),item.getState().toString())));
     DateTime nowPlusOffset=new DateTime().plusDays(GCalConfiguration.offset);
     com.google.gdata.data.DateTime time=com.google.gdata.data.DateTime.parseDateTime(nowPlusOffset.toString());
     When eventTimes=new When();
