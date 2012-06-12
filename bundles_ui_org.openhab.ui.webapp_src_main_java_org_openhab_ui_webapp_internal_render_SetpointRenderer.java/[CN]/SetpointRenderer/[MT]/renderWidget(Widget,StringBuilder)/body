@@ -1,0 +1,34 @@
+{
+  Setpoint sp=(Setpoint)w;
+  State state=itemUIRegistry.getState(w);
+  String newLowerState=state.toString();
+  String newHigherState=state.toString();
+  if (state instanceof DecimalType) {
+    DecimalType actState=(DecimalType)state;
+    BigDecimal newLower=actState.toBigDecimal().subtract(sp.getStep());
+    BigDecimal newHigher=actState.toBigDecimal().add(sp.getStep());
+    if (newLower.compareTo(sp.getMinValue()) < 0) {
+      newLower=sp.getMinValue();
+    }
+    if (newHigher.compareTo(sp.getMaxValue()) > 0) {
+      newHigher=sp.getMaxValue();
+    }
+    newLowerState=newLower.toString();
+    newHigherState=newHigher.toString();
+  }
+  String snippetName="setpoint";
+  String snippet=getSnippet(snippetName);
+  snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(w));
+  snippet=snippet.replaceAll("%icon%",itemUIRegistry.getIcon(w));
+  snippet=snippet.replaceAll("%item%",w.getItem());
+  snippet=snippet.replaceAll("%state%",state.toString());
+  snippet=snippet.replaceAll("%newlowerstate%",newLowerState);
+  snippet=snippet.replaceAll("%newhigherstate%",newHigherState);
+  snippet=snippet.replaceAll("%label%",getLabel(w));
+  snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
+  snippet=snippet.replaceAll("%minValue%",sp.getMinValue().toString());
+  snippet=snippet.replaceAll("%maxValue%",sp.getMaxValue().toString());
+  snippet=snippet.replaceAll("%step%",sp.getStep().toString());
+  sb.append(snippet);
+  return null;
+}
