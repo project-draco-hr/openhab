@@ -1,0 +1,14 @@
+{
+  File[] files=new File(path).listFiles();
+  for (  File file : files) {
+    String normalizedPath=file.getPath().replaceAll(contentDir,"");
+    if (file.isDirectory()) {
+      collectLocalEntries(localEntries,file.getPath());
+    }
+ else {
+      if (!file.getName().endsWith(".dbox")) {
+        localEntries.put(normalizedPath,file.lastModified());
+      }
+    }
+  }
+}

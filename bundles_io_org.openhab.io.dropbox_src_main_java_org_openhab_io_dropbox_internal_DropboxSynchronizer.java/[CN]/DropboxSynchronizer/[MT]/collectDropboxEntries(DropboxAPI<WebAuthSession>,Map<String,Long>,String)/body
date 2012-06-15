@@ -1,0 +1,11 @@
+{
+  Entry entries=dropbox.metadata(path,-1,null,true,null);
+  for (  Entry entry : entries.contents) {
+    if (entry.isDir) {
+      collectDropboxEntries(dropbox,dropboxEntries,entry.path);
+    }
+ else {
+      dropboxEntries.put(entry.path,RESTUtility.parseDate(entry.modified).getTime());
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  String fqPath=contentDir + entry.metadata.path;
+  File newLocalFile=new File(fqPath);
+  if (entry.metadata.isDir) {
+    boolean success=newLocalFile.mkdirs();
+    if (!success) {
+      logger.debug("Didn't create any intermediary directories for '{}'",fqPath);
+    }
+  }
+ else {
+    try {
+      dropbox.getFile(entry.metadata.path,null,new FileOutputStream(newLocalFile),null);
+    }
+ catch (    FileNotFoundException fnfe) {
+      logger.warn("Couldn't download file '" + fqPath + "'",fnfe);
+    }
+  }
+  long lastModified=RESTUtility.parseDate(entry.metadata.modified).getTime();
+  boolean success=newLocalFile.setLastModified(lastModified);
+  if (!success) {
+    logger.debug("Couldn't change attribute 'lastModified' of file '{}'",fqPath);
+  }
+  logger.debug("Successfully downloaded file '{}'",fqPath);
+}

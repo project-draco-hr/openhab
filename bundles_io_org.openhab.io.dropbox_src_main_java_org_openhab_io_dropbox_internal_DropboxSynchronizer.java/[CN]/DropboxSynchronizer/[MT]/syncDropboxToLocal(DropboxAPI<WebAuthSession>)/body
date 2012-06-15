@@ -1,0 +1,22 @@
+{
+  File cursorFile=new File(contentDir + DELTA_CURSOR_FILE_NAME);
+  if (lastCursor == null) {
+    lastCursor=extractDeltaCursor(cursorFile);
+    logger.trace("Last cursor was NULL and has now been recreated from the filesystem (file='{}', cursor='{}')",cursorFile.getAbsolutePath(),lastCursor);
+  }
+  DeltaPage<Entry> deltaPage=dropbox.delta(lastCursor);
+  if (deltaPage.entries != null && deltaPage.entries.size() == 0) {
+    logger.debug("There are no deltas to download from Dropbox ...");
+  }
+ else {
+    for (    DeltaEntry<Entry> entry : deltaPage.entries) {
+      if (entry.metadata != null) {
+        downloadFile(entry);
+      }
+ else {
+        deleteLocalFile(entry.lcPath);
+      }
+    }
+  }
+  writeLastCursorFile(deltaPage,cursorFile);
+}

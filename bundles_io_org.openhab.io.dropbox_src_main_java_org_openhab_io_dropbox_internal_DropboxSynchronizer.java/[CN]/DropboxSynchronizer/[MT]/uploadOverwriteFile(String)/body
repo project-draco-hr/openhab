@@ -1,0 +1,10 @@
+{
+  try {
+    File file=new File(contentDir + File.separator + dropboxPath);
+    Entry newEntry=dropbox.putFileOverwrite(dropboxPath,new FileInputStream(file),file.length(),null);
+    logger.debug("successfully overwritten file '{}'. New revision is '{}'",file.getPath(),newEntry.rev);
+  }
+ catch (  FileNotFoundException fnfe) {
+    logger.error("Errors while uploading file '" + dropboxPath + "'",fnfe);
+  }
+}

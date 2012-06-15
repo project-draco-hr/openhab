@@ -1,0 +1,12 @@
+{
+  try {
+    StringBuffer sb=new StringBuffer();
+    for (    java.util.Map.Entry<String,Long> line : dropboxEntries.entrySet()) {
+      sb.append(line.getKey()).append(FIELD_DELIMITER).append(line.getValue()).append(LINE_DELIMITER);
+    }
+    FileUtils.writeStringToFile(file,sb.toString());
+  }
+ catch (  IOException e) {
+    logger.warn("Couldn't write file '{}'",file.getPath());
+  }
+}

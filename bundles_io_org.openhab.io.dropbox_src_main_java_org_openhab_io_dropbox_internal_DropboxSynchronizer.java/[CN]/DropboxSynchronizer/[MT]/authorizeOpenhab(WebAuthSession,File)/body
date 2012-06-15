@@ -1,0 +1,38 @@
+{
+  WebAuthInfo authInfo=session.getAuthInfo();
+  RequestTokenPair pair=authInfo.requestTokenPair;
+  logger.info("################################################################################################");
+  logger.info("# Dropbox-Integration: U S E R   I N T E R A C T I O N   R E Q U I R E D !!");
+  logger.info("# 1. Open URL '{}'",authInfo.url);
+  logger.info("# 2. Allow openHAB to access Dropbox. Note: The given URL is only valid for THE NEXT 5 MINUTES!");
+  logger.info("################################################################################################");
+  boolean interrupted=false;
+  int waitedFor=0;
+  while (!interrupted) {
+    try {
+      Thread.sleep(5000);
+      waitedFor+=5000;
+      try {
+        session.retrieveWebAccessToken(pair);
+        interrupted=true;
+      }
+ catch (      DropboxUnlinkedException due) {
+      }
+    }
+ catch (    InterruptedException e) {
+    }
+    if (waitedFor > 300000) {
+      interrupted=true;
+      logger.info("Authorization timeslot is closed now! Please use OSGi " + "console to restart the Dropbox-Bundle and re-initiate the authorization process!");
+    }
+  }
+  AccessTokenPair accessToken=session.getAccessTokenPair();
+  if (accessToken != null) {
+    logger.debug("Got token pair from Dropbox (key={}, secret={}) -> serialize to file for later use!",accessToken.key,accessToken.secret);
+    writeLocalFile(authFile,accessToken.key + FIELD_DELIMITER + accessToken.secret);
+  }
+ else {
+    logger.warn("AccessToken is null, so we can't write it to a file for later use.");
+  }
+  return accessToken;
+}

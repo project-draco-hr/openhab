@@ -1,0 +1,28 @@
+{
+  if (config != null) {
+    DropboxSynchronizer.appKey=(String)config.get("appkey");
+    DropboxSynchronizer.appSecret=(String)config.get("appsecret");
+    String contentDirString=(String)config.get("contentdir");
+    if (StringUtils.isNotBlank(contentDirString)) {
+      DropboxSynchronizer.contentDir=contentDirString;
+    }
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      DropboxSynchronizer.refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String syncModeString=(String)config.get("syncmode");
+    if (StringUtils.isNotBlank(syncModeString)) {
+      try {
+        DropboxSynchronizer.syncMode=SyncMode.valueOf(syncModeString.toUpperCase());
+      }
+ catch (      IllegalArgumentException iae) {
+        throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");
+      }
+    }
+    if (StringUtils.isBlank(DropboxSynchronizer.appKey) || StringUtils.isBlank(DropboxSynchronizer.appSecret)) {
+      throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
+    }
+    isProperlyConfigured=true;
+    start();
+  }
+}

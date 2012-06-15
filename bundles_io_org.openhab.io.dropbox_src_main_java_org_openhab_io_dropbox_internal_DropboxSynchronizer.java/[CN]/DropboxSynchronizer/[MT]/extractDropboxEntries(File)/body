@@ -1,0 +1,19 @@
+{
+  Map<String,Long> dropboxEntries=new HashMap<String,Long>();
+  try {
+    List<String> lines=FileUtils.readLines(dropboxEntryFile);
+    for (    String line : lines) {
+      String[] lineComponents=line.split(FIELD_DELIMITER);
+      if (lineComponents.length == 2) {
+        dropboxEntries.put(lineComponents[0],Long.valueOf(lineComponents[1]));
+      }
+ else {
+        logger.trace("Couldn't parse line '{}' - it does not contain to elements delimited by '{}'",line,FIELD_DELIMITER);
+      }
+    }
+  }
+ catch (  IOException ioe) {
+    logger.warn("Couldn't read lines from file '{}'",dropboxEntryFile.getPath());
+  }
+  return dropboxEntries;
+}
