@@ -1,14 +1,25 @@
 {
-  File[] files=new File(path).listFiles();
+  File[] files=new File(path).listFiles(new FileFilter(){
+    @Override public boolean accept(    File pathname){
+      for (      String filter : filterElements) {
+        if (pathname.getName().matches(filter)) {
+          return false;
+        }
+ else         if (FilenameUtils.getName(pathname.getName()).startsWith(".")) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+);
   for (  File file : files) {
-    String normalizedPath=file.getPath().replaceAll(contentDir,"");
+    String normalizedPath=StringUtils.substringAfter(file.getPath(),contentDir);
     if (file.isDirectory()) {
       collectLocalEntries(localEntries,file.getPath());
     }
  else {
-      if (!file.getName().endsWith(".dbox")) {
-        localEntries.put(normalizedPath,file.lastModified());
-      }
+      localEntries.put(normalizedPath,file.lastModified());
     }
   }
 }

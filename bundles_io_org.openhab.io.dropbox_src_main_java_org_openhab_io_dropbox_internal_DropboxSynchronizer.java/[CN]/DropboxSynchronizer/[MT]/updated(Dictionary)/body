@@ -19,6 +19,11 @@
         throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");
       }
     }
+    String filterString=(String)config.get("filter");
+    if (StringUtils.isNotBlank(filterString)) {
+      String[] newFilterElements=filterString.split(",");
+      filterElements.addAll(Arrays.asList(newFilterElements));
+    }
     if (StringUtils.isBlank(DropboxSynchronizer.appKey) || StringUtils.isBlank(DropboxSynchronizer.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
