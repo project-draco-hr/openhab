@@ -2,10 +2,11 @@
   File[] files=new File(path).listFiles(new FileFilter(){
     @Override public boolean accept(    File pathname){
       for (      String filter : filterElements) {
-        if (pathname.getName().matches(filter)) {
+        String fileName=FilenameUtils.getName(pathname.getName());
+        if (fileName.matches(filter)) {
           return false;
         }
- else         if (FilenameUtils.getName(pathname.getName()).startsWith(".")) {
+ else         if (fileName.startsWith(".")) {
           return false;
         }
       }

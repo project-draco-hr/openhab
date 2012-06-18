@@ -17,13 +17,13 @@
   for (  java.util.Map.Entry<String,Long> entry : localEntries.entrySet()) {
     if (dropboxEntries.containsKey(entry.getKey())) {
       if (entry.getValue().compareTo(dropboxEntries.get(entry.getKey())) > 0) {
-        logger.debug("Local file '{}' is newer - upload into Dropbox!",entry.getKey());
+        logger.trace("Local file '{}' is newer - upload into Dropbox!",entry.getKey());
         uploadOverwriteFile(entry.getKey());
         isChanged=true;
       }
     }
  else {
-      logger.debug("Local file '{}' doesn't exist in Dropbox - upload into Dropbox!",entry.getKey());
+      logger.trace("Local file '{}' doesn't exist in Dropbox - upload into Dropbox!",entry.getKey());
       uploadFile(entry.getKey());
       isChanged=true;
     }
