@@ -5,8 +5,11 @@
   bean.icon=icon;
   bean.link=UriBuilder.fromUri(uri).path(PATH_SITEMAPS).path(sitemapName).path(pageId).build().toASCIIString();
   if (children != null) {
+    int cntWidget=0;
     for (    Widget widget : children) {
-      bean.widgets.add(createWidgetBean(sitemapName,widget,drillDown,uri));
+      String widgetId=pageId + "_" + cntWidget;
+      bean.widgets.add(createWidgetBean(sitemapName,widget,drillDown,uri,widgetId));
+      cntWidget++;
     }
   }
  else {

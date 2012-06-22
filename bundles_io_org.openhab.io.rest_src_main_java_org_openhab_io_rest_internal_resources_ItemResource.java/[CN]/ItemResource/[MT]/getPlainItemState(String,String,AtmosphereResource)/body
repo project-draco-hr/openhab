@@ -1,0 +1,16 @@
+{
+  if (atmosphereTransport == null || atmosphereTransport.isEmpty()) {
+    Item item=getItem(itemname);
+    if (item != null) {
+      logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
+      throw new WebApplicationException(Response.ok(item.getState().toString()).build());
+    }
+ else {
+      logger.info("Received HTTP GET request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
+      throw new WebApplicationException(404);
+    }
+  }
+  GeneralBroadcaster itemBroadcaster=(GeneralBroadcaster)BroadcasterFactory.getDefault().lookup(GeneralBroadcaster.class,resource.getRequest().getPathInfo(),true);
+  itemBroadcaster.addStateChangeListener(new ItemStateChangeListener());
+  return new SuspendResponse.SuspendResponseBuilder<String>().scope(SCOPE.REQUEST).resumeOnBroadcast(!ResourceStateChangeListener.isStreamingTransport(resource.getRequest())).broadcaster(itemBroadcaster).outputComments(true).build();
+}

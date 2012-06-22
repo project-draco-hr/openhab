@@ -1,0 +1,28 @@
+{
+  List<WidgetBean> foundWidgets=new ArrayList<WidgetBean>();
+  try {
+    for (    WidgetBean widget : widgets) {
+      if (widget.item != null && widget.item.name.equals(searchItem.getName())) {
+        foundWidgets.add(widget);
+      }
+ else {
+        if (!widget.widgets.isEmpty()) {
+          List<WidgetBean> tmpWidgets=getItemsOnPage(widget.widgets,searchItem);
+          if (!tmpWidgets.isEmpty()) {
+            foundWidgets.addAll(tmpWidgets);
+          }
+        }
+      }
+      if (widget.linkedPage != null && widget.linkedPage.widgets != null) {
+        List<WidgetBean> tmpWidgets=getItemsOnPage(widget.linkedPage.widgets,searchItem);
+        if (!tmpWidgets.isEmpty()) {
+          foundWidgets.addAll(tmpWidgets);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+  }
+  return foundWidgets;
+}

@@ -8,20 +8,11 @@
  catch (    Exception e) {
       logger.error("Could not start Jersey framework",e);
     }
-    httpPort=Integer.parseInt(bundleContext.getProperty("jetty.port"));
-    httpSSLPort=Integer.parseInt(bundleContext.getProperty("jetty.port.ssl"));
     httpService.registerServlet(REST_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
     logger.info("Started REST API at /rest");
-    if (discoveryService != null) {
-      discoveryService.registerService(getDefaultServiceDescription());
-      discoveryService.registerService(getSSLServiceDescription());
-    }
   }
  catch (  ServletException se) {
     throw new RuntimeException(se);
-  }
-catch (  NumberFormatException nfe) {
-    throw new RuntimeException("The given value is not a valid port number",nfe);
   }
 catch (  NamespaceException se) {
     throw new RuntimeException(se);
