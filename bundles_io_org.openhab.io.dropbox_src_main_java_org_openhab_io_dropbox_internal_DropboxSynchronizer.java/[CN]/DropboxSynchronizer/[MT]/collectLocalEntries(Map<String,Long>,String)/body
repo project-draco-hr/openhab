@@ -1,16 +1,16 @@
 {
   File[] files=new File(path).listFiles(new FileFilter(){
-    @Override public boolean accept(    File pathname){
+    @Override public boolean accept(    File file){
+      String normalizedPath=StringUtils.substringAfter(file.getPath(),contentDir);
       for (      String filter : filterElements) {
-        String fileName=FilenameUtils.getName(pathname.getName());
-        if (fileName.matches(filter)) {
+        if (FilenameUtils.getName(normalizedPath).startsWith(".")) {
           return false;
         }
- else         if (fileName.startsWith(".")) {
-          return false;
+ else         if (normalizedPath.matches(filter)) {
+          return true;
         }
       }
-      return true;
+      return false;
     }
   }
 );

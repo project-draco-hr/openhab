@@ -30,9 +30,13 @@
     dropboxEntries.remove(entry.getKey());
   }
   for (  String path : dropboxEntries.keySet()) {
-    dropbox.delete(path);
-    isChanged=true;
-    logger.debug("Successfully deleted file '{}' from Dropbox",path);
+    for (    String filter : filterElements) {
+      if (path.matches(filter)) {
+        dropbox.delete(path);
+        isChanged=true;
+        logger.debug("Successfully deleted file '{}' from Dropbox",path);
+      }
+    }
   }
   if (isChanged) {
     boolean success=FileUtils.deleteQuietly(dropboxEntryFile);
