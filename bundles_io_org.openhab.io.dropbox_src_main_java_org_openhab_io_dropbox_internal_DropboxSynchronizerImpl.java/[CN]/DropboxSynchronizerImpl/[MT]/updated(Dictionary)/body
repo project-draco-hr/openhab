@@ -1,19 +1,19 @@
 {
   if (config != null) {
-    DropboxSynchronizer.appKey=(String)config.get("appkey");
-    DropboxSynchronizer.appSecret=(String)config.get("appsecret");
+    DropboxSynchronizerImpl.appKey=(String)config.get("appkey");
+    DropboxSynchronizerImpl.appSecret=(String)config.get("appsecret");
     String contentDirString=(String)config.get("contentdir");
     if (StringUtils.isNotBlank(contentDirString)) {
-      DropboxSynchronizer.contentDir=contentDirString;
+      DropboxSynchronizerImpl.contentDir=contentDirString;
     }
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
-      DropboxSynchronizer.refreshInterval=Long.parseLong(refreshIntervalString);
+      DropboxSynchronizerImpl.refreshInterval=Long.parseLong(refreshIntervalString);
     }
     String syncModeString=(String)config.get("syncmode");
     if (StringUtils.isNotBlank(syncModeString)) {
       try {
-        DropboxSynchronizer.syncMode=SyncMode.valueOf(syncModeString.toUpperCase());
+        DropboxSynchronizerImpl.syncMode=DropboxSyncMode.valueOf(syncModeString.toUpperCase());
       }
  catch (      IllegalArgumentException iae) {
         throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");
@@ -24,7 +24,7 @@
       String[] newFilterElements=filterString.split(",");
       filterElements.addAll(Arrays.asList(newFilterElements));
     }
-    if (StringUtils.isBlank(DropboxSynchronizer.appKey) || StringUtils.isBlank(DropboxSynchronizer.appSecret)) {
+    if (StringUtils.isBlank(DropboxSynchronizerImpl.appKey) || StringUtils.isBlank(DropboxSynchronizerImpl.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
     isProperlyConfigured=true;
