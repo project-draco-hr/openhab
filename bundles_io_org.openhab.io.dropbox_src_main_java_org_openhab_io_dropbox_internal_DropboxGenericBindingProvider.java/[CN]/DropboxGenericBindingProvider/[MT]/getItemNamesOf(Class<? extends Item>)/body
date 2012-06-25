@@ -1,0 +1,10 @@
+{
+  Set<String> itemNames=new HashSet<String>();
+  for (  Entry<String,BindingConfig> entry : bindingConfigs.entrySet()) {
+    DropboxBindingConfig dbConfig=(DropboxBindingConfig)entry.getValue();
+    if (dbConfig.getItem().getClass().isAssignableFrom(itemType)) {
+      itemNames.add(entry.getKey());
+    }
+  }
+  return itemNames;
+}
