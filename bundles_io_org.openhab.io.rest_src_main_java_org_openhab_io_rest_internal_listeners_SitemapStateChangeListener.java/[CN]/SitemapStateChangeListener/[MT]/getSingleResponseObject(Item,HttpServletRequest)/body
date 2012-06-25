@@ -1,0 +1,11 @@
+{
+  String responseType=getResponseType(request);
+  PageBean pageBean=getPageBean(request);
+  WidgetListBean responseBeam;
+  if (pageBean != null) {
+    responseBeam=new WidgetListBean(getItemsOnPage(pageBean.widgets,item));
+    Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(responseBeam,getQueryParam(request,"callback")) : responseBeam;
+    return Response.ok(responseObject,responseType).build();
+  }
+  return null;
+}

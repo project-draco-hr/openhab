@@ -1,0 +1,9 @@
+{
+  String responseType=getResponseType(request);
+  PageBean pageBean=getPageBean(request);
+  if (pageBean != null) {
+    Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(pageBean,getQueryParam(request,"callback")) : pageBean;
+    return Response.ok(responseObject,responseType).build();
+  }
+  return null;
+}

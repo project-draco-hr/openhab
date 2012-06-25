@@ -1,0 +1,16 @@
+{
+  logger.debug("Received HTTP GET request at '{}' for media type '{}'.",new String[]{uriInfo.getPath(),type});
+  if (atmosphereTransport == null || atmosphereTransport.isEmpty()) {
+    final String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
+    if (responseType != null) {
+      final Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getItemDataBean(itemname),callback) : getItemDataBean(itemname);
+      throw new WebApplicationException(Response.ok(responseObject,responseType).build());
+    }
+ else {
+      throw new WebApplicationException(Response.notAcceptable(null).build());
+    }
+  }
+  GeneralBroadcaster itemBroadcaster=(GeneralBroadcaster)BroadcasterFactory.getDefault().lookup(GeneralBroadcaster.class,resource.getRequest().getPathInfo(),true);
+  itemBroadcaster.addStateChangeListener(new ItemStateChangeListener());
+  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).resumeOnBroadcast(!ResourceStateChangeListener.isStreamingTransport(resource.getRequest())).broadcaster(itemBroadcaster).outputComments(true).build();
+}
