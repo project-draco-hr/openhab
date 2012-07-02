@@ -8,8 +8,12 @@
     }
   }
  else {
+    if (!newLocalFile.getParentFile().exists()) {
+      newLocalFile.getParentFile().mkdirs();
+    }
     try {
-      dropbox.getFile(entry.metadata.path,null,new FileOutputStream(newLocalFile),null);
+      FileOutputStream os=new FileOutputStream(newLocalFile);
+      dropbox.getFile(entry.metadata.path,null,os,null);
     }
  catch (    FileNotFoundException fnfe) {
       logger.warn("Couldn't download file '" + fqPath + "'",fnfe);

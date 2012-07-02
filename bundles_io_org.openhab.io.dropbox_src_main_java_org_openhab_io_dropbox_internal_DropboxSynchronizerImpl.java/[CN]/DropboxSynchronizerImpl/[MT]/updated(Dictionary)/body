@@ -28,6 +28,17 @@
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
     isProperlyConfigured=true;
-    start();
+    String activateString=(String)config.get("activate");
+    if (StringUtils.isNotBlank(activateString)) {
+      if (BooleanUtils.toBoolean(activateString)) {
+        activate();
+      }
+ else {
+        deactivate();
+      }
+    }
+ else {
+      activate();
+    }
   }
 }
