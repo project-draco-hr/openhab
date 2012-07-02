@@ -1,0 +1,28 @@
+{
+  if (configAdmin != null) {
+    for (    ConfigAdminBindingProvider provider : this.providers) {
+      ConfigAdminBindingConfig bindingConfig=provider.getBindingConfig(itemName);
+      if (bindingConfig != null) {
+        try {
+          String normalizedPid=bindingConfig.pid;
+          if (!normalizedPid.contains(".")) {
+            normalizedPid="org.openhab." + bindingConfig.pid;
+          }
+          Configuration config=configAdmin.getConfiguration(normalizedPid);
+          if (config != null) {
+            Dictionary props=config.getProperties();
+            props.put(bindingConfig.configParameter,command.toString());
+            config.update(props);
+            logger.debug("successfully updated configuration (pid={}, value={})",normalizedPid,command.toString());
+          }
+ else {
+            logger.info("There is no configuration found for pid '{}'",normalizedPid);
+          }
+        }
+ catch (        IOException ioe) {
+          logger.warn("Fetching configuration for pid '" + bindingConfig.pid + "' failed",ioe);
+        }
+      }
+    }
+  }
+}
