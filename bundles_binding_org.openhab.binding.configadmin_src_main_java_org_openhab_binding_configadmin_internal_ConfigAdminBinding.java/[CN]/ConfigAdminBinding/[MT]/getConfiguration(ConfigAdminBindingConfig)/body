@@ -1,0 +1,12 @@
+{
+  Configuration result=null;
+  if (bindingConfig != null) {
+    try {
+      result=configAdmin.getConfiguration(bindingConfig.normalizedPid);
+    }
+ catch (    IOException ioe) {
+      logger.warn("Fetching configuration for pid '" + bindingConfig.normalizedPid + "' failed",ioe);
+    }
+  }
+  return result;
+}

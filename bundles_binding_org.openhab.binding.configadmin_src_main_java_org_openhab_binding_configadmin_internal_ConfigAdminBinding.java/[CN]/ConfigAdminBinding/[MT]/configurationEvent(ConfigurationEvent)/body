@@ -1,0 +1,15 @@
+{
+  if (ConfigurationEvent.CM_UPDATED == event.getType()) {
+    try {
+      Configuration config=configAdmin.getConfiguration(event.getPid());
+      for (      ConfigAdminBindingProvider provider : this.providers) {
+        for (        ConfigAdminBindingConfig bindingConfig : provider.getBindingConfigByPid(event.getPid())) {
+          postUpdate(config,bindingConfig);
+        }
+      }
+    }
+ catch (    IOException ioe) {
+      logger.warn("Fetching configuration for pid '" + event.getPid() + "' failed",ioe);
+    }
+  }
+}
