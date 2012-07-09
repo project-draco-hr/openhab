@@ -6,8 +6,7 @@
         FritzboxBinding.ip=ip;
         reconnect();
         try {
-          SchedulerFactory sf=new StdSchedulerFactory();
-          Scheduler sched=sf.getScheduler();
+          Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
           JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect","FritzBox").build();
           CronTrigger trigger=newTrigger().withIdentity("Reconnect","FritzBox").withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
           sched.scheduleJob(job,trigger);
