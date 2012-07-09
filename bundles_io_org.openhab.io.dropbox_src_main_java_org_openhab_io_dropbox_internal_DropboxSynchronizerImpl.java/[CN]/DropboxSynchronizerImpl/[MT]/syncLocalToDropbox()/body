@@ -1,4 +1,5 @@
 {
+  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(getSession());
   Map<String,Long> dropboxEntries=new HashMap<String,Long>();
   Entry metadata=dropbox.metadata("/",-1,null,true,null);
   File dropboxEntryFile=new File(contentDir + DROPBOX_ENTRIES_FILE_NAME);
@@ -18,13 +19,13 @@
     if (dropboxEntries.containsKey(entry.getKey())) {
       if (entry.getValue().compareTo(dropboxEntries.get(entry.getKey())) > 0) {
         logger.trace("Local file '{}' is newer - upload into Dropbox!",entry.getKey());
-        uploadOverwriteFile(entry.getKey());
+        uploadOverwriteFile(dropbox,entry.getKey());
         isChanged=true;
       }
     }
  else {
       logger.trace("Local file '{}' doesn't exist in Dropbox - upload into Dropbox!",entry.getKey());
-      uploadFile(entry.getKey());
+      uploadFile(dropbox,entry.getKey());
       isChanged=true;
     }
     dropboxEntries.remove(entry.getKey());

@@ -1,4 +1,5 @@
 {
+  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(getSession());
   File cursorFile=new File(contentDir + DELTA_CURSOR_FILE_NAME);
   if (lastCursor == null) {
     lastCursor=extractDeltaCursor(cursorFile);
@@ -11,10 +12,11 @@
  else {
     for (    DeltaEntry<Entry> entry : deltaPage.entries) {
       if (entry.metadata != null) {
-        downloadFile(entry);
+        downloadFile(dropbox,entry);
       }
  else {
-        deleteLocalFile(entry.lcPath);
+        String fqPath=contentDir + entry.lcPath;
+        deleteLocalFile(fqPath);
       }
     }
   }

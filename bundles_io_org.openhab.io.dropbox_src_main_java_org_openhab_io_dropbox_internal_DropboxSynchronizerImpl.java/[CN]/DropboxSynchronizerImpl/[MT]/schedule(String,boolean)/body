@@ -1,0 +1,13 @@
+{
+  String direction=isUpload ? "Upload" : "Download";
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    JobDetail job=newJob(SynchronizationJob.class).withIdentity(direction,DROPBOX_SCHEDULER_GROUP).build();
+    CronTrigger trigger=newTrigger().withIdentity(direction,DROPBOX_SCHEDULER_GROUP).withSchedule(CronScheduleBuilder.cronSchedule(interval)).build();
+    sched.scheduleJob(job,trigger);
+    logger.debug("Scheduled synchronization job (direction={}) with cron expression '{}'",direction,interval);
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Could not create synchronization job: {}",e.getMessage());
+  }
+}

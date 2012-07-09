@@ -1,0 +1,13 @@
+{
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    Set<JobKey> jobKeys=sched.getJobKeys(jobGroupEquals(DROPBOX_SCHEDULER_GROUP));
+    if (jobKeys.size() > 0) {
+      sched.deleteJobs(new ArrayList<JobKey>(jobKeys));
+      logger.debug("Found {} synchronization jobs to delete from DefaulScheduler (keys={})",jobKeys.size(),jobKeys);
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Couldn't remove synchronization job: {}",e.getMessage());
+  }
+}

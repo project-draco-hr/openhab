@@ -6,9 +6,13 @@
     if (StringUtils.isNotBlank(contentDirString)) {
       DropboxSynchronizerImpl.contentDir=contentDirString;
     }
-    String refreshIntervalString=(String)config.get("refresh");
-    if (StringUtils.isNotBlank(refreshIntervalString)) {
-      DropboxSynchronizerImpl.refreshInterval=Long.parseLong(refreshIntervalString);
+    String uploadIntervalString=(String)config.get("uploadInterval");
+    if (StringUtils.isNotBlank(uploadIntervalString)) {
+      DropboxSynchronizerImpl.uploadInterval=uploadIntervalString;
+    }
+    String downloadIntervalString=(String)config.get("downloadInterval");
+    if (StringUtils.isNotBlank(downloadIntervalString)) {
+      DropboxSynchronizerImpl.downloadInterval=downloadIntervalString;
     }
     String syncModeString=(String)config.get("syncmode");
     if (StringUtils.isNotBlank(syncModeString)) {
@@ -27,7 +31,6 @@
     if (StringUtils.isBlank(DropboxSynchronizerImpl.appKey) || StringUtils.isBlank(DropboxSynchronizerImpl.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
-    isProperlyConfigured=true;
     String activateString=(String)config.get("activate");
     if (StringUtils.isNotBlank(activateString)) {
       if (BooleanUtils.toBoolean(activateString)) {
