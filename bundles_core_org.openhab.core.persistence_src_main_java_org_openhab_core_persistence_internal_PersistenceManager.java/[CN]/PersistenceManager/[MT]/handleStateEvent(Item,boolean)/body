@@ -5,7 +5,11 @@
       for (      PersistenceConfiguration config : entry.getValue()) {
         if (hasStrategy(serviceName,config,onlyChanges ? GlobalStrategies.CHANGE : GlobalStrategies.UPDATE)) {
           if (appliesToItem(config,item)) {
-            persistenceServices.get(serviceName).store(item,config.getAlias());
+            PersistItemWorker persistItemWorker=new PersistItemWorker(serviceName,item,config.getAlias());
+            persistItemWorker.setName("PersistItemWorker (service=" + serviceName + ", item='"+ item.getName()+ ")");
+            persistItemWorker.setDaemon(true);
+            persistItemWorker.setPriority(Thread.MIN_PRIORITY);
+            persistItemWorker.start();
           }
         }
       }
