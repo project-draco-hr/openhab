@@ -1,4 +1,5 @@
 {
+  logger.debug("Started synchronization from Dropbox to local ...");
   DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(getSession());
   File cursorFile=new File(contentDir + DELTA_CURSOR_FILE_NAME);
   if (lastCursor == null) {
@@ -6,19 +7,38 @@
     logger.trace("Last cursor was NULL and has now been recreated from the filesystem (file='{}', cursor='{}')",cursorFile.getAbsolutePath(),lastCursor);
   }
   DeltaPage<Entry> deltaPage=dropbox.delta(lastCursor);
+  if (deltaPage.reset && initializeDropboxOnReset) {
+    logger.info("Forward to upload first, because a Dropbox initialization is requested.");
+    syncLocalToDropbox();
+    return;
+  }
   if (deltaPage.entries != null && deltaPage.entries.size() == 0) {
     logger.debug("There are no deltas to download from Dropbox ...");
   }
  else {
-    for (    DeltaEntry<Entry> entry : deltaPage.entries) {
-      if (entry.metadata != null) {
-        downloadFile(dropbox,entry);
-      }
+    do {
+      logger.debug("There are '{}' deltas to download from Dropbox ...",deltaPage.entries.size());
+      for (      DeltaEntry<Entry> entry : deltaPage.entries) {
+        boolean matches=false;
+        for (        String filter : filterElements) {
+          matches|=entry.lcPath.matches(filter);
+        }
+        if (matches) {
+          if (entry.metadata != null) {
+            downloadFile(dropbox,entry);
+          }
  else {
-        String fqPath=contentDir + entry.lcPath;
-        deleteLocalFile(fqPath);
+            String fqPath=contentDir + entry.lcPath;
+            deleteLocalFile(fqPath);
+          }
+        }
+ else {
+          logger.trace("skipped file '{}' since it doesn't match the given filters.");
+        }
       }
+      deltaPage=dropbox.delta(lastCursor);
     }
+ while (deltaPage.hasMore);
   }
   writeLastCursorFile(deltaPage,cursorFile);
 }
