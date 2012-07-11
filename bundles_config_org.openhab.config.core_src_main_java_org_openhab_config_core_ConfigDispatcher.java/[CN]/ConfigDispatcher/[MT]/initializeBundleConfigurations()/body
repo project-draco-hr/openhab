@@ -1,25 +1,4 @@
 {
-  String defaultConfigFilePath=getDefaultConfigurationFilePath();
-  File defaultConfigFile=new File(defaultConfigFilePath);
-  try {
-    logger.debug("Processing openHAB default configuration file '{}'.",defaultConfigFile.getAbsolutePath());
-    processConfigFile(defaultConfigFile);
-  }
- catch (  FileNotFoundException e) {
-  }
-catch (  IOException e) {
-    logger.error("Default openHAB configuration file '{}' cannot be read.",defaultConfigFilePath,e);
-  }
-  String mainConfigFilePath=getMainConfigurationFilePath();
-  File mainConfigFile=new File(mainConfigFilePath);
-  try {
-    logger.debug("Processing openHAB main configuration file '{}'.",mainConfigFile.getAbsolutePath());
-    processConfigFile(mainConfigFile);
-  }
- catch (  FileNotFoundException e) {
-    logger.warn("Main openHAB configuration file '{}' does not exist.",mainConfigFilePath);
-  }
-catch (  IOException e) {
-    logger.error("Main openHAB configuration file '{}' cannot be read.",mainConfigFilePath,e);
-  }
+  initializeDefaultConfiguration(-1);
+  initializeMainConfiguration(-1);
 }

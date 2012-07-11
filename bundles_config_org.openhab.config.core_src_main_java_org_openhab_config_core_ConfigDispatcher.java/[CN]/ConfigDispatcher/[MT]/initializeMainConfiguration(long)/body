@@ -1,0 +1,18 @@
+{
+  String mainConfigFilePath=getMainConfigurationFilePath();
+  File mainConfigFile=new File(mainConfigFilePath);
+  if (lastRefresh > 0 && mainConfigFile.lastModified() <= lastRefresh) {
+    logger.trace("main configuration file '{}' hasn't been changed since '{}' (lasModified='{}') -> initialization aborted.",new Object[]{mainConfigFile.getAbsolutePath(),lastRefresh,mainConfigFile.lastModified()});
+    return;
+  }
+  try {
+    logger.debug("Processing openHAB main configuration file '{}'.",mainConfigFile.getAbsolutePath());
+    processConfigFile(mainConfigFile);
+  }
+ catch (  FileNotFoundException e) {
+    logger.warn("Main openHAB configuration file '{}' does not exist.",mainConfigFilePath);
+  }
+catch (  IOException e) {
+    logger.error("Main openHAB configuration file '{}' cannot be read.",mainConfigFilePath,e);
+  }
+}
