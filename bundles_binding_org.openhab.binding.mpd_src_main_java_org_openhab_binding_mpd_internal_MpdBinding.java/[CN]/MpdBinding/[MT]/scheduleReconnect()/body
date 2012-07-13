@@ -2,8 +2,8 @@
   Scheduler sched;
   try {
     sched=StdSchedulerFactory.getDefaultScheduler();
-    JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect","MPD").build();
-    CronTrigger trigger=newTrigger().withIdentity("Reconnect","MPD").withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
+    JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect",MPD_SCHEDULER_GROUP).build();
+    CronTrigger trigger=newTrigger().withIdentity("Reconnect",MPD_SCHEDULER_GROUP).withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
     sched.scheduleJob(job,trigger);
     logger.debug("Scheduled a daily MPD Reconnect of all MPDs");
   }
