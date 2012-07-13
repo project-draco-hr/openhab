@@ -1,12 +1,13 @@
 {
   DropboxSynchronizerImpl.instance=this;
-  cancelAllJobs();
+  if (isProperlyConfigured) {
+    cancelAllJobs();
 switch (syncMode) {
 case DROPBOX_TO_LOCAL:
-    schedule(DropboxSynchronizerImpl.downloadInterval,false);
-  break;
+      schedule(DropboxSynchronizerImpl.downloadInterval,false);
+    break;
 case LOCAL_TO_DROPBOX:
-schedule(DropboxSynchronizerImpl.uploadInterval,true);
+  schedule(DropboxSynchronizerImpl.uploadInterval,true);
 break;
 case BIDIRECTIONAL:
 schedule(DropboxSynchronizerImpl.downloadInterval,false);
@@ -14,5 +15,6 @@ schedule(DropboxSynchronizerImpl.uploadInterval,true);
 break;
 default :
 throw new IllegalArgumentException("Unknown SyncMode '" + syncMode.toString() + "'");
+}
 }
 }
