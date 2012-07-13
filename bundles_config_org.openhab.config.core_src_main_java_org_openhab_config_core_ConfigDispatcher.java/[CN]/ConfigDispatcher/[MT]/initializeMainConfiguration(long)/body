@@ -1,13 +1,15 @@
 {
   String mainConfigFilePath=getMainConfigurationFilePath();
   File mainConfigFile=new File(mainConfigFilePath);
-  if (lastRefresh > 0 && mainConfigFile.lastModified() <= lastRefresh) {
-    logger.trace("main configuration file '{}' hasn't been changed since '{}' (lasModified='{}') -> initialization aborted.",new Object[]{mainConfigFile.getAbsolutePath(),lastRefresh,mainConfigFile.lastModified()});
+  if (lastReload > -1 && mainConfigFile.lastModified() <= lastReload) {
+    logger.trace("main configuration file '{}' hasn't been changed since '{}' (lasModified='{}') -> initialization aborted.",new Object[]{mainConfigFile.getAbsolutePath(),lastReload,mainConfigFile.lastModified()});
+    ConfigDispatcher.lastReload=System.currentTimeMillis();
     return;
   }
   try {
     logger.debug("Processing openHAB main configuration file '{}'.",mainConfigFile.getAbsolutePath());
     processConfigFile(mainConfigFile);
+    ConfigDispatcher.lastReload=System.currentTimeMillis();
   }
  catch (  FileNotFoundException e) {
     logger.warn("Main openHAB configuration file '{}' does not exist.",mainConfigFilePath);

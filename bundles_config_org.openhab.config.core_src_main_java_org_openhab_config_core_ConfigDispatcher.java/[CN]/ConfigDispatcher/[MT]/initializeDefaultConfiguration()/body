@@ -1,10 +1,6 @@
 {
   String defaultConfigFilePath=getDefaultConfigurationFilePath();
   File defaultConfigFile=new File(defaultConfigFilePath);
-  if (lastRefresh > 0 && defaultConfigFile.lastModified() <= lastRefresh) {
-    logger.trace("default configuration file '{}' hasn't been changed since '{}' (lasModified='{}') -> initialization aborted.",new Object[]{defaultConfigFile.getAbsolutePath(),lastRefresh,defaultConfigFile.lastModified()});
-    return;
-  }
   try {
     logger.debug("Processing openHAB default configuration file '{}'.",defaultConfigFile.getAbsolutePath());
     processConfigFile(defaultConfigFile);
