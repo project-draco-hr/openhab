@@ -1,7 +1,7 @@
 {
   File[] files=new File(path).listFiles(new FileFilter(){
     @Override public boolean accept(    File file){
-      String normalizedPath=StringUtils.substringAfter(file.getPath(),contentDir);
+      String normalizedPath=substringAfter(file.getPath(),contentDir);
       for (      String filter : filterElements) {
         if (FilenameUtils.getName(normalizedPath).startsWith(".")) {
           return false;
@@ -18,7 +18,7 @@
   }
 );
   for (  File file : files) {
-    String normalizedPath=StringUtils.substringAfter(file.getPath(),contentDir);
+    String normalizedPath=substringAfter(file.getPath(),contentDir);
     if (file.isDirectory()) {
       collectLocalEntries(localEntries,file.getPath());
     }

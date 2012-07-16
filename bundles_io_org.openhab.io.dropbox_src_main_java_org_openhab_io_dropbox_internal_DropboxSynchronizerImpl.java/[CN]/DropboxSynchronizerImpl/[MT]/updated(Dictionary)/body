@@ -1,28 +1,35 @@
 {
   if (config != null) {
-    DropboxSynchronizerImpl.appKey=(String)config.get("appkey");
-    DropboxSynchronizerImpl.appSecret=(String)config.get("appsecret");
-    if (StringUtils.isBlank(DropboxSynchronizerImpl.appKey) || StringUtils.isBlank(DropboxSynchronizerImpl.appSecret)) {
+    isProperlyConfigured=false;
+    String appKeyString=(String)config.get("appkey");
+    if (isNotBlank(appKeyString)) {
+      DropboxSynchronizerImpl.appKey=appKeyString;
+    }
+    String appSecretString=(String)config.get("appsecret");
+    if (isNotBlank(appSecretString)) {
+      DropboxSynchronizerImpl.appSecret=appSecretString;
+    }
+    if (isBlank(DropboxSynchronizerImpl.appKey) || isBlank(DropboxSynchronizerImpl.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
     String initializeString=(String)config.get("initialize");
-    if (StringUtils.isNotBlank(initializeString)) {
+    if (isNotBlank(initializeString)) {
       DropboxSynchronizerImpl.initializeDropboxOnReset=BooleanUtils.toBoolean(initializeString);
     }
     String contentDirString=(String)config.get("contentdir");
-    if (StringUtils.isNotBlank(contentDirString)) {
+    if (isNotBlank(contentDirString)) {
       DropboxSynchronizerImpl.contentDir=contentDirString;
     }
     String uploadIntervalString=(String)config.get("uploadInterval");
-    if (StringUtils.isNotBlank(uploadIntervalString)) {
+    if (isNotBlank(uploadIntervalString)) {
       DropboxSynchronizerImpl.uploadInterval=uploadIntervalString;
     }
     String downloadIntervalString=(String)config.get("downloadInterval");
-    if (StringUtils.isNotBlank(downloadIntervalString)) {
+    if (isNotBlank(downloadIntervalString)) {
       DropboxSynchronizerImpl.downloadInterval=downloadIntervalString;
     }
     String syncModeString=(String)config.get("syncmode");
-    if (StringUtils.isNotBlank(syncModeString)) {
+    if (isNotBlank(syncModeString)) {
       try {
         DropboxSynchronizerImpl.syncMode=DropboxSyncMode.valueOf(syncModeString.toUpperCase());
       }
@@ -31,10 +38,11 @@
       }
     }
     String filterString=(String)config.get("filter");
-    if (StringUtils.isNotBlank(filterString)) {
+    if (isNotBlank(filterString)) {
       String[] newFilterElements=filterString.split(",");
       filterElements.addAll(Arrays.asList(newFilterElements));
     }
     isProperlyConfigured=true;
+    activate();
   }
 }
