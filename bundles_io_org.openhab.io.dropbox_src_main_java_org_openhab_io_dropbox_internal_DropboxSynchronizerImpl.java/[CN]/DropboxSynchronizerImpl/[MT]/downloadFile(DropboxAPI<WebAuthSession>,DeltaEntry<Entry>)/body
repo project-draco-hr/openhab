@@ -17,7 +17,7 @@
       logger.debug("Successfully downloaded file '{}'",fqPath);
     }
  catch (    FileNotFoundException fnfe) {
-      logger.warn("Couldn't write file '" + fqPath + "'",fnfe);
+      throw new DropboxException("Couldn't write file '" + fqPath + "'",fnfe);
     }
   }
   long lastModified=RESTUtility.parseDate(entry.metadata.modified).getTime();
