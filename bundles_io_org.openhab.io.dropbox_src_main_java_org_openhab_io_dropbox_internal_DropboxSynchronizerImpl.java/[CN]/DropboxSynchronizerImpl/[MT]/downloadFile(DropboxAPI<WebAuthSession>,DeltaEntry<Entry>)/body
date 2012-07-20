@@ -14,9 +14,10 @@
     try {
       FileOutputStream os=new FileOutputStream(newLocalFile);
       dropbox.getFile(entry.metadata.path,null,os,null);
+      logger.debug("Successfully downloaded file '{}'",fqPath);
     }
  catch (    FileNotFoundException fnfe) {
-      logger.warn("Couldn't download file '" + fqPath + "'",fnfe);
+      logger.warn("Couldn't write file '" + fqPath + "'",fnfe);
     }
   }
   long lastModified=RESTUtility.parseDate(entry.metadata.modified).getTime();
@@ -24,5 +25,4 @@
   if (!success) {
     logger.debug("Couldn't change attribute 'lastModified' of file '{}'",fqPath);
   }
-  logger.debug("Successfully downloaded file '{}'",fqPath);
 }
