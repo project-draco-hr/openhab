@@ -1,3 +1,8 @@
 {
-  if (eventAdmin != null)   eventAdmin.postEvent(createCommandEvent(itemName,command));
+  if (command != null) {
+    if (eventAdmin != null)     eventAdmin.postEvent(createCommandEvent(itemName,command));
+  }
+ else {
+    logger.warn("given command is NULL, couldn't post command to '{}'",itemName);
+  }
 }

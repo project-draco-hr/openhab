@@ -1,3 +1,8 @@
 {
-  if (eventAdmin != null)   eventAdmin.postEvent(createUpdateEvent(itemName,newState));
+  if (newState != null) {
+    if (eventAdmin != null)     eventAdmin.postEvent(createUpdateEvent(itemName,newState));
+  }
+ else {
+    logger.warn("given new state is NULL, couldn't post update for '{}'",itemName);
+  }
 }
