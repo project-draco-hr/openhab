@@ -1,6 +1,12 @@
 {
   if (servername != null) {
-    ConnectionConfiguration config=new ConnectionConfiguration(servername,port);
+    ConnectionConfiguration config;
+    if (proxy != null) {
+      config=new ConnectionConfiguration(servername,port,proxy);
+    }
+ else {
+      config=new ConnectionConfiguration(servername,port);
+    }
     if (connection != null && connection.isConnected()) {
       connection.disconnect();
     }
