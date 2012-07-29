@@ -1,0 +1,10 @@
+{
+  Set<String> itemNames=new HashSet<String>();
+  for (  Entry<String,BindingConfig> entry : bindingConfigs.entrySet()) {
+    HeatPumpBindingConfig heatpumpConfig=(HeatPumpBindingConfig)entry.getValue();
+    if (heatpumpConfig.getType().equals(eventType)) {
+      itemNames.add(entry.getKey());
+    }
+  }
+  return itemNames.toArray(new String[itemNames.size()]);
+}

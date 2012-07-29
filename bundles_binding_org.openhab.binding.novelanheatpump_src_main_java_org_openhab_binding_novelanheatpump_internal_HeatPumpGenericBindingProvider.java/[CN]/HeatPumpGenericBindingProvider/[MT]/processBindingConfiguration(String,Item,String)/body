@@ -1,0 +1,10 @@
+{
+  super.processBindingConfiguration(context,item,heatpumpCommand);
+  if (heatpumpCommand != null) {
+    HeatPumpBindingConfig config=parseBindingConfig(item,HeatpumpCommandType.fromString(heatpumpCommand));
+    addBindingConfig(item,config);
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}

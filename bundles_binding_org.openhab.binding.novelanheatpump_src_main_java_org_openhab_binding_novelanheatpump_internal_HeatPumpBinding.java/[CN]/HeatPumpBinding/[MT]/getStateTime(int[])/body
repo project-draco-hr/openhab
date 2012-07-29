@@ -1,0 +1,19 @@
+{
+  String returnValue="";
+  if (heatpumpValues[118] == 2) {
+    long value=heatpumpValues[95];
+    if (value < 0)     value=0;
+    Calendar cal=Calendar.getInstance();
+    cal.setTimeInMillis(value * 1000L);
+    returnValue+=sdateformat.format(cal.getTime());
+  }
+ else {
+    int value=heatpumpValues[120];
+    returnValue+=String.format("%02d:",new Object[]{Integer.valueOf(value / 3600)});
+    value%=3600;
+    returnValue+=String.format("%02d:",new Object[]{Integer.valueOf(value / 60)});
+    value%=60;
+    returnValue+=String.format("%02d",new Object[]{Integer.valueOf(value)});
+  }
+  return returnValue;
+}

@@ -1,0 +1,14 @@
+{
+  if (config != null) {
+    String ip=(String)config.get("ip");
+    if (StringUtils.isNotBlank(ip) && !ip.equals(HeatPumpBinding.ip)) {
+      HeatPumpBinding.ip=ip;
+      String refreshIntervalString=(String)config.get("refresh");
+      if (StringUtils.isNotBlank(refreshIntervalString)) {
+        refreshInterval=Long.parseLong(refreshIntervalString);
+      }
+      isProperlyConfigured=true;
+      start();
+    }
+  }
+}

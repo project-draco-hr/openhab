@@ -1,0 +1,33 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing Heatpump binding configuration => refresh cycle aborted!");
+    return;
+  }
+  HeatpumpConnector connector=new HeatpumpConnector(ip);
+  try {
+    connector.connect();
+    int[] heatpumpValues=connector.getValues();
+    handleEventType(new DecimalType(((double)heatpumpValues[15]) / 10),HeatpumpCommandType.TYPE_TEMPERATURE_OUTSIDE);
+    handleEventType(new DecimalType(((double)heatpumpValues[10] / 10)),HeatpumpCommandType.TYPE_TEMPERATURE_SUPPLAY);
+    handleEventType(new DecimalType(((double)heatpumpValues[11] / 10)),HeatpumpCommandType.TYPE_TEMPERATURE_RETURN);
+    handleEventType(new DecimalType(((double)heatpumpValues[12] / 10)),HeatpumpCommandType.TYPE_TEMPERATURE_REFERENCE_RETURN);
+    handleEventType(new DecimalType(((double)heatpumpValues[18] / 10)),HeatpumpCommandType.TYPE_TEMPERATURE_SERVICEWATER_REFERENCE);
+    handleEventType(new DecimalType(((double)heatpumpValues[17] / 10)),HeatpumpCommandType.TYPE_TEMPERATURE_SERVICEWATER);
+    handleEventType(new DecimalType(((double)heatpumpValues[26] / 10)),HeatpumpCommandType.TYPE_HEATPUMP_SOLAR_COLLECTOR);
+    handleEventType(new DecimalType(((double)heatpumpValues[27] / 10)),HeatpumpCommandType.TYPE_HEATPUMP_SOLAR_STORAGE);
+    handleEventType(new DecimalType(((double)heatpumpValues[27] / 10)),HeatpumpCommandType.TYPE_HEATPUMP_SOLAR_STORAGE);
+    String heatpumpState=getStateString(heatpumpValues) + ": " + getStateTime(heatpumpValues);
+    handleEventType(new StringType(heatpumpState),HeatpumpCommandType.TYPE_HEATPUMP_STATE);
+  }
+ catch (  UnknownHostException e) {
+    logger.warn("the given hostname '{}' of the Novela heatpump is unknown",ip);
+  }
+catch (  IOException e) {
+    logger.warn("couldn't establish network connection [host '{}']",ip);
+  }
+ finally {
+    if (connector != null) {
+      connector.disconnect();
+    }
+  }
+}
