@@ -2,19 +2,11 @@
   DropboxSynchronizerImpl.instance=this;
   if (isProperlyConfigured) {
     cancelAllJobs();
-switch (syncMode) {
-case DROPBOX_TO_LOCAL:
-      schedule(DropboxSynchronizerImpl.downloadInterval,false);
-    break;
-case LOCAL_TO_DROPBOX:
-  schedule(DropboxSynchronizerImpl.uploadInterval,true);
-break;
-case BIDIRECTIONAL:
-schedule(DropboxSynchronizerImpl.downloadInterval,false);
-schedule(DropboxSynchronizerImpl.uploadInterval,true);
-break;
-default :
-throw new IllegalArgumentException("Unknown SyncMode '" + syncMode.toString() + "'");
-}
-}
+    if (isAuthorized()) {
+      scheduleJobs();
+    }
+ else {
+      logger.debug("Dropbox-Bundle isn't authorized properly, so the synchronization jobs " + "won't be started! Please re-initiate the authorization process by restarting the " + "Dropbox-Bundle through OSGi console.");
+    }
+  }
 }

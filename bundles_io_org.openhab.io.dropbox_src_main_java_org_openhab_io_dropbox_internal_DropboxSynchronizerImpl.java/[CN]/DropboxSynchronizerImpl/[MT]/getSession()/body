@@ -7,11 +7,14 @@
       accessToken=extractAccessTokenFrom(authFile);
     }
  else {
-      accessToken=authorizeOpenhab(session,authFile);
+      accessToken=authorizeOpenHAB(session,authFile);
     }
   }
   if (accessToken != null) {
     session.setAccessTokenPair(accessToken);
+  }
+ else {
+    session=null;
   }
   return session;
 }

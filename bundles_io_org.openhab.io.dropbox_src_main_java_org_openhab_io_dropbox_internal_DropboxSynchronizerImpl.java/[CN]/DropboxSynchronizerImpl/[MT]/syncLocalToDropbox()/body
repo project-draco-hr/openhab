@@ -1,6 +1,10 @@
 {
   logger.debug("Started synchronization from local to Dropbox ...");
-  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(getSession());
+  WebAuthSession session=getSession();
+  if (session == null) {
+    return;
+  }
+  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(session);
   Map<String,Long> dropboxEntries=new HashMap<String,Long>();
   Entry metadata=dropbox.metadata("/",-1,null,true,null);
   File dropboxEntryFile=new File(contentDir + DROPBOX_ENTRIES_FILE_NAME);

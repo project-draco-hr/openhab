@@ -1,6 +1,10 @@
 {
   logger.debug("Started synchronization from Dropbox to local ...");
-  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(getSession());
+  WebAuthSession session=getSession();
+  if (session == null) {
+    return;
+  }
+  DropboxAPI<WebAuthSession> dropbox=new DropboxAPI<WebAuthSession>(session);
   File cursorFile=new File(contentDir + DELTA_CURSOR_FILE_NAME);
   if (lastCursor == null) {
     lastCursor=extractDeltaCursor(cursorFile);

@@ -1,21 +1,21 @@
 {
   WebAuthInfo authInfo=session.getAuthInfo();
-  RequestTokenPair pair=authInfo.requestTokenPair;
+  RequestTokenPair requestToken=authInfo.requestTokenPair;
   logger.info("################################################################################################");
   logger.info("# Dropbox-Integration: U S E R   I N T E R A C T I O N   R E Q U I R E D !!");
   logger.info("# 1. Open URL '{}'",authInfo.url);
   logger.info("# 2. Allow openHAB to access Dropbox. Note: The given URL is only valid for THE NEXT 5 MINUTES!");
   logger.info("################################################################################################");
-  boolean interrupted=false;
+  authorizationThreadInterrupted=false;
   int waitedFor=0;
-  while (!interrupted) {
+  while (!authorizationThreadInterrupted) {
     try {
       int interval=5000;
       Thread.sleep(interval);
       waitedFor+=interval;
       try {
-        session.retrieveWebAccessToken(pair);
-        interrupted=true;
+        session.retrieveWebAccessToken(requestToken);
+        authorizationThreadInterrupted=true;
       }
  catch (      DropboxUnlinkedException due) {
       }
@@ -23,17 +23,18 @@
  catch (    InterruptedException e) {
     }
     if (waitedFor > 300000) {
-      interrupted=true;
+      authorizationThreadInterrupted=true;
       logger.info("Authorization timeslot is closed now! Please use OSGi " + "console to restart the Dropbox-Bundle and re-initiate the authorization process!");
     }
   }
   AccessTokenPair accessToken=session.getAccessTokenPair();
-  if (accessToken != null) {
+  if (!requestToken.equals(accessToken)) {
     logger.debug("Got token pair from Dropbox (key={}, secret={}) -> serialize to file for later use!",accessToken.key,accessToken.secret);
     writeLocalFile(authFile,accessToken.key + FIELD_DELIMITER + accessToken.secret);
   }
  else {
-    logger.warn("AccessToken is null, so we can't write it to a file for later use.");
+    logger.debug("AccessToken hasn't been updated by Dropbox. This is likely because the authorization timeslot timed out. Thus we didn't write an authfile for later use.");
+    accessToken=null;
   }
   return accessToken;
 }
