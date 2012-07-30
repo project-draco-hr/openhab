@@ -1,0 +1,12 @@
+{
+  Query query=null;
+  try {
+    query=db.query();
+  }
+ catch (  DatabaseClosedException dce) {
+    logger.debug("Database '{}' is closed, we'll try to reopen it again ...");
+    openDbFile();
+    query=db.query();
+  }
+  return query;
+}

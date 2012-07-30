@@ -1,26 +1,27 @@
 {
-  Query query=db.query();
-  query.constrain(Db4oItem.class);
-  if (filter == null) {
-    filter=new FilterCriteria();
-  }
-  if (filter.getBeginDate() != null) {
-    query.descend("timestamp").constrain(filter.getBeginDate()).greater().equal();
-  }
-  if (filter.getEndDate() != null) {
-    query.descend("timestamp").constrain(filter.getEndDate()).smaller().equal();
-  }
-  if (filter.getItemName() != null) {
-    query.descend("name").constrain(filter.getItemName()).equal();
-  }
-  if (filter.getState() != null && filter.getOperator() != null) {
+  Query query=queryWithReconnect();
+  if (query != null) {
+    query.constrain(Db4oItem.class);
+    if (filter == null) {
+      filter=new FilterCriteria();
+    }
+    if (filter.getBeginDate() != null) {
+      query.descend("timestamp").constrain(filter.getBeginDate()).greater().equal();
+    }
+    if (filter.getEndDate() != null) {
+      query.descend("timestamp").constrain(filter.getEndDate()).smaller().equal();
+    }
+    if (filter.getItemName() != null) {
+      query.descend("name").constrain(filter.getItemName()).equal();
+    }
+    if (filter.getState() != null && filter.getOperator() != null) {
 switch (filter.getOperator()) {
 case EQ:
-      query.descend("state").constrain(filter.getState()).equal();
-    break;
+        query.descend("state").constrain(filter.getState()).equal();
+      break;
 case GT:
-  query.descend("state").constrain(filter.getState()).greater();
-break;
+    query.descend("state").constrain(filter.getState()).greater();
+  break;
 case LT:
 query.descend("state").constrain(filter.getState()).smaller();
 break;
@@ -45,7 +46,6 @@ endIndex=results.size();
 }
 return results.subList(startIndex,endIndex);
 }
- else {
-return Collections.emptyList();
 }
+return Collections.emptyList();
 }
