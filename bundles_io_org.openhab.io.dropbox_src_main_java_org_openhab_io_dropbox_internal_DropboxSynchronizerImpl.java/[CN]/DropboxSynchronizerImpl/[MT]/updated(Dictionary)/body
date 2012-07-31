@@ -37,10 +37,15 @@
         throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");
       }
     }
-    String filterString=(String)config.get("filter");
-    if (isNotBlank(filterString)) {
-      String[] newFilterElements=filterString.split(",");
-      filterElements.addAll(Arrays.asList(newFilterElements));
+    String uploadFilterString=(String)config.get("uploadfilter");
+    if (isNotBlank(uploadFilterString)) {
+      String[] newFilterElements=uploadFilterString.split(",");
+      uploadFilterElements.addAll(Arrays.asList(newFilterElements));
+    }
+    String downloadFilterString=(String)config.get("downloadfilter");
+    if (isNotBlank(downloadFilterString)) {
+      String[] newFilterElements=downloadFilterString.split(",");
+      downloadFilterElements.addAll(Arrays.asList(newFilterElements));
     }
     isProperlyConfigured=true;
     activate();

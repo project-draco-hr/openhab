@@ -24,7 +24,7 @@
       logger.debug("There are '{}' deltas to download from Dropbox ...",deltaPage.entries.size());
       for (      DeltaEntry<Entry> entry : deltaPage.entries) {
         boolean matches=false;
-        for (        String filter : filterElements) {
+        for (        String filter : downloadFilterElements) {
           matches|=entry.lcPath.matches(filter);
         }
         if (matches) {
@@ -37,7 +37,7 @@
           }
         }
  else {
-          logger.trace("skipped file '{}' since it doesn't match the given filters.");
+          logger.trace("skipped file '{}' since it doesn't match the given filter arguments.");
         }
       }
       deltaPage=dropbox.delta(lastCursor);

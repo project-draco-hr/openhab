@@ -2,9 +2,9 @@
   try {
     Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
     JobDetail job=newJob(SynchronizationJob.class).withIdentity("Upload_GCal-Entries",GCAL_SCHEDULER_GROUP).build();
-    CronTrigger trigger=newTrigger().withIdentity("Upload_GCal-Entries",GCAL_SCHEDULER_GROUP).withSchedule(CronScheduleBuilder.cronSchedule(uploadInterval)).build();
+    SimpleTrigger trigger=newTrigger().withIdentity("Upload_GCal-Entries",GCAL_SCHEDULER_GROUP).withSchedule(repeatSecondlyForever(uploadInterval)).build();
     sched.scheduleJob(job,trigger);
-    logger.debug("Scheduled Google Calendar Upload-Job with cron expression '{}'",uploadInterval);
+    logger.debug("Scheduled Google Calendar Upload-Job with interval '{}'",uploadInterval);
   }
  catch (  SchedulerException e) {
     logger.warn("Could not create Google Calendar Upload-Job: {}",e.getMessage());
