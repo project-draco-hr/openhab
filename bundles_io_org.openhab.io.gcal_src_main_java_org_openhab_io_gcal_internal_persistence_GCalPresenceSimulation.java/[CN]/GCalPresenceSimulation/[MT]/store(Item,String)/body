@@ -10,7 +10,10 @@
     eventTimes.setStartTime(time);
     eventTimes.setEndTime(time);
     myEntry.addTime(eventTimes);
-    CalendarEventEntry createdEvent=GCalConnector.createCalendarEvent(myEntry);
-    logger.debug("succesfully created new calendar event (title='{}', date='{}', content='{}')",new String[]{createdEvent.getTitle().getPlainText(),createdEvent.getTimes().get(0).getStartTime().toString(),createdEvent.getPlainTextContent()});
+    entries.offer(myEntry);
+    logger.trace("added new entry '{}' for item '{}' to upload queue",myEntry.getTitle().getPlainText(),item.getName());
+  }
+ else {
+    logger.debug("GCal PresenceSimulation Service isn't configured properly! No entries will be uploaded to your Google Calendar");
   }
 }

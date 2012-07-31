@@ -1,0 +1,13 @@
+{
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    Set<JobKey> jobKeys=sched.getJobKeys(jobGroupEquals(GCAL_SCHEDULER_GROUP));
+    if (jobKeys.size() > 0) {
+      sched.deleteJobs(new ArrayList<JobKey>(jobKeys));
+      logger.debug("Found {} Google Calendar Upload-Jobs to delete from DefaulScheduler (keys={})",jobKeys.size(),jobKeys);
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Couldn't remove Google Calendar Upload-Job: {}",e.getMessage());
+  }
+}
