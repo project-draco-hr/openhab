@@ -5,6 +5,7 @@
     myService.setUserCredentials(username,password);
     CalendarQuery myQuery=new CalendarQuery(feedUrl);
     myQuery.setMinimumStartTime(DateTime.now());
+    myQuery.setMaximumStartTime(new DateTime(DateTime.now().getValue() + (2 * GCalConfiguration.refreshInterval)));
     return myService.getFeed(myQuery,CalendarEventFeed.class);
   }
  catch (  AuthenticationException ae) {
