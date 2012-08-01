@@ -1,0 +1,13 @@
+{
+  String clientId=request.getHeader("X-Atmosphere-tracking-id");
+  if (clientId == null || clientId.isEmpty()) {
+    return false;
+  }
+  Object firedEntity=ResourceStateChangeListener.getMap().get(clientId);
+  if (firedEntity == null || firedEntity instanceof PageBean) {
+    if (firedEntity == null || ((PageBean)firedEntity).icon != ((PageBean)responseEntity).icon || ((PageBean)firedEntity).title != ((PageBean)responseEntity).title) {
+      return true;
+    }
+  }
+  return false;
+}

@@ -13,7 +13,7 @@
     }
   }
  else {
-    String responseType=getResponseType(request);
+    String responseType=(new ResponseTypeHelper()).getResponseType(request);
     if (responseType != null) {
       String basePath=request.getScheme() + "://" + request.getServerName()+ ":"+ request.getServerPort()+ (request.getContextPath().equals("null") ? "" : request.getContextPath())+ RESTApplication.REST_SERVLET_ALIAS+ "/";
       if (pathInfo.startsWith("/" + ItemResource.PATH_ITEMS)) {
@@ -23,8 +23,7 @@
           Item item=ItemResource.getItem(itemName);
           if (item != null) {
             Object itemBean=ItemResource.createItemBean(item,true,basePath);
-            Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(itemBean,getQueryParam(request,"callback")) : itemBean;
-            return Response.ok(responseObject,responseType).build();
+            return itemBean;
           }
         }
       }

@@ -1,0 +1,40 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  try {
+    if (ResponseTypeHelper.isStreamingTransport(request)) {
+      if (message instanceof PageBean && originalMessage instanceof Item) {
+        final String delayedBroadcasterName=resource.getRequest().getPathInfo();
+        if (isPageUpdated(request,message)) {
+          Executors.newSingleThreadExecutor().submit(new Runnable(){
+            public void run(){
+              try {
+                Thread.sleep(300);
+                GeneralBroadcaster delayedBroadcaster=(GeneralBroadcaster)BroadcasterFactory.getDefault().lookup(GeneralBroadcaster.class,delayedBroadcasterName);
+                delayedBroadcaster.broadcast(message,resource);
+              }
+ catch (              Exception e) {
+                logger.error(e.getMessage());
+              }
+            }
+          }
+);
+        }
+      }
+      if (originalMessage instanceof PageBean) {
+        PageBean originalBean=(PageBean)message;
+        PageBean responseBeam=new PageBean();
+        responseBeam.icon=originalBean.icon;
+        responseBeam.id=originalBean.id;
+        responseBeam.link=originalBean.link;
+        responseBeam.parent=originalBean.parent;
+        responseBeam.title=originalBean.title;
+        return new BroadcastAction(ACTION.CONTINUE,responseBeam);
+      }
+    }
+    return new BroadcastAction(ACTION.CONTINUE,message);
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+    return new BroadcastAction(ACTION.ABORT,message);
+  }
+}

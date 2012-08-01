@@ -1,64 +1,19 @@
 {
   broadcaster.getBroadcasterConfig().addFilter(new PerRequestBroadcastFilter(){
-    private boolean isDoubleBroadcast(    HttpServletRequest request,    String responseValue){
-      String clientId=request.getHeader("X-Atmosphere-tracking-id");
-      if (clientId == null || clientId.isEmpty()) {
-        return false;
-      }
-      String firedResponse=map.put(clientId,responseValue);
-      if (responseValue.equals(firedResponse)) {
-        return true;
-      }
-      return false;
-    }
-    @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
-      final HttpServletRequest request=resource.getRequest();
-      final ObjectMapper mapper=new ObjectMapper();
-      try {
-        Response response=null;
-        if (isStreamingTransport(request)) {
-          if (message instanceof Item) {
-            response=(Response)getSingleResponseObject((Item)message,request);
-            if (!isDoubleBroadcast(request,mapper.writeValueAsString(response.getEntity()))) {
-              return new BroadcastAction(ACTION.CONTINUE,response);
-            }
-          }
-        }
- else {
-          if (message instanceof Item) {
-            final String delayedBroadcasterName=resource.getRequest().getPathInfo();
-            Executors.newSingleThreadExecutor().submit(new Runnable(){
-              public void run(){
-                try {
-                  Thread.sleep(300);
-                  Response response=(Response)getResponseObject(request);
-                  if (!isDoubleBroadcast(request,mapper.writeValueAsString(response.getEntity()))) {
-                    GeneralBroadcaster delayedBroadcaster=(GeneralBroadcaster)BroadcasterFactory.getDefault().lookup(GeneralBroadcaster.class,delayedBroadcasterName);
-                    delayedBroadcaster.broadcast(response);
-                  }
-                }
- catch (                Exception e) {
-                  logger.error(e.getMessage());
-                }
-              }
-            }
-);
-          }
- else {
-            return new BroadcastAction(ACTION.CONTINUE,message);
-          }
-        }
-      }
- catch (      Exception e) {
-        logger.error(e.getMessage());
-      }
-      return new BroadcastAction(ACTION.ABORT,message);
-    }
     @Override public BroadcastAction filter(    Object originalMessage,    Object message){
       return new BroadcastAction(ACTION.CONTINUE,message);
     }
+    @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
+      HttpServletRequest request=resource.getRequest();
+      return new BroadcastAction(ACTION.CONTINUE,getResponseObject(request));
+    }
   }
 );
+  broadcaster.getBroadcasterConfig().addFilter(new PollingDelayFilter());
+  broadcaster.getBroadcasterConfig().addFilter(new SendPageUpdateFilter());
+  broadcaster.getBroadcasterConfig().addFilter(new DuplicateBroadcastProtectionFilter());
+  broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
+  broadcaster.getBroadcasterConfig().addFilter(new MessageTypeFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
       if (item instanceof GroupItem && !broadcaster.getAtmosphereResources().isEmpty()) {

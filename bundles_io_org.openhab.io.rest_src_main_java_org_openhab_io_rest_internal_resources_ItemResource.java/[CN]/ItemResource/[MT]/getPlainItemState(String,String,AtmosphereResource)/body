@@ -12,5 +12,5 @@
   }
   GeneralBroadcaster itemBroadcaster=(GeneralBroadcaster)BroadcasterFactory.getDefault().lookup(GeneralBroadcaster.class,resource.getRequest().getPathInfo(),true);
   itemBroadcaster.addStateChangeListener(new ItemStateChangeListener());
-  return new SuspendResponse.SuspendResponseBuilder<String>().scope(SCOPE.REQUEST).resumeOnBroadcast(!ResourceStateChangeListener.isStreamingTransport(resource.getRequest())).broadcaster(itemBroadcaster).outputComments(true).build();
+  return new SuspendResponse.SuspendResponseBuilder<String>().scope(SCOPE.REQUEST).resumeOnBroadcast(!ResponseTypeHelper.isStreamingTransport(resource.getRequest())).broadcaster(itemBroadcaster).outputComments(true).build();
 }

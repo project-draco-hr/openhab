@@ -1,0 +1,14 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  try {
+    Response response=null;
+    if (ResponseTypeHelper.isStreamingTransport(request) && message instanceof PageBean && originalMessage instanceof Item) {
+      return new BroadcastAction(ACTION.CONTINUE,getSingleResponseObject((PageBean)message,(Item)originalMessage,request));
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+    return new BroadcastAction(ACTION.ABORT,message);
+  }
+  return new BroadcastAction(ACTION.CONTINUE,message);
+}
