@@ -1,0 +1,18 @@
+{
+  long startTime=System.currentTimeMillis();
+  String backupFileName=DB_FOLDER_NAME + File.separator + DATE_FORMATTER.format(System.currentTimeMillis())+ "_"+ DB_FILE_NAME+ ".bak";
+  removeObsoleteBackupFiles();
+  try {
+    ExtObjectContainer extDb=db.ext();
+    if (!extDb.isClosed()) {
+      extDb.backup(backupFileName);
+      logger.debug("succesfully created new DB4O backup '{}' in {}ms",backupFileName,System.currentTimeMillis() - startTime);
+    }
+ else {
+      logger.debug("couldn't create DB4O backup '{}' because db is closed",backupFileName);
+    }
+  }
+ catch (  Db4oException e) {
+    logger.warn("Error creating backup '{}': {}",backupFileName,e.getMessage());
+  }
+}
