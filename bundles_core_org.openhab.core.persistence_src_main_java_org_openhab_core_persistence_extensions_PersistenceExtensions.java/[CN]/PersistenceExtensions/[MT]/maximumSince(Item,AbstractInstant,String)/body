@@ -1,7 +1,7 @@
 {
   Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
   Iterator<HistoricItem> it=result.iterator();
-  DecimalType maximum=null;
+  DecimalType maximum=(DecimalType)item.getStateAs(DecimalType.class);
   while (it.hasNext()) {
     State state=it.next().getState();
     if (state instanceof DecimalType) {
