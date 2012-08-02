@@ -3,9 +3,6 @@
   if (configParts.length != 2) {
     throw new BindingConfigParseException("Onewire sensor configuration must contain of two parts separated by a '#'");
   }
-  if (!checkSensorId(configParts[0])) {
-    throw new BindingConfigParseException("SensorId '" + configParts[0] + "' isn't a correct id-pattern. A correct pattern looks like '26.AF9C32000000' (<familycode 8bit>.<serialid 48bit>)");
-  }
   OneWireBindingConfig config=new OneWireBindingConfig();
   config.sensorId=configParts[0];
   config.unit=configParts[1];
