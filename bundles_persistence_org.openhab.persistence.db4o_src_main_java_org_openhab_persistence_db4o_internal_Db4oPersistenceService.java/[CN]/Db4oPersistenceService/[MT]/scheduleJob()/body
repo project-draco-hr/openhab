@@ -1,0 +1,16 @@
+{
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    JobDetail job=newJob(CommitJob.class).withIdentity("Commit_Transaction",SCHEDULER_GROUP).build();
+    SimpleTrigger trigger=newTrigger().withIdentity("Commit_Transaction",SCHEDULER_GROUP).withSchedule(repeatSecondlyForever(commitInterval)).build();
+    sched.scheduleJob(job,trigger);
+    logger.debug("Scheduled Commit-Job with interval {}sec.",commitInterval);
+    JobDetail backupJob=newJob(BackupJob.class).withIdentity("Backup_DB",SCHEDULER_GROUP).build();
+    CronTrigger backupTrigger=newTrigger().withIdentity("Backup_DB",SCHEDULER_GROUP).withSchedule(CronScheduleBuilder.cronSchedule(backupInterval)).build();
+    sched.scheduleJob(backupJob,backupTrigger);
+    logger.debug("Scheduled Backup-Job with cron expression '{}'",backupInterval);
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Could not create Job: {}",e.getMessage());
+  }
+}

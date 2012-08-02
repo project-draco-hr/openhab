@@ -1,0 +1,26 @@
+{
+  if (config != null) {
+    String backupIntervalString=(String)config.get("backupinterval");
+    if (StringUtils.isNotBlank(backupIntervalString)) {
+      backupInterval=backupIntervalString;
+    }
+    String commitIntervalString=(String)config.get("commitinterval");
+    if (StringUtils.isNotBlank(commitIntervalString)) {
+      try {
+        commitInterval=Integer.valueOf(commitIntervalString);
+      }
+ catch (      IllegalArgumentException iae) {
+        logger.warn("couldn't parse '{}' to an integer");
+      }
+    }
+    String maxBackupsString=(String)config.get("maxbackups");
+    if (StringUtils.isNotBlank(maxBackupsString)) {
+      try {
+        maxBackups=Integer.valueOf(maxBackupsString);
+      }
+ catch (      IllegalArgumentException iae) {
+        logger.warn("couldn't parse '{}' to an integer");
+      }
+    }
+  }
+}

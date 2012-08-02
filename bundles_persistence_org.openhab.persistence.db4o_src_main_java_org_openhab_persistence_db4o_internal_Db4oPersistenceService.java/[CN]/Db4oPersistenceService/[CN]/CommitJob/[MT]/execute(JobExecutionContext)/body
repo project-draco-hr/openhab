@@ -1,0 +1,11 @@
+{
+  long startTime=System.currentTimeMillis();
+  try {
+    db.commit();
+    logger.trace("succesfully commited db4o transaction in {}ms",System.currentTimeMillis() - startTime);
+  }
+ catch (  Db4oException e) {
+    db.rollback();
+    logger.warn("Error commiting transaction : {}",e.getMessage());
+  }
+}

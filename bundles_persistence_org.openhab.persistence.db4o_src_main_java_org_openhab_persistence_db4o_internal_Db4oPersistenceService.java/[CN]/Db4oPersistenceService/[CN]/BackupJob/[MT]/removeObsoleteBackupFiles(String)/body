@@ -1,0 +1,24 @@
+{
+  File dbFolder=new File(dbFolderName);
+  if (dbFolder.exists() && dbFolder.isDirectory()) {
+    File[] backupFiles=dbFolder.listFiles(new FilenameFilter(){
+      @Override public boolean accept(      File dir,      String name){
+        return name.endsWith(DB_FILE_NAME + ".bak");
+      }
+    }
+);
+    Arrays.sort(backupFiles);
+    if (backupFiles.length > maxBackups) {
+      logger.debug("found {} backup files but only {} are allowed. will remove the oldest {} file(s) now",new Object[]{backupFiles.length,maxBackups,backupFiles.length - maxBackups});
+      for (int index=0; index < backupFiles.length - maxBackups; index++) {
+        boolean succesful=backupFiles[index].delete();
+        if (succesful) {
+          logger.trace("successfully deleted file '{}'",backupFiles[index]);
+        }
+ else {
+          logger.debug("couldn't delete file '{}'",backupFiles[index]);
+        }
+      }
+    }
+  }
+}

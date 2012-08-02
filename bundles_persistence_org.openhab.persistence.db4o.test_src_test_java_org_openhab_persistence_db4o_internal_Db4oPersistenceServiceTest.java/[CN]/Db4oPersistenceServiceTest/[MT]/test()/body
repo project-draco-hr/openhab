@@ -1,0 +1,18 @@
+{
+  String testDbDirName="./target/etc/db4o/";
+  File db4oDir=new File(testDbDirName);
+  db4oDir.mkdirs();
+  FileUtils.cleanDirectory(db4oDir);
+  new File(testDbDirName + "20120802173012_store.db4o.bak").createNewFile();
+  new File(testDbDirName + "20120701134442_store.db4o.bak").createNewFile();
+  new File(testDbDirName + "20120801191254_store.db4o.bak").createNewFile();
+  new File(testDbDirName + "20120805172351_store.db4o.bak").createNewFile();
+  new File(testDbDirName + "20120803095643_store.db4o.bak").createNewFile();
+  Assert.assertEquals(5,db4oDir.listFiles().length);
+  backupJob.removeObsoleteBackupFiles(testDbDirName);
+  File[] result=db4oDir.listFiles();
+  Assert.assertEquals(3,result.length);
+  Assert.assertEquals("20120802173012_store.db4o.bak",result[0].getName());
+  Assert.assertEquals("20120803095643_store.db4o.bak",result[1].getName());
+  Assert.assertEquals("20120805172351_store.db4o.bak",result[2].getName());
+}
