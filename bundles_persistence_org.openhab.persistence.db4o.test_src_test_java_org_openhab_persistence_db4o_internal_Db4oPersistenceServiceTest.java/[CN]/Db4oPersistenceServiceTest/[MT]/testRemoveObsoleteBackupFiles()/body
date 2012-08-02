@@ -1,0 +1,16 @@
+{
+  String testDbDirName="./target/etc/db4o/";
+  File db4oDir=new File(testDbDirName);
+  db4oDir.mkdirs();
+  FileUtils.cleanDirectory(db4oDir);
+  for (int index=0; index < backupFileNames.length; index++) {
+    new File(testDbDirName + backupFileNames[index] + "_store.db4o.bak").createNewFile();
+  }
+  Assert.assertEquals(backupFileNames.length,db4oDir.listFiles().length);
+  backupJob.removeObsoleteBackupFiles(testDbDirName);
+  File[] result=db4oDir.listFiles();
+  Assert.assertEquals(Db4oConfiguration.maxBackups,result.length);
+  for (int index=0; index < result.length; index++) {
+    Assert.assertEquals(backupFileNames[expectedResultIndexes[index]] + "_store.db4o.bak",result[index].getName());
+  }
+}
