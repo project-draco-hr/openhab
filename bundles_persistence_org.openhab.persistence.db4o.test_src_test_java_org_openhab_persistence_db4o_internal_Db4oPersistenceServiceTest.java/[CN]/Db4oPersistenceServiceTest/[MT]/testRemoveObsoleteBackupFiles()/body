@@ -9,6 +9,7 @@
   Assert.assertEquals(backupFileNames.length,db4oDir.listFiles().length);
   backupJob.removeObsoleteBackupFiles(testDbDirName);
   File[] result=db4oDir.listFiles();
+  Arrays.sort(result);
   Assert.assertEquals(Db4oConfiguration.maxBackups,result.length);
   for (int index=0; index < result.length; index++) {
     Assert.assertEquals(backupFileNames[expectedResultIndexes[index]] + "_store.db4o.bak",result[index].getName());
