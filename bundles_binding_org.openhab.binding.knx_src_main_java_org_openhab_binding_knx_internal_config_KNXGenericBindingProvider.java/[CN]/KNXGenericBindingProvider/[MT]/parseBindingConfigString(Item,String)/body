@@ -14,22 +14,24 @@
         throw new BindingConfigParseException("No DPT could be determined for the type '" + typeClass.getSimpleName() + "'.");
       }
       configItem.dpt=new DPT(dptId,null,null,null);
-      String str=segments.length == 1 ? segments[0] : segments[1];
-      if (str.trim().startsWith("<")) {
+      String str=segments.length == 1 ? segments[0].trim() : segments[1].trim();
+      if (str.startsWith("<")) {
         configItem.readable=true;
-        str=str.trim().substring(1);
+        str=str.substring(1);
       }
-      if (!str.trim().isEmpty()) {
+      if (!str.isEmpty()) {
         List<GroupAddress> gas=new ArrayList<GroupAddress>();
-        for (        String ga : str.trim().split("\\+")) {
-          gas.add(new GroupAddress(ga.trim()));
+        for (        String ga : str.split("\\+")) {
+          if (!ga.trim().isEmpty()) {
+            gas.add(new GroupAddress(ga.trim()));
+          }
         }
         configItem.groupAddresses=gas.toArray(new GroupAddress[gas.size()]);
-        if (item.getAcceptedCommandTypes().size() > 0) {
-          configItem.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
+        if (str.startsWith("+") || item.getAcceptedCommandTypes().size() == 0) {
+          configItem.datapoint=new StateDP(gas.get(0),item.getName(),0,dptId);
         }
  else {
-          configItem.datapoint=new StateDP(gas.get(0),item.getName(),0,dptId);
+          configItem.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
         }
         config.add(configItem);
       }
