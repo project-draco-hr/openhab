@@ -1,12 +1,12 @@
 {
   try {
     Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
-    JobDetail job=newJob(RefreshJob.class).withIdentity("Refresh",SCHEDULER_GROUP).build();
-    CronTrigger trigger=newTrigger().withIdentity("Refresh",SCHEDULER_GROUP).withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?")).build();
+    JobDetail job=newJob(RefreshJob.class).withIdentity(REFRESH_JOB_KEY).build();
+    SimpleTrigger trigger=newTrigger().withIdentity(REFRESH_TRIGGER_KEY).withSchedule(repeatSecondlyForever(refreshInterval)).build();
     sched.scheduleJob(job,trigger);
-    logger.debug("Created refresh job '{}' in DefaulScheduler",job.getKey());
+    logger.debug("Scheduled refresh job '{}' in DefaulScheduler",job.getKey());
   }
  catch (  SchedulerException e) {
-    logger.warn("Could not create refresh job: {}",e.getMessage());
+    logger.warn("Could not schedule refresh job: {}",e.getMessage());
   }
 }

@@ -1,0 +1,14 @@
+{
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    if (sched.checkExists(REFRESH_JOB_KEY)) {
+      rescheduleRefreshJob();
+    }
+ else {
+      scheduleRefreshJob();
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Could not check if job exists: {}",e.getMessage());
+  }
+}
