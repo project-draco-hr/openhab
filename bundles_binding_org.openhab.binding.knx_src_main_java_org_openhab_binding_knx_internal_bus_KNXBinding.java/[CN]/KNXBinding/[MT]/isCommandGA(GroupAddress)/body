@@ -1,7 +1,8 @@
 {
-  boolean result=true;
   for (  KNXBindingProvider provider : providers) {
-    result&=provider.isCommandGA(groupAddress);
+    if (!provider.isCommandGA(groupAddress)) {
+      return false;
+    }
   }
-  return result;
+  return true;
 }

@@ -5,7 +5,17 @@ synchronized (bindingConfigs) {
       KNXBindingConfig knxConfig=(KNXBindingConfig)config;
       for (      KNXBindingConfigItem configItem : knxConfig) {
         if (ArrayUtils.contains(configItem.groupAddresses,groupAddress)) {
-          result&=configItem.groupAddresses[0].equals(groupAddress);
+          if (configItem.datapoint instanceof CommandDP) {
+            if (configItem.groupAddresses[0].equals(groupAddress)) {
+              return true;
+            }
+ else {
+              return false;
+            }
+          }
+ else {
+            return false;
+          }
         }
       }
     }
