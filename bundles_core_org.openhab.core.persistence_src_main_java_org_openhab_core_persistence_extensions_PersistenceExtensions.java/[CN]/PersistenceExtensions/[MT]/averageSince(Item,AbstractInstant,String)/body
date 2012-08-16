@@ -1,0 +1,20 @@
+{
+  Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
+  Iterator<HistoricItem> it=result.iterator();
+  DecimalType value=(DecimalType)item.getStateAs(DecimalType.class);
+  if (value == null) {
+    value=DecimalType.ZERO;
+  }
+  double average=value.doubleValue();
+  int quantity=1;
+  while (it.hasNext()) {
+    State state=it.next().getState();
+    if (state instanceof DecimalType) {
+      value=(DecimalType)state;
+      average+=value.doubleValue();
+      quantity++;
+    }
+  }
+  average/=quantity;
+  return new DecimalType(average);
+}
