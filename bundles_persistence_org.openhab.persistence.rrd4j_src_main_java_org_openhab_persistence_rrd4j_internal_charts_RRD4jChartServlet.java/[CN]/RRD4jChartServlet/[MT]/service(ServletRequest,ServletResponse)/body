@@ -6,6 +6,7 @@
     RrdGraph graph=new RrdGraph(graphDef);
     BufferedImage bi=new BufferedImage(graph.getRrdGraphInfo().getWidth(),graph.getRrdGraphInfo().getHeight(),BufferedImage.TYPE_INT_RGB);
     graph.render(bi.getGraphics());
+    res.setContentType("image/png");
     javax.imageio.ImageIO.write(bi,"png",res.getOutputStream());
   }
  catch (  FileNotFoundException e) {
