@@ -9,6 +9,10 @@
     if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
+    String retryString=(String)config.get("retry");
+    if (retryString != null && !retryString.isEmpty()) {
+      retry=Integer.parseInt(retryString);
+    }
     connect(ip,port);
     isProperlyConfigured=true;
     start();

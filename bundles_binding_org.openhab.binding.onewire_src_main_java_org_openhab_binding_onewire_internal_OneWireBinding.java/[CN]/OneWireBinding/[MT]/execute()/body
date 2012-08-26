@@ -11,9 +11,14 @@
         State value=UnDefType.UNDEF;
         try {
           if (owc.exists("/" + sensorId)) {
-            String valueString=owc.read("/" + sensorId + "/"+ unitId);
-            if (valueString != null) {
-              value=new DecimalType(Double.valueOf(valueString));
+            int attempt=1;
+            while (value == UnDefType.UNDEF && attempt <= retry) {
+              String valueString=owc.read(sensorId + "/" + unitId);
+              logger.debug(itemName + ": Read value [" + valueString+ "] from "+ sensorId+ "/"+ unitId+ ", attempt="+ attempt);
+              if (valueString != null) {
+                value=new DecimalType(Double.valueOf(valueString));
+              }
+              attempt++;
             }
           }
  else {
