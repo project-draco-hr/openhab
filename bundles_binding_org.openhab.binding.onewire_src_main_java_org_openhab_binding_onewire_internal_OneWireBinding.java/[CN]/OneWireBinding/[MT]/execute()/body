@@ -14,7 +14,7 @@
             int attempt=1;
             while (value == UnDefType.UNDEF && attempt <= retry) {
               String valueString=owc.read(sensorId + "/" + unitId);
-              logger.debug(itemName + ": Read value [" + valueString+ "] from "+ sensorId+ "/"+ unitId+ ", attempt="+ attempt);
+              logger.debug("{}: Read value '{}' from {}/{}, attempt={}",new Object[]{itemName,valueString,sensorId,unitId,attempt});
               if (valueString != null) {
                 value=new DecimalType(Double.valueOf(valueString));
               }
