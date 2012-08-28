@@ -1,4 +1,8 @@
 {
+  if (event.getCallerIdNum() == null || event.getExten() == null) {
+    logger.debug("calleridnum or exten is null -> handle new call aborted!");
+    return;
+  }
   CallType call=new CallType(new StringType(event.getCallerIdNum()),new StringType(event.getExten()));
   eventCache.put(event.getUniqueId(),call);
   if (item instanceof SwitchItem) {
@@ -8,6 +12,6 @@
     eventPublisher.postUpdate(item.getName(),call);
   }
  else {
-    logger.warn("handleCall - postUpdate for itemType '{}' is undefined",item);
+    logger.warn("handle call for item type '{}' is undefined",item);
   }
 }
