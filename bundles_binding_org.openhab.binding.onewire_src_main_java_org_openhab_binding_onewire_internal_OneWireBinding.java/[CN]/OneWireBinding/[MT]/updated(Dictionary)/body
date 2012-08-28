@@ -2,12 +2,16 @@
   if (config != null) {
     ip=(String)config.get("ip");
     String portString=(String)config.get("port");
-    if (portString != null && !portString.isEmpty()) {
+    if (StringUtils.isNotBlank(portString)) {
       port=Integer.parseInt(portString);
     }
     String refreshIntervalString=(String)config.get("refresh");
-    if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String retryString=(String)config.get("retry");
+    if (StringUtils.isNotBlank(retryString)) {
+      retry=Integer.parseInt(retryString);
     }
     connect(ip,port);
     isProperlyConfigured=true;
