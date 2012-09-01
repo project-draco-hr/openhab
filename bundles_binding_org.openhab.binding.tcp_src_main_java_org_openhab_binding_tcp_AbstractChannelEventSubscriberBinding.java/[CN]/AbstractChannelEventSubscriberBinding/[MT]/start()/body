@@ -1,0 +1,18 @@
+{
+  if (!isProperlyConfigured()) {
+    logger.trace("{} won't be started because it isn't properly configured.",getName());
+    return;
+  }
+  if (this.selectorThread == null) {
+    this.selectorThread=new SelectorThread(getName() + " Selector Thread",getRefreshInterval());
+    this.selectorThread.start();
+  }
+  if (this.parserThread == null) {
+    this.parserThread=new ParserThread(getName() + " Parser Thread",getRefreshInterval());
+    this.parserThread.start();
+  }
+  if (this.reconnectThread == null & isConnectionOriented()) {
+    this.reconnectThread=new ReconnectThread(getName() + " Reconnect Thread",getRefreshInterval(),getReconnectInterval());
+    this.reconnectThread.start();
+  }
+}

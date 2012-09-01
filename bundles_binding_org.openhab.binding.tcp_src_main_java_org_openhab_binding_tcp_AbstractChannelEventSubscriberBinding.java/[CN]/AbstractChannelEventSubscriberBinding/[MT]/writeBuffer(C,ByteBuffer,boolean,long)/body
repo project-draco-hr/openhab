@@ -1,0 +1,38 @@
+{
+  if (selector != null && getActiveChannelCount(networkChannel) > 0) {
+    byteBuffer.flip();
+    BufferElement bufferElement=new BufferElement();
+    bufferElement.byteBuffer=ByteBuffer.allocate(byteBuffer.limit());
+    bufferElement.byteBuffer.put(byteBuffer);
+    bufferElement.byteBuffer.rewind();
+    bufferElement.isBlocking=isBlockingWriteRead;
+    if (isBlockingWriteRead) {
+      channelTrackers.get(networkChannel).blockingLock.lock();
+synchronized (channelTrackers.get(networkChannel)) {
+        channelTrackers.get(networkChannel).inBlockingWriteRead=true;
+      }
+    }
+    channelTrackers.get(networkChannel).writeQueue.add(bufferElement);
+    if (isBlockingWriteRead) {
+      long currentElapsedTimeMillis=System.currentTimeMillis();
+      while (channelTrackers.get(networkChannel).blockingReadBuffer == null && (System.currentTimeMillis() - currentElapsedTimeMillis) < timeOut) {
+        try {
+          Thread.sleep(50);
+        }
+ catch (        InterruptedException e) {
+          logger.warn("Exception occured while waiting waiting during a blocking buffer write");
+        }
+      }
+      ByteBuffer responseBuffer=channelTrackers.get(networkChannel).blockingReadBuffer;
+synchronized (channelTrackers.get(networkChannel)) {
+        channelTrackers.get(networkChannel).blockingReadBuffer=null;
+      }
+      channelTrackers.get(networkChannel).blockingLock.unlock();
+      return responseBuffer;
+    }
+    return null;
+  }
+ else {
+    return null;
+  }
+}

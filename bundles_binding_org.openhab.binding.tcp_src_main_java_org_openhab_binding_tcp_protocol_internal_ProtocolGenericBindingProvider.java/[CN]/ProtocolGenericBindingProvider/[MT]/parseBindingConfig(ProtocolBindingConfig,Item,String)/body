@@ -1,0 +1,29 @@
+{
+  if (bindingConfig != null) {
+    Matcher matcher=BASE_CONFIG_PATTERN.matcher(bindingConfig);
+    if (!matcher.matches()) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of five parts [config=" + matcher+ "]");
+    }
+ else {
+      String direction=matcher.group(1);
+      Direction directionType=Direction.BIDIRECTIONAL;
+      String commandAsString=matcher.group(2);
+      String host=matcher.group(3);
+      String port=matcher.group(4);
+      String tcpCommand=matcher.group(5);
+      if (direction.equals(">")) {
+        directionType=Direction.OUT;
+      }
+ else       if (direction.equals("<")) {
+        directionType=Direction.IN;
+      }
+ else       if (direction.equals("*")) {
+        directionType=Direction.BIDIRECTIONAL;
+      }
+      ProtocolBindingConfigElement newElement=new ProtocolBindingConfigElement(host,Integer.parseInt(port),directionType,tcpCommand);
+      Command command=createCommandFromString(item,commandAsString);
+      config.put(command,newElement);
+    }
+  }
+ else   return;
+}

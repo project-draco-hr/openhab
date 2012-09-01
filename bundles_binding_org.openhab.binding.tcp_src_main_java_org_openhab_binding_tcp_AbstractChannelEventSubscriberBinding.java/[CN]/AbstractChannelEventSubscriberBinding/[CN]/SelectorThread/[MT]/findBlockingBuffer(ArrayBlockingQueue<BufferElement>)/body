@@ -1,0 +1,11 @@
+{
+  Iterator<BufferElement> iterator=queue.iterator();
+  while (iterator.hasNext()) {
+    BufferElement bufferElement=iterator.next();
+    if (bufferElement.isBlocking) {
+      queue.remove(bufferElement);
+      return bufferElement;
+    }
+  }
+  return null;
+}
