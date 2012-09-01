@@ -1,0 +1,25 @@
+{
+  if (stateMap != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AVTransport"));
+    Action action=service.getAction("GetRunningAlarmProperties");
+    ActionInvocation invocation=new ActionInvocation(action);
+    executeActionInvocation(invocation);
+    StateVariableValue alarmID=stateMap.get("AlarmID");
+    StateVariableValue groupID=stateMap.get("GroupID");
+    StateVariableValue loggedStartTime=stateMap.get("LoggedStartTime");
+    String newStringValue=null;
+    if (alarmID != null && loggedStartTime != null) {
+      newStringValue=alarmID.getValue() + " - " + loggedStartTime.getValue();
+    }
+ else {
+      newStringValue="No running alarm";
+    }
+    StateVariable newVariable=new StateVariable("RunningAlarmProperties",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+    StateVariableValue newValue=new StateVariableValue(newVariable,newStringValue);
+    processStateVariableValue(newVariable.getName(),newValue);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

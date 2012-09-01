@@ -1,0 +1,13 @@
+{
+  Map<String,StateVariableValue> values=sub.getCurrentValues();
+  for (  String stateVariable : values.keySet()) {
+    if (stateVariable.equals("ZoneGroupState")) {
+      try {
+        setSonosZoneGroups(SonosXMLParser.getZoneGroupFromXML(values.get(stateVariable).toString()));
+      }
+ catch (      SAXException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}

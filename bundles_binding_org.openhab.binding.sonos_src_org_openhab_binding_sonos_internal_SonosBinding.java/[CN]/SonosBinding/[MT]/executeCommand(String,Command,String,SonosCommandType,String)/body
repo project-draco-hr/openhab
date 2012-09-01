@@ -1,0 +1,88 @@
+{
+  boolean result=false;
+  if (sonosID != null) {
+    SonosZonePlayer player=sonosZonePlayerCache.get(sonosID);
+    if (player != null) {
+switch (sonosCommandType) {
+case SETLED:
+        result=player.setLed(createStringFromCommand(command,commandAsString));
+      break;
+case PLAY:
+    result=player.play();
+  break;
+case STOP:
+result=player.stop();
+break;
+case PAUSE:
+result=player.pause();
+break;
+case NEXT:
+result=player.next();
+break;
+case PREVIOUS:
+result=player.previous();
+break;
+case SETVOLUME:
+result=player.setVolume(commandAsString);
+break;
+case GETVOLUME:
+break;
+case ADDMEMBER:
+result=player.addMember(getPlayerForID(commandAsString));
+break;
+case REMOVEMEMBER:
+result=player.removeMember(getPlayerForID(commandAsString));
+break;
+case BECOMESTANDALONEGROUP:
+result=player.becomeStandAlonePlayer();
+break;
+case SETMUTE:
+result=player.setMute(commandAsString);
+break;
+case PA:
+result=player.publicAddress();
+break;
+case RADIO:
+result=player.playRadio(commandAsString);
+break;
+case SETALARM:
+result=player.setAlarm(commandAsString);
+break;
+case SNOOZE:
+result=player.snoozeAlarm(Integer.parseInt(commandAsString));
+break;
+case SAVE:
+result=savePlayerState();
+break;
+case RESTORE:
+result=restorePlayerState();
+break;
+default :
+break;
+}
+;
+}
+ else {
+logger.error("UPNP device is not defined for Sonos Player with ID {}",sonosID);
+return;
+}
+}
+if (result) {
+State newState=createStateFromString(sonosCommandType,commandAsString);
+Item theItem=null;
+try {
+theItem=itemRegistry.getItem(itemName);
+}
+ catch (ItemNotFoundException e) {
+e.printStackTrace();
+}
+if (theItem.getAcceptedDataTypes().contains(newState.getClass())) {
+if (newState.equals((State)command) || newState instanceof StringType || newState instanceof DecimalType) {
+eventPublisher.postUpdate(itemName,newState);
+}
+}
+ else {
+eventPublisher.postUpdate(itemName,(State)command);
+}
+}
+}

@@ -1,0 +1,32 @@
+{
+  List<SonosAlarm> sonosAlarms=getCurrentAlarmList();
+  if (isConfigured()) {
+    String currentLocalTime=getTime();
+    DateTimeFormatter fmt=DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    DateTime currentDateTime=fmt.parseDateTime(currentLocalTime);
+    Duration shortestDuration=Period.days(10).toStandardDuration();
+    SonosAlarm firstAlarm=null;
+    for (    SonosAlarm anAlarm : sonosAlarms) {
+      Duration duration=new Duration(currentDateTime,anAlarm.getStartTime());
+      if (anAlarm.getStartTime().isBefore(currentDateTime.plus(shortestDuration)) && anAlarm.getRoomUUID().equals(udn.getIdentifierString())) {
+        shortestDuration=duration;
+        firstAlarm=anAlarm;
+      }
+    }
+    if (firstAlarm != null) {
+      if (alarmSwitch) {
+        firstAlarm.setEnabled(true);
+      }
+ else {
+        firstAlarm.setEnabled(false);
+      }
+      return updateAlarm(firstAlarm);
+    }
+ else {
+      return false;
+    }
+  }
+ else {
+    return false;
+  }
+}

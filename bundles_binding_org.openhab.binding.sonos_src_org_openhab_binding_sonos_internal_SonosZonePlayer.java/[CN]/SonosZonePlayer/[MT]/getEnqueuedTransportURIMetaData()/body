@@ -1,0 +1,23 @@
+{
+  if (stateMap != null && isConfigured()) {
+    StateVariableValue value=stateMap.get("EnqueuedTransportURIMetaData");
+    SonosMetaData currentTrack=null;
+    if (value != null) {
+      try {
+        if (((String)value.getValue()).length() != 0) {
+          currentTrack=SonosXMLParser.getMetaDataFromXML((String)value.getValue());
+        }
+      }
+ catch (      SAXException e) {
+        e.printStackTrace();
+      }
+      return currentTrack;
+    }
+ else {
+      return null;
+    }
+  }
+ else {
+    return null;
+  }
+}

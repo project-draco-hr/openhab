@@ -1,0 +1,41 @@
+{
+  if (device != null && values != null) {
+    String sonosID=getSonosIDforDevice(device);
+    for (    String stateVariable : values.keySet()) {
+      List<SonosCommandType> supportedCommands=SonosCommandType.getCommandByVariable(stateVariable);
+      for (      SonosCommandType sonosCommandType : supportedCommands) {
+        for (        SonosBindingProvider provider : providers) {
+          List<String> supportedItems=provider.getItemNames(sonosID,sonosCommandType.getSonosCommand());
+          for (          String anItem : supportedItems) {
+            List<Command> commands=provider.getCommands(anItem);
+            for (            Command aCommand : commands) {
+              Direction theDirection=provider.getDirection(anItem,aCommand);
+              Direction otherDirection=sonosCommandType.getDirection();
+              if ((theDirection == Direction.IN || theDirection == Direction.BIDIRECTIONAL) && (otherDirection != Direction.OUT)) {
+                StateVariableValue status=values.get(stateVariable);
+                State newState=createStateFromVariable(sonosCommandType,status);
+                if (newState != null) {
+                  Item theItem=null;
+                  try {
+                    theItem=itemRegistry.getItem(anItem);
+                  }
+ catch (                  ItemNotFoundException e) {
+                    e.printStackTrace();
+                  }
+                  if (theItem.getAcceptedDataTypes().contains(newState.getClass())) {
+                    if (newState.equals((State)aCommand) || newState instanceof StringType || newState instanceof DecimalType) {
+                      eventPublisher.postUpdate(anItem,newState);
+                    }
+                  }
+ else {
+                    eventPublisher.postUpdate(anItem,(State)aCommand);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

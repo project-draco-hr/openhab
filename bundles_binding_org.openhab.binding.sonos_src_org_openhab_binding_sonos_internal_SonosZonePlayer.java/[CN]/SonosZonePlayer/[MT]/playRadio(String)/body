@@ -1,0 +1,24 @@
+{
+  if (isConfigured()) {
+    List<SonosEntry> stations=getFavoriteRadios();
+    SonosEntry theEntry=null;
+    for (    SonosEntry someStation : stations) {
+      if (someStation.getTitle().equals(station)) {
+        theEntry=someStation;
+        break;
+      }
+    }
+    if (theEntry != null) {
+      SonosZonePlayer coordinator=sonosBinding.getCoordinatorForZonePlayer(this);
+      coordinator.setCurrentURI(theEntry);
+      coordinator.play();
+      return true;
+    }
+ else {
+      return false;
+    }
+  }
+ else {
+    return false;
+  }
+}

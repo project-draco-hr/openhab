@@ -1,0 +1,62 @@
+{
+  if (stateMap != null && isConfigured()) {
+    String currentURI=null;
+    SonosMetaData currentTrack=null;
+    if (!isGroupCoordinator()) {
+      currentURI=getCoordinator().getCurrentURI();
+      currentTrack=getCoordinator().getCurrentURIMetadata();
+    }
+ else {
+      currentURI=getCurrentURI();
+      currentTrack=getCurrentURIMetadata();
+    }
+    if (currentURI != null) {
+      String resultString=null;
+      if (currentURI.contains("x-sonosapi-stream")) {
+        String stationID=StringUtils.substringBetween(currentURI,":s","?sid");
+        StateVariable newVariable=new StateVariable("StationID",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+        StateVariableValue newValue=new StateVariableValue(newVariable,stationID);
+        if (this.isUpdatedValue("StationID",newValue) || lastOPMLQuery == null || lastOPMLQuery.plusMinutes(1).isBeforeNow()) {
+          processStateVariableValue(newVariable.getName(),newValue);
+          String url="http://opml.radiotime.com/Describe.ashx?c=nowplaying&id=" + stationID + "&partnerId=IAeIhU42&serial="+ getMACAddress();
+          String response=HttpUtil.executeUrl("GET",url,SO_TIMEOUT);
+          lastOPMLQuery=DateTime.now();
+          List<String> fields=null;
+          try {
+            fields=SonosXMLParser.getRadioTimeFromXML(response);
+          }
+ catch (          SAXException e) {
+            e.printStackTrace();
+          }
+          if (fields != null) {
+          }
+          resultString=new String();
+          Iterator<String> listIterator=fields.listIterator();
+          while (listIterator.hasNext()) {
+            String field=listIterator.next();
+            resultString=resultString + field;
+            if (listIterator.hasNext()) {
+              resultString=resultString + " - ";
+            }
+          }
+        }
+ else {
+          resultString=stateMap.get("CurrentURIFormatted").getValue().toString();
+        }
+      }
+ else {
+        if (currentTrack != null) {
+          resultString=currentTrack.getAlbumArtist() + " - " + currentTrack.getAlbum()+ " - "+ currentTrack.getTitle();
+        }
+ else {
+          resultString="";
+        }
+      }
+      StateVariable newVariable=new StateVariable("CurrentURIFormatted",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+      StateVariableValue newValue=new StateVariableValue(newVariable,resultString);
+      processStateVariableValue(newVariable.getName(),newValue);
+      return true;
+    }
+  }
+  return false;
+}

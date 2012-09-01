@@ -1,0 +1,54 @@
+{
+  String direction=null;
+  String sonosID=null;
+  String commandAsString=null;
+  String sonosCommand=null;
+  if (bindingConfig != null) {
+    Matcher actionMatcher=ACTION_CONFIG_PATTERN.matcher(bindingConfig);
+    Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
+    if (!actionMatcher.matches() && !statusMatcher.matches()) {
+      throw new BindingConfigParseException("Sonos binding configuration must consist of either three [config=" + statusMatcher + "] or four parts [config="+ actionMatcher+ "]");
+    }
+ else {
+      if (actionMatcher.matches()) {
+        direction=actionMatcher.group(1);
+        commandAsString=actionMatcher.group(2);
+        sonosID=actionMatcher.group(3);
+        sonosCommand=actionMatcher.group(4);
+      }
+ else       if (statusMatcher.matches()) {
+        direction=statusMatcher.group(1);
+        commandAsString=null;
+        sonosID=statusMatcher.group(2);
+        sonosCommand=statusMatcher.group(3);
+      }
+      Direction directionType=Direction.BIDIRECTIONAL;
+      if (direction.equals(">")) {
+        directionType=Direction.OUT;
+      }
+ else       if (direction.equals("<")) {
+        directionType=Direction.IN;
+      }
+ else       if (direction.equals("*")) {
+        directionType=Direction.BIDIRECTIONAL;
+      }
+      SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,sonosCommand);
+      Command command=null;
+      if (commandAsString == null) {
+        if (item instanceof NumberItem || item instanceof StringItem) {
+          command=createCommandFromString(item,Integer.toString(counter));
+          counter++;
+          config.put(command,newElement);
+        }
+ else {
+          logger.warn("Only NumberItem or StringItem can have undefined command types");
+        }
+      }
+ else {
+        command=createCommandFromString(item,commandAsString);
+        config.put(command,newElement);
+      }
+    }
+  }
+ else   return;
+}

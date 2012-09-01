@@ -1,0 +1,22 @@
+{
+  if (value != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("RenderingControl"));
+    Action action=service.getAction("SetVolume");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      invocation.setInput("Channel","Master");
+      invocation.setInput("DesiredVolume",value);
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

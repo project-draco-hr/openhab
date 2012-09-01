@@ -1,0 +1,12 @@
+{
+  if (isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AlarmClock"));
+    Action action=service.getAction("GetTimeNow");
+    ActionInvocation invocation=new ActionInvocation(action);
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

@@ -1,0 +1,25 @@
+{
+  StateVariable stateVariable=new StateVariable(localName,new StateVariableTypeDetails(new StringDatatype()));
+  StateVariableValue stateVariableValue=new StateVariableValue(stateVariable,atts.getValue("val"));
+  if ("Volume".equals(qName)) {
+    changes.put(qName + atts.getValue("channel"),stateVariableValue);
+  }
+ else   if ("Mute".equals(qName)) {
+    changes.put(qName + atts.getValue("channel"),stateVariableValue);
+  }
+ else   if ("Bass".equals(qName)) {
+    changes.put(qName,stateVariableValue);
+  }
+ else   if ("Treble".equals(qName)) {
+    changes.put(qName,stateVariableValue);
+  }
+ else   if ("Loudness".equals(qName)) {
+    changes.put(qName + atts.getValue("channel"),stateVariableValue);
+  }
+ else   if ("OutputFixed".equals(qName)) {
+    changes.put(qName,stateVariableValue);
+  }
+ else   if ("PresetNameList".equals(qName)) {
+    getPresetName=true;
+  }
+}

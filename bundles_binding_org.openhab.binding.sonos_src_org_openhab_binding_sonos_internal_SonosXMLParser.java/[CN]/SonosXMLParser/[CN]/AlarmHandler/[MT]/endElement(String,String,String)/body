@@ -1,0 +1,41 @@
+{
+  if (qName.equals("Alarm")) {
+    int finalID=0;
+    int finalVolume=0;
+    boolean finalEnabled=false;
+    boolean finalIncludeLinkedZones=false;
+    DateTime finalStartTime=null;
+    Period finalDuration=null;
+    try {
+      finalID=Integer.parseInt(id);
+      finalVolume=Integer.parseInt(volume);
+      if (enabled.equals("0")) {
+        finalEnabled=false;
+      }
+ else {
+        finalEnabled=true;
+      }
+      if (includeLinkedZones.equals("0")) {
+        finalIncludeLinkedZones=false;
+      }
+ else {
+        finalIncludeLinkedZones=true;
+      }
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      DateTimeFormatter formatter=DateTimeFormat.forPattern("HH:mm:ss");
+      finalStartTime=formatter.parseDateTime(startTime);
+      LocalTime localDateTime=finalStartTime.toLocalTime();
+      finalStartTime=localDateTime.toDateTimeToday();
+      PeriodFormatter pFormatter=new PeriodFormatterBuilder().appendHours().appendSeparator(":").appendMinutes().appendSeparator(":").appendSeconds().toFormatter();
+      finalDuration=pFormatter.parsePeriod(duration);
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+    alarms.add(new SonosAlarm(finalID,finalStartTime,finalDuration,recurrence,finalEnabled,roomUUID,programURI,programMetaData,playMode,finalVolume,finalIncludeLinkedZones));
+  }
+}

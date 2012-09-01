@@ -1,0 +1,12 @@
+{
+  if (stateMap != null && isConfigured()) {
+    updatePosition();
+    if (stateMap != null) {
+      StateVariableValue variable=stateMap.get("Track");
+      if (variable != null) {
+        return ((UnsignedIntegerFourBytes)variable.getValue()).getValue();
+      }
+    }
+  }
+  return (long)-1;
+}

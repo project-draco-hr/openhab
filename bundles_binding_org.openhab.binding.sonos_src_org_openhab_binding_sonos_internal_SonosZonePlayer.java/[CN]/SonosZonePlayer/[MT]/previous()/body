@@ -1,0 +1,12 @@
+{
+  if (isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AVTransport"));
+    Action action=service.getAction("Previous");
+    ActionInvocation invocation=new ActionInvocation(action);
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

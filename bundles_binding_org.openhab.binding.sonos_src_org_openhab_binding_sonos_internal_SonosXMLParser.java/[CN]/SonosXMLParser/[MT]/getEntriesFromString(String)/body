@@ -1,0 +1,12 @@
+{
+  XMLReader reader=XMLReaderFactory.createXMLReader();
+  EntryHandler handler=new EntryHandler();
+  reader.setContentHandler(handler);
+  try {
+    reader.parse(new InputSource(new StringReader(xml)));
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  return handler.getArtists();
+}

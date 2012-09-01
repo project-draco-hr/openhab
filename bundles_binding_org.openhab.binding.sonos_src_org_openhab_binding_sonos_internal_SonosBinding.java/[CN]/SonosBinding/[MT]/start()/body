@@ -1,0 +1,8 @@
+{
+  logger.debug("Starting Cling...");
+  upnpService=new UpnpServiceImpl(new SonosUpnpServiceConfiguration(),listener);
+  UDADeviceType udaType=new UDADeviceType("ZonePlayer");
+  upnpService.getControlPoint().search(new UDADeviceTypeHeader(udaType));
+  pollingThread.setDaemon(true);
+  pollingThread.start();
+}

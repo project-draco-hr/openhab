@@ -1,0 +1,16 @@
+{
+  List<SonosAlarm> sonosAlarms=null;
+  if (isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AlarmClock"));
+    Action action=service.getAction("ListAlarms");
+    ActionInvocation invocation=new ActionInvocation(action);
+    executeActionInvocation(invocation);
+    try {
+      sonosAlarms=SonosXMLParser.getAlarmsFromStringResult(invocation.getOutput("CurrentAlarmList").toString());
+    }
+ catch (    SAXException e) {
+      e.printStackTrace();
+    }
+  }
+  return sonosAlarms;
+}

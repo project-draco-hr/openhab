@@ -1,0 +1,14 @@
+{
+  String bindingConfig=StringUtils.substringBefore(bindingConfigs,",");
+  String bindingConfigTail=StringUtils.substringAfter(bindingConfigs,",");
+  SonosBindingConfig newConfig=new SonosBindingConfig();
+  parseBindingConfig(newConfig,item,bindingConfig);
+  addBindingConfig(item,newConfig);
+  while (StringUtils.isNotBlank(bindingConfigTail)) {
+    bindingConfig=StringUtils.substringBefore(bindingConfigTail,",");
+    bindingConfig=StringUtils.strip(bindingConfig);
+    bindingConfigTail=StringUtils.substringAfter(bindingConfig,",");
+    parseBindingConfig(newConfig,item,bindingConfig);
+    addBindingConfig(item,newConfig);
+  }
+}

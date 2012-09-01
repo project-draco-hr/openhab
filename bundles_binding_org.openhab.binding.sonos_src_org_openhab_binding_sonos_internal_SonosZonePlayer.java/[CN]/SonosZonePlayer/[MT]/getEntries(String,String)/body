@@ -1,0 +1,62 @@
+{
+  List<SonosEntry> resultList=null;
+  if (isConfigured()) {
+    long startAt=0;
+    Service service=device.findService(new UDAServiceId("ContentDirectory"));
+    Action action=service.getAction("Browse");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      invocation.setInput("ObjectID",type);
+      invocation.setInput("BrowseFlag","BrowseDirectChildren");
+      invocation.setInput("Filter",filter);
+      invocation.setInput("StartingIndex",new UnsignedIntegerFourBytes(startAt));
+      invocation.setInput("RequestedCount",new UnsignedIntegerFourBytes(200));
+      invocation.setInput("SortCriteria","");
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    new ActionCallback.Default(invocation,upnpService.getControlPoint()).run();
+    Long totalMatches=((UnsignedIntegerFourBytes)invocation.getOutput("TotalMatches").getValue()).getValue();
+    Long initialNumberReturned=((UnsignedIntegerFourBytes)invocation.getOutput("NumberReturned").getValue()).getValue();
+    String initialResult=(String)invocation.getOutput("Result").getValue();
+    try {
+      resultList=SonosXMLParser.getEntriesFromString(initialResult);
+    }
+ catch (    SAXException e) {
+      e.printStackTrace();
+    }
+    startAt=startAt + initialNumberReturned;
+    while (startAt < totalMatches) {
+      invocation=new ActionInvocation(action);
+      try {
+        invocation.setInput("ObjectID",type);
+        invocation.setInput("BrowseFlag","BrowseDirectChildren");
+        invocation.setInput("Filter",filter);
+        invocation.setInput("StartingIndex",new UnsignedIntegerFourBytes(startAt));
+        invocation.setInput("RequestedCount",new UnsignedIntegerFourBytes(200));
+        invocation.setInput("SortCriteria","");
+      }
+ catch (      InvalidValueException ex) {
+        logger.error("Action Invalid Value Exception {}",ex.getMessage());
+      }
+catch (      NumberFormatException ex) {
+        logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+      }
+      new ActionCallback.Default(invocation,upnpService.getControlPoint()).run();
+      String result=(String)invocation.getOutput("Result").getValue();
+      int numberReturned=(Integer)invocation.getOutput("NumberReturned").getValue();
+      try {
+        resultList.addAll(SonosXMLParser.getEntriesFromString(result));
+      }
+ catch (      SAXException e) {
+        e.printStackTrace();
+      }
+      startAt=startAt + numberReturned;
+    }
+  }
+  return resultList;
+}
