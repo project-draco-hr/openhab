@@ -1,0 +1,17 @@
+{
+  CupsBindingConfig config=new CupsBindingConfig();
+  String[] parts=bindingConfig.trim().split("#");
+  config.printerName=parts[0];
+  if (parts.length == 2) {
+    try {
+      config.whichJobs=WhichJobsEnum.valueOf(WhichJobsEnum.class,parts[1].toUpperCase());
+    }
+ catch (    IllegalArgumentException e) {
+      throw new BindingConfigParseException("WhichJobs-Part " + parts[1] + " is unknown (use one of "+ StringUtils.join(WhichJobsEnum.values(),", ")+ ")");
+    }
+catch (    NullPointerException e) {
+      config.whichJobs=WhichJobsEnum.NOT_COMPLETED;
+    }
+  }
+  addBindingConfig(item,config);
+}

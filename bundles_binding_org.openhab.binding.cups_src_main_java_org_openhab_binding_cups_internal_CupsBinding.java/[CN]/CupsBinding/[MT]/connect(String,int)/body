@@ -1,0 +1,13 @@
+{
+  if (ip != null && port > 0) {
+    try {
+      client=new CupsClient(ip,port);
+    }
+ catch (    Exception e) {
+      logger.error("Couldn't connect to CupsServer [IP '" + ip + "' Port '"+ port+ "']: ",e.getLocalizedMessage());
+    }
+  }
+ else {
+    logger.warn("Couldn't connect to CupsServer because of missing connection parameters [IP '{}' Port '{}'].",ip,port);
+  }
+}

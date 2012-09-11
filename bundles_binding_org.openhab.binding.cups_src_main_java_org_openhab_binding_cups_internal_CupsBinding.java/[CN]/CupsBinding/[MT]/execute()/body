@@ -1,0 +1,60 @@
+{
+  if (client != null) {
+    for (    CupsBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String printerName=provider.getPrinterName(itemName);
+        WhichJobsEnum whichJobs=provider.getWhichJobs(itemName);
+        if (printerName == null) {
+          logger.warn("printerName isn't configured properly " + "for the given itemName [itemName={}, printerName={}] => querying bus for values aborted!",new Object[]{itemName,printerName});
+          continue;
+        }
+        State value=UnDefType.UNDEF;
+        try {
+          URL printerUrl=null;
+          CupsPrinter printer=null;
+          try {
+            printerUrl=new URL(printerName);
+          }
+ catch (          MalformedURLException e) {
+            try {
+              printerUrl=new URL("http://" + ip + ":"+ port+ "/printers/"+ printerName);
+            }
+ catch (            MalformedURLException e1) {
+              logger.error("wrong printer address {}",printerName);
+            }
+          }
+          if (printerUrl == null) {
+            for (            CupsPrinter pr : client.getPrinters()) {
+              if (pr.getName().equalsIgnoreCase(printerName)) {
+                printer=pr;
+                break;
+              }
+            }
+          }
+ else {
+            printer=client.getPrinter(printerUrl);
+          }
+          if (printer != null) {
+            value=new DecimalType(client.getJobs(printer,whichJobs,"",false).size());
+            logger.debug("Found printer {}#{} with value {}",new Object[]{printerUrl,whichJobs,value});
+          }
+ else {
+            logger.info("there is no printer for path {}",printerUrl);
+          }
+        }
+ catch (        IOException ioe) {
+          logger.error("couldn't establish network connection while reading '" + printerName + "'",ioe);
+        }
+catch (        Exception e) {
+          logger.error("couldn't get printer '" + printerName + "' from cups server",e);
+        }
+ finally {
+          eventPublisher.postUpdate(itemName,value);
+        }
+      }
+    }
+  }
+ else {
+    logger.warn("CupsClient is null => refresh cycle aborted!");
+  }
+}
