@@ -1,13 +1,14 @@
 {
-  if (ip != null && port > 0) {
+  if (host != null && StringUtils.isNotBlank(host) && port > 0) {
     try {
-      client=new CupsClient(ip,port);
+      client=new CupsClient(host,port);
+      logger.debug("Connection to CupsServer {} established",host);
     }
  catch (    Exception e) {
-      logger.error("Couldn't connect to CupsServer [IP '" + ip + "' Port '"+ port+ "']: ",e.getLocalizedMessage());
+      logger.error("Couldn't connect to CupsServer [Host '" + host + "' Port '"+ port+ "']: ",e.getLocalizedMessage());
     }
   }
  else {
-    logger.warn("Couldn't connect to CupsServer because of missing connection parameters [IP '{}' Port '{}'].",ip,port);
+    logger.warn("Couldn't connect to CupsServer because of missing connection parameters [Host '{}' Port '{}'].",host,port);
   }
 }

@@ -1,13 +1,14 @@
 {
   if (config != null) {
-    ip=(String)config.get("ip");
-    if (!ip.matches("[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}")) {
+    host=(String)config.get("host");
+    Matcher matcher=IP_PATTERN.matcher(host);
+    if (!matcher.matches()) {
       try {
-        InetAddress host=InetAddress.getByName(ip);
-        ip=host.getHostAddress();
+        InetAddress address=InetAddress.getByName(host);
+        ip=address.getHostAddress();
       }
  catch (      UnknownHostException e) {
-        logger.error("unknown host {} ",ip);
+        throw new ConfigurationException("host","unknown host '" + host + "'!");
       }
     }
     String portString=(String)config.get("port");
