@@ -6,6 +6,10 @@
       String datapointConfig=datapointConfigs[i];
       KNXBindingConfigItem configItem=new KNXBindingConfigItem();
       configItem.itemName=item.getName();
+      if (datapointConfig.startsWith("<")) {
+        configItem.readable=true;
+        datapointConfig=datapointConfig.substring(1);
+      }
       String dptId=null;
       String[] segments=datapointConfig.trim().split(":");
       Class<? extends Type> typeClass=item.getAcceptedCommandTypes().size() > 0 ? item.getAcceptedCommandTypes().get(i) : item.getAcceptedDataTypes().size() > 1 ? item.getAcceptedDataTypes().get(i) : item.getAcceptedDataTypes().get(0);
@@ -15,10 +19,6 @@
       }
       configItem.dpt=new DPT(dptId,null,null,null);
       String str=segments.length == 1 ? segments[0].trim() : segments[1].trim();
-      if (str.startsWith("<")) {
-        configItem.readable=true;
-        str=str.substring(1);
-      }
       if (!str.isEmpty()) {
         List<GroupAddress> gas=new ArrayList<GroupAddress>();
         for (        String ga : str.split("\\+")) {
