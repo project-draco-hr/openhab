@@ -1,0 +1,9 @@
+{
+  item.setState(new DecimalType(5000));
+  HistoricItem historicItem=PersistenceExtensions.minimumSince(item,new DateMidnight(2012,1,1),"test");
+  assertNotNull(historicItem);
+  assertEquals("5000",historicItem.getState().toString());
+  historicItem=PersistenceExtensions.minimumSince(item,new DateMidnight(2005,1,1),"test");
+  assertEquals("2005",historicItem.getState().toString());
+  assertEquals(new DateMidnight(2005,1,1).toDate(),historicItem.getTimestamp());
+}

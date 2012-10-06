@@ -1,15 +1,35 @@
 {
   Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
   Iterator<HistoricItem> it=result.iterator();
+  HistoricItem maximumHistoricItem=null;
   DecimalType maximum=(DecimalType)item.getStateAs(DecimalType.class);
   while (it.hasNext()) {
-    State state=it.next().getState();
+    HistoricItem historicItem=it.next();
+    State state=historicItem.getState();
     if (state instanceof DecimalType) {
       DecimalType value=(DecimalType)state;
       if (maximum == null || value.compareTo(maximum) > 0) {
         maximum=value;
+        maximumHistoricItem=historicItem;
       }
     }
   }
-  return maximum;
+  if (maximumHistoricItem == null && maximum != null) {
+    final DecimalType state=maximum;
+    return new HistoricItem(){
+      public Date getTimestamp(){
+        return Calendar.getInstance().getTime();
+      }
+      public State getState(){
+        return state;
+      }
+      public String getName(){
+        return item.getName();
+      }
+    }
+;
+  }
+ else {
+    return maximumHistoricItem;
+  }
 }

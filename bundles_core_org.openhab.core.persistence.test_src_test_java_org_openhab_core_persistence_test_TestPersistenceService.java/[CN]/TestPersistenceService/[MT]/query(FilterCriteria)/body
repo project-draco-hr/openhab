@@ -1,0 +1,26 @@
+{
+  int startValue=1900;
+  int endValue=2012;
+  if (filter.getBeginDate() != null)   startValue=filter.getBeginDate().getYear() + 1900;
+  if (filter.getEndDate() != null)   endValue=filter.getEndDate().getYear() + 1900;
+  ArrayList<HistoricItem> results=new ArrayList<HistoricItem>(endValue - startValue);
+  for (int i=startValue; i < endValue; i++) {
+    final int year=i;
+    results.add(new HistoricItem(){
+      public Date getTimestamp(){
+        return new Date(year - 1900,0,1);
+      }
+      @Override public State getState(){
+        return new DecimalType(year);
+      }
+      @Override public String getName(){
+        return "Test";
+      }
+    }
+);
+  }
+  if (filter.getOrdering() == Ordering.DESCENDING) {
+    Collections.reverse(results);
+  }
+  return results;
+}

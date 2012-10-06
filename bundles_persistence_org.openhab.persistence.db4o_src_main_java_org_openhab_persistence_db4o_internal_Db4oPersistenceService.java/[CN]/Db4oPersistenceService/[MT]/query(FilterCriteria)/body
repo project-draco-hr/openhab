@@ -36,7 +36,12 @@ query.descend("state").constrain(filter.getState()).smaller().equal();
 break;
 }
 }
+if (filter.getOrdering() == Ordering.ASCENDING) {
 query.descend("timestamp").orderDescending();
+}
+ else {
+query.descend("timestamp").orderAscending();
+}
 ObjectSet<HistoricItem> results=query.execute();
 int startIndex=filter.getPageNumber() * filter.getPageSize();
 if (startIndex < results.size()) {
