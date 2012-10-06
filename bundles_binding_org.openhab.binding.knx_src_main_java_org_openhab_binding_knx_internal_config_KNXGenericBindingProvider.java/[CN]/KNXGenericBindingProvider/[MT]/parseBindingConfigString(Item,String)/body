@@ -6,9 +6,9 @@
       String datapointConfig=datapointConfigs[i];
       KNXBindingConfigItem configItem=new KNXBindingConfigItem();
       configItem.itemName=item.getName();
-      if (datapointConfig.startsWith("<")) {
+      if (datapointConfig.trim().startsWith("<")) {
         configItem.readable=true;
-        datapointConfig=datapointConfig.substring(1);
+        datapointConfig=datapointConfig.trim().substring(1);
       }
       String dptId=null;
       String[] segments=datapointConfig.trim().split(":");
