@@ -1,10 +1,8 @@
 {
-  removeRules(updateEventTriggeredRules.values(),ruleModel);
-  removeRules(changedEventTriggeredRules.values(),ruleModel);
-  removeRules(commandEventTriggeredRules.values(),ruleModel);
-  removeRules(Collections.singletonList(systemStartupTriggeredRules),ruleModel);
-  removeRules(Collections.singletonList(systemShutdownTriggeredRules),ruleModel);
-  for (  Rule rule : new ArrayList<Rule>(timerEventTriggeredRules)) {
-    removeRule(TIMER,rule);
-  }
+  removeRules(UPDATE,updateEventTriggeredRules.values(),ruleModel);
+  removeRules(CHANGE,changedEventTriggeredRules.values(),ruleModel);
+  removeRules(COMMAND,commandEventTriggeredRules.values(),ruleModel);
+  removeRules(STARTUP,Collections.singletonList(systemStartupTriggeredRules),ruleModel);
+  removeRules(SHUTDOWN,Collections.singletonList(systemShutdownTriggeredRules),ruleModel);
+  removeRules(TIMER,Collections.singletonList(timerEventTriggeredRules),ruleModel);
 }

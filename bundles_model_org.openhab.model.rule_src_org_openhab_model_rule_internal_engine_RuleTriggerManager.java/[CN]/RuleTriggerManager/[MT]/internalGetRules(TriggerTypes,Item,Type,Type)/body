@@ -9,25 +9,27 @@ case STARTUP:
     return systemStartupTriggeredRules;
 case SHUTDOWN:
   return systemShutdownTriggeredRules;
+case TIMER:
+return timerEventTriggeredRules;
 case UPDATE:
 if (newType instanceof State) {
-  State state=(State)newType;
-  for (  Rule rule : rules) {
-    for (    EventTrigger t : rule.getEventtrigger()) {
-      if (t instanceof UpdateEventTrigger) {
-        UpdateEventTrigger ut=(UpdateEventTrigger)t;
-        if (ut.getItem().equals(item.getName())) {
-          if (ut.getState() != null) {
-            State triggerState=TypeParser.parseState(item.getAcceptedDataTypes(),ut.getState());
-            if (!state.equals(triggerState)) {
-              continue;
-            }
+State state=(State)newType;
+for (Rule rule : rules) {
+  for (  EventTrigger t : rule.getEventtrigger()) {
+    if (t instanceof UpdateEventTrigger) {
+      UpdateEventTrigger ut=(UpdateEventTrigger)t;
+      if (ut.getItem().equals(item.getName())) {
+        if (ut.getState() != null) {
+          State triggerState=TypeParser.parseState(item.getAcceptedDataTypes(),ut.getState());
+          if (!state.equals(triggerState)) {
+            continue;
           }
-          result.add(rule);
         }
+        result.add(rule);
       }
     }
   }
+}
 }
 break;
 case CHANGE:
@@ -36,24 +38,24 @@ State newState=(State)newType;
 State oldState=(State)oldType;
 for (Rule rule : rules) {
 for (EventTrigger t : rule.getEventtrigger()) {
-  if (t instanceof ChangedEventTrigger) {
-    ChangedEventTrigger ct=(ChangedEventTrigger)t;
-    if (ct.getItem().equals(item.getName())) {
-      if (ct.getOldState() != null) {
-        State triggerOldState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getOldState());
-        if (!oldState.equals(triggerOldState)) {
-          continue;
-        }
+if (t instanceof ChangedEventTrigger) {
+  ChangedEventTrigger ct=(ChangedEventTrigger)t;
+  if (ct.getItem().equals(item.getName())) {
+    if (ct.getOldState() != null) {
+      State triggerOldState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getOldState());
+      if (!oldState.equals(triggerOldState)) {
+        continue;
       }
-      if (ct.getNewState() != null) {
-        State triggerNewState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getNewState());
-        if (!newState.equals(triggerNewState)) {
-          continue;
-        }
-      }
-      result.add(rule);
     }
+    if (ct.getNewState() != null) {
+      State triggerNewState=TypeParser.parseState(item.getAcceptedDataTypes(),ct.getNewState());
+      if (!newState.equals(triggerNewState)) {
+        continue;
+      }
+    }
+    result.add(rule);
   }
+}
 }
 }
 }
@@ -67,7 +69,7 @@ if (t instanceof CommandEventTrigger) {
 CommandEventTrigger ct=(CommandEventTrigger)t;
 Command triggerCommand=TypeParser.parseCommand(item.getAcceptedCommandTypes(),ct.getCommand());
 if (ct.getItem().equals(item.getName()) && (triggerCommand == null || command.equals(triggerCommand))) {
-  result.add(rule);
+result.add(rule);
 }
 }
 }
