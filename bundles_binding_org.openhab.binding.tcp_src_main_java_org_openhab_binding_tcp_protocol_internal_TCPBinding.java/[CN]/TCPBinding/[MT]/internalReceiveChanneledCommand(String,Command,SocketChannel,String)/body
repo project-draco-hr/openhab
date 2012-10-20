@@ -1,24 +1,15 @@
 {
   ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
-  Item theItem=getItemFromItemName(itemName);
-  String tcpCommandName=null;
-  Command finalCommand=null;
-  if (command instanceof StringType && theItem != null) {
-    try {
-      finalCommand=createCommandFromString(theItem,"*");
+  if (command != null) {
+    String tcpCommandName=null;
+    if (command instanceof DecimalType) {
+      tcpCommandName=commandAsString;
     }
- catch (    Exception e) {
-      logger.warn("Exception occured whilst creating a Command for item {}",theItem);
-    }
-    tcpCommandName=command.toString();
-  }
  else {
-    finalCommand=command;
-    tcpCommandName=provider.getProtocolCommand(itemName,finalCommand);
-  }
-  tcpCommandName=tcpCommandName + ((char)13) + ((char)10);
-  if (finalCommand != null) {
-    Direction direction=provider.getDirection(itemName,finalCommand);
+      tcpCommandName=provider.getProtocolCommand(itemName,command);
+    }
+    tcpCommandName=tcpCommandName + ((char)13) + ((char)10);
+    Direction direction=provider.getDirection(itemName,command);
     if (direction.equals(Direction.OUT) | direction.equals(Direction.BIDIRECTIONAL)) {
       ByteBuffer outputBuffer=ByteBuffer.allocate(1024);
       try {

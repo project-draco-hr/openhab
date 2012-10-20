@@ -5,35 +5,23 @@
     logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
     return;
   }
-  Command finalCommand=null;
-  if (command instanceof StringType) {
-    try {
-      finalCommand=createCommandFromString(itemRegistry.getItem(itemName),"*");
-    }
- catch (    ItemNotFoundException e) {
-      logger.warn("Could not find item {}",itemName);
-    }
-catch (    Exception e) {
-      logger.warn("Exception creating CommandFromString for item {}",itemName);
-    }
-  }
- else {
-    finalCommand=command;
-  }
-  if (finalCommand != null) {
-    sChannel=getActiveChannel(provider.getHost(itemName,finalCommand),provider.getPort(itemName,finalCommand));
-    if (sChannel != null) {
-      boolean result=internalReceiveChanneledCommand(itemName,command,sChannel);
-      if (result) {
-        Item theItem=getItemFromItemName(itemName);
-        State newState=createStateFromString(theItem,command.toString());
-        if (newState != null) {
-          eventPublisher.postUpdate(itemName,newState);
+  if (command != null) {
+    List<Command> commands=provider.getAllCommands(itemName);
+    for (    Command someCommand : commands) {
+      sChannel=getActiveChannel(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand));
+      if (sChannel != null) {
+        boolean result=internalReceiveChanneledCommand(itemName,someCommand,sChannel,command.toString());
+        if (result) {
+          List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,someCommand);
+          State newState=createStateFromString(stateTypeList,command.toString());
+          if (newState != null) {
+            eventPublisher.postUpdate(itemName,newState);
+          }
         }
       }
-    }
  else {
-      logger.error("there is no active channel for [itemName={}, command={}]",itemName,command);
+        logger.error("there is no active channel for [itemName={}, command={}]",itemName,command);
+      }
     }
   }
 }

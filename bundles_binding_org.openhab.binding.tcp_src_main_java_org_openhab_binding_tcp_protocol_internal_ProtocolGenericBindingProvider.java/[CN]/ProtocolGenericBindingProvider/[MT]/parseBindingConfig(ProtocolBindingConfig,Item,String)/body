@@ -1,16 +1,32 @@
 {
+  String direction=null;
+  Direction directionType=null;
+  String commandAsString=null;
+  String host=null;
+  String port=null;
+  String protocolCommand=null;
   if (bindingConfig != null) {
-    Matcher matcher=BASE_CONFIG_PATTERN.matcher(bindingConfig);
-    if (!matcher.matches()) {
-      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of five parts [config=" + matcher+ "]");
+    Matcher actionMatcher=ACTION_CONFIG_PATTERN.matcher(bindingConfig);
+    Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
+    if ((!actionMatcher.matches() && !statusMatcher.matches())) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of three [config=" + statusMatcher+ "] or five parts [config="+ actionMatcher+ "]");
     }
  else {
-      String direction=matcher.group(1);
-      Direction directionType=Direction.BIDIRECTIONAL;
-      String commandAsString=matcher.group(2);
-      String host=matcher.group(3);
-      String port=matcher.group(4);
-      String tcpCommand=matcher.group(5);
+      if (actionMatcher.matches()) {
+        direction=actionMatcher.group(1);
+        directionType=Direction.BIDIRECTIONAL;
+        commandAsString=actionMatcher.group(2);
+        host=actionMatcher.group(3);
+        port=actionMatcher.group(4);
+        protocolCommand=actionMatcher.group(5);
+      }
+ else       if (statusMatcher.matches()) {
+        direction=statusMatcher.group(1);
+        directionType=Direction.BIDIRECTIONAL;
+        commandAsString=null;
+        host=statusMatcher.group(2);
+        port=statusMatcher.group(3);
+      }
       if (direction.equals(">")) {
         directionType=Direction.OUT;
       }
@@ -20,10 +36,22 @@
  else       if (direction.equals("*")) {
         directionType=Direction.BIDIRECTIONAL;
       }
-      ProtocolBindingConfigElement newElement=new ProtocolBindingConfigElement(host,Integer.parseInt(port),directionType,tcpCommand);
-      Command command=createCommandFromString(item,commandAsString);
+      ProtocolBindingConfigElement newElement=new ProtocolBindingConfigElement(host,Integer.parseInt(port),directionType,protocolCommand,item.getAcceptedDataTypes());
+      Command command=null;
+      if (commandAsString == null) {
+        NumberItem dummy=new NumberItem(Integer.toString(counter));
+        command=createCommandFromString(dummy,Integer.toString(counter));
+        counter++;
+        config.put(command,newElement);
+      }
+ else {
+        command=createCommandFromString(item,commandAsString);
+        config.put(command,newElement);
+      }
       config.put(command,newElement);
     }
   }
- else   return;
+ else {
+    return;
+  }
 }
