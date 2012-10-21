@@ -13,6 +13,15 @@
     if (StringUtils.isNotBlank(retryString)) {
       retry=Integer.parseInt(retryString);
     }
+    String tempScaleString=(String)config.get("tempscale");
+    if (StringUtils.isNotBlank(tempScaleString)) {
+      try {
+        tempScale=OwTemperatureScale.valueOf("OWNET_TS_" + tempScaleString);
+      }
+ catch (      IllegalArgumentException iae) {
+        throw new ConfigurationException("onewire:tempscale","Unknown temperature scale '" + tempScaleString + "'. Valid values are CELSIUS, FAHRENHEIT, KELVIN or RANKIN.");
+      }
+    }
     connect(ip,port);
     isProperlyConfigured=true;
     start();
