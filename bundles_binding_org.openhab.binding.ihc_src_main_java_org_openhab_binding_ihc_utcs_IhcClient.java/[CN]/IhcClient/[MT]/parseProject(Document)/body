@@ -1,0 +1,19 @@
+{
+  logger.debug("Parsing project file...");
+  enumDictionary.clear();
+  NodeList nodes=doc.getElementsByTagName("enum_definition");
+  for (int i=0; i < nodes.getLength(); i++) {
+    Element element=(Element)nodes.item(i);
+    int typedefId=Integer.parseInt(element.getAttribute("id").replace("_0x",""),16);
+    ArrayList<EnumValue> enumValues=new ArrayList<EnumValue>();
+    NodeList name=element.getElementsByTagName("enum_value");
+    for (int j=0; j < name.getLength(); j++) {
+      Element val=(Element)name.item(j);
+      EnumValue enumVal=new EnumValue();
+      enumVal.id=Integer.parseInt(val.getAttribute("id").replace("_0x",""),16);
+      enumVal.name=val.getAttribute("name");
+      enumValues.add(enumVal);
+    }
+    enumDictionary.put(typedefId,enumValues);
+  }
+}

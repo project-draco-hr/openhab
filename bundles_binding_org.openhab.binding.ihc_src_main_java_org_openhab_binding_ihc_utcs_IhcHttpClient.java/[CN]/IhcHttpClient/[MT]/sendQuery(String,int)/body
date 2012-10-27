@@ -1,0 +1,10 @@
+{
+  conn.setReadTimeout(timeoutInMilliseconds);
+  OutputStreamWriter writer=new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
+  writer.write(query);
+  writer.flush();
+  writer.close();
+  InputStreamReader reader=new InputStreamReader(conn.getInputStream(),"UTF-8");
+  String response=readInputStreamAsString(reader);
+  return response;
+}

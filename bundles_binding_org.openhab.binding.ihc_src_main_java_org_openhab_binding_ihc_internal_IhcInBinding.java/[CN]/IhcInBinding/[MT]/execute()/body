@@ -1,0 +1,50 @@
+{
+  IhcClient ihc=IhcConnection.getCommunicator();
+  if (ihc != null) {
+    for (    IhcBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        int resourceId=provider.getResourceId(itemName);
+        int itemRefreshInterval=provider.getRefreshInterval(itemName) * 1000;
+        if (itemRefreshInterval > 0) {
+          Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+          if (lastUpdateTimeStamp == null) {
+            lastUpdateTimeStamp=0L;
+          }
+          long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+          boolean needsUpdate=age >= itemRefreshInterval;
+          if (needsUpdate) {
+            logger.debug("Item '{}' is about to be refreshed now",itemName);
+            try {
+              WSResourceValue resourceValue=null;
+              try {
+                resourceValue=ihc.resourceQuery(resourceId);
+              }
+ catch (              IOException e1) {
+                logger.warn("Value could not be read from controller - retrying one time.");
+                try {
+                  IhcConnection.reconnect();
+                  resourceValue=ihc.resourceQuery(resourceId);
+                }
+ catch (                Exception e2) {
+                  logger.error("Communication error",e2);
+                }
+              }
+              if (resourceValue != null) {
+                Item item=getItemFromItemName(itemName);
+                State value=convertResourceValueToState(item,resourceValue);
+                eventPublisher.postUpdate(itemName,value);
+              }
+            }
+ catch (            Exception e) {
+              logger.error("Exception",e);
+            }
+            lastUpdateMap.put(itemName,System.currentTimeMillis());
+          }
+        }
+      }
+    }
+  }
+ else {
+    logger.warn("Controller is null => refresh cycle aborted!");
+  }
+}

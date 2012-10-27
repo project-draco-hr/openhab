@@ -1,0 +1,24 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  IhcBindingConfig config=new IhcBindingConfig();
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length > 2) {
+    throw new BindingConfigParseException("IHC / ELKO LS binding must contain of max two two parts separated by ':'");
+  }
+  if (bindingConfig.startsWith(">")) {
+    if (configParts.length == 1) {
+      config.outBindingOnly=true;
+      config.resourceId=Integer.parseInt(configParts[0].replace(">",""));
+    }
+ else {
+      throw new BindingConfigParseException("When configuration start with '>', refresh interval is not supported ");
+    }
+  }
+ else {
+    String resourceId=configParts[0];
+    if (resourceId.startsWith("0x"))     config.resourceId=Integer.parseInt(resourceId.replace("0x",""),16);
+ else     config.resourceId=Integer.parseInt(resourceId);
+    if (configParts.length == 2)     config.refreshInterval=Integer.parseInt(configParts[1]);
+  }
+  addBindingConfig(item,config);
+}

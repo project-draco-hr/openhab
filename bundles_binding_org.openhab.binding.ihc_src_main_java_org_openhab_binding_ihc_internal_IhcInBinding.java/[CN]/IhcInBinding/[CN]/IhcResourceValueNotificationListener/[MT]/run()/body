@@ -1,0 +1,26 @@
+{
+  logger.debug("IHC Listener started");
+  boolean ready=false;
+  while (!interrupted) {
+    boolean orderResourceValueNotifications=false;
+    final long lastConfigChangeTime=getLastConfigurationChangeTime();
+    if (lastConfigChangeTime > lastNotificationOrderTime) {
+      logger.debug("Configuration change detected");
+      ready=false;
+      if ((lastConfigChangeTime + 1000) < System.currentTimeMillis()) {
+        ready=true;
+        orderResourceValueNotifications=true;
+      }
+ else {
+        logger.debug("Waiting 1 seconds before reorder runtime value notifications");
+      }
+    }
+    if (IhcConnection.getLastOpenTime() > lastNotificationOrderTime) {
+      logger.debug("Controller connection reopen detected");
+      orderResourceValueNotifications=true;
+    }
+    if (ready)     waitResourceNotifications(orderResourceValueNotifications);
+ else     mysleep(1000L);
+  }
+  logger.debug("IHC Listener stopped");
+}

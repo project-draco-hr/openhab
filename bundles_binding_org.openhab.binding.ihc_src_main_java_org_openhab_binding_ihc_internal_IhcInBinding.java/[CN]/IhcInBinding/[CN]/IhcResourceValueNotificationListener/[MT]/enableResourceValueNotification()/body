@@ -1,0 +1,17 @@
+{
+  logger.debug("Order resource runtime value notifications from controller");
+  List<Integer> resourceIdList=new ArrayList<Integer>();
+  IhcClient ihc=IhcConnection.getCommunicator();
+  if (ihc != null) {
+    for (    IhcBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        resourceIdList.add(provider.getResourceId(itemName));
+      }
+    }
+  }
+  if (resourceIdList.size() > 0) {
+    logger.debug("Enable runtime notfications for {} resources",resourceIdList.size());
+    ihc.enableRuntimeValueNotifications(resourceIdList);
+    lastNotificationOrderTime=System.currentTimeMillis();
+  }
+}

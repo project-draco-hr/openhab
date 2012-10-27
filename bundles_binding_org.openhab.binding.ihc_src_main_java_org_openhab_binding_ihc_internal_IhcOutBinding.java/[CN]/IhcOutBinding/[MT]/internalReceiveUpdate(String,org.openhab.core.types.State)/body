@@ -1,0 +1,48 @@
+{
+  if (itemName != null) {
+    IhcBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+    if (provider == null) {
+      logger.warn("Doesn't find matching binding provider [itemName={}]",itemName);
+      return;
+    }
+    if (provider.isOutBindingOnly(itemName)) {
+      logger.debug("Received out binding update (item='{}', state='{}', class='{}')",new Object[]{itemName,newState.toString(),newState.getClass().toString()});
+      IhcClient ihc=IhcConnection.getCommunicator();
+      if (ihc == null) {
+        logger.warn("IHC / ELKO LS controller is null!");
+        return;
+      }
+      try {
+        int resourceId=provider.getResourceId(itemName);
+        WSResourceValue value=ihc.getResourceValueInformation(resourceId);
+        value=convertCommandToResourceValue(newState,value);
+        boolean result=false;
+        try {
+          result=ihc.resourceUpdate(value);
+        }
+ catch (        IOException e1) {
+          logger.warn("Value could not be set - retrying one time: {}",e1.getMessage());
+          try {
+            IhcConnection.reconnect();
+            result=ihc.resourceUpdate(value);
+          }
+ catch (          IOException e2) {
+            logger.error("Communication error - giving up: {}",e2.getMessage());
+            return;
+          }
+catch (          Exception e) {
+            logger.error("Communication error",e);
+          }
+        }
+catch (        Exception e) {
+          logger.error("Exception",e);
+        }
+        if (result == true)         logger.debug("Item updated '{}' succesfully sent",itemName);
+ else         logger.error("Item '{}' update failed",itemName);
+      }
+ catch (      Exception e) {
+        logger.error("Exception ",e);
+      }
+    }
+  }
+}

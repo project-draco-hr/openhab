@@ -1,0 +1,84 @@
+{
+  String resourceId=getValue(n,"ns1:resourceID");
+  if (resourceId != null && resourceId != "") {
+    int id=Integer.parseInt(resourceId);
+    String value=getValue(n,"ns1:value/ns" + index + ":floatingPointValue");
+    if (value != null && value != "") {
+      WSFloatingPointValue val=new WSFloatingPointValue();
+      val.setResourceID(id);
+      val.setFloatingPointValue(Double.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":maximumValue");
+      if (value != null && value != "")       val.setMaximumValue(Double.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":minimumValue");
+      if (value != null && value != "")       val.setMinimumValue(Double.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":value");
+    if (value != null && value != "") {
+      WSBooleanValue val=new WSBooleanValue();
+      val.setResourceID(id);
+      val.setValue(Boolean.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":integer");
+    if (value != null && value != "") {
+      WSIntegerValue val=new WSIntegerValue();
+      val.setResourceID(id);
+      val.setInteger(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":maximumValue");
+      if (value != null && value != "")       val.setMaximumValue(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":minimumValue");
+      if (value != null && value != "")       val.setMinimumValue(Integer.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":milliseconds");
+    if (value != null && value != "") {
+      WSTimerValue val=new WSTimerValue();
+      val.setResourceID(id);
+      val.setMilliseconds(Integer.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":hours");
+    if (value != null && value != "") {
+      WSTimeValue val=new WSTimeValue();
+      val.setResourceID(id);
+      val.setHours(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":minutes");
+      if (value != null && value != "")       val.setMinutes(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":seconds");
+      if (value != null && value != "")       val.setSeconds(Integer.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":day");
+    if (value != null && value != "") {
+      WSDateValue val=new WSDateValue();
+      val.setResourceID(id);
+      val.setDay(Byte.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":month");
+      if (value != null && value != "")       val.setMonth(Byte.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":year");
+      if (value != null && value != "")       val.setYear(Short.valueOf(value));
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":definitionTypeID");
+    if (value != null && value != "") {
+      WSEnumValue val=new WSEnumValue();
+      val.setResourceID(id);
+      val.setDefinitionTypeID(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":enumValueID");
+      if (value != null && value != "")       val.setEnumValueID(Integer.valueOf(value));
+      value=getValue(n,"ns1:value/ns" + index + ":enumName");
+      if (value != null && value != "")       val.setEnumName(value);
+      return val;
+    }
+    value=getValue(n,"ns1:value/ns" + index + ":weekdayNumber");
+    if (value != null && value != "") {
+      WSWeekdayValue val=new WSWeekdayValue();
+      val.setResourceID(id);
+      val.setWeekdayNumber(Integer.valueOf(value));
+      return val;
+    }
+    throw new IllegalArgumentException("Unsupported value type");
+  }
+  return null;
+}

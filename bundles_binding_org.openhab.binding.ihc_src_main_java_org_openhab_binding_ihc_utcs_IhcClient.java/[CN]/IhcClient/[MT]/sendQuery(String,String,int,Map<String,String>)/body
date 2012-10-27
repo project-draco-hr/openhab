@@ -1,0 +1,35 @@
+{
+  if (getConnectionState() == ConnectionState.DISCONNECTED) {
+    openConnection();
+  }
+  String url="https://" + ip + "/ws/"+ service;
+  IhcHttpClient queryclient=new IhcHttpClient();
+  queryclient.openConnection(url,timeout);
+  queryclient.setCookies(cookies);
+  String response=null;
+  if (listOfProperties != null) {
+    queryclient.setRequestProperties(listOfProperties);
+  }
+  try {
+    response=queryclient.sendQuery(data,timeoutInMilliseconds);
+    List<String> c=queryclient.getCookies();
+    if (c != null)     cookies=c;
+  }
+ catch (  SocketTimeoutException e2) {
+    throw e2;
+  }
+catch (  IOException e1) {
+    openConnection();
+    queryclient=new IhcHttpClient();
+    queryclient.openConnection(url,timeout);
+    queryclient.setCookies(cookies);
+    if (listOfProperties != null) {
+      queryclient.setRequestProperties(listOfProperties);
+    }
+    response=queryclient.sendQuery(data,timeoutInMilliseconds);
+    List<String> c=queryclient.getCookies();
+    if (c != null)     cookies=c;
+  }
+  if (response != null && response != "")   return response;
+ else   throw new IOException("Illegal response");
+}
