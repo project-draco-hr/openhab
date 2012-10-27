@@ -1,0 +1,15 @@
+{
+  List<String> items=new ArrayList<String>();
+  for (  String itemName : bindingConfigs.keySet()) {
+    ProtocolBindingConfig aConfig=(ProtocolBindingConfig)bindingConfigs.get(itemName);
+    for (    Command aCommand : aConfig.keySet()) {
+      ProtocolBindingConfigElement anElement=(ProtocolBindingConfigElement)aConfig.get(aCommand);
+      if (anElement.getHost().equals(host) && anElement.getPort() == port) {
+        if (!items.contains(itemName)) {
+          items.add(itemName);
+        }
+      }
+    }
+  }
+  return items;
+}

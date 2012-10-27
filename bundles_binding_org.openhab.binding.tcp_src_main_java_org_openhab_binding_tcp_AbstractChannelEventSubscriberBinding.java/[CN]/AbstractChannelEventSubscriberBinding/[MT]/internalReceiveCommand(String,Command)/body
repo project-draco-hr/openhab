@@ -1,0 +1,27 @@
+{
+  P provider=findFirstMatchingBindingProvider(itemName);
+  C sChannel=null;
+  if (provider == null) {
+    logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  if (command != null) {
+    List<Command> commands=provider.getAllCommands(itemName);
+    for (    Command someCommand : commands) {
+      sChannel=getActiveChannel(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand));
+      if (sChannel != null) {
+        boolean result=internalReceiveChanneledCommand(itemName,someCommand,sChannel,command.toString());
+        if (result) {
+          List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,someCommand);
+          State newState=createStateFromString(stateTypeList,command.toString());
+          if (newState != null) {
+            eventPublisher.postUpdate(itemName,newState);
+          }
+        }
+      }
+ else {
+        logger.error("there is no active channel for [itemName={}, command={}]",itemName,command);
+      }
+    }
+  }
+}

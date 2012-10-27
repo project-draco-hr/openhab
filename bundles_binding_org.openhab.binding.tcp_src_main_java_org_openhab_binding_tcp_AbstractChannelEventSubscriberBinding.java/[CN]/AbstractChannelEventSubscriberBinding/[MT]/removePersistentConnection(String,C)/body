@@ -1,0 +1,16 @@
+{
+  if (selector != null) {
+    if (channelTrackers.get(networkChannel).referers.size() == 1) {
+      SelectionKey sKey=networkChannel.keyFor(selector);
+      sKey.cancel();
+synchronized (channelTrackers.get(networkChannel)) {
+        networkChannel.close();
+      }
+      channelTrackers.get(networkChannel).referers.remove(reference);
+      channelTrackers.remove(networkChannel);
+    }
+ else {
+      channelTrackers.get(networkChannel).referers.remove(reference);
+    }
+  }
+}

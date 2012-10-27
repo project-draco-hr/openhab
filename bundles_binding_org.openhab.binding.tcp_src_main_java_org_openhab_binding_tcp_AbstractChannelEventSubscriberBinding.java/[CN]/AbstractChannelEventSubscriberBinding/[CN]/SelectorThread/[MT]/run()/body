@@ -1,0 +1,26 @@
+{
+  logger.debug(getName() + " has been started");
+  while (!shutdown) {
+    try {
+      selectorLock.lock();
+      selector.selectNow();
+      selectorLock.unlock();
+    }
+ catch (    IOException e) {
+      break;
+    }
+    Iterator<SelectionKey> it=selector.selectedKeys().iterator();
+    while (it.hasNext()) {
+      SelectionKey selKey=(SelectionKey)it.next();
+      it.remove();
+      try {
+        processSelectionKey(selKey);
+      }
+ catch (      IOException e) {
+        selKey.cancel();
+      }
+    }
+    pause(refreshInterval);
+  }
+  logger.info(getName() + " has been shut down");
+}

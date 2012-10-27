@@ -1,0 +1,14 @@
+{
+  if (this.selectorThread != null) {
+    this.selectorThread.interrupt();
+    logger.trace("{} has been interrupted.",this.selectorThread.getName());
+  }
+  if (this.parserThread != null) {
+    this.parserThread.interrupt();
+    logger.trace("{} has been interrupted.",this.parserThread.getName());
+  }
+  if (this.reconnectThread != null && isConnectionOriented()) {
+    this.reconnectThread.interrupt();
+    logger.trace("{} has been interrupted.",this.reconnectThread.getName());
+  }
+}

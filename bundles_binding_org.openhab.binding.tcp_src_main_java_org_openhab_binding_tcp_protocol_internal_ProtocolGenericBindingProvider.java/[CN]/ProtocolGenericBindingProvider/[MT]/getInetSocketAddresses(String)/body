@@ -1,0 +1,17 @@
+{
+  List<InetSocketAddress> theList=new ArrayList<InetSocketAddress>();
+  ProtocolBindingConfig config=(ProtocolBindingConfig)bindingConfigs.get(itemName);
+  if (config != null) {
+    for (    Command command : config.keySet()) {
+      InetSocketAddress anAddress=null;
+      try {
+        anAddress=new InetSocketAddress(InetAddress.getByName(config.get(command).getHost()),config.get(command).getPort());
+      }
+ catch (      UnknownHostException e) {
+        logger.warn("Could not resolve the hostname {} for item {}",config.get(command).getHost(),itemName);
+      }
+      theList.add(anAddress);
+    }
+  }
+  return theList;
+}

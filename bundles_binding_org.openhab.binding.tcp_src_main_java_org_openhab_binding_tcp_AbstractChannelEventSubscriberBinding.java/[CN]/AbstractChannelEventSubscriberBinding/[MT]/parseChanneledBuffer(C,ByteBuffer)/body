@@ -1,0 +1,14 @@
+{
+  if (networkChannel != null && byteBuffer != null) {
+    logger.debug("Received " + new String(byteBuffer.array()) + " from "+ networkChannel.toString());
+    String host=channelTrackers.get(networkChannel).host;
+    int port=channelTrackers.get(networkChannel).port;
+    Collection<String> qualifiedItems=new ArrayList<String>();
+    for (    P provider : this.providers) {
+      qualifiedItems.addAll(provider.getItemNames(host,port));
+    }
+    if (qualifiedItems.size() > 0) {
+      parseBuffer(qualifiedItems,byteBuffer);
+    }
+  }
+}
