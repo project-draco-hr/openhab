@@ -1,5 +1,5 @@
 {
-  String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:utcs=\"utcs\">" + " <soapenv:Header/>"+ " <soapenv:Body>"+ "  <utcs:waitForResourceValueChanges1>" + timeoutInSeconds + "  </utcs:waitForResourceValueChanges1>"+ " </soapenv:Body>"+ "</soapenv:Envelope>";
+  String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:utcs=\"utcs\">" + "<soapenv:Header/>"+ "<soapenv:Body>"+ " <utcs:waitForResourceValueChanges1>" + timeoutInSeconds + "</utcs:waitForResourceValueChanges1>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
   List<WSResourceValue> resourceValueList=new ArrayList<WSResourceValue>();
   String response=sendQuery("ResourceInteractionService",soapQuery,timeoutInSeconds * 1000 + timeout,null);
   NodeList nodeList=parseList(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:waitForResourceValueChanges2/ns1:arrayItem");
