@@ -5,6 +5,10 @@
     ChatManager chatmanager=conn.getChatManager();
     Chat newChat=chatmanager.createChat(to,null);
     try {
+      while (message.length() >= 2000) {
+        newChat.sendMessage(message.substring(0,2000));
+        message=message.substring(2000);
+      }
       newChat.sendMessage(message);
       logger.debug("Sent message '{}' to '{}'.",message,to);
       success=true;
