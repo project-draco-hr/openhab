@@ -1,0 +1,11 @@
+{
+  if (typeClass == DecimalType.class) {
+    return state == OpenClosedType.OPEN ? new DecimalType(1) : DecimalType.ZERO;
+  }
+ else   if (typeClass == PercentType.class) {
+    return state == OpenClosedType.OPEN ? PercentType.HUNDRED : PercentType.ZERO;
+  }
+ else {
+    return super.getStateAs(typeClass);
+  }
+}
