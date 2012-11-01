@@ -1,0 +1,56 @@
+{
+  if (message != null) {
+    if (message.getAttempts() < MAX_ATTEMPTS) {
+      message.increaseAttempts();
+      logger.info("Sending Plugwise protocol data unit: attempts: {} MAC:{} command:{} sequence:{} full HEX:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.toHexString()});
+      String packedString=PROTOCOL_HEADER + message.toHexString() + PROTOCOL_TRAILER;
+      ByteBuffer bytebuffer=ByteBuffer.allocate(packedString.length());
+      bytebuffer.put(packedString.getBytes());
+      bytebuffer.rewind();
+      theStick.queueLock.lock();
+      try {
+        theStick.outputChannel.write(bytebuffer);
+      }
+ catch (      IOException e) {
+        logger.error("Error writing '{}' to serial port {}: {}",new String[]{packedString,theStick.port,e.getMessage()});
+      }
+      Message lastMessage=null;
+      while (lastMessage == null) {
+        theStick.receiveLock.lock();
+        Iterator<Message> messageIterator=theStick.receivedQueue.iterator();
+        while (messageIterator.hasNext()) {
+          Message aMessage=messageIterator.next();
+          if (aMessage.getType().equals(MessageType.ACKNOWLEDGEMENT)) {
+            if (!((AcknowledgeMessage)aMessage).isExtended()) {
+              lastMessage=aMessage;
+              theStick.receivedQueue.remove(lastMessage);
+              break;
+            }
+          }
+        }
+        theStick.receiveLock.unlock();
+      }
+      AcknowledgeMessage ack=(AcknowledgeMessage)lastMessage;
+      if (!ack.isSuccess()) {
+        if (ack.isError()) {
+          logger.error("Error sending Plugwise message: Negative ACK: {}",packedString);
+        }
+      }
+ else {
+        message.setSequenceNumber(ack.getSequenceNumber());
+        try {
+          theStick.sentQueue.put(message);
+        }
+ catch (        InterruptedException e) {
+          logger.error("Error storing Plugwise message in the sent queue: {}",message.toHexString());
+        }
+      }
+      theStick.queueLock.unlock();
+      return true;
+    }
+ else {
+      logger.error("Giving finally up on Plugwise protocol data unit after attempts: {} MAC:{} command:{} sequence:{} payload:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.getPayLoad()});
+    }
+  }
+  return false;
+}

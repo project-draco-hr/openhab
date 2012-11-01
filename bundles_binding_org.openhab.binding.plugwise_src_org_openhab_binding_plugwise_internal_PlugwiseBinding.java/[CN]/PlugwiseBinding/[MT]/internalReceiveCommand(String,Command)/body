@@ -1,0 +1,29 @@
+{
+  PlugwiseBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  String commandAsString=command.toString();
+  if (command != null) {
+    List<Command> commands=new ArrayList<Command>();
+    String checkID=provider.getPlugwiseID(itemName,command);
+    if (checkID != null) {
+      commands.add(command);
+    }
+ else {
+      commands=provider.getAllCommands(itemName);
+    }
+    for (    Command someCommand : commands) {
+      String plugwiseID=provider.getPlugwiseID(itemName,someCommand);
+      PlugwiseCommandType plugwiseCommandType=provider.getPlugwiseCommandType(itemName,someCommand);
+      if (plugwiseID != null) {
+        if (plugwiseCommandType != null) {
+          @SuppressWarnings("unused") boolean result=executeCommand(plugwiseID,plugwiseCommandType,commandAsString);
+        }
+ else {
+          logger.error("wrong command type for binding [Item={}, command={}]",itemName,commandAsString);
+        }
+      }
+ else {
+        logger.error("{} is an unrecognised command for Item {}",commandAsString,itemName);
+      }
+    }
+  }
+}

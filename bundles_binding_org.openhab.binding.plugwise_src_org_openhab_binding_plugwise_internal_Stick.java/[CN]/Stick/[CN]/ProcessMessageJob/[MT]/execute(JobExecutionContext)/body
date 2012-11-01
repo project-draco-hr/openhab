@@ -1,0 +1,29 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  theStick=(Stick)dataMap.get("Stick");
+  if (theStick.isInitialised()) {
+    theStick.queueLock.lock();
+    Message message=theStick.receivedQueue.poll();
+    theStick.queueLock.unlock();
+    if (message != null) {
+      PlugwiseDevice target=theStick.getDeviceByMAC(message.getMAC());
+      boolean result=false;
+      if (target != null) {
+        result=target.processMessage(message);
+      }
+ else {
+        result=theStick.processMessage(message);
+      }
+      if (result) {
+        Iterator<Message> messageIterator=theStick.sentQueue.iterator();
+        while (messageIterator.hasNext()) {
+          Message aMessage=messageIterator.next();
+          if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
+            theStick.sentQueue.remove(aMessage);
+            break;
+          }
+        }
+      }
+    }
+  }
+}

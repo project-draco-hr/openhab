@@ -1,0 +1,13 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  Stick theStick=(Stick)dataMap.get("Stick");
+  String MAC=(String)dataMap.get("MAC");
+  if (theStick.isInitialised()) {
+    PlugwiseDevice device=theStick.getDeviceByMAC(MAC);
+    if (device != null) {
+      if (device.getType().equals(DeviceType.CirclePlus)) {
+        ((CirclePlus)device).updateRealTimeClock();
+      }
+    }
+  }
+}

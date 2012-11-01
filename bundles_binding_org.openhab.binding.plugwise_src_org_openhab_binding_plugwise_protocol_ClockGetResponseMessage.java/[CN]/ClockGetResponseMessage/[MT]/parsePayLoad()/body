@@ -1,0 +1,14 @@
+{
+  Pattern RESPONSE_PATTERN=Pattern.compile("(\\w{16})(\\w{2})(\\w{2})(\\w{2})(\\w{2})(\\w{2})(\\w{2})(\\w{2})");
+  Matcher matcher=RESPONSE_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+    hour=Integer.parseInt(matcher.group(2),16);
+    minutes=Integer.parseInt(matcher.group(3),16);
+    seconds=Integer.parseInt(matcher.group(4),16);
+    weekday=Integer.parseInt(matcher.group(5),16);
+  }
+ else {
+    logger.debug("Plugwise protocol ClockGetResponseMessage error: {} does not match",payLoad);
+  }
+}

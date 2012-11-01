@@ -1,0 +1,13 @@
+{
+  List<String> ids=new ArrayList<String>();
+  for (  String anItem : bindingConfigs.keySet()) {
+    PlugwiseBindingConfig aConfig=(PlugwiseBindingConfig)bindingConfigs.get(anItem);
+    for (    Command aCommand : aConfig.keySet()) {
+      PlugwiseBindingConfigElement element=aConfig.get(aCommand);
+      if (element != null) {
+        ids.add(element.getId());
+      }
+    }
+  }
+  return ids;
+}

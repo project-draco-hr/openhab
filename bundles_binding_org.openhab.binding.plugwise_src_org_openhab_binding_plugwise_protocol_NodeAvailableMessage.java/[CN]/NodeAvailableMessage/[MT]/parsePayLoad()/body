@@ -1,0 +1,10 @@
+{
+  Pattern RESPONSE_PATTERN=Pattern.compile("(\\w{16})");
+  Matcher matcher=RESPONSE_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+  }
+ else {
+    logger.debug("Plugwise protocol NodeAvailableMessage error: {} does not match",payLoad);
+  }
+}
