@@ -1,4 +1,7 @@
 {
-  logger.debug("AutoUpdate for item {} canceled",itemName);
-  return false;
+  if (providesBindingFor(itemName)) {
+    logger.debug("AutoUpdate for item {} canceled",itemName);
+    return false;
+  }
+  return null;
 }
