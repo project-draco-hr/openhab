@@ -9,7 +9,10 @@
     try {
       Item item=getItem(itemName);
       if (label.contains("%d")) {
-        state=item.getStateAs(DecimalType.class);
+        state=item.getState();
+        if (!(state instanceof DecimalType)) {
+          state=item.getStateAs(DecimalType.class);
+        }
       }
  else {
         state=item.getState();
