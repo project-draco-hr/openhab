@@ -1,14 +1,15 @@
 {
-  String bindingConfig=StringUtils.substringBefore(bindingConfigs,",");
-  String bindingConfigTail=StringUtils.substringAfter(bindingConfigs,",");
   ProtocolBindingConfig newConfig=new ProtocolBindingConfig();
-  parseBindingConfig(newConfig,item,bindingConfig);
-  addBindingConfig(item,newConfig);
-  while (StringUtils.isNotBlank(bindingConfigTail)) {
-    bindingConfig=StringUtils.substringBefore(bindingConfigTail,",");
-    bindingConfig=StringUtils.strip(bindingConfig);
-    bindingConfigTail=StringUtils.substringAfter(bindingConfig,",");
-    parseBindingConfig(newConfig,item,bindingConfig);
-    addBindingConfig(item,newConfig);
+  Matcher matcher=BASE_CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid binding configuration");
+  }
+  matcher.reset();
+  while (matcher.find()) {
+    String bindingConfigPart=matcher.group(1);
+    if (StringUtils.isNotBlank(bindingConfigPart)) {
+      parseBindingConfig(newConfig,item,bindingConfigPart);
+      addBindingConfig(item,newConfig);
+    }
   }
 }
