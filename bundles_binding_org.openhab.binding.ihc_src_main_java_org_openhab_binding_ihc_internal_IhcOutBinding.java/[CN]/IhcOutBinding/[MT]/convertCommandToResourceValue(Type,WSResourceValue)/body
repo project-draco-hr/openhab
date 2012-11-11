@@ -4,7 +4,7 @@
       double newVal=((DecimalType)type).doubleValue();
       double max=((WSFloatingPointValue)value).getMaximumValue();
       double min=((WSFloatingPointValue)value).getMinimumValue();
-      if (newVal > min && newVal < max)       ((WSFloatingPointValue)value).setFloatingPointValue(newVal);
+      if (newVal >= min && newVal <= max)       ((WSFloatingPointValue)value).setFloatingPointValue(newVal);
  else       throw new NumberFormatException("Value is not between accetable limits (min=" + min + ", max="+ max+ ")");
     }
  else     if (value instanceof WSBooleanValue) {
@@ -14,7 +14,7 @@
       int newVal=((DecimalType)type).intValue();
       int max=((WSIntegerValue)value).getMaximumValue();
       int min=((WSIntegerValue)value).getMinimumValue();
-      if (newVal > min && newVal < max)       ((WSIntegerValue)value).setInteger(newVal);
+      if (newVal >= min && newVal <= max)       ((WSIntegerValue)value).setInteger(newVal);
  else       throw new NumberFormatException("Value is not between accetable limits (min=" + min + ", max="+ max+ ")");
     }
  else     if (value instanceof WSTimerValue) {
@@ -28,7 +28,19 @@
     }
   }
  else   if (type instanceof OnOffType) {
-    ((WSBooleanValue)value).setValue(type == OnOffType.ON ? true : false);
+    if (value instanceof WSBooleanValue) {
+      ((WSBooleanValue)value).setValue(type == OnOffType.ON ? true : false);
+    }
+ else     if (value instanceof WSIntegerValue) {
+      int newVal=type == OnOffType.ON ? 100 : 0;
+      int max=((WSIntegerValue)value).getMaximumValue();
+      int min=((WSIntegerValue)value).getMinimumValue();
+      if (newVal >= min && newVal <= max)       ((WSIntegerValue)value).setInteger(newVal);
+ else       throw new NumberFormatException("Value is not between accetable limits (min=" + min + ", max="+ max+ ")");
+    }
+ else {
+      throw new NumberFormatException("Can't convert OnOffType to " + value.getClass());
+    }
   }
  else   if (type instanceof OpenClosedType) {
     ((WSBooleanValue)value).setValue(type == OpenClosedType.OPEN ? true : false);
@@ -73,6 +85,33 @@
     }
  else {
       throw new NumberFormatException("Can't convert StringType to " + value.getClass());
+    }
+  }
+ else   if (type instanceof PercentType) {
+    if (value instanceof WSIntegerValue) {
+      int newVal=((DecimalType)type).intValue();
+      int max=((WSIntegerValue)value).getMaximumValue();
+      int min=((WSIntegerValue)value).getMinimumValue();
+      if (newVal >= min && newVal <= max)       ((WSIntegerValue)value).setInteger(newVal);
+ else       throw new NumberFormatException("Value is not between accetable limits (min=" + min + ", max="+ max+ ")");
+    }
+ else {
+      throw new NumberFormatException("Can't convert PercentType to " + value.getClass());
+    }
+  }
+ else   if (type instanceof UpDownType) {
+    if (value instanceof WSBooleanValue) {
+      ((WSBooleanValue)value).setValue(type == UpDownType.DOWN ? true : false);
+    }
+ else     if (value instanceof WSIntegerValue) {
+      int newVal=type == UpDownType.DOWN ? 100 : 0;
+      int max=((WSIntegerValue)value).getMaximumValue();
+      int min=((WSIntegerValue)value).getMinimumValue();
+      if (newVal >= min && newVal <= max)       ((WSIntegerValue)value).setInteger(newVal);
+ else       throw new NumberFormatException("Value is not between accetable limits (min=" + min + ", max="+ max+ ")");
+    }
+ else {
+      throw new NumberFormatException("Can't convert UpDownType to " + value.getClass());
     }
   }
  else {

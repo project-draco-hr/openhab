@@ -12,6 +12,10 @@
  else     if (value.getClass() == WSWeekdayValue.class)     state=new DecimalType(((WSWeekdayValue)value).getWeekdayNumber());
  else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
   }
+ else   if (item instanceof DimmerItem) {
+    if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
+ else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+  }
  else   if (item instanceof SwitchItem) {
     if (value.getClass() == WSBooleanValue.class) {
       if (((WSBooleanValue)value).isValue())       state=OnOffType.ON;
@@ -50,6 +54,10 @@
  else {
       throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to StringItem");
     }
+  }
+ else   if (item instanceof RollershutterItem) {
+    if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
+ else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
   }
   return state;
 }
