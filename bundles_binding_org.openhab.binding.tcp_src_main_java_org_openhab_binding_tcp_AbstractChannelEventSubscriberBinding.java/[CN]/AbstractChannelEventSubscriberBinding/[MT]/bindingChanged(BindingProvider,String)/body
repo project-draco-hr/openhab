@@ -20,7 +20,7 @@
     ListIterator<C> subIterator=socketChannels.listIterator();
     while (subIterator.hasNext()) {
       C networkChannel=subIterator.next();
-      if (channelTrackers.get(networkChannel).host.equals(inetSocketAddress.getHostName()) && channelTrackers.get(networkChannel).port == inetSocketAddress.getPort()) {
+      if (channelTrackers.get(networkChannel).host.equals(inetSocketAddress.getAddress().getHostAddress()) && channelTrackers.get(networkChannel).port == inetSocketAddress.getPort()) {
         channelExists=true;
         break;
       }
