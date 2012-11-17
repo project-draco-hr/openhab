@@ -1,14 +1,17 @@
 {
   if (stateMap != null && isConfigured()) {
     String currentURI=null;
+    SonosMetaData currentURIMetaData=null;
     SonosMetaData currentTrack=null;
     if (!isGroupCoordinator()) {
       currentURI=getCoordinator().getCurrentURI();
-      currentTrack=getCoordinator().getCurrentURIMetadata();
+      currentURIMetaData=getCoordinator().getCurrentURIMetadata();
+      currentTrack=getCoordinator().getTrackMetadata();
     }
  else {
       currentURI=getCurrentURI();
-      currentTrack=getCurrentURIMetadata();
+      currentURIMetaData=getCurrentURIMetadata();
+      currentTrack=getTrackMetadata();
     }
     if (currentURI != null) {
       String resultString=null;
