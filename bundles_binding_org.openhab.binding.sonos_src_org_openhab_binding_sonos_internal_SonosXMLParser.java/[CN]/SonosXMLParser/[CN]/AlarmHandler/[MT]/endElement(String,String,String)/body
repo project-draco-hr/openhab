@@ -23,7 +23,7 @@
       }
     }
  catch (    Exception e) {
-      e.printStackTrace();
+      logger.debug("Error parsing Integer");
     }
     try {
       DateTimeFormatter formatter=DateTimeFormat.forPattern("HH:mm:ss");
@@ -34,7 +34,7 @@
       finalDuration=pFormatter.parsePeriod(duration);
     }
  catch (    Exception e) {
-      e.printStackTrace();
+      logger.error("Error parsing DateTime");
     }
     alarms.add(new SonosAlarm(finalID,finalStartTime,finalDuration,recurrence,finalEnabled,roomUUID,programURI,programMetaData,playMode,finalVolume,finalIncludeLinkedZones));
   }
