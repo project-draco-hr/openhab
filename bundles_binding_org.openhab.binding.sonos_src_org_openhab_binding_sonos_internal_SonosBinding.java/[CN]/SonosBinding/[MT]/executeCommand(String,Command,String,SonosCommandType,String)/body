@@ -68,21 +68,23 @@ return;
 }
 }
 if (result) {
-State newState=createStateFromString(sonosCommandType,commandAsString);
-Item theItem=null;
+Type newState=null;
 try {
-theItem=itemRegistry.getItem(itemName);
+newState=createStateForType(sonosCommandType,commandAsString);
 }
- catch (ItemNotFoundException e) {
-e.printStackTrace();
+ catch (BindingConfigParseException e) {
+logger.error("Error parsing a value {} to a state variable of type {}",commandAsString,sonosCommandType.getTypeClass().toString());
 }
-if (theItem.getAcceptedDataTypes().contains(newState.getClass())) {
+if (newState != null) {
 if (newState.equals((State)command) || newState instanceof StringType || newState instanceof DecimalType) {
-eventPublisher.postUpdate(itemName,newState);
-}
+eventPublisher.postUpdate(itemName,(State)newState);
 }
  else {
 eventPublisher.postUpdate(itemName,(State)command);
+}
+}
+ else {
+throw new IllegalClassException("Cannot process update for the command of type " + sonosCommandType.toString());
 }
 }
 }

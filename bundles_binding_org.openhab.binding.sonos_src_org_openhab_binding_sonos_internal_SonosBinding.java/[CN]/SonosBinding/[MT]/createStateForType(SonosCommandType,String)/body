@@ -1,0 +1,22 @@
+{
+  if (ctype != null && value != null) {
+    Class<? extends Type> typeClass=ctype.getTypeClass();
+    List<Class<? extends State>> stateTypeList=new ArrayList<Class<? extends State>>();
+    stateTypeList.add((Class<? extends State>)typeClass);
+    String finalValue=value;
+    if (typeClass.equals(OnOffType.class)) {
+      finalValue=StringUtils.upperCase(value);
+      if (finalValue.equals("TRUE")) {
+        finalValue="ON";
+      }
+ else       if (finalValue.equals("FALSE")) {
+        finalValue="OFF";
+      }
+    }
+    State state=TypeParser.parseState(stateTypeList,finalValue);
+    return state;
+  }
+ else {
+    return null;
+  }
+}

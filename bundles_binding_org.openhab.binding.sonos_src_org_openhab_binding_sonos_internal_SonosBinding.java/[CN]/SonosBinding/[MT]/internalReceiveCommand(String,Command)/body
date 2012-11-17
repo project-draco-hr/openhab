@@ -1,14 +1,7 @@
 {
   SonosBindingProvider provider=findFirstMatchingBindingProvider(itemName);
   String commandAsString=command.toString();
-  Item theItem=null;
-  try {
-    theItem=itemRegistry.getItem(itemName);
-  }
- catch (  ItemNotFoundException e1) {
-    e1.printStackTrace();
-  }
-  if (command != null && theItem != null) {
+  if (command != null) {
     List<Command> commands=new ArrayList<Command>();
     if (command instanceof StringType || command instanceof DecimalType) {
       commands=provider.getVariableCommands(itemName);
@@ -18,11 +11,10 @@
     }
     for (    Command someCommand : commands) {
       String sonosID=provider.getSonosID(itemName,someCommand);
-      String sonosCommand=provider.getSonosCommand(itemName,someCommand);
       Direction direction=provider.getDirection(itemName,someCommand);
-      if (sonosID != null && sonosCommand != null && direction != null) {
-        SonosCommandType sonosCommandType=SonosCommandType.getCommandType(sonosCommand,direction);
-        if (sonosCommandType != null && theItem.getAcceptedCommandTypes().contains(sonosCommandType.getTypeClass())) {
+      SonosCommandType sonosCommandType=provider.getSonosCommandType(itemName,someCommand,direction);
+      if (sonosID != null && direction != null) {
+        if (sonosCommandType != null) {
           if (direction.equals(Direction.OUT) | direction.equals(Direction.BIDIRECTIONAL)) {
             executeCommand(itemName,someCommand,sonosID,sonosCommandType,commandAsString);
           }

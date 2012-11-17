@@ -32,21 +32,33 @@
  else       if (direction.equals("*")) {
         directionType=Direction.BIDIRECTIONAL;
       }
-      SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,sonosCommand);
-      Command command=null;
-      if (commandAsString == null) {
-        if (item instanceof NumberItem || item instanceof StringItem) {
-          command=createCommandFromString(item,Integer.toString(counter));
-          counter++;
-          config.put(command,newElement);
+      SonosCommandType type=SonosCommandType.getCommandType(sonosCommand,directionType);
+      if (SonosCommandType.validateBinding(type,item)) {
+        SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,type);
+        Command command=null;
+        if (commandAsString == null) {
+          if (item instanceof NumberItem || item instanceof StringItem) {
+            command=createCommandFromString(item,Integer.toString(counter));
+            counter++;
+            config.put(command,newElement);
+          }
+ else {
+            logger.warn("Only NumberItem or StringItem can have undefined command types");
+          }
         }
  else {
-          logger.warn("Only NumberItem or StringItem can have undefined command types");
+          command=createCommandFromString(item,commandAsString);
+          config.put(command,newElement);
         }
       }
  else {
-        command=createCommandFromString(item,commandAsString);
-        config.put(command,newElement);
+        String validItemType=SonosCommandType.getValidItemTypes(sonosCommand);
+        if (StringUtils.isEmpty(validItemType)) {
+          throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
+        }
+ else {
+          throw new BindingConfigParseException("'" + bindingConfig + "' is not bound to a valid item type. Valid item type(s): "+ validItemType);
+        }
       }
     }
   }

@@ -2,7 +2,10 @@
   List<Command> commands=new ArrayList<Command>();
   SonosBindingConfig aConfig=(SonosBindingConfig)bindingConfigs.get(anItem);
   for (  Command aCommand : aConfig.keySet()) {
-    commands.add(aCommand);
+    SonosBindingConfigElement anElement=aConfig.get(aCommand);
+    if (anElement.getCommandType().equals(sonosCommandType)) {
+      commands.add(aCommand);
+    }
   }
   return commands;
 }
