@@ -1,0 +1,14 @@
+{
+  if (device != null && isConfigured()) {
+    List<SonosCommandType> subscriptionCommands=SonosCommandType.getSubscriptions();
+    List<String> addedSubscriptions=new ArrayList<String>();
+    for (    SonosCommandType c : subscriptionCommands) {
+      Service service=device.findService(new UDAServiceId(c.getService()));
+      if (service != null && !addedSubscriptions.contains(c.getService())) {
+        SonosPlayerSubscriptionCallback callback=new SonosPlayerSubscriptionCallback(service,interval);
+        addedSubscriptions.add(c.getService());
+        upnpService.getControlPoint().execute(callback);
+      }
+    }
+  }
+}

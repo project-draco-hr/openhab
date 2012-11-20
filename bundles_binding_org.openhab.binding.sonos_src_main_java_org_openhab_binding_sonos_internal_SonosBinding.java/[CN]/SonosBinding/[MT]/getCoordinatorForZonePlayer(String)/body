@@ -1,0 +1,17 @@
+{
+  SonosZonePlayer zonePlayer=sonosZonePlayerCache.get(playerName);
+  if (zonePlayer == null || getSonosZoneGroups() == null) {
+    return playerName;
+  }
+  for (  SonosZoneGroup zg : getSonosZoneGroups()) {
+    if (zg.getMembers().contains(zonePlayer.getUdn().getIdentifierString())) {
+      String coordinator=zg.getCoordinator();
+      for (      String player : sonosZonePlayerCache.keySet()) {
+        if (sonosZonePlayerCache.get(player).getUdn().getIdentifierString().equals(coordinator)) {
+          return player;
+        }
+      }
+    }
+  }
+  return playerName;
+}

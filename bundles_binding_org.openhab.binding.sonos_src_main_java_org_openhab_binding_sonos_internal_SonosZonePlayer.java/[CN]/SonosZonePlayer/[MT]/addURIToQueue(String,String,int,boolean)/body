@@ -1,0 +1,23 @@
+{
+  if (isConfigured() && URI != null && meta != null) {
+    Service service=device.findService(new UDAServiceId("AVTransport"));
+    Action action=service.getAction("AddURIToQueue");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      invocation.setInput("InstanceID","0");
+      invocation.setInput("EnqueuedURI",URI);
+      invocation.setInput("EnqueuedURIMetaData",meta);
+      invocation.setInput("DesiredFirstTrackNumberEnqueued",new UnsignedIntegerFourBytes(desiredFirstTrack));
+      invocation.setInput("EnqueueAsNext",enqueueAsNext);
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+  return false;
+}

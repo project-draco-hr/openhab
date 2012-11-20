@@ -1,0 +1,37 @@
+{
+  if (qName.equals("container") || qName.equals("item")) {
+    id=attributes.getValue("id");
+    parentId=attributes.getValue("parentID");
+  }
+ else   if (qName.equals("res")) {
+    element=Element.RES;
+  }
+ else   if (qName.equals("dc:title")) {
+    element=Element.TITLE;
+  }
+ else   if (qName.equals("upnp:class")) {
+    element=Element.CLASS;
+  }
+ else   if (qName.equals("dc:creator")) {
+    element=Element.CREATOR;
+  }
+ else   if (qName.equals("upnp:album")) {
+    element=Element.ALBUM;
+  }
+ else   if (qName.equals("upnp:albumArtURI")) {
+    element=Element.ALBUM_ART_URI;
+  }
+ else   if (qName.equals("upnp:originalTrackNumber")) {
+    element=Element.TRACK_NUMBER;
+  }
+ else {
+    if (ignore == null) {
+      ignore=new ArrayList<String>();
+      ignore.add("DIDL-Lite");
+    }
+    if (!ignore.contains(localName)) {
+      logger.warn("Did not recognise element named {}",localName);
+    }
+    element=null;
+  }
+}

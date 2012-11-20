@@ -1,0 +1,12 @@
+{
+  if (isConfigured()) {
+    updateLed();
+    if (stateMap != null) {
+      StateVariableValue variable=stateMap.get("CurrentLEDState");
+      if (variable != null) {
+        return variable.getValue().equals("On") ? true : false;
+      }
+    }
+  }
+  return false;
+}

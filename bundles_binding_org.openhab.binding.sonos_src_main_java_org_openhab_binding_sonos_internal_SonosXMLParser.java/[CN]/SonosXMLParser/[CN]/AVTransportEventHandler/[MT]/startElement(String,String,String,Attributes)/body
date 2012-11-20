@@ -1,0 +1,12 @@
+{
+  try {
+    if (atts.getValue("val") != null) {
+      StateVariable stateVariable=new StateVariable(localName,new StateVariableTypeDetails(new StringDatatype()));
+      StateVariableValue stateVariableValue=new StateVariableValue(stateVariable,atts.getValue("val"));
+      changes.put(localName,stateVariableValue);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    logger.info("{} is not defined in EventType. ",localName);
+  }
+}

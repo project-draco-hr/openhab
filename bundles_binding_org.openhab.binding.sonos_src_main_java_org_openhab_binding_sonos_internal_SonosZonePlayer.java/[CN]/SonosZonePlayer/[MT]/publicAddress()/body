@@ -1,0 +1,28 @@
+{
+  if (isLineInConnected() && isConfigured()) {
+    becomeStandAlonePlayer();
+    List<SonosZoneGroup> currentSonosZoneGroups=new ArrayList<SonosZoneGroup>(sonosBinding.getSonosZoneGroups().size());
+    for (    SonosZoneGroup grp : sonosBinding.getSonosZoneGroups()) {
+      currentSonosZoneGroups.add((SonosZoneGroup)grp.clone());
+    }
+    for (    SonosZoneGroup group : currentSonosZoneGroups) {
+      for (      String player : group.getMembers()) {
+        SonosZonePlayer somePlayer=sonosBinding.getPlayerForID(player);
+        if (somePlayer != this) {
+          somePlayer.becomeStandAlonePlayer();
+          somePlayer.stop();
+          addMember(somePlayer);
+        }
+      }
+    }
+    SonosZonePlayer coordinator=getCoordinator();
+    SonosEntry entry=new SonosEntry("","","","","","","","x-rincon-stream:" + udn.getIdentifierString());
+    coordinator.setCurrentURI(entry);
+    coordinator.play();
+    return true;
+  }
+ else {
+    logger.warn("Line-in of {} is not connected",this);
+    return false;
+  }
+}

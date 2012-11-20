@@ -1,0 +1,34 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_SONOS_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given sonos-config-key '" + key + "' does not follow the expected pattern '<sonosId>.<udn>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String sonosID=matcher.group(1);
+      SonosZonePlayer sonosConfig=sonosZonePlayerCache.get(sonosID);
+      if (sonosConfig == null) {
+        sonosConfig=new SonosZonePlayer(self);
+        sonosZonePlayerCache.put(sonosID,sonosConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("udn".equals(configKey)) {
+        sonosConfig.setUdn(new UDN(value));
+        logger.debug("Querying network for UPNP with UDN {}",sonosConfig.getUdn());
+        upnpService.getControlPoint().search(new UDNHeader(sonosConfig.getUdn()));
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  if (string != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("RenderingControl"));
+    Action action=service.getAction("SetMute");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      invocation.setInput("Channel","Master");
+      if (string.equals("ON") || string.equals("OPEN") || string.equals("UP")) {
+        invocation.setInput("DesiredMute","On");
+      }
+ else       if (string.equals("OFF") || string.equals("CLOSED") || string.equals("DOWN")) {
+        invocation.setInput("DesiredMute","Off");
+      }
+ else {
+        return false;
+      }
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

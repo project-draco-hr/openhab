@@ -1,0 +1,40 @@
+{
+  Map<String,StateVariableValue> values=sub.getCurrentValues();
+  Map<String,StateVariableValue> mapToProcess=new HashMap<String,StateVariableValue>();
+  Map<String,StateVariableValue> parsedValues=null;
+  for (  String stateVariable : values.keySet()) {
+    if (stateVariable.equals("LastChange") && service.getServiceType().getType().equals("AVTransport")) {
+      try {
+        parsedValues=SonosXMLParser.getAVTransportFromXML(values.get(stateVariable).toString());
+        for (        String someValue : parsedValues.keySet()) {
+          if (isUpdatedValue(someValue,parsedValues.get(someValue))) {
+            mapToProcess.put(someValue,parsedValues.get(someValue));
+          }
+        }
+      }
+ catch (      SAXException e) {
+        logger.error("Could not parse AVTransport from String {}",values.get(stateVariable).toString());
+      }
+    }
+ else     if (stateVariable.equals("LastChange") && service.getServiceType().getType().equals("RenderingControl")) {
+      try {
+        parsedValues=SonosXMLParser.getRenderingControlFromXML(values.get(stateVariable).toString());
+        for (        String someValue : parsedValues.keySet()) {
+          if (isUpdatedValue(someValue,parsedValues.get(someValue))) {
+            mapToProcess.put(someValue,parsedValues.get(someValue));
+          }
+        }
+      }
+ catch (      SAXException e) {
+        logger.error("Could not parse RenderingControl from String {}",values.get(stateVariable).toString());
+      }
+    }
+ else     if (isUpdatedValue(stateVariable,values.get(stateVariable))) {
+      mapToProcess.put(stateVariable,values.get(stateVariable));
+    }
+  }
+  if (isConfigured) {
+    stateMap.putAll(mapToProcess);
+    sonosBinding.processVariableMap(device,mapToProcess);
+  }
+}

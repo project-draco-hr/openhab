@@ -1,0 +1,38 @@
+{
+  if (device != null && values != null) {
+    String sonosID=getSonosIDforDevice(device);
+    for (    String stateVariable : values.keySet()) {
+      List<SonosCommandType> supportedCommands=SonosCommandType.getCommandByVariable(stateVariable);
+      StateVariableValue status=values.get(stateVariable);
+      for (      SonosCommandType sonosCommandType : supportedCommands) {
+        Type newState=null;
+        try {
+          newState=createStateForType(sonosCommandType,status.getValue().toString());
+        }
+ catch (        BindingConfigParseException e) {
+          logger.error("Error parsing a value {} to a state variable of type {}",status.toString(),sonosCommandType.getTypeClass().toString());
+        }
+        for (        SonosBindingProvider provider : providers) {
+          List<String> qualifiedItems=provider.getItemNames(sonosID,sonosCommandType);
+          for (          String anItem : qualifiedItems) {
+            List<Command> commands=provider.getCommands(anItem,sonosCommandType);
+            for (            Command aCommand : commands) {
+              Direction theDirection=provider.getDirection(anItem,aCommand);
+              Direction otherDirection=sonosCommandType.getDirection();
+              if ((theDirection == Direction.IN || theDirection == Direction.BIDIRECTIONAL) && (otherDirection != Direction.OUT)) {
+                if (newState != null) {
+                  if (newState.equals((State)aCommand) || newState instanceof StringType || newState instanceof DecimalType) {
+                    eventPublisher.postUpdate(anItem,(State)newState);
+                  }
+                }
+ else {
+                  throw new IllegalClassException("Cannot process update for the command of type " + sonosCommandType.toString());
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

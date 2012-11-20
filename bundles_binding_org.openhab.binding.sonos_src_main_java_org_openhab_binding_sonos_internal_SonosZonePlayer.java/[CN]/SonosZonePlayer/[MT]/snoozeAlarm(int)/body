@@ -1,0 +1,24 @@
+{
+  if (isAlarmRunning() && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AVTransport"));
+    Action action=service.getAction("SnoozeAlarm");
+    ActionInvocation invocation=new ActionInvocation(action);
+    Period snoozePeriod=Period.minutes(minutes);
+    PeriodFormatter pFormatter=new PeriodFormatterBuilder().printZeroAlways().appendHours().appendSeparator(":").appendMinutes().appendSeparator(":").appendSeconds().toFormatter();
+    try {
+      invocation.setInput("Duration",pFormatter.print(snoozePeriod));
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    logger.warn("There is no alarm running on {} ",this);
+    return false;
+  }
+}

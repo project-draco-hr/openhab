@@ -1,0 +1,23 @@
+{
+  if (invocation != null) {
+    new ActionCallback.Default(invocation,upnpService.getControlPoint()).run();
+    ActionException anException=invocation.getFailure();
+    if (anException != null && anException.getMessage() != null) {
+      logger.warn(anException.getMessage());
+    }
+    Map<String,ActionArgumentValue> result=invocation.getOutputMap();
+    Map<String,StateVariableValue> mapToProcess=new HashMap<String,StateVariableValue>();
+    if (result != null) {
+      for (      String variable : result.keySet()) {
+        ActionArgumentValue newArgument=result.get(variable);
+        StateVariable newVariable=new StateVariable(variable,new StateVariableTypeDetails(newArgument.getDatatype()));
+        StateVariableValue newValue=new StateVariableValue(newVariable,newArgument.getValue());
+        if (isUpdatedValue(variable,newValue)) {
+          mapToProcess.put(variable,newValue);
+        }
+      }
+      stateMap.putAll(mapToProcess);
+      sonosBinding.processVariableMap(device,mapToProcess);
+    }
+  }
+}

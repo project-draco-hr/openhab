@@ -1,0 +1,29 @@
+{
+  if (string != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("DeviceProperties"));
+    Action action=service.getAction("SetLEDState");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      if (string.equals("ON") || string.equals("OPEN") || string.equals("UP")) {
+        invocation.setInput("DesiredLEDState","On");
+      }
+ else       if (string.equals("OFF") || string.equals("CLOSED") || string.equals("DOWN")) {
+        invocation.setInput("DesiredLEDState","Off");
+      }
+ else {
+        return false;
+      }
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

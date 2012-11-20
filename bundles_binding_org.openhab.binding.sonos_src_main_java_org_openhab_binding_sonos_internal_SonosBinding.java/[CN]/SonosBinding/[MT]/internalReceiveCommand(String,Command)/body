@@ -1,0 +1,34 @@
+{
+  SonosBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  String commandAsString=command.toString();
+  if (command != null) {
+    List<Command> commands=new ArrayList<Command>();
+    if (command instanceof StringType || command instanceof DecimalType) {
+      commands=provider.getVariableCommands(itemName);
+    }
+ else {
+      commands.add(command);
+    }
+    for (    Command someCommand : commands) {
+      String sonosID=provider.getSonosID(itemName,someCommand);
+      Direction direction=provider.getDirection(itemName,someCommand);
+      SonosCommandType sonosCommandType=provider.getSonosCommandType(itemName,someCommand,direction);
+      if (sonosID != null && direction != null) {
+        if (sonosCommandType != null) {
+          if (direction.equals(Direction.OUT) | direction.equals(Direction.BIDIRECTIONAL)) {
+            executeCommand(itemName,someCommand,sonosID,sonosCommandType,commandAsString);
+          }
+ else {
+            logger.error("wrong command direction for binding [Item={}, command={}]",itemName,commandAsString);
+          }
+        }
+ else {
+          logger.error("wrong command type for binding [Item={}, command={}]",itemName,commandAsString);
+        }
+      }
+ else {
+        logger.error("{} is an unrecognised command for Item {}",commandAsString,itemName);
+      }
+    }
+  }
+}

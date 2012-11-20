@@ -1,0 +1,12 @@
+{
+  if (stateMap != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("DeviceProperties"));
+    Action action=service.getAction("GetZoneInfo");
+    ActionInvocation invocation=new ActionInvocation(action);
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

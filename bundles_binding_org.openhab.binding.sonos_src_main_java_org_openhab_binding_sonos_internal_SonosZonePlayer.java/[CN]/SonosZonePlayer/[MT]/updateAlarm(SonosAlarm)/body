@@ -1,0 +1,43 @@
+{
+  if (alarm != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AlarmClock"));
+    Action action=service.getAction("ListAlarms");
+    ActionInvocation invocation=new ActionInvocation(action);
+    DateTimeFormatter formatter=DateTimeFormat.forPattern("HH:mm:ss");
+    PeriodFormatter pFormatter=new PeriodFormatterBuilder().printZeroAlways().appendHours().appendSeparator(":").appendMinutes().appendSeparator(":").appendSeconds().toFormatter();
+    try {
+      invocation.setInput("ID",Integer.toString(alarm.getID()));
+      invocation.setInput("StartLocalTime",formatter.print(alarm.getStartTime()));
+      invocation.setInput("Duration",pFormatter.print(alarm.getDuration()));
+      invocation.setInput("Recurrence",alarm.getRecurrence());
+      invocation.setInput("RoomUUID",alarm.getRoomUUID());
+      invocation.setInput("ProgramURI",alarm.getProgramURI());
+      invocation.setInput("ProgramMetaData",alarm.getProgramMetaData());
+      invocation.setInput("PlayMode",alarm.getPlayMode());
+      invocation.setInput("Volume",Integer.toString(alarm.getVolume()));
+      if (alarm.getIncludeLinkedZones()) {
+        invocation.setInput("IncludeLinkedZones","1");
+      }
+ else {
+        invocation.setInput("IncludeLinkedZones","0");
+      }
+      if (alarm.getEnabled()) {
+        invocation.setInput("Enabled","1");
+      }
+ else {
+        invocation.setInput("Enabled","0");
+      }
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}

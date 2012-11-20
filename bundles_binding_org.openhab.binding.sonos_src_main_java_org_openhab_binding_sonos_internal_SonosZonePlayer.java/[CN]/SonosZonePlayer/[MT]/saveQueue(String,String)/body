@@ -1,0 +1,22 @@
+{
+  if (name != null && queueID != null && isConfigured()) {
+    Service service=device.findService(new UDAServiceId("AVTransport"));
+    Action action=service.getAction("SaveQueue");
+    ActionInvocation invocation=new ActionInvocation(action);
+    try {
+      invocation.setInput("Title",name);
+      invocation.setInput("ObjectID",queueID);
+    }
+ catch (    InvalidValueException ex) {
+      logger.error("Action Invalid Value Exception {}",ex.getMessage());
+    }
+catch (    NumberFormatException ex) {
+      logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+    }
+    executeActionInvocation(invocation);
+    return true;
+  }
+ else {
+    return false;
+  }
+}
