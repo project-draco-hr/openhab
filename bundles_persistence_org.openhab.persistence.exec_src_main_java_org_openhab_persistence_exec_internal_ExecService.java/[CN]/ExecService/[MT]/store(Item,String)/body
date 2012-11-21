@@ -1,0 +1,42 @@
+{
+  ExecStatementBuilder esb=new ExecStatementBuilder();
+  String execCmd=null;
+  BufferedReader reader=null;
+  try {
+    execCmd=esb.getStatement(item.getState().toString(),alias,Calendar.getInstance().getTime());
+    logger.debug("Executing command [" + execCmd + "]");
+    Process process=Runtime.getRuntime().exec(execCmd);
+    String line=null;
+    String output="";
+    logger.debug("Stored item '{}' as '{}' using Exec at {}.",new String[]{item.getName(),item.getState().toString(),(new java.util.Date()).toString()});
+    reader=new BufferedReader(new InputStreamReader(process.getInputStream()));
+    while ((line=reader.readLine()) != null) {
+      output=output + line;
+    }
+    reader.close();
+    if (output.length() > 0) {
+      logger.debug("Output from exec command is: " + output);
+    }
+    output="";
+    reader=new BufferedReader(new InputStreamReader(process.getErrorStream()));
+    while ((line=reader.readLine()) != null) {
+      output=output + line;
+    }
+    reader.close();
+    if (output.length() > 0) {
+      logger.debug("Error from exec command is: " + output);
+    }
+    process.waitFor();
+  }
+ catch (  Exception e) {
+    logger.error("Could not execute command [" + execCmd + "]",e);
+  }
+ finally {
+    try {
+      reader.close();
+      reader=null;
+    }
+ catch (    Exception hidden) {
+    }
+  }
+}
