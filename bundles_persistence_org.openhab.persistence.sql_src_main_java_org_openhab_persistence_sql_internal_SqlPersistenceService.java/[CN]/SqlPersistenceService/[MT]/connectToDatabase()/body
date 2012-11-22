@@ -1,0 +1,11 @@
+{
+  try {
+    logger.debug("Attempting to connect to database " + url);
+    Class.forName(driverClass).newInstance();
+    connection=DriverManager.getConnection(url,user,password);
+    logger.debug("Connected to database " + url);
+  }
+ catch (  Exception e) {
+    logger.error("Failed connecting to the SQL database using: driverClass=" + driverClass + ", url="+ url+ ", user="+ user+ ", password="+ password,e);
+  }
+}
