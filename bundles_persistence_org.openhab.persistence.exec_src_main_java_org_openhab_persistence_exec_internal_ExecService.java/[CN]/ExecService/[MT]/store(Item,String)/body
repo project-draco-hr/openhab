@@ -1,9 +1,8 @@
 {
-  ExecStatementBuilder esb=new ExecStatementBuilder();
   String execCmd=null;
   BufferedReader reader=null;
   try {
-    execCmd=esb.getStatement(item.getState().toString(),alias,Calendar.getInstance().getTime());
+    execCmd=formatAlias(alias,item.getState().toString(),Calendar.getInstance().getTime());
     logger.debug("Executing command [" + execCmd + "]");
     Process process=Runtime.getRuntime().exec(execCmd);
     String line=null;

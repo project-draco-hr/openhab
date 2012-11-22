@@ -1,0 +1,11 @@
+{
+  Date date=Calendar.getInstance().getTime();
+  String dateFormatString="%2$tY-%2$tm-%2$td %2$tT %2$ts : %1$s";
+  String value="testValue";
+  String formattedDate=String.format(dateFormatString,value,date);
+  String alias="/Users/me/writeToFile.sh /Users/me/TempOut.txt " + dateFormatString;
+  String expected="/Users/me/writeToFile.sh /Users/me/TempOut.txt " + formattedDate;
+  System.out.println("expected String: " + expected);
+  String result=service.formatAlias(alias,value,date);
+  Assert.assertEquals(expected,result);
+}
