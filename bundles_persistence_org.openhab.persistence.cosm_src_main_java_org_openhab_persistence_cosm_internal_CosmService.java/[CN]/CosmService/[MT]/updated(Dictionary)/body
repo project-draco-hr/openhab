@@ -1,0 +1,13 @@
+{
+  if (config != null) {
+    url=(String)config.get("url");
+    if (StringUtils.isBlank(url)) {
+      url=DEFAULT_EVENT_URL;
+    }
+    apiKey=(String)config.get("apikey");
+    if (StringUtils.isBlank(apiKey)) {
+      throw new ConfigurationException("cosm:apikey","The Cosm API-Key is missing - please configure it in openhab.cfg");
+    }
+    initialized=true;
+  }
+}

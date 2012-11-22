@@ -1,0 +1,23 @@
+{
+  if (obj instanceof CosmEventBean) {
+    CosmEventBean pachubeEventBean=(CosmEventBean)obj;
+    JSONContext context=getContext();
+    context.writeOpenObject();
+    context.writeName("id");
+    context.write("\"" + pachubeEventBean.getId() + "\"");
+    context.writeComma();
+    context.writeName("current_value");
+    context.write("\"" + pachubeEventBean.getValue() + "\"");
+    if (null != pachubeEventBean.getMaxValue() && !pachubeEventBean.getMaxValue().isEmpty()) {
+      context.writeComma();
+      context.writeName("max_value");
+      context.write("\"" + pachubeEventBean.getMaxValue() + "\"");
+    }
+    if (null != pachubeEventBean.getMinValue() && !pachubeEventBean.getMinValue().isEmpty()) {
+      context.writeComma();
+      context.writeName("min_value");
+      context.write("\"" + pachubeEventBean.getMinValue() + "\"");
+    }
+    context.writeCloseObject();
+  }
+}

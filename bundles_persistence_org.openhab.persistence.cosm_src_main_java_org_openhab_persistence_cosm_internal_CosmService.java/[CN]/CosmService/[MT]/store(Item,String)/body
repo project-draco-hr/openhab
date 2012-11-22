@@ -1,0 +1,23 @@
+{
+  if (initialized) {
+    try {
+      String serviceUrl=url + alias;
+      URL url=new URL(serviceUrl);
+      HttpURLConnection httpCon=(HttpURLConnection)url.openConnection();
+      httpCon.setDoOutput(true);
+      httpCon.setRequestMethod("PUT");
+      httpCon.setRequestProperty("Content-type","application/json");
+      httpCon.setRequestProperty("X-ApiKey",apiKey);
+      OutputStreamWriter out=new OutputStreamWriter(httpCon.getOutputStream());
+      JSONSerializer serializer=new JSONSerializer().transform(new CosmEventTransformer(),CosmEventBean.class);
+      String serializedBean=serializer.serialize(new CosmEventBean(alias,item.getState().toString()));
+      out.write(serializedBean);
+      out.flush();
+      logger.debug("Stored item '{}' as '{}' in Cosm and received response: {} ",new String[]{item.getName(),alias,httpCon.getResponseMessage()});
+      out.close();
+    }
+ catch (    Exception e) {
+      logger.warn("Connection error");
+    }
+  }
+}
