@@ -1,16 +1,19 @@
 {
   Matcher matcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
   if (!matcher.matches()) {
-    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid out-binding-configuration. A valid configuration is matched by the RegExp '(.*?):([A-Z]*):(.*)'");
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't contain a valid out-binding-configuration. A valid configuration is matched by the RegExp '(.*?):?([A-Z]*):(.*)'");
   }
   matcher.reset();
   HttpBindingConfigElement configElement;
   while (matcher.find()) {
     configElement=new HttpBindingConfigElement();
-    String commandAsString=matcher.group(1);
-    Command command=createCommandFromString(item,commandAsString);
-    configElement.httpMethod=matcher.group(2);
-    configElement.url=matcher.group(3).replaceAll("\\\\\"","");
+    Command command=UPDATE_COMMAND_KEY;
+    String commandString=matcher.group(2);
+    if (StringUtils.isNotBlank(commandString)) {
+      command=createCommandFromString(item,commandString);
+    }
+    configElement.httpMethod=matcher.group(3);
+    configElement.url=matcher.group(4).replaceAll("\\\\\"","");
     config.put(command,configElement);
   }
   return config;
