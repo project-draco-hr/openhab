@@ -7,13 +7,9 @@
   HttpBindingConfigElement configElement;
   while (matcher.find()) {
     configElement=new HttpBindingConfigElement();
-    Command command=UPDATE_COMMAND_KEY;
-    String commandString=matcher.group(2);
-    if (StringUtils.isNotBlank(commandString)) {
-      command=createCommandFromString(item,commandString);
-    }
-    configElement.httpMethod=matcher.group(3);
-    configElement.url=matcher.group(4).replaceAll("\\\\\"","");
+    Command command=createCommandFromString(item,matcher.group(1));
+    configElement.httpMethod=matcher.group(2);
+    configElement.url=matcher.group(3).replaceAll("\\\\\"","");
     config.put(command,configElement);
   }
   return config;
