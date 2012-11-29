@@ -36,8 +36,9 @@
       try {
         type=SonosCommandType.getCommandType(sonosCommand,directionType);
       }
- catch (      BindingConfigParseException e) {
+ catch (      SonosIllegalCommandTypeException e) {
         logger.error("Error parsing binding configuration : {}",e.getMessage());
+        throw new BindingConfigParseException("Sonos binding configuration error : " + sonosCommand.toString() + " does not match the direction of type "+ directionType.toString()+ "]");
       }
       if (SonosCommandType.validateBinding(type,item)) {
         SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,type);
