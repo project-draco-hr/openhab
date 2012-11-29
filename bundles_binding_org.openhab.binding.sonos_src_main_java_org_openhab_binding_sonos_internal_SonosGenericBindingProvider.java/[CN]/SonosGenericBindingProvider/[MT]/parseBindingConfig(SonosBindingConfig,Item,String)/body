@@ -32,7 +32,13 @@
  else       if (direction.equals("*")) {
         directionType=Direction.BIDIRECTIONAL;
       }
-      SonosCommandType type=SonosCommandType.getCommandType(sonosCommand,directionType);
+      SonosCommandType type=null;
+      try {
+        type=SonosCommandType.getCommandType(sonosCommand,directionType);
+      }
+ catch (      BindingConfigParseException e) {
+        logger.error("Error parsing binding configuration : {}",e.getMessage());
+      }
       if (SonosCommandType.validateBinding(type,item)) {
         SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,type);
         Command command=null;
