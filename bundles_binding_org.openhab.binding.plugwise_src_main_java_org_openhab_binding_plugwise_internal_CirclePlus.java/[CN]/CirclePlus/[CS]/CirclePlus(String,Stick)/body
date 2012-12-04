@@ -1,0 +1,21 @@
+{
+  super(mac,stick,"circleplus");
+  type=DeviceType.CirclePlus;
+  Scheduler sched=null;
+  try {
+    sched=StdSchedulerFactory.getDefaultScheduler();
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error getting a reference to the Quarz Scheduler");
+  }
+  JobDataMap map=new JobDataMap();
+  map.put("CirclePlus",this);
+  JobDetail job=newJob(SetClockJob.class).withIdentity(MAC + "-SetCirclePlusClock","Plugwise").usingJobData(map).build();
+  CronTrigger trigger=newTrigger().withIdentity(MAC + "-SetCirclePlusClock","Plugwise").startNow().withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
+  try {
+    sched.scheduleJob(job,trigger);
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error scheduling a Quartz Job");
+  }
+}

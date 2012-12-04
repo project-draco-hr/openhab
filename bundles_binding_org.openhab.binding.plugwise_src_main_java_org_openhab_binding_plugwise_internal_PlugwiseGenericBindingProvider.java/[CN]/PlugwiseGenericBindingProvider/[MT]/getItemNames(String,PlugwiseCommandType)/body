@@ -1,0 +1,18 @@
+{
+  Set<String> result=new HashSet<String>();
+  Collection<String> items=getItemNames();
+  Iterator<String> itemIterator=items.iterator();
+  while (itemIterator.hasNext()) {
+    String anItem=itemIterator.next();
+    PlugwiseBindingConfig pbConfig=(PlugwiseBindingConfig)bindingConfigs.get(anItem);
+    for (    Command command : pbConfig.keySet()) {
+      PlugwiseBindingConfigElement element=pbConfig.get(command);
+      if (element.getCommandType() == type && element.getId().equals(PlugwiseID)) {
+        if (!result.contains(anItem)) {
+          result.add(anItem);
+        }
+      }
+    }
+  }
+  return result;
+}

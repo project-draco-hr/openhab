@@ -1,0 +1,13 @@
+{
+  if (!completeHistory) {
+    previousLogAddress=recentLogAddress - 1;
+  }
+ else {
+    previousLogAddress=0;
+  }
+  while (previousLogAddress < recentLogAddress) {
+    PowerBufferRequestMessage message=new PowerBufferRequestMessage(MAC,previousLogAddress);
+    previousLogAddress=previousLogAddress + 1;
+    stick.sendMessage(message);
+  }
+}

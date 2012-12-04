@@ -1,0 +1,10 @@
+{
+  if (message != null && isInitialised()) {
+    try {
+      sendQueue.put(message);
+    }
+ catch (    InterruptedException e) {
+      logger.error("Error sending Plugwise message: {}",message.toHexString());
+    }
+  }
+}

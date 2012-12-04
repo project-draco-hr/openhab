@@ -1,0 +1,39 @@
+{
+  if (message != null) {
+switch (message.getType()) {
+case DEVICE_ROLECALL_RESPONSE:
+      if (((RoleCallResponseMessage)message).getNodeID() < 63 && !((RoleCallResponseMessage)message).getNodeMAC().equals("FFFFFFFFFFFFFFFF")) {
+        Circle newCircle1=(Circle)stick.getDeviceByMAC(((RoleCallResponseMessage)message).getNodeMAC());
+        if (newCircle1 == null) {
+          newCircle1=new Circle(((RoleCallResponseMessage)message).getNodeMAC(),stick,((RoleCallResponseMessage)message).getNodeMAC());
+          stick.plugwiseDeviceCache.add(newCircle1);
+          logger.debug("Added a Circle with MAC {} to the cache",newCircle1.getMAC());
+        }
+        newCircle1.updateInformation();
+        newCircle1.calibrate();
+        roleCall(((RoleCallResponseMessage)message).getNodeID() + 1);
+      }
+    return true;
+case REALTIMECLOCK_GET_RESPONSE:
+  realtimeClock=((RealTimeClockGetResponseMessage)message).getTime();
+DateTimeFormatter rc=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+postUpdate(MAC,PlugwiseCommandType.REALTIMECLOCK,rc.print(realtimeClock));
+return true;
+case ACKNOWLEDGEMENT:
+if (((AcknowledgeMessage)message).isExtended()) {
+switch (((AcknowledgeMessage)message).getExtensionCode()) {
+case CLOCKSET:
+logger.debug("Circle+ Clock is set");
+break;
+default :
+return stick.processMessage(message);
+}
+}
+default :
+return super.processMessage(message);
+}
+}
+ else {
+return false;
+}
+}

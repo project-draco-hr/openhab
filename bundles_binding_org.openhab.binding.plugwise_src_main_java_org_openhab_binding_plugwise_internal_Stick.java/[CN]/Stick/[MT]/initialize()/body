@@ -1,0 +1,80 @@
+{
+  Enumeration portList=CommPortIdentifier.getPortIdentifiers();
+  while (portList.hasMoreElements()) {
+    CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+    if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+      if (id.getName().equals(port)) {
+        logger.debug("Serial port '{}' has been found.",port);
+        portId=id;
+      }
+    }
+  }
+  if (portId != null) {
+    try {
+      serialPort=(SerialPort)portId.open("openHAB",2000);
+    }
+ catch (    PortInUseException e) {
+      throw new PlugwiseInitializationException(e);
+    }
+    try {
+      serialPort.addEventListener(this);
+    }
+ catch (    TooManyListenersException e) {
+      throw new PlugwiseInitializationException(e);
+    }
+    serialPort.notifyOnDataAvailable(true);
+    try {
+      serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    }
+ catch (    UnsupportedCommOperationException e) {
+      throw new PlugwiseInitializationException(e);
+    }
+    try {
+      outputChannel=Channels.newChannel(serialPort.getOutputStream());
+    }
+ catch (    IOException e) {
+      throw new PlugwiseInitializationException(e);
+    }
+  }
+ else {
+    StringBuilder sb=new StringBuilder();
+    portList=CommPortIdentifier.getPortIdentifiers();
+    while (portList.hasMoreElements()) {
+      CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+      if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+        sb.append(id.getName() + "\n");
+      }
+    }
+    throw new PlugwiseInitializationException("Serial port '" + port + "' could not be found. Available ports are:\n"+ sb.toString());
+  }
+  Scheduler sched=null;
+  try {
+    sched=StdSchedulerFactory.getDefaultScheduler();
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error getting a reference to the Quartz Scheduler");
+  }
+  JobDataMap map=new JobDataMap();
+  map.put("Stick",this);
+  JobDetail job=newJob(SendJob.class).withIdentity("Send","Plugwise").usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity("Send","Plugwise").startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInMilliseconds(50)).build();
+  try {
+    sched.scheduleJob(job,trigger);
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error scheduling a job with the Quartz Scheduler");
+  }
+  map=new JobDataMap();
+  map.put("Stick",this);
+  job=newJob(ProcessMessageJob.class).withIdentity("ProcessMessage","Plugwise").usingJobData(map).build();
+  trigger=newTrigger().withIdentity("ProcessMessage","Plugwise").startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInMilliseconds(50)).build();
+  try {
+    sched.scheduleJob(job,trigger);
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error scheduling a job with the Quartz Scheduler");
+  }
+  initialised=true;
+  InitialiseRequestMessage message=new InitialiseRequestMessage();
+  sendMessage(message);
+}

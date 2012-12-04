@@ -1,0 +1,24 @@
+{
+  if (MAC != null && ctype != null && value != null) {
+    for (    PlugwiseBindingProvider provider : providers) {
+      Set<String> qualifiedItems=provider.getItemNames(MAC,ctype);
+      Set<String> qualifiedItemsFriendly=provider.getItemNames(stick.getDevice(MAC).getFriendlyName(),ctype);
+      qualifiedItems.addAll(qualifiedItemsFriendly);
+      Type type=null;
+      try {
+        type=createStateForType(ctype,value.toString());
+      }
+ catch (      BindingConfigParseException e) {
+        logger.error("Error parsing a value {} to a state variable of type {}",value.toString(),ctype.getTypeClass().toString());
+      }
+      for (      String anItem : qualifiedItems) {
+        if (type instanceof State) {
+          eventPublisher.postUpdate(anItem,(State)type);
+        }
+ else {
+          throw new IllegalClassException("Cannot process update of type " + type.toString());
+        }
+      }
+    }
+  }
+}

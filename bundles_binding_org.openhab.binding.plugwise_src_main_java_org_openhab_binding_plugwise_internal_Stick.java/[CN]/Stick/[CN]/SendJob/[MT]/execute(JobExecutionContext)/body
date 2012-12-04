@@ -1,0 +1,11 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  theStick=(Stick)dataMap.get("Stick");
+  if (theStick.isInitialised()) {
+    Message message=theStick.sendQueue.poll();
+    while (message != null) {
+      sendMessage(message);
+      message=theStick.sendQueue.poll();
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  List<PlugwiseBindingConfigElement> result=new ArrayList<PlugwiseBindingConfigElement>();
+  Collection<String> items=getItemNames();
+  Iterator<String> itemIterator=items.iterator();
+  while (itemIterator.hasNext()) {
+    String anItem=itemIterator.next();
+    PlugwiseBindingConfig pbConfig=(PlugwiseBindingConfig)bindingConfigs.get(anItem);
+    for (    Command command : pbConfig.keySet()) {
+      boolean found=false;
+      PlugwiseBindingConfigElement element=pbConfig.get(command);
+      Iterator<PlugwiseBindingConfigElement> elementIterator=result.iterator();
+      while (elementIterator.hasNext()) {
+        PlugwiseBindingConfigElement resultElement=elementIterator.next();
+        if (resultElement.getId().equals(element.getId()) && resultElement.getCommandType().getJobClass().equals(element.getCommandType().getJobClass())) {
+          found=true;
+          if (resultElement.getInterval() > element.getInterval()) {
+            result.remove(resultElement);
+            result.add(element);
+            break;
+          }
+        }
+      }
+      if (!found) {
+        result.add(element);
+      }
+    }
+  }
+  return result;
+}

@@ -1,0 +1,11 @@
+{
+  float joule=0;
+  if (energy.getInterval() == 0) {
+    float correctedPulses=(float)(Math.pow(energy.getPulses() + offruis,2) * gainb + (energy.getPulses() + offruis) * gaina + offtot);
+    joule=correctedPulses * PULSE_FACTOR;
+  }
+ else {
+    joule=pulseToWatt(energy) * energy.getInterval();
+  }
+  return joule / (3600 * 1000);
+}

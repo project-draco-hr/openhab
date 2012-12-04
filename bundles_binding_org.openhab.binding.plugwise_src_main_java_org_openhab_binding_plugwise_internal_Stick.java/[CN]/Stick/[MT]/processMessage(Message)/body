@@ -1,0 +1,91 @@
+{
+  if (message != null) {
+switch (message.getType()) {
+case ACKNOWLEDGEMENT:
+      if (((AcknowledgeMessage)message).isExtended()) {
+switch (((AcknowledgeMessage)message).getExtensionCode()) {
+case CIRCLEPLUS:
+          CirclePlus circlePlus11=(CirclePlus)getDeviceByMAC(((AcknowledgeMessage)message).getCirclePlusMAC());
+        if (!((AcknowledgeMessage)message).getCirclePlusMAC().equals("") && circlePlus11 == null) {
+          circlePlus11=new CirclePlus(((AcknowledgeMessage)message).getCirclePlusMAC(),this);
+          plugwiseDeviceCache.add(circlePlus11);
+          logger.debug("Added a CirclePlus with MAC {} to the cache",circlePlus11.getMAC());
+        }
+      circlePlus11.updateInformation();
+    circlePlus11.calibrate();
+  circlePlus11.setClock();
+if (circlePlus11 != null) {
+  circlePlus11.roleCall(0);
+}
+break;
+case TIMEOUT:
+logger.error("Timeout sending Plugwise message with sequence number: {}",((AcknowledgeMessage)message).getSequenceNumber());
+Iterator<Message> messageIterator=sentQueue.iterator();
+Message aMessage=null;
+while (messageIterator.hasNext()) {
+aMessage=messageIterator.next();
+if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
+sentQueue.remove(aMessage);
+break;
+}
+}
+if (aMessage != null) {
+aMessage.setSequenceNumber(0);
+try {
+Thread.sleep(3000);
+}
+ catch (InterruptedException e) {
+logger.error("Error putting plugwise thread to sleep");
+}
+sendMessage(aMessage);
+}
+return false;
+case ON:
+break;
+case OFF:
+break;
+default :
+logger.debug("Plugwise Unknown Acknowledgement message Extension");
+break;
+}
+}
+return true;
+case INITIALISE_RESPONSE:
+MAC=((InitialiseResponseMessage)message).getMAC();
+initialised=true;
+if (((InitialiseResponseMessage)message).isOnline()) {
+CirclePlus circlePlus=(CirclePlus)getDeviceByMAC(((InitialiseResponseMessage)message).getCirclePlusMAC());
+if (!((InitialiseResponseMessage)message).getCirclePlusMAC().equals("") && circlePlus == null) {
+circlePlus=new CirclePlus(((InitialiseResponseMessage)message).getCirclePlusMAC(),this);
+plugwiseDeviceCache.add(circlePlus);
+logger.debug("Added a CirclePlus with MAC {} to the cache",circlePlus.getMAC());
+}
+circlePlus.updateInformation();
+circlePlus.calibrate();
+circlePlus.setClock();
+if (circlePlus != null) {
+circlePlus.roleCall(0);
+}
+}
+ else {
+logger.info("The network is not online. nothing to do here");
+}
+return true;
+case NODE_AVAILABLE:
+String node=((NodeAvailableMessage)message).getMAC();
+Circle someCircle=(Circle)getDeviceByMAC(node);
+if (someCircle == null) {
+Circle newCircle=new Circle(node,this,node);
+plugwiseDeviceCache.add(newCircle);
+NodeAvailableResponseMessage response=new NodeAvailableResponseMessage(true,node);
+sendMessage(response);
+newCircle.updateInformation();
+newCircle.calibrate();
+}
+return true;
+default :
+return super.processMessage(message);
+}
+}
+return false;
+}

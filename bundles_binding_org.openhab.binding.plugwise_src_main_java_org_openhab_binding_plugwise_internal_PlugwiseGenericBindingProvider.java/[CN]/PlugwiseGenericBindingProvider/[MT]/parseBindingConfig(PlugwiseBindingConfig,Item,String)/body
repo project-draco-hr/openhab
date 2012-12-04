@@ -1,0 +1,54 @@
+{
+  String commandAsString=null;
+  String plugwiseID=null;
+  String plugwiseCommand=null;
+  int interval=60;
+  if (bindingConfig != null) {
+    Matcher actionMatcher=ACTION_CONFIG_PATTERN.matcher(bindingConfig);
+    Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
+    if (!actionMatcher.matches() && !statusMatcher.matches()) {
+      throw new BindingConfigParseException("Plugwise binding configuration must consist of either three [config=" + statusMatcher + "] or four parts [config="+ actionMatcher+ "]");
+    }
+ else {
+      if (actionMatcher.matches()) {
+        commandAsString=actionMatcher.group(1);
+        plugwiseID=actionMatcher.group(2);
+        plugwiseCommand=actionMatcher.group(3);
+        interval=Integer.valueOf(actionMatcher.group(4));
+      }
+ else       if (statusMatcher.matches()) {
+        commandAsString=null;
+        plugwiseID=statusMatcher.group(1);
+        plugwiseCommand=statusMatcher.group(2);
+        interval=Integer.valueOf(statusMatcher.group(3));
+      }
+      PlugwiseCommandType type=PlugwiseCommandType.getCommandType(plugwiseCommand);
+      if (PlugwiseCommandType.validateBinding(type,item)) {
+        PlugwiseBindingConfigElement newElement=new PlugwiseBindingConfigElement(plugwiseID,type,interval);
+        Command command=null;
+        if (commandAsString == null) {
+          NumberItem dummy=new NumberItem(Integer.toString(counter));
+          command=createCommandFromString(dummy,Integer.toString(counter));
+          counter++;
+          config.put(command,newElement);
+        }
+ else {
+          command=createCommandFromString(item,commandAsString);
+          config.put(command,newElement);
+        }
+      }
+ else {
+        String validItemType=PlugwiseCommandType.getValidItemTypes(plugwiseCommand);
+        if (StringUtils.isEmpty(validItemType)) {
+          throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
+        }
+ else {
+          throw new BindingConfigParseException("'" + bindingConfig + "' is not bound to a valid item type. Valid item type(s): "+ validItemType);
+        }
+      }
+    }
+  }
+ else {
+    return;
+  }
+}

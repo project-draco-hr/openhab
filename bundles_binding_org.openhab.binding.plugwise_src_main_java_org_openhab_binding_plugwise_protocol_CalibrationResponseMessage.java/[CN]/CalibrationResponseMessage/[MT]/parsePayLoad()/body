@@ -1,0 +1,14 @@
+{
+  Pattern RESPONSE_PATTERN=Pattern.compile("(\\w{16})(\\w{8})(\\w{8})(\\w{8})(\\w{8})");
+  Matcher matcher=RESPONSE_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+    gaina=Float.intBitsToFloat((int)(Long.parseLong(matcher.group(2),16)));
+    gainb=Float.intBitsToFloat((int)(Long.parseLong(matcher.group(3),16)));
+    offtot=Float.intBitsToFloat((int)(Long.parseLong(matcher.group(4),16)));
+    offruis=Float.intBitsToFloat((int)(Long.parseLong(matcher.group(5),16)));
+  }
+ else {
+    logger.debug("Plugwise protocol RoleCallResponseMessage error: {} does not match",payLoad);
+  }
+}

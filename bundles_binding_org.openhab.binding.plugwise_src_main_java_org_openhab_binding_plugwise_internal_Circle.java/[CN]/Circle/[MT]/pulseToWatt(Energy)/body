@@ -1,0 +1,12 @@
+{
+  float averagePulses;
+  float correctedPulses;
+  if (energy.getInterval() != 0) {
+    averagePulses=energy.getPulses() / energy.getInterval();
+  }
+ else {
+    return 0;
+  }
+  correctedPulses=(float)(Math.pow(averagePulses + offruis,2) * gainb + (averagePulses + offruis) * gaina + offtot);
+  return correctedPulses * PULSE_FACTOR;
+}

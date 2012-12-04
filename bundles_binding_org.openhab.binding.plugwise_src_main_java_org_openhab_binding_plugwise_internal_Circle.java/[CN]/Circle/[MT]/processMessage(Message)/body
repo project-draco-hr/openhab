@@ -1,0 +1,67 @@
+{
+  if (message != null) {
+switch (message.getType()) {
+case CLOCK_GET_RESPONSE:
+      systemClock=((ClockGetResponseMessage)message).getTime();
+    DateTimeFormatter sc=DateTimeFormat.forPattern("HH:mm:ss");
+  postUpdate(MAC,PlugwiseCommandType.CURRENTCLOCK,sc.print(systemClock));
+return true;
+case DEVICE_CALIBRATION_RESPONSE:
+gaina=((CalibrationResponseMessage)message).getGaina();
+gainb=((CalibrationResponseMessage)message).getGainb();
+offtot=((CalibrationResponseMessage)message).getOfftot();
+offruis=((CalibrationResponseMessage)message).getOffruis();
+return true;
+case DEVICE_INFORMATION_RESPONSE:
+stamp=new DateTime(((InformationResponseMessage)message).getYear(),((InformationResponseMessage)message).getMonth(),1,0,0).plusMinutes(((InformationResponseMessage)message).getMinutes());
+recentLogAddress=((InformationResponseMessage)message).getLogAddress();
+powerState=((InformationResponseMessage)message).getPowerState();
+hertz=((InformationResponseMessage)message).getHertz();
+hardwareVersion=((InformationResponseMessage)message).getHardwareVersion();
+postUpdate(MAC,PlugwiseCommandType.CURRENTSTATE,powerState ? "ON" : "OFF");
+return true;
+case POWER_INFORMATION_RESPONSE:
+one=((PowerInformationResponseMessage)message).getOneSecond();
+postUpdate(MAC,PlugwiseCommandType.CURRENTPOWER,pulseToWatt(one));
+DateTimeFormatter fmt=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+postUpdate(MAC,PlugwiseCommandType.CURRENTPOWERSTAMP,fmt.print(one.getTime()));
+return true;
+case POWER_BUFFER_RESPONSE:
+Energy lastHour=((PowerBufferResponseMessage)message).getEnergy(3);
+if (lastHour == null) {
+lastHour=((PowerBufferResponseMessage)message).getEnergy(2);
+}
+if (lastHour == null) {
+lastHour=((PowerBufferResponseMessage)message).getEnergy(1);
+}
+if (lastHour == null) {
+lastHour=((PowerBufferResponseMessage)message).getEnergy(0);
+}
+if (lastHour != null) {
+postUpdate(MAC,PlugwiseCommandType.LASTHOURCONSUMPTION,pulseTokWh(lastHour));
+fmt=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+postUpdate(MAC,PlugwiseCommandType.LASTHOURCONSUMPTIONSTAMP,fmt.print(lastHour.getTime()));
+}
+return true;
+case ACKNOWLEDGEMENT:
+if (((AcknowledgeMessage)message).isExtended()) {
+switch (((AcknowledgeMessage)message).getExtensionCode()) {
+case ON:
+postUpdate(MAC,PlugwiseCommandType.CURRENTSTATE,((AcknowledgeMessage)message).isOn());
+break;
+case OFF:
+postUpdate(MAC,PlugwiseCommandType.CURRENTSTATE,((AcknowledgeMessage)message).isOff());
+break;
+default :
+return stick.processMessage(message);
+}
+}
+return true;
+default :
+return stick.processMessage(message);
+}
+}
+ else {
+return false;
+}
+}

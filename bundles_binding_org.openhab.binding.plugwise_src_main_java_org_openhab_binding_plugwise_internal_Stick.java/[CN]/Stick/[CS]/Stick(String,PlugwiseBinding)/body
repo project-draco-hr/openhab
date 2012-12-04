@@ -1,0 +1,13 @@
+{
+  super("",PlugwiseDevice.DeviceType.Stick,"stick");
+  this.port=port;
+  this.binding=binding;
+  plugwiseDeviceCache.add(this);
+  try {
+    initialize();
+  }
+ catch (  PlugwiseInitializationException e) {
+    logger.error("Failed to initialize Plugwise stick: {}",e.getLocalizedMessage());
+    initialised=false;
+  }
+}

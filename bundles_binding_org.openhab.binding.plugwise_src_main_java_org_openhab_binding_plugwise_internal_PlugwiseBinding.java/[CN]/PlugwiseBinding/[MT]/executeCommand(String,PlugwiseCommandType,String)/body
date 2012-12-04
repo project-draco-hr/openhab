@@ -1,0 +1,22 @@
+{
+  boolean result=false;
+  if (plugwiseID != null) {
+    PlugwiseDevice plug=stick.getDeviceByMAC(plugwiseID);
+    if (plug != null) {
+switch (plugwiseCommandType) {
+case CURRENTSTATE:
+        if (plug instanceof Circle || plug instanceof CirclePlus) {
+          result=((Circle)plug).setPowerState(commandAsString);
+          ((Circle)plug).updateInformation();
+        }
+default :
+      break;
+  }
+  ;
+}
+ else {
+  logger.error("Plugwise device is not defined for device with ID {}",plugwiseID);
+}
+}
+return result;
+}
