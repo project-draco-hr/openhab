@@ -7,16 +7,13 @@ synchronized (bindingConfigs) {
         if (input == null) {
           return false;
         }
-        return input.readable;
+        return input.readableDataPoint != null;
       }
     }
 );
     return Iterables.transform(filteredBindingConfigs,new Function<KNXBindingConfigItem,Datapoint>(){
       public Datapoint apply(      KNXBindingConfigItem from){
-        if (from == null) {
-          return null;
-        }
-        return from.datapoint;
+        return from.readableDataPoint;
       }
     }
 );

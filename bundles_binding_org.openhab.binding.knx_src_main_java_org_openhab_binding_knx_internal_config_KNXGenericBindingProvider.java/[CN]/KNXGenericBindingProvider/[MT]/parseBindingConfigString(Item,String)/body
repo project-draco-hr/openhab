@@ -3,38 +3,47 @@
   String[] datapointConfigs=bindingConfig.trim().split(",");
   for (int i=0; i < datapointConfigs.length; i++) {
     try {
-      String datapointConfig=datapointConfigs[i];
+      String datapointConfig=datapointConfigs[i].trim();
       KNXBindingConfigItem configItem=new KNXBindingConfigItem();
       configItem.itemName=item.getName();
-      if (datapointConfig.trim().startsWith("<")) {
-        configItem.readable=true;
-        datapointConfig=datapointConfig.trim().substring(1);
+      if (datapointConfig.split("<").length > 2) {
+        throw new BindingConfigParseException("Only one readable GA allowed.");
       }
-      String dptId=null;
-      String[] segments=datapointConfig.trim().split(":");
       Class<? extends Type> typeClass=item.getAcceptedCommandTypes().size() > 0 ? item.getAcceptedCommandTypes().get(i) : item.getAcceptedDataTypes().size() > 1 ? item.getAcceptedDataTypes().get(i) : item.getAcceptedDataTypes().get(0);
-      dptId=segments.length == 1 ? getDefaultDPTId(typeClass) : segments[0];
-      if (dptId == null || dptId.trim().isEmpty()) {
-        throw new BindingConfigParseException("No DPT could be determined for the type '" + typeClass.getSimpleName() + "'.");
-      }
-      configItem.dpt=new DPT(dptId,null,null,null);
-      String str=segments.length == 1 ? segments[0].trim() : segments[1].trim();
-      if (!str.isEmpty()) {
-        List<GroupAddress> gas=new ArrayList<GroupAddress>();
-        for (        String ga : str.split("\\+")) {
-          if (!ga.trim().isEmpty()) {
-            gas.add(new GroupAddress(ga.trim()));
-          }
+      String[] dataPoints=datapointConfig.split("\\+");
+      for (int j=0; j < dataPoints.length; ++j) {
+        String dataPoint=dataPoints[j].trim();
+        if (dataPoint.isEmpty()) {
+          continue;
         }
-        configItem.groupAddresses=gas.toArray(new GroupAddress[gas.size()]);
-        if (str.startsWith("+") || item.getAcceptedCommandTypes().size() == 0) {
-          configItem.datapoint=new StateDP(gas.get(0),item.getName(),0,dptId);
+        boolean isReadable=false;
+        if (dataPoint.startsWith("<")) {
+          isReadable=true;
+          dataPoint=dataPoint.substring(1);
+        }
+        String[] segments=dataPoint.split(":");
+        String dptID=(segments.length == 1) ? getDefaultDPTId(typeClass) : segments[0];
+        if (dptID == null || dptID.trim().isEmpty()) {
+          throw new BindingConfigParseException("No DPT could be determined for the type '" + typeClass.getSimpleName() + "'.");
+        }
+        String ga=(segments.length == 1) ? segments[0].trim() : segments[1].trim();
+        GroupAddress groupAddress=new GroupAddress(ga);
+        Datapoint dp;
+        if (j != 0 || item.getAcceptedCommandTypes().size() == 0) {
+          dp=new StateDP(groupAddress,item.getName(),0,dptID);
         }
  else {
-          configItem.datapoint=new CommandDP(gas.get(0),item.getName(),0,dptId);
+          dp=new CommandDP(groupAddress,item.getName(),0,dptID);
         }
-        config.add(configItem);
+        if (configItem.mainDataPoint == null) {
+          configItem.mainDataPoint=dp;
+        }
+        if (isReadable) {
+          configItem.readableDataPoint=dp;
+        }
+        configItem.allDataPoints.add(dp);
       }
+      config.add(configItem);
     }
  catch (    IndexOutOfBoundsException e) {
       throw new BindingConfigParseException("No more than " + i + " datapoint definitions are allowed for this item.");

@@ -1,12 +1,11 @@
 {
-  boolean result=true;
 synchronized (bindingConfigs) {
     for (    BindingConfig config : bindingConfigs.values()) {
       KNXBindingConfig knxConfig=(KNXBindingConfig)config;
       for (      KNXBindingConfigItem configItem : knxConfig) {
-        if (ArrayUtils.contains(configItem.groupAddresses,groupAddress)) {
-          if (configItem.datapoint instanceof CommandDP) {
-            if (configItem.groupAddresses[0].equals(groupAddress)) {
+        if (configItem.allDataPoints.contains(groupAddress)) {
+          if (configItem.mainDataPoint instanceof CommandDP) {
+            if (configItem.mainDataPoint.getMainAddress().equals(groupAddress)) {
               return true;
             }
  else {
@@ -20,5 +19,5 @@ synchronized (bindingConfigs) {
       }
     }
   }
-  return result;
+  return false;
 }

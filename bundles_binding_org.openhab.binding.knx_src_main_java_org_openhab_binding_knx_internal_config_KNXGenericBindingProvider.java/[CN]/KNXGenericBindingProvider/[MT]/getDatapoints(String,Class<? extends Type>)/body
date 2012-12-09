@@ -8,13 +8,13 @@ synchronized (bindingConfigs) {
           if (input == null) {
             return false;
           }
-          return input.itemName.equals(itemName) && KNXCoreTypeMapper.toTypeClass(input.dpt.getID()).equals(typeClass);
+          return input.itemName.equals(itemName) && KNXCoreTypeMapper.toTypeClass(input.mainDataPoint.getDPT()).equals(typeClass);
         }
       }
 );
       Iterable<Datapoint> datapoints=Iterables.transform(bindingConfigs,new Function<KNXBindingConfigItem,Datapoint>(){
         public Datapoint apply(        KNXBindingConfigItem configItem){
-          return configItem.datapoint;
+          return configItem.mainDataPoint;
         }
       }
 );
