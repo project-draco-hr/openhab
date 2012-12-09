@@ -9,6 +9,11 @@
   HttpMethod method=HttpUtil.createHttpMethod(httpMethod,url);
   method.getParams().setSoTimeout(timeout);
   method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  if (httpHeaders != null) {
+    for (    String httpHeaderKey : httpHeaders.stringPropertyNames()) {
+      method.addRequestHeader(new Header(httpHeaderKey,httpHeaders.getProperty(httpHeaderKey)));
+    }
+  }
   if (method instanceof EntityEnclosingMethod && content != null) {
     EntityEnclosingMethod eeMethod=(EntityEnclosingMethod)method;
     eeMethod.setRequestEntity(new InputStreamRequestEntity(content,contentType));

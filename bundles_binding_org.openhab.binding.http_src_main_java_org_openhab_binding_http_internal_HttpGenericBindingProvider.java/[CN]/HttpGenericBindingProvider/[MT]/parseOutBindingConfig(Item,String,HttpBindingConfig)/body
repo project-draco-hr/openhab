@@ -9,7 +9,16 @@
     configElement=new HttpBindingConfigElement();
     Command command=createCommandFromString(item,matcher.group(1));
     configElement.httpMethod=matcher.group(2);
-    configElement.url=matcher.group(3).replaceAll("\\\\\"","");
+    String lastPart=matcher.group(3).replaceAll("\\\\\"","");
+    if (lastPart.trim().endsWith("}") && lastPart.contains("{")) {
+      int beginIdx=lastPart.lastIndexOf("{");
+      int endIdx=lastPart.lastIndexOf("}");
+      configElement.url=lastPart.substring(0,beginIdx);
+      configElement.headers=parseHttpHeaders(lastPart.substring(beginIdx + 1,endIdx));
+    }
+ else {
+      configElement.url=lastPart;
+    }
     config.put(command,configElement);
   }
   return config;
