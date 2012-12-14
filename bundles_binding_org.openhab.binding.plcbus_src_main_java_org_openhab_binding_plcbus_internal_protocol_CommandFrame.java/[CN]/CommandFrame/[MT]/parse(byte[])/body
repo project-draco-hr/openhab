@@ -1,0 +1,9 @@
+{
+  extendAddress=((data[0] & 0x80) == 0x80);
+  threePhase=((data[0] & 0x40) == 0x40);
+  demandAck=((data[0] & 0x20) == 0x20);
+  command=CommandFactory.createBy((byte)(data[0] & 0x1F));
+  if (command != null) {
+    command.parse(new byte[]{data[1],data[2]});
+  }
+}
