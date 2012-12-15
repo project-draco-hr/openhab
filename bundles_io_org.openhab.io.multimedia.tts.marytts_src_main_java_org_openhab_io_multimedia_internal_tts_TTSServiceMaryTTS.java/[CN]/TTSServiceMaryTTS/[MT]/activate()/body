@@ -1,0 +1,15 @@
+{
+  try {
+    marytts=new LocalMaryInterface();
+    Locale systemLocale=Locale.getDefault();
+    if (marytts.getAvailableLocales().contains(systemLocale)) {
+      defaultVoice=Voice.getDefaultVoice(systemLocale);
+    }
+    if (defaultVoice == null) {
+      defaultVoice=Voice.getVoice(marytts.getAvailableVoices().iterator().next());
+    }
+  }
+ catch (  MaryConfigurationException e) {
+    logger.error("Error connecting to Mary TTS: " + e.getLocalizedMessage(),e);
+  }
+}
