@@ -1,0 +1,16 @@
+{
+  byte result=0x00;
+  if (shouldExtendAddress()) {
+    result|=0x80;
+  }
+  if (isThreePhase()) {
+    result|=0x40;
+  }
+  if (shouldDemandAck()) {
+    result|=0x20;
+  }
+  if (command != null) {
+    result|=command.getId();
+  }
+  return result;
+}

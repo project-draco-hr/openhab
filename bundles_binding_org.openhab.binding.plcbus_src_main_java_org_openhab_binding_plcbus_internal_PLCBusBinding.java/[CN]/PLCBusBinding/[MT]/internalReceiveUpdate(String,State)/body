@@ -1,0 +1,13 @@
+{
+  PLCBusBindingConfig config=tryGetConfigFor(itemName);
+  if (config == null) {
+    logger.error("No config found for %s",itemName);
+    return;
+  }
+  IPLCBusController controller=PLCBusController.create(serialPortGateway);
+  if (newState == UnDefType.UNDEF) {
+    StatusResponse response=controller.requestStatusFor(config.getUnit());
+    State status=(response.isUnitOn()) ? OnOffType.ON : OnOffType.OFF;
+    this.eventPublisher.postUpdate(itemName,status);
+  }
+}

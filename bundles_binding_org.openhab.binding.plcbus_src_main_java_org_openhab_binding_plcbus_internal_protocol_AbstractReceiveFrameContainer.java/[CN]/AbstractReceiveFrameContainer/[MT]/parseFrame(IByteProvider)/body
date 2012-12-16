@@ -1,0 +1,17 @@
+{
+  try {
+    byte currentByte=byteProvider.getByte();
+    if (currentByte == Frame.START_BYTE) {
+      int length=byteProvider.getByte();
+      if (length > 0) {
+        byte[] data=byteProvider.getBytes(length + 1);
+        ReceiveFrame frame=new ReceiveFrame();
+        frame.parse(data);
+        receiveFrames.add(frame);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error while parsing ReceiveFrame");
+  }
+}
