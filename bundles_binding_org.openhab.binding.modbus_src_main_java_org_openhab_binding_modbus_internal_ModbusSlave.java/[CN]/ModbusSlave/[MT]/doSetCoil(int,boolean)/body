@@ -1,0 +1,14 @@
+{
+  if (connection == null)   return;
+  ModbusRequest request=new WriteCoilRequest(writeRegister,b);
+  request.setUnitID(id);
+  transaction.setRequest(request);
+  try {
+    logger.debug("ModbusSlave: FC05 ref=" + writeRegister + " value="+ b);
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("ModbusSlave:" + e.getMessage());
+    return;
+  }
+}
