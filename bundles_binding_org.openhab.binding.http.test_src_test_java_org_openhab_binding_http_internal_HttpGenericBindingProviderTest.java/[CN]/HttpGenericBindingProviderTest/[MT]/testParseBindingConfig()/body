@@ -1,21 +1,5 @@
 {
   String bindingConfig=">[ON:POST:http://www.domain.org:1234/home/lights/23871/?status=on&type=\"text\"] >[OFF:GET:http://www.domain.org:1234/home/lights/23871/?status=off] <[http://www.google.com:1234/ig/api?weather=Krefeld+Germany&hl=de:60000:REGEX(.*?<current_conditions>.*?<temp_c data=\\\"(.*?)\\\".*)] >[CHANGED:POST:http://www.domain.org:1234/home/lights/23871/?value=%2$s] >[*:POST:http://www.domain.org:1234/home/lights?value=%2$s]";
-  Item testItem=new GenericItem("TEST"){
-    public List<Class<? extends State>> getAcceptedDataTypes(){
-      List<Class<? extends State>> list=new ArrayList<Class<? extends State>>();
-      list.add(StringType.class);
-      return list;
-    }
-    public List<Class<? extends Command>> getAcceptedCommandTypes(){
-      List<Class<? extends Command>> list=new ArrayList<Class<? extends Command>>();
-      list.add(StringType.class);
-      return list;
-    }
-    @Override public State getStateAs(    Class<? extends State> typeClass){
-      return null;
-    }
-  }
-;
   HttpBindingConfig config=provider.parseBindingConfig(testItem,bindingConfig);
   Assert.assertEquals(true,config.containsKey(HttpGenericBindingProvider.IN_BINDING_KEY));
   Assert.assertEquals(null,config.get(HttpGenericBindingProvider.IN_BINDING_KEY).httpMethod);
