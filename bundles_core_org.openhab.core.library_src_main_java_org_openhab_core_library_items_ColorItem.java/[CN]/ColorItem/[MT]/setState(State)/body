@@ -1,0 +1,33 @@
+{
+  State currentState=this.state;
+  if (currentState instanceof HSBType) {
+    DecimalType hue=((HSBType)currentState).getHue();
+    PercentType saturation=((HSBType)currentState).getSaturation();
+    if (state == OnOffType.OFF) {
+      this.state=new HSBType(hue,saturation,PercentType.ZERO);
+    }
+ else     if (state == OnOffType.ON) {
+      this.state=new HSBType(hue,saturation,PercentType.HUNDRED);
+    }
+ else     if (state instanceof PercentType) {
+      this.state=new HSBType(hue,saturation,(PercentType)state);
+    }
+ else {
+      super.setState(state);
+    }
+  }
+ else {
+    if (state == OnOffType.OFF) {
+      this.state=HSBType.BLACK;
+    }
+ else     if (state == OnOffType.ON) {
+      this.state=HSBType.WHITE;
+    }
+ else     if (state instanceof PercentType) {
+      this.state=new HSBType(DecimalType.ZERO,PercentType.ZERO,(PercentType)state);
+    }
+ else {
+      super.setState(state);
+    }
+  }
+}
