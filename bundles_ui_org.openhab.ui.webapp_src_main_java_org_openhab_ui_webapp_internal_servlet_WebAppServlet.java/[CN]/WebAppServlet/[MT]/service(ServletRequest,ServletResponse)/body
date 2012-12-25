@@ -21,19 +21,21 @@
       }
       result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
     }
- else {
+ else     if (!widgetId.equals("Colorpicker")) {
       Widget w=renderer.getItemUIRegistry().getWidget(sitemap,widgetId);
-      String label=renderer.getItemUIRegistry().getLabel(w);
-      if (label == null)       label="undefined";
-      if (!(w instanceof LinkableWidget)) {
-        throw new RenderException("Widget '" + w + "' can not have any content");
+      if (w != null) {
+        String label=renderer.getItemUIRegistry().getLabel(w);
+        if (label == null)         label="undefined";
+        if (!(w instanceof LinkableWidget)) {
+          throw new RenderException("Widget '" + w + "' can not have any content");
+        }
+        EList<Widget> children=renderer.getItemUIRegistry().getChildren((LinkableWidget)w);
+        if (poll && waitForChanges(children) == false) {
+          res.getWriter().append(getTimeoutResponse()).close();
+          return;
+        }
+        result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w),sitemapName,label,children,async));
       }
-      EList<Widget> children=renderer.getItemUIRegistry().getChildren((LinkableWidget)w);
-      if (poll && waitForChanges(children) == false) {
-        res.getWriter().append(getTimeoutResponse()).close();
-        return;
-      }
-      result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w),sitemapName,label,children,async));
     }
   }
  catch (  RenderException e) {
