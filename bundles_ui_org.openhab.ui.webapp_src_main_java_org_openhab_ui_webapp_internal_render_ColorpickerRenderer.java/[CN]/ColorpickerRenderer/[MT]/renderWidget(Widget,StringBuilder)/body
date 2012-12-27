@@ -3,11 +3,24 @@
   String snippetName="colorpicker";
   String snippet=getSnippet(snippetName);
   String frequency=cp.getFrequency() == 0 ? "200" : Integer.toString(cp.getFrequency());
+  State state=itemUIRegistry.getState(cp);
+  String hexValue="#ffffff";
+  if (state instanceof HSBType) {
+    HSBType hsbState=(HSBType)state;
+    Color color=hsbState.toColor();
+    hexValue="#" + Integer.toHexString(color.getRGB()).substring(2);
+  }
+  String label=getLabel(cp);
+  String purelabel=label;
+  if (label.contains("<span>")) {
+    purelabel=purelabel.substring(0,label.indexOf("<span>"));
+  }
   snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(cp));
   snippet=snippet.replaceAll("%icon%",itemUIRegistry.getIcon(cp));
   snippet=snippet.replaceAll("%item%",w.getItem());
-  snippet=snippet.replaceAll("%label%",getLabel(cp));
-  snippet=snippet.replaceAll("%state%",itemUIRegistry.getState(cp).toString());
+  snippet=snippet.replaceAll("%label%",label);
+  snippet=snippet.replaceAll("%purelabel%",purelabel);
+  snippet=snippet.replaceAll("%state%",hexValue);
   snippet=snippet.replaceAll("%frequency%",frequency);
   snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
   sb.append(snippet);
