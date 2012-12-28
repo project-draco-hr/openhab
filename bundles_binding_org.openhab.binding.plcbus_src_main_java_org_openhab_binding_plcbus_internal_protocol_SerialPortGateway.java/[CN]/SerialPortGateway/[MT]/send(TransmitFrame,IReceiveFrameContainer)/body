@@ -1,0 +1,16 @@
+{
+  try {
+    byte[] paket=Convert.toByteArray(frame.getBytes());
+    OutputStream out=serialPort.getOutputStream();
+    out.write(paket);
+    try {
+      receivedFrameContainer.process(SerialPortByteProvider.create(serialPort));
+    }
+ catch (    Exception e) {
+      logger.error("Error while processing: " + e.getMessage());
+    }
+  }
+ catch (  Exception e) {
+    logger.info("Error in write methode: " + e.getMessage());
+  }
+}

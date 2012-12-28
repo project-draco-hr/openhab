@@ -1,0 +1,29 @@
+{
+  PLCBusBindingConfig config=tryGetConfigFor(itemName);
+  if (config == null) {
+    logger.error("No config found for item %s",itemName);
+    return;
+  }
+  IPLCBusController controller=PLCBusController.create(serialPortGateway);
+  if (command == OnOffType.ON) {
+    controller.switchOn(config.getUnit());
+  }
+ else   if (command == OnOffType.OFF) {
+    controller.switchOff(config.getUnit());
+  }
+ else   if (command == IncreaseDecreaseType.INCREASE) {
+    controller.bright(config.getUnit(),config.getSeconds());
+  }
+ else   if (command == IncreaseDecreaseType.DECREASE) {
+    controller.dim(config.getUnit(),config.getSeconds());
+  }
+ else   if (command == StopMoveType.STOP) {
+    controller.fadeStop(config.getUnit());
+  }
+ else   if (command == UpDownType.UP) {
+    controller.switchOn(config.getUnit());
+  }
+ else   if (command == UpDownType.DOWN) {
+    controller.switchOff(config.getUnit());
+  }
+}

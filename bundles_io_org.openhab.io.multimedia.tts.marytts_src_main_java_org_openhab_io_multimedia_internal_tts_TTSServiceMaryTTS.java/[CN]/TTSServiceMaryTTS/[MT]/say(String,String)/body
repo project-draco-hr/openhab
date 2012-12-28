@@ -1,0 +1,38 @@
+{
+  if (marytts == null) {
+    logger.error("Mary TTS is not available");
+    return;
+  }
+  if (text == null) {
+    return;
+  }
+  Voice voice=null;
+  if (StringUtils.isBlank(voiceName)) {
+    logger.debug("Mary TTS: {} (Voice not set. Using default voice {}).",new String[]{text,defaultVoice.toString()});
+    voice=defaultVoice;
+  }
+ else {
+    voice=Voice.getVoice(voiceName);
+    logger.debug("Mary TTS: {} (Voice: {})",new String[]{text,voiceName});
+  }
+  if (voice != null) {
+    marytts.setLocale(voice.getLocale());
+    marytts.setVoice(voice.getName());
+    try {
+      AudioInputStream audio=marytts.generateAudio(text);
+      AudioPlayer player=new AudioPlayer(audio);
+      player.start();
+      player.join();
+    }
+ catch (    SynthesisException e) {
+      logger.error("Error during tts generation: {}",e.getLocalizedMessage(),e);
+    }
+catch (    InterruptedException e) {
+      logger.error("Error during tts playback: {}",e.getLocalizedMessage(),e);
+    }
+  }
+ else {
+    logger.error("Could not find voice: {}",voiceName);
+    logger.info("Available Voices are {} ",StringUtils.join(marytts.getAvailableVoices(),", "));
+  }
+}

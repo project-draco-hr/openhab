@@ -1,0 +1,9 @@
+{
+  IReceiveFrameContainer container=new StatusRequestReceiveFrameContainer();
+  send(unit.getUsercode(),unit.getAddress(),new StatusRequest(),container);
+  ReceiveFrame answer=container.getAnswerFrame();
+  if (answer == null) {
+    return null;
+  }
+  return new StatusResponse(answer.isAcknowledgement(),answer.getCommand(),answer.getFirstParameter(),answer.getSecondParameter());
+}

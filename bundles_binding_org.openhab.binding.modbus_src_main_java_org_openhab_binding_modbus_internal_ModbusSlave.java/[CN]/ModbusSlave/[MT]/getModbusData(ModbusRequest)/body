@@ -1,0 +1,16 @@
+{
+  request.setUnitID(id);
+  transaction.setRequest(request);
+  try {
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("ModbusSlave:" + e.getMessage());
+    return null;
+  }
+  ModbusResponse r=transaction.getResponse();
+  if (r.getTransactionID() != transaction.getTransactionID()) {
+    return null;
+  }
+  return r;
+}

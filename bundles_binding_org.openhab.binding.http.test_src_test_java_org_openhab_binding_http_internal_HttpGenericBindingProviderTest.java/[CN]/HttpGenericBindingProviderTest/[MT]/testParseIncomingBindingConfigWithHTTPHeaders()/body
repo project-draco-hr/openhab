@@ -1,0 +1,16 @@
+{
+  String bindingConfig="<[http://www.wetter-vista.de/api/xml.php?q=Berlin{header1=value1&header2=value2}:60000:XPATH(/wettervorhersage/tag[1]/tmax)]";
+  Item testItem=new DecimalTestItem();
+  HttpBindingConfig config=provider.parseBindingConfig(testItem,bindingConfig);
+  Assert.assertEquals(true,config.containsKey(HttpGenericBindingProvider.IN_BINDING_KEY));
+  Assert.assertEquals(null,config.get(HttpGenericBindingProvider.IN_BINDING_KEY).httpMethod);
+  Assert.assertEquals("http://www.wetter-vista.de/api/xml.php?q=Berlin",config.get(HttpGenericBindingProvider.IN_BINDING_KEY).url);
+  Assert.assertEquals(60000,config.get(HttpGenericBindingProvider.IN_BINDING_KEY).refreshInterval);
+  Assert.assertEquals("XPATH(/wettervorhersage/tag[1]/tmax)",config.get(HttpGenericBindingProvider.IN_BINDING_KEY).transformation);
+  Assert.assertNotNull(config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers);
+  Assert.assertEquals("{header2=value2, header1=value1}",config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers.toString());
+  Assert.assertTrue(config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers.containsKey("header1"));
+  Assert.assertTrue(config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers.containsKey("header2"));
+  Assert.assertTrue(config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers.contains("value1"));
+  Assert.assertTrue(config.get(HttpGenericBindingProvider.IN_BINDING_KEY).headers.contains("value2"));
+}

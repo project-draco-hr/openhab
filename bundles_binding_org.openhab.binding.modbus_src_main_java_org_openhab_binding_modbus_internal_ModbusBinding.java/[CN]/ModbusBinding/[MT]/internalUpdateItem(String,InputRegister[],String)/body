@@ -1,0 +1,12 @@
+{
+  for (  ModbusBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      ModbusBindingConfig config=provider.getConfig(itemName);
+      if (config.slaveName.equals(slaveName)) {
+        InputRegister value=registers[config.readRegister];
+        DecimalType newState=new DecimalType(value.getValue());
+        if (!newState.equals(provider.getConfig(itemName).getItemState()))         eventPublisher.postUpdate(itemName,newState);
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
   for (  HttpBindingProvider provider : providers) {
     for (    String itemName : provider.getInBindingItemNames()) {
       String url=provider.getUrl(itemName);
+      Properties headers=provider.getHttpHeaders(itemName);
       int refreshInterval=provider.getRefreshInterval(itemName);
       String transformation=provider.getTransformation(itemName);
       Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
@@ -12,7 +13,7 @@
       boolean needsUpdate=age >= refreshInterval;
       if (needsUpdate) {
         logger.debug("item '{}' is about to be refreshed now",itemName);
-        String response=HttpUtil.executeUrl("GET",url,timeout);
+        String response=HttpUtil.executeUrl("GET",url,headers,null,null,timeout);
         if (response == null) {
           logger.error("No response received from '{}'",url);
         }

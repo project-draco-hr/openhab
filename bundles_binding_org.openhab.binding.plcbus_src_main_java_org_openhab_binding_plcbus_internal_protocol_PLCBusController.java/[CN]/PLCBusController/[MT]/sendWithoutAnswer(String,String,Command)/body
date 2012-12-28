@@ -1,0 +1,9 @@
+{
+  IReceiveFrameContainer container=getDefaultReceiveFrameContainer();
+  send(usercode,address,command,container);
+  ReceiveFrame answer=container.getAnswerFrame();
+  if (answer == null) {
+    return false;
+  }
+  return answer.isAcknowledgement();
+}

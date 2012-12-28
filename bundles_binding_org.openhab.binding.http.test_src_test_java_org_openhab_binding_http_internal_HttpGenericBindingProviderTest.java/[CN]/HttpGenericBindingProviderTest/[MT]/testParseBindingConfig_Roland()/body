@@ -1,0 +1,13 @@
+{
+  String bindingConfig="<[http://localhost:42111/valueget.html?q=4-SWITCHMULTILEVEL-user-byte-1-0:60000:XSLT(value.xsl)] >[CHANGED:POST:http://localhost:42111/valuepost.html?id=4-SWITCHMULTILEVEL-user-byte-1-0&v=39]";
+  testItem=new DimmerTestItem();
+  HttpBindingConfig config=provider.parseBindingConfig(testItem,bindingConfig);
+  Assert.assertEquals(true,config.containsKey(HttpGenericBindingProvider.IN_BINDING_KEY));
+  Assert.assertEquals(null,config.get(HttpGenericBindingProvider.IN_BINDING_KEY).httpMethod);
+  Assert.assertEquals("http://localhost:42111/valueget.html?q=4-SWITCHMULTILEVEL-user-byte-1-0",config.get(HttpGenericBindingProvider.IN_BINDING_KEY).url);
+  Assert.assertEquals(60000,config.get(HttpGenericBindingProvider.IN_BINDING_KEY).refreshInterval);
+  Assert.assertEquals("XSLT(value.xsl)",config.get(HttpGenericBindingProvider.IN_BINDING_KEY).transformation);
+  Assert.assertEquals(true,config.containsKey(HttpGenericBindingProvider.CHANGED_COMMAND_KEY));
+  Assert.assertEquals("POST",config.get(HttpGenericBindingProvider.CHANGED_COMMAND_KEY).httpMethod);
+  Assert.assertEquals("http://localhost:42111/valuepost.html?id=4-SWITCHMULTILEVEL-user-byte-1-0&v=39",config.get(HttpGenericBindingProvider.CHANGED_COMMAND_KEY).url);
+}

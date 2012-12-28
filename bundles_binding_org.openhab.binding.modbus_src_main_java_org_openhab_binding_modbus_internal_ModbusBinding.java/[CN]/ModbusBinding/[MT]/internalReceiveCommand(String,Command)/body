@@ -1,0 +1,9 @@
+{
+  for (  ModbusBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      ModbusBindingConfig config=provider.getConfig(itemName);
+      ModbusSlave slave=ModbusConfiguration.getSlave(config.slaveName);
+      slave.executeCommand(command,config.readRegister,config.writeRegister);
+    }
+  }
+}
