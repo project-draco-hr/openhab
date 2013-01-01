@@ -1,0 +1,60 @@
+{
+  if (channel != null) {
+    try {
+      channel.configureBlocking(false);
+      setKeepAlive(true);
+    }
+ catch (    IOException e2) {
+      logger.error("An exception occured while configuring a channel: {}",e2.getMessage());
+    }
+    try {
+      connectSelector=Selector.open();
+    }
+ catch (    IOException e) {
+      logger.error("An exception occured while opening a channel: {}",e.getMessage());
+    }
+synchronized (connectSelector) {
+      if (isConnectionOriented()) {
+        connectSelector.wakeup();
+        try {
+          channel.register(connectSelector,SelectionKey.OP_CONNECT);
+        }
+ catch (        ClosedChannelException e1) {
+          logger.error("An exception occured while registering a channel: {}",e1.getMessage());
+        }
+catch (        IllegalArgumentException e2) {
+        }
+      }
+    }
+    try {
+      writeSelector=Selector.open();
+    }
+ catch (    IOException e) {
+      logger.error("An exception occured while opening a selectir: {}",e.getMessage());
+    }
+synchronized (writeSelector) {
+      writeSelector.wakeup();
+      try {
+        channel.register(writeSelector,SelectionKey.OP_WRITE);
+      }
+ catch (      ClosedChannelException e1) {
+        logger.error("An exception occured while registering a selector: {}",e1.getMessage());
+      }
+    }
+    try {
+      readSelector=Selector.open();
+    }
+ catch (    IOException e) {
+      logger.error("An exception occured while connecting a selector: {}",e.getMessage());
+    }
+synchronized (readSelector) {
+      readSelector.wakeup();
+      try {
+        channel.register(readSelector,SelectionKey.OP_READ);
+      }
+ catch (      ClosedChannelException e1) {
+        logger.error("An exception occured while registering a selector: {}",e1.getMessage());
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  @SuppressWarnings("rawtypes") AbstractChannelEventSubscriberBinding.MuxChannel muxChannel=(AbstractChannelEventSubscriberBinding.MuxChannel)dataMap.get("MuxChannel");
+  boolean jobDone=false;
+  while (!jobDone) {
+    if (!muxChannel.isOpen()) {
+      logger.warn("{} apparently is not open.",muxChannel);
+      jobDone=true;
+      muxChannel.isConnecting=false;
+      break;
+    }
+    if (!muxChannel.isConnectionOriented()) {
+      jobDone=true;
+      muxChannel.isConnecting=false;
+      break;
+    }
+synchronized (muxChannel.connectSelector) {
+      try {
+        muxChannel.connectSelector.selectNow();
+      }
+ catch (      IOException e) {
+      }
+      Iterator<SelectionKey> it=muxChannel.connectSelector.selectedKeys().iterator();
+      while (it.hasNext()) {
+        SelectionKey selKey=(SelectionKey)it.next();
+        it.remove();
+        if (selKey.isValid() && selKey.isConnectable()) {
+          if (muxChannel.isConnectionPending()) {
+            try {
+              muxChannel.finishConnect();
+            }
+ catch (            NoConnectionPendingException e) {
+              logger.warn("{} has no conection pending",muxChannel);
+            }
+catch (            ClosedChannelException e) {
+              logger.warn("{} apparently is closed.",muxChannel);
+            }
+catch (            IOException e) {
+              logger.warn("{} has encountered an unknown IO Exception: {}",muxChannel,e.getMessage());
+              muxChannel.logFault();
+            }
+            muxChannel.isConnecting=false;
+          }
+          jobDone=true;
+        }
+      }
+    }
+  }
+}

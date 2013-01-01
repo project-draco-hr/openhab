@@ -1,0 +1,29 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  @SuppressWarnings("rawtypes") AbstractChannelEventSubscriberBinding.MuxChannel muxChannel=(AbstractChannelEventSubscriberBinding.MuxChannel)dataMap.get("MuxChannel");
+  if (muxChannel.isConnected()) {
+    Scheduler scheduler=null;
+    try {
+      scheduler=StdSchedulerFactory.getDefaultScheduler();
+    }
+ catch (    SchedulerException e1) {
+      logger.error("An exception occured while getting the Quartz scheduler: {}",e1.getMessage());
+    }
+    JobDataMap map=new JobDataMap();
+    map.put("MuxChannel",muxChannel);
+    JobDetail job=newJob(ReadJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Read-" + Long.toString(System.currentTimeMillis()),"AbstractChannelEventSubscriberBinding").usingJobData(map).build();
+    Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Read-" + Long.toString(System.currentTimeMillis()),"AbstractChannelEventSubscriberBinding").startNow().build();
+    try {
+      scheduler.getListenerManager().addJobListener(new ReadJobListener(),KeyMatcher.keyEquals(job.getKey()));
+    }
+ catch (    SchedulerException e1) {
+      logger.error("An exception occured while getting a Quartz Listener Manager: {}",e1.getMessage());
+    }
+    try {
+      scheduler.scheduleJob(job,trigger);
+    }
+ catch (    SchedulerException e) {
+      logger.error("Error scheduling a read job with the Quartz Scheduler : {}",e.getMessage());
+    }
+  }
+}

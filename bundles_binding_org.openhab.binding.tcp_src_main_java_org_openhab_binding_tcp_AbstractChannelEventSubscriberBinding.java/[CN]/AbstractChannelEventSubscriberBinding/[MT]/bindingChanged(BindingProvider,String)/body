@@ -1,37 +1,16 @@
 {
-  List<C> socketChannels=getActiveChannels(itemName);
   List<InetSocketAddress> socketAddresses=((P)provider).getInetSocketAddresses(itemName);
-  ListIterator<C> listIterator=socketChannels.listIterator();
-  while (listIterator.hasNext()) {
-    C networkChannel=listIterator.next();
-    if (!socketAddresses.contains(new InetSocketAddress(channelTrackers.get(networkChannel).host,channelTrackers.get(networkChannel).port)) && isConnectedChannel(networkChannel)) {
+  for (  MuxChannel aChannel : channelTracker) {
+    if (!socketAddresses.contains(new InetSocketAddress(aChannel.host,aChannel.port))) {
       try {
-        removePersistentConnection(itemName,networkChannel);
+        channelTracker.remove(aChannel.host,aChannel.port,itemName);
       }
  catch (      IOException e) {
-        e.printStackTrace();
+        logger.error("An exception occured while remvoing a channel: {}",e.getMessage());
       }
     }
   }
-  ListIterator<InetSocketAddress> addrIterator=socketAddresses.listIterator();
-  while (addrIterator.hasNext()) {
-    InetSocketAddress inetSocketAddress=addrIterator.next();
-    boolean channelExists=false;
-    ListIterator<C> subIterator=socketChannels.listIterator();
-    while (subIterator.hasNext()) {
-      C networkChannel=subIterator.next();
-      if (channelTrackers.get(networkChannel).host.equals(inetSocketAddress.getAddress().getHostAddress()) && channelTrackers.get(networkChannel).port == inetSocketAddress.getPort()) {
-        channelExists=true;
-        break;
-      }
-    }
-    if (!channelExists) {
-      try {
-        addPersistentConnection(itemName,inetSocketAddress);
-      }
- catch (      IOException e) {
-        logger.debug("Could not add a persitent connection for item {} to address {}",itemName,inetSocketAddress.toString());
-      }
-    }
+  for (  SocketAddress anAddress : socketAddresses) {
+    channelTracker.add(this,((InetSocketAddress)anAddress).getAddress().getHostAddress(),((InetSocketAddress)anAddress).getPort(),itemName);
   }
 }

@@ -1,0 +1,34 @@
+{
+  ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  if (command != null) {
+    String udpCommandName=null;
+    if (command instanceof DecimalType) {
+      udpCommandName=commandAsString;
+    }
+ else {
+      udpCommandName=provider.getProtocolCommand(itemName,command);
+    }
+    udpCommandName=udpCommandName + ((char)13) + ((char)10);
+    Direction direction=provider.getDirection(itemName,command);
+    if (direction.equals(Direction.OUT) | direction.equals(Direction.BIDIRECTIONAL)) {
+      ByteBuffer outputBuffer=ByteBuffer.allocate(1024);
+      try {
+        outputBuffer.put(udpCommandName.getBytes("ASCII"));
+      }
+ catch (      UnsupportedEncodingException e) {
+        logger.warn("Exception while attempting an unsupported encoding scheme");
+      }
+      try {
+        @SuppressWarnings("unused") ByteBuffer response=dChannel.writeBuffer(outputBuffer,false,3000);
+      }
+ catch (      Exception e) {
+        logger.error("An exception occured while writing a buffer to a channel: {}",e.getMessage());
+      }
+      return true;
+    }
+ else {
+      logger.error("UDPCommand has the wrong direction");
+    }
+  }
+  return false;
+}

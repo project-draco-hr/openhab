@@ -1,6 +1,6 @@
 {
   P provider=findFirstMatchingBindingProvider(itemName);
-  C sChannel=null;
+  MuxChannel channel=null;
   if (provider == null) {
     logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
     return;
@@ -8,9 +8,10 @@
   if (command != null) {
     List<Command> commands=provider.getQualifiedCommands(itemName,command);
     for (    Command someCommand : commands) {
-      sChannel=getActiveChannel(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand));
-      if (sChannel != null) {
-        boolean result=internalReceiveChanneledCommand(itemName,someCommand,sChannel,command.toString());
+      InetSocketAddress tempAddress=new InetSocketAddress(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand));
+      channel=channelTracker.get(tempAddress.getAddress().getHostAddress(),tempAddress.getPort());
+      if (channel != null) {
+        boolean result=internalReceiveChanneledCommand(itemName,someCommand,channel,command.toString());
         if (result) {
           List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,someCommand);
           State newState=createStateFromString(stateTypeList,command.toString());
@@ -20,7 +21,7 @@
         }
       }
  else {
-        logger.error("there is no active channel for [itemName={}, command={}]",itemName,command);
+        logger.error("there is no channel that services [itemName={}, command={}]",itemName,command);
       }
     }
   }

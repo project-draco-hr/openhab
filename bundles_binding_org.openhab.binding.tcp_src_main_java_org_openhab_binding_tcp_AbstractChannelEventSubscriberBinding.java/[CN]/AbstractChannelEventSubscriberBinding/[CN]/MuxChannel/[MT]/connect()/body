@@ -1,0 +1,25 @@
+{
+  if (!isConnecting) {
+    if (!isFaulty()) {
+      if (host != null && port != 0) {
+        configure();
+        isConnecting=true;
+        scheduleFinishConnectJob();
+        logger.info("Setting up a connection to {}",(new InetSocketAddress(host,port).toString()));
+        connect(new InetSocketAddress(host,port));
+        return true;
+      }
+ else {
+        return false;
+      }
+    }
+ else {
+      logger.error("The channel servicing {} has experienced too many errors",(new InetSocketAddress(host,port).toString()));
+      return false;
+    }
+  }
+ else {
+    logger.error("Already trying to setup a connection to {}",(new InetSocketAddress(host,port).toString()));
+    return false;
+  }
+}
