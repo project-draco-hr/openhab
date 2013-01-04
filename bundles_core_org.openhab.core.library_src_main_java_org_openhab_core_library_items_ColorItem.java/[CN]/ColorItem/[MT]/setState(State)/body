@@ -4,13 +4,13 @@
     DecimalType hue=((HSBType)currentState).getHue();
     PercentType saturation=((HSBType)currentState).getSaturation();
     if (state == OnOffType.OFF) {
-      this.state=new HSBType(hue,saturation,PercentType.ZERO);
+      super.setState(new HSBType(hue,saturation,PercentType.ZERO));
     }
  else     if (state == OnOffType.ON) {
-      this.state=new HSBType(hue,saturation,PercentType.HUNDRED);
+      super.setState(new HSBType(hue,saturation,PercentType.HUNDRED));
     }
  else     if (state instanceof PercentType && !(state instanceof HSBType)) {
-      this.state=new HSBType(hue,saturation,(PercentType)state);
+      super.setState(new HSBType(hue,saturation,(PercentType)state));
     }
  else {
       super.setState(state);
@@ -18,13 +18,13 @@
   }
  else {
     if (state == OnOffType.OFF) {
-      this.state=HSBType.BLACK;
+      super.setState(HSBType.BLACK);
     }
  else     if (state == OnOffType.ON) {
-      this.state=HSBType.WHITE;
+      super.setState(HSBType.WHITE);
     }
  else     if (state instanceof PercentType && !(state instanceof HSBType)) {
-      this.state=new HSBType(DecimalType.ZERO,PercentType.ZERO,(PercentType)state);
+      super.setState(new HSBType(DecimalType.ZERO,PercentType.ZERO,(PercentType)state));
     }
  else {
       super.setState(state);

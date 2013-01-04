@@ -2,7 +2,17 @@
   if (typeClass == HSBType.class) {
     return this.state;
   }
- else {
-    return super.getStateAs(typeClass);
+ else   if (typeClass == OnOffType.class) {
+    if (state instanceof HSBType) {
+      HSBType hsbState=(HSBType)state;
+      return hsbState.getBrightness().equals(PercentType.ZERO) ? OnOffType.OFF : OnOffType.ON;
+    }
   }
+ else   if (typeClass == DecimalType.class) {
+    if (state instanceof HSBType) {
+      HSBType hsbState=(HSBType)state;
+      return new DecimalType(hsbState.getBrightness().toBigDecimal().divide(new BigDecimal(100),8,RoundingMode.UP));
+    }
+  }
+  return super.getStateAs(typeClass);
 }
