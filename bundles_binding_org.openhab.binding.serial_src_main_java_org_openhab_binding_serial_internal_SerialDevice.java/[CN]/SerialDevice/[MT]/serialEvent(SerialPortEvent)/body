@@ -11,24 +11,33 @@ case SerialPortEvent.RI:
 case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
     break;
 case SerialPortEvent.DATA_AVAILABLE:
-  byte[] readBuffer=new byte[20];
+  StringBuilder sb=new StringBuilder();
+byte[] readBuffer=new byte[20];
 try {
+do {
   while (inputStream.available() > 0) {
-    inputStream.read(readBuffer);
+    int bytes=inputStream.read(readBuffer);
+    sb.append(new String(readBuffer,0,bytes));
   }
-  String result=new String(readBuffer);
-  IOUtils.closeQuietly(inputStream);
-  logger.debug("Received message '{}' on serial port {}",new String[]{result,port});
-  if (eventPublisher != null && stringItemName != null) {
-    eventPublisher.postUpdate(stringItemName,new StringType(result));
+  try {
+    Thread.sleep(100);
   }
-  if (eventPublisher != null && switchItemName != null && result.trim().isEmpty()) {
-    eventPublisher.postUpdate(switchItemName,OnOffType.ON);
-    eventPublisher.postUpdate(switchItemName,OnOffType.OFF);
+ catch (  InterruptedException e) {
   }
 }
+ while (inputStream.available() > 0);
+String result=sb.toString();
+logger.debug("Received message '{}' on serial port {}",new String[]{result,port});
+if (eventPublisher != null && stringItemName != null) {
+  eventPublisher.postUpdate(stringItemName,new StringType(result));
+}
+if (eventPublisher != null && switchItemName != null && result.trim().isEmpty()) {
+  eventPublisher.postUpdate(switchItemName,OnOffType.ON);
+  eventPublisher.postUpdate(switchItemName,OnOffType.OFF);
+}
+}
  catch (IOException e) {
-  logger.debug("Error receiving data on serial port {}: {}",new String[]{port,e.getMessage()});
+logger.debug("Error receiving data on serial port {}: {}",new String[]{port,e.getMessage()});
 }
 break;
 }
