@@ -1,8 +1,10 @@
 {
-  if (bindingsExist()) {
+  if (listenersStarted == false && bindingsExist()) {
+    logger.debug("startIhcListener");
     resourceValueNotificationListener=new IhcResourceValueNotificationListener();
     resourceValueNotificationListener.start();
     controllerStateListener=new IhcControllerStateListener();
     controllerStateListener.start();
+    listenersStarted=true;
   }
 }
