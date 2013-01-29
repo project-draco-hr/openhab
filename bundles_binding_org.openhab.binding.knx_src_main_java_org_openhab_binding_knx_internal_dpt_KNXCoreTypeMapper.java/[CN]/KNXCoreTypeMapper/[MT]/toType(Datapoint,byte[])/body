@@ -4,7 +4,10 @@
     translator.setData(data);
     String value=translator.getValue();
     String id=translator.getType().getID();
+    logger.debug("toType datapoint DPT = " + datapoint.getDPT());
+    logger.debug("toType datapoint getMainNumver = " + datapoint.getMainNumber());
     if (datapoint.getMainNumber() == 9)     id="9.001";
+    if (datapoint.getMainNumber() == 14)     id="14.001";
     Class<? extends Type> typeClass=toTypeClass(id);
     if (typeClass.equals(UpDownType.class))     return UpDownType.valueOf(value.toUpperCase());
     if (typeClass.equals(IncreaseDecreaseType.class))     return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
