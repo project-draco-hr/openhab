@@ -6,9 +6,8 @@
     String id=translator.getType().getID();
     logger.trace("toType datapoint DPT = " + datapoint.getDPT());
     logger.trace("toType datapoint getMainNumver = " + datapoint.getMainNumber());
-    if (datapoint.getMainNumber() == 9)     id=DPTXlator2ByteFloat.DPT_TEMPERATURE.getID();
-    if (datapoint.getMainNumber() == 13)     id=DPTXlator4ByteSigned.DPT_VALUE_4_COUNT.getID();
-    if (datapoint.getMainNumber() == 14)     id=DPTXlator4ByteFloat.DPT_VALUE_4_ACCELERATION_ANGULAR.getID();
+    if (datapoint.getMainNumber() == 9)     id="9.001";
+    if (datapoint.getMainNumber() == 14)     id="14.001";
     Class<? extends Type> typeClass=toTypeClass(id);
     if (typeClass.equals(UpDownType.class))     return UpDownType.valueOf(value.toUpperCase());
     if (typeClass.equals(IncreaseDecreaseType.class))     return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
