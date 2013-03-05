@@ -1,0 +1,28 @@
+{
+  if (command instanceof IncreaseDecreaseType && !isRedefinedByCustomCommand(command)) {
+    IncreaseDecreaseType t=(IncreaseDecreaseType)command;
+    if (IncreaseDecreaseType.INCREASE.equals(t)) {
+      for (      int channelId : channels) {
+        service.enableChannel(channelId);
+        service.increaseChannel(channelId,DIMMER_STEP_SIZE);
+        if (service.getChannelValue(channelId) == 0) {
+          service.setChannelValue(channelId,DmxChannel.DMX_MAX_VALUE);
+        }
+      }
+    }
+ else {
+      for (      int channelId : channels) {
+        service.decreaseChannel(channelId,DIMMER_STEP_SIZE);
+      }
+    }
+    return;
+  }
+  if (command instanceof PercentType) {
+    for (    int channelId : channels) {
+      service.setChannelValue(channelId,DmxChannel.DMX_MAX_VALUE);
+      service.setChannelValue(channelId,(PercentType)command);
+    }
+    return;
+  }
+  super.processCommand(service,command);
+}

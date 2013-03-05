@@ -1,0 +1,32 @@
+{
+  name=itemName;
+  bindingProvider=dmxBindingProvider;
+  int pos=configString.indexOf(']');
+  String channelConfigString=configString.substring(configString.indexOf("CHANNEL[") + 8,pos);
+  parseChannelConfig(channelConfigString);
+  try {
+    if (configString.length() < pos + 2) {
+      return;
+    }
+    String[] configElements=configString.substring(pos + 2).split("],");
+    for (    String cmd : configElements) {
+      if (cmd == null || cmd.length() == 0) {
+        continue;
+      }
+      String openHabCommand=cmd.substring(0,cmd.indexOf('['));
+      String dmxCommandString=cmd.substring(cmd.indexOf('[') + 1,cmd.length() - 1);
+      String dmxCommandType=dmxCommandString.split("\\|")[0];
+      if (dmxCommandType.equals(DmxCommand.types.FADE.toString())) {
+        DmxCommand dmxCommand=new DmxFadeCommand(this,dmxCommandString.substring(dmxCommandString.indexOf("|") + 1));
+        customCommands.put(openHabCommand,dmxCommand);
+      }
+ else {
+        throw new BindingConfigParseException("Unsupported DMX command: " + dmxCommandType);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Invalid DMX configuration for item {} : {}",itemName,e.getMessage());
+    throw new BindingConfigParseException(e.getMessage());
+  }
+}

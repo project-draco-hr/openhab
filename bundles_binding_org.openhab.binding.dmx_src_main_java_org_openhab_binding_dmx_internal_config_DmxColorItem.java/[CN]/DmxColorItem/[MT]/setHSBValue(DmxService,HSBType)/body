@@ -1,0 +1,18 @@
+{
+  hsbState=hsbValue;
+  int valueLength=isRgbw() ? 4 : 3;
+  int[] values=new int[valueLength];
+  values[0]=DmxUtil.getByteFromPercentType(hsbValue.getRed());
+  values[1]=DmxUtil.getByteFromPercentType(hsbValue.getGreen());
+  values[2]=DmxUtil.getByteFromPercentType(hsbValue.getBlue());
+  if (isRgbw()) {
+    values[3]=DmxUtil.calculateWhite(values[0],values[1],values[3]);
+  }
+  int j=0;
+  for (  int c : channels) {
+    service.setChannelValue(c,values[j++]);
+    if (j == values.length) {
+      j=0;
+    }
+  }
+}

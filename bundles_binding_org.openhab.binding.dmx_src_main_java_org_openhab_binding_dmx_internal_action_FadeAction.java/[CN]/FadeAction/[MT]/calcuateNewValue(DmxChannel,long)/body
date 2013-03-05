@@ -1,0 +1,48 @@
+{
+  int newValue=channel.getValue();
+  if (startTime == 0) {
+    startTime=currentTime;
+    if (fadeTime != 0) {
+      startValue=channel.getValue();
+      if (startValue == targetValue) {
+        stepDuration=1;
+      }
+ else       if (startValue > targetValue) {
+        fadeDirection=FadeDirection.down;
+        stepDuration=fadeTime / (startValue - targetValue);
+      }
+ else {
+        fadeDirection=FadeDirection.up;
+        stepDuration=fadeTime / (targetValue - startValue);
+      }
+    }
+ else {
+      newValue=targetValue;
+    }
+  }
+  long duration=currentTime - startTime;
+  if (fadeTime != 0 && newValue != targetValue) {
+    if (stepDuration == 0) {
+      stepDuration=1;
+    }
+    int currentStep=(int)(duration / stepDuration);
+    if (fadeDirection == FadeDirection.up) {
+      newValue=DmxUtil.capDmxValue(startValue + currentStep);
+      if (newValue > targetValue) {
+        newValue=targetValue;
+      }
+    }
+ else {
+      newValue=DmxUtil.capDmxValue(startValue - currentStep);
+      if (newValue < targetValue) {
+        newValue=targetValue;
+      }
+    }
+  }
+  if (newValue == targetValue) {
+    if (((holdTime > 0 || fadeTime > 0) && (duration >= fadeTime + holdTime)) || (holdTime == 0 && fadeTime == 0)) {
+      completed=true;
+    }
+  }
+  return newValue;
+}

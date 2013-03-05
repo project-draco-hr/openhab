@@ -1,0 +1,44 @@
+{
+  if (dmxService == null) {
+    logger.error("DMX Service unavailable. Cannot process item configuration for {}",item.getName());
+    return;
+  }
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String config=(bindingConfig == null) ? "" : bindingConfig.replaceAll(" ","").toUpperCase();
+  logger.trace("Binding item: {} with configuration {}",item.getName(),config);
+  DmxItem itemBinding=null;
+  if (item instanceof ColorItem) {
+    itemBinding=new DmxColorItem(item.getName(),config,this);
+  }
+ else   if (item instanceof DimmerItem) {
+    itemBinding=new DmxDimmerItem(item.getName(),config,this);
+  }
+ else   if (item instanceof SwitchItem) {
+    itemBinding=new DmxSwitchItem(item.getName(),config,this);
+  }
+ else {
+    throw new BindingConfigParseException("Unsupported item type " + item.getClass().getSimpleName());
+  }
+  if (itemBinding.isStatusListener()) {
+    final DmxStatusUpdateListener dmxStatusListener=itemBinding;
+    final String itemName=item.getName();
+    logger.trace("Registering status listener for item {} ",item.getName());
+    dmxService.registerStatusListener(dmxStatusListener);
+    addBindingChangeListener(new BindingChangeListener(){
+      @Override public void bindingChanged(      BindingProvider provider,      String changedItemName){
+        if (itemName.equals(changedItemName) && !provider.providesBindingFor(itemName)) {
+          logger.trace("Removing status listener for item {}",itemName);
+          dmxService.unregisterStatusListener(dmxStatusListener);
+        }
+      }
+      @Override public void allBindingsChanged(      BindingProvider provider){
+        if (!provider.providesBindingFor(itemName)) {
+          logger.trace("Removing status listener for item {}",itemName);
+          dmxService.unregisterStatusListener(dmxStatusListener);
+        }
+      }
+    }
+);
+  }
+  addBindingConfig(item,itemBinding);
+}

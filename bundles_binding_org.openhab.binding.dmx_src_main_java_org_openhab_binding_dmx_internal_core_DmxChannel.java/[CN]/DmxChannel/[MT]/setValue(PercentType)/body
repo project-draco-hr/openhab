@@ -1,0 +1,17 @@
+{
+  if (outputlevel.intValue() == 0) {
+    switchOff();
+    return;
+  }
+ else {
+    switchOn();
+  }
+  if (hasRunningActions()) {
+    for (    BaseAction a : actions) {
+      a.setOutputLevel(outputlevel.intValue());
+    }
+  }
+ else {
+    value=DmxUtil.getOutputValue(value,outputlevel.intValue());
+  }
+}

@@ -1,0 +1,14 @@
+{
+  if (increment < 0) {
+    return;
+  }
+  switchedOn=true;
+  if (!hasRunningActions()) {
+    value=DmxUtil.capDmxValue(value + DmxUtil.getByteFromPercentType(new PercentType(increment)));
+  }
+ else {
+    for (    BaseAction a : actions) {
+      a.increase(increment);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  if (!switchedOn) {
+    return DMX_MIN_VALUE;
+  }
+  if (hasRunningActions()) {
+    BaseAction action=actions.get(0);
+    value=action.getNewValue(this,calculationTime);
+    if (action.isCompleted()) {
+      switchToNextAction();
+    }
+  }
+  return value;
+}

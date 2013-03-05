@@ -1,0 +1,13 @@
+{
+  if (decrement < 0) {
+    return;
+  }
+  if (!hasRunningActions()) {
+    value=DmxUtil.capDmxValue(value - DmxUtil.getByteFromPercentType(new PercentType(decrement)));
+  }
+ else {
+    for (    BaseAction a : actions) {
+      a.decrease(decrement);
+    }
+  }
+}

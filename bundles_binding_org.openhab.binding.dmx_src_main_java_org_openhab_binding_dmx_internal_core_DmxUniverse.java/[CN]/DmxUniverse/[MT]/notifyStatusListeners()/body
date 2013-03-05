@@ -1,0 +1,11 @@
+{
+  for (  DmxStatusUpdateListener listener : updateListeners) {
+    if (System.currentTimeMillis() > listener.getLastUpdateTime() + listener.getUpdateDelay()) {
+      int values[]=new int[listener.getFootPrint()];
+      for (int i=0; i < listener.getFootPrint(); i++) {
+        values[i]=getChannel(listener.getChannel() + i).getValue();
+      }
+      listener.processStatusUpdate(values);
+    }
+  }
+}

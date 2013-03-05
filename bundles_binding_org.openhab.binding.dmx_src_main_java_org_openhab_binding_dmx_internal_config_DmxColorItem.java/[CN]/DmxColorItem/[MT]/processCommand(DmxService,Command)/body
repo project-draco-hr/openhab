@@ -1,0 +1,49 @@
+{
+  if (command instanceof HSBType) {
+    HSBType hsbValue=(HSBType)command;
+    setHSBValue(service,hsbValue);
+    return;
+  }
+  if (command instanceof IncreaseDecreaseType && !isRedefinedByCustomCommand(command) && !service.hasChannelActions(channels[0])) {
+    HSBType hsb=hsbState;
+    int brightness=0;
+    IncreaseDecreaseType t=(IncreaseDecreaseType)command;
+    if (IncreaseDecreaseType.INCREASE.equals(t)) {
+      if (hsb == null) {
+        hsb=new HSBType(Color.WHITE);
+      }
+      for (      int ch : channels) {
+        service.enableChannel(ch);
+      }
+      brightness=hsb.getBrightness().intValue();
+      brightness+=BRIGHTNESS_STEP_SIZE;
+      if (brightness > 100) {
+        brightness=100;
+      }
+    }
+ else {
+      if (hsb == null) {
+        hsb=new HSBType(Color.BLACK);
+      }
+      brightness=hsb.getBrightness().intValue();
+      brightness-=BRIGHTNESS_STEP_SIZE;
+      if (brightness <= 0) {
+        brightness=0;
+      }
+    }
+    HSBType newHsb=new HSBType(hsb.getHue(),hsb.getSaturation(),new PercentType(brightness));
+    setHSBValue(service,newHsb);
+    return;
+  }
+  if (command instanceof PercentType && !service.hasChannelActions(channels[0])) {
+    PercentType t=(PercentType)command;
+    HSBType hsb=hsbState;
+    if (hsb == null) {
+      hsb=new HSBType(Color.WHITE);
+    }
+    HSBType newHsb=new HSBType(hsb.getHue(),hsb.getSaturation(),t);
+    setHSBValue(service,newHsb);
+    return;
+  }
+  super.processCommand(service,command);
+}

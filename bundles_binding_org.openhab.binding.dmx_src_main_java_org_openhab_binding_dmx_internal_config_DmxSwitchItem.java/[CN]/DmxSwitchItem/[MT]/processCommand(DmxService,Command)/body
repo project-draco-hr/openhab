@@ -1,0 +1,29 @@
+{
+  if (command instanceof OnOffType && !isRedefinedByCustomCommand(command)) {
+    if (OnOffType.ON.equals(command)) {
+      boolean hasValue=false;
+      for (      int channelId : channels) {
+        service.enableChannel(channelId);
+        if (service.getChannelValue(channelId) > 0) {
+          hasValue=true;
+        }
+      }
+      if (!hasValue) {
+        for (        int channelId : channels) {
+          service.setChannelValue(channelId,DmxChannel.DMX_MAX_VALUE);
+        }
+      }
+    }
+ else {
+      for (      int channelId : channels) {
+        service.disableChannel(channelId);
+      }
+    }
+    return;
+  }
+  if (isRedefinedByCustomCommand(command)) {
+    DmxCommand dmxCommand=customCommands.get(command.toString());
+    dmxCommand.execute(service);
+    return;
+  }
+}

@@ -1,0 +1,20 @@
+{
+  String autoBind=System.getProperty("net.opendmx.ola.autobind");
+  if (autoBind == null || !autoBind.equalsIgnoreCase("false")) {
+    logger.info("Starting autobind for universe 0. To disable autobind use -Dnet.opendmx.ola.autobind=false");
+    DeviceInfoReply devInfoReply=client.getDeviceInfo();
+    if (devInfoReply == null) {
+      logger.error("Could not retrieve device list. Binding to OLA aborted.");
+      return;
+    }
+    List<DeviceInfo> devList=devInfoReply.getDeviceList();
+    for (    DeviceInfo devInfo : devList) {
+      if (client.patchPort(devInfo.getDeviceAlias(),0,PatchAction.PATCH,0)) {
+        logger.info("Linked universe 0 to device " + devInfo.getDeviceName());
+      }
+ else {
+        logger.info("Could not link universe 0 to device " + devInfo.getDeviceName());
+      }
+    }
+  }
+}

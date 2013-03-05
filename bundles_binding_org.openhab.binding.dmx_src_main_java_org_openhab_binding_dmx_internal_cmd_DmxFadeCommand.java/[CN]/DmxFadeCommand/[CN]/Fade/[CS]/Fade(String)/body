@@ -1,0 +1,17 @@
+{
+  String[] values=cmd.split(":");
+  if (values.length != 3) {
+    throw new BindingConfigParseException("Fade configs should consist out of 3 sections!");
+  }
+  fadeTime=Integer.parseInt(values[0]);
+  holdTime=Integer.parseInt(values[2]);
+  if (holdTime < -1) {
+    holdTime=-1;
+  }
+  String[] target=values[1].split(",");
+  targetValues=new int[target.length];
+  int i=0;
+  for (  String t : target) {
+    targetValues[i++]=Integer.parseInt(t);
+  }
+}

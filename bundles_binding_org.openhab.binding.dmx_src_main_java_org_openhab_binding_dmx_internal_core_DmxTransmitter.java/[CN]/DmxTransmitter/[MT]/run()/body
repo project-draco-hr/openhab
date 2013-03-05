@@ -1,0 +1,22 @@
+{
+  if (suspended) {
+    return;
+  }
+  running=true;
+  try {
+    byte[] b=universe.calculateBuffer();
+    if (universe.getBufferChanged()) {
+      DmxConnection conn=service.getConnection();
+      if (conn != null) {
+        conn.sendDmx(b);
+        universe.notifyStatusListeners();
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error sending dmx values.",e);
+  }
+ finally {
+    running=false;
+  }
+}

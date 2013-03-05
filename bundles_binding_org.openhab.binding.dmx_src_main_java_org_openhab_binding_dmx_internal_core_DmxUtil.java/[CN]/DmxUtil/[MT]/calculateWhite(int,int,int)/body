@@ -1,0 +1,9 @@
+{
+  int low=(red <= green) ? ((red <= blue) ? red : blue) : ((green <= blue) ? green : blue);
+  int high=(red >= green) ? ((red >= blue) ? red : blue) : ((green >= blue) ? green : blue);
+  if (high == 0) {
+    return 0;
+  }
+  int saturation=100 * ((high - low) / high);
+  return (DmxChannel.DMX_MAX_VALUE - saturation) / DmxChannel.DMX_MAX_VALUE * (red + green + blue) / 3;
+}

@@ -1,0 +1,17 @@
+{
+  String host=DEFAULT_HOST;
+  int port=DEFAULT_PORT;
+  if (StringUtils.isNotBlank(connectionString)) {
+    String[] connectionStringElements=connectionString.split(":");
+    if (connectionStringElements.length == 1) {
+      host=connectionStringElements[0];
+    }
+ else     if (connectionStringElements.length == 2) {
+      host=connectionStringElements[0];
+      port=Integer.valueOf(connectionStringElements[1]).intValue();
+    }
+  }
+  client=new OlaClient();
+  client.connect(host,port);
+  autoBind();
+}

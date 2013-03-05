@@ -1,0 +1,13 @@
+{
+  logger.trace("Fading channels {} to {}",startChannel,targetValues);
+  int channelId=startChannel;
+  for (  int v : targetValues) {
+    FadeAction fade=new FadeAction(fadeTime,v,holdTime);
+    if (immediate) {
+      transmitter.getChannel(channelId++).setChannelAction(fade);
+    }
+ else {
+      transmitter.getChannel(channelId++).addChannelAction(fade);
+    }
+  }
+}

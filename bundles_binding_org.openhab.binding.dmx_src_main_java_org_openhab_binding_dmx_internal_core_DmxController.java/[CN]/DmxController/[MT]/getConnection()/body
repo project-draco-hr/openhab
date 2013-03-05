@@ -1,0 +1,16 @@
+{
+  if (connection == null) {
+    logger.error("No DMX connection available. Please provide a bundle which implements the connection.");
+    return null;
+  }
+  if (connection.isClosed()) {
+    try {
+      connection.open(connectionString);
+    }
+ catch (    Throwable t) {
+      logger.error("Error opening DMX connection.",t);
+      return null;
+    }
+  }
+  return connection;
+}
