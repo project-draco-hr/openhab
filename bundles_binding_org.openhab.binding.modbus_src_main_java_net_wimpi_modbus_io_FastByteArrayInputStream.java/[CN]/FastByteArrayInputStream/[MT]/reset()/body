@@ -1,0 +1,11 @@
+{
+  if (readlimit < 0 || pos > mark + readlimit) {
+    pos=mark;
+    readlimit=-1;
+  }
+ else {
+    mark=pos;
+    readlimit=-1;
+    throw new IOException("Readlimit exceeded.");
+  }
+}

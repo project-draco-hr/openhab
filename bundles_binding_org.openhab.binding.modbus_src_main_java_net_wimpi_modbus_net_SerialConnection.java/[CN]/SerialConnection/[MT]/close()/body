@@ -1,0 +1,16 @@
+{
+  if (!m_Open) {
+    return;
+  }
+  if (m_SerialPort != null) {
+    try {
+      m_Transport.close();
+      m_SerialIn.close();
+    }
+ catch (    IOException e) {
+      System.err.println(e);
+    }
+    m_SerialPort.close();
+  }
+  m_Open=false;
+}

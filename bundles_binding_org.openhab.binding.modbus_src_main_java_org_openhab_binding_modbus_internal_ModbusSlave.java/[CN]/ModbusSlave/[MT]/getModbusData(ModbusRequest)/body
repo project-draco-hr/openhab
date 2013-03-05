@@ -1,5 +1,5 @@
 {
-  request.setUnitID(id);
+  request.setUnitID(getId());
   transaction.setRequest(request);
   try {
     transaction.execute();
@@ -9,7 +9,7 @@
     return null;
   }
   ModbusResponse r=transaction.getResponse();
-  if (r.getTransactionID() != transaction.getTransactionID()) {
+  if ((r.getTransactionID() != transaction.getTransactionID()) && !r.isHeadless()) {
     return null;
   }
   return r;

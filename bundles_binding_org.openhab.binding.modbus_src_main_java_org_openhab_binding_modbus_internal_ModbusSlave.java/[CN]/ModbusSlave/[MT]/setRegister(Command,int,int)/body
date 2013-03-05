@@ -1,4 +1,7 @@
 {
+  if (!isConnected()) {
+    return;
+  }
   Register newValue=null;
 synchronized (storage) {
     newValue=(Register)((InputRegister[])storage)[readRegister];
@@ -14,11 +17,20 @@ synchronized (storage) {
  else   if (command instanceof DecimalType) {
     newValue.setValue(((DecimalType)command).intValue());
   }
-  if (connection == null) {
-    return;
+ else   if (command instanceof OnOffType) {
+    if (command.equals(OnOffType.ON))     newValue.setValue(1);
+ else     if (command.equals(OnOffType.OFF))     newValue.setValue(0);
   }
-  ModbusRequest request=new WriteSingleRegisterRequest(writeRegister,newValue);
-  request.setUnitID(id);
+  ModbusRequest request=null;
+  if (writeMultipleRegisters) {
+    Register[] regs=new Register[1];
+    regs[0]=newValue;
+    request=new WriteMultipleRegistersRequest(writeRegister,regs);
+  }
+ else {
+    request=new WriteSingleRegisterRequest(writeRegister,newValue);
+  }
+  request.setUnitID(getId());
   transaction.setRequest(request);
   try {
     logger.debug("ModbusSlave: FC" + request.getFunctionCode() + " ref="+ writeRegister+ " value="+ newValue.getValue());

@@ -1,0 +1,34 @@
+{
+  WriteMultipleRegistersResponse response=null;
+  if (m_NonWordDataHandler == null) {
+    Register[] regs=null;
+    ProcessImage procimg=ModbusCoupler.getReference().getProcessImage();
+    try {
+      regs=procimg.getRegisterRange(this.getReference(),this.getWordCount());
+      for (int i=0; i < regs.length; i++) {
+        regs[i].setValue(this.getRegister(i).toBytes());
+      }
+    }
+ catch (    IllegalAddressException iaex) {
+      return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
+    }
+    response=new WriteMultipleRegistersResponse(this.getReference(),regs.length);
+  }
+ else {
+    int result=m_NonWordDataHandler.commitUpdate();
+    if (result > 0) {
+      return createExceptionResponse(result);
+    }
+    response=new WriteMultipleRegistersResponse(this.getReference(),m_NonWordDataHandler.getWordCount());
+  }
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+  }
+ else {
+    response.setHeadless();
+  }
+  response.setUnitID(this.getUnitID());
+  response.setFunctionCode(this.getFunctionCode());
+  return response;
+}

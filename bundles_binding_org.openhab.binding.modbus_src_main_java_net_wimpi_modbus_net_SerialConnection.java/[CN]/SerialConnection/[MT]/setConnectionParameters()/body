@@ -1,0 +1,25 @@
+{
+  int oldBaudRate=m_SerialPort.getBaudRate();
+  int oldDatabits=m_SerialPort.getDataBits();
+  int oldStopbits=m_SerialPort.getStopBits();
+  int oldParity=m_SerialPort.getParity();
+  int oldFlowControl=m_SerialPort.getFlowControlMode();
+  try {
+    m_SerialPort.setSerialPortParams(m_Parameters.getBaudRate(),m_Parameters.getDatabits(),m_Parameters.getStopbits(),m_Parameters.getParity());
+  }
+ catch (  UnsupportedCommOperationException e) {
+    m_Parameters.setBaudRate(oldBaudRate);
+    m_Parameters.setDatabits(oldDatabits);
+    m_Parameters.setStopbits(oldStopbits);
+    m_Parameters.setParity(oldParity);
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception("Unsupported parameter");
+  }
+  try {
+    m_SerialPort.setFlowControlMode(m_Parameters.getFlowControlIn() | m_Parameters.getFlowControlOut());
+  }
+ catch (  UnsupportedCommOperationException e) {
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception("Unsupported flow control");
+  }
+}

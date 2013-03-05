@@ -1,0 +1,14 @@
+{
+  if (b == ModbusASCIITransport.FRAME_START) {
+    out.write(58);
+    return;
+  }
+ else   if (b == ModbusASCIITransport.FRAME_END) {
+    out.write(13);
+    out.write(10);
+    return;
+  }
+ else {
+    out.write(ModbusUtil.toHex(b));
+  }
+}

@@ -1,0 +1,14 @@
+{
+  setReference(din.readUnsignedShort());
+  byte[] data=new byte[2];
+  for (int k=0; k < 2; k++) {
+    data[k]=din.readByte();
+  }
+  if (data[0] == Modbus.COIL_ON) {
+    setCoil(true);
+  }
+ else {
+    setCoil(false);
+  }
+  setDataLength(4);
+}

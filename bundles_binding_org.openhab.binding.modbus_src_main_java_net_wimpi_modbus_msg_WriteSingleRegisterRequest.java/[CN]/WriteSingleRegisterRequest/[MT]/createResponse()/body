@@ -1,0 +1,23 @@
+{
+  WriteSingleRegisterResponse response=null;
+  Register reg=null;
+  ProcessImage procimg=ModbusCoupler.getReference().getProcessImage();
+  try {
+    reg=procimg.getRegister(m_Reference);
+    reg.setValue(m_Register.toBytes());
+  }
+ catch (  IllegalAddressException iaex) {
+    return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
+  }
+  response=new WriteSingleRegisterResponse(this.getReference(),reg.getValue());
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+  }
+ else {
+    response.setHeadless();
+  }
+  response.setUnitID(this.getUnitID());
+  response.setFunctionCode(this.getFunctionCode());
+  return response;
+}

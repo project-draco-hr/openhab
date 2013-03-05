@@ -1,35 +1,47 @@
 {
-  if (connection == null)   return;
-  Object local=null;
-  if (ModbusBindingProvider.TYPE_COIL.equals(type)) {
-    ModbusRequest request=new ReadCoilsRequest(start,length);
-    ReadCoilsResponse responce=(ReadCoilsResponse)getModbusData(request);
-    ;
-    local=responce.getCoils();
+  if (!connect()) {
+    logger.info("ModbusSlave not connected");
+    return;
   }
- else   if (ModbusBindingProvider.TYPE_DISCRETE.equals(type)) {
-    ModbusRequest request=new ReadInputDiscretesRequest(start,length);
-    ReadInputDiscretesResponse responce=(ReadInputDiscretesResponse)getModbusData(request);
-    local=responce.getDiscretes();
-  }
- else   if (ModbusBindingProvider.TYPE_HOLDING.equals(type)) {
-    ModbusRequest request=new ReadMultipleRegistersRequest(start,length);
-    ReadMultipleRegistersResponse responce=(ReadMultipleRegistersResponse)getModbusData(request);
-    local=responce.getRegisters();
-  }
- else   if (ModbusBindingProvider.TYPE_INPUT.equals(type)) {
-    ModbusRequest request=new ReadInputRegistersRequest(start,length);
-    ReadInputRegistersResponse responce=(ReadInputRegistersResponse)getModbusData(request);
-    local=responce.getRegisters();
-  }
-  if (storage == null)   storage=local;
+  try {
+    Object local=null;
+    if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
+      ModbusRequest request=new ReadCoilsRequest(getStart(),getLength());
+      if (this instanceof ModbusSerialSlave) {
+        request.setHeadless();
+      }
+      request.setUnitID(id);
+      ReadCoilsResponse responce=(ReadCoilsResponse)getModbusData(request);
+      local=responce.getCoils();
+    }
+ else     if (ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
+      ModbusRequest request=new ReadInputDiscretesRequest(getStart(),getLength());
+      ReadInputDiscretesResponse responce=(ReadInputDiscretesResponse)getModbusData(request);
+      local=responce.getDiscretes();
+    }
+ else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
+      ModbusRequest request=new ReadMultipleRegistersRequest(getStart(),getLength());
+      ReadMultipleRegistersResponse responce=(ReadMultipleRegistersResponse)getModbusData(request);
+      local=responce.getRegisters();
+    }
+ else     if (ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
+      ModbusRequest request=new ReadInputRegistersRequest(getStart(),getLength());
+      ReadInputRegistersResponse responce=(ReadInputRegistersResponse)getModbusData(request);
+      local=responce.getRegisters();
+    }
+    if (storage == null)     storage=local;
  else {
 synchronized (storage) {
-      storage=local;
+        storage=local;
+      }
+    }
+    Collection<String> items=binding.getItemNames();
+    for (    String item : items) {
+      updateItem(binding,item);
     }
   }
-  Collection<String> items=binding.getItemNames();
-  for (  String item : items) {
-    updateItem(binding,item);
+ catch (  Exception e) {
+    resetConnection();
+    logger.info("ModbusSlave error getting responce from slave");
   }
 }

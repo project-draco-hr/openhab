@@ -1,0 +1,22 @@
+{
+  ReadInputRegistersResponse response=null;
+  InputRegister[] inpregs=null;
+  ProcessImage procimg=ModbusCoupler.getReference().getProcessImage();
+  try {
+    inpregs=procimg.getInputRegisterRange(this.getReference(),this.getWordCount());
+  }
+ catch (  IllegalAddressException iaex) {
+    return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
+  }
+  response=new ReadInputRegistersResponse(inpregs);
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+  }
+ else {
+    response.setHeadless();
+  }
+  response.setUnitID(this.getUnitID());
+  response.setFunctionCode(this.getFunctionCode());
+  return response;
+}

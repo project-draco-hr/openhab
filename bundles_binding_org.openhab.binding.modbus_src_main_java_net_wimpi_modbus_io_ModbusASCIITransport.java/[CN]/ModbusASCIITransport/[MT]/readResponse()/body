@@ -1,0 +1,43 @@
+{
+  boolean done=false;
+  ModbusResponse response=null;
+  int in=-1;
+  try {
+    do {
+      while ((in=m_InputStream.read()) != FRAME_START) {
+        if (in == -1) {
+          throw new IOException("readResponse: I/O exception - Serial port timeout.");
+        }
+      }
+synchronized (m_InBuffer) {
+        m_ByteInOut.reset();
+        while ((in=m_InputStream.read()) != FRAME_END) {
+          if (in == -1) {
+            throw new IOException("I/O exception - Serial port timeout.");
+          }
+          m_ByteInOut.writeByte(in);
+        }
+        int len=m_ByteInOut.size();
+        if (Modbus.debug)         System.out.println("Received: " + ModbusUtil.toHex(m_InBuffer,0,len));
+        if (((int)m_InBuffer[len - 1] & 0xff) != ModbusUtil.calculateLRC(m_InBuffer,0,len - 1)) {
+          if (Modbus.debug)           System.out.println("LRC is wrong: received=" + ((int)m_InBuffer[len - 1] & 0xff) + " calculated="+ ModbusUtil.calculateLRC(m_InBuffer,0,len - 1));
+          continue;
+        }
+        m_ByteIn.reset(m_InBuffer,m_ByteInOut.size());
+        in=m_ByteIn.readUnsignedByte();
+        in=m_ByteIn.readUnsignedByte();
+        response=ModbusResponse.createModbusResponse(in);
+        response.setHeadless();
+        m_ByteIn.reset(m_InBuffer,m_ByteInOut.size());
+        response.readFrom(m_ByteIn);
+      }
+      done=true;
+    }
+ while (!done);
+    return response;
+  }
+ catch (  Exception ex) {
+    if (Modbus.debug)     System.out.println(ex.getMessage());
+    throw new ModbusIOException("readResponse I/O exception - failed to read.");
+  }
+}

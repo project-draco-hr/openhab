@@ -1,0 +1,18 @@
+{
+  try {
+    if (m_Interface == null) {
+      m_Terminal=new UDPSlaveTerminal(InetAddress.getLocalHost());
+    }
+ else {
+      m_Terminal=new UDPSlaveTerminal(m_Interface);
+    }
+    m_Terminal.setLocalPort(m_Port);
+    m_Terminal.activate();
+    m_Handler=new ModbusUDPHandler(m_Terminal.getModbusTransport());
+    m_HandlerThread=new Thread(m_Handler);
+    m_HandlerThread.start();
+  }
+ catch (  Exception e) {
+  }
+  m_Listening=true;
+}

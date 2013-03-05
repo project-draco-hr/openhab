@@ -1,0 +1,14 @@
+{
+  dout.writeShort(m_Reference);
+  dout.writeShort(getWordCount());
+  dout.writeByte(getByteCount());
+  if (m_NonWordDataHandler == null) {
+    for (int n=0; n < m_Registers.length; n++) {
+      dout.write(m_Registers[n].toBytes());
+    }
+  }
+ else {
+    m_NonWordDataHandler.prepareData(getReference(),getWordCount());
+    dout.write(m_NonWordDataHandler.getData());
+  }
+}

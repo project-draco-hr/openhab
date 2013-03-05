@@ -1,0 +1,56 @@
+{
+  UDPMasterConnection conn=null;
+  ModbusUDPTransaction trans=null;
+  WriteCoilRequest req=null;
+  InetAddress addr=null;
+  int ref=0;
+  boolean set=false;
+  int repeat=1;
+  int port=Modbus.DEFAULT_PORT;
+  try {
+    if (args.length < 3) {
+      printUsage();
+      System.exit(1);
+    }
+ else {
+      try {
+        String astr=args[0];
+        int idx=astr.indexOf(':');
+        if (idx > 0) {
+          port=Integer.parseInt(astr.substring(idx + 1));
+          astr=astr.substring(0,idx);
+        }
+        addr=InetAddress.getByName(astr);
+        ref=Integer.parseInt(args[1]);
+        set="true".equals(args[2]);
+        if (args.length == 4) {
+          repeat=Integer.parseInt(args[3]);
+        }
+      }
+ catch (      Exception ex) {
+        ex.printStackTrace();
+        printUsage();
+        System.exit(1);
+      }
+    }
+    conn=new UDPMasterConnection(addr);
+    conn.setPort(502);
+    conn.connect();
+    req=new WriteCoilRequest(ref,set);
+    req.setUnitID(0);
+    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    trans=new ModbusUDPTransaction(conn);
+    trans.setRequest(req);
+    int k=0;
+    do {
+      trans.execute();
+      if (Modbus.debug)       System.out.println("Response: " + trans.getResponse().getHexMessage());
+      k++;
+    }
+ while (k < repeat);
+    conn.close();
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+}

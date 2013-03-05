@@ -1,0 +1,25 @@
+{
+  try {
+    if (connection == null) {
+      SerialParameters params=new SerialParameters();
+      params.setPortName(port);
+      params.setBaudRate(baud);
+      params.setDatabits(8);
+      params.setParity("None");
+      params.setStopbits(1);
+      params.setEncoding(Modbus.SERIAL_ENCODING_RTU);
+      params.setEcho(false);
+      connection=new SerialConnection(params);
+      connection.open();
+    }
+    if (!connection.isOpen()) {
+      connection.open();
+    }
+    ((ModbusSerialTransaction)transaction).setSerialConnection(connection);
+  }
+ catch (  Exception e) {
+    logger.debug("ModbusSlave: Error connecting to master: " + e.getMessage());
+    return false;
+  }
+  return true;
+}

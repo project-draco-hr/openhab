@@ -1,0 +1,66 @@
+{
+  int bc=-1, bc2=-1, bcw=-1;
+  int inpBytes=0;
+  byte inpBuf[]=new byte[256];
+  try {
+switch (fn) {
+case 0x01:
+case 0x02:
+case 0x03:
+case 0x04:
+case 0x0C:
+case 0x11:
+case 0x14:
+case 0x15:
+case 0x17:
+      bc=m_InputStream.read();
+    out.write(bc);
+  setReceiveThreshold(bc + 2);
+inpBytes=m_InputStream.read(inpBuf,0,bc + 2);
+out.write(inpBuf,0,inpBytes);
+m_CommPort.disableReceiveThreshold();
+if (inpBytes != bc + 2) {
+System.out.println("Error: looking for " + (bc + 2) + " bytes, received "+ inpBytes);
+}
+break;
+case 0x05:
+case 0x06:
+case 0x0B:
+case 0x0F:
+case 0x10:
+setReceiveThreshold(6);
+inpBytes=m_InputStream.read(inpBuf,0,6);
+out.write(inpBuf,0,inpBytes);
+m_CommPort.disableReceiveThreshold();
+break;
+case 0x07:
+case 0x08:
+setReceiveThreshold(3);
+inpBytes=m_InputStream.read(inpBuf,0,3);
+out.write(inpBuf,0,inpBytes);
+m_CommPort.disableReceiveThreshold();
+break;
+case 0x16:
+setReceiveThreshold(8);
+inpBytes=m_InputStream.read(inpBuf,0,8);
+out.write(inpBuf,0,inpBytes);
+m_CommPort.disableReceiveThreshold();
+break;
+case 0x18:
+bc=m_InputStream.read();
+out.write(bc);
+bc2=m_InputStream.read();
+out.write(bc2);
+bcw=ModbusUtil.makeWord(bc,bc2);
+setReceiveThreshold(bcw + 2);
+inpBytes=m_InputStream.read(inpBuf,0,bcw + 2);
+out.write(inpBuf,0,inpBytes);
+m_CommPort.disableReceiveThreshold();
+break;
+}
+}
+ catch (IOException e) {
+m_CommPort.disableReceiveThreshold();
+throw new IOException("getResponse serial port exception");
+}
+}

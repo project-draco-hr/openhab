@@ -3,10 +3,10 @@ synchronized (storage) {
     boolean b=translateCommand2Boolean(command);
     if (((BitVector)storage).getBit(readRegister) != b) {
       if (b) {
-        doSetCoil(start + writeRegister,true);
+        doSetCoil(getStart() + writeRegister,true);
       }
  else {
-        doSetCoil(start + writeRegister,readRegister == writeRegister ? false : true);
+        doSetCoil(getStart() + writeRegister,readRegister == writeRegister ? false : true);
       }
     }
   }

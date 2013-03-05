@@ -1,7 +1,10 @@
 {
-  if (connection == null)   return;
+  if (!connect()) {
+    logger.info("ModbusSlave not connected");
+    return;
+  }
   ModbusRequest request=new WriteCoilRequest(writeRegister,b);
-  request.setUnitID(id);
+  request.setUnitID(getId());
   transaction.setRequest(request);
   try {
     logger.debug("ModbusSlave: FC05 ref=" + writeRegister + " value="+ b);

@@ -1,0 +1,12 @@
+{
+  ExceptionResponse response=new ExceptionResponse(this.getFunctionCode(),EXCEPTION_CODE);
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+    response.setUnitID(this.getUnitID());
+  }
+ else {
+    response.setHeadless();
+  }
+  return response;
+}

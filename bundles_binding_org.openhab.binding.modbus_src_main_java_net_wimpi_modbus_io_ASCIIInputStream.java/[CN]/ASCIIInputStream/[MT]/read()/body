@@ -1,0 +1,31 @@
+{
+  StringBuffer sbuf=new StringBuffer(2);
+  int ch=in.read();
+  if (ch == -1) {
+    return -1;
+  }
+  sbuf.append((char)ch);
+  if (sbuf.charAt(0) == ':') {
+    return ModbusASCIITransport.FRAME_START;
+  }
+ else {
+    if (sbuf.charAt(0) == '\r') {
+      if (in.read() == 10) {
+        return ModbusASCIITransport.FRAME_END;
+      }
+ else {
+        throw new IOException("Malformed Stream No Frame Delims");
+      }
+    }
+ else {
+      try {
+        sbuf.append((char)in.read());
+        return Integer.parseInt(sbuf.toString().toLowerCase(),16);
+      }
+ catch (      NumberFormatException ex) {
+        if (Modbus.debug)         System.out.println(sbuf.toString());
+        throw new IOException("Malformed Stream - Wrong Characters");
+      }
+    }
+  }
+}

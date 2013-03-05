@@ -1,0 +1,14 @@
+{
+  if (b == ModbusASCIITransport.FRAME_START) {
+    out.write(ModbusBINTransport.FRAME_START_TOKEN);
+    return;
+  }
+ else   if (b == ModbusASCIITransport.FRAME_END) {
+    out.write(ModbusBINTransport.FRAME_END_TOKEN);
+    return;
+  }
+ else   if (b == ModbusBINTransport.FRAME_START_TOKEN || b == ModbusBINTransport.FRAME_END_TOKEN) {
+    out.write(b);
+    out.write(b);
+  }
+}

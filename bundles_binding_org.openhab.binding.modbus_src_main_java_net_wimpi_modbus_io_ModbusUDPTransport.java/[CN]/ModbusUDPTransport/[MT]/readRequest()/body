@@ -1,0 +1,17 @@
+{
+  try {
+    ModbusRequest req=null;
+synchronized (m_ByteIn) {
+      m_ByteIn.reset(m_Terminal.receiveMessage());
+      m_ByteIn.skip(7);
+      int functionCode=m_ByteIn.readUnsignedByte();
+      m_ByteIn.reset();
+      req=ModbusRequest.createModbusRequest(functionCode);
+      req.readFrom(m_ByteIn);
+    }
+    return req;
+  }
+ catch (  Exception ex) {
+    throw new ModbusIOException("I/O exception - failed to read.");
+  }
+}

@@ -1,0 +1,69 @@
+{
+  InetAddress addr=null;
+  TCPMasterConnection con=null;
+  ModbusRequest di_req=null;
+  WriteCoilRequest do_req=null;
+  ModbusTCPTransaction di_trans=null;
+  ModbusTCPTransaction do_trans=null;
+  int di_ref=0;
+  int do_ref=0;
+  int port=Modbus.DEFAULT_PORT;
+  try {
+    if (args.length < 3) {
+      printUsage();
+      System.exit(1);
+    }
+ else {
+      try {
+        String astr=args[0];
+        int idx=astr.indexOf(':');
+        if (idx > 0) {
+          port=Integer.parseInt(astr.substring(idx + 1));
+          astr=astr.substring(0,idx);
+        }
+        addr=InetAddress.getByName(astr);
+        di_ref=Integer.parseInt(args[1]);
+        do_ref=Integer.parseInt(args[2]);
+      }
+ catch (      Exception ex) {
+        ex.printStackTrace();
+        printUsage();
+        System.exit(1);
+      }
+    }
+    con=new TCPMasterConnection(addr);
+    con.setPort(port);
+    con.connect();
+    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    di_req=new ReadInputDiscretesRequest(di_ref,1);
+    do_req=new WriteCoilRequest();
+    do_req.setReference(do_ref);
+    di_req.setUnitID(0);
+    do_req.setUnitID(0);
+    di_trans=new ModbusTCPTransaction(con);
+    di_trans.setRequest(di_req);
+    di_trans.setReconnecting(false);
+    do_trans=new ModbusTCPTransaction(con);
+    do_trans.setRequest(do_req);
+    do_trans.setReconnecting(false);
+    boolean last_out=false;
+    boolean new_in=false;
+    do {
+      di_trans.execute();
+      new_in=((ReadInputDiscretesResponse)di_trans.getResponse()).getDiscreteStatus(0);
+      if (new_in != last_out) {
+        do_req.setCoil(new_in);
+        do_trans.execute();
+        last_out=new_in;
+        if (Modbus.debug)         System.out.println("Updated coil with state from DI.");
+      }
+    }
+ while (true);
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+ finally {
+    con.close();
+  }
+}

@@ -1,0 +1,26 @@
+{
+  try {
+    ModbusResponse res=null;
+synchronized (m_ByteIn) {
+      byte[] buffer=m_ByteIn.getBuffer();
+      if (m_Input.read(buffer,0,6) == -1) {
+        throw new ModbusIOException("Premature end of stream (Header truncated).");
+      }
+      int bf=ModbusUtil.registerToShort(buffer,4);
+      if (m_Input.read(buffer,6,bf) == -1) {
+        throw new ModbusIOException("Premature end of stream (Message truncated).");
+      }
+      m_ByteIn.reset(buffer,(6 + bf));
+      m_ByteIn.skip(7);
+      int functionCode=m_ByteIn.readUnsignedByte();
+      m_ByteIn.reset();
+      res=ModbusResponse.createModbusResponse(functionCode);
+      res.readFrom(m_ByteIn);
+    }
+    return res;
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+    throw new ModbusIOException("I/O exception - failed to read.");
+  }
+}

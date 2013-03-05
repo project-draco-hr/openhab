@@ -1,0 +1,17 @@
+{
+  try {
+    m_SlaveAddress=InetAddress.getByName(addr);
+    m_Connection=new UDPMasterConnection(m_SlaveAddress);
+    m_ReadCoilsRequest=new ReadCoilsRequest();
+    m_ReadInputDiscretesRequest=new ReadInputDiscretesRequest();
+    m_WriteCoilRequest=new WriteCoilRequest();
+    m_WriteMultipleCoilsRequest=new WriteMultipleCoilsRequest();
+    m_ReadInputRegistersRequest=new ReadInputRegistersRequest();
+    m_ReadMultipleRegistersRequest=new ReadMultipleRegistersRequest();
+    m_WriteSingleRegisterRequest=new WriteSingleRegisterRequest();
+    m_WriteMultipleRegistersRequest=new WriteMultipleRegistersRequest();
+  }
+ catch (  UnknownHostException e) {
+    throw new RuntimeException(e.getMessage());
+  }
+}

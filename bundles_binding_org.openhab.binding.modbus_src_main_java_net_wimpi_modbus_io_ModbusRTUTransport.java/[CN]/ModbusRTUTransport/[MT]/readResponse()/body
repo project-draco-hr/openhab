@@ -1,0 +1,43 @@
+{
+  boolean done=false;
+  ModbusResponse response=null;
+  int dlength=0;
+  try {
+    do {
+synchronized (m_ByteIn) {
+        int uid=m_InputStream.read();
+        if (uid != -1) {
+          int fc=m_InputStream.read();
+          m_ByteInOut.reset();
+          m_ByteInOut.writeByte(uid);
+          m_ByteInOut.writeByte(fc);
+          response=ModbusResponse.createModbusResponse(fc);
+          response.setHeadless();
+          getResponse(fc,m_ByteInOut);
+          dlength=m_ByteInOut.size() - 2;
+          if (Modbus.debug)           System.out.println("Response: " + ModbusUtil.toHex(m_ByteInOut.getBuffer(),0,dlength + 2));
+          m_ByteIn.reset(m_InBuffer,dlength);
+          int[] crc=ModbusUtil.calculateCRC(m_InBuffer,0,dlength);
+          if (ModbusUtil.unsignedByteToInt(m_InBuffer[dlength]) != crc[0] || ModbusUtil.unsignedByteToInt(m_InBuffer[dlength + 1]) != crc[1]) {
+            throw new IOException("CRC Error in received frame: " + dlength + " bytes: "+ ModbusUtil.toHex(m_ByteIn.getBuffer(),0,dlength));
+          }
+        }
+ else {
+          throw new IOException("Error reading response");
+        }
+        m_ByteIn.reset(m_InBuffer,dlength);
+        if (response != null) {
+          response.readFrom(m_ByteIn);
+        }
+        done=true;
+      }
+    }
+ while (!done);
+    return response;
+  }
+ catch (  Exception ex) {
+    System.err.println("Last request: " + ModbusUtil.toHex(lastRequest));
+    System.err.println(ex.getMessage());
+    throw new ModbusIOException("I/O exception - failed to read");
+  }
+}

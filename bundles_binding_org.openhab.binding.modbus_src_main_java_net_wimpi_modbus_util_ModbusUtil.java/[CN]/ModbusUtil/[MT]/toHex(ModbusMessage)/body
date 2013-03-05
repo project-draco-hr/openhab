@@ -1,0 +1,13 @@
+{
+  String ret="-1";
+  try {
+synchronized (m_ByteOut) {
+      msg.writeTo(m_ByteOut);
+      ret=toHex(m_ByteOut.getBuffer(),0,m_ByteOut.size());
+      m_ByteOut.reset();
+    }
+  }
+ catch (  IOException ex) {
+  }
+  return ret;
+}

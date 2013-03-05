@@ -1,0 +1,31 @@
+{
+  Object x=extract();
+  if (x != null) {
+    return x;
+  }
+ else {
+synchronized (m_PutLock) {
+      try {
+        long waitTime=msecs;
+        long start=(msecs <= 0) ? 0 : System.currentTimeMillis();
+        ++m_WaitingForTake;
+        for (; ; ) {
+          x=extract();
+          if (x != null || waitTime <= 0) {
+            --m_WaitingForTake;
+            return x;
+          }
+ else {
+            m_PutLock.wait(waitTime);
+            waitTime=msecs - (System.currentTimeMillis() - start);
+          }
+        }
+      }
+ catch (      InterruptedException ex) {
+        --m_WaitingForTake;
+        m_PutLock.notify();
+        throw ex;
+      }
+    }
+  }
+}
