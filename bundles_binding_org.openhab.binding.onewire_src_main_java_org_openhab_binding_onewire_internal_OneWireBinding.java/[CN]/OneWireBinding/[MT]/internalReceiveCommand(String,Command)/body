@@ -1,0 +1,42 @@
+{
+  if (owc != null) {
+    for (    OneWireBindingProvider provider : providers) {
+      String sensorId=provider.getSensorId(itemName);
+      String unitId=provider.getUnitId(itemName);
+      if (sensorId == null || unitId == null) {
+        continue;
+      }
+      String value=null;
+      if (command instanceof OnOffType && command.equals(OnOffType.ON)) {
+        value="1";
+      }
+ else       if (command instanceof OnOffType && command.equals(OnOffType.OFF)) {
+        value="0";
+      }
+ else {
+        value=command.toString();
+      }
+      try {
+        if (owc.exists("/" + sensorId) && (value != null)) {
+          logger.debug("{}: writing value '{}' to {}/{}",new Object[]{itemName,value,sensorId,unitId});
+          owc.write(sensorId + "/" + unitId,value);
+        }
+ else {
+          logger.info("there is no sensor for path {}",sensorId);
+        }
+      }
+ catch (      OwfsException oe) {
+        logger.warn("couldn't write to path {}",sensorId);
+        if (logger.isDebugEnabled()) {
+          logger.debug("writing to path " + sensorId + " throws exception",oe);
+        }
+      }
+catch (      IOException ioe) {
+        logger.error("couldn't establish network connection while writing to '" + sensorId + "'",ioe);
+      }
+    }
+  }
+ else {
+    logger.warn("OneWireClient is null => writing aborted!");
+  }
+}

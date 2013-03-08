@@ -36,7 +36,14 @@ catch (        IOException ioe) {
           logger.error("couldn't establish network connection while reading '" + sensorId + "'",ioe);
         }
  finally {
-          eventPublisher.postUpdate(itemName,value);
+          Item item=provider.getItem(itemName);
+          if (item != null) {
+synchronized (item) {
+              if (!item.getState().equals(value)) {
+                eventPublisher.postUpdate(itemName,value);
+              }
+            }
+          }
         }
       }
     }
