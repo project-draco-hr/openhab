@@ -1,0 +1,47 @@
+{
+  HueBindingConfig deviceConfig=getConfigForItemName(itemName);
+  if (deviceConfig == null) {
+    return;
+  }
+  HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+  if (bulb == null) {
+    bulb=new HueBulb(bridge,deviceConfig.getDeviceNumber());
+    bulbCache.put(deviceConfig.getDeviceNumber(),bulb);
+  }
+  if (command instanceof OnOffType) {
+    bulb.setOnAtFullBrightness(OnOffType.ON.equals(command));
+  }
+  if (command instanceof HSBType) {
+    HSBType hsbCommand=(HSBType)command;
+    DecimalType hue=hsbCommand.getHue();
+    PercentType sat=hsbCommand.getSaturation();
+    PercentType bri=hsbCommand.getBrightness();
+    bulb.colorizeByHSB(hue.doubleValue() / 360,sat.doubleValue() / 100,bri.doubleValue() / 100);
+  }
+  if (deviceConfig.getType().equals(BindingType.brightness) || deviceConfig.getType().equals(BindingType.rgb)) {
+    if (IncreaseDecreaseType.INCREASE.equals(command)) {
+      int resultingValue=bulb.increaseBrightness(deviceConfig.getStepSize());
+      eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
+    }
+ else     if (IncreaseDecreaseType.DECREASE.equals(command)) {
+      int resultingValue=bulb.decreaseBrightness(deviceConfig.getStepSize());
+      eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
+    }
+ else     if (command instanceof PercentType) {
+      bulb.setBrightness((255 / 100) * ((PercentType)command).intValue());
+    }
+  }
+  if (deviceConfig.getType().equals(BindingType.colorTemperature)) {
+    if (IncreaseDecreaseType.INCREASE.equals(command)) {
+      int resultingValue=bulb.increaseColorTemperature(deviceConfig.getStepSize());
+      eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
+    }
+ else     if (IncreaseDecreaseType.DECREASE.equals(command)) {
+      int resultingValue=bulb.decreaseColorTemperature(deviceConfig.getStepSize());
+      eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
+    }
+ else     if (command instanceof PercentType) {
+      bulb.setColorTemperature(((346 / 100) * ((PercentType)command).intValue()) + 154);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  Client client=Client.create();
+  String targetURL=bridge.getUrl() + "lights/" + deviceNumber+ "/state";
+  WebResource webResource=client.resource(targetURL);
+  ClientResponse response=webResource.type("application/json").put(ClientResponse.class,message);
+  logger.debug("Sent message: '" + message + "' to "+ targetURL);
+  if (response.getStatus() != 200) {
+    logger.error("Failed to connect to Hue bridge: HTTP error code: " + response.getStatus());
+  }
+}

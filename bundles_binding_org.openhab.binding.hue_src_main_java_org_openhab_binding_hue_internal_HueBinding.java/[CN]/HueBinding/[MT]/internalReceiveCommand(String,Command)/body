@@ -1,0 +1,10 @@
+{
+  super.internalReceiveCommand(itemName,command);
+  logger.debug("Hue binding received command '" + command + "' for item '"+ itemName+ "'");
+  if (activeBridge != null) {
+    computeCommandForItemOnBridge(command,itemName,activeBridge);
+  }
+ else {
+    logger.warn("Hue binding skipped command because no Hue bridge is connected.");
+  }
+}

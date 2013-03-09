@@ -1,0 +1,14 @@
+{
+  this.brightness=brightness;
+  this.brightness=this.brightness < 0 ? 0 : this.brightness;
+  this.brightness=this.brightness > 255 ? 255 : this.brightness;
+  if (this.brightness > 0) {
+    this.isOn=true;
+    executeMessage("{\"bri\":" + this.brightness + ",\"on\":true}");
+  }
+ else {
+    this.isOn=false;
+    executeMessage("{\"on\":false}");
+  }
+  return (int)Math.round((100.0 / 255.0) * this.brightness);
+}

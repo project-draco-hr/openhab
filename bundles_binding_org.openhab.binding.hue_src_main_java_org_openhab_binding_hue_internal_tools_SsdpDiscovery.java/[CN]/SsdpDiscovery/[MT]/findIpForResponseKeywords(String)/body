@@ -1,0 +1,12 @@
+{
+  try {
+    logger.debug("Sending SSDP discover.");
+    MulticastSocket socket=sendDiscoveryBroacast();
+    logger.debug("Waiting for response.");
+    return scanResposesForKeywords(socket,keywords);
+  }
+ catch (  SocketTimeoutException e) {
+    logger.debug("Timeout of request...");
+  }
+  return null;
+}

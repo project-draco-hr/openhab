@@ -1,0 +1,13 @@
+{
+  do {
+    logger.debug("Got an answer message.");
+    byte[] rxbuf=new byte[8192];
+    DatagramPacket packet=new DatagramPacket(rxbuf,rxbuf.length);
+    socket.receive(packet);
+    String foundIp=analyzePacket(packet,keywords);
+    if (foundIp != null) {
+      return foundIp;
+    }
+  }
+ while (true);
+}

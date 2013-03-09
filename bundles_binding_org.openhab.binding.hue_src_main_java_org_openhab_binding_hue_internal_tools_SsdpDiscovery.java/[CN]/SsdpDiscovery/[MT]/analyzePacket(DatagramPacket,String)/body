@@ -1,0 +1,16 @@
+{
+  logger.debug("Analyzing answer message.");
+  InetAddress addr=packet.getAddress();
+  ByteArrayInputStream in=new ByteArrayInputStream(packet.getData(),0,packet.getLength());
+  String response=IOUtils.toString(in);
+  boolean foundAllKeywords=true;
+  for (  String keyword : keywords) {
+    foundAllKeywords&=response.toUpperCase().contains(keyword.toUpperCase());
+  }
+  if (foundAllKeywords) {
+    logger.debug("Found matching answer.");
+    return addr.getHostAddress();
+  }
+  logger.debug("Answer did not match.");
+  return null;
+}

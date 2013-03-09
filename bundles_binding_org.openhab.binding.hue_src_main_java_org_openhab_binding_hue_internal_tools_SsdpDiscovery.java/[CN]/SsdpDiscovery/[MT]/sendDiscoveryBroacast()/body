@@ -1,0 +1,12 @@
+{
+  InetAddress multicastAddress=InetAddress.getByName("239.255.255.250");
+  final int port=1900;
+  MulticastSocket socket=new MulticastSocket(port);
+  socket.setReuseAddress(true);
+  socket.setSoTimeout(130000);
+  socket.joinGroup(multicastAddress);
+  byte[] requestMessage=DISCOVER_MESSAGE.getBytes("UTF-8");
+  DatagramPacket datagramPacket=new DatagramPacket(requestMessage,requestMessage.length,multicastAddress,port);
+  socket.send(datagramPacket);
+  return socket;
+}
