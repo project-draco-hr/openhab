@@ -9,7 +9,7 @@
     if (tmp.length == 1) {
       int footprint=getFootPrint();
       channels=new int[footprint];
-      int start=Integer.parseInt(tmp[0]);
+      int start=parseChannelNumber(tmp[0]);
       for (int i=0; i < footprint; i++) {
         channels[i]=start + i;
       }
@@ -17,13 +17,15 @@
  else {
       channels=new int[tmp.length];
       for (int i=0; i < tmp.length; i++) {
-        channels[i]=Integer.parseInt(tmp[i]);
+        channels[i]=parseChannelNumber(tmp[i]);
+        if (channels[i] < 1 || channels[i] > 512) {
+        }
       }
     }
   }
  else {
     String[] tmp=values[0].split("/");
-    int startChannel=Integer.parseInt(tmp[0]);
+    int startChannel=parseChannelNumber(tmp[0]);
     int channelWidth=Integer.parseInt(tmp[1]);
     channels=new int[channelWidth];
     for (int i=0; i < channelWidth; i++) {
