@@ -1,0 +1,31 @@
+{
+  DmxItem item=getItemInstance("CHANNEL[1,2,3,4,5,6:500]");
+  assertTrue(arraysAreEqual(new int[]{1,2,3,4,5,6},item.getChannels()));
+  assertEquals(500,item.getUpdateDelay());
+  assertEquals(6,item.getChannels().length);
+  item=getItemInstance("CHANNEL[1,2,3,4,5]");
+  assertTrue(arraysAreEqual(new int[]{1,2,3,4,5},item.getChannels()));
+  assertEquals(0,item.getUpdateDelay());
+  assertEquals(5,item.getChannels().length);
+  try {
+    item=getItemInstance("CHANNEL[71000,2]");
+    fail("Missing exception");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+  }
+  try {
+    item=getItemInstance("CHANNEL[A1,00:1]");
+    fail("Missing exception");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+  }
+  try {
+    item=getItemInstance("CHANNEL[1,2,3,4:A]");
+    fail("Missing exception");
+  }
+ catch (  NumberFormatException e) {
+    e.printStackTrace();
+  }
+}

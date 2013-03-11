@@ -1,0 +1,9 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  DmxCommand cmd=Mockito.mock(DmxCommand.class);
+  Map<String,DmxCommand> commands=(Map<String,DmxCommand>)Whitebox.getInternalState(item,"customCommands");
+  commands.put("ON",cmd);
+  item.processCommand(service,OnOffType.ON);
+  Mockito.verify(cmd).execute(service);
+}

@@ -1,0 +1,8 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  item.processCommand(service,new PercentType(50));
+  Mockito.verify(service).setChannelValue(3,129);
+  Mockito.verify(service).setChannelValue(4,129);
+  Mockito.verify(service).setChannelValue(5,129);
+}

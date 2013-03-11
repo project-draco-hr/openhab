@@ -1,0 +1,9 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  HSBType hsb=new HSBType(DecimalType.ZERO,PercentType.HUNDRED,PercentType.HUNDRED);
+  item.processCommand(service,hsb);
+  Mockito.verify(service).setChannelValue(3,255);
+  Mockito.verify(service).setChannelValue(4,0);
+  Mockito.verify(service).setChannelValue(5,0);
+}

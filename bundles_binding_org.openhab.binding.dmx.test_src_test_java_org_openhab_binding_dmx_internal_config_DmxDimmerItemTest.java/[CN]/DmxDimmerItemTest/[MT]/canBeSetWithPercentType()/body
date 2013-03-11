@@ -1,0 +1,11 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  Mockito.when(service.getChannelValue(3)).thenReturn(0);
+  Mockito.when(service.getChannelValue(4)).thenReturn(155);
+  item.processCommand(service,new PercentType(0));
+  Mockito.verify(service).setChannelValue(3,DmxChannel.DMX_MAX_VALUE);
+  Mockito.verify(service).setChannelValue(3,PercentType.ZERO);
+  Mockito.verify(service).setChannelValue(4,DmxChannel.DMX_MAX_VALUE);
+  Mockito.verify(service).setChannelValue(4,PercentType.ZERO);
+}

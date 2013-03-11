@@ -1,0 +1,13 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  HSBType hsb=new HSBType(new DecimalType(150),new PercentType(50),new PercentType(50));
+  item.processCommand(service,hsb);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(3,65);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(4,129);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(5,97);
+  item.processCommand(service,IncreaseDecreaseType.DECREASE);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(3,57);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(4,116);
+  Mockito.verify(service,Mockito.times(1)).setChannelValue(5,87);
+}

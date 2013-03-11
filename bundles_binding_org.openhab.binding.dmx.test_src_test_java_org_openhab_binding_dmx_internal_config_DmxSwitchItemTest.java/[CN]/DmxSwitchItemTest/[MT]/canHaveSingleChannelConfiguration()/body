@@ -1,0 +1,41 @@
+{
+  DmxItem item=getItemInstance("CHANNEL[7:1000]");
+  assertEquals(7,item.getChannel());
+  assertEquals(1000,item.getUpdateDelay());
+  if (item instanceof DmxColorItem) {
+    assertEquals(3,item.getChannels().length);
+  }
+ else {
+    assertEquals(1,item.getChannels().length);
+  }
+  item=getItemInstance("CHANNEL[1]");
+  assertEquals(1,item.getChannel());
+  assertEquals(0,item.getUpdateDelay());
+  if (item instanceof DmxColorItem) {
+    assertEquals(3,item.getChannels().length);
+  }
+ else {
+    assertEquals(1,item.getChannels().length);
+  }
+  try {
+    item=getItemInstance("CHANNEL[71000]");
+    fail("Missing exception");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+  }
+  try {
+    item=getItemInstance("CHANNEL[A1-00]");
+    fail("Missing exception");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+  }
+  try {
+    item=getItemInstance("CHANNEL[a:B]");
+    fail("Missing exception");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+  }
+}

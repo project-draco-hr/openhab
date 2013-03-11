@@ -1,0 +1,7 @@
+{
+  DmxItem item=getValidInstance();
+  DmxService service=Mockito.mock(DmxService.class);
+  item.processCommand(service,OnOffType.OFF);
+  Mockito.verify(service).disableChannel(3);
+  Mockito.verify(service).disableChannel(4);
+}
