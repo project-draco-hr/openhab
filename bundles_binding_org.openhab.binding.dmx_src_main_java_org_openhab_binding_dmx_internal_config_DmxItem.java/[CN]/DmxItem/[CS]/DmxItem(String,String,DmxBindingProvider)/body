@@ -24,6 +24,10 @@
         DmxCommand dmxCommand=new DmxFadeCommand(this,dmxCommandString.substring(dmxCommandString.indexOf("|") + 1));
         customCommands.put(openHabCommand,dmxCommand);
       }
+ else       if (dmxCommandType.equals(DmxCommand.types.SFADE.toString())) {
+        DmxCommand dmxCommand=new DmxSuspendingFadeCommand(this,dmxCommandString.substring(dmxCommandString.indexOf("|") + 1));
+        customCommands.put(openHabCommand,dmxCommand);
+      }
  else {
         throw new BindingConfigParseException("Unsupported DMX command: " + dmxCommandType);
       }
