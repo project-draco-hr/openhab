@@ -1,6 +1,8 @@
 {
-  for (  ItemProvider provider : itemMap.keySet()) {
-    provider.removeItemChangeListener(this);
+synchronized (itemMap) {
+    for (    ItemProvider provider : itemMap.keySet()) {
+      provider.removeItemChangeListener(this);
+    }
+    itemMap.clear();
   }
-  itemMap.clear();
 }

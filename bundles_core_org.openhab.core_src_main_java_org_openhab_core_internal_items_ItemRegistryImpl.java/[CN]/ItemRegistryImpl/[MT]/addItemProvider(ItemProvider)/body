@@ -2,7 +2,9 @@
   if (!itemMap.containsKey(itemProvider)) {
     Collection<Item> items=Collections.synchronizedCollection(itemProvider.getItems());
     itemProvider.addItemChangeListener(this);
-    itemMap.put(itemProvider,items);
+synchronized (itemMap) {
+      itemMap.put(itemProvider,items);
+    }
     logger.debug("Item provider '{}' has been added.",itemProvider.getClass().getSimpleName());
     allItemsChanged(itemProvider,null);
   }

@@ -1,8 +1,10 @@
 {
-  for (  Collection<Item> items : itemMap.values()) {
-    for (    Item item : items) {
-      if (item.getName().matches(name)) {
-        return item;
+synchronized (itemMap) {
+    for (    Collection<Item> items : itemMap.values()) {
+      for (      Item item : items) {
+        if (item.getName().matches(name)) {
+          return item;
+        }
       }
     }
   }
