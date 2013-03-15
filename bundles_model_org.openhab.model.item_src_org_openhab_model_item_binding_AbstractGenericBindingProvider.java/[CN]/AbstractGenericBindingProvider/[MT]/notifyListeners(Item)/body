@@ -1,5 +1,10 @@
 {
   for (  BindingChangeListener listener : listeners) {
-    listener.bindingChanged(this,item.getName());
+    try {
+      listener.bindingChanged(this,item.getName());
+    }
+ catch (    Exception e) {
+      logger.error("Binding " + listener.getClass().getName() + " threw an exception: ",e);
+    }
   }
 }
