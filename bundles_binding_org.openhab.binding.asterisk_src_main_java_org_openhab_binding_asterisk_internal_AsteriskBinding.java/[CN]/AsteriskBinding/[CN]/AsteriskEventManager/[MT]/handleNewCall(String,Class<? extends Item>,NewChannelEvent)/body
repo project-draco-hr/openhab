@@ -5,13 +5,13 @@
   }
   CallType call=new CallType(new StringType(event.getCallerIdNum()),new StringType(event.getExten()));
   eventCache.put(event.getUniqueId(),call);
-  if (item instanceof SwitchItem) {
-    eventPublisher.postUpdate(item.getName(),OnOffType.ON);
+  if (itemType.isAssignableFrom(SwitchItem.class)) {
+    eventPublisher.postUpdate(itemName,OnOffType.ON);
   }
- else   if (item instanceof CallItem) {
-    eventPublisher.postUpdate(item.getName(),call);
+ else   if (itemType.isAssignableFrom(CallItem.class)) {
+    eventPublisher.postUpdate(itemName,call);
   }
  else {
-    logger.warn("handle call for item type '{}' is undefined",item);
+    logger.warn("handle call for item type '{}' is undefined",itemName);
   }
 }

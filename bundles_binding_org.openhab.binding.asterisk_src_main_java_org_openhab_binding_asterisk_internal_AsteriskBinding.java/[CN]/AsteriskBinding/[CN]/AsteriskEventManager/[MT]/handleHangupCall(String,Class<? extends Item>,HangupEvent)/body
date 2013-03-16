@@ -1,0 +1,14 @@
+{
+  eventCache.remove(event.getUniqueId());
+  if (itemType.isAssignableFrom(SwitchItem.class)) {
+    OnOffType activeState=(eventCache.size() == 0 ? OnOffType.OFF : OnOffType.ON);
+    eventPublisher.postUpdate(itemName,activeState);
+  }
+ else   if (itemType.isAssignableFrom(CallItem.class)) {
+    CallType call=(CallType)(eventCache.size() == 0 ? CallType.EMPTY : eventCache.values().toArray()[0]);
+    eventPublisher.postUpdate(itemName,call);
+  }
+ else {
+    logger.warn("handleHangupCall - postUpdate for itemType '{}' is undefined",itemName);
+  }
+}
