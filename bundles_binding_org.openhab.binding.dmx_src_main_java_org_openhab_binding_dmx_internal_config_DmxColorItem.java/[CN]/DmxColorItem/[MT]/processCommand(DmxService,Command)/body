@@ -35,7 +35,7 @@
     setHSBValue(service,newHsb);
     return;
   }
-  if (command instanceof PercentType && !service.hasChannelActions(channels[0])) {
+  if (command instanceof PercentType && !isRedefinedByCustomCommand(command) && !service.hasChannelActions(channels[0])) {
     PercentType t=(PercentType)command;
     HSBType hsb=hsbState;
     if (hsb == null) {
