@@ -16,7 +16,9 @@
     if (StringUtils.isNotBlank(secret)) {
       this.bridgeSecret=secret;
     }
-    activeBridge=new HueBridge(bridgeIP,bridgeSecret);
-    activeBridge.pairBridgeIfNecessary();
+    if (this.bridgeIP != null) {
+      activeBridge=new HueBridge(bridgeIP,bridgeSecret);
+      activeBridge.pairBridgeIfNecessary();
+    }
   }
 }
