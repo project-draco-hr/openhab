@@ -1,0 +1,50 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  RFXComBindingConfig config=new RFXComBindingConfig();
+  String valueSelectorString=null;
+  if (bindingConfig.startsWith("<")) {
+    String[] configParts=bindingConfig.trim().split(":");
+    if (configParts.length != 2) {
+      throw new BindingConfigParseException("RFXCOM binding must contain two parts separated by ':'");
+    }
+    config.id=configParts[0].trim().replace("<","");
+    config.inBinding=true;
+    valueSelectorString=configParts[1].trim();
+  }
+ else   if (bindingConfig.startsWith(">")) {
+    String[] configParts=bindingConfig.trim().split(":");
+    config.id=configParts[0].trim().replace(">","");
+    config.inBinding=false;
+    String[] types=configParts[1].trim().split("\\.");
+    if (types.length != 2) {
+      throw new BindingConfigParseException("RFXCOM out binding second field should contain 2 parts separated by '.'");
+    }
+    try {
+      config.packetType=RFXComMessageUtils.convertPacketType(types[0].trim());
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Invalid packet type '" + types[0] + "'!");
+    }
+    try {
+      config.subType=RFXComMessageUtils.convertSubType(config.packetType,types[1].trim());
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Invalid sub type '" + types[1] + "'!");
+    }
+    valueSelectorString=configParts[2].trim();
+  }
+ else {
+    throw new BindingConfigParseException("RFXCOM binding should start < or > character!");
+  }
+  try {
+    RFXComValueSelector.validateBinding(valueSelectorString,item.getClass());
+    config.valueSelector=RFXComValueSelector.getValueSelector(valueSelectorString);
+  }
+ catch (  IllegalArgumentException e1) {
+    throw new BindingConfigParseException("Invalid value selector '" + valueSelectorString + "'!");
+  }
+catch (  InvalidClassException e1) {
+    throw new BindingConfigParseException("Invalid item type for value selector '" + valueSelectorString + "'!");
+  }
+  addBindingConfig(item,config);
+}

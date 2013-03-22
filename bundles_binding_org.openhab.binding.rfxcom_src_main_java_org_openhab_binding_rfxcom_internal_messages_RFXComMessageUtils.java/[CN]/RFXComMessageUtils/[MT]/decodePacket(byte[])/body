@@ -1,0 +1,24 @@
+{
+  Object obj=null;
+  byte packetType=data[1];
+switch (packetType) {
+case (byte)0x00:
+    obj=new RFXComControlMessage(data);
+  break;
+case (byte)0x01:
+obj=new RFXComInterfaceMessage(data);
+break;
+case (byte)0x02:
+obj=new RFXComTransmitterMessage(data);
+break;
+case (byte)0x11:
+obj=new RFXComLighting2Message(data);
+break;
+case (byte)0x52:
+obj=new RFXComTemperatureHumidityMessage(data);
+break;
+default :
+throw new IllegalArgumentException("Packet type " + (int)packetType + " not implemented!");
+}
+return obj;
+}

@@ -1,0 +1,16 @@
+{
+  rawMessage=data;
+  packetType=PacketType.UNKNOWN;
+  for (  PacketType pt : PacketType.values()) {
+    if (pt.toByte() == data[1]) {
+      packetType=pt;
+      break;
+    }
+  }
+  subType=data[2];
+  seqNbr=data[3];
+  id1=data[4];
+  if (data.length > 5) {
+    id2=data[5];
+  }
+}

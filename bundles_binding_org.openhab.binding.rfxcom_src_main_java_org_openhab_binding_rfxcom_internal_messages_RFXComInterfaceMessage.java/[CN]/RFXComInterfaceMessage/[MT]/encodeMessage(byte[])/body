@@ -1,0 +1,49 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  try {
+    command=Commands.values()[data[4]];
+  }
+ catch (  Exception e) {
+    command=Commands.UNKNOWN;
+  }
+  transceiverType=TransceiverType.UNKNOWN;
+  for (  TransceiverType type : TransceiverType.values()) {
+    if (type.toByte() == data[5]) {
+      transceiverType=type;
+      break;
+    }
+  }
+  firmwareVersion=data[6];
+  enableUndecodedPackets=(data[7] & 0x80) != 0 ? true : false;
+  enableRFU6Packets=(data[7] & 0x40) != 0 ? true : false;
+  enableRFU5Packets=(data[7] & 0x20) != 0 ? true : false;
+  enableRFU4Packets=(data[7] & 0x10) != 0 ? true : false;
+  enableRFU3Packets=(data[7] & 0x08) != 0 ? true : false;
+  enableFineOffsetPackets=(data[7] & 0x04) != 0 ? true : false;
+  enableRubicsonPackets=(data[7] & 0x02) != 0 ? true : false;
+  enableAEPackets=(data[7] & 0x01) != 0 ? true : false;
+  enableBlindsT1Packets=(data[8] & 0x80) != 0 ? true : false;
+  enableBlindsT0Packets=(data[8] & 0x40) != 0 ? true : false;
+  enableProGuardPackets=(data[8] & 0x20) != 0 ? true : false;
+  enableFS20Packets=(data[8] & 0x10) != 0 ? true : false;
+  enableLaCrossePackets=(data[8] & 0x08) != 0 ? true : false;
+  enableHidekiPackets=(data[8] & 0x04) != 0 ? true : false;
+  enableADPackets=(data[8] & 0x02) != 0 ? true : false;
+  enableMertikPackets=(data[8] & 0x01) != 0 ? true : false;
+  enableVisonicPackets=(data[9] & 0x80) != 0 ? true : false;
+  enableATIPackets=(data[9] & 0x40) != 0 ? true : false;
+  enableOregonPackets=(data[9] & 0x20) != 0 ? true : false;
+  enableMeiantechPackets=(data[9] & 0x10) != 0 ? true : false;
+  enableHomeEasyPackets=(data[9] & 0x08) != 0 ? true : false;
+  enableACPackets=(data[9] & 0x04) != 0 ? true : false;
+  enableARCPackets=(data[9] & 0x02) != 0 ? true : false;
+  enableX10Packets=(data[9] & 0x01) != 0 ? true : false;
+  hardwareVersion1=data[10];
+  hardwareVersion2=data[11];
+}

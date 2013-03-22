@@ -1,0 +1,120 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (valueSelector.getItemClass() == NumberItem.class) {
+    if (valueSelector == RFXComValueSelector.SIGNAL_LEVEL) {
+      state=new DecimalType(obj.signalLevel);
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + valueSelector + " to NumberItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == DimmerItem.class || valueSelector.getItemClass() == RollershutterItem.class) {
+    if (valueSelector == RFXComValueSelector.DIMMING_LEVEL) {
+switch (obj.dimmingLevel) {
+case LEVEL0:
+        state=new PercentType(100);
+      break;
+case LEVEL6:
+    state=new PercentType(84);
+  break;
+case LEVEL12:
+state=new PercentType(78);
+break;
+case LEVEL18:
+state=new PercentType(72);
+break;
+case LEVEL24:
+state=new PercentType(66);
+break;
+case LEVEL30:
+state=new PercentType(60);
+break;
+case LEVEL36:
+state=new PercentType(54);
+break;
+case LEVEL42:
+state=new PercentType(48);
+break;
+case LEVEL48:
+state=new PercentType(42);
+break;
+case LEVEL54:
+state=new PercentType(36);
+break;
+case LEVEL60:
+state=new PercentType(30);
+break;
+case LEVEL66:
+state=new PercentType(24);
+break;
+case LEVEL72:
+state=new PercentType(18);
+break;
+case LEVEL78:
+state=new PercentType(12);
+break;
+case LEVEL84:
+state=new PercentType(6);
+break;
+case LEVEL100:
+state=new PercentType(0);
+break;
+}
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to DimmerItem/RollershutterItem");
+}
+}
+ else if (valueSelector.getItemClass() == SwitchItem.class) {
+if (valueSelector == RFXComValueSelector.COMMAND) {
+switch (obj.command) {
+case OFF:
+case GROUP_OFF:
+state=OnOffType.OFF;
+break;
+case ON:
+case GROUP_ON:
+state=OnOffType.ON;
+break;
+case SET_GROUP_LEVEL:
+case SET_LEVEL:
+throw new NumberFormatException("Can't convert " + obj.command + " to SwitchItem");
+}
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to SwitchItem");
+}
+}
+ else if (valueSelector.getItemClass() == ContactItem.class) {
+if (valueSelector == RFXComValueSelector.COMMAND) {
+switch (obj.command) {
+case OFF:
+case GROUP_OFF:
+state=OpenClosedType.OPEN;
+break;
+case ON:
+case GROUP_ON:
+state=OpenClosedType.CLOSED;
+break;
+case SET_GROUP_LEVEL:
+case SET_LEVEL:
+throw new NumberFormatException("Can't convert " + obj.command + " to ContactItem");
+}
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to ContactItem");
+}
+}
+ else if (valueSelector.getItemClass() == StringItem.class) {
+if (valueSelector == RFXComValueSelector.RAW_DATA) {
+state=new StringType(DatatypeConverter.printHexBinary(obj.rawMessage));
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to StringItem");
+}
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to "+ valueSelector.getItemClass());
+}
+return state;
+}

@@ -1,0 +1,21 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  temperature=(short)((data[6] & 0x7F) << 8 | (data[7] & 0xFF)) * 0.1;
+  if ((data[6] & 0x80) != 0)   temperature=-temperature;
+  humidity=data[8];
+  try {
+    humidityStatus=HumidityStatus.values()[data[9]];
+  }
+ catch (  Exception e) {
+    humidityStatus=HumidityStatus.UNKNOWN;
+  }
+  signalLevel=(byte)((data[10] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[10] & 0x0F);
+}

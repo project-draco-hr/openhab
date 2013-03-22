@@ -1,0 +1,13 @@
+{
+  CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(device);
+  CommPort commPort=portIdentifier.open(this.getClass().getName(),2000);
+  SerialPort serialPort=(SerialPort)commPort;
+  serialPort.setSerialPortParams(38400,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+  in=serialPort.getInputStream();
+  out=serialPort.getOutputStream();
+  out.flush();
+  if (in.markSupported()) {
+    in.reset();
+  }
+  (new Thread(new SerialReader(in))).start();
+}

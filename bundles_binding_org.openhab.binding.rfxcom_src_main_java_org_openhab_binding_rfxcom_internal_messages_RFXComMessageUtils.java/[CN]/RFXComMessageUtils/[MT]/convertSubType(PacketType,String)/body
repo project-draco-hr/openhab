@@ -1,0 +1,19 @@
+{
+switch (packetType) {
+case LIGHTING2:
+    for (    SubType s : RFXComLighting2Message.SubType.values()) {
+      if (s.toString().equals(subType)) {
+        return s;
+      }
+    }
+  break;
+case TEMPERATURE_HUMIDITY:
+break;
+case INTERFACE_CONTROL:
+case INTERFACE_MESSAGE:
+case UNKNOWN:
+default :
+break;
+}
+throw new IllegalArgumentException("Unknown sub type " + subType);
+}

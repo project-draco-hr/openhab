@@ -1,0 +1,24 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    serialPort=(String)config.get("serialPort");
+    String setModeStr=(String)config.get("setMode");
+    if (setModeStr != null && setModeStr.isEmpty() == false) {
+      try {
+        setMode=DatatypeConverter.parseHexBinary(setModeStr);
+      }
+ catch (      IllegalArgumentException e) {
+        throw new ConfigurationException("setMode",e.getMessage());
+      }
+      if (setMode.length != 14) {
+        throw new ConfigurationException("setMode","hexBinary value lenght should be 14 bytes (28 characters)");
+      }
+    }
+    try {
+      connect();
+    }
+ catch (    Exception e) {
+      logger.error("Connection to RFXCOM controller failed.",e);
+    }
+  }
+}
