@@ -1,4 +1,5 @@
 {
+  shutdown=false;
   try {
     if (StringUtils.isNotBlank(ip)) {
       link=connectByIp(ipConnectionType,localIp,ip,port);
@@ -12,11 +13,11 @@
     }
     link.addLinkListener(new NetworkLinkListener(){
       public void linkClosed(      CloseEvent e){
-        if (!e.isUserRequest()) {
+        if (!e.isUserRequest() && !shutdown) {
           logger.warn("KNX link has been lost (reason: {} on object {}) - reconnecting...",e.getReason(),e.getSource().toString());
           connect();
         }
-        if (!link.isOpen()) {
+        if (!link.isOpen() && !shutdown) {
           logger.error("KNX link has been lost!");
         }
       }
