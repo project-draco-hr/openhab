@@ -26,14 +26,14 @@
       if (calendarCache.containsKey(cec.modifiedByEvent)) {
         modifiedByEvent=cec.modifiedByEvent;
       }
-      JobDetail startJob=createAndScheduleJob(cec.startCommands,event,true);
-      boolean triggersCreated=createAndScheduleTrigger(startJob,event,modifiedByEvent,true);
+      JobDetail startJob=createJob(cec.startCommands,event,true);
+      boolean triggersCreated=createTriggerAndSchedule(startJob,event,modifiedByEvent,true);
       if (triggersCreated) {
         logger.info("created new startJob '{}' with details '{}'",eventTitle,createJobInfo(event,startJob));
       }
       if (StringUtils.isNotBlank(cec.endCommands)) {
-        JobDetail endJob=createAndScheduleJob(cec.endCommands,event,false);
-        triggersCreated=createAndScheduleTrigger(endJob,event,modifiedByEvent,false);
+        JobDetail endJob=createJob(cec.endCommands,event,false);
+        triggersCreated=createTriggerAndSchedule(endJob,event,modifiedByEvent,false);
         if (triggersCreated) {
           logger.info("created new endJob '{}' with details '{}'",eventTitle,createJobInfo(event,endJob));
         }

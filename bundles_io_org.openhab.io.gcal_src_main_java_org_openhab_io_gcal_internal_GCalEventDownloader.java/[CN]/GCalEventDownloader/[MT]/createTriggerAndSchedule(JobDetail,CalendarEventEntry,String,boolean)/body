@@ -18,7 +18,7 @@
         trigger=newTrigger().forJob(job).withIdentity(jobIdentity + "_" + dateValue+ "_trigger",GCAL_SCHEDULER_GROUP).startAt(new Date(dateValue)).modifiedByCalendar(modifiedByEvent).build();
       }
       try {
-        scheduler.scheduleJob(trigger);
+        scheduler.scheduleJob(job,trigger);
         triggersCreated=true;
       }
  catch (      SchedulerException se) {
