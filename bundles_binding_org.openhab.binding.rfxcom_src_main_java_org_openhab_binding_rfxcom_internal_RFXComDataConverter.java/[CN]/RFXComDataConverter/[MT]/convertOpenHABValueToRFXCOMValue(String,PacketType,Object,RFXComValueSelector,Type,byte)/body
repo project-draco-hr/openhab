@@ -1,19 +1,42 @@
 {
   Object obj=null;
 switch (packetType) {
-case LIGHTING2:
-    RFXComLighting2Message d=new RFXComLighting2Message();
-  d.subType=(RFXComLighting2Message.SubType)subType;
-d.seqNbr=seqNumber;
-String[] ids=id.split("\\.");
-d.sensorId=Integer.parseInt(ids[0]);
-d.unitcode=Byte.parseByte(ids[1]);
+case LIGHTING1:
+    RFXComLighting1Message d1=new RFXComLighting1Message();
+  d1.subType=(RFXComLighting1Message.SubType)subType;
+d1.seqNbr=seqNumber;
+String[] ids1=id.split("\\.");
+d1.sensorId=ids1[0].charAt(0);
+d1.unitcode=Byte.parseByte(ids1[1]);
+logger.debug("convertOpenHABValueToRFXCOMValue 1 (command='{}', type='{}')",new Object[]{valueSelector.toString(),type.toString()});
 switch (valueSelector) {
 case COMMAND:
 if (type instanceof OnOffType) {
-d.command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
-d.dimmingLevel=(type == OnOffType.ON ? DimmingLevel.LEVEL0 : DimmingLevel.LEVEL100);
-obj=d;
+d1.command=(type == OnOffType.ON ? RFXComLighting1Message.Commands.ON : RFXComLighting1Message.Commands.OFF);
+obj=d1;
+}
+ else {
+throw new NumberFormatException("Can't convert " + type + " to Command");
+}
+break;
+default :
+break;
+}
+break;
+case LIGHTING2:
+RFXComLighting2Message d2=new RFXComLighting2Message();
+d2.subType=(RFXComLighting2Message.SubType)subType;
+d2.seqNbr=seqNumber;
+String[] ids2=id.split("\\.");
+d2.sensorId=Integer.parseInt(ids2[0]);
+d2.unitcode=Byte.parseByte(ids2[1]);
+logger.debug("convertOpenHABValueToRFXCOMValue 2 (command='{}', type='{}')",new Object[]{valueSelector.toString(),type.toString()});
+switch (valueSelector) {
+case COMMAND:
+if (type instanceof OnOffType) {
+d2.command=(type == OnOffType.ON ? RFXComLighting2Message.Commands.ON : RFXComLighting2Message.Commands.OFF);
+d2.dimmingLevel=0;
+obj=d2;
 }
  else {
 throw new NumberFormatException("Can't convert " + type + " to Command");
@@ -21,11 +44,53 @@ throw new NumberFormatException("Can't convert " + type + " to Command");
 break;
 case DIMMING_LEVEL:
 if (type instanceof OnOffType) {
-d.command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
-d.dimmingLevel=(type == OnOffType.ON ? DimmingLevel.LEVEL0 : DimmingLevel.LEVEL100);
-obj=d;
+d2.command=(type == OnOffType.ON ? RFXComLighting2Message.Commands.ON : RFXComLighting2Message.Commands.OFF);
+d2.dimmingLevel=0;
+obj=d2;
 }
  else if (type instanceof PercentType) {
+d2.command=RFXComLighting2Message.Commands.SET_LEVEL;
+d2.dimmingLevel=(byte)RFXComLighting2Message.getDimLevelFromPercentType((PercentType)type);
+if (d2.dimmingLevel == 0) {
+d2.command=RFXComLighting2Message.Commands.OFF;
+}
+logger.debug("dim level = '{}')",new Object[]{d2.dimmingLevel});
+obj=d2;
+}
+ else if (type instanceof IncreaseDecreaseType) {
+d2.command=RFXComLighting2Message.Commands.SET_LEVEL;
+d2.dimmingLevel=5;
+obj=d2;
+}
+ else {
+throw new NumberFormatException("Can't convert " + type + " to Command");
+}
+break;
+default :
+break;
+}
+break;
+case CURTAIN1:
+RFXComCurtain1Message d3=new RFXComCurtain1Message();
+d3.subType=(RFXComCurtain1Message.SubType)subType;
+d3.seqNbr=seqNumber;
+String[] ids3=id.split("\\.");
+d3.sensorId=ids3[0].charAt(0);
+d3.unitcode=Byte.parseByte(ids3[1]);
+logger.debug("convertOpenHABValueToRFXCOMValue 3 (command='{}', type='{}')",new Object[]{valueSelector.toString(),type.toString()});
+switch (valueSelector) {
+case SHUTTER:
+if (type instanceof OpenClosedType) {
+d3.command=(type == OpenClosedType.CLOSED ? RFXComCurtain1Message.Commands.CLOSE : RFXComCurtain1Message.Commands.OPEN);
+obj=d3;
+}
+ else if (type instanceof UpDownType) {
+d3.command=(type == UpDownType.UP ? RFXComCurtain1Message.Commands.CLOSE : RFXComCurtain1Message.Commands.OPEN);
+obj=d3;
+}
+ else if (type instanceof StopMoveType) {
+d3.command=RFXComCurtain1Message.Commands.STOP;
+obj=d3;
 }
  else {
 throw new NumberFormatException("Can't convert " + type + " to Command");

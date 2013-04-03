@@ -41,7 +41,12 @@
       }
     }
   }
- catch (  IOException e) {
+ catch (  InterruptedIOException e) {
+    Thread.currentThread().interrupt();
+    logger.error("Interrupted via InterruptedIOException");
+  }
+catch (  IOException e) {
     logger.error("Reading from serial port failed",e);
   }
+  logger.debug("Ready reading from serial port");
 }

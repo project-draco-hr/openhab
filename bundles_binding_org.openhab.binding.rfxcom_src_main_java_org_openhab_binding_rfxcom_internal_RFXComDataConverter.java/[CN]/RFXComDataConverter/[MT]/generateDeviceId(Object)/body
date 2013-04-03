@@ -1,12 +1,10 @@
 {
   String id=null;
-  if (obj instanceof RFXComLighting2Message) {
-    RFXComLighting2Message o=(RFXComLighting2Message)obj;
-    id=o.sensorId + "." + o.unitcode;
+  if (obj instanceof RFXComBaseMessage) {
+    id=((RFXComBaseMessage)obj).generateDeviceId();
   }
- else   if (obj instanceof RFXComTemperatureHumidityMessage) {
-    RFXComTemperatureHumidityMessage o=(RFXComTemperatureHumidityMessage)obj;
-    id=String.valueOf(o.sensorId);
+ else {
+    logger.warn("Error generate device id.");
   }
   return id;
 }

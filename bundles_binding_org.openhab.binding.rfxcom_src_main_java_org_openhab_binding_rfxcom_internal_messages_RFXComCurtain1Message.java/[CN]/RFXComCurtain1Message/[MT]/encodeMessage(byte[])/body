@@ -1,0 +1,15 @@
+{
+  super.encodeMessage(data);
+  subType=SubType.values()[super.subType];
+  sensorId=(char)data[4];
+  unitcode=data[5];
+  command=Commands.STOP;
+  for (  Commands loCmd : Commands.values()) {
+    if (loCmd.toByte() == data[6]) {
+      command=loCmd;
+      break;
+    }
+  }
+  signalLevel=(byte)((data[7] & 0xF0) >> 4);
+  batteryLevel=(byte)((data[7] & 0x0F));
+}
