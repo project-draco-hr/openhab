@@ -1,0 +1,14 @@
+{
+  if (logger != null)   logger.debug(TAG,"Sending key " + key.getValue() + "...");
+  checkConnection();
+  try {
+    internalSendKey(key);
+  }
+ catch (  SocketException e) {
+    if (logger != null)     logger.debug(TAG,"Could not send key because the server closed the connection. Reconnecting...");
+    initialize();
+    if (logger != null)     logger.debug(TAG,"Sending key " + key.getValue() + " again...");
+    internalSendKey(key);
+  }
+  if (logger != null)   logger.debug(TAG,"Successfully sent key " + key.getValue());
+}

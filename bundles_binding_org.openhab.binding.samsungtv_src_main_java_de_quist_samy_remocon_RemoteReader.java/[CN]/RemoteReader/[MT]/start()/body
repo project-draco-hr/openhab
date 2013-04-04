@@ -1,0 +1,20 @@
+{
+  if (active)   return;
+  this.reader=new InputStreamReader(in);
+  active=true;
+  this.worker=new Thread(new Runnable(){
+    public void run(){
+      try {
+        work();
+      }
+ catch (      IOException e) {
+        if (active) {
+          handler.onClose(e);
+        }
+        active=false;
+      }
+    }
+  }
+);
+  this.worker.start();
+}

@@ -1,0 +1,19 @@
+{
+  while (active) {
+    int messageType=reader.read();
+    String identifier=readText(reader);
+    char[] status=readCharArray(reader);
+    if (Arrays.equals(REGISTRATION_ALLOWED,status)) {
+      handler.onRegistrationSuccessfull();
+    }
+ else     if (Arrays.equals(REGISTRATION_DENIED,status)) {
+      handler.onRegistrationDenied();
+    }
+ else     if (Arrays.equals(REGISTRATION_TIMEOUT,status)) {
+      handler.onRegistrationTimeout();
+    }
+ else {
+      handler.onUnknownStatus(status);
+    }
+  }
+}

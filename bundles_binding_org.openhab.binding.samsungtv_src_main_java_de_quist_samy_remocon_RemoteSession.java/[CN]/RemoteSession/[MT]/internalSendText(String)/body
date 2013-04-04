@@ -1,0 +1,12 @@
+{
+  writer.append((char)0x01);
+  writeText(writer,TV_APP_STRING);
+  writeText(writer,getTextPayload(text));
+  writer.flush();
+  if (!reader.ready()) {
+    return;
+  }
+  int i=reader.read();
+  String t=readText(reader);
+  char[] c=readCharArray(reader);
+}

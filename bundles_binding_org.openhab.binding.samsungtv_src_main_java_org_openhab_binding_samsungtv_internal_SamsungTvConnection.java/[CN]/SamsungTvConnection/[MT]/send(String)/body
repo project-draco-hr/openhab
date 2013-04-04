@@ -1,0 +1,13 @@
+{
+  RemoteSession remoteController=null;
+  try {
+    remoteController=RemoteSession.create("openHAB","openHAB",ip,port);
+    Key key=Key.valueOf(cmd);
+    logger.debug("Try to send command: {}",cmd);
+    remoteController.sendKey(key);
+  }
+ catch (  Exception e) {
+    logger.error("Could not send command to device on {}: {}",ip + ":" + port,e);
+  }
+  remoteController=null;
+}

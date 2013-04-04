@@ -1,0 +1,14 @@
+{
+  if (logger != null)   logger.debug(TAG,"Sending text \"" + text + "\"...");
+  checkConnection();
+  try {
+    internalSendText(text);
+  }
+ catch (  SocketException e) {
+    if (logger != null)     logger.debug(TAG,"Could not send key because the server closed the connection. Reconnecting...");
+    initialize();
+    if (logger != null)     logger.debug(TAG,"Sending text \"" + text + "\" again...");
+    internalSendText(text);
+  }
+  if (logger != null)   logger.debug(TAG,"Successfully sent text \"" + text + "\"");
+}

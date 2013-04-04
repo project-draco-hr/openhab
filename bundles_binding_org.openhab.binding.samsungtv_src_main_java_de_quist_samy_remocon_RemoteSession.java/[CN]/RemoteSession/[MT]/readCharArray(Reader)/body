@@ -1,0 +1,12 @@
+{
+  if (reader.markSupported())   reader.mark(1024);
+  int length=reader.read();
+  int delimiter=reader.read();
+  if (delimiter != 0) {
+    if (reader.markSupported())     reader.reset();
+    throw new IOException("Unsupported reply exception");
+  }
+  char[] buffer=new char[length];
+  reader.read(buffer);
+  return buffer;
+}

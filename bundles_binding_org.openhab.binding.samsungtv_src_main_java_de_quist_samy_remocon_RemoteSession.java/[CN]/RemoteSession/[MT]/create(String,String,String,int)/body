@@ -1,0 +1,16 @@
+{
+  RemoteSession session=new RemoteSession(applicationName,uniqueId,host,port);
+  String result=session.initialize();
+  if (result.equals(ALLOWED)) {
+    return session;
+  }
+ else   if (result.equals(DENIED)) {
+    throw new ConnectionDeniedException();
+  }
+ else   if (result.equals(TIMEOUT)) {
+    throw new TimeoutException();
+  }
+ else {
+    return session;
+  }
+}
