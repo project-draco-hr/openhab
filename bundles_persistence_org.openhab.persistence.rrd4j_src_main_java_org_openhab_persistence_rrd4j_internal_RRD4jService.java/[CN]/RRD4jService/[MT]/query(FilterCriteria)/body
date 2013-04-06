@@ -1,0 +1,41 @@
+{
+  String itemName=filter.getItemName();
+  ConsolFun consolidationFunction=getConsolidationFunction(itemName);
+  RrdDb db=getDB(itemName,consolidationFunction);
+  if (db != null) {
+    long start=0L;
+    long end=filter.getEndDate() == null ? System.currentTimeMillis() / 1000 : filter.getEndDate().getTime() / 1000;
+    if (filter.getBeginDate() == null) {
+      if (filter.getOrdering() == Ordering.DESCENDING) {
+        try {
+          Archive archive=db.findStartMatchArchive(consolidationFunction.toString(),filter.getEndDate().getTime() / 1000L,1L);
+          long stepInSecs=archive.getArcStep();
+          start=end - stepInSecs;
+        }
+ catch (        IOException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+ else {
+      start=filter.getBeginDate().getTime() / 1000;
+    }
+    FetchRequest request=db.createFetchRequest(consolidationFunction,start,end);
+    try {
+      HashSet<HistoricItem> items=new HashSet<HistoricItem>();
+      FetchData result=request.fetchData();
+      long ts=result.getFirstTimestamp();
+      for (      double value : result.getValues(DATASOURCE_STATE)) {
+        if (!Double.isNaN(value)) {
+          items.add(new RRD4jItem(itemName,mapToState(value,itemName),new Date(ts * 1000)));
+        }
+        ts+=result.getStep();
+      }
+      return items;
+    }
+ catch (    IOException e) {
+      logger.warn("Could not query rrd4j database for item '{}': {}",new String[]{itemName,e.getMessage()});
+    }
+  }
+  return Collections.emptyList();
+}

@@ -1,5 +1,5 @@
 {
-  RrdDb db=getDB(item.getName());
+  RrdDb db=getDB(item.getName(),getConsolidationFunction(item));
   if (db != null) {
     try {
       Sample sample=db.createSample();
@@ -7,13 +7,26 @@
       DecimalType state=(DecimalType)item.getStateAs(DecimalType.class);
       if (state != null) {
         double value=state.toBigDecimal().doubleValue();
-        sample.setValue("state",value);
+        sample.setValue(DATASOURCE_STATE,value);
         sample.update();
-        logger.debug("Stored item '{}' in rrd4j database",item.getName());
+        logger.debug("Stored item '{}' with state '{}' in rrd4j database",item.getName(),item.getState());
       }
       db.close();
     }
- catch (    Exception e) {
+ catch (    IllegalArgumentException e) {
+      if (e.getMessage().contains("at least one second step is required")) {
+        try {
+          Thread.sleep(1000);
+          store(item,alias);
+        }
+ catch (        InterruptedException e1) {
+        }
+      }
+ else {
+        logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+      }
+    }
+catch (    Exception e) {
       logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
     }
   }

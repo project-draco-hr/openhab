@@ -1,0 +1,12 @@
+{
+  if (itemRegistry != null) {
+    try {
+      Item item=itemRegistry.getItem(itemName);
+      return getConsolidationFunction(item);
+    }
+ catch (    ItemNotFoundException e) {
+      logger.debug("Could not find item '{}' in registry",itemName);
+    }
+  }
+  return ConsolFun.MAX;
+}
