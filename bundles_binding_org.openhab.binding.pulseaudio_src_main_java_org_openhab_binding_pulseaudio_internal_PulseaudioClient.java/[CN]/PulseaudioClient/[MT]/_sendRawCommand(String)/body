@@ -1,0 +1,12 @@
+{
+  checkConnection();
+  try {
+    PrintStream out=new PrintStream(client.getOutputStream(),true);
+    out.print(command + "\r\n");
+    out.close();
+    client.close();
+  }
+ catch (  IOException e) {
+    logger.error(e.getLocalizedMessage(),e);
+  }
+}

@@ -1,0 +1,34 @@
+{
+  List<Module> modules=new ArrayList<Module>();
+  String[] parts=raw.split("index: ");
+  if (parts.length <= 1)   return modules;
+  for (int i=1; i < parts.length; i++) {
+    String[] lines=parts[i].split("\n");
+    Hashtable<String,String> properties=new Hashtable<String,String>();
+    int id=0;
+    try {
+      id=Integer.valueOf(lines[0].trim());
+    }
+ catch (    NumberFormatException e) {
+      Matcher matcher=fallBackPattern.matcher(lines[0].trim());
+      if (matcher.find()) {
+        id=Integer.valueOf(matcher.group(1));
+        properties.put(matcher.group(2).trim(),matcher.group(3).trim());
+      }
+    }
+    for (int j=1; j < lines.length; j++) {
+      Matcher matcher=pattern.matcher(lines[j]);
+      if (matcher.find()) {
+        properties.put(matcher.group(1).trim(),matcher.group(2).trim());
+      }
+    }
+    if (properties.containsKey("name")) {
+      Module module=new Module(id,properties.get("name"));
+      if (properties.containsKey("argument")) {
+        module.setArgument(properties.get("argument"));
+      }
+      modules.add(module);
+    }
+  }
+  return modules;
+}

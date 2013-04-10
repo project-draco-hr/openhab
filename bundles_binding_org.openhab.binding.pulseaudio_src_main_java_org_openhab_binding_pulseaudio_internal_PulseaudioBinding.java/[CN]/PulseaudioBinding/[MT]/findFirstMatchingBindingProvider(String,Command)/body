@@ -1,0 +1,17 @@
+{
+  PulseaudioBindingProvider firstMatchingProvider=null;
+  Class<? extends Item> itemClass=mapCommandToItemType(command);
+  for (  PulseaudioBindingProvider provider : this.providers) {
+    String audioItemName=provider.getItemName(itemName);
+    Class<? extends Item> itemType=provider.getItemType(itemName);
+    if (itemClass.equals(itemType)) {
+      firstMatchingProvider=provider;
+      break;
+    }
+ else     if (audioItemName != null && itemType != null && itemType.isAssignableFrom(itemClass)) {
+      firstMatchingProvider=provider;
+      break;
+    }
+  }
+  return firstMatchingProvider;
+}

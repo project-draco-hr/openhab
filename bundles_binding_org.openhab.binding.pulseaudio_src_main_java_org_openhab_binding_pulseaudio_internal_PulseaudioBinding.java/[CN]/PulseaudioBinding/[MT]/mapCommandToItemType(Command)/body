@@ -1,0 +1,21 @@
+{
+  if (command instanceof IncreaseDecreaseType) {
+    return DimmerItem.class;
+  }
+ else   if (command instanceof PercentType) {
+    return DimmerItem.class;
+  }
+ else   if (command instanceof DecimalType) {
+    return NumberItem.class;
+  }
+ else   if (command instanceof OnOffType) {
+    return SwitchItem.class;
+  }
+ else   if (command instanceof StringType) {
+    return StringItem.class;
+  }
+ else {
+    logger.warn("No explicit mapping found for command type '{}' - return StringItem.class instead",command.getClass().getSimpleName());
+    return StringItem.class;
+  }
+}

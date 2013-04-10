@@ -1,0 +1,21 @@
+{
+  if (serverConfig.host != null && serverConfig.port > 0) {
+    try {
+      clients.put(serverId,new PulseaudioClient(serverConfig.host,serverConfig.port));
+      boolean isConnected=clients.get(serverId).isConnected();
+      if (isConnected) {
+        logger.info("Established connection to Pulseaudio server on Host '{}' Port '{}'.",serverConfig.host,serverConfig.port);
+        execute();
+      }
+ else {
+        logger.warn("Establishing connection to Pulseaudio server [Host '{}' Port '{}'] timed out.",serverConfig.host,serverConfig.port);
+      }
+    }
+ catch (    IOException ioe) {
+      logger.error("Couldn't connect to Pulsaudio server [Host '" + serverConfig.host + "' Port '"+ serverConfig.port+ "']: ",ioe.getLocalizedMessage());
+    }
+  }
+ else {
+    logger.warn("Couldn't connect to Pulseaudio server because of missing connection parameters [Host '{}' Port '{}'].",serverConfig.host,serverConfig.port);
+  }
+}

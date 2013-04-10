@@ -1,0 +1,10 @@
+{
+  if (combinedSink == null || !combinedSink.isCombinedSink())   return;
+  List<String> slaves=new ArrayList<String>();
+  for (  Sink sink : sinks) {
+    slaves.add(sink.getName());
+  }
+  _sendRawCommand(CMD_UNLOAD_MODULE + " " + combinedSink.getModule().getId());
+  _sendRawCommand(CMD_LOAD_MODULE + " " + MODULE_COMBINE_SINK+ " sink_name="+ combinedSink.getName()+ " slaves="+ StringUtils.join(slaves,","));
+  update();
+}

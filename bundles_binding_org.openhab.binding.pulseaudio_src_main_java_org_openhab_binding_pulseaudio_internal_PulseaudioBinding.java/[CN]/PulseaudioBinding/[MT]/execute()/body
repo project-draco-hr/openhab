@@ -1,0 +1,115 @@
+{
+  List<PulseaudioClient> updatedClients=new ArrayList<PulseaudioClient>();
+  for (  PulseaudioBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String audioItemName=provider.getItemName(itemName);
+      String serverId=provider.getServerId(itemName);
+      Class<? extends Item> itemType=provider.getItemType(itemName);
+      String command=provider.getCommand(itemName);
+      PulseaudioCommandTypeMapping commandType=null;
+      if (command != null && !command.isEmpty()) {
+        try {
+          commandType=PulseaudioCommandTypeMapping.valueOf(command.toUpperCase());
+        }
+ catch (        IllegalArgumentException e) {
+          logger.warn("unknown command specified for the given itemName [itemName={}, audio-item-name={}, serverId={}, command={}] => querying for values aborted!",new Object[]{itemName,audioItemName,serverId,command});
+          continue;
+        }
+      }
+      if (itemType.isAssignableFrom(GroupItem.class) || itemType.isAssignableFrom(StringItem.class)) {
+        continue;
+      }
+      PulseaudioClient client=clients.get(serverId);
+      if (client == null) {
+        logger.warn("connection to pulseaudio server in not available " + "for the given itemName [itemName={}, audio-item-name={}, serverId={}, command={}] => querying for values aborted!",new Object[]{itemName,audioItemName,serverId,command});
+        continue;
+      }
+      if (audioItemName == null) {
+        logger.warn("audio-item-name isn't configured properly " + "for the given itemName [itemName={}, audio-item-name={}, serverId={}, command={}] => querying for values aborted!",new Object[]{itemName,audioItemName,serverId,command});
+        continue;
+      }
+      if (!updatedClients.contains(client)) {
+        client.update();
+        updatedClients.add(client);
+      }
+      State value=UnDefType.UNDEF;
+      AbstractAudioDeviceConfig audioItem=client.getGenericAudioItem(audioItemName);
+      if (audioItem != null) {
+        if (itemType.isAssignableFrom(DimmerItem.class)) {
+          value=new PercentType(audioItem.getVolume());
+        }
+ else         if (itemType.isAssignableFrom(NumberItem.class)) {
+          if (commandType == null) {
+            value=new DecimalType(audioItem.getVolume());
+          }
+ else {
+switch (commandType) {
+case VOLUME:
+              value=new DecimalType(audioItem.getVolume());
+            break;
+case ID:
+          value=new DecimalType(audioItem.getId());
+        break;
+case MODULE_ID:
+      if (audioItem.getModule() != null)       value=new DecimalType(audioItem.getModule().getId());
+    break;
+}
+}
+}
+ else if (itemType.isAssignableFrom(SwitchItem.class)) {
+if (commandType == null) {
+if (!audioItem.isMuted() && audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.RUNNING)) {
+  value=OnOffType.ON;
+}
+ else {
+  value=OnOffType.OFF;
+}
+}
+ else {
+switch (commandType) {
+case EXISTS:
+  value=OnOffType.ON;
+break;
+case MUTED:
+value=audioItem.isMuted() ? OnOffType.ON : OnOffType.OFF;
+break;
+case RUNNING:
+case CORKED:
+case SUSPENDED:
+case IDLE:
+try {
+value=audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.valueOf(commandType.name())) ? OnOffType.ON : OnOffType.OFF;
+}
+ catch (IllegalArgumentException e) {
+logger.warn("no corresponding AbstractAudioDeviceConfig.State found for " + commandType.name());
+}
+break;
+}
+}
+}
+ else if (itemType.isAssignableFrom(StringItem.class)) {
+if (commandType == null) {
+value=new StringType(audioItem.toString());
+}
+ else if (audioItem instanceof Sink) {
+Sink sink=(Sink)audioItem;
+switch (commandType) {
+case SLAVE_SINKS:
+if (sink.isCombinedSink()) {
+value=new StringType(StringUtils.join(sink.getCombinedSinkNames(),","));
+}
+break;
+}
+}
+}
+ else {
+logger.debug("unhandled item type [type={}, name={}]",itemType.getClass(),audioItemName);
+}
+}
+ else if (itemType.isAssignableFrom(SwitchItem.class)) {
+value=OnOffType.OFF;
+}
+eventPublisher.postUpdate(itemName,value);
+}
+}
+}

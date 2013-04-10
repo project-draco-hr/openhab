@@ -1,0 +1,49 @@
+{
+  List<SinkInput> items=new ArrayList<SinkInput>();
+  String[] parts=raw.split("index: ");
+  if (parts.length <= 1)   return items;
+  for (int i=1; i < parts.length; i++) {
+    String[] lines=parts[i].split("\n");
+    Hashtable<String,String> properties=new Hashtable<String,String>();
+    int id=0;
+    try {
+      id=Integer.valueOf(lines[0].trim());
+    }
+ catch (    NumberFormatException e) {
+      Matcher matcher=fallBackPattern.matcher(lines[0].trim());
+      if (matcher.find()) {
+        id=Integer.valueOf(matcher.group(1));
+        properties.put(matcher.group(2).trim(),matcher.group(3).trim());
+      }
+    }
+    for (int j=1; j < lines.length; j++) {
+      Matcher matcher=pattern.matcher(lines[j]);
+      if (matcher.find()) {
+        properties.put(matcher.group(1).trim(),matcher.group(2).trim());
+      }
+    }
+    if (properties.containsKey("sink")) {
+      String name=properties.containsKey("media.name") ? properties.get("media.name") : properties.get("sink");
+      SinkInput item=new SinkInput(id,name,client.getModule(getNumberValue(properties.get("module"))));
+      if (properties.containsKey("state")) {
+        try {
+          item.setState(AbstractAudioDeviceConfig.State.valueOf(properties.get("state")));
+        }
+ catch (        IllegalArgumentException e) {
+          logger.error("unhandled state " + properties.get("state") + " in sink-input item #"+ id);
+        }
+      }
+      if (properties.containsKey("muted")) {
+        item.setMuted(properties.get("muted").equalsIgnoreCase("yes"));
+      }
+      if (properties.containsKey("volume")) {
+        item.setVolume(Integer.valueOf(parseVolume(properties.get("volume"))));
+      }
+      if (properties.containsKey("sink")) {
+        item.setSink(client.getSink(Integer.valueOf(parseVolume(properties.get("sink")))));
+      }
+      items.add(item);
+    }
+  }
+  return items;
+}

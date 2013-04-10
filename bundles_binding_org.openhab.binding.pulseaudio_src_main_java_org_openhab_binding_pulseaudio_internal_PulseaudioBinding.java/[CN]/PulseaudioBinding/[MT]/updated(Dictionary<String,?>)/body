@@ -1,0 +1,36 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given pulseaudio-config-key '" + key + "' does not follow the expected pattern '<serverId>.<host|port>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String serverId=matcher.group(1);
+      PulseaudioServerConfig serverConfig=serverConfigCache.get(serverId);
+      if (serverConfig == null) {
+        serverConfig=new PulseaudioServerConfig();
+        serverConfigCache.put(serverId,serverConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("host".equals(configKey)) {
+        serverConfig.host=value;
+      }
+ else       if ("port".equals(configKey)) {
+        serverConfig.port=Integer.valueOf(value);
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    connectAllPulseaudioServers();
+  }
+}

@@ -1,0 +1,14 @@
+{
+  int id=-1;
+  if (raw == null)   return 0;
+  try {
+    id=Integer.valueOf(raw.trim());
+  }
+ catch (  NumberFormatException e) {
+    Matcher matcher=numberValuePattern.matcher(raw.trim());
+    if (matcher.find()) {
+      id=Integer.valueOf(matcher.group(1));
+    }
+  }
+  return id;
+}

@@ -1,0 +1,9 @@
+{
+  if (getSink(combinedSinkName) != null)   return;
+  List<String> slaves=new ArrayList<String>();
+  for (  Sink sink : sinks) {
+    slaves.add(sink.getName());
+  }
+  _sendRawCommand(CMD_LOAD_MODULE + " " + MODULE_COMBINE_SINK+ " sink_name="+ combinedSinkName+ " slaves="+ StringUtils.join(slaves,","));
+  update();
+}

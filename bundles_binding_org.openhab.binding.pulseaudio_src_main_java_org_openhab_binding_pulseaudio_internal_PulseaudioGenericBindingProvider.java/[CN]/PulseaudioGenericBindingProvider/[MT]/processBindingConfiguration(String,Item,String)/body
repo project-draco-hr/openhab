@@ -1,0 +1,23 @@
+{
+  PulseaudioBindingConfig config=new PulseaudioBindingConfig();
+  String[] configParts=bindingConfig.split(":");
+  if (item instanceof StringItem) {
+    if (configParts.length != 1 && configParts.length != 3) {
+      throw new BindingConfigParseException("Pulseaudio binding configuration for StringItems must consist of one or three part [config=" + configParts + "]");
+    }
+    config.serverId=StringUtils.trim(configParts[0]);
+    config.itemType=item.getClass();
+    addBindingConfig(item,config);
+    return;
+  }
+ else   if (configParts.length < 2 || configParts.length > 3) {
+    throw new BindingConfigParseException("Pulseaudio binding configuration must consist of two or three parts [config=" + configParts + "]");
+  }
+  config.serverId=StringUtils.trim(configParts[0]);
+  config.itemName=StringUtils.trim(configParts[1]);
+  if (configParts.length == 3) {
+    config.command=StringUtils.trim(configParts[2]);
+  }
+  config.itemType=item.getClass();
+  addBindingConfig(item,config);
+}

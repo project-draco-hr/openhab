@@ -1,0 +1,48 @@
+{
+  List<Source> sources=new ArrayList<Source>();
+  String[] parts=raw.split("index: ");
+  if (parts.length <= 1)   return sources;
+  for (int i=1; i < parts.length; i++) {
+    String[] lines=parts[i].split("\n");
+    Hashtable<String,String> properties=new Hashtable<String,String>();
+    int id=0;
+    try {
+      id=Integer.valueOf(lines[0].trim());
+    }
+ catch (    NumberFormatException e) {
+      Matcher matcher=fallBackPattern.matcher(lines[0].trim());
+      if (matcher.find()) {
+        id=Integer.valueOf(matcher.group(1));
+        properties.put(matcher.group(2).trim(),matcher.group(3).trim());
+      }
+    }
+    for (int j=1; j < lines.length; j++) {
+      Matcher matcher=pattern.matcher(lines[j]);
+      if (matcher.find()) {
+        properties.put(matcher.group(1).trim(),matcher.group(2).trim());
+      }
+    }
+    if (properties.containsKey("name")) {
+      Source source=new Source(id,properties.get("name"),client.getModule(getNumberValue(properties.get("module"))));
+      if (properties.containsKey("state")) {
+        try {
+          source.setState(AbstractAudioDeviceConfig.State.valueOf(properties.get("state")));
+        }
+ catch (        IllegalArgumentException e) {
+          logger.error("unhandled state " + properties.get("state") + " in source item #"+ id);
+        }
+      }
+      if (properties.containsKey("muted")) {
+        source.setMuted(properties.get("muted").equalsIgnoreCase("yes"));
+      }
+      if (properties.containsKey("volume")) {
+        source.setVolume(Integer.valueOf(parseVolume(properties.get("volume"))));
+      }
+      if (properties.containsKey("monitor_of")) {
+        source.setMonitorOf(client.getSink(Integer.valueOf(parseVolume(properties.get("monitor_of")))));
+      }
+      sources.add(source);
+    }
+  }
+  return sources;
+}

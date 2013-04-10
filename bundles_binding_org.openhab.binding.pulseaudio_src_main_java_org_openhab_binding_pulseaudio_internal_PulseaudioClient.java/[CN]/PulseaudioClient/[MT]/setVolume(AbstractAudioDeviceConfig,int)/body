@@ -1,0 +1,7 @@
+{
+  if (item == null)   return;
+  String itemCommandName=getItemCommandName(item);
+  if (itemCommandName == null)   return;
+  _sendRawCommand("set-" + itemCommandName + "-volume "+ item.getId()+ " "+ vol);
+  item.setVolume(Math.round(100f / 65536f * vol));
+}

@@ -1,0 +1,57 @@
+{
+  Hashtable<String,Sink> sinks=new Hashtable<String,Sink>();
+  String[] parts=raw.split("index: ");
+  if (parts.length <= 1)   return sinks.values();
+  List<Sink> combinedSinks=new ArrayList<Sink>();
+  for (int i=1; i < parts.length; i++) {
+    String[] lines=parts[i].split("\n");
+    Hashtable<String,String> properties=new Hashtable<String,String>();
+    int id=0;
+    try {
+      id=Integer.valueOf(lines[0].trim());
+    }
+ catch (    NumberFormatException e) {
+      Matcher matcher=fallBackPattern.matcher(lines[0].trim());
+      if (matcher.find()) {
+        id=Integer.valueOf(matcher.group(1));
+        properties.put(matcher.group(2).trim(),matcher.group(3).trim());
+      }
+    }
+    for (int j=1; j < lines.length; j++) {
+      Matcher matcher=pattern.matcher(lines[j]);
+      if (matcher.find()) {
+        properties.put(matcher.group(1).trim(),matcher.group(2).trim());
+      }
+    }
+    if (properties.containsKey("name")) {
+      Sink sink=new Sink(id,properties.get("name"),client.getModule(getNumberValue(properties.get("module"))));
+      if (properties.containsKey("state")) {
+        try {
+          sink.setState(AbstractAudioDeviceConfig.State.valueOf(properties.get("state")));
+        }
+ catch (        IllegalArgumentException e) {
+          logger.error("unhandled state " + properties.get("state") + " in sink item #"+ id);
+        }
+      }
+      if (properties.containsKey("muted")) {
+        sink.setMuted(properties.get("muted").equalsIgnoreCase("yes"));
+      }
+      if (properties.containsKey("volume")) {
+        sink.setVolume(Integer.valueOf(parseVolume(properties.get("volume"))));
+      }
+      if (properties.containsKey("combine.slaves")) {
+        for (        String sinkName : properties.get("combine.slaves").replace("\"","").split(",")) {
+          sink.addCombinedSinkName(sinkName);
+        }
+        combinedSinks.add(sink);
+      }
+      sinks.put(sink.getName(),sink);
+    }
+  }
+  for (  Sink combinedSink : combinedSinks) {
+    for (    String sinkName : combinedSink.getCombinedSinkNames()) {
+      combinedSink.addCombinedSink(sinks.get(sinkName));
+    }
+  }
+  return sinks.values();
+}

@@ -1,0 +1,41 @@
+{
+  checkConnection();
+  String result="";
+  try {
+    PrintStream out=new PrintStream(client.getOutputStream(),true);
+    out.print(command + "\r\n");
+    InputStream instr=client.getInputStream();
+    try {
+      byte[] buff=new byte[1024];
+      int ret_read=0;
+      int lc=0;
+      do {
+        ret_read=instr.read(buff);
+        lc++;
+        if (ret_read > 0) {
+          String line=new String(buff,0,ret_read);
+          if (line.endsWith(">>> ") && lc > 1) {
+            result+=line.substring(0,line.length() - 4);
+            break;
+          }
+          result+=line.trim();
+        }
+      }
+ while (ret_read > 0);
+    }
+ catch (    SocketTimeoutException e) {
+      return "";
+    }
+catch (    IOException e) {
+      System.err.println("Exception while reading socket:" + e.getMessage());
+    }
+    instr.close();
+    out.close();
+    client.close();
+    return result;
+  }
+ catch (  IOException e) {
+    logger.error(e.getLocalizedMessage(),e);
+  }
+  return result;
+}

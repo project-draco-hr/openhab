@@ -1,0 +1,129 @@
+{
+  PulseaudioBindingProvider provider=findFirstMatchingBindingProvider(itemName,command);
+  if (provider == null) {
+    logger.warn("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  String audioItemName=provider.getItemName(itemName);
+  String serverId=provider.getServerId(itemName);
+  String paCommand=provider.getCommand(itemName);
+  PulseaudioCommandTypeMapping pulseaudioCommandType=null;
+  if (paCommand != null && !paCommand.isEmpty()) {
+    try {
+      pulseaudioCommandType=PulseaudioCommandTypeMapping.valueOf(paCommand.toUpperCase());
+    }
+ catch (    IllegalArgumentException e) {
+      logger.warn("unknown command specified for the given itemName [itemName={}, audio-item-name={}, serverId={}, command={}] => querying for values aborted!",new Object[]{itemName,audioItemName,serverId,command});
+    }
+  }
+  PulseaudioClient client=clients.get(serverId);
+  if (client == null) {
+    if (serverConfigCache.containsKey(serverId)) {
+      connect(serverId,serverConfigCache.get(serverId));
+      client=clients.get(serverId);
+    }
+  }
+  if (client == null) {
+    logger.warn("does't find matching pulseaudio client [itemName={}, serverId={}]",itemName,serverId);
+    return;
+  }
+  if (audioItemName != null && !audioItemName.isEmpty()) {
+    AbstractAudioDeviceConfig audioItem=client.getGenericAudioItem(audioItemName);
+    if (audioItem == null) {
+      logger.warn("no corresponding audio-item found [audioItemName={}]",audioItemName);
+      return;
+    }
+    State updateState=UnDefType.UNDEF;
+    if (command instanceof IncreaseDecreaseType) {
+      int volume=audioItem.getVolume();
+      logger.debug(audioItemName + " volume is " + volume);
+      if (command.equals(IncreaseDecreaseType.INCREASE))       volume=Math.min(100,volume + 5);
+      if (command.equals(IncreaseDecreaseType.DECREASE))       volume=Math.max(0,volume - 5);
+      logger.debug("setting " + audioItemName + " volume to "+ volume);
+      client.setVolumePercent(audioItem,volume);
+      updateState=new PercentType(volume);
+    }
+ else     if (command instanceof PercentType) {
+      client.setVolumePercent(audioItem,Integer.valueOf(command.toString()));
+      updateState=(PercentType)command;
+    }
+ else     if (command instanceof DecimalType) {
+      if (pulseaudioCommandType == null || pulseaudioCommandType.equals(PulseaudioCommandTypeMapping.VOLUME)) {
+        client.setVolume(audioItem,Integer.valueOf(command.toString()));
+        updateState=(DecimalType)command;
+      }
+    }
+ else     if (command instanceof OnOffType) {
+      if (pulseaudioCommandType == null) {
+        client.setMute(audioItem,((OnOffType)command).equals(OnOffType.ON));
+        updateState=(OnOffType)command;
+      }
+ else {
+switch (pulseaudioCommandType) {
+case EXISTS:
+          break;
+case MUTED:
+        client.setMute(audioItem,((OnOffType)command).equals(OnOffType.ON));
+      updateState=(OnOffType)command;
+    break;
+case RUNNING:
+case CORKED:
+case SUSPENDED:
+case IDLE:
+  break;
+case ID:
+case MODULE_ID:
+break;
+case VOLUME:
+if (((OnOffType)command).equals(OnOffType.ON)) {
+client.setVolume(audioItem,100);
+}
+ else {
+client.setVolume(audioItem,100);
+}
+updateState=(OnOffType)command;
+break;
+case SLAVE_SINKS:
+break;
+}
+}
+}
+ else if (command instanceof StringType) {
+if (pulseaudioCommandType != null) {
+switch (pulseaudioCommandType) {
+case CORKED:
+case EXISTS:
+case ID:
+case IDLE:
+case MODULE_ID:
+case MUTED:
+case RUNNING:
+case SUSPENDED:
+case VOLUME:
+break;
+case SLAVE_SINKS:
+if (audioItem instanceof Sink && ((Sink)audioItem).isCombinedSink()) {
+Sink mainSink=(Sink)audioItem;
+ArrayList<Sink> slaveSinks=new ArrayList<Sink>();
+for (String slaveSinkName : StringUtils.split(command.toString(),",")) {
+Sink slaveSink=client.getSink(slaveSinkName);
+if (slaveSink != null) {
+slaveSinks.add(slaveSink);
+}
+}
+logger.debug(slaveSinks.size() + " slave sinks");
+if (slaveSinks.size() > 0) {
+client.setCombinedSinkSlaves(mainSink,slaveSinks);
+}
+}
+break;
+}
+}
+}
+if (!updateState.equals(UnDefType.UNDEF)) eventPublisher.postUpdate(itemName,updateState);
+}
+ else if (command instanceof StringType) {
+client.sendCommand(command.toString());
+eventPublisher.postUpdate(itemName,(StringType)command);
+}
+}
