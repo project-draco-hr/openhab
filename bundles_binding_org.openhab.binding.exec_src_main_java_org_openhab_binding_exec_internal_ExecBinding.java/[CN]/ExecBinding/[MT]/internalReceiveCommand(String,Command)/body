@@ -1,14 +1,15 @@
 {
-  ExecBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  ExecBindingProvider provider=findFirstMatchingBindingProvider(itemName,command);
   if (provider == null) {
     logger.warn("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
     return;
   }
-  String commandLine=provider.getCommandLine(itemName,command.toString());
+  String commandLine=provider.getCommandLine(itemName,command);
   if (commandLine == null) {
-    commandLine=provider.getCommandLine(itemName,"*");
+    commandLine=provider.getCommandLine(itemName,WILDCARD_COMMAND_KEY);
   }
   if (commandLine != null && !commandLine.isEmpty()) {
+    commandLine=String.format(commandLine,Calendar.getInstance().getTime(),command,itemName);
     executeCommand(commandLine);
   }
 }

@@ -1,0 +1,50 @@
+{
+  for (  ExecBindingProvider provider : providers) {
+    for (    String itemName : provider.getInBindingItemNames()) {
+      String commandLine=provider.getCommandLine(itemName);
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      String transformation=provider.getTransformation(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        logger.debug("item '{}' is about to be refreshed now",itemName);
+        commandLine=String.format(commandLine,Calendar.getInstance().getTime(),"",itemName);
+        String response=executeCommandAndWaitResponse(commandLine);
+        if (response == null) {
+          logger.error("No response received from command '{}'",commandLine);
+        }
+ else {
+          String transformedResponse;
+          try {
+            String[] parts=splitTransformationConfig(transformation);
+            String transformationType=parts[0];
+            String transformationFunction=parts[1];
+            TransformationService transformationService=TransformationHelper.getTransformationService(ExecActivator.getContext(),transformationType);
+            if (transformationService != null) {
+              transformedResponse=transformationService.transform(transformationFunction,response);
+            }
+ else {
+              transformedResponse=response;
+              logger.warn("couldn't transform response because transformationService of type '{}' is unavailable",transformationType);
+            }
+          }
+ catch (          TransformationException te) {
+            logger.error("transformation throws exception [transformation=" + transformation + ", response="+ response+ "]",te);
+            transformedResponse=response;
+          }
+          logger.debug("transformed response is '{}'",transformedResponse);
+          Class<? extends Item> itemType=provider.getItemType(itemName);
+          State state=createState(itemType,transformedResponse);
+          if (state != null) {
+            eventPublisher.postUpdate(itemName,state);
+          }
+        }
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}

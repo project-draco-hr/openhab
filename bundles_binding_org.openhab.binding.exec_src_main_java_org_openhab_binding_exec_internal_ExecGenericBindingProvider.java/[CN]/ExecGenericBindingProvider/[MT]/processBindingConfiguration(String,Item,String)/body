@@ -1,6 +1,29 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   ExecBindingConfig config=new ExecBindingConfig();
-  parseBindingConfig(bindingConfig,config);
+  config.itemType=item.getClass();
+  Matcher matcher=BASE_CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    if (bindingConfig.startsWith("<") || bindingConfig.startsWith(">")) {
+      throw new BindingConfigParseException("Exec binding legacy format cannot start with '<' or '>' ");
+    }
+    parseLegacyOutBindingConfig(item,bindingConfig,config);
+  }
+ else {
+    matcher.reset();
+    while (matcher.find()) {
+      String direction=matcher.group(1);
+      String bindingConfigPart=matcher.group(2);
+      if (direction.equals("<")) {
+        config=parseInBindingConfig(item,bindingConfigPart,config);
+      }
+ else       if (direction.equals(">")) {
+        config=parseOutBindingConfig(item,bindingConfigPart,config);
+      }
+ else {
+        throw new BindingConfigParseException("Unknown command given! Configuration must start with '<' or '>' ");
+      }
+    }
+  }
   addBindingConfig(item,config);
 }

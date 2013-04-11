@@ -1,0 +1,20 @@
+{
+  try {
+    if (itemType.isAssignableFrom(DecimalType.class)) {
+      return DecimalType.valueOf(transformedResponse);
+    }
+ else     if (itemType.isAssignableFrom(OpenClosedType.class)) {
+      return OpenClosedType.valueOf(transformedResponse);
+    }
+ else     if (itemType.isAssignableFrom(OnOffType.class)) {
+      return OnOffType.valueOf(transformedResponse);
+    }
+ else {
+      return StringType.valueOf(transformedResponse);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Couldn't create state of type '{}' for value '{}'",itemType,transformedResponse);
+    return StringType.valueOf(transformedResponse);
+  }
+}

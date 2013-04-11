@@ -1,0 +1,15 @@
+{
+  Matcher matcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't represent a valid in-binding-configuration.");
+  }
+  matcher.reset();
+  ExecBindingConfigElement configElement;
+  while (matcher.find()) {
+    Command command=createCommandFromString(item,matcher.group(1));
+    configElement=new ExecBindingConfigElement();
+    configElement.commandLine=matcher.group(2).replaceAll("\\\\\"","");
+    config.put(command,configElement);
+  }
+  return config;
+}

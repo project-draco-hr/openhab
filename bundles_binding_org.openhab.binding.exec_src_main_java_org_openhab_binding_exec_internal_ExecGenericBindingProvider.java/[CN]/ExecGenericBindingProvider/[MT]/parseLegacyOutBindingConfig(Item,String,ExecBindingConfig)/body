@@ -9,7 +9,7 @@
     commandLine=tmpCommandLine.substring(1).split("(?<!\\\\)'")[0];
     String tail=tmpCommandLine.replaceFirst(".*(?<!\\\\)' ?,","").trim();
     if (!tail.isEmpty()) {
-      parseBindingConfig(tail,config);
+      parseLegacyOutBindingConfig(item,tail,config);
     }
   }
  else {
@@ -20,8 +20,11 @@
  else {
       commandLine=tmpCommandLineElements[0];
       String tail=StringUtils.join(tmpCommandLineElements,", ",1,tmpCommandLineElements.length);
-      parseBindingConfig(tail,config);
+      parseLegacyOutBindingConfig(item,tail,config);
     }
   }
-  config.put(command,commandLine.replaceAll("(?<!\\\\)\\\\",""));
+  ExecBindingConfigElement configElement=new ExecBindingConfigElement();
+  configElement.commandLine=commandLine.replaceAll("(?<!\\\\)\\\\","");
+  Command cmd=createCommandFromString(item,command);
+  config.put(cmd,configElement);
 }
