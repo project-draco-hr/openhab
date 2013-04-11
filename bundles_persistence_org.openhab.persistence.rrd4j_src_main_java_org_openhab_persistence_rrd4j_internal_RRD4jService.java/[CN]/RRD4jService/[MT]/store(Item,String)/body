@@ -1,9 +1,28 @@
 {
-  RrdDb db=getDB(item.getName(),getConsolidationFunction(item));
+  ConsolFun function=getConsolidationFunction(item);
+  RrdDb db=getDB(item.getName(),function);
   if (db != null) {
+    long now=System.currentTimeMillis() / 1000;
+    if (function != ConsolFun.AVERAGE) {
+      try {
+        if (now - 1 > db.getLastUpdateTime()) {
+          double lastValue=db.getLastDatasourceValue(DATASOURCE_STATE);
+          if (!Double.isNaN(lastValue)) {
+            Sample sample=db.createSample();
+            sample.setTime(now - 1);
+            sample.setValue(DATASOURCE_STATE,lastValue);
+            sample.update();
+            logger.debug("Stored item '{}' with state '{}' in rrd4j database",item.getName(),lastValue);
+          }
+        }
+      }
+ catch (      IOException e) {
+        logger.debug("Error re-storing last value: {}",e.getMessage());
+      }
+    }
     try {
       Sample sample=db.createSample();
-      sample.setTime(System.currentTimeMillis() / 1000);
+      sample.setTime(now);
       DecimalType state=(DecimalType)item.getStateAs(DecimalType.class);
       if (state != null) {
         double value=state.toBigDecimal().doubleValue();
@@ -11,7 +30,6 @@
         sample.update();
         logger.debug("Stored item '{}' with state '{}' in rrd4j database",item.getName(),item.getState());
       }
-      db.close();
     }
  catch (    IllegalArgumentException e) {
       if (e.getMessage().contains("at least one second step is required")) {
@@ -28,6 +46,12 @@
     }
 catch (    Exception e) {
       logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+    }
+    try {
+      db.close();
+    }
+ catch (    IOException e) {
+      logger.debug("Error closing rrd4j database: {}",e.getMessage());
     }
   }
 }
