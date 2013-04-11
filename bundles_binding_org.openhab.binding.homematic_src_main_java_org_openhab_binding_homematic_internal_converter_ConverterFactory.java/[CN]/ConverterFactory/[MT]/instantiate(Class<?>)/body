@@ -1,0 +1,16 @@
+{
+  if (converter == null) {
+    return null;
+  }
+  try {
+    return converter.newInstance();
+  }
+ catch (  InstantiationException e) {
+    logger.error("Could not instanciate " + converter,e);
+    throw new RuntimeException(e);
+  }
+catch (  IllegalAccessException e) {
+    logger.error("Could not instanciate " + converter,e);
+    throw new RuntimeException(e);
+  }
+}

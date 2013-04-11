@@ -1,0 +1,15 @@
+{
+  logger.info("Registering callback handler.");
+  CallbackHandler handler=new CallbackHandler();
+  handler.registerCallbackReceiver(ccu);
+  handler.registerCallbackReceiver(this);
+  cbServer=new CallbackServer(null,callbackPort,handler);
+  cbServer.start();
+  Runtime.getRuntime().addShutdownHook(new Thread(){
+    @Override public void run(){
+      removeCallbackHandler(cbServer);
+    }
+  }
+);
+  ccu.getConnection().init("http://" + callbackHost + ":"+ callbackPort+ "/xmlrpc","" + ccu.getConnection().hashCode());
+}

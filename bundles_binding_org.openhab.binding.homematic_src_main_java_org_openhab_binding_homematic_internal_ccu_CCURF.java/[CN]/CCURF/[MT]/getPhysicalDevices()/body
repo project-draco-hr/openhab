@@ -1,0 +1,23 @@
+{
+  logger.debug("listing all physical devices");
+  Set<DeviceDescription> descriptions=connection.listDevices();
+  logger.debug("retrieved " + descriptions.size() + " device descriptions.");
+  Set<HMRFDevice> devices=new HashSet<HMRFDevice>();
+  for (  DeviceDescription descr : descriptions) {
+    String address=descr.getAddress();
+    if (cache.isCached(address)) {
+      devices.add(cache.getDeviceByAddress(address));
+    }
+ else {
+      HMRFDevice dev=HMDeviceFactory.createRFDevice(this,address);
+      if (dev != null) {
+        devices.add(dev);
+      }
+ else {
+        logger.warn("unknown device: " + descr.getType());
+      }
+    }
+  }
+  cache.addDevices(devices);
+  return devices;
+}

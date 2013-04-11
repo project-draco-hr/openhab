@@ -1,0 +1,16 @@
+{
+  HMPhysicalDevice physicalDevice=ccu.getPhysicalDevice(parameterAddress.getPhysicalDeviceAddress());
+  if (physicalDevice == null) {
+    return false;
+  }
+  HMChannel channel=physicalDevice.getChannel(parameterAddress.getChannel());
+  if (channel == null) {
+    return false;
+  }
+  Object isWorkingObj=channel.getValues().getValue(ParameterKey.WORKING.name());
+  if (isWorkingObj != null) {
+    Boolean isWorking=(Boolean)isWorkingObj;
+    return isWorking;
+  }
+  return false;
+}

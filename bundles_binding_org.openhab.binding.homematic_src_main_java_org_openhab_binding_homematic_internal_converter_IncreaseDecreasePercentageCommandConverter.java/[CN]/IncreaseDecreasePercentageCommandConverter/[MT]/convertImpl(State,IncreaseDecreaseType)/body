@@ -1,0 +1,13 @@
+{
+  if (actualState instanceof PercentType) {
+    PercentType actualPercentage=(PercentType)actualState;
+    return calculateNewState(command,actualPercentage);
+  }
+ else   if (actualState instanceof UnDefType) {
+    return calculateNewState(command,new PercentType(0));
+  }
+ else {
+    logger.warn("Could not increase / decrease actualState " + actualState + ". Expected PercentageType, got "+ actualState.getClass());
+    return null;
+  }
+}

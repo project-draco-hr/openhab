@@ -1,0 +1,19 @@
+{
+  if (address == null) {
+    throw new IllegalArgumentException("address must not be null");
+  }
+  ;
+  this.address=address;
+  URL url=null;
+  try {
+    url=new URL("http://" + address + ":2001");
+  }
+ catch (  MalformedURLException e) {
+    throw new RuntimeException("Malformed homematic server url: http://" + address + ":2001",e);
+  }
+  logger.info("Connecting to " + url);
+  XmlRpcClientConfigImpl config=new XmlRpcClientConfigImpl();
+  config.setServerURL(url);
+  xmlRpcClient=new XmlRpcClient();
+  xmlRpcClient.setConfig(config);
+}

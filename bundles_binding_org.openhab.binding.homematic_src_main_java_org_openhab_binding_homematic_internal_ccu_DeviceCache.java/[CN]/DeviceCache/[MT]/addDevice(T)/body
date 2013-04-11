@@ -1,0 +1,14 @@
+{
+  T cachedDev=addressMap.get(device.getAddress());
+  if (cachedDev == null) {
+    log.fine("adding device to cache: " + device.getAddress());
+    return (addressMap.put(device.getAddress(),device) != null);
+  }
+ else   if (device == cachedDev) {
+    log.fine("device already in cache: " + device.getAddress());
+    return true;
+  }
+ else {
+    throw new RuntimeException("two different instances of the same device found!");
+  }
+}

@@ -1,0 +1,21 @@
+{
+  if (config == null) {
+    return;
+  }
+  String callbackPortStr=(String)config.get(CONFIG_KEY_CALLBACK_PORT);
+  if (StringUtils.isBlank(callbackPortStr)) {
+    callbackPort=DEFAULT_CALLBACK_PORT;
+  }
+ else {
+    callbackPort=Integer.valueOf(callbackPortStr);
+  }
+  callbackHost=(String)config.get(CONFIG_KEY_CALLBACK_HOST);
+  if (StringUtils.isBlank(callbackHost)) {
+    callbackHost=LocalNetworkInterface.getLocalNetworkInterface();
+  }
+  ccuHost=(String)config.get(CONFIG_KEY_CCU_HOST);
+  ccu=new CCURF(new XmlRpcConnectionRF(ccuHost));
+  if (ccu != null && cbServer == null) {
+    registerCallbackHandler();
+  }
+}

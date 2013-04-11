@@ -1,0 +1,9 @@
+{
+  if (address == null) {
+    throw new IllegalArgumentException("address must not be null");
+  }
+  log.fine("called getDeviceDescription: " + address);
+  Object[] params={address};
+  Object result=executeRPC("getDeviceDescription",params);
+  return new DeviceDescription((Map<String,Object>)result);
+}

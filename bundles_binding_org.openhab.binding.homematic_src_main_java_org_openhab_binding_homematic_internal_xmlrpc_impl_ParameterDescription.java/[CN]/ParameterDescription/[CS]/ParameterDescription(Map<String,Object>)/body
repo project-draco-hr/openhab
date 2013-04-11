@@ -1,0 +1,65 @@
+{
+  super(values);
+  String typeStr=values.get("TYPE").toString();
+  type=ParameterDescription.Type.STRING;
+  if ("FLOAT".equals(typeStr)) {
+    type=ParameterDescription.Type.FLOAT;
+  }
+  if ("SPECIAL".equals(typeStr)) {
+    type=ParameterDescription.Type.SPECIAL;
+  }
+  if ("INTEGER".equals(typeStr)) {
+    type=ParameterDescription.Type.INTEGER;
+  }
+  if ("BOOL".equals(typeStr)) {
+    type=ParameterDescription.Type.BOOL;
+  }
+  if ("ENUM".equals(typeStr)) {
+    type=ParameterDescription.Type.ENUM;
+  }
+  if ("VALUE_LIST".equals(typeStr)) {
+    type=ParameterDescription.Type.VALUE_LIST;
+  }
+  if ("STRING".equals(typeStr)) {
+    type=ParameterDescription.Type.STRING;
+  }
+  if ("ACTION".equals(typeStr)) {
+    type=ParameterDescription.Type.ACTION;
+  }
+  Integer operationVal=Integer.parseInt(values.get("OPERATIONS").toString());
+  operations=new HashSet<ParameterDescription.Operation>();
+  if ((operationVal & 1) == 1) {
+    operations.add(ParameterDescription.Operation.READ);
+  }
+  if ((operationVal & 2) == 2) {
+    operations.add(ParameterDescription.Operation.WRITE);
+  }
+  if ((operationVal & 4) == 4) {
+    operations.add(ParameterDescription.Operation.EVENT);
+  }
+  Integer flagsVal=Integer.parseInt(values.get("FLAGS").toString());
+  flags=new HashSet<ParameterDescription.Flag>();
+  if ((flagsVal & 1) == 1) {
+    flags.add(ParameterDescription.Flag.VISIBLE);
+  }
+  if ((flagsVal & 2) == 2) {
+    flags.add(ParameterDescription.Flag.INTERNAL);
+  }
+  if ((flagsVal & 4) == 4) {
+    flags.add(ParameterDescription.Flag.TRANSFORM);
+  }
+  if ((flagsVal & 8) == 8) {
+    flags.add(ParameterDescription.Flag.SERVICE);
+  }
+  if ((flagsVal & 16) == 16) {
+    flags.add(ParameterDescription.Flag.STICKY);
+  }
+  defaultValue=values.get("DEFAULT");
+  maxValue=values.get("MAX");
+  minValue=values.get("MIN");
+  unit=values.get("UNIT").toString();
+  tabOrder=Integer.parseInt(values.get("TAB_ORDER").toString());
+  if (values.get("CONTROL") != null) {
+    control=values.get("CONTROL").toString();
+  }
+}

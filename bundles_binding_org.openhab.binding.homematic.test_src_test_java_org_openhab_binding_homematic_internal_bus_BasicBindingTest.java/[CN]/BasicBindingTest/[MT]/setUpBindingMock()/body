@@ -1,0 +1,12 @@
+{
+  binding=new HomematicBinding();
+  ccu=new CCUMock();
+  values=new HashMap<String,Object>();
+  ccu.getPhysicalDevice(null).getChannel(1).setValues(new Paramset(values));
+  binding.setCCU(ccu);
+  provider=new HomematicBindingProviderMock();
+  binding.addBindingProvider(provider);
+  provider.getItemNames().add(ITEM_NAME);
+  publisher=new EventPublisherMock();
+  binding.setEventPublisher(publisher);
+}

@@ -1,0 +1,12 @@
+{
+  if (address == null) {
+    throw new IllegalArgumentException("address must not be null");
+  }
+  if (paramsetType == null) {
+    throw new IllegalArgumentException("paramsetType must not be null");
+  }
+  log.info("called getParamset: " + address + ", "+ paramsetType);
+  Object[] params={address,paramsetType};
+  Object result=executeRPC("getParamset",params);
+  return new Paramset((Map<String,Object>)result);
+}

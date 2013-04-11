@@ -1,0 +1,11 @@
+{
+  HMChannel channel=ccu.getPhysicalDevice(parameterAddress.getPhysicalDeviceAddress()).getChannel(parameterAddress.getChannel());
+  String parameterKey=parameterAddress.getParameterKey();
+  StateConverter<?,?> converter=converterFactory.getFromStateConverter(parameterKey,newState);
+  if (converter == null) {
+    logger.warn("No converter found for " + parameterAddress + "!");
+    return;
+  }
+  Object value=converter.convertFrom(newState);
+  channel.setValue(parameterKey,value);
+}

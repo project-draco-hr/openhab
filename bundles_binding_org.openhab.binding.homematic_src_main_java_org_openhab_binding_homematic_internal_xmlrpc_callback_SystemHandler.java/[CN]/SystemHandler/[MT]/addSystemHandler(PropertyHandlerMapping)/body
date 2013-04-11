@@ -1,0 +1,21 @@
+{
+  final RequestProcessorFactoryFactory factory=pMapping.getRequestProcessorFactoryFactory();
+  final SystemHandler systemHandler=new SystemHandler(pMapping);
+  pMapping.setRequestProcessorFactoryFactory(new RequestProcessorFactoryFactory(){
+    @Override public RequestProcessorFactory getRequestProcessorFactory(    @SuppressWarnings("rawtypes") Class pClass) throws XmlRpcException {
+      if (SystemHandler.class.equals(pClass)) {
+        return new RequestProcessorFactory(){
+          @Override public Object getRequestProcessor(          XmlRpcRequest request) throws XmlRpcException {
+            return systemHandler;
+          }
+        }
+;
+      }
+ else {
+        return factory.getRequestProcessorFactory(pClass);
+      }
+    }
+  }
+);
+  pMapping.addHandler("system",SystemHandler.class);
+}

@@ -1,0 +1,30 @@
+{
+  super(deviceDescription);
+  if (parent == null) {
+    throw new IllegalArgumentException("parent must not be null");
+  }
+  this.parent=parent;
+  this.pChangeSupport=new PropertyChangeSupport(this);
+  XmlRpcConnection connection=getParent().getCCU().getConnection();
+  try {
+    valueDescription=connection.getParamsetDescription(getAddress(),"VALUES");
+  }
+ catch (  Exception e) {
+    logger.warn("Could not retrieve ParamsetDescription of VALUES for device at " + getAddress() + ": "+ e);
+    valueDescription=new ParamsetDescription(new HashMap<String,Object>());
+  }
+  try {
+    values=connection.getParamset(getAddress(),"VALUES");
+  }
+ catch (  Exception e) {
+    logger.debug("Could not retrieve Paramset for device of VALUES for device at " + getAddress() + ": "+ e);
+    values=new Paramset(new HashMap<String,Object>());
+  }
+  try {
+    masterDescription=connection.getParamsetDescription(getAddress(),"MASTER");
+  }
+ catch (  Exception e) {
+    logger.warn("Could not retrieve ParamsetDescription of MASTER for device at " + getAddress() + ": "+ e);
+    masterDescription=new ParamsetDescription(new HashMap<String,Object>());
+  }
+}

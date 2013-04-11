@@ -1,0 +1,23 @@
+{
+  for (  HomematicBindingProvider provider : providers) {
+    logger.debug("Checking provider with names {}",provider.getItemNames());
+    if (provider.isAdminItem(itemName)) {
+      handleAdminCommand(provider.getAdminItem(itemName),command);
+    }
+ else {
+      ParameterAddress parameterAddress=provider.getParameterAddress(itemName);
+      State actualState=provider.getItem(itemName).getState();
+      String parameterKey=parameterAddress.getParameterKey();
+      CommandConverter<?,?> commandConverter=converterFactory.getCommandConverter(parameterKey,command);
+      if (commandConverter == null) {
+        logger.warn("No command converter found for {}. No command will be executed.",parameterAddress);
+        return;
+      }
+      State newState=commandConverter.convertFrom(actualState,command);
+      if (command instanceof StopMoveType && parameterKey.equals(ParameterKey.LEVEL.name())) {
+        parameterAddress=ParameterAddress.from(parameterAddress.getAddress(),ParameterKey.STOP.name());
+      }
+      setStateOnDevice(newState,parameterAddress);
+    }
+  }
+}

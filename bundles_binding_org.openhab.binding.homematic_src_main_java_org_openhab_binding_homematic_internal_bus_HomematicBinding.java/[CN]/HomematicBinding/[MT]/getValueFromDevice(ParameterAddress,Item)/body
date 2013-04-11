@@ -1,0 +1,26 @@
+{
+  HMPhysicalDevice physicalDevice=ccu.getPhysicalDevice(parameterAddress.getPhysicalDeviceAddress());
+  if (physicalDevice == null) {
+    logger.warn("Physical device not found for item " + item.getName() + " with address "+ parameterAddress+ " - no state updated.");
+    return null;
+  }
+  HMChannel channel=physicalDevice.getChannel(parameterAddress.getChannel());
+  if (channel == null) {
+    logger.warn("Channel not found for " + parameterAddress + " - doing nothing.");
+    return null;
+  }
+  Paramset values=channel.getValues();
+  if (values == null) {
+    logger.warn("Values not found for " + parameterAddress + " - doing nothing.");
+    return null;
+  }
+  Object valueObject=values.getValue(parameterAddress.getParameterKey());
+  StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress.getParameterKey(),item);
+  if (converter == null) {
+    logger.warn("No converter found for " + parameterAddress + " - doing nothing.");
+    return null;
+  }
+  State value=converter.convertTo(valueObject);
+  logger.debug("Found device at {} with value {}",parameterAddress,value);
+  return value;
+}

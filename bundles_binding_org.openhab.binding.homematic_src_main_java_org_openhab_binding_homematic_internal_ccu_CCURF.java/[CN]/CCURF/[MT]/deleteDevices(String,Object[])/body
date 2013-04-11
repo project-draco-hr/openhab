@@ -1,0 +1,13 @@
+{
+  String[] addrs=new String[addresses.length];
+  System.arraycopy(addresses,0,addrs,0,addresses.length);
+  for (  String addr : addrs) {
+    HMRFDevice dev=null;
+    if (cache.isCached(addr)) {
+      dev=getPhysicalDevice(addr);
+      cache.removeDevice(addr);
+      this.fireDeviceRemoved(dev);
+    }
+  }
+  return null;
+}

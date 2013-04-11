@@ -1,0 +1,15 @@
+{
+  if (clazz == null) {
+    throw new IllegalArgumentException("clazz must not be null");
+  }
+  logger.debug("listing all physical devices of type " + clazz.getCanonicalName());
+  Set<HMRFDevice> allDevices=getPhysicalDevices();
+  Set<T> result=new HashSet<T>();
+  for (  HMPhysicalDevice device : allDevices) {
+    if (device.getClass().isAssignableFrom(clazz)) {
+      result.add((T)device);
+    }
+  }
+  cache.addDevices(allDevices);
+  return result;
+}

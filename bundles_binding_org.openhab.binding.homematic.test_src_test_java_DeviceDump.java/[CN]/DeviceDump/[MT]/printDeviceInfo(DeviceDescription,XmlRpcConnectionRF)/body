@@ -1,0 +1,24 @@
+{
+  System.out.println(devDescr);
+  String[] pSetNames=devDescr.getParamsets();
+  for (  String pSetName : pSetNames) {
+    System.out.print(pSetName + ": ");
+    try {
+      ParamsetDescription pSet=conn.getParamsetDescription(devDescr.getAddress(),pSetName);
+      System.out.println(pSet);
+    }
+ catch (    Exception ex) {
+      ex.printStackTrace();
+      System.out.println("failed");
+    }
+  }
+  System.out.println("");
+  String[] childAddresses=devDescr.getChildren();
+  if (childAddresses != null) {
+    for (    String childAddr : childAddresses) {
+      DeviceDescription childDescr=conn.getDeviceDescription(childAddr);
+      printDeviceInfo(childDescr,conn);
+      System.out.println("");
+    }
+  }
+}

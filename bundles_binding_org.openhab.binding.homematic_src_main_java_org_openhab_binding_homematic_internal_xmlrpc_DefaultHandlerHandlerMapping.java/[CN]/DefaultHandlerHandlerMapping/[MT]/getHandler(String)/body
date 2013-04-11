@@ -1,0 +1,22 @@
+{
+  if (pHandlerName == null) {
+    throw new IllegalArgumentException("pHandlerName must not be null");
+  }
+  log.fine("somebody asked for a handler for " + pHandlerName);
+  XmlRpcHandler result=null;
+  try {
+    result=super.getHandler(pHandlerName);
+  }
+ catch (  Exception ex) {
+  }
+  log.fine("super class methods returned " + result);
+  if (result == null) {
+    result=super.getHandler(defaultHandlerName + "." + pHandlerName);
+    log.fine("asking super class method for CallbackHandler." + pHandlerName);
+    log.fine("result was " + result);
+  }
+  if (result == null) {
+    throw new XmlRpcNoSuchHandlerException("No such handler: " + pHandlerName);
+  }
+  return result;
+}

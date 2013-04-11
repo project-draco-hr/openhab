@@ -1,0 +1,11 @@
+{
+  Logger.getLogger("").setLevel(Level.ALL);
+  XmlRpcConnectionRF conn=new XmlRpcConnectionRF("homematic");
+  CCURF ccu=new CCURF(conn);
+  CallbackHandler handler=new CallbackHandler();
+  handler.registerCallbackReceiver(ccu);
+  CallbackServer cbServer=new CallbackServer(null,12345,handler);
+  cbServer.start();
+  conn.init("http://localhost:12345/xmlrpc","" + conn.hashCode());
+  conn.getServiceMessages();
+}
