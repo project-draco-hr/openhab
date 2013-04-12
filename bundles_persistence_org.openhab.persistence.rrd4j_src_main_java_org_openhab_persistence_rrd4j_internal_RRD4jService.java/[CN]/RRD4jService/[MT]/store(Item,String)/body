@@ -1,6 +1,7 @@
 {
+  final String name=alias == null ? item.getName() : alias;
   ConsolFun function=getConsolidationFunction(item);
-  RrdDb db=getDB(item.getName(),function);
+  RrdDb db=getDB(name,function);
   if (db != null) {
     long now=System.currentTimeMillis() / 1000;
     if (function != ConsolFun.AVERAGE) {
@@ -12,7 +13,7 @@
             sample.setTime(now - 1);
             sample.setValue(DATASOURCE_STATE,lastValue);
             sample.update();
-            logger.debug("Stored item '{}' with state '{}' in rrd4j database",item.getName(),lastValue);
+            logger.debug("Stored '{}' with state '{}' in rrd4j database",name,mapToState(lastValue,item.getName()));
           }
         }
       }
@@ -28,24 +29,32 @@
         double value=state.toBigDecimal().doubleValue();
         sample.setValue(DATASOURCE_STATE,value);
         sample.update();
-        logger.debug("Stored item '{}' with state '{}' in rrd4j database",item.getName(),item.getState());
+        logger.debug("Stored '{}' with state '{}' in rrd4j database",name,item.getState());
       }
     }
  catch (    IllegalArgumentException e) {
       if (e.getMessage().contains("at least one second step is required")) {
-        try {
-          Thread.sleep(1000);
-          store(item,alias);
+        TimerTask task=new TimerTask(){
+          public void run(){
+            store(item,name);
+          }
         }
- catch (        InterruptedException e1) {
+;
+        Timer timer=timers.get(name);
+        if (timer != null) {
+          timer.cancel();
+          timers.remove(name);
         }
+        timer=new Timer();
+        timers.put(name,timer);
+        timer.schedule(task,1000);
       }
  else {
-        logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+        logger.warn("Could not persist '{}' to rrd4j database: {}",new String[]{name,e.getMessage()});
       }
     }
 catch (    Exception e) {
-      logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+      logger.warn("Could not persist '{}' to rrd4j database: {}",new String[]{name,e.getMessage()});
     }
     try {
       db.close();
