@@ -3,5 +3,11 @@
     logger.error("Hue bridge settings not initialized correctly.");
     return 0;
   }
-  return (Integer)settingsData.node("lights").node(Integer.toString(deviceNumber)).node("state").value("sat");
+  Object sat=settingsData.node("lights").node(Integer.toString(deviceNumber)).node("state").value("sat");
+  if (sat instanceof Integer) {
+    return (Integer)sat;
+  }
+ else {
+    return 0;
+  }
 }
