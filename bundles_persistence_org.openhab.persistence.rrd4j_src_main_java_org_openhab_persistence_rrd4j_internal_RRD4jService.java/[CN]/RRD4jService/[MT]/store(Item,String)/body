@@ -1,20 +1,66 @@
 {
-  RrdDb db=getDB(item.getName());
+  final String name=alias == null ? item.getName() : alias;
+  ConsolFun function=getConsolidationFunction(item);
+  RrdDb db=getDB(name,function);
   if (db != null) {
+    long now=System.currentTimeMillis() / 1000;
+    if (function != ConsolFun.AVERAGE) {
+      try {
+        if (now - 1 > db.getLastUpdateTime()) {
+          double lastValue=db.getLastDatasourceValue(DATASOURCE_STATE);
+          if (!Double.isNaN(lastValue)) {
+            Sample sample=db.createSample();
+            sample.setTime(now - 1);
+            sample.setValue(DATASOURCE_STATE,lastValue);
+            sample.update();
+            logger.debug("Stored '{}' with state '{}' in rrd4j database",name,mapToState(lastValue,item.getName()));
+          }
+        }
+      }
+ catch (      IOException e) {
+        logger.debug("Error re-storing last value: {}",e.getMessage());
+      }
+    }
     try {
       Sample sample=db.createSample();
-      sample.setTime(System.currentTimeMillis() / 1000);
+      sample.setTime(now);
       DecimalType state=(DecimalType)item.getStateAs(DecimalType.class);
       if (state != null) {
         double value=state.toBigDecimal().doubleValue();
-        sample.setValue("state",value);
+        sample.setValue(DATASOURCE_STATE,value);
         sample.update();
-        logger.debug("Stored item '{}' in rrd4j database",item.getName());
+        logger.debug("Stored '{}' with state '{}' in rrd4j database",name,item.getState());
       }
+    }
+ catch (    IllegalArgumentException e) {
+      if (e.getMessage().contains("at least one second step is required")) {
+        TimerTask task=new TimerTask(){
+          public void run(){
+            store(item,name);
+          }
+        }
+;
+        Timer timer=timers.get(name);
+        if (timer != null) {
+          timer.cancel();
+          timers.remove(name);
+        }
+        timer=new Timer();
+        timers.put(name,timer);
+        timer.schedule(task,1000);
+      }
+ else {
+        logger.warn("Could not persist '{}' to rrd4j database: {}",new String[]{name,e.getMessage()});
+      }
+    }
+catch (    Exception e) {
+      logger.warn("Could not persist '{}' to rrd4j database: {}",new String[]{name,e.getMessage()});
+    }
+    try {
       db.close();
     }
- catch (    Exception e) {
-      logger.warn("Could not persist item '{}' to rrd4j database: {}",new String[]{item.getName(),e.getMessage()});
+ catch (    IOException e) {
+      logger.debug("Error closing rrd4j database: {}",e.getMessage());
     }
   }
 }
