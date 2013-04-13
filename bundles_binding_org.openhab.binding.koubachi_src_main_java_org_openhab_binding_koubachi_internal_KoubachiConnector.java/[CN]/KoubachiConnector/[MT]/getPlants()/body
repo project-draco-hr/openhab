@@ -1,0 +1,20 @@
+{
+  List<Plant> plants=new ArrayList<Plant>();
+  String url=String.format(apiPlantListUrl,credentials,appKey);
+  Properties headers=new Properties();
+  headers.put("Accept","application/json");
+  String response=HttpUtil.executeUrl("GET",url,headers,null,null,HTTP_REQUEST_TIMEOUT);
+  if (response == null) {
+    logger.error("No response received from '{}'",url);
+  }
+ else {
+    logger.debug("Koubachi returned '{}'",response);
+    List<Map<String,Plant>> plantList=fromJSON(new TypeReference<List<Map<String,Plant>>>(){
+    }
+,response);
+    for (    Map<String,Plant> element : plantList) {
+      plants.add(element.get("plant"));
+    }
+  }
+  return plants;
+}

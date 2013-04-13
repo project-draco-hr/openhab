@@ -1,0 +1,20 @@
+{
+  List<Device> devices=new ArrayList<Device>();
+  String url=String.format(apiDeviceListUrl,credentials,appKey);
+  Properties headers=new Properties();
+  headers.put("Accept","application/json");
+  String response=HttpUtil.executeUrl("GET",url,headers,null,null,HTTP_REQUEST_TIMEOUT);
+  if (response == null) {
+    logger.error("No response received from '{}'",url);
+  }
+ else {
+    logger.debug("Koubachi returned '{}'",response);
+    List<Map<String,Device>> deviceList=fromJSON(new TypeReference<List<Map<String,Device>>>(){
+    }
+,response);
+    for (    Map<String,Device> element : deviceList) {
+      devices.add(element.get("device"));
+    }
+  }
+  return devices;
+}

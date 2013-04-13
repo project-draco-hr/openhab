@@ -1,0 +1,32 @@
+{
+  List<Device> devices=KoubachiConnector.getDevices();
+  List<Plant> plants=KoubachiConnector.getPlants();
+  for (  KoubachiBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      KoubachiResourceType resourceType=provider.getResourceType(itemName);
+      String resourceId=provider.getResourceId(itemName);
+      String propertyName=provider.getPropertyName(itemName);
+      KoubachiResource resource=null;
+      if (KoubachiResourceType.DEVICE.equals(resourceType)) {
+        resource=findResource(resourceId,devices);
+      }
+ else {
+        resource=findResource(resourceId,plants);
+      }
+      if (resource == null) {
+        logger.debug("Cannot find Koubachi resource with id '{}'",resourceId);
+        continue;
+      }
+      try {
+        Object propertyValue=PropertyUtils.getProperty(resource,propertyName);
+        State state=createState(propertyValue.getClass(),propertyValue);
+        if (state != null) {
+          eventPublisher.postUpdate(itemName,state);
+        }
+      }
+ catch (      Exception e) {
+        logger.warn("Reading value '{}' from Resource '{}' throws went wrong",propertyName,resource);
+      }
+    }
+  }
+}
