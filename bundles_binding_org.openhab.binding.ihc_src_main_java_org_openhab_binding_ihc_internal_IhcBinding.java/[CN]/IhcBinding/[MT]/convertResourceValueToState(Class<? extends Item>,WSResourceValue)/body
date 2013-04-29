@@ -1,6 +1,6 @@
 {
   org.openhab.core.types.State state=UnDefType.UNDEF;
-  if (itemType.isAssignableFrom(NumberItem.class)) {
+  if (itemType == NumberItem.class) {
     if (value.getClass() == WSFloatingPointValue.class) {
       double d=((WSFloatingPointValue)value).getFloatingPointValue();
       BigDecimal bd=new BigDecimal(d).setScale(2,RoundingMode.HALF_EVEN);
@@ -12,11 +12,11 @@
  else     if (value.getClass() == WSWeekdayValue.class)     state=new DecimalType(((WSWeekdayValue)value).getWeekdayNumber());
  else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
   }
- else   if (itemType.isAssignableFrom(DimmerItem.class)) {
+ else   if (itemType == DimmerItem.class) {
     if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
  else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
   }
- else   if (itemType.isAssignableFrom(SwitchItem.class)) {
+ else   if (itemType == SwitchItem.class) {
     if (value.getClass() == WSBooleanValue.class) {
       if (((WSBooleanValue)value).isValue())       state=OnOffType.ON;
  else       state=OnOffType.OFF;
@@ -25,7 +25,7 @@
       throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to SwitchItem");
     }
   }
- else   if (itemType.isAssignableFrom(ContactItem.class)) {
+ else   if (itemType == ContactItem.class) {
     if (value.getClass() == WSBooleanValue.class) {
       if (((WSBooleanValue)value).isValue())       state=OpenClosedType.OPEN;
  else       state=OpenClosedType.CLOSED;
@@ -34,7 +34,7 @@
       throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to ContactItem");
     }
   }
- else   if (itemType.isAssignableFrom(DateTimeItem.class)) {
+ else   if (itemType == DateTimeItem.class) {
     if (value.getClass() == WSDateValue.class) {
       Calendar cal=WSDateTimeToCalendar((WSDateValue)value,null);
       state=new DateTimeType(cal);
@@ -47,7 +47,7 @@
       throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to DateTimeItem");
     }
   }
- else   if (itemType.isAssignableFrom(StringItem.class)) {
+ else   if (itemType == StringItem.class) {
     if (value.getClass() == WSEnumValue.class) {
       state=new StringType(((WSEnumValue)value).getEnumName());
     }
@@ -55,7 +55,7 @@
       throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to StringItem");
     }
   }
- else   if (itemType.isAssignableFrom(RollershutterItem.class)) {
+ else   if (itemType == RollershutterItem.class) {
     if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
  else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
   }
