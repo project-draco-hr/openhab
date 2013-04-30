@@ -1,10 +1,11 @@
 {
-  if (logger != null)   logger.debug(TAG,"Creating socket for host " + host + " on port "+ port);
-  socket=new Socket(host,port);
-  if (logger != null)   logger.debug(TAG,"Socket successfully created and connected");
+  if (logger != null)   logger.debug("Creating socket for host " + host + " on port "+ port);
+  socket=new Socket();
+  socket.connect(new InetSocketAddress(host,port),5000);
+  if (logger != null)   logger.debug("Socket successfully created and connected");
   InetAddress localAddress=socket.getLocalAddress();
-  if (logger != null)   logger.debug(TAG,"Local address is " + localAddress.getHostAddress());
-  if (logger != null)   logger.debug(TAG,"Sending registration message");
+  if (logger != null)   logger.debug("Local address is " + localAddress.getHostAddress());
+  if (logger != null)   logger.debug("Sending registration message");
   writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
   writer.append((char)0x00);
   writeText(writer,APP_STRING);

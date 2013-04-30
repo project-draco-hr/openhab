@@ -1,19 +1,19 @@
 {
-  if (logger != null)   logger.debug(TAG,"Reading registration reply");
+  if (logger != null)   logger.debug("Reading registration reply");
   reader.read();
   String text1=readText(reader);
-  if (logger != null)   logger.debug(TAG,"Received ID: " + text1);
+  if (logger != null)   logger.debug("Received ID: " + text1);
   char[] result=readCharArray(reader);
   if (Arrays.equals(result,ALLOWED_BYTES)) {
-    if (logger != null)     logger.debug(TAG,"Registration successfull");
+    if (logger != null)     logger.debug("Registration successfull");
     return ALLOWED;
   }
  else   if (Arrays.equals(result,DENIED_BYTES)) {
-    if (logger != null)     logger.warn(TAG,"Registration denied");
+    if (logger != null)     logger.warn("Registration denied");
     return DENIED;
   }
  else   if (Arrays.equals(result,TIMEOUT_BYTES)) {
-    if (logger != null)     logger.warn(TAG,"Registration timed out");
+    if (logger != null)     logger.warn("Registration timed out");
     return TIMEOUT;
   }
  else {
@@ -24,7 +24,7 @@
     }
     String hexReturn=sb.toString();
     if (logger != null) {
-      logger.error(REPORT_TAG,"Received unknown registration reply: " + hexReturn);
+      logger.error("Received unknown registration reply: " + hexReturn);
     }
     return hexReturn;
   }
