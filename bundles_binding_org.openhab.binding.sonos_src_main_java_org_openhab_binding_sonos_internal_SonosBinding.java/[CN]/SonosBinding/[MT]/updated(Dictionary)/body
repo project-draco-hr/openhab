@@ -22,9 +22,12 @@
       String configKey=matcher.group(2);
       String value=(String)config.get(key);
       if ("udn".equals(configKey)) {
+        if (sonosPlayersFromCfg == null) {
+          sonosPlayersFromCfg=new ArrayList<String>();
+        }
+        sonosPlayersFromCfg.add(value);
         sonosConfig.setUdn(new UDN(value));
-        logger.debug("Querying network for UPNP with UDN {}",sonosConfig.getUdn());
-        upnpService.getControlPoint().search(new UDNHeader(sonosConfig.getUdn()));
+        logger.debug("Add predefined Sonos device with UDN {}",sonosConfig.getUdn());
       }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
