@@ -1,7 +1,9 @@
 {
-  Video video=(Video)w;
   String snippet=getSnippet("video");
-  snippet=snippet.replaceAll("%url%",video.getUrl());
+  String widgetId=itemUIRegistry.getWidgetId(w);
+  String sitemap=w.eResource().getURI().path();
+  String url="proxy?sitemap=" + sitemap + "&widgetId="+ widgetId;
+  snippet=snippet.replaceAll("%url%",url);
   sb.append(snippet);
   return null;
 }

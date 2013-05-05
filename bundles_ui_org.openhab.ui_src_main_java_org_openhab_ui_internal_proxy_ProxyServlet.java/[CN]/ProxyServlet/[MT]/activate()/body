@@ -1,0 +1,13 @@
+{
+  try {
+    logger.debug("Starting up proxy servlet at /" + PROXY_ALIAS);
+    Hashtable<String,String> props=new Hashtable<String,String>();
+    httpService.registerServlet("/" + PROXY_ALIAS,this,props,createHttpContext());
+  }
+ catch (  NamespaceException e) {
+    logger.error("Error during servlet startup: {}",e.getMessage());
+  }
+catch (  ServletException e) {
+    logger.error("Error during servlet startup: {}",e.getMessage());
+  }
+}

@@ -1,0 +1,54 @@
+{
+  String sitemapName=request.getParameter("sitemap");
+  String widgetId=request.getParameter("widgetId");
+  if (sitemapName == null) {
+    throw new ServletException("Parameter 'sitemap' must be provided!");
+  }
+  if (widgetId == null) {
+    throw new ServletException("Parameter 'widget' must be provided!");
+  }
+  String uriString=null;
+  Sitemap sitemap=(Sitemap)modelRepository.getModel(sitemapName);
+  if (sitemap != null) {
+    Widget widget=itemUIRegistry.getWidget(sitemap,widgetId);
+    if (widget instanceof Image) {
+      Image image=(Image)widget;
+      uriString=image.getUrl();
+    }
+ else     if (widget instanceof Video) {
+      Video video=(Video)widget;
+      uriString=video.getUrl();
+    }
+ else {
+      if (widget == null) {
+        throw new ServletException("Widget '" + widgetId + "' could not be found!");
+      }
+ else {
+        throw new ServletException("Widget type '" + widget.getClass().getName() + "' is not supported!");
+      }
+    }
+  }
+ else {
+    throw new ServletException("Sitemap '" + sitemapName + "' could not be found!");
+  }
+  HttpClient httpClient=new HttpClient();
+  try {
+    URI uri=URI.create(uriString);
+    if (uri.getUserInfo() != null) {
+      String[] userInfo=uri.getUserInfo().split(":");
+      httpClient.getParams().setAuthenticationPreemptive(true);
+      Credentials creds=new UsernamePasswordCredentials(userInfo[0],userInfo[1]);
+      httpClient.getState().setCredentials(new AuthScope(uri.getHost(),uri.getPort(),AuthScope.ANY_REALM),creds);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    throw new ServletException("URI '" + uriString + "' is not valid: "+ e.getMessage());
+  }
+  GetMethod method=new GetMethod(uriString);
+  httpClient.executeMethod(method);
+  for (  Header header : method.getResponseHeaders()) {
+    response.setHeader(header.getName(),header.getValue());
+  }
+  IOUtils.copy(method.getResponseBodyAsStream(),response.getOutputStream());
+  method.releaseConnection();
+}
