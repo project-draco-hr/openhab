@@ -11,7 +11,7 @@
       logger.error("No IP address or serial port could be found in configuration!");
       return;
     }
-    link.addLinkListener(new NetworkLinkListener(){
+    NetworkLinkListener linkListener=new NetworkLinkListener(){
       public void linkClosed(      CloseEvent e){
         if (!e.isUserRequest() && !shutdown) {
           logger.warn("KNX link has been lost (reason: {} on object {}) - reconnecting...",e.getReason(),e.getSource().toString());
@@ -19,6 +19,26 @@
         }
         if (!link.isOpen() && !shutdown) {
           logger.error("KNX link has been lost!");
+          if (autoReconnectPeriod > 0) {
+            logger.info("KNX link will be retried in " + autoReconnectPeriod + " seconds");
+            final Timer timer=new Timer();
+            TimerTask timerTask=new TimerTask(){
+              @Override public void run(){
+                if (shutdown) {
+                  timer.cancel();
+                }
+ else {
+                  logger.info("..retrying Knx connection");
+                  connect();
+                  if (link.isOpen()) {
+                    timer.cancel();
+                  }
+                }
+              }
+            }
+;
+            timer.schedule(timerTask,autoReconnectPeriod * 1000,autoReconnectPeriod * 1000);
+          }
         }
       }
       public void indication(      FrameEvent e){
@@ -26,7 +46,8 @@
       public void confirmation(      FrameEvent e){
       }
     }
-);
+;
+    link.addLinkListener(linkListener);
     if (pc != null) {
       pc.removeProcessListener(listener);
       pc.detach();

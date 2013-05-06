@@ -46,6 +46,13 @@
         readRetriesLimit=readRetries;
       }
     }
+    String autoReconnectPeriodString=(String)config.get("autoReconnectPeriod");
+    if (StringUtils.isNotBlank(autoReconnectPeriodString)) {
+      int autoReconnectPeriodValue=Integer.parseInt(autoReconnectPeriodString);
+      if (autoReconnectPeriodValue >= 0) {
+        autoReconnectPeriod=autoReconnectPeriodValue;
+      }
+    }
     if (pc == null)     connect();
   }
 }
