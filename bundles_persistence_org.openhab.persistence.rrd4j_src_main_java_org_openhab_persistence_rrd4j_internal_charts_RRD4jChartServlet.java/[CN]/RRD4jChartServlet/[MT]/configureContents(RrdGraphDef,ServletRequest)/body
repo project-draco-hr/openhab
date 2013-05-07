@@ -4,7 +4,13 @@
   if (itemList != null) {
     String[] itemNames=itemList.split(",");
     for (    String itemName : itemNames) {
-      addLine(graphDef,itemName,counter++);
+      try {
+        Item item=itemUIRegistry.getItem(itemName);
+        addLine(graphDef,item,counter++);
+      }
+ catch (      ItemNotFoundException e) {
+        throw new ServletException("Item '" + itemName + "' does not exist!");
+      }
     }
   }
   String groupList=req.getParameter("groups");
@@ -16,7 +22,7 @@
         if (item instanceof GroupItem) {
           GroupItem groupItem=(GroupItem)item;
           for (          Item member : groupItem.getMembers()) {
-            addLine(graphDef,member.getName(),counter++);
+            addLine(graphDef,member,counter++);
           }
         }
  else {

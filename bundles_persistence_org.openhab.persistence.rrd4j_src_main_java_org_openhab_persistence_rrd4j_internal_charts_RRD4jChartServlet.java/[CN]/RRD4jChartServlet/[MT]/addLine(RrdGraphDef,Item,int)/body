@@ -1,0 +1,17 @@
+{
+  Color color=LINECOLORS[counter % LINECOLORS.length];
+  String label=itemUIRegistry.getLabel(item.getName());
+  if (label != null && label.contains("[") && label.contains("]")) {
+    label=label.substring(0,label.indexOf('['));
+  }
+  if (item instanceof NumberItem) {
+    graphDef.datasource(Integer.toString(counter),"./etc/rrd4j/" + item.getName() + ".rrd","state",RRD4jService.getConsolidationFunction(item));
+    graphDef.line(Integer.toString(counter),color,label,2);
+  }
+ else {
+    graphDef.datasource(Integer.toString(counter),"./etc/rrd4j/" + item.getName() + ".rrd","state",RRD4jService.getConsolidationFunction(item));
+    Color areaColor=AREACOLORS[counter % LINECOLORS.length];
+    graphDef.area(Integer.toString(counter),areaColor);
+    graphDef.line(Integer.toString(counter),color,label,2);
+  }
+}
