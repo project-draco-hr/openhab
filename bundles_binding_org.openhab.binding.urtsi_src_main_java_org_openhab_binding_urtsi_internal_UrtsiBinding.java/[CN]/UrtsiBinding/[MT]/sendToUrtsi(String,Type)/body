@@ -1,0 +1,61 @@
+{
+  UrtsiBindingProvider provider=null;
+  if (!providers.isEmpty()) {
+    provider=providers.iterator().next();
+  }
+  if (provider == null) {
+    if (logger.isErrorEnabled()) {
+      logger.error("doesn't find matching binding provider [itemName={}, type={}]",itemName,type);
+    }
+    return false;
+  }
+  String urtsiDeviceId=provider.getDeviceId(itemName);
+  UrtsiDevice urtsiDevice=idToDeviceMap.get(urtsiDeviceId);
+  if (urtsiDevice == null) {
+    if (logger.isErrorEnabled()) {
+      logger.error("No serial port has been configured for urtsi device id '" + urtsiDeviceId + "'");
+    }
+    return false;
+  }
+  int channel=provider.getChannel(itemName);
+  if (urtsiDevice != null) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Send to URTSI for item: " + itemName + "; Type: "+ type);
+    }
+    String actionKey=null;
+    if (type instanceof UpDownType) {
+switch ((UpDownType)type) {
+case UP:
+        actionKey=COMMAND_UP;
+      break;
+case DOWN:
+    actionKey=COMMAND_DOWN;
+  break;
+}
+}
+ else if (type instanceof StopMoveType) {
+switch ((StopMoveType)type) {
+case STOP:
+actionKey=COMMAND_STOP;
+break;
+default :
+break;
+}
+}
+if (logger.isDebugEnabled()) {
+logger.debug("Action key: " + actionKey);
+}
+if (actionKey != null) {
+String channelString=String.format("%02d",channel);
+String command="01" + channelString + actionKey;
+boolean executedSuccessfully=urtsiDevice.writeString(command);
+if (!executedSuccessfully) {
+if (logger.isErrorEnabled()) {
+logger.error("Command has not been processed [itemName={}, command={}]",itemName,command);
+}
+}
+return executedSuccessfully;
+}
+}
+return false;
+}
