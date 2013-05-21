@@ -1,0 +1,24 @@
+{
+  try {
+    if (inStream != null) {
+      inStream.close();
+      inStream=null;
+      logger.debug("closed input stream!");
+    }
+    if (outStream != null) {
+      outStream.close();
+      outStream=null;
+      logger.debug("closed output stream!");
+    }
+    if (eiscpSocket != null) {
+      eiscpSocket.close();
+      eiscpSocket=null;
+      logger.debug("closed socket!");
+    }
+    connected=false;
+  }
+ catch (  IOException ioException) {
+    logger.error("Closing connection throws an exception!",ioException);
+  }
+  return connected;
+}

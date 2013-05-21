@@ -1,0 +1,30 @@
+{
+  boolean retVal=false;
+  if (ip == null || ip.equals("")) {
+    ip=DEFAULT_EISCP_IP;
+  }
+  if (eiscpPort == 0) {
+    eiscpPort=DEFAULT_EISCP_PORT;
+  }
+  if (connected) {
+    if (eiscpSocket.isConnected()) {
+      retVal=true;
+    }
+  }
+ else {
+    try {
+      eiscpSocket=new Socket(ip,eiscpPort);
+      if (eiscpSocket != null) {
+        eiscpSocket.close();
+      }
+      retVal=true;
+    }
+ catch (    UnknownHostException unknownHost) {
+      logger.error("You are trying to connect to an unknown host!",unknownHost);
+    }
+catch (    IOException ioException) {
+      logger.error("Can't connect: " + ioException.getMessage());
+    }
+  }
+  return retVal;
+}
