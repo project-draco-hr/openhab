@@ -2,7 +2,7 @@
   if (message != null) {
     if (message.getAttempts() < MAX_ATTEMPTS) {
       message.increaseAttempts();
-      logger.info("Sending Plugwise protocol data unit: attempts: {} MAC:{} command:{} sequence:{} full HEX:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.toHexString()});
+      logger.debug("Sending Plugwise protocol data unit: attempts: {} MAC:{} command:{} sequence:{} full HEX:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.toHexString()});
       String packedString=PROTOCOL_HEADER + message.toHexString() + PROTOCOL_TRAILER;
       ByteBuffer bytebuffer=ByteBuffer.allocate(packedString.length());
       bytebuffer.put(packedString.getBytes());
