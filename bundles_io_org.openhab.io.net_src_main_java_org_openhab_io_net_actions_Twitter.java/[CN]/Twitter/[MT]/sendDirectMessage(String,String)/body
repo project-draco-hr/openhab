@@ -4,6 +4,7 @@
     return false;
   }
   try {
+    messageTxt=StringUtils.abbreviate(messageTxt,CHARACTER_LIMIT);
     DirectMessage message=client.sendDirectMessage(recipientId,messageTxt);
     logger.debug("Successfully sent direct message '{}' to @",message.getText(),message.getRecipientScreenName());
     return true;
