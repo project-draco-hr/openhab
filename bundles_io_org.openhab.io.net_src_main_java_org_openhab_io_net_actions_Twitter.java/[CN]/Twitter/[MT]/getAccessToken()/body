@@ -1,0 +1,49 @@
+{
+  try {
+    String accessToken=loadToken(tokenFile,"accesstoken");
+    String accessTokenSecret=loadToken(tokenFile,"accesstokensecret");
+    if (StringUtils.isEmpty(accessToken) || StringUtils.isEmpty(accessTokenSecret)) {
+      RequestToken requestToken=client.getOAuthRequestToken();
+      logger.info("################################################################################################");
+      logger.info("# Twitter-Integration: U S E R   I N T E R A C T I O N   R E Q U I R E D !!");
+      logger.info("# 1. Open URL '{}'",requestToken.getAuthorizationURL());
+      logger.info("# 2. Grant openHAB access to your Twitter account");
+      logger.info("# 3. Create an empty file 'client.pin' in your openHAB home directory");
+      logger.info("# 4. Add the line 'pin=<authpin>' to the twitter.pin file");
+      logger.info("# 5. openHAB will automatically detect the file and complete the authentication process");
+      logger.info("# NOTE: You will only have 5 mins before openHAB gives up waiting for the pin!!!");
+      logger.info("################################################################################################");
+      String authPin=null;
+      int interval=5000;
+      int waitedFor=0;
+      while (StringUtils.isEmpty(authPin)) {
+        try {
+          Thread.sleep(interval);
+          waitedFor+=interval;
+        }
+ catch (        InterruptedException e) {
+        }
+        File pinFile=new File("twitter.pin");
+        authPin=(String)loadToken(pinFile,"pin");
+        if (waitedFor > 300000) {
+          logger.info("Took too long to enter your Twitter authorisation pin! Please use OSGi " + "console to restart the org.openhab.io.net-Bundle and re-initiate the authorization process!");
+          break;
+        }
+      }
+      if (StringUtils.isEmpty(authPin)) {
+        logger.warn("Timed out waiting for the Twitter authorisation pin.");
+        return null;
+      }
+      AccessToken token=client.getOAuthAccessToken(requestToken,authPin);
+      accessToken=token.getToken();
+      accessTokenSecret=token.getTokenSecret();
+      saveToken(tokenFile,"accesstoken",accessToken);
+      saveToken(tokenFile,"accesstokensecret",accessTokenSecret);
+    }
+    return new AccessToken(accessToken,accessTokenSecret);
+  }
+ catch (  Exception e) {
+    logger.error("Failed to authenticate openHAB against Twitter",e);
+    return null;
+  }
+}

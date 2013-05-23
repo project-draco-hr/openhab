@@ -1,0 +1,15 @@
+{
+  if (!isEnabled) {
+    logger.debug("Twitter client is disabled > execution aborted!");
+    return false;
+  }
+  try {
+    DirectMessage message=client.sendDirectMessage(recipientId,messageTxt);
+    logger.debug("Successfully sent direct message '{}' to @",message.getText(),message.getRecipientScreenName());
+    return true;
+  }
+ catch (  TwitterException e) {
+    logger.error("Failed to send Tweet '" + messageTxt + "' because of: "+ e.getLocalizedMessage());
+    return false;
+  }
+}
