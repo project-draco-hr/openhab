@@ -57,6 +57,9 @@
     if (listener != null) {
       pc.addProcessListener(listener);
     }
+    if (KNXConnection.connectionEstablishedListener != null) {
+      KNXConnection.connectionEstablishedListener.connectionEstablished();
+    }
     if (logger.isInfoEnabled()) {
       if (link instanceof KNXNetworkLinkIP) {
         String ipConnectionTypeString=KNXConnection.ipConnectionType == KNXNetworkLinkIP.ROUTER ? "ROUTER" : "TUNNEL";
