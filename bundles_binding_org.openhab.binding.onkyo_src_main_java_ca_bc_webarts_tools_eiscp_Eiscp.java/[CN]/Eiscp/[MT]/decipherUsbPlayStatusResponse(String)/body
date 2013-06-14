@@ -1,0 +1,34 @@
+{
+  String[] responses=queryResponses.split("[\n]");
+  String retVal="NETUSB_PLAY_STATUS_QUERY response: " + queryResponses.trim();
+  String queryResponse="";
+  for (int i=0; i < responses.length; i++) {
+    queryResponse=responses[i];
+    if (queryResponse.substring(3,4).equals("P")) {
+      retVal+="\n  Play Status: ";
+      if (queryResponse.substring(5).equals("S"))       retVal+="Stop";
+ else       if (queryResponse.substring(5).equals("P"))       retVal+="Play";
+ else       if (queryResponse.substring(5).equals("p"))       retVal+="Pause";
+ else       if (queryResponse.substring(5).equals("F"))       retVal+="FastForward";
+ else       if (queryResponse.substring(5).equals("R"))       retVal+="FastRewind";
+ else       retVal+="NotSpecified";
+    }
+ else     if (queryResponse.substring(3,4).equals("R")) {
+      retVal+="\n  Repeat Status: ";
+      if (queryResponse.substring(5).equals("-"))       retVal+="Off";
+ else       if (queryResponse.substring(5).equals("R"))       retVal+="All";
+ else       if (queryResponse.substring(5).equals("F"))       retVal+="Folder";
+ else       if (queryResponse.substring(5).equals("1"))       retVal+="1 song";
+ else       retVal+="NotSpecified";
+    }
+ else     if (queryResponse.substring(3,4).equals("S")) {
+      retVal+="\n  Schuffle Status: ";
+      if (queryResponse.trim().substring(5).equals("-"))       retVal+="Off";
+ else       if (queryResponse.trim().substring(5).equals("S"))       retVal+="All";
+ else       if (queryResponse.trim().substring(5).equals("A"))       retVal+="Album";
+ else       if (queryResponse.trim().substring(5).equals("F"))       retVal+="Folder";
+ else       retVal+="NotSpecified";
+    }
+  }
+  return retVal;
+}

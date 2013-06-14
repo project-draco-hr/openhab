@@ -3,7 +3,7 @@
   try {
     config=playerConfigCache.get(playerId);
     if (config != null && config.instance == null) {
-      MPD mpd=new MPD(config.host,config.port,CONNECTION_TIMEOUT);
+      MPD mpd=new MPD(config.host,config.port,config.password,CONNECTION_TIMEOUT);
       MPDStandAloneMonitor mpdStandAloneMonitor=new MPDStandAloneMonitor(mpd,500);
       mpdStandAloneMonitor.addVolumeChangeListener(this);
       mpdStandAloneMonitor.addPlayerChangeListener(this);

@@ -15,6 +15,9 @@
     }
     if (currentURI != null) {
       String resultString=null;
+      String artist=null;
+      String album=null;
+      String title=null;
       if (currentURI.contains("x-sonosapi-stream")) {
         String stationID=StringUtils.substringBetween(currentURI,":s","?sid");
         StateVariable newVariable=new StateVariable("StationID",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
@@ -49,7 +52,16 @@
       }
  else {
         if (currentTrack != null) {
-          resultString=currentTrack.getAlbumArtist() + " - " + currentTrack.getAlbum()+ " - "+ currentTrack.getTitle();
+          if (currentTrack.getAlbumArtist().equals("")) {
+            resultString=currentTrack.getCreator() + " - " + currentTrack.getAlbum()+ " - "+ currentTrack.getTitle();
+            artist=currentTrack.getCreator();
+          }
+ else {
+            resultString=currentTrack.getAlbumArtist() + " - " + currentTrack.getAlbum()+ " - "+ currentTrack.getTitle();
+            artist=currentTrack.getAlbumArtist();
+          }
+          album=currentTrack.getAlbum();
+          title=currentTrack.getTitle();
         }
  else {
           resultString="";
@@ -58,6 +70,21 @@
       StateVariable newVariable=new StateVariable("CurrentURIFormatted",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
       StateVariableValue newValue=new StateVariableValue(newVariable,resultString);
       processStateVariableValue(newVariable.getName(),newValue);
+      if (artist != null) {
+        newVariable=new StateVariable("CurrentArtist",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+        newValue=new StateVariableValue(newVariable,artist);
+        processStateVariableValue(newVariable.getName(),newValue);
+      }
+      if (title != null) {
+        newVariable=new StateVariable("CurrentTitle",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+        newValue=new StateVariableValue(newVariable,title);
+        processStateVariableValue(newVariable.getName(),newValue);
+      }
+      if (album != null) {
+        newVariable=new StateVariable("CurrentAlbum",new StateVariableTypeDetails(Datatype.Builtin.STRING.getDatatype()));
+        newValue=new StateVariableValue(newVariable,album);
+        processStateVariableValue(newVariable.getName(),newValue);
+      }
       return true;
     }
   }

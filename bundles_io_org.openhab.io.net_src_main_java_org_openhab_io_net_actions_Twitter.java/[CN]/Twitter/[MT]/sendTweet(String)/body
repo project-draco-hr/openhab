@@ -1,0 +1,16 @@
+{
+  if (!isEnabled) {
+    logger.debug("Twitter client is disabled > execution aborted!");
+    return false;
+  }
+  try {
+    tweetTxt=StringUtils.abbreviate(tweetTxt,CHARACTER_LIMIT);
+    Status status=client.updateStatus(tweetTxt);
+    logger.debug("Successfully sent Tweet '{}'",status.getText());
+    return true;
+  }
+ catch (  TwitterException e) {
+    logger.error("Failed to send Tweet '" + tweetTxt + "' because of: "+ e.getLocalizedMessage());
+    return false;
+  }
+}

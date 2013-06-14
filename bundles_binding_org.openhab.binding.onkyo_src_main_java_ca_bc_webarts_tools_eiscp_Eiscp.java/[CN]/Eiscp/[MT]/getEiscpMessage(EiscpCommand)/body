@@ -1,0 +1,32 @@
+{
+  String cmdStr="";
+  if (EiscpCommand.VOLUME_SET.equals(cmd)) {
+    cmdStr="MVL" + Integer.toHexString(DEFAULT_VOLUME);
+  }
+ else {
+    cmdStr=cmd.getCommand();
+  }
+  StringBuilder sb=new StringBuilder();
+  int eiscpDataSize=cmdStr.length() + 2;
+  int eiscpMsgSize=eiscpDataSize + 1 + 16;
+  sb.append("ISCP");
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("10",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt(Integer.toHexString(eiscpMsgSize),16));
+  sb.append((char)Integer.parseInt("01",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append((char)Integer.parseInt("00",16));
+  sb.append("!");
+  sb.append("1");
+  sb.append(cmdStr);
+  sb.append((char)Integer.parseInt("0D",16));
+  logger.debug("  eISCP data size: {} (0x{}) chars",eiscpDataSize,Integer.toHexString(eiscpDataSize));
+  logger.debug("  eISCP msg size: {} (0x{}) chars",sb.length(),Integer.toHexString(sb.length()));
+  return sb;
+}

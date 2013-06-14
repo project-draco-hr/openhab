@@ -1,0 +1,21 @@
+{
+  if (itemName != null) {
+    OnkyoBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+    if (provider == null) {
+      logger.warn("Doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+      return;
+    }
+    logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
+    String tmp=provider.getDeviceCommand(itemName,command.toString());
+    String[] commandParts=tmp.split(":");
+    String deviceId=commandParts[0];
+    EiscpCommand cmd=EiscpCommand.valueOf(commandParts[1]);
+    DeviceConfig device=deviceConfigCache.get(deviceId);
+    if (device != null) {
+      OnkyoConnection remoteController=device.getConnection();
+      if (remoteController != null) {
+        remoteController.send(cmd);
+      }
+    }
+  }
+}
