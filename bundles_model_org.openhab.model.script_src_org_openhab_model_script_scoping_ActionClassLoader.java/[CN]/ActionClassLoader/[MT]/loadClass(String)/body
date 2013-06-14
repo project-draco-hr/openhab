@@ -1,0 +1,18 @@
+{
+  try {
+    Class<?> clazz=getParent().loadClass(name);
+    return clazz;
+  }
+ catch (  ClassNotFoundException e) {
+    Object[] services=ScriptActivator.actionServiceTracker.getServices();
+    if (services != null) {
+      for (      Object service : services) {
+        ActionService actionService=(ActionService)service;
+        if (actionService.getActionClassName().equals(name)) {
+          return actionService.getActionClass();
+        }
+      }
+    }
+  }
+  throw new ClassNotFoundException();
+}
