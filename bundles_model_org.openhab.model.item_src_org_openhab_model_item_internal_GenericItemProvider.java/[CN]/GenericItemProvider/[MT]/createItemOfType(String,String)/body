@@ -5,8 +5,10 @@
   for (  ItemFactory factory : itemFactorys) {
     GenericItem item=factory.createItem(itemType,itemName);
     if (item != null) {
+      logger.trace("Created item '{}' of type '{}'",itemName,itemType);
       return item;
     }
   }
+  logger.debug("Couldn't find ItemFactory for item '{}' of type '{}'",itemName,itemType);
   return null;
 }

@@ -1,0 +1,32 @@
+{
+  for (  ModelBinding binding : bindings) {
+    String bindingType=binding.getType();
+    String config=binding.getConfiguration();
+    BindingConfigReader localReader=reader;
+    if (reader == null) {
+      logger.trace("Given binding config reader is null > query cache to find appropriate reader!");
+      localReader=bindingConfigReaders.get(bindingType);
+    }
+ else {
+      if (!localReader.getBindingType().equals(binding.getType())) {
+        logger.trace("The Readers' binding type '{}' and the Bindings' type '{}' doesn't match > continue processing next binding.",localReader.getBindingType(),binding.getType());
+        continue;
+      }
+ else {
+        logger.debug("Start processing binding configuration of Item '{}' with '{}' reader.",item,localReader.getClass().getSimpleName());
+      }
+    }
+    if (localReader != null) {
+      try {
+        localReader.validateItemType(item,config);
+        localReader.processBindingConfiguration(modelName,item,config);
+      }
+ catch (      BindingConfigParseException e) {
+        logger.error("Binding configuration of type '" + bindingType + "' of item ???"+ item.getName()+ "??? could not be parsed correctly.",e);
+      }
+    }
+ else {
+      logger.trace("Couldn't find config reader for binding type '{}' > " + "parsing binding configuration of Iten '{}' aborted!",bindingType,item);
+    }
+  }
+}
