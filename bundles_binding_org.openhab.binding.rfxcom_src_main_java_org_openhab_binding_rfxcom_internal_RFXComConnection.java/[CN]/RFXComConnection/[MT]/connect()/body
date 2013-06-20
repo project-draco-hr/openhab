@@ -1,18 +1,7 @@
 {
   logger.info("Connecting to RFXCOM [serialPort='{}' ].",new Object[]{serialPort});
   connector=new RFXComSerialConnector();
-  connector.addEventListener(new RFXComEventListener(){
-    @Override public void packetReceived(    EventObject event,    byte[] packet){
-      try {
-        Object obj=RFXComMessageUtils.decodePacket(packet);
-        logger.debug("Data received:\n{}",obj.toString());
-      }
- catch (      IllegalArgumentException e) {
-        logger.debug("Unknown data received, data: {}",DatatypeConverter.printHexBinary(packet));
-      }
-    }
-  }
-);
+  connector.addEventListener(eventLister);
   connector.connect(serialPort);
   logger.debug("Reset controller");
   connector.sendMessage(RFXComMessageUtils.CMD_RESET);

@@ -4,10 +4,11 @@
   int msgLen=0;
   int index=0;
   boolean start_found=false;
+  logger.debug("Data listener started");
   try {
     byte[] tmpData=new byte[20];
     int len=-1;
-    while ((len=in.read(tmpData)) > 0) {
+    while ((len=in.read(tmpData)) > 0 && interrupted != true) {
       byte[] logData=Arrays.copyOf(tmpData,len);
       logger.debug("Received data (len={}): {}",len,DatatypeConverter.printHexBinary(logData));
       for (int i=0; i < len; i++) {
@@ -48,5 +49,5 @@
 catch (  IOException e) {
     logger.error("Reading from serial port failed",e);
   }
-  logger.debug("Ready reading from serial port");
+  logger.debug("Data listener stopped");
 }

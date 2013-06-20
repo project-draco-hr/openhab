@@ -1,11 +1,27 @@
 {
-  logger.debug("Interrupt serial connection");
-  readerThread.interrupt();
-  logger.debug("Close serial stream");
+  logger.debug("Disconnecting");
+  if (readerThread != null) {
+    logger.debug("Interrupt serial listener");
+    readerThread.interrupt();
+  }
+  logger.debug("Close serial streams");
   try {
-    out.close();
+    if (out != null) {
+      out.close();
+    }
+    if (in != null) {
+      in.close();
+    }
   }
  catch (  IOException e) {
   }
-  logger.debug("Ready");
+  if (serialPort != null) {
+    logger.debug("Close serial port");
+    serialPort.close();
+  }
+  readerThread=null;
+  serialPort=null;
+  out=null;
+  in=null;
+  logger.debug("Closed");
 }
