@@ -1,3 +1,24 @@
 {
-  throw new RuntimeException("RFXCOM does not support transmitting ENERGY messages!");
+  byte[] data=new byte[17];
+  data[0]=0x11;
+  data[1]=RFXComBaseMessage.PacketType.ENERGY.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=count;
+  long instantUsage=Double.doubleToRawLongBits(instantAmps * WATTS_TO_AMPS_CONVERSION_FACTOR);
+  long totalUsage=Double.doubleToRawLongBits(totalAmpHours * WATTS_TO_AMPS_CONVERSION_FACTOR * TOTAL_USAGE_CONVERSION_FACTOR);
+  data[7]=(byte)((instantUsage >> 24) & 0xFF);
+  data[8]=(byte)((instantUsage >> 16) & 0xFF);
+  data[9]=(byte)((instantUsage >> 8) & 0xFF);
+  data[10]=(byte)(instantUsage & 0xFF);
+  data[11]=(byte)((totalUsage >> 40) & 0xFF);
+  data[12]=(byte)((totalUsage >> 32) & 0xFF);
+  data[13]=(byte)((totalUsage >> 24) & 0xFF);
+  data[14]=(byte)((totalUsage >> 16) & 0xFF);
+  data[15]=(byte)((totalUsage >> 8) & 0xFF);
+  data[16]=(byte)(totalUsage & 0xFF);
+  data[17]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
 }
