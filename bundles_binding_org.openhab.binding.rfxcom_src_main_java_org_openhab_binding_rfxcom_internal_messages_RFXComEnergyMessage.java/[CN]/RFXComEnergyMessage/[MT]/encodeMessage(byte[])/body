@@ -1,0 +1,17 @@
+{
+  super.encodeMessage(data);
+  for (  SubType st : SubType.values()) {
+    if (st.toByte() == super.subType) {
+      subType=st;
+      break;
+    }
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  count=data[6];
+  double instantUsage=((data[7] & 0xFF) << 24 | (data[8] & 0xFF) << 16 | (data[9] & 0xFF) << 8 | (data[10] & 0xFF));
+  double totalUsage=((data[11] & 0xFF) << 40 | (data[12] & 0xFF) << 32 | (data[13] & 0xFF) << 24 | (data[14] & 0xFF) << 16 | (data[15] & 0xFF) << 8 | (data[16] & 0xFF)) / 223.666;
+  instantAmps=instantUsage / 230F;
+  totalAmpHours=totalUsage / 230F;
+  signalLevel=(byte)((data[17] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[17] & 0x0F);
+}

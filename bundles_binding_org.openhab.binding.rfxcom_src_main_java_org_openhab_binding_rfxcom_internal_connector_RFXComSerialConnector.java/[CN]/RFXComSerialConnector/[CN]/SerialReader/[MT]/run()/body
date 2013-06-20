@@ -10,7 +10,7 @@
     int len=-1;
     while ((len=in.read(tmpData)) > 0 && interrupted != true) {
       byte[] logData=Arrays.copyOf(tmpData,len);
-      logger.debug("Received data (len={}): {}",len,DatatypeConverter.printHexBinary(logData));
+      logger.trace("Received data (len={}): {}",len,DatatypeConverter.printHexBinary(logData));
       for (int i=0; i < len; i++) {
         if (index > dataBufferMaxLen) {
           start_found=false;
