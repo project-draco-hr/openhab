@@ -1,0 +1,13 @@
+{
+  try {
+    long startTime=System.currentTimeMillis();
+    CalendarEventEntry createdEvent=createCalendarEvent(username,password,url,entry);
+    logger.debug("succesfully created new calendar event (title='{}', date='{}', content='{}') in {}ms",new Object[]{createdEvent.getTitle().getPlainText(),createdEvent.getTimes().get(0).getStartTime().toString(),createdEvent.getPlainTextContent(),System.currentTimeMillis() - startTime});
+  }
+ catch (  AuthenticationException ae) {
+    logger.error("authentication failed: {}",ae.getMessage());
+  }
+catch (  Exception e) {
+    logger.error("creating a new calendar entry throws an exception: {}",e.getMessage());
+  }
+}
