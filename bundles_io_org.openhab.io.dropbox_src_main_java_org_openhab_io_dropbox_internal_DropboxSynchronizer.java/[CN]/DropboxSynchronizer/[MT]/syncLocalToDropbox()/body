@@ -25,11 +25,17 @@
     if (dropboxEntries.containsKey(entry.getKey())) {
       if (entry.getValue().compareTo(dropboxEntries.get(entry.getKey())) > 0) {
         logger.trace("Local file '{}' is newer - upload to Dropbox!",entry.getKey());
+        if (!fakeMode) {
+          uploadOverwriteFile(dropbox,entry.getKey());
+        }
         isChanged=true;
       }
     }
  else {
       logger.trace("Local file '{}' doesn't exist in Dropbox - upload to Dropbox!",entry.getKey());
+      if (!fakeMode) {
+        uploadFile(dropbox,entry.getKey());
+      }
       isChanged=true;
     }
     dropboxEntries.remove(entry.getKey());
@@ -37,6 +43,9 @@
   for (  String path : dropboxEntries.keySet()) {
     for (    String filter : uploadFilterElements) {
       if (path.matches(filter)) {
+        if (!fakeMode) {
+          dropbox.delete(path);
+        }
         isChanged=true;
         logger.debug("Successfully deleted file '{}' from Dropbox",path);
       }
@@ -57,6 +66,6 @@
     writeLastCursorFile(deltaPage,new File(contentDir + DELTA_CURSOR_FILE_NAME));
   }
  else {
-    logger.debug("There are no deltas to upload into Dropbox ...");
+    logger.debug("No files changed locally > no deltas to upload to Dropbox ...");
   }
 }

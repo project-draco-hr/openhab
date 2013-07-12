@@ -12,6 +12,10 @@
     if (isBlank(DropboxSynchronizer.appKey) || isBlank(DropboxSynchronizer.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
+    String fakeModeString=(String)config.get("fakemode");
+    if (isNotBlank(fakeModeString)) {
+      DropboxSynchronizer.fakeMode=BooleanUtils.toBoolean(fakeModeString);
+    }
     String initializeString=(String)config.get("initialize");
     if (isNotBlank(initializeString)) {
       DropboxSynchronizer.initializeDropboxOnReset=BooleanUtils.toBoolean(initializeString);

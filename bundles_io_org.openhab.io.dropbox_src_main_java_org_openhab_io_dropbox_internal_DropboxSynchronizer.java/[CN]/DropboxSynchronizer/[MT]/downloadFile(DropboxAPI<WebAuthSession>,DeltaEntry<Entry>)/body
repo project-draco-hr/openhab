@@ -13,7 +13,9 @@
     }
     try {
       FileOutputStream os=new FileOutputStream(newLocalFile);
-      dropbox.getFile(entry.metadata.path,null,os,null);
+      if (!fakeMode) {
+        dropbox.getFile(entry.metadata.path,null,os,null);
+      }
       logger.debug("Successfully downloaded file '{}'",fqPath);
     }
  catch (    FileNotFoundException fnfe) {

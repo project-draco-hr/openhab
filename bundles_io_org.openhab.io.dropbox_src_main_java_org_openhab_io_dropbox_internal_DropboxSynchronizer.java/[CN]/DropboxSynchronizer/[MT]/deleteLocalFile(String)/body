@@ -1,7 +1,10 @@
 {
   File fileToDelete=new File(fqPath);
   if (!fileToDelete.isDirectory()) {
-    boolean success=FileUtils.deleteQuietly(fileToDelete);
+    boolean success=true;
+    if (!fakeMode) {
+      FileUtils.deleteQuietly(fileToDelete);
+    }
     if (success) {
       logger.debug("Successfully deleted local file '{}'",fqPath);
     }
