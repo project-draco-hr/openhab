@@ -29,8 +29,9 @@
     newHigherState=newHigher.toString();
   }
  else   if (state instanceof UnDefType) {
-    newLowerState=minValue.toString();
-    newHigherState=maxValue.toString();
+    BigDecimal avgValue=minValue.add(maxValue).divide(new BigDecimal(2),RoundingMode.HALF_UP).setScale(0);
+    newLowerState=avgValue.toString();
+    newHigherState=avgValue.toString();
   }
   String snippetName="setpoint";
   String snippet=getSnippet(snippetName);
