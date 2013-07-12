@@ -1,0 +1,16 @@
+{
+switch (syncMode) {
+case DROPBOX_TO_LOCAL:
+    schedule(DropboxSynchronizer.downloadInterval,false);
+  break;
+case LOCAL_TO_DROPBOX:
+schedule(DropboxSynchronizer.uploadInterval,true);
+break;
+case BIDIRECTIONAL:
+schedule(DropboxSynchronizer.downloadInterval,false);
+schedule(DropboxSynchronizer.uploadInterval,true);
+break;
+default :
+throw new IllegalArgumentException("Unknown SyncMode '" + syncMode.toString() + "'");
+}
+}

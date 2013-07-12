@@ -3,35 +3,35 @@
     isProperlyConfigured=false;
     String appKeyString=(String)config.get("appkey");
     if (isNotBlank(appKeyString)) {
-      DropboxSynchronizerImpl.appKey=appKeyString;
+      DropboxSynchronizer.appKey=appKeyString;
     }
     String appSecretString=(String)config.get("appsecret");
     if (isNotBlank(appSecretString)) {
-      DropboxSynchronizerImpl.appSecret=appSecretString;
+      DropboxSynchronizer.appSecret=appSecretString;
     }
-    if (isBlank(DropboxSynchronizerImpl.appKey) || isBlank(DropboxSynchronizerImpl.appSecret)) {
+    if (isBlank(DropboxSynchronizer.appKey) || isBlank(DropboxSynchronizer.appSecret)) {
       throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
     }
     String initializeString=(String)config.get("initialize");
     if (isNotBlank(initializeString)) {
-      DropboxSynchronizerImpl.initializeDropboxOnReset=BooleanUtils.toBoolean(initializeString);
+      DropboxSynchronizer.initializeDropboxOnReset=BooleanUtils.toBoolean(initializeString);
     }
     String contentDirString=(String)config.get("contentdir");
     if (isNotBlank(contentDirString)) {
-      DropboxSynchronizerImpl.contentDir=contentDirString;
+      DropboxSynchronizer.contentDir=contentDirString;
     }
     String uploadIntervalString=(String)config.get("uploadInterval");
     if (isNotBlank(uploadIntervalString)) {
-      DropboxSynchronizerImpl.uploadInterval=uploadIntervalString;
+      DropboxSynchronizer.uploadInterval=uploadIntervalString;
     }
     String downloadIntervalString=(String)config.get("downloadInterval");
     if (isNotBlank(downloadIntervalString)) {
-      DropboxSynchronizerImpl.downloadInterval=downloadIntervalString;
+      DropboxSynchronizer.downloadInterval=downloadIntervalString;
     }
     String syncModeString=(String)config.get("syncmode");
     if (isNotBlank(syncModeString)) {
       try {
-        DropboxSynchronizerImpl.syncMode=DropboxSyncMode.valueOf(syncModeString.toUpperCase());
+        DropboxSynchronizer.syncMode=DropboxSyncMode.valueOf(syncModeString.toUpperCase());
       }
  catch (      IllegalArgumentException iae) {
         throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");

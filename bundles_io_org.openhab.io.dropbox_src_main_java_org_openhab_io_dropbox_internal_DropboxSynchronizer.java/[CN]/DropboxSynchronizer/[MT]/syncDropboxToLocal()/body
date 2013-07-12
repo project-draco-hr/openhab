@@ -21,7 +21,8 @@
   }
  else {
     do {
-      logger.debug("There are '{}' deltas to download from Dropbox ...",deltaPage.entries.size());
+      logger.debug("There are '{}' deltas to process ...",deltaPage.entries.size());
+      int processedDelta=0;
       for (      DeltaEntry<Entry> entry : deltaPage.entries) {
         boolean matches=false;
         for (        String filter : downloadFilterElements) {
@@ -35,11 +36,13 @@
             String fqPath=contentDir + entry.lcPath;
             deleteLocalFile(fqPath);
           }
+          processedDelta++;
         }
  else {
-          logger.trace("skipped file '{}' since it doesn't match the given filter arguments.");
+          logger.trace("skipped file '{}' since it doesn't match the given filter arguments.",entry.lcPath);
         }
       }
+      logger.debug("'{}' deltas met the given downloadFilter {}",processedDelta,downloadFilterElements);
       deltaPage=dropbox.delta(lastCursor);
     }
  while (deltaPage.hasMore);

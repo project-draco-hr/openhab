@@ -19,18 +19,17 @@
   }
   Map<String,Long> localEntries=new HashMap<String,Long>();
   collectLocalEntries(localEntries,contentDir);
+  logger.debug("There are '{}' local entries that met the upload filters ...",localEntries.size());
   boolean isChanged=false;
   for (  java.util.Map.Entry<String,Long> entry : localEntries.entrySet()) {
     if (dropboxEntries.containsKey(entry.getKey())) {
       if (entry.getValue().compareTo(dropboxEntries.get(entry.getKey())) > 0) {
-        logger.trace("Local file '{}' is newer - upload into Dropbox!",entry.getKey());
-        uploadOverwriteFile(dropbox,entry.getKey());
+        logger.trace("Local file '{}' is newer - upload to Dropbox!",entry.getKey());
         isChanged=true;
       }
     }
  else {
-      logger.trace("Local file '{}' doesn't exist in Dropbox - upload into Dropbox!",entry.getKey());
-      uploadFile(dropbox,entry.getKey());
+      logger.trace("Local file '{}' doesn't exist in Dropbox - upload to Dropbox!",entry.getKey());
       isChanged=true;
     }
     dropboxEntries.remove(entry.getKey());
@@ -38,9 +37,11 @@
   for (  String path : dropboxEntries.keySet()) {
     for (    String filter : uploadFilterElements) {
       if (path.matches(filter)) {
-        dropbox.delete(path);
         isChanged=true;
         logger.debug("Successfully deleted file '{}' from Dropbox",path);
+      }
+ else {
+        logger.trace("skipped file '{}' since it doesn't match the given filter arguments.",path);
       }
     }
   }
