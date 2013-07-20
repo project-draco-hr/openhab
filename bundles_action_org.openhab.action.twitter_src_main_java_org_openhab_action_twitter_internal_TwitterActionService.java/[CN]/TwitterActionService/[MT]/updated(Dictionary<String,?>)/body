@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    String appKeyString=(String)config.get("key");
+    if (isNotBlank(appKeyString)) {
+      consumerKey=appKeyString;
+    }
+    String appSecretString=(String)config.get("secret");
+    if (isNotBlank(appSecretString)) {
+      consumerSecret=appSecretString;
+    }
+    if (isBlank(consumerKey) || isBlank(consumerSecret)) {
+      throw new ConfigurationException("twitter","The parameters 'key' or 'secret' are missing! Please refer to your 'openhab.cfg'");
+    }
+    String enabledString=(String)config.get("enabled");
+    if (StringUtils.isNotBlank(enabledString)) {
+      Twitter.isEnabled=Boolean.parseBoolean(enabledString);
+    }
+    isProperlyConfigured=true;
+    start();
+  }
+}

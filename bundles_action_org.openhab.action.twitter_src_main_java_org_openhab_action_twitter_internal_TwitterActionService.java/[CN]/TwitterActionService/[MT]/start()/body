@@ -1,0 +1,14 @@
+{
+  if (!Twitter.isEnabled) {
+    return;
+  }
+  Twitter.client=createClient();
+  AccessToken accessToken=getAccessToken();
+  if (accessToken != null) {
+    Twitter.client.setOAuthAccessToken(accessToken);
+    logger.info("TwitterAction has been successfully authenticated > awaiting your Tweets!");
+  }
+ else {
+    logger.info("Twitter authentication failed. Please use OSGi " + "console to restart the org.openhab.io.net-Bundle and re-initiate the authorization process!");
+  }
+}
