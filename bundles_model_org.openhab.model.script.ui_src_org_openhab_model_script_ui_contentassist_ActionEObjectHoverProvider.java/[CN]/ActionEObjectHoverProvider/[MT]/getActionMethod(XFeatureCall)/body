@@ -1,0 +1,19 @@
+{
+  if (call.getFeature().eContainer() instanceof JvmGenericType) {
+    JvmGenericType type=(JvmGenericType)call.getFeature().eContainer();
+    Object[] services=ScriptUIActivator.actionServiceTracker.getServices();
+    if (services != null) {
+      for (      Object service : services) {
+        ActionService actionService=(ActionService)service;
+        if (actionService.getActionClassName().equals(type.getIdentifier())) {
+          for (          Method m : actionService.getActionClass().getMethods()) {
+            if (m.toString().contains((call.getFeature().getIdentifier()))) {
+              return m;
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
