@@ -1,10 +1,14 @@
 {
+  PatternLayoutEncoder encoder=new PatternLayoutEncoder();
+  LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
+  encoder.setContext(context);
+  encoder.setPattern(pattern);
+  encoder.start();
   FileAppender<ILoggingEvent> appender;
   appender=new FileAppender<ILoggingEvent>();
   appender.setAppend(true);
   appender.setFile(LOG_FOLDER + File.separator + alias+ LOG_FILEEXT);
   appender.setEncoder(encoder);
-  LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
   appender.setContext(context);
   appender.start();
   return appender;
