@@ -1,0 +1,49 @@
+{
+  boolean success=false;
+  if (MailActionService.isProperlyConfigured) {
+    Email email=new SimpleEmail();
+    if (attachmentUrl != null) {
+      try {
+        email=new MultiPartEmail();
+        EmailAttachment attachment=new EmailAttachment();
+        attachment.setURL(new URL(attachmentUrl));
+        attachment.setDisposition(EmailAttachment.ATTACHMENT);
+        attachment.setName("Attachment");
+        ((MultiPartEmail)email).attach(attachment);
+      }
+ catch (      MalformedURLException e) {
+        logger.error("Invalid attachment url.",e);
+      }
+catch (      EmailException e) {
+        logger.error("Error adding attachment to email.",e);
+      }
+    }
+    email.setHostName(hostname);
+    email.setSmtpPort(port);
+    email.setTLS(tls);
+    if (StringUtils.isNotBlank(username)) {
+      if (popBeforeSmtp) {
+        email.setPopBeforeSmtp(true,hostname,username,password);
+      }
+ else {
+        email.setAuthenticator(new DefaultAuthenticator(username,password));
+      }
+    }
+    try {
+      email.setFrom(from);
+      email.addTo(to);
+      if (!StringUtils.isEmpty(subject))       email.setSubject(subject);
+      if (!StringUtils.isEmpty(message))       email.setMsg(message);
+      email.send();
+      logger.debug("Sent email to '{}' with subject '{}'.",to,subject);
+      success=true;
+    }
+ catch (    EmailException e) {
+      logger.error("Could not send e-mail to '" + to + "???.",e);
+    }
+  }
+ else {
+    logger.error("Cannot send e-mail because of missing configuration settings. The current settings are: " + "Host: '{}', port '{}', from '{}', useTLS: {}, username: '{}', password '{}'",new String[]{hostname,String.valueOf(port),from,String.valueOf(tls),username,password});
+  }
+  return success;
+}
