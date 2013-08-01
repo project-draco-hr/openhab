@@ -1,0 +1,25 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String apiDeviceUrlString=(String)config.get("deviceurl");
+    if (StringUtils.isNotBlank(apiDeviceUrlString)) {
+      apiDeviceListUrl=apiDeviceUrlString;
+    }
+    String apiPlantUrlString=(String)config.get("planturl");
+    if (StringUtils.isNotBlank(apiPlantUrlString)) {
+      apiPlantListUrl=apiPlantUrlString;
+    }
+    credentials=(String)config.get("credentials");
+    if (StringUtils.isBlank(credentials)) {
+      throw new ConfigurationException("koubachi:credentials","Users' credentials parameter must be set");
+    }
+    appKey=(String)config.get("appkey");
+    if (StringUtils.isBlank(appKey)) {
+      throw new ConfigurationException("koubachi:appkey","AppKey parameter must be set");
+    }
+    setProperlyConfigured(true);
+  }
+}

@@ -1,0 +1,43 @@
+{
+  if (config != null) {
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=keys.nextElement();
+      logger.debug("Processing key '" + key + "'");
+      if (key != "service.pid") {
+        Matcher matcher=EXTRACT_URTSI_CONFIG_PATTERN.matcher(key);
+        if (!matcher.matches()) {
+          logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.port'");
+        }
+ else {
+          matcher.reset();
+          matcher.find();
+          String deviceId=matcher.group(1);
+          UrtsiDevice urtsiDevice=idToDeviceMap.get(deviceId);
+          if (urtsiDevice == null) {
+            String configKey=matcher.group(2);
+            String value=(String)config.get(key);
+            String port=null;
+            if ("port".equals(configKey)) {
+              port=value;
+            }
+ else {
+              throw new ConfigurationException(configKey,"the given config key '" + configKey + "' is unknown");
+            }
+            urtsiDevice=new UrtsiDevice(port);
+            try {
+              urtsiDevice.initialize();
+            }
+ catch (            InitializationException e) {
+              throw new ConfigurationException(configKey,"Could not open serial port " + port + ": "+ e.getMessage());
+            }
+catch (            Throwable e) {
+              throw new ConfigurationException(configKey,"Could not open serial port " + port + ": "+ e.getMessage());
+            }
+            idToDeviceMap.put(deviceId,urtsiDevice);
+          }
+        }
+      }
+    }
+  }
+}

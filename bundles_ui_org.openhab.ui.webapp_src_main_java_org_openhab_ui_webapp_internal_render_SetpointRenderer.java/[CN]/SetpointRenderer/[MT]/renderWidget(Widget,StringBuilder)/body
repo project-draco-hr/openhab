@@ -28,10 +28,15 @@
     newLowerState=newLower.toString();
     newHigherState=newHigher.toString();
   }
+ else   if (state instanceof UnDefType) {
+    BigDecimal avgValue=minValue.add(maxValue).divide(new BigDecimal(2),RoundingMode.HALF_UP).setScale(0);
+    newLowerState=avgValue.toString();
+    newHigherState=avgValue.toString();
+  }
   String snippetName="setpoint";
   String snippet=getSnippet(snippetName);
   snippet=snippet.replaceAll("%id%",itemUIRegistry.getWidgetId(w));
-  snippet=snippet.replaceAll("%icon%",itemUIRegistry.getIcon(w));
+  snippet=snippet.replaceAll("%icon%",escapeURLPath(itemUIRegistry.getIcon(w)));
   snippet=snippet.replaceAll("%item%",w.getItem());
   snippet=snippet.replaceAll("%state%",state.toString());
   snippet=snippet.replaceAll("%newlowerstate%",newLowerState);

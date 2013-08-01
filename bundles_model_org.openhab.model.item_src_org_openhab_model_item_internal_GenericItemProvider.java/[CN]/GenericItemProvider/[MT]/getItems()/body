@@ -1,47 +1,7 @@
 {
-  List<Item> items=new ArrayList<Item>();
-  if (modelRepository != null) {
-    for (    String modelName : modelRepository.getAllModelNamesOfType("items")) {
-      ItemModel model=(ItemModel)modelRepository.getModel(modelName);
-      if (model == null) {
-        continue;
-      }
-      for (      BindingConfigReader reader : bindingConfigReaders.values()) {
-        reader.removeConfigurations(modelName);
-      }
-      for (      ModelItem modelItem : model.getItems()) {
-        Item item=null;
-        if (modelItem instanceof ModelGroupItem) {
-          ModelGroupItem modelGroupItem=(ModelGroupItem)modelItem;
-          String baseItemType=modelGroupItem.getType();
-          GenericItem baseItem=getItemOfType(baseItemType,modelGroupItem.getName());
-          if (baseItem != null) {
-            ModelGroupFunction function=modelGroupItem.getFunction();
-            if (function == null) {
-              item=new GroupItem(modelGroupItem.getName(),baseItem);
-            }
- else {
-              item=applyGroupFunction(baseItem,modelGroupItem,function);
-            }
-          }
- else {
-            item=new GroupItem(modelGroupItem.getName());
-          }
-        }
- else {
-          ModelNormalItem normalItem=(ModelNormalItem)modelItem;
-          String itemName=normalItem.getName();
-          item=getItemOfType(normalItem.getType(),itemName);
-        }
-        if (item != null) {
-          for (          String groupName : modelItem.getGroups()) {
-            item.getGroupNames().add(groupName);
-          }
-          items.add(item);
-          dispatchBindings(modelName,item,modelItem.getBindings());
-        }
-      }
-    }
+  Set<Item> items=new HashSet<Item>();
+  for (  String name : modelRepository.getAllModelNamesOfType("items")) {
+    items.addAll(getItemsFromModel(name));
   }
   return items;
 }

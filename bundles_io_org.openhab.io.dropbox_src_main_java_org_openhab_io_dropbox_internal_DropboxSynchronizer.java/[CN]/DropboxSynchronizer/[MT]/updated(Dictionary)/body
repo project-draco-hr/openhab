@@ -1,0 +1,53 @@
+{
+  if (config != null) {
+    isProperlyConfigured=false;
+    String appKeyString=(String)config.get("appkey");
+    if (isNotBlank(appKeyString)) {
+      DropboxSynchronizer.appKey=appKeyString;
+    }
+    String appSecretString=(String)config.get("appsecret");
+    if (isNotBlank(appSecretString)) {
+      DropboxSynchronizer.appSecret=appSecretString;
+    }
+    if (isBlank(DropboxSynchronizer.appKey) || isBlank(DropboxSynchronizer.appSecret)) {
+      throw new ConfigurationException("dropbox:appkey","The parameters 'appkey' or 'appsecret' are missing! Please refer to your 'openhab.cfg'");
+    }
+    String fakeModeString=(String)config.get("fakemode");
+    if (isNotBlank(fakeModeString)) {
+      DropboxSynchronizer.fakeMode=BooleanUtils.toBoolean(fakeModeString);
+    }
+    String contentDirString=(String)config.get("contentdir");
+    if (isNotBlank(contentDirString)) {
+      DropboxSynchronizer.contentDir=contentDirString;
+    }
+    String uploadIntervalString=(String)config.get("uploadInterval");
+    if (isNotBlank(uploadIntervalString)) {
+      DropboxSynchronizer.uploadInterval=uploadIntervalString;
+    }
+    String downloadIntervalString=(String)config.get("downloadInterval");
+    if (isNotBlank(downloadIntervalString)) {
+      DropboxSynchronizer.downloadInterval=downloadIntervalString;
+    }
+    String syncModeString=(String)config.get("syncmode");
+    if (isNotBlank(syncModeString)) {
+      try {
+        DropboxSynchronizer.syncMode=DropboxSyncMode.valueOf(syncModeString.toUpperCase());
+      }
+ catch (      IllegalArgumentException iae) {
+        throw new ConfigurationException("dropbox:syncmode","Unknown SyncMode '" + syncModeString + "'. Valid SyncModes are 'DROPBOX_TO_LOCAL', 'LOCAL_TO_DROPBOX' and 'BIDIRECTIONAL'.");
+      }
+    }
+    String uploadFilterString=(String)config.get("uploadfilter");
+    if (isNotBlank(uploadFilterString)) {
+      String[] newFilterElements=uploadFilterString.split(",");
+      uploadFilterElements=Arrays.asList(newFilterElements);
+    }
+    String downloadFilterString=(String)config.get("downloadfilter");
+    if (isNotBlank(downloadFilterString)) {
+      String[] newFilterElements=downloadFilterString.split(",");
+      downloadFilterElements=Arrays.asList(newFilterElements);
+    }
+    isProperlyConfigured=true;
+    activate();
+  }
+}

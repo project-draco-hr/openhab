@@ -1,0 +1,9 @@
+{
+  if (logger.isDebugEnabled()) {
+    logger.debug("Received command for " + itemName + "! Command: "+ command);
+  }
+  boolean executedSuccessfully=sendToUrtsi(itemName,command);
+  if (executedSuccessfully && command instanceof State) {
+    eventPublisher.postUpdate(itemName,(State)command);
+  }
+}

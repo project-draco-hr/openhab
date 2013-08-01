@@ -1,0 +1,30 @@
+{
+  File[] files=new File(path).listFiles(new FileFilter(){
+    @Override public boolean accept(    File file){
+      String normalizedPath=substringAfter(file.getPath(),contentDir);
+      for (      String filter : uploadFilterElements) {
+        if (FilenameUtils.getName(normalizedPath).startsWith(".")) {
+          return false;
+        }
+ else         if (FilenameUtils.getName(normalizedPath).endsWith(".dbx")) {
+          return false;
+        }
+ else         if (normalizedPath.matches(filter)) {
+          return true;
+        }
+      }
+      logger.trace("skipped file '{}' since it doesn't match the given filter arguments.",file.getAbsolutePath());
+      return false;
+    }
+  }
+);
+  for (  File file : files) {
+    String normalizedPath=substringAfter(file.getPath(),contentDir);
+    if (file.isDirectory()) {
+      collectLocalEntries(localEntries,file.getPath());
+    }
+ else {
+      localEntries.put(normalizedPath,file.lastModified());
+    }
+  }
+}

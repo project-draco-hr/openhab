@@ -1,0 +1,26 @@
+{
+  Item item=null;
+  if (modelItem instanceof ModelGroupItem) {
+    ModelGroupItem modelGroupItem=(ModelGroupItem)modelItem;
+    String baseItemType=modelGroupItem.getType();
+    GenericItem baseItem=createItemOfType(baseItemType,modelGroupItem.getName());
+    if (baseItem != null) {
+      ModelGroupFunction function=modelGroupItem.getFunction();
+      if (function == null) {
+        item=new GroupItem(modelGroupItem.getName(),baseItem);
+      }
+ else {
+        item=applyGroupFunction(baseItem,modelGroupItem,function);
+      }
+    }
+ else {
+      item=new GroupItem(modelGroupItem.getName());
+    }
+  }
+ else {
+    ModelNormalItem normalItem=(ModelNormalItem)modelItem;
+    String itemName=normalItem.getName();
+    item=createItemOfType(normalItem.getType(),itemName);
+  }
+  return item;
+}

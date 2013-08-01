@@ -1,0 +1,19 @@
+{
+  if (initialized) {
+    String newAlias=alias != null ? alias : item.getName();
+    CalendarEventEntry myEntry=new CalendarEventEntry();
+    myEntry.setTitle(new PlainTextConstruct("[PresenceSimulation] " + newAlias));
+    myEntry.setContent(new PlainTextConstruct(String.format(executeScript,item.getName(),item.getState().toString())));
+    DateTime nowPlusOffset=new DateTime().plusDays(offset);
+    com.google.gdata.data.DateTime time=com.google.gdata.data.DateTime.parseDateTime(nowPlusOffset.toString());
+    When eventTimes=new When();
+    eventTimes.setStartTime(time);
+    eventTimes.setEndTime(time);
+    myEntry.addTime(eventTimes);
+    entries.offer(myEntry);
+    logger.trace("added new entry '{}' for item '{}' to upload queue",myEntry.getTitle().getPlainText(),item.getName());
+  }
+ else {
+    logger.debug("GCal PresenceSimulation Service isn't initialized properly! No entries will be uploaded to your Google Calendar");
+  }
+}

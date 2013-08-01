@@ -1,0 +1,20 @@
+{
+  AppKeyPair appKeys=new AppKeyPair(DropboxSynchronizer.appKey,DropboxSynchronizer.appSecret);
+  WebAuthSession session=new WebAuthSession(appKeys,AccessType.APP_FOLDER);
+  if (accessToken == null) {
+    File authFile=new File(contentDir + AUTH_FILE_NAME);
+    if (authFile.exists()) {
+      accessToken=extractAccessTokenFrom(authFile);
+    }
+ else {
+      accessToken=authorizeOpenHAB(session,authFile);
+    }
+  }
+  if (accessToken != null) {
+    session.setAccessTokenPair(accessToken);
+  }
+ else {
+    session=null;
+  }
+  return session;
+}

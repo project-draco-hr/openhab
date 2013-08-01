@@ -1,14 +1,9 @@
 {
   if (config != null) {
-    String pattern=(String)config.get("pattern");
+    pattern=(String)config.get("pattern");
     if (StringUtils.isBlank(pattern)) {
       pattern=DEFAULT_PATTERN;
     }
-    encoder=new PatternLayoutEncoder();
-    LoggerContext context=(LoggerContext)LoggerFactory.getILoggerFactory();
-    encoder.setContext(context);
-    encoder.setPattern(pattern);
-    encoder.start();
     initialized=true;
   }
 }

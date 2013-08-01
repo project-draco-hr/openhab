@@ -1,0 +1,24 @@
+{
+  logger.debug("Read items from model '{}'",modelName);
+  List<Item> items=new ArrayList<Item>();
+  if (modelRepository != null) {
+    ItemModel model=(ItemModel)modelRepository.getModel(modelName);
+    if (model == null) {
+      return items;
+    }
+    for (    BindingConfigReader reader : bindingConfigReaders.values()) {
+      reader.removeConfigurations(modelName);
+    }
+    for (    ModelItem modelItem : model.getItems()) {
+      Item item=createItemFromModelItem(modelItem);
+      if (item != null) {
+        for (        String groupName : modelItem.getGroups()) {
+          item.getGroupNames().add(groupName);
+        }
+        items.add(item);
+        internalDispatchBindings(modelName,item,modelItem.getBindings());
+      }
+    }
+  }
+  return items;
+}
