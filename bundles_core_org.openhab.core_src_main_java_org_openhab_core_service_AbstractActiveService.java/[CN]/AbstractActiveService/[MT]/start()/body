@@ -3,8 +3,8 @@
     logger.trace("{} won't be started because it isn't yet properly configured.",getName());
     return;
   }
+  shutdown=false;
   if (!isRunning()) {
-    shutdown=false;
     this.refreshThread=new RefreshThread(getName(),getRefreshInterval());
     this.refreshThread.start();
   }
