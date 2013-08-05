@@ -1,0 +1,26 @@
+{
+  for (  OnkyoBindingProvider provider : providers) {
+    String initCmd=provider.getItemInitCommand(itemName);
+    if (initCmd != null) {
+      logger.debug("Initialize item {}",itemName);
+      String[] commandParts=initCmd.split(":");
+      String deviceId=commandParts[0];
+      String deviceCmd=commandParts[1];
+      DeviceConfig device=deviceConfigCache.get(deviceId);
+      OnkyoConnection remoteController=device.getConnection();
+      if (device != null && remoteController != null) {
+        if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
+          deviceCmd=deviceCmd.replace(ADVANCED_COMMAND_KEY,"");
+        }
+ else {
+          EiscpCommand cmd=EiscpCommand.valueOf(deviceCmd);
+          deviceCmd=cmd.getCommand();
+        }
+        remoteController.send(deviceCmd);
+      }
+ else {
+        logger.warn("Cannot find connection details for device id '{}'",deviceId);
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  DeviceConfig deviceConfig=findDevice(ip);
+  if (deviceConfig != null) {
+    logger.debug("Received status update '{}' from device {}",data,deviceConfig.host);
+    for (    OnkyoBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        HashMap<String,String> values=provider.getDeviceCommands(itemName);
+        for (        String cmd : values.keySet()) {
+          String[] commandParts=values.get(cmd).split(":");
+          String deviceCmd=commandParts[1];
+          boolean match=false;
+          if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
+            if (data.startsWith(deviceCmd.substring(1,4))) {
+              match=true;
+            }
+          }
+ else {
+            try {
+              String eiscpCmd=EiscpCommand.valueOf(deviceCmd).getCommand();
+              if (data.startsWith(eiscpCmd.substring(0,3))) {
+                match=true;
+              }
+            }
+ catch (            Exception e) {
+              logger.error("Unregonized command '" + deviceCmd + "'",e);
+            }
+          }
+          if (match) {
+            Class<? extends Item> itemType=provider.getItemType(itemName);
+            State v=convertDeviceValueToOpenHabState(itemType,data);
+            eventPublisher.postUpdate(itemName,v);
+            break;
+          }
+        }
+      }
+    }
+  }
+}

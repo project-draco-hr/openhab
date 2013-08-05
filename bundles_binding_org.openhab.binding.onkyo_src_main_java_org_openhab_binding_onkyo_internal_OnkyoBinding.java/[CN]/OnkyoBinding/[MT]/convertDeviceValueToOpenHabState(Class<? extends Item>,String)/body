@@ -1,0 +1,31 @@
+{
+  State state=UnDefType.UNDEF;
+  try {
+    int index;
+    String s;
+    if (itemType == SwitchItem.class) {
+      index=Integer.parseInt(data.substring(3,5),16);
+      state=index == 0 ? OnOffType.OFF : OnOffType.ON;
+    }
+ else     if (itemType == NumberItem.class) {
+      index=Integer.parseInt(data.substring(3,5),16);
+      state=new DecimalType(index);
+    }
+ else     if (itemType == DimmerItem.class) {
+      index=Integer.parseInt(data.substring(3,5),16);
+      state=new PercentType(index);
+    }
+ else     if (itemType == RollershutterItem.class) {
+      index=Integer.parseInt(data.substring(3,5),16);
+      state=new PercentType(index);
+    }
+ else     if (itemType == StringItem.class) {
+      s=data.substring(3,data.length());
+      state=new StringType(s);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Cannot convert value '{}' to data type {}",data,itemType);
+  }
+  return state;
+}

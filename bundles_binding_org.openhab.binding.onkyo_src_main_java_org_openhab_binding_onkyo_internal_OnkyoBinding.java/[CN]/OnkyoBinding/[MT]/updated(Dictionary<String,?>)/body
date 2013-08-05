@@ -1,6 +1,10 @@
 {
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
   if (config != null) {
     Enumeration<String> keys=config.keys();
+    if (deviceConfigCache == null) {
+      deviceConfigCache=new HashMap<String,DeviceConfig>();
+    }
     while (keys.hasMoreElements()) {
       String key=(String)keys.nextElement();
       if ("service.pid".equals(key)) {
@@ -29,6 +33,18 @@
       }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    for (    String device : deviceConfigCache.keySet()) {
+      OnkyoConnection connection=deviceConfigCache.get(device).getConnection();
+      if (connection != null) {
+        connection.openConnection();
+        connection.addEventListener(this);
+      }
+    }
+    for (    OnkyoBindingProvider provider : this.providers) {
+      for (      String itemName : provider.getItemNames()) {
+        initializeItem(itemName);
       }
     }
   }

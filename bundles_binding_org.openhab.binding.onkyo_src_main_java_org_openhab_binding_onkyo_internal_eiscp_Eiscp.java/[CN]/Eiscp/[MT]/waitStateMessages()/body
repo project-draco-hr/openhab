@@ -1,0 +1,70 @@
+{
+  if (connected) {
+    OnkyoStatusUpdateEvent event=new OnkyoStatusUpdateEvent(this);
+    logger.trace("Waiting status messages");
+    while (true) {
+      if (inStream.readByte() != 'I')       continue;
+      if (inStream.readByte() != 'S')       continue;
+      if (inStream.readByte() != 'C')       continue;
+      if (inStream.readByte() != 'P')       continue;
+      final int headerSize=(inStream.readByte() & 0xFF) << 24 | (inStream.readByte() & 0xFF) << 16 | (inStream.readByte() & 0xFF) << 8 | (inStream.readByte() & 0xFF);
+      logger.trace("Header size: {}",headerSize);
+      if (headerSize != 16) {
+        throw new EiscpException("Unsupported header size: " + headerSize);
+      }
+      final int dataSize=(inStream.readByte() & 0xFF) << 24 | (inStream.readByte() & 0xFF) << 16 | (inStream.readByte() & 0xFF) << 8 | (inStream.readByte() & 0xFF);
+      logger.trace("Data size: {}",dataSize);
+      final byte versionChar=inStream.readByte();
+      if (versionChar != 1) {
+        throw new EiscpException("Unsupported version " + String.valueOf(versionChar));
+      }
+      inStream.readByte();
+      inStream.readByte();
+      inStream.readByte();
+      byte[] data=new byte[dataSize];
+      final int bytesReceived=inStream.read(data,0,data.length);
+      if (logger.isTraceEnabled()) {
+        logger.trace("Received {} bytes: {}",bytesReceived,DatatypeConverter.printHexBinary(data));
+      }
+      if (bytesReceived != dataSize) {
+        throw new EiscpException("Data missing: " + (dataSize - bytesReceived));
+      }
+      final byte startChar=data[0];
+      if (startChar != '!') {
+        throw new EiscpException("Illegal start char " + startChar);
+      }
+      @SuppressWarnings("unused") final byte unitType=data[1];
+      int endBytes=0;
+      if (data[dataSize - 4] == (byte)0x1A && data[dataSize - 3] == '\r' && data[dataSize - 2] == '\n' && data[dataSize - 1] == 0x00) {
+        endBytes=4;
+      }
+ else       if (data[dataSize - 3] == (byte)0x1A && data[dataSize - 2] == '\r' && data[dataSize - 1] == '\n') {
+        endBytes=3;
+      }
+ else       if (data[dataSize - 2] == (byte)0x1A && data[dataSize - 1] == '\r') {
+        endBytes=2;
+      }
+ else       if (data[dataSize - 1] == (byte)0x1A) {
+        endBytes=1;
+      }
+ else {
+        throw new EiscpException("Illegal end of message");
+      }
+      int bytesToCopy=dataSize - 2 - endBytes;
+      byte[] message=new byte[bytesToCopy];
+      System.arraycopy(data,2,message,0,bytesToCopy);
+      try {
+        Iterator<OnkyoEventListener> iterator=_listeners.iterator();
+        while (iterator.hasNext()) {
+          ((OnkyoEventListener)iterator.next()).statusUpdateReceived(event,receiverIP,new String(message));
+        }
+      }
+ catch (      Exception e) {
+        logger.error("Event listener invoking error",e);
+      }
+    }
+  }
+ else {
+    throw new IOException("Not Connected to Receiver");
+  }
+}

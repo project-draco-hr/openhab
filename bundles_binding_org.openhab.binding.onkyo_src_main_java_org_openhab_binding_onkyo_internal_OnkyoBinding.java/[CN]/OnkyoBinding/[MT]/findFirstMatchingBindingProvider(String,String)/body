@@ -7,5 +7,14 @@
       break;
     }
   }
+  if (firstMatchingProvider == null) {
+    for (    OnkyoBindingProvider provider : this.providers) {
+      String tmp=provider.getDeviceCommand(itemName,WILDCARD_COMMAND_KEY);
+      if (tmp != null) {
+        firstMatchingProvider=provider;
+        break;
+      }
+    }
+  }
   return firstMatchingProvider;
 }

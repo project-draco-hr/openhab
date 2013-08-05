@@ -8,11 +8,13 @@
   String command=StringUtils.trim(configParts[0]);
   String deviceId=StringUtils.trim(configParts[1]);
   String deviceCommand=StringUtils.trim(configParts[2]);
-  try {
-    EiscpCommand.valueOf(deviceCommand);
-  }
- catch (  Exception e) {
-    throw new BindingConfigParseException("Unregonized command '" + deviceCommand + "'");
+  if (!deviceCommand.startsWith(ADVANCED_COMMAND_KEY)) {
+    try {
+      EiscpCommand.valueOf(deviceCommand);
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Unregonized command '" + deviceCommand + "'");
+    }
   }
   if (StringUtils.isNotBlank(bindingConfigTail)) {
     parseBindingConfig(bindingConfigTail,config);

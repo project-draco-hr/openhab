@@ -7,15 +7,37 @@
     }
     logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
     String tmp=provider.getDeviceCommand(itemName,command.toString());
+    if (tmp == null) {
+      tmp=provider.getDeviceCommand(itemName,WILDCARD_COMMAND_KEY);
+    }
     String[] commandParts=tmp.split(":");
     String deviceId=commandParts[0];
-    EiscpCommand cmd=EiscpCommand.valueOf(commandParts[1]);
+    String deviceCmd=commandParts[1];
     DeviceConfig device=deviceConfigCache.get(deviceId);
-    if (device != null) {
-      OnkyoConnection remoteController=device.getConnection();
-      if (remoteController != null) {
-        remoteController.send(cmd);
+    OnkyoConnection remoteController=device.getConnection();
+    if (device != null && remoteController != null) {
+      if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
+        deviceCmd=deviceCmd.replace(ADVANCED_COMMAND_KEY,"");
+        if (deviceCmd.contains("%")) {
+          deviceCmd=convertOpenHabCommandToDeviceCommand(command,deviceCmd);
+        }
       }
+ else {
+        EiscpCommand cmd=EiscpCommand.valueOf(deviceCmd);
+        deviceCmd=cmd.getCommand();
+        if (deviceCmd.contains("%")) {
+          deviceCmd=convertOpenHabCommandToDeviceCommand(command,deviceCmd);
+        }
+      }
+      if (deviceCmd != null) {
+        remoteController.send(deviceCmd);
+      }
+ else {
+        logger.warn("Cannot convert value '{}' to eISCP format",command);
+      }
+    }
+ else {
+      logger.warn("Cannot find connection details for device id '{}'",deviceId);
     }
   }
 }
