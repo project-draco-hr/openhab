@@ -1,7 +1,16 @@
 {
   Item item=getItem(itemname);
+  Command command=null;
   if (item != null) {
-    Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
+    if ("toggle".equalsIgnoreCase(value) && (item instanceof SwitchItem || item instanceof RollershutterItem)) {
+      if (OnOffType.ON.equals(item.getStateAs(OnOffType.class)))       command=OnOffType.OFF;
+      if (OnOffType.OFF.equals(item.getStateAs(OnOffType.class)))       command=OnOffType.ON;
+      if (UpDownType.UP.equals(item.getStateAs(UpDownType.class)))       command=UpDownType.DOWN;
+      if (UpDownType.DOWN.equals(item.getStateAs(UpDownType.class)))       command=UpDownType.UP;
+    }
+ else {
+      command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
+    }
     if (command != null) {
       logger.debug("Received HTTP POST request at '{}' with value '{}'.",uriInfo.getPath(),value);
       RESTApplication.getEventPublisher().postCommand(itemname,command);
