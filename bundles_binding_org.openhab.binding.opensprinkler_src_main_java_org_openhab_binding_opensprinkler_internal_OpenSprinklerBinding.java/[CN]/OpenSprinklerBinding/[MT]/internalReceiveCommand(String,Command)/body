@@ -1,0 +1,21 @@
+{
+  if (!(command instanceof OnOffType)) {
+    logger.debug("Provided command " + command + " is not of type 'OnOffType'");
+    return;
+  }
+  final OnOffType switchCommand=(OnOffType)command;
+  final OpenSprinklerBindingProvider bindingProvider=findFirstMatchingBindingProvider(itemName,command);
+  final int station=bindingProvider.getStationNumber(itemName);
+  if (station < 0 || station >= numberOfStations) {
+    logger.warn("Station " + station + " is not in the valid ["+ 0+ ".."+ numberOfStations+ "] range");
+    return;
+  }
+switch (switchCommand) {
+case ON:
+    openSprinkler.openStation(station);
+  break;
+case OFF:
+openSprinkler.closeStation(station);
+break;
+}
+}

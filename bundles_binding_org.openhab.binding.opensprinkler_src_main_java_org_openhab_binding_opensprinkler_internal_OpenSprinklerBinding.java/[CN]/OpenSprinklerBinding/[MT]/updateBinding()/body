@@ -1,0 +1,17 @@
+{
+  if (openSprinkler != null) {
+    openSprinkler.closeConnection();
+  }
+switch (mode) {
+case GPIO:
+    openSprinkler=OpenSprinklerFactory.newGpioConnection();
+  break;
+case HTTP:
+openSprinkler=OpenSprinklerFactory.newHttpConnection(url,password);
+break;
+default :
+throw new IllegalStateException("Unknown OpenSprinkler mode: " + mode + "! Since it is checked while initialization already, this Exception should never be thrown!");
+}
+openSprinkler.setNumberOfStations(numberOfStations);
+logger.info("OpenSprinkler binding running in " + mode + " mode"+ (HTTP.equals(mode) ? " with url" + url : "")+ ". Running with "+ numberOfStations+ " stations enabled.");
+}

@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    String modeString=(String)config.get("mode");
+    if (StringUtils.isNotBlank(modeString)) {
+      try {
+        mode=OpenSprinklerMode.valueOf(modeString.toUpperCase());
+      }
+ catch (      IllegalArgumentException iae) {
+        throw new ConfigurationException("openSprinkler:mode","Unknown OpenSprinkler mode " + mode + "! Valid modes are 'gpio' and 'http'. Please fix your openhab.cfg.");
+      }
+    }
+    url=(String)config.get("httpUrl");
+    password=(String)config.get("httpPassword");
+    String numberOfStationsString=(String)config.get("numberOfStations");
+    if (StringUtils.isNotBlank(numberOfStationsString)) {
+      numberOfStations=Integer.parseInt(numberOfStationsString);
+      openSprinkler.setNumberOfStations(numberOfStations);
+    }
+    updateBinding();
+  }
+}
