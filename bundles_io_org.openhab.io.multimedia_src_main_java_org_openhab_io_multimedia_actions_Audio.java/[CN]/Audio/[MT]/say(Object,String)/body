@@ -1,14 +1,3 @@
 {
-  if (StringUtils.isNotBlank(text.toString())) {
-    TTSService ttsService=getTTSService(MultimediaActivator.getContext(),System.getProperty("osgi.os"));
-    if (ttsService == null) {
-      ttsService=getTTSService(MultimediaActivator.getContext(),"any");
-    }
-    if (ttsService != null) {
-      ttsService.say(text.toString(),voice);
-    }
- else {
-      logger.error("No TTS service available - tried to say: {}",text);
-    }
-  }
+  say(text,voice,null);
 }

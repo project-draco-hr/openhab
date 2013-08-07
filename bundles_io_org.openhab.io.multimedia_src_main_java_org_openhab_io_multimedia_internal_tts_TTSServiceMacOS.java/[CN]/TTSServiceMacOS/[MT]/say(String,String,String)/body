@@ -1,0 +1,23 @@
+{
+  ArrayList<String> list=new ArrayList<String>();
+  list.add("say");
+  if (outputDevice != null) {
+    list.add("-a");
+    list.add(outputDevice);
+  }
+  if (voiceName != null) {
+    list.add("-v");
+    list.add(voiceName);
+  }
+  list.add(text.replace("-"," minus "));
+  try {
+    Process process=Runtime.getRuntime().exec(list.toArray(new String[list.size()]));
+    process.waitFor();
+  }
+ catch (  IOException e) {
+    logger.error("Error while executing the 'say' command: " + e.getMessage());
+  }
+catch (  InterruptedException e) {
+    logger.error("The 'say' command has been interrupted: " + e.getMessage());
+  }
+}
