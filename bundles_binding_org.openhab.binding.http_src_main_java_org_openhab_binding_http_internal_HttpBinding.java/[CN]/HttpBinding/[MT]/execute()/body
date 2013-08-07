@@ -13,8 +13,23 @@
       long age=System.currentTimeMillis() - lastUpdateTimeStamp;
       boolean needsUpdate=age >= refreshInterval;
       if (needsUpdate) {
-        logger.debug("Item '{}' is about to be refreshed now",itemName);
-        String response=HttpUtil.executeUrl("GET",url,headers,null,null,timeout);
+        String response=null;
+        CacheConfig cacheItem=itemCache.get(url);
+        if (cacheItem != null) {
+          long cacheAge=System.currentTimeMillis() - cacheItem.lastUpdate;
+          boolean cacheNeedsUpdate=cacheAge >= cacheItem.updateInterval;
+          if (cacheNeedsUpdate) {
+            logger.debug("updating cache for '{}' ('{}')",url,cacheItem.url);
+            cacheItem.data=HttpUtil.executeUrl("GET",cacheItem.url,null,null,null,timeout);
+            if (cacheItem.data != null)             cacheItem.lastUpdate=System.currentTimeMillis();
+          }
+          logger.debug("item '{}' is fetched from cache",itemName);
+          response=cacheItem.data;
+        }
+ else {
+          logger.debug("item '{}' is about to be refreshed now",itemName);
+          response=HttpUtil.executeUrl("GET",url,headers,null,null,timeout);
+        }
         if (response == null) {
           logger.error("No response received from '{}'",url);
         }
