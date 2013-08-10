@@ -6,6 +6,11 @@
       if ("service.pid".equals(key)) {
         continue;
       }
+      if ("pollingPeriod".equals(key)) {
+        pollingPeriod=Integer.parseInt((String)config.get(key));
+        logger.debug("Setting polling period to {} ms",pollingPeriod);
+        continue;
+      }
       Matcher matcher=EXTRACT_SONOS_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
         logger.debug("given sonos-config-key '" + key + "' does not follow the expected pattern '<sonosId>.<udn>'");

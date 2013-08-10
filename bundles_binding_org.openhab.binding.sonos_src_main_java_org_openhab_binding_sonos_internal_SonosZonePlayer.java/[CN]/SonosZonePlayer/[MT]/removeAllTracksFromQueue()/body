@@ -1,0 +1,19 @@
+{
+  if (!isConfigured) {
+    return false;
+  }
+  Service service=device.findService(new UDAServiceId("AVTransport"));
+  Action action=service.getAction("RemoveAllTracksFromQueue");
+  ActionInvocation invocation=new ActionInvocation(action);
+  try {
+    invocation.setInput("InstanceID","0");
+  }
+ catch (  InvalidValueException ex) {
+    logger.error("Action Invalid Value Exception {}",ex.getMessage());
+  }
+catch (  NumberFormatException ex) {
+    logger.error("Action Invalid Value Format Exception {}",ex.getMessage());
+  }
+  executeActionInvocation(invocation);
+  return true;
+}

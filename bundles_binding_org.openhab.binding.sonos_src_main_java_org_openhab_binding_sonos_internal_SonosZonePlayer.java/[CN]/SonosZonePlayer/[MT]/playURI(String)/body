@@ -1,0 +1,15 @@
+{
+  if (!isConfigured) {
+    return false;
+  }
+  SonosZonePlayer coordinator=sonosBinding.getCoordinatorForZonePlayer(this);
+  coordinator.stop();
+  coordinator.removeAllTracksFromQueue();
+  if (!url.startsWith("x-")) {
+    url="x-file-cifs:" + url;
+  }
+  coordinator.addURIToQueue(url,"",0,true);
+  coordinator.setCurrentURI("x-rincon-queue:" + udn.getIdentifierString() + "#0","");
+  coordinator.setMute("OFF");
+  return coordinator.play();
+}
