@@ -1,0 +1,137 @@
+{
+  DeviceConfig device=deviceConfigCache.get(deviceId);
+  if (device == null) {
+    logger.error("Could not find device '{}'",deviceId);
+    return;
+  }
+  EpsonProjectorDevice remoteController=device.getConnection();
+  if (remoteController == null) {
+    logger.error("Could not find device '{}'",deviceId);
+    return;
+  }
+  try {
+    if (remoteController.isConnected() == false)     remoteController.connect();
+switch (commmandType) {
+case AKEYSTONE:
+      remoteController.setAutoKeystone(((DecimalType)command).intValue());
+    break;
+case ASPECT_RATIO:
+  remoteController.setAspectRatio(AspectRatio.valueOf(command.toString()));
+break;
+case BACKGROUND:
+remoteController.setBackground(Background.valueOf(command.toString()));
+break;
+case BRIGHTNESS:
+remoteController.setBrightness(((DecimalType)command).intValue());
+break;
+case COLOR:
+remoteController.setColor(Color.valueOf(command.toString()));
+break;
+case COLOR_MODE:
+remoteController.setColorMode(ColorMode.valueOf(command.toString()));
+break;
+case COLOR_TEMP:
+remoteController.setColorTemperature(((DecimalType)command).intValue());
+break;
+case CONTRAST:
+remoteController.setContrast(((DecimalType)command).intValue());
+break;
+case DENSITY:
+remoteController.setDensity(((DecimalType)command).intValue());
+break;
+case DIRECT_SOURCE:
+remoteController.setDirectSource(((DecimalType)command).intValue());
+break;
+case ERR_CODE:
+logger.error("'{}' is read only parameter",commmandType);
+break;
+case ERR_MESSAGE:
+logger.error("'{}' is read only parameter",commmandType);
+break;
+case FLESH_TEMP:
+remoteController.setFleshColor(((DecimalType)command).intValue());
+break;
+case GAIN_BLUE:
+remoteController.setGainBlue(((DecimalType)command).intValue());
+break;
+case GAIN_GREEN:
+remoteController.setGainGreen(((DecimalType)command).intValue());
+break;
+case GAIN_RED:
+remoteController.setGainRed(((DecimalType)command).intValue());
+break;
+case GAMMA:
+remoteController.setGamma(Gamma.valueOf(command.toString()));
+break;
+case GAMMA_STEP:
+logger.warn("Set '{}' not implemented!",commmandType.toString());
+break;
+case HKEYSTONE:
+remoteController.setHorizontalKeystone(((DecimalType)command).intValue());
+break;
+case HPOSITION:
+remoteController.setHorizontalPosition(((DecimalType)command).intValue());
+break;
+case HREVERSE:
+remoteController.setHorizontalReverse((command == OnOffType.ON ? Switch.ON : Switch.OFF));
+break;
+case KEY_CODE:
+remoteController.sendKeyCode(((DecimalType)command).intValue());
+break;
+case LAMP_TIME:
+logger.error("'{}' is read only parameter",commmandType);
+break;
+case LUMINANCE:
+remoteController.setLuminance(Luminance.valueOf(command.toString()));
+break;
+case MUTE:
+remoteController.setMute((command == OnOffType.ON ? Switch.ON : Switch.OFF));
+break;
+case OFFSET_BLUE:
+remoteController.setOffsetBlue(((DecimalType)command).intValue());
+break;
+case OFFSET_GREEN:
+remoteController.setOffsetGreen(((DecimalType)command).intValue());
+break;
+case OFFSET_RED:
+remoteController.setOffsetRed(((DecimalType)command).intValue());
+break;
+case POWER:
+remoteController.setPower((command == OnOffType.ON ? Switch.ON : Switch.OFF));
+break;
+case POWER_STATE:
+logger.error("'{}' is read only parameter",commmandType);
+break;
+case SHARP:
+logger.warn("Set '{}' not implemented!",commmandType.toString());
+break;
+case SOURCE:
+remoteController.setSource(Source.valueOf(command.toString()));
+break;
+case SYNC:
+remoteController.setSync(((DecimalType)command).intValue());
+break;
+case TINT:
+remoteController.setTint(((DecimalType)command).intValue());
+break;
+case TRACKING:
+remoteController.setTracking(((DecimalType)command).intValue());
+break;
+case VKEYSTONE:
+remoteController.setVerticalKeystone(((DecimalType)command).intValue());
+break;
+case VPOSITION:
+remoteController.setVerticalPosition(((DecimalType)command).intValue());
+break;
+case VREVERSE:
+remoteController.setVerticalReverse((command == OnOffType.ON ? Switch.ON : Switch.OFF));
+break;
+default :
+logger.warn("Unknown '{}' command!",commmandType);
+break;
+}
+}
+ catch (EpsonProjectorException e) {
+logger.error("Couldn't execute command '{}', {}",commmandType,e);
+}
+}

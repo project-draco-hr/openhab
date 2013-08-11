@@ -1,0 +1,16 @@
+{
+  String response=sendQuery(query,timeout);
+  if (response != null && !response.equals("")) {
+    try {
+      String[] pieces=response.split("=");
+      String str=pieces[1].trim();
+      return Integer.parseInt(str,radix);
+    }
+ catch (    Exception e) {
+      throw new EpsonProjectorException("Illegal response");
+    }
+  }
+ else {
+    throw new EpsonProjectorException("No response received");
+  }
+}

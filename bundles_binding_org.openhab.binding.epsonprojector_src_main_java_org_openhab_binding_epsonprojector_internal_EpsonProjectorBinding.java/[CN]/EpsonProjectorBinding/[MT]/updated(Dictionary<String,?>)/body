@@ -1,0 +1,48 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    if (deviceConfigCache == null) {
+      deviceConfigCache=new HashMap<String,DeviceConfig>();
+    }
+    String granularityString=(String)config.get("granularity");
+    if (StringUtils.isNotBlank(granularityString)) {
+      granularity=Integer.parseInt(granularityString);
+    }
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.warn("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String deviceId=matcher.group(1);
+      DeviceConfig deviceConfig=deviceConfigCache.get(deviceId);
+      if (deviceConfig == null) {
+        logger.debug("Added new device {}",deviceId);
+        deviceConfig=new DeviceConfig(deviceId);
+        deviceConfigCache.put(deviceId,deviceConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("serialPort".equals(configKey)) {
+        deviceConfig.serialPort=value;
+      }
+ else       if ("host".equals(configKey)) {
+        deviceConfig.host=value;
+      }
+ else       if ("port".equals(configKey)) {
+        deviceConfig.port=Integer.valueOf(value);
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    setProperlyConfigured(true);
+  }
+}

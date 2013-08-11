@@ -1,0 +1,20 @@
+{
+  if (deviceConfigCache != null) {
+    for (    Entry<String,DeviceConfig> entry : deviceConfigCache.entrySet()) {
+      DeviceConfig deviceCfg=entry.getValue();
+      if (deviceCfg != null) {
+        EpsonProjectorDevice device=deviceCfg.getConnection();
+        if (device != null) {
+          try {
+            logger.debug("Closing connection to device '{}' ",deviceCfg.deviceId);
+            device.disconnect();
+          }
+ catch (          EpsonProjectorException e) {
+            logger.error("Error occured when closing connection to device '{}'",deviceCfg.deviceId);
+          }
+        }
+      }
+    }
+    deviceConfigCache=null;
+  }
+}

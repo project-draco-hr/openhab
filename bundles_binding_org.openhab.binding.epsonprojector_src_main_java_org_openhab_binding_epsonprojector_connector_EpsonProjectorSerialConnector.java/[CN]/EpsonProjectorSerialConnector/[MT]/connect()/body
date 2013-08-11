@@ -1,0 +1,20 @@
+{
+  try {
+    logger.debug("Open connection to serial port '{}'",serialPortName);
+    CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(serialPortName);
+    CommPort commPort=portIdentifier.open(this.getClass().getName(),2000);
+    serialPort=(SerialPort)commPort;
+    serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    serialPort.enableReceiveThreshold(1);
+    serialPort.disableReceiveTimeout();
+    in=serialPort.getInputStream();
+    out=serialPort.getOutputStream();
+    out.flush();
+    if (in.markSupported()) {
+      in.reset();
+    }
+  }
+ catch (  Exception e) {
+    throw new EpsonProjectorException(e);
+  }
+}

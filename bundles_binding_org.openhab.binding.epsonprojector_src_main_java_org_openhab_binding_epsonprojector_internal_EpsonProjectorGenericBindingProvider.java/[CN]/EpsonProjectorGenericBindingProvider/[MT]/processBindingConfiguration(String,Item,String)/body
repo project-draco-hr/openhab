@@ -1,0 +1,32 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  EpsonProjectorBindingConfig config=new EpsonProjectorBindingConfig();
+  String[] configParts=bindingConfig.trim().split(":");
+  config.inBinding=true;
+  config.outBinding=true;
+  config.itemType=item.getClass();
+  if (bindingConfig.startsWith("<")) {
+    if (configParts.length != 3) {
+      throw new BindingConfigParseException("Epson projector in binding must contain 3 parts separated by ':'");
+    }
+    config.outBinding=false;
+    config.deviceID=configParts[0].trim().replace("<","");
+    parseRefreshPeriod(configParts[2],config);
+  }
+ else   if (bindingConfig.startsWith(">")) {
+    if (configParts.length != 2) {
+      throw new BindingConfigParseException("Epson projector out binding must contain 2 parts separated by ':'");
+    }
+    config.inBinding=false;
+    config.deviceID=configParts[0].trim().replace(">","");
+  }
+ else {
+    if (configParts.length != 3) {
+      throw new BindingConfigParseException("Epson projector bi-directional binding must contain 3 parts separated by ':'");
+    }
+    config.deviceID=configParts[0].trim();
+    parseRefreshPeriod(configParts[2],config);
+  }
+  config.commandType=getCommandTypeFromString(configParts[1].trim(),item);
+  addBindingConfig(item,config);
+}

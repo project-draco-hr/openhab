@@ -1,0 +1,15 @@
+{
+  if (refreshPeriodString.trim().contains(",")) {
+    String[] refreshIntervalParts=refreshPeriodString.trim().split(",");
+    if (refreshIntervalParts.length != 2) {
+      throw new BindingConfigParseException("Epson projector refresh interval must contain 1-2 parts separated by ','");
+    }
+    if (refreshIntervalParts[0].trim().equals("ON")) {
+      config.refreshInterval=Integer.valueOf(refreshIntervalParts[1].trim());
+      config.refreshOnlyWhenPowerOn=true;
+      return;
+    }
+  }
+  config.refreshInterval=Integer.valueOf(refreshPeriodString);
+  config.refreshOnlyWhenPowerOn=false;
+}

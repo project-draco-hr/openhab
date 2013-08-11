@@ -1,0 +1,36 @@
+{
+  for (  EpsonProjectorBindingProvider provider : providers) {
+    for (    String itemName : provider.getInBindingItemNames()) {
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        boolean refreshOnlyWhenPowerOn=provider.refreshOnlyWhenPowerOn(itemName);
+        String deviceId=provider.getDeviceId(itemName);
+        if (refreshOnlyWhenPowerOn) {
+          OnOffType state=(OnOffType)queryDataFromDevice(deviceId,EpsonProjectorCommandType.POWER,SwitchItem.class);
+          if (state != OnOffType.ON) {
+            logger.debug("projector power is OFF, skip refresh for item '{}'",itemName);
+            lastUpdateMap.put(itemName,System.currentTimeMillis());
+            return;
+          }
+        }
+        logger.debug("item '{}' is about to be refreshed now",itemName);
+        EpsonProjectorCommandType commmandType=provider.getCommandType(itemName);
+        Class<? extends Item> itemType=provider.getItemType(itemName);
+        State state=queryDataFromDevice(deviceId,commmandType,itemType);
+        if (state != null) {
+          eventPublisher.postUpdate(itemName,state);
+        }
+ else {
+          logger.error("No response received from command '{}'",commmandType);
+        }
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}

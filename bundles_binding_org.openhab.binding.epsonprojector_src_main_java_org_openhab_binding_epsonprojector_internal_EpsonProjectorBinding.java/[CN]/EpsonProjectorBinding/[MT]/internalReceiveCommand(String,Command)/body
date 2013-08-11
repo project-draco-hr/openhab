@@ -1,0 +1,17 @@
+{
+  EpsonProjectorBindingProvider provider=findFirstMatchingBindingProvider(itemName,command);
+  if (provider == null) {
+    logger.warn("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  if (provider.isOutBinding(itemName)) {
+    EpsonProjectorCommandType commmandType=provider.getCommandType(itemName);
+    String deviceId=provider.getDeviceId(itemName);
+    if (commmandType != null) {
+      sendDataToDevice(deviceId,commmandType,command);
+    }
+  }
+ else {
+    logger.warn("itemName={} is not out binding",itemName);
+  }
+}

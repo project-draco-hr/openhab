@@ -1,0 +1,14 @@
+{
+  EpsonProjectorCommandType commandType=null;
+  try {
+    EpsonProjectorCommandType.validateBinding(commandTypeString,item.getClass());
+    commandType=EpsonProjectorCommandType.getCommandType(commandTypeString);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("Invalid command type '" + commandTypeString + "'!");
+  }
+catch (  InvalidClassException e) {
+    throw new BindingConfigParseException("Invalid item type for command type '" + commandTypeString + "'!");
+  }
+  return commandType;
+}
