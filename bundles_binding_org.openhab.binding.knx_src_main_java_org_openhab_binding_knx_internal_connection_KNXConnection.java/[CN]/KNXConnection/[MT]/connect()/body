@@ -28,7 +28,7 @@
                   timer.cancel();
                 }
  else {
-                  logger.info("..retrying Knx connection");
+                  logger.info("Trying to reconnect to KNX...");
                   connect();
                   if (link.isOpen()) {
                     timer.cancel();
@@ -57,8 +57,8 @@
     if (listener != null) {
       pc.addProcessListener(listener);
     }
-    if (KNXConnection.connectionEstablishedListener != null) {
-      KNXConnection.connectionEstablishedListener.connectionEstablished();
+    for (    KNXConnectionListener listener : KNXConnection.connectionListeners) {
+      listener.connectionEstablished();
     }
     if (logger.isInfoEnabled()) {
       if (link instanceof KNXNetworkLinkIP) {
