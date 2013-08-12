@@ -1,0 +1,19 @@
+{
+  int[] get_reply_data_pos=commandType.getGetReplyDataPos();
+  int value=0;
+  int base=0;
+  for (int i=get_reply_data_pos.length - 1; i >= 0; i--) {
+    value+=data[get_reply_data_pos[i]] << base;
+    base+=8;
+  }
+  int[] possibleValues=commandType.getPossibleValues();
+  if (possibleValues != null) {
+    for (    int possibleValue : possibleValues) {
+      if ((value & possibleValue) == possibleValue) {
+        return new DecimalType(value);
+      }
+    }
+    return null;
+  }
+  return new DecimalType(value);
+}

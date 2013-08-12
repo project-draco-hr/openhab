@@ -1,0 +1,16 @@
+{
+  Set<String> usedKeys=new HashSet<String>();
+  for (  ComfoAirBindingProvider provider : providers) {
+    usedKeys.addAll(provider.getConfiguredKeys());
+  }
+  for (  ComfoAirBindingProvider provider : providers) {
+    String eventType=provider.getConfiguredKeyForItem(itemName);
+    ComfoAirCommand changeCommand=ComfoAirCommandType.getChangeCommand(eventType,(DecimalType)command);
+    sendCommand(changeCommand);
+    Collection<ComfoAirCommand> affectedReadCommands=ComfoAirCommandType.getAffectedReadCommands(eventType,usedKeys);
+    if (affectedReadCommands.size() > 0) {
+      Thread updateThread=new AffectedItemsUpdateThread(affectedReadCommands);
+      updateThread.start();
+    }
+  }
+}

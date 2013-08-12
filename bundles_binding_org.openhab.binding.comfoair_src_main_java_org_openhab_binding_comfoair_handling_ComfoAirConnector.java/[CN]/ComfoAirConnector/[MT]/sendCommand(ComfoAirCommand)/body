@@ -1,0 +1,88 @@
+{
+  int requestCmd=command.getRequestCmd();
+  int retry=0;
+  if (requestCmd == 0x9b) {
+    isSuspended=!isSuspended;
+  }
+ else   if (requestCmd == 0x9c) {
+    return new int[]{isSuspended ? 0x00 : 0x03};
+  }
+ else   if (isSuspended) {
+    logger.debug("Ignore cmd. Service is currently suspended");
+    return null;
+  }
+  do {
+    int[] requestData=command.getRequestData();
+    if (requestData == null && requestCmd == 0x37) {
+      requestData=new int[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+    }
+    if (!send(calculateRequest(requestCmd,requestData))) {
+      return null;
+    }
+    try {
+      byte[] requestBlock=new byte[0];
+      byte[] readBuffer=new byte[31];
+      do {
+        while (inputStream.available() > 0) {
+          int bytes=inputStream.read(readBuffer);
+          byte[] mergedBytes=new byte[requestBlock.length + bytes];
+          System.arraycopy(requestBlock,0,mergedBytes,0,requestBlock.length);
+          System.arraycopy(readBuffer,0,mergedBytes,requestBlock.length,bytes);
+          requestBlock=mergedBytes;
+        }
+        try {
+          Thread.sleep(100);
+        }
+ catch (        InterruptedException e) {
+        }
+      }
+ while (inputStream.available() > 0);
+      if (requestBlock.length >= 2 && requestBlock[0] == (byte)0x07 && requestBlock[1] == (byte)0xf3) {
+        if (command.getReplyCmd() == null) {
+          if (requestBlock.length > 2) {
+            send(ACK);
+          }
+          return null;
+        }
+        if (requestBlock.length >= 11 && requestBlock[2] == (byte)0x07 && requestBlock[3] == (byte)0xf0 && requestBlock[requestBlock.length - 2] == (byte)0x07 && requestBlock[requestBlock.length - 1] == (byte)0x0f && (requestBlock[5] & 0xff) == command.getReplyCmd()) {
+          logger.debug("receive RAW DATA: " + dumpData(requestBlock));
+          byte[] cleanedBlock=cleanupBlock(requestBlock);
+          int dataSize=cleanedBlock[2];
+          if (dataSize + 3 == cleanedBlock.length - 1) {
+            byte checksum=cleanedBlock[dataSize + 3];
+            int[] replyData=new int[dataSize];
+            for (int i=0; i < dataSize; i++) {
+              replyData[i]=cleanedBlock[i + 3] & 0xff;
+            }
+            byte[] _block=new byte[3 + replyData.length];
+            System.arraycopy(cleanedBlock,0,_block,0,_block.length);
+            if (calculateChecksum(_block) == checksum) {
+              logger.debug(String.format("receive CMD: %02x",command.getReplyCmd()) + " DATA: " + dumpData(replyData));
+              send(ACK);
+              return replyData;
+            }
+            logger.warn("Unable to handle data. Checksum verification failed");
+          }
+ else {
+            logger.warn("Unable to handle data. Data size not valid");
+          }
+          logger.warn(String.format("skip CMD: %02x",command.getReplyCmd()) + " DATA: " + dumpData(cleanedBlock));
+        }
+      }
+    }
+ catch (    IOException e) {
+      logger.error(e.getMessage(),e);
+    }
+    try {
+      Thread.sleep(1000);
+      logger.warn("Retry cmd. Last call was not successful");
+    }
+ catch (    InterruptedException e) {
+    }
+  }
+ while (retry++ < 5);
+  if (retry == 5) {
+    logger.error("Unable to send command. " + retry + " retries failed.");
+  }
+  return null;
+}

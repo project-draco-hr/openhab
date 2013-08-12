@@ -1,0 +1,12 @@
+{
+  logger.debug("send DATA: " + dumpData(request));
+  try {
+    outputStream.write(request);
+    outputStream.flush();
+    return true;
+  }
+ catch (  IOException e) {
+    logger.error("Error writing to serial port {}: {}",port,e.getLocalizedMessage());
+    return false;
+  }
+}

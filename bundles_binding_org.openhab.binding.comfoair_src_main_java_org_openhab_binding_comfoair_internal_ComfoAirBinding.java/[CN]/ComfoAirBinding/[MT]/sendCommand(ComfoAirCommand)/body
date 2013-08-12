@@ -1,0 +1,22 @@
+{
+  int[] response=connector.sendCommand(command);
+  if (response == null) {
+    return;
+  }
+  List<ComfoAirCommandType> commandTypes=ComfoAirCommandType.getCommandTypesByReplyCmd(command.getReplyCmd());
+  for (  ComfoAirCommandType commandType : commandTypes) {
+    ComfoAirDataType dataType=commandType.getDataType();
+    State value=dataType.convertToState(response,commandType);
+    if (value == null) {
+      logger.error("Unexpected value for DATA: " + ComfoAirConnector.dumpData(response));
+    }
+ else {
+      for (      ComfoAirBindingProvider provider : providers) {
+        List<String> items=provider.getItemNamesForCommandKey(commandType.getKey());
+        for (        String item : items) {
+          eventPublisher.postUpdate(item,value);
+        }
+      }
+    }
+  }
+}

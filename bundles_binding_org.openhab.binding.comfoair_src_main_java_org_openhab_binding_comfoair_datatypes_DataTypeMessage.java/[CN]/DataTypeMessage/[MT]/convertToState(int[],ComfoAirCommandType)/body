@@ -1,0 +1,30 @@
+{
+  int[] get_reply_data_pos=commandType.getGetReplyDataPos();
+  int errorAlo=data[get_reply_data_pos[0]];
+  int errorE=data[get_reply_data_pos[1]];
+  int errorEA=data[get_reply_data_pos[2]];
+  int errorAhi=data[get_reply_data_pos[3]];
+  String errorCode="";
+  if (errorAlo > 0) {
+    errorCode="A:" + convertToCode(errorAlo);
+  }
+ else   if (errorAhi > 0) {
+    if (errorAhi == 0x80) {
+      errorCode="A0";
+    }
+    errorCode="A:" + (convertToCode(errorAhi) + 8);
+  }
+  if (errorE > 0) {
+    if (errorCode.length() > 0) {
+      errorCode+=" ";
+    }
+    errorCode+="E:" + convertToCode(errorE);
+  }
+ else   if (errorEA > 0) {
+    if (errorCode.length() > 0) {
+      errorCode+=" ";
+    }
+    errorCode+="EA:" + convertToCode(errorEA);
+  }
+  return new StringType(errorCode.length() > 0 ? errorCode : "Ok");
+}

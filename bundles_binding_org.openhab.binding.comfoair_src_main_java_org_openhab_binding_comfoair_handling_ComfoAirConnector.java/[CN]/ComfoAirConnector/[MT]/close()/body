@@ -1,0 +1,8 @@
+{
+  logger.debug("Close ComfoAir connection");
+  ComfoAirCommand command=ComfoAirCommandType.getChangeCommand(ComfoAirCommandType.ACTIVATE.key,new DecimalType(0));
+  sendCommand(command);
+  IOUtils.closeQuietly(inputStream);
+  IOUtils.closeQuietly(outputStream);
+  serialPort.close();
+}

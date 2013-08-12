@@ -1,0 +1,14 @@
+{
+  int pos=0;
+  byte[] cleanedBuffer=new byte[50];
+  for (int i=4; i < processBuffer.length - 2; i++) {
+    if ((byte)0x07 == processBuffer[i]) {
+      i++;
+    }
+    cleanedBuffer[pos]=processBuffer[i];
+    pos++;
+  }
+  byte[] _block=new byte[pos];
+  System.arraycopy(cleanedBuffer,0,_block,0,_block.length);
+  return _block;
+}

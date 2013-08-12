@@ -1,0 +1,22 @@
+{
+  int length=data == null ? 0 : data.length;
+  byte[] block=new byte[4 + length];
+  block[0]=0x00;
+  block[1]=(byte)command;
+  block[2]=(byte)length;
+  if (data != null) {
+    for (int i=0; i < data.length; i++) {
+      block[i + 3]=(byte)data[i];
+    }
+  }
+  byte checksum=calculateChecksum(block);
+  block[block.length - 1]=checksum;
+  block=escapeBlock(block);
+  byte[] request=new byte[4 + block.length];
+  request[0]=START[0];
+  request[1]=START[1];
+  System.arraycopy(block,0,request,2,block.length);
+  request[request.length - 2]=END[0];
+  request[request.length - 1]=END[1];
+  return request;
+}
