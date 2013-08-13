@@ -4,7 +4,7 @@
   if (label.contains("[") && label.endsWith("]")) {
     label=label.replace("[","").replace("]","");
   }
-  snippet=snippet.replaceAll("%label%",label);
+  snippet=snippet.replaceAll("%label%",StringEscapeUtils.escapeHtml(label));
   snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
   snippet=snippet.replaceAll("%sitemap%",sitemap);
   String[] parts=snippet.split("%children%");
