@@ -4,9 +4,9 @@
   if (label.contains("[") && label.endsWith("]")) {
     label=label.replace("[","").replace("]","");
   }
-  snippet=snippet.replaceAll("%label%",StringEscapeUtils.escapeHtml(label));
-  snippet=snippet.replaceAll("%servletname%",WebAppServlet.SERVLET_NAME);
-  snippet=snippet.replaceAll("%sitemap%",sitemap);
+  snippet=StringUtils.replace(snippet,"%label%",StringEscapeUtils.escapeHtml(label));
+  snippet=StringUtils.replace(snippet,"%servletname%",WebAppServlet.SERVLET_NAME);
+  snippet=StringUtils.replace(snippet,"%sitemap%",sitemap);
   String[] parts=snippet.split("%children%");
   StringBuilder pre_children=new StringBuilder(parts[0]);
   StringBuilder post_children=new StringBuilder(parts[1]);
