@@ -4,16 +4,13 @@
     logger.debug("Interrupt serial listener");
     readerThread.interrupt();
   }
-  logger.debug("Close serial streams");
-  try {
-    if (out != null) {
-      out.close();
-    }
-    if (in != null) {
-      in.close();
-    }
+  if (out != null) {
+    logger.debug("Close serial out stream");
+    IOUtils.closeQuietly(out);
   }
- catch (  IOException e) {
+  if (in != null) {
+    logger.debug("Close serial in stream");
+    IOUtils.closeQuietly(in);
   }
   if (serialPort != null) {
     logger.debug("Close serial port");
