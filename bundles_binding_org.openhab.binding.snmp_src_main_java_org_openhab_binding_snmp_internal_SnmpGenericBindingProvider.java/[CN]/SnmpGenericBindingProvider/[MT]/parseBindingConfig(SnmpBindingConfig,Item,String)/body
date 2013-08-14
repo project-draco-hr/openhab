@@ -1,0 +1,37 @@
+{
+  config.itemType=item.getClass();
+  if (bindingConfig != null) {
+    Matcher inMatcher=IN_BINDING_PATTERN.matcher(bindingConfig);
+    Matcher outMatcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
+    if (!outMatcher.matches() && !inMatcher.matches()) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of four [config=" + inMatcher+ "] or five parts [config="+ outMatcher+ "]");
+    }
+ else {
+      SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
+      if (outMatcher.matches()) {
+        String commandAsString=outMatcher.group(1).toString();
+        newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
+        newElement.community=new OctetString(outMatcher.group(3).toString());
+        newElement.oid=new OID(outMatcher.group(4).toString());
+        newElement.value=new OctetString(outMatcher.group(5).toString());
+        Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
+        if (command == null) {
+          logger.error("SNMP can't resolve command {} for item {}",commandAsString,item);
+        }
+ else {
+          config.put(command,newElement);
+        }
+      }
+ else       if (inMatcher.matches()) {
+        newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
+        newElement.community=new OctetString(inMatcher.group(2).toString());
+        newElement.oid=new OID(inMatcher.group(3).toString());
+        newElement.refreshInterval=Integer.valueOf(inMatcher.group(4)).intValue();
+        config.put(IN_BINDING_KEY,newElement);
+      }
+    }
+  }
+ else {
+    return;
+  }
+}

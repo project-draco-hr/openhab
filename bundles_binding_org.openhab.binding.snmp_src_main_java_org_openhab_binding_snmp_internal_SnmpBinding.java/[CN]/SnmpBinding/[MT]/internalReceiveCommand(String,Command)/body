@@ -1,0 +1,36 @@
+{
+  logger.debug("SNMP receive command {} from {}",itemName,command);
+  SnmpBindingProvider providerCmd=null;
+  for (  SnmpBindingProvider provider : this.providers) {
+    OID oid=provider.getOID(itemName,command);
+    if (oid != null) {
+      providerCmd=provider;
+      break;
+    }
+  }
+  if (providerCmd == null) {
+    logger.warn("No match for binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  logger.debug("SNMP command for {} to {}",itemName,providerCmd.toString());
+  CommunityTarget target=new CommunityTarget();
+  target.setCommunity(providerCmd.getCommunity(itemName,command));
+  target.setAddress(providerCmd.getAddress(itemName,command));
+  target.setRetries(retries);
+  target.setTimeout(timeout);
+  target.setVersion(SnmpConstants.version1);
+  Variable var=new Integer32(Integer.parseInt(providerCmd.getValue(itemName,command).toString()));
+  OID oid=providerCmd.getOID(itemName,command);
+  VariableBinding varBind=new VariableBinding(oid,var);
+  PDU pdu=new PDU();
+  pdu.add(varBind);
+  pdu.setType(PDU.SET);
+  pdu.setRequestID(new Integer32(1));
+  logger.debug("SNMP: Send PDU {} {}",providerCmd.getAddress(itemName,command),pdu);
+  if (snmp == null) {
+    logger.error("SNMP: snmp not initialised - aborting request");
+  }
+ else {
+    sendPDU(target,pdu);
+  }
+}

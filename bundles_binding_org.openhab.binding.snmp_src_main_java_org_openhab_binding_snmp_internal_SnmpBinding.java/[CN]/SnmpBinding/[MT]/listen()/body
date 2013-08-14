@@ -1,20 +1,26 @@
 {
   UdpAddress address=new UdpAddress(SnmpBinding.port);
   try {
+    if (transport != null) {
+      transport.close();
+      transport=null;
+    }
+    if (snmp != null) {
+      snmp.close();
+      snmp=null;
+    }
     transport=new DefaultUdpTransportMapping(address);
-    MessageDispatcher mDispatcher=new MessageDispatcherImpl();
-    mDispatcher.addMessageProcessingModel(new MPv1());
-    mDispatcher.addMessageProcessingModel(new MPv2c());
     SecurityProtocols.getInstance().addDefaultProtocols();
     SecurityProtocols.getInstance().addPrivacyProtocol(new Priv3DES());
-    CommunityTarget target=new CommunityTarget();
-    target.setCommunity(new OctetString(SnmpBinding.community));
-    Snmp snmp=new Snmp(mDispatcher,transport);
-    snmp.addCommandResponder(this);
+    if (SnmpBinding.community != null) {
+      CommunityTarget target=new CommunityTarget();
+      target.setCommunity(new OctetString(SnmpBinding.community));
+    }
+    snmp=new Snmp(transport);
     transport.listen();
     logger.debug("SNMP binding is listening on " + address);
   }
  catch (  IOException ioe) {
-    logger.error("couldn't listen to " + address,ioe);
+    logger.error("SNMP binding couldn't listen to " + address,ioe);
   }
 }

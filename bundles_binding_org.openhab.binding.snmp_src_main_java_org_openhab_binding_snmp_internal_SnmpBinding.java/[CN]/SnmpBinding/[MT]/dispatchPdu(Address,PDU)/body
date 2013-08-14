@@ -1,0 +1,36 @@
+{
+  if (pdu != null & address != null) {
+    logger.debug("Received PDU from '{}' '{}'",address,pdu);
+    for (    SnmpBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        if (!provider.getAddress(itemName).equals(address)) {
+          continue;
+        }
+        OID oid=provider.getOID(itemName);
+        Variable variable=pdu.getVariable(oid);
+        if (variable != null) {
+          Class<? extends Item> itemType=provider.getItemType(itemName);
+          State state=null;
+          if (itemType.isAssignableFrom(StringItem.class)) {
+            state=StringType.valueOf(variable.toString());
+          }
+ else           if (itemType.isAssignableFrom(NumberItem.class)) {
+            state=DecimalType.valueOf(variable.toString());
+          }
+ else           if (itemType.isAssignableFrom(SwitchItem.class)) {
+            state=OnOffType.valueOf(variable.toString());
+          }
+          if (state != null) {
+            eventPublisher.postUpdate(itemName,state);
+          }
+ else {
+            logger.debug("'{}' couldn't be parsed to a State. Valid State-Types are String and Number",variable.toString());
+          }
+        }
+ else {
+          logger.trace("PDU doesn't contain a variable with OID ???{}???",oid.toString());
+        }
+      }
+    }
+  }
+}

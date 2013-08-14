@@ -1,0 +1,39 @@
+{
+  for (  SnmpBindingProvider provider : providers) {
+    for (    String itemName : provider.getInBindingItemNames()) {
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate;
+      if (refreshInterval == 0) {
+        needsUpdate=false;
+      }
+ else {
+        needsUpdate=age >= refreshInterval;
+      }
+      if (needsUpdate) {
+        logger.debug("Item '{}' is about to be refreshed",itemName);
+        CommunityTarget target=new CommunityTarget();
+        target.setCommunity(provider.getCommunity(itemName));
+        target.setAddress(provider.getAddress(itemName));
+        target.setRetries(retries);
+        target.setTimeout(timeout);
+        target.setVersion(SnmpConstants.version1);
+        PDU pdu=new PDU();
+        pdu.add(new VariableBinding(provider.getOID(itemName)));
+        pdu.setType(PDU.GET);
+        logger.debug("SNMP: Send PDU {} {}",provider.getAddress(itemName),pdu);
+        if (snmp == null) {
+          logger.error("SNMP: snmp not initialised - aborting request");
+        }
+ else {
+          sendPDU(target,pdu);
+        }
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}

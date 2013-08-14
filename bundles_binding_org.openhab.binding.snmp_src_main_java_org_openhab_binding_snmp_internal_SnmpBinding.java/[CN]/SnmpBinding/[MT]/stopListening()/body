@@ -1,11 +1,20 @@
 {
-  if (SnmpBinding.transport != null) {
+  if (transport != null) {
     try {
-      SnmpBinding.transport.close();
+      transport.close();
     }
  catch (    IOException ioe) {
       logger.error("couldn't close connection",ioe);
     }
-    SnmpBinding.transport=null;
+    transport=null;
+  }
+  if (snmp != null) {
+    try {
+      snmp.close();
+    }
+ catch (    IOException ioe) {
+      logger.error("couldn't close snmp",ioe);
+    }
+    snmp=null;
   }
 }

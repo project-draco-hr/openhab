@@ -1,0 +1,52 @@
+{
+  boolean mapping=false;
+  stopListening();
+  if (config != null) {
+    mapping=true;
+    SnmpBinding.community=(String)config.get("community");
+    if (StringUtils.isBlank(SnmpBinding.community)) {
+      SnmpBinding.community="public";
+      logger.info("didn't find SNMP community configuration -> listen to SNMP community {}",SnmpBinding.community);
+    }
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString) && portString.matches("\\d*")) {
+      SnmpBinding.port=Integer.valueOf(portString).intValue();
+    }
+ else {
+      SnmpBinding.port=SNMP_DEFAULT_PORT;
+      logger.info("Didn't find SNMP port configuration or configuration is invalid -> listen to SNMP default port {}",SnmpBinding.port);
+    }
+    String timeoutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(timeoutString)) {
+      SnmpBinding.timeout=Integer.valueOf(timeoutString).intValue();
+      if (SnmpBinding.timeout < 0 | SnmpBinding.retries > 5) {
+        logger.info("SNMP timeout value is invalid (" + SnmpBinding.timeout + "). Using default value.");
+        SnmpBinding.timeout=1500;
+      }
+    }
+ else {
+      SnmpBinding.timeout=1500;
+      logger.info("Didn't find SNMP timeout or configuration is invalid -> timeout set to {}",SnmpBinding.timeout);
+    }
+    String retriesString=(String)config.get("retries");
+    if (StringUtils.isNotBlank(retriesString)) {
+      SnmpBinding.retries=Integer.valueOf(retriesString).intValue();
+      if (SnmpBinding.retries < 0 | SnmpBinding.retries > 5) {
+        logger.info("SNMP retries value is invalid (" + SnmpBinding.retries + "). Using default value.");
+        SnmpBinding.retries=0;
+      }
+    }
+ else {
+      SnmpBinding.retries=0;
+      logger.info("Didn't find SNMP retries or configuration is invalid -> retries set to {}",SnmpBinding.retries);
+    }
+  }
+  for (  SnmpBindingProvider provider : providers) {
+    if (provider.getInBindingItemNames() != null) {
+      mapping=true;
+    }
+  }
+  if (mapping) {
+    listen();
+  }
+}

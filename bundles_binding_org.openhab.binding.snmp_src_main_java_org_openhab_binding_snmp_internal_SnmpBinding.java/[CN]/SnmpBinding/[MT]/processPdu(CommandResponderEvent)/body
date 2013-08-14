@@ -1,31 +1,15 @@
 {
-  PDU pdu=event.getPDU();
-  if (pdu != null) {
-    logger.debug("Received PDU '{}'",event.getPDU());
-    for (    SnmpBindingProvider provider : providers) {
-      for (      String itemName : provider.getItemNames()) {
-        OID oid=provider.getOID(itemName);
-        Variable variable=pdu.getVariable(oid);
-        if (variable != null) {
-          Class<? extends Item> itemType=provider.getItemType(itemName);
-          State state=null;
-          if (itemType.isAssignableFrom(StringItem.class)) {
-            state=StringType.valueOf(variable.toString());
-          }
- else           if (itemType.isAssignableFrom(NumberItem.class)) {
-            state=DecimalType.valueOf(variable.toString());
-          }
-          if (state != null) {
-            eventPublisher.postUpdate(itemName,state);
-          }
+  Address addr=event.getPeerAddress();
+  if (addr == null) {
+    return;
+  }
+  String s=addr.toString().split("/")[0];
+  if (s == null) {
+    logger.error("TRAP: failed to translate address {}",addr);
+    dispatchPdu(addr,event.getPDU());
+  }
  else {
-            logger.debug("'{}' couldn't be parsed to a State. Valid State-Types are String and Number",variable.toString());
-          }
-        }
- else {
-          logger.trace("PDU doesn't contain a variable with OID ???{}???",oid.toString());
-        }
-      }
-    }
+    Address address=GenericAddress.parse("udp:" + s + "/161");
+    dispatchPdu(address,event.getPDU());
   }
 }
