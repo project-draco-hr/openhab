@@ -13,7 +13,7 @@
         newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
         newElement.community=new OctetString(outMatcher.group(3).toString());
         newElement.oid=new OID(outMatcher.group(4).toString());
-        newElement.value=new OctetString(outMatcher.group(5).toString());
+        newElement.value=new Integer32(Integer.parseInt(outMatcher.group(5).toString()));
         Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
         if (command == null) {
           logger.error("SNMP can't resolve command {} for item {}",commandAsString,item);
