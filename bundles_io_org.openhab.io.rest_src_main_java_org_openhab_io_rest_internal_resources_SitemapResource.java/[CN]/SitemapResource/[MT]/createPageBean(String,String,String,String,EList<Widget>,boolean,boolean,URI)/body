@@ -3,12 +3,14 @@
   bean.id=pageId;
   bean.title=title;
   bean.icon=icon;
+  bean.leaf=isLeaf;
   bean.link=UriBuilder.fromUri(uri).path(PATH_SITEMAPS).path(sitemapName).path(pageId).build().toASCIIString();
   if (children != null) {
     int cntWidget=0;
     for (    Widget widget : children) {
       String widgetId=pageId + "_" + cntWidget;
-      bean.widgets.add(createWidgetBean(sitemapName,widget,drillDown,uri,widgetId));
+      WidgetBean subWidget=createWidgetBean(sitemapName,widget,drillDown,uri,widgetId);
+      bean.widgets.add(subWidget);
       cntWidget++;
     }
   }

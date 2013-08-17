@@ -3,12 +3,13 @@
   Sitemap sitemap=getSitemap(sitemapName);
   if (sitemap != null) {
     if (pageId.equals(sitemap.getName())) {
-      return createPageBean(sitemapName,sitemap.getLabel(),sitemap.getIcon(),sitemap.getName(),sitemap.getChildren(),false,uri);
+      return createPageBean(sitemapName,sitemap.getLabel(),sitemap.getIcon(),sitemap.getName(),sitemap.getChildren(),false,isLeaf(sitemap.getChildren()),uri);
     }
  else {
       Widget pageWidget=itemUIRegistry.getWidget(sitemap,pageId);
       if (pageWidget instanceof LinkableWidget) {
-        PageBean pageBean=createPageBean(sitemapName,itemUIRegistry.getLabel(pageWidget),itemUIRegistry.getIcon(pageWidget),pageId,itemUIRegistry.getChildren((LinkableWidget)pageWidget),false,uri);
+        EList<Widget> children=itemUIRegistry.getChildren((LinkableWidget)pageWidget);
+        PageBean pageBean=createPageBean(sitemapName,itemUIRegistry.getLabel(pageWidget),itemUIRegistry.getIcon(pageWidget),pageId,children,false,isLeaf(children),uri);
         EObject parentPage=pageWidget.eContainer();
         while (parentPage instanceof Frame) {
           parentPage=parentPage.eContainer();
