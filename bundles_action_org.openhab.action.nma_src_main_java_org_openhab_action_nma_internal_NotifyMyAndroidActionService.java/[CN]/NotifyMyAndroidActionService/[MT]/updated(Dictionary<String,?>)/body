@@ -1,0 +1,26 @@
+{
+  logger.debug("Updating config");
+  if (config != null) {
+    logger.debug("Received new config");
+    NotifyMyAndroid.developerKey=(String)config.get(PARAM_KEY_DEV_API_KEY);
+    NotifyMyAndroid.appName=(String)config.get(PARAM_KEY_APP_NAME);
+    try {
+      NotifyMyAndroid.timeout=Integer.parseInt((String)config.get(PARAM_KEY_TIMEOUT));
+    }
+ catch (    NumberFormatException e) {
+      throw new ConfigurationException(PARAM_KEY_DEFAULT_PRIORITY,REASON_CANT_PARSE_NUMBER,e);
+    }
+    NotifyMyAndroid.apiKey=(String)config.get(PARAM_KEY_API_KEY);
+    try {
+      NotifyMyAndroid.defaultPriotiy=Integer.parseInt((String)config.get(PARAM_KEY_DEFAULT_PRIORITY));
+    }
+ catch (    NumberFormatException e) {
+      throw new ConfigurationException(PARAM_KEY_DEFAULT_PRIORITY,REASON_CANT_PARSE_NUMBER,e);
+    }
+    NotifyMyAndroid.defaultUrl=(String)config.get(PARAM_KEY_DEFAULT_URL);
+  }
+ else {
+    logger.warn("Dictionary was NULL, didn't read any configuration");
+  }
+  isProperlyConfigured=true;
+}

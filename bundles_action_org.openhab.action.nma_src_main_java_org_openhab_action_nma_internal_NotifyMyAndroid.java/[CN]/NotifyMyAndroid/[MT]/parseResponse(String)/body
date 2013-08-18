@@ -1,0 +1,17 @@
+{
+  DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+  DocumentBuilder db=factory.newDocumentBuilder();
+  InputSource inStream=new InputSource();
+  inStream.setCharacterStream(new StringReader(response));
+  Document doc=db.parse(inStream);
+  Element root=doc.getDocumentElement();
+  String lastError=null;
+  if (root.getTagName().equals("nma")) {
+    Node item=root.getFirstChild();
+    String childName=item.getNodeName();
+    if (!childName.equals("success")) {
+      lastError=item.getFirstChild().getNodeValue();
+    }
+  }
+  return lastError;
+}
