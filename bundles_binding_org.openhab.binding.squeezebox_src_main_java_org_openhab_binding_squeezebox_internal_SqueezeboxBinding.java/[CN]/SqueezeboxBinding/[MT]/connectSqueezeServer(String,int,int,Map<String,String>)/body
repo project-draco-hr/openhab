@@ -1,0 +1,9 @@
+{
+  squeezeServer=new SqueezeServer(host,cliport,webport);
+  for (  Map.Entry<String,String> playerMapEntry : tmpPlayerMap.entrySet()) {
+    SqueezePlayer player=new SqueezePlayer(playerMapEntry.getKey(),playerMapEntry.getValue());
+    player.addPlayerhangeEventListener(this);
+    squeezeServer.addPlayer(player);
+  }
+  squeezeServer.connect();
+}

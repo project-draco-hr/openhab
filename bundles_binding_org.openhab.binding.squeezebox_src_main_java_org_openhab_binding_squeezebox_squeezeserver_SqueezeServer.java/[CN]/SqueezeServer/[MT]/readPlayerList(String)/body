@@ -1,0 +1,35 @@
+{
+  String[] playerList=msg.split("playerindex:\\d+\\s");
+  for (  String player : playerList) {
+    String[] paramList=player.split("\\s");
+    String id=null;
+    String ip=null;
+    String uuid=null;
+    String name=null;
+    String model=null;
+    for (    String parameter : paramList) {
+      if (parameter.contains("playerid")) {
+        id=parameter.substring(parameter.indexOf(":") + 1);
+      }
+ else       if (parameter.contains("ip")) {
+        ip=parameter.substring(parameter.indexOf(":") + 1);
+      }
+ else       if (parameter.contains("uuid")) {
+        uuid=parameter.substring(parameter.indexOf(":") + 1);
+      }
+ else       if (parameter.contains("name")) {
+        name=parameter.substring(parameter.indexOf(":") + 1);
+      }
+ else       if (parameter.contains("model")) {
+        model=parameter.substring(parameter.indexOf(":") + 1);
+      }
+    }
+    if ((null != id) && (null != uuid) && (null != name)&& (null != model)&& (null != ip)&& (true == players.containsKey(id))) {
+      players.get(id).setUuid(uuid);
+      players.get(id).setName(name);
+      players.get(id).setModel(model);
+      players.get(id).setIpAddr(ip);
+      sendMsg(id + cmdGetPlayerStatus);
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  String[] paramList=msg.split("\\s");
+  SqueezePlayer player=null;
+  int pos, pos2;
+  try {
+    if (0 < paramList.length) {
+      String id=URLDecoder.decode(paramList[0],"UTF-8");
+      if (true == players.containsKey(id)) {
+        player=players.get(id);
+      }
+    }
+    String songArt="";
+    if (player != null) {
+      for (      String parameter : paramList) {
+        logger.debug(parameter);
+        if (parameter.contains("power%3A")) {
+          String value=parameter.substring(parameter.indexOf("%3A") + 3);
+          if (value.matches("1")) {
+            player.setPowerState(STATES.TRUE);
+          }
+ else           if (value.matches("0")) {
+            player.setPowerState(STATES.FALSE);
+          }
+        }
+ else         if (parameter.contains("mixer%20volume%3A")) {
+          String value=parameter.substring(parameter.indexOf("%3A") + 3);
+          player.setVolume(value);
+        }
+ else         if (parameter.contains("mode%3A")) {
+          String value=parameter.substring(parameter.indexOf("%3A") + 3);
+          if (value.matches("play")) {
+            player.setPlayState(STATES.TRUE);
+          }
+ else           if (value.matches("stop")) {
+            player.setStopState(STATES.TRUE);
+          }
+ else           if (value.matches("pause")) {
+            player.setPauseState(STATES.TRUE);
+          }
+        }
+      }
+      player.setCurrentTitle(URLDecoder.decode(getParameterValue(msg,"title%3A"),"UTF-8"));
+      player.setGenre(URLDecoder.decode(getParameterValue(msg,"genre%3A"),"UTF-8"));
+      player.setArtist(URLDecoder.decode(getParameterValue(msg,"artist%3A"),"UTF-8"));
+      player.setYear(URLDecoder.decode(getParameterValue(msg,"year%3A"),"UTF-8"));
+      player.setAlbum(URLDecoder.decode(getParameterValue(msg,"album%3A"),"UTF-8"));
+      if (0 < (pos=msg.indexOf("artwork_track_id%3A"))) {
+        pos2=msg.indexOf(" ",pos + 19);
+        if (pos2 > 0) {
+          songArt="http://" + host + ":"+ String.valueOf(webport)+ "/music/"+ msg.substring(pos + 19,msg.lastIndexOf(" ",pos2))+ "/cover.jpg";
+        }
+ else {
+          songArt=msg.substring(pos + 19);
+        }
+      }
+      player.setArt(URLDecoder.decode(songArt,"UTF-8"));
+      player.setRemoteTitle(URLDecoder.decode(getParameterValue(msg,"remote_title%3A"),"UTF-8"));
+    }
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("error while reading from squeezeserver");
+  }
+}

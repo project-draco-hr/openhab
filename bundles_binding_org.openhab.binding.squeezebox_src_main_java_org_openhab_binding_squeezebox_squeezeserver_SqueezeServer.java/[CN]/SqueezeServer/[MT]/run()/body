@@ -1,0 +1,29 @@
+{
+  String buffer;
+  String bufferraw;
+  BufferedReader reader;
+  try {
+    sleep(5000);
+  }
+ catch (  InterruptedException e1) {
+    logger.error("error while sleeping");
+  }
+  try {
+    reader=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    sendMsg(cmdGetPlayerList);
+    sendMsg(cmdActivateListenMode);
+    while ((bufferraw=reader.readLine()) != null) {
+      buffer=URLDecoder.decode(bufferraw,"UTF-8");
+      logger.debug(buffer);
+      if (true == buffer.contains(cmdGetPlayerList)) {
+        readPlayerList(buffer);
+      }
+ else       if (true == buffer.contains(cmdGetPlayerStatus)) {
+        readPlayerStatus(bufferraw);
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.error("error while reading from squeezeserver");
+  }
+}

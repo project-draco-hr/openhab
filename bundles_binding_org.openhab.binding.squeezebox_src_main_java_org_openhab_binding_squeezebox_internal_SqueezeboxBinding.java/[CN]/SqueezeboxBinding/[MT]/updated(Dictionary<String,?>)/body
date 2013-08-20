@@ -1,0 +1,36 @@
+{
+  if (config != null) {
+    disconnectSqueezeServer();
+    int cliport=DEFAULT_CLI_PORT;
+    int webport=DEFAULT_WEB_PORT;
+    String host=DEFAULT_HOST;
+    Map<String,String> tmpPlayerMap=new HashMap<String,String>();
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher serverMatcher=EXTRACT_SERVER_CONFIG_PATTERN.matcher(key);
+      Matcher playerMatcher=EXTRACT_PLAYER_CONFIG_PATTERN.matcher(key);
+      String value=(String)config.get(key);
+      if (serverMatcher.matches()) {
+        serverMatcher.reset();
+        serverMatcher.find();
+        if ("host".equals(serverMatcher.group(2))) {
+          host=value;
+        }
+ else         if ("cliport".equals(serverMatcher.group(2))) {
+          cliport=Integer.valueOf(value);
+        }
+ else         if ("webport".equals(serverMatcher.group(2))) {
+          webport=Integer.valueOf(value);
+        }
+      }
+ else       if (playerMatcher.matches()) {
+        tmpPlayerMap.put(value.toString(),playerMatcher.group(1));
+      }
+    }
+    connectSqueezeServer(host,cliport,webport,tmpPlayerMap);
+  }
+}
