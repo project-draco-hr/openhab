@@ -1,0 +1,21 @@
+{
+  String response=null;
+  if (unassigned) {
+    response=transport.execute(JSONRequestConstants.JSON_APARTMENT_GET_DEVICES + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_UNASSIGNED_TRUE);
+  }
+ else {
+    response=transport.execute(JSONRequestConstants.JSON_APARTMENT_GET_DEVICES + JSONRequestConstants.PARAMETER_TOKEN + token);
+  }
+  JSONObject responseObj=handler.toJSONObject(response);
+  if (handler.checkResponse(responseObj) && responseObj.get(JSONApiResponseKeysEnum.APARTMENT_GET_DEVICES.getKey()) instanceof JSONArray) {
+    JSONArray array=(JSONArray)responseObj.get(JSONApiResponseKeysEnum.APARTMENT_GET_DEVICES.getKey());
+    List<Device> deviceList=new LinkedList<Device>();
+    for (int i=0; i < array.size(); i++) {
+      if (array.get(i) instanceof org.json.simple.JSONObject) {
+        deviceList.add(new JSONDeviceImpl((JSONObject)array.get(i)));
+      }
+    }
+    return deviceList;
+  }
+  return new LinkedList<Device>();
+}

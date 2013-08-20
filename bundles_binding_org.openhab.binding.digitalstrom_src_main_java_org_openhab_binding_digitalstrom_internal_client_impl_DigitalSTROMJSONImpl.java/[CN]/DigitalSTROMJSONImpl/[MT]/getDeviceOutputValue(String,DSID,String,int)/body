@@ -1,0 +1,31 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && withParameterOffset(offset)) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_OUTPUT_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_OFFSET+ offset);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_OUTPUT_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_OFFSET+ offset);
+      }
+    }
+ else     if (name != null) {
+      response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_OUTPUT_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_OFFSET+ offset);
+    }
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject valueObject=handler.getResultJSONObject(responseObj);
+      if (valueObject != null && valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_OUTPUT_VALUE.getKey()) != null) {
+        int value=-1;
+        try {
+          value=Integer.parseInt(valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_OUTPUT_VALUE.getKey()).toString());
+        }
+ catch (        java.lang.NumberFormatException e) {
+          logger.error("NumberFormatException by getDeviceOutputValue: " + valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_OUTPUT_VALUE.getKey()).toString());
+        }
+        return value;
+      }
+    }
+  }
+  return -1;
+}

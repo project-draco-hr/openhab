@@ -1,0 +1,43 @@
+{
+  if (sceneNumber != null && isValidApartmentSceneNumber(sceneNumber.getSceneNumber())) {
+    String response=null;
+    if (groupName != null) {
+      if (withParameterGroupId(groupID)) {
+        if (force) {
+          response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_ID+ groupID+ JSONRequestConstants.INFIX_PARAMETER_GROUP_NAME+ groupName+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+        }
+ else {
+          response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_ID+ groupID+ JSONRequestConstants.INFIX_PARAMETER_GROUP_NAME+ groupName+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+        }
+      }
+ else {
+        if (force) {
+          response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_NAME+ groupName+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+        }
+ else {
+          response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_NAME+ groupName+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+        }
+      }
+    }
+ else     if (withParameterGroupId(groupID)) {
+      if (force) {
+        response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_ID+ groupID+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_GROUP_ID+ groupID+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+      }
+    }
+ else {
+      if (force) {
+        response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_APARTMENT_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+      }
+    }
+    if (handler.checkResponse(handler.toJSONObject(response))) {
+      return true;
+    }
+  }
+  return false;
+}

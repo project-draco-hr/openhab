@@ -1,0 +1,14 @@
+{
+  if (getToken() != null) {
+    boolean transmitted=digitalSTROM.subscribeEvent(getToken(),EVENT_NAME,this.ID,connectTimeout,readTimeout);
+    if (transmitted) {
+      this.setShutdown(false);
+    }
+ else {
+      logger.error("Couldn't subscribe eventListener ... maybe timeout because system is to busy ...");
+    }
+  }
+ else {
+    logger.error("Couldn't subscribe eventListener because there is no token (no connection)");
+  }
+}

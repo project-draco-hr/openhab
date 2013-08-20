@@ -1,0 +1,14 @@
+{
+  if (countdown != null) {
+    countdown.reset();
+  }
+  DigitalSTROMBindingConfigItem configItem=new DigitalSTROMBindingConfigItem();
+  configItem.init(item,bindingConfig);
+  if (configItem.isValid()) {
+    addConfiguration(item,configItem);
+  }
+ else {
+    throw new BindingConfigParseException("itemType mismatch ... wrong item:" + item.getName() + " for digitalstrom hardware");
+  }
+  return configItem;
+}

@@ -1,0 +1,22 @@
+{
+  if (apartment != null) {
+    Map<Integer,Map<Short,List<String>>> newZoneGroupMap=Collections.synchronizedMap(new HashMap<Integer,Map<Short,List<String>>>());
+    Map<String,Device> clonedDsidMap=getDsidToDeviceMap();
+    for (    Zone zone : apartment.getZoneMap().values()) {
+      Map<Short,List<String>> groupMap=new HashMap<Short,List<String>>();
+      for (      DetailedGroupInfo g : zone.getGroups()) {
+        List<String> devicesInGroup=new LinkedList<String>();
+        for (        String dsid : g.getDeviceList()) {
+          if (clonedDsidMap.containsKey(dsid)) {
+            devicesInGroup.add(dsid);
+          }
+        }
+        groupMap.put(g.getGroupID(),devicesInGroup);
+      }
+      newZoneGroupMap.put(zone.getZoneId(),groupMap);
+    }
+synchronized (digitalSTROMZoneGroupMap) {
+      digitalSTROMZoneGroupMap=newZoneGroupMap;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && sceneNumber != null) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        if (force) {
+          response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+        }
+ else {
+          response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+        }
+      }
+ else {
+        if (force) {
+          response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+        }
+ else {
+          response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+        }
+      }
+    }
+ else     if (name != null) {
+      if (force) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber()+ JSONRequestConstants.INFIX_PARAMETER_FORCE_TRUE);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_CALLSCENE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_NUMBER+ sceneNumber.getSceneNumber());
+      }
+    }
+    if (handler.checkResponse(handler.toJSONObject(response))) {
+      return true;
+    }
+  }
+  return false;
+}

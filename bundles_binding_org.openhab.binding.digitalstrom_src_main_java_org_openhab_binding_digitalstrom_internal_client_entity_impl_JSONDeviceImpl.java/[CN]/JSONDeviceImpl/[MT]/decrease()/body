@@ -1,0 +1,29 @@
+{
+  if (isDimmable()) {
+    if (outputValue == minOutputValue) {
+      if (outputValue == 0) {
+        setIsOn(false);
+      }
+      return;
+    }
+    if ((outputValue - getDimmStep()) <= minOutputValue) {
+      if (isOn) {
+        System.out.println("Device isOn");
+        outputValue=minOutputValue;
+      }
+      if (minOutputValue == 0) {
+        setIsOn(false);
+      }
+ else {
+        if (outputValue != 0) {
+          setIsOn(true);
+        }
+      }
+    }
+ else {
+      outputValue-=getDimmStep();
+      setIsOn(true);
+    }
+    notifyDeviceListener(this.dsid.getValue());
+  }
+}

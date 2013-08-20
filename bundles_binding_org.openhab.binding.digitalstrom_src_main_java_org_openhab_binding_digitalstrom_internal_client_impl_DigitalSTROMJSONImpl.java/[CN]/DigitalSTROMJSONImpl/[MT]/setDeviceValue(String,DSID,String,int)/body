@@ -1,0 +1,20 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && valueInRange(value)) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_SET_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_VALUE+ value);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_SET_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_VALUE+ value);
+      }
+    }
+ else     if (name != null) {
+      response=transport.execute(JSONRequestConstants.JSON_DEVICE_SET_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_VALUE+ value);
+    }
+    if (handler.checkResponse(handler.toJSONObject(response))) {
+      return true;
+    }
+  }
+  return false;
+}

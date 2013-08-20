@@ -1,0 +1,92 @@
+{
+  if (item != null) {
+    Device device=getDeviceMap().get(item.getName());
+    if (device != null) {
+      State state=null;
+      if (item instanceof DimmerItem) {
+        state=new PercentType(getPercent(device.getMaxOutPutValue(),device.getOutputValue()));
+      }
+ else       if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+        state=device.getOutputValue() > 0 ? OnOffType.ON : OnOffType.OFF;
+      }
+ else       if (item instanceof NumberItem) {
+        Map<String,BindingConfig> clonedConfigMap=getConfigMap();
+        BindingConfig conf=clonedConfigMap.get(item.getName());
+        if (conf instanceof DigitalSTROMBindingConfigItem) {
+          DigitalSTROMBindingConfigItem confItem=(DigitalSTROMBindingConfigItem)conf;
+          if (confItem.consumption != null) {
+            int value=-1;
+switch (confItem.consumption) {
+case ACTIVE_POWER:
+              value=device.getPowerConsumption();
+            if (value != -1) {
+              state=new DecimalType(value);
+            }
+          break;
+case OUTPUT_CURRENT:
+        value=device.getEnergyMeterValue();
+      if (value != -1) {
+        state=new DecimalType(value);
+      }
+    break;
+default :
+  break;
+}
+}
+}
+}
+ else if (item instanceof RollershutterItem) {
+Map<String,BindingConfig> clonedConfigMap=getConfigMap();
+BindingConfig conf=clonedConfigMap.get(item.getName());
+if (conf instanceof DigitalSTROMBindingConfigItem) {
+DigitalSTROMBindingConfigItem confItem=(DigitalSTROMBindingConfigItem)conf;
+if (confItem.context != null && confItem.context.equals(ContextConfig.slat)) {
+int output=getPercent(device.getMaxSlatPosition(),device.getSlatPosition());
+state=new PercentType(100 - output);
+}
+ else if (confItem.context != null && confItem.context.equals(ContextConfig.awning)) {
+int output=getPercent(device.getMaxOutPutValue(),device.getOutputValue());
+state=new PercentType(output);
+}
+ else {
+int output=getPercent(device.getMaxOutPutValue(),device.getOutputValue());
+state=new PercentType(100 - output);
+}
+}
+}
+ else if (item instanceof StringItem) {
+Map<String,BindingConfig> clonedConfigMap=getConfigMap();
+BindingConfig conf=clonedConfigMap.get(item.getName());
+if (conf instanceof DigitalSTROMBindingConfigItem) {
+DigitalSTROMBindingConfigItem confItem=(DigitalSTROMBindingConfigItem)conf;
+if (confItem.consumption != null) {
+int value=-1;
+switch (confItem.consumption) {
+case ACTIVE_POWER:
+value=device.getPowerConsumption();
+if (value != -1) {
+state=new DecimalType(value);
+}
+break;
+case OUTPUT_CURRENT:
+value=device.getEnergyMeterValue();
+if (value != -1) {
+state=new DecimalType(value);
+}
+break;
+default :
+break;
+}
+}
+}
+}
+notifyItemListener(item.getName(),state);
+}
+ else {
+logger.error("couldn't update item state, because device is null: " + item.getName());
+}
+}
+ else {
+logger.error("couldn't update item state, because item is null");
+}
+}

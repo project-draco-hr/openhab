@@ -1,0 +1,19 @@
+{
+synchronized (meterConsumptionJobBox) {
+    for (Iterator<Thread> iter=meterConsumptionJobBox.iterator(); iter.hasNext(); ) {
+      Thread thread=(Thread)iter.next();
+      if (thread instanceof MeterConsumptionOnDemand) {
+        MeterConsumptionOnDemand metCon=(MeterConsumptionOnDemand)thread;
+        if (metCon.getItemName().equals(itemName)) {
+          iter.remove();
+        }
+      }
+ else       if (thread instanceof ApartmentConsumptionJob) {
+        ApartmentConsumptionJob apCon=(ApartmentConsumptionJob)thread;
+        if (apCon.getItemName().equals(itemName)) {
+          iter.remove();
+        }
+      }
+    }
+  }
+}

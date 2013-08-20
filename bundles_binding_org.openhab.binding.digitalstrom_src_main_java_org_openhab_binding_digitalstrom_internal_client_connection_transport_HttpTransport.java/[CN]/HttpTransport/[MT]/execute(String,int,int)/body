@@ -1,0 +1,48 @@
+{
+  if (request != null && !request.trim().equals("")) {
+    HttpURLConnection connection=null;
+    StringBuilder response=new StringBuilder();
+    BufferedReader in=null;
+    try {
+      URL url=new URL(this.uri + request);
+      connection=(HttpURLConnection)url.openConnection();
+      int responseCode=-1;
+      if (connection != null) {
+        connection.setConnectTimeout(connectTimeout);
+        connection.setReadTimeout(readTimeout);
+        try {
+          connection.connect();
+          responseCode=connection.getResponseCode();
+        }
+ catch (        SocketTimeoutException e) {
+          logger.warn(e.getMessage() + " : " + request);
+          return null;
+        }
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+          String inputLine=null;
+          in=new BufferedReader(new InputStreamReader(connection.getInputStream()));
+          while ((inputLine=in.readLine()) != null) {
+            response.append(inputLine);
+          }
+          in.close();
+        }
+ else {
+          response=null;
+        }
+      }
+      if (response != null) {
+        return response.toString();
+      }
+    }
+ catch (    MalformedURLException e) {
+      logger.error("MalformedURLException by executing jsonRequest: " + request + " ; "+ e.getLocalizedMessage());
+    }
+catch (    IOException e) {
+      logger.error("IOException by executing jsonRequest: " + request + " ; "+ e.getLocalizedMessage());
+    }
+ finally {
+      if (connection != null)       connection.disconnect();
+    }
+  }
+  return null;
+}

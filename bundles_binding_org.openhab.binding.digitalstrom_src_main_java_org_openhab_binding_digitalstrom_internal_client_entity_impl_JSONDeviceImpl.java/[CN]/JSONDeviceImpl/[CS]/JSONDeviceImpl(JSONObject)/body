@@ -1,0 +1,68 @@
+{
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_NAME.getKey()) != null) {
+    this.name=object.get(JSONApiResponseKeysEnum.DEVICE_NAME.getKey()).toString();
+  }
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_ID.getKey()) != null) {
+    this.dsid=new DSID(object.get(JSONApiResponseKeysEnum.DEVICE_ID.getKey()).toString());
+  }
+ else   if (object.get(JSONApiResponseKeysEnum.DEVICE_ID_QUERY.getKey()) != null) {
+    this.dsid=new DSID(object.get(JSONApiResponseKeysEnum.DEVICE_ID_QUERY.getKey()).toString());
+  }
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_ON.getKey()) != null) {
+    this.isOn=object.get(JSONApiResponseKeysEnum.DEVICE_ON.getKey()).toString().equals("true");
+  }
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_IS_PRESENT.getKey()) != null) {
+    this.isPresent=object.get(JSONApiResponseKeysEnum.DEVICE_IS_PRESENT.getKey()).toString().equals("true");
+  }
+ else   if (object.get(JSONApiResponseKeysEnum.DEVICE_IS_PRESENT_QUERY.getKey()) != null) {
+    this.isPresent=object.get(JSONApiResponseKeysEnum.DEVICE_IS_PRESENT_QUERY.getKey()).toString().equals("true");
+  }
+  String zoneStr=null;
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_ZONE_ID.getKey()) != null) {
+    zoneStr=object.get(JSONApiResponseKeysEnum.DEVICE_ZONE_ID.getKey()).toString();
+  }
+ else   if (object.get(JSONApiResponseKeysEnum.DEVICE_ZONE_ID_QUERY.getKey()) != null) {
+    zoneStr=object.get(JSONApiResponseKeysEnum.DEVICE_ZONE_ID_QUERY.getKey()).toString();
+  }
+  if (zoneStr != null) {
+    try {
+      this.zoneId=Integer.parseInt(zoneStr);
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by parsing zoneId: " + zoneStr);
+    }
+  }
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_GROUPS.getKey()) instanceof JSONArray) {
+    JSONArray array=(JSONArray)object.get(JSONApiResponseKeysEnum.DEVICE_GROUPS.getKey());
+    for (int i=0; i < array.size(); i++) {
+      if (array.get(i) != null) {
+        String value=array.get(i).toString();
+        short tmp=-1;
+        try {
+          tmp=Short.parseShort(value);
+        }
+ catch (        java.lang.NumberFormatException e) {
+          logger.error("NumberFormatException by parsing groups: " + value);
+        }
+        if (tmp != -1) {
+          this.groupList.add(tmp);
+        }
+      }
+    }
+  }
+  if (object.get(JSONApiResponseKeysEnum.DEVICE_OUTPUT_MODE.getKey()) != null) {
+    int tmp=-1;
+    try {
+      tmp=Integer.parseInt(object.get(JSONApiResponseKeysEnum.DEVICE_OUTPUT_MODE.getKey()).toString());
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by parsing outputmode: " + object.get(JSONApiResponseKeysEnum.DEVICE_OUTPUT_MODE.getKey()).toString());
+    }
+    if (tmp != -1) {
+      if (OutputModeEnum.containsMode(tmp)) {
+        outputMode=OutputModeEnum.getMode(tmp);
+      }
+    }
+  }
+  init();
+}

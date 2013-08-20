@@ -1,0 +1,29 @@
+{
+  if (configItem.dsid != null || configItem.dsmid != null) {
+    String dsid=configItem.dsid != null ? configItem.dsid.getValue() : configItem.dsmid.getValue();
+    nameToItemMap.put(item.getName(),item);
+    if (!dsid.equals("ALL")) {
+synchronized (dsidToNameMap) {
+        if (!dsidToNameMap.containsKey(dsid)) {
+          List<String> itemNameList=new LinkedList<String>();
+          itemNameList.add(item.getName());
+          dsidToNameMap.put(dsid,itemNameList);
+        }
+ else {
+          List<String> list=dsidToNameMap.get(dsid);
+          if (list != null) {
+            if (!list.contains(item.getName())) {
+              list.add(item.getName());
+            }
+          }
+        }
+      }
+    }
+  }
+ else   if (configItem.isValidSceneItem()) {
+    nameToItemMap.put(item.getName(),item);
+  }
+ else {
+    logger.error("could not register item: " + item.getName() + " : missing a dsid or dsmid in configuration");
+  }
+}

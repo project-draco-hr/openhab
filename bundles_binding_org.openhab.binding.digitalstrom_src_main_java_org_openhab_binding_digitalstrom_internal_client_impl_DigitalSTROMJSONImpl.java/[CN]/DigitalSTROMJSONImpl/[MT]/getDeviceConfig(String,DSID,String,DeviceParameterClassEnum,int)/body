@@ -1,0 +1,24 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && class_ != null && withParameterIndex(index)) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_CONFIG + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_CLASS+ class_.getClassIndex()+ JSONRequestConstants.INFIX_PARAMETER_INDEX+ index);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_CONFIG + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_CLASS+ class_.getClassIndex()+ JSONRequestConstants.INFIX_PARAMETER_INDEX+ index);
+      }
+    }
+ else     if (name != null) {
+      response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_CONFIG + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_CLASS+ class_.getClassIndex()+ JSONRequestConstants.INFIX_PARAMETER_INDEX+ index);
+    }
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject configObject=handler.getResultJSONObject(responseObj);
+      if (configObject != null) {
+        return new JSONDeviceConfigImpl(configObject);
+      }
+    }
+  }
+  return null;
+}

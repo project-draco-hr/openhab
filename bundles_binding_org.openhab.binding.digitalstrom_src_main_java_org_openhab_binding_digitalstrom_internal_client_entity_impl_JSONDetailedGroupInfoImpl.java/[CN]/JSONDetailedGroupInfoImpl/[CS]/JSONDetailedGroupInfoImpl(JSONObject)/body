@@ -1,0 +1,22 @@
+{
+  this.deviceList=new LinkedList<String>();
+  if (jObject.get(JSONApiResponseKeysEnum.GROUP_NAME.getKey()) != null) {
+    name=jObject.get(JSONApiResponseKeysEnum.GROUP_NAME.getKey()).toString();
+  }
+  if (jObject.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()) != null) {
+    try {
+      this.groupId=Short.parseShort(jObject.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()).toString());
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by parsing groupID: " + jObject.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()).toString());
+    }
+  }
+  if (jObject.get(JSONApiResponseKeysEnum.GROUP_DEVICES.getKey()) instanceof JSONArray) {
+    JSONArray array=(JSONArray)jObject.get(JSONApiResponseKeysEnum.GROUP_DEVICES.getKey());
+    for (int i=0; i < array.size(); i++) {
+      if (array.get(i) != null) {
+        deviceList.add(array.get(i).toString());
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  if (!systemIsBusy()) {
+    int consumptionValue=-1;
+switch (this.consumptionType) {
+case ACTIVE_POWER:
+      List<CachedMeteringValue> consumptionList=digitalSTROM.getLatest(getToken(),MeteringTypeEnum.consumption,".meters(" + dsid.getValue() + ")",null);
+    if (consumptionList != null) {
+      consumptionValue=0;
+      for (      CachedMeteringValue value : consumptionList) {
+        consumptionValue+=value.getValue();
+      }
+    }
+  break;
+case ELECTRIC_METER:
+List<CachedMeteringValue> energyList=digitalSTROM.getLatest(getToken(),MeteringTypeEnum.energy,".meters(" + dsid.getValue() + ")",MeteringUnitsEnum.Wh);
+if (energyList != null) {
+consumptionValue=0;
+for (CachedMeteringValue value : energyList) {
+  consumptionValue+=value.getValue();
+}
+}
+break;
+default :
+break;
+}
+org.openhab.core.types.State state=UnDefType.NULL;
+if (consumptionValue != -1) {
+state=new DecimalType(consumptionValue);
+}
+if (this.item instanceof NumberItem) {
+((NumberItem)this.item).setState(state);
+}
+ else if (this.item instanceof StringItem) {
+((StringItem)this.item).setState(state);
+}
+}
+this.cleanUp();
+}

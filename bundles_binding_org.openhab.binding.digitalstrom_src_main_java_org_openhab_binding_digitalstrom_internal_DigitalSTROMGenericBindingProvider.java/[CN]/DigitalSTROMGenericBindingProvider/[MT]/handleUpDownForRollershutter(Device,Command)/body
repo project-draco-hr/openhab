@@ -1,0 +1,20 @@
+{
+  if (((org.openhab.core.library.types.UpDownType)cm).equals(UpDownType.UP)) {
+    boolean transmitted=digitalSTROM.callDeviceScene(getToken(),device.getDSID(),null,ZoneSceneEnum.MAXIMUM,false);
+    if (transmitted) {
+      addEcho(device.getDSID().getValue(),(short)ZoneSceneEnum.MAXIMUM.getSceneNumber());
+    }
+ else {
+      logger.error("could not transmit command UP for dsid: " + device.getDSID().getValue());
+    }
+  }
+ else   if (((org.openhab.core.library.types.UpDownType)cm).equals(UpDownType.DOWN)) {
+    boolean transmitted=digitalSTROM.callDeviceScene(getToken(),device.getDSID(),null,ZoneSceneEnum.MINIMUM,false);
+    if (transmitted) {
+      addEcho(device.getDSID().getValue(),(short)ZoneSceneEnum.MINIMUM.getSceneNumber());
+    }
+ else {
+      logger.error("could not transmit command DOWN for dsid: " + device.getDSID().getValue());
+    }
+  }
+}

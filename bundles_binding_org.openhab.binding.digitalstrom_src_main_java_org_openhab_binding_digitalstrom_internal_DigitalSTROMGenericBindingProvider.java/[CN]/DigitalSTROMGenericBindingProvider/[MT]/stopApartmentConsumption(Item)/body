@@ -1,0 +1,14 @@
+{
+  if (apartmentConsumptionThread != null) {
+    if (apartmentConsumptionThread.getItemName().equals(item.getName())) {
+      apartmentConsumptionThread.setShutdown(true);
+      try {
+        apartmentConsumptionThread.join();
+      }
+ catch (      InterruptedException e) {
+        logger.error("InterruptedException by waiting for the end of ApartmendConsumptionThread");
+      }
+      apartmentConsumptionThread=null;
+    }
+  }
+}

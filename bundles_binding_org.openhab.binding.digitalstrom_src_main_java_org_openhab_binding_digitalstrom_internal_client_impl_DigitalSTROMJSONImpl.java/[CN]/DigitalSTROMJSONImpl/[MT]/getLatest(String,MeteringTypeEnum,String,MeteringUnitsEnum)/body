@@ -1,0 +1,26 @@
+{
+  if (type != null && from != null) {
+    String response=null;
+    if (unit != null && type != MeteringTypeEnum.consumption) {
+      response=transport.execute(JSONRequestConstants.JSON_METERING_GET_LATEST + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_TYPE+ type.name()+ JSONRequestConstants.INFIX_PARAMETER_FROM+ from+ JSONRequestConstants.INFIX_PARAMETER_UNIT+ unit.name());
+    }
+ else {
+      response=transport.execute(JSONRequestConstants.JSON_METERING_GET_LATEST + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_TYPE+ type.name()+ JSONRequestConstants.INFIX_PARAMETER_FROM+ from);
+    }
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject latestObj=handler.getResultJSONObject(responseObj);
+      if (latestObj != null && latestObj.get(JSONApiResponseKeysEnum.METERING_GET_LATEST.getKey()) instanceof JSONArray) {
+        JSONArray array=(JSONArray)latestObj.get(JSONApiResponseKeysEnum.METERING_GET_LATEST.getKey());
+        List<CachedMeteringValue> list=new LinkedList<CachedMeteringValue>();
+        for (int i=0; i < array.size(); i++) {
+          if (array.get(i) instanceof JSONObject) {
+            list.add(new JSONCachedMeteringValueImpl((JSONObject)array.get(i)));
+          }
+        }
+        return list;
+      }
+    }
+  }
+  return null;
+}

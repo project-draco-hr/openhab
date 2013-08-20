@@ -1,0 +1,21 @@
+{
+  List<String> meterList=new LinkedList<String>();
+  String response=transport.execute(JSONRequestConstants.JSON_PROPERTY_QUERY + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_QUERY+ JSONRequestConstants.QUERY_GET_METERLIST);
+  JSONObject responseObj=handler.toJSONObject(response);
+  if (handler.checkResponse(responseObj)) {
+    JSONObject obj=handler.getResultJSONObject(responseObj);
+    if (obj != null && obj.get(JSONApiResponseKeysEnum.DS_METER_QUERY.getKey()) instanceof JSONArray) {
+      JSONArray array=(JSONArray)obj.get(JSONApiResponseKeysEnum.DS_METER_QUERY.getKey());
+      for (int i=0; i < array.size(); i++) {
+        if (array.get(i) instanceof JSONObject) {
+          JSONObject elem=(JSONObject)array.get(i);
+          @SuppressWarnings("unchecked") Collection<String> k=elem.values();
+          for (          String s : k) {
+            meterList.add(s);
+          }
+        }
+      }
+    }
+  }
+  return meterList;
+}

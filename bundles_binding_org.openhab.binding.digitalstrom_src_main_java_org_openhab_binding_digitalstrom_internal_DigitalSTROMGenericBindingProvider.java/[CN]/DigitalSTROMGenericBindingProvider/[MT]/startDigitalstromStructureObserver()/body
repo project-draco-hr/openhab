@@ -1,0 +1,15 @@
+{
+  if (digitalSTROMApartmentStructureObserver != null) {
+    digitalSTROMApartmentStructureObserver.setShutdown(true);
+    try {
+      digitalSTROMApartmentStructureObserver.join();
+    }
+ catch (    InterruptedException e) {
+      logger.error("InterruptedException at digitalSTROMStructureObserver ... " + e.getLocalizedMessage());
+    }
+  }
+  if (!shutdown) {
+    digitalSTROMApartmentStructureObserver=new DigitalSTROMApartmentStructureObserver();
+    digitalSTROMApartmentStructureObserver.start();
+  }
+}

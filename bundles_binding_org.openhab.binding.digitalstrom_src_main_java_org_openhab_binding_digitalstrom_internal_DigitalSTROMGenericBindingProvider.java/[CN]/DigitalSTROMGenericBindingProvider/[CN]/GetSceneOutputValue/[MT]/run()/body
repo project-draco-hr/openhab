@@ -1,0 +1,12 @@
+{
+  if (!isReadingFile()) {
+    setSensorReading(true);
+    DeviceConfig config=digitalSTROM.getDeviceConfig(getToken(),this.device.getDSID(),null,DeviceParameterClassEnum.CLASS_128,this.sceneId);
+    setSensorReading(false);
+    if (config != null) {
+      this.device.setSceneOutputValue(this.sceneId,(short)config.getValue());
+      logger.info("UPDATED sceneOutputValue for dsid: " + this.device.getDSID() + ", sceneID: "+ sceneId+ ", value: "+ config.getValue());
+    }
+  }
+  this.cleanUp();
+}

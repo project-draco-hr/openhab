@@ -1,0 +1,14 @@
+{
+synchronized (meterConsumptionThreadList) {
+    for (Iterator<TimedMeterConsumptionThread> iter=meterConsumptionThreadList.iterator(); iter.hasNext(); ) {
+      TimedMeterConsumptionThread thread=(TimedMeterConsumptionThread)iter.next();
+      if (thread instanceof TimedMeterConsumptionThread) {
+        TimedMeterConsumptionThread timedMetCon=(TimedMeterConsumptionThread)thread;
+        if (timedMetCon.getItemName().equals(itemName)) {
+          timedMetCon.setShutdown(true);
+          iter.remove();
+        }
+      }
+    }
+  }
+}

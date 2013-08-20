@@ -1,0 +1,24 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && sceneID > -1) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SCENE_MODE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_ID+ sceneID);
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SCENE_MODE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_SCENE_ID+ sceneID);
+      }
+    }
+ else     if (name != null) {
+      response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SCENE_MODE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SCENE_ID+ sceneID);
+    }
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject sceneSpec=handler.getResultJSONObject(responseObj);
+      if (sceneSpec != null) {
+        return new JSONDeviceSceneSpecImpl(sceneSpec);
+      }
+    }
+  }
+  return null;
+}

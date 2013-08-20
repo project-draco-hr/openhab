@@ -1,0 +1,64 @@
+{
+switch (configKey) {
+case dsid:
+    this.dsid=new DSID(valueStr);
+  break;
+case consumption:
+try {
+  this.consumption=ConsumptionConfig.valueOf(valueStr);
+}
+ catch (Exception e) {
+  logger.error("WRONG consumption type: " + valueStr + "; "+ e.getLocalizedMessage());
+}
+if (consumption == null) {
+this.consumption=ConsumptionConfig.ACTIVE_POWER;
+}
+break;
+case timeinterval:
+int interval=-1;
+try {
+interval=Integer.parseInt(valueStr);
+}
+ catch (java.lang.NumberFormatException e) {
+logger.error("Numberformat exception by parsing a string to int in timeinterval: " + valueStr);
+}
+if (interval != -1) {
+this.timeinterval=interval;
+}
+break;
+case dsmid:
+this.dsmid=new DSID(valueStr);
+break;
+case context:
+if (valueStr.toLowerCase().equals(ContextConfig.slat.name())) {
+this.context=ContextConfig.slat;
+}
+ else if (valueStr.toLowerCase().equals(ContextConfig.apartment.name())) {
+this.context=ContextConfig.apartment;
+}
+ else if (valueStr.toLowerCase().equals(ContextConfig.zone.name())) {
+this.context=ContextConfig.zone;
+}
+ else if (valueStr.toLowerCase().equals(ContextConfig.awning.name())) {
+this.context=ContextConfig.awning;
+}
+break;
+case groupid:
+try {
+this.groupID=Short.parseShort(valueStr);
+}
+ catch (java.lang.NumberFormatException e) {
+logger.error("Numberformat exception by parsing a string to short: " + valueStr + "; "+ e.getLocalizedMessage());
+}
+break;
+case zoneid:
+try {
+this.zoneID=Integer.parseInt(valueStr);
+}
+ catch (java.lang.NumberFormatException e) {
+logger.error("Numberformat exception by parsing a string to integer: " + valueStr + "; "+ e.getLocalizedMessage());
+}
+break;
+default :
+}
+}

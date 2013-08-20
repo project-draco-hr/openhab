@@ -1,0 +1,15 @@
+{
+  if (isDimmable()) {
+    if (outputValue == maxOutputValue) {
+      return;
+    }
+    if ((outputValue + getDimmStep()) > maxOutputValue) {
+      outputValue=maxOutputValue;
+    }
+ else {
+      outputValue+=getDimmStep();
+    }
+    setIsOn(true);
+    notifyDeviceListener(this.dsid.getValue());
+  }
+}

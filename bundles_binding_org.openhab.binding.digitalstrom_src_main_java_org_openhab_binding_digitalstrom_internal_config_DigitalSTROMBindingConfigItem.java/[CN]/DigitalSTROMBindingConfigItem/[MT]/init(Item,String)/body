@@ -1,0 +1,20 @@
+{
+  this.itemName=item.getName();
+  this.item=item;
+  String[] elements=bindingConfig.trim().split("#");
+  for (int i=0; i < elements.length; i++) {
+    String[] pairs=elements[i].trim().split(":");
+    if (pairs.length == 2) {
+      DigitalSTROMBindingConfigEnum configKey=null;
+      String keyStr=pairs[0].trim();
+      String valueStr=pairs[1].trim();
+      configKey=parseKey(keyStr);
+      if (configKey == null)       throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: key is NULL");
+      if (valueStr.equals(""))       throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: value is NULL");
+ else       parseValue(configKey,valueStr);
+    }
+ else {
+      throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: you have used the symbol ':' more than one time ");
+    }
+  }
+}

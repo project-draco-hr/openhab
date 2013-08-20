@@ -1,0 +1,12 @@
+{
+  name=object.get(JSONApiResponseKeysEnum.EVENT_NAME.getKey()).toString();
+  if (object.get(JSONApiResponseKeysEnum.EVENT_PROPERTIES.getKey()) instanceof JSONObject) {
+    JSONObject propObj=(JSONObject)object.get(JSONApiResponseKeysEnum.EVENT_PROPERTIES.getKey());
+    @SuppressWarnings("unchecked") Set<String> keys=propObj.keySet();
+    for (    String key : keys) {
+      if (EventPropertyEnum.containsId(key)) {
+        addProperty(EventPropertyEnum.getProperty(key),propObj.get(key).toString());
+      }
+    }
+  }
+}

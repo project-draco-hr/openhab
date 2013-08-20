@@ -1,0 +1,16 @@
+{
+synchronized (deviceMap) {
+    if (!deviceMap.containsKey(itemName)) {
+      deviceMap.put(itemName,dev);
+      dev.addDeviceListener(this);
+    }
+ else {
+      logger.warn("device already exists in deviceMap: " + itemName);
+    }
+  }
+synchronized (dsidToDeviceMap) {
+    if (!dsidToDeviceMap.containsKey(dev.getDSID().getValue())) {
+      dsidToDeviceMap.put(dev.getDSID().getValue(),dev);
+    }
+  }
+}

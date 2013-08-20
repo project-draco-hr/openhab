@@ -1,0 +1,18 @@
+{
+  if (digitalSTROMEventListener != null) {
+    if (digitalSTROMEventListener.unsubscribe()) {
+      logger.info("SUCCESSFULLY unsubscribed eventListener");
+    }
+ else {
+      logger.info("could NOT unsubscribe eventListener");
+    }
+    digitalSTROMEventListener.setShutdown(true);
+    try {
+      digitalSTROMEventListener.join();
+    }
+ catch (    InterruptedException e) {
+      logger.error("InterruptedException by waiting for the end of eventListener ... " + e.getLocalizedMessage());
+    }
+    digitalSTROMEventListener=null;
+  }
+}

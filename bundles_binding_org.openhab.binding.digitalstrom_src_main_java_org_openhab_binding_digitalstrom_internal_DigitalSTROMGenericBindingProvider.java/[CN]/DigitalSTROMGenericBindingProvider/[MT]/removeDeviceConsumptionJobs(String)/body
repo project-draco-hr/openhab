@@ -1,0 +1,13 @@
+{
+synchronized (deviceConsumptionJobBox) {
+    for (Iterator<Thread> iter=deviceConsumptionJobBox.iterator(); iter.hasNext(); ) {
+      Thread thread=(Thread)iter.next();
+      if (thread instanceof DeviceConsumption) {
+        DeviceConsumption devCon=(DeviceConsumption)thread;
+        if (devCon.getDsid().equals(dsid)) {
+          iter.remove();
+        }
+      }
+    }
+  }
+}

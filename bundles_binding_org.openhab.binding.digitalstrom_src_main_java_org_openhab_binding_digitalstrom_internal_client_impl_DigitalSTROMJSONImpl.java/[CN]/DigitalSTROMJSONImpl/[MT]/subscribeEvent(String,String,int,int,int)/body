@@ -1,0 +1,10 @@
+{
+  if (name != null && !name.trim().equals("") && withParameterSubscriptionID(subscriptionID)) {
+    String response=null;
+    response=transport.execute(JSONRequestConstants.JSON_EVENT_SUBSCRIBE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SUBSCRIPTION_ID+ subscriptionID,connectTimeout,readTimeout);
+    if (handler.checkResponse(handler.toJSONObject(response))) {
+      return true;
+    }
+  }
+  return false;
+}

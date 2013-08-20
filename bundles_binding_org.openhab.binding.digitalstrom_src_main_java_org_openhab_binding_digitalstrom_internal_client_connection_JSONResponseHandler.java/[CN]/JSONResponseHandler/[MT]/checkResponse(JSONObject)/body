@@ -1,0 +1,10 @@
+{
+  if (jsonResponse == null)   return false;
+ else   if (jsonResponse.get(JSONApiResponseKeysEnum.RESPONSE_OK.getKey()) != null) {
+    return jsonResponse.get(JSONApiResponseKeysEnum.RESPONSE_OK.getKey()).toString().equals(JSONApiResponseKeysEnum.RESPONSE_SUCCESSFUL.getKey());
+  }
+ else {
+    logger.error("error in json request. Error message : " + jsonResponse.get(JSONApiResponseKeysEnum.RESPONSE_MESSAGE).toString());
+  }
+  return false;
+}

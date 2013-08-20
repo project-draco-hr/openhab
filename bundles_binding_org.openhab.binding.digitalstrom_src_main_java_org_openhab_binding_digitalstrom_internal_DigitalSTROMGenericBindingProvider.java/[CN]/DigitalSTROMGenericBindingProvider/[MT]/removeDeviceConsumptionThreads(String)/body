@@ -1,0 +1,14 @@
+{
+synchronized (deviceConsumptionThreadList) {
+    for (Iterator<TimedDeviceConsumptionThread> iter=deviceConsumptionThreadList.iterator(); iter.hasNext(); ) {
+      TimedDeviceConsumptionThread thread=(TimedDeviceConsumptionThread)iter.next();
+      if (thread instanceof TimedDeviceConsumptionThread) {
+        TimedDeviceConsumptionThread timedDevCon=(TimedDeviceConsumptionThread)thread;
+        if (timedDevCon.getDeviceDsid().equals(dsid)) {
+          timedDevCon.setShutdown(true);
+          iter.remove();
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  if (runnerThread != null) {
+    runnerThread.setShutdown(true);
+    try {
+      runnerThread.join();
+    }
+ catch (    InterruptedException e) {
+      logger.error("InterruptedException at runner thread ... " + e.getLocalizedMessage());
+    }
+  }
+  if (!shutdown) {
+    runnerThread=new RunnerThread();
+    runnerThread.start();
+  }
+}

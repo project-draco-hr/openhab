@@ -1,0 +1,31 @@
+{
+  if (((dsid != null && dsid.getValue() != null) || name != null) && sensorIndex != null) {
+    String response=null;
+    if (dsid != null && dsid.getValue() != null) {
+      if (name != null) {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SENSOR_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SENSOR_INDEX+ sensorIndex.getIndex());
+      }
+ else {
+        response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SENSOR_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_DSID+ dsid.getValue()+ JSONRequestConstants.INFIX_PARAMETER_SENSOR_INDEX+ sensorIndex.getIndex());
+      }
+    }
+ else     if (name != null) {
+      response=transport.execute(JSONRequestConstants.JSON_DEVICE_GET_SENSOR_VALUE + JSONRequestConstants.PARAMETER_TOKEN + token+ JSONRequestConstants.INFIX_PARAMETER_NAME+ name+ JSONRequestConstants.INFIX_PARAMETER_SENSOR_INDEX+ sensorIndex.getIndex());
+    }
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject valueObject=handler.getResultJSONObject(responseObj);
+      if (valueObject != null && valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_SENSOR_VALUE_SENSOR_VALUE.getKey()) != null) {
+        short value=-1;
+        try {
+          value=Short.parseShort(valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_SENSOR_VALUE_SENSOR_VALUE.getKey()).toString());
+        }
+ catch (        java.lang.NumberFormatException e) {
+          logger.error("NumberFormatException by getDeviceSensorValue: " + valueObject.get(JSONApiResponseKeysEnum.DEVICE_GET_SENSOR_VALUE_SENSOR_VALUE.getKey()).toString());
+        }
+        return value;
+      }
+    }
+  }
+  return -1;
+}

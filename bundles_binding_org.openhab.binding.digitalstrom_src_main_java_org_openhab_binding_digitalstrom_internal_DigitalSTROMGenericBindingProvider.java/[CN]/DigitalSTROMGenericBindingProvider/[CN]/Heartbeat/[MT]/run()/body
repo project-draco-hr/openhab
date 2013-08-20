@@ -1,0 +1,20 @@
+{
+  while (!this.shutdown) {
+    if (!serverIsFound()) {
+      login();
+    }
+ else     if (!systemIsBusy()) {
+      if (digitalSTROM.getTime(getToken()) == -1) {
+        logger.warn("test method failed ... new login now");
+        login();
+      }
+    }
+    try {
+      sleep(this.sleepTime);
+    }
+ catch (    InterruptedException e) {
+      this.setShutdown(true);
+      logger.error("Heartbeat thread CRASHED ... " + e.getLocalizedMessage());
+    }
+  }
+}

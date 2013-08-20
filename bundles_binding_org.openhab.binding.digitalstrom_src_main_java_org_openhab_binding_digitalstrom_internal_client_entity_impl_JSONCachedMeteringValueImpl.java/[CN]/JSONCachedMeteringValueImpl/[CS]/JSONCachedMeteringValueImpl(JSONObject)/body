@@ -1,0 +1,16 @@
+{
+  if (jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_DSID.getKey()) != null) {
+    this.dsid=new DSID(jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_DSID.getKey()).toString());
+  }
+  if (jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_VALUE.getKey()) != null) {
+    try {
+      this.value=Double.parseDouble(jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_VALUE.getKey()).toString());
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by getting value: " + jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_VALUE.getKey()).toString());
+    }
+  }
+  if (jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_DATE.getKey()) != null) {
+    this.date=jObject.get(JSONApiResponseKeysEnum.METERING_GET_LATEST_DATE.getKey()).toString();
+  }
+}

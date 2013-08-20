@@ -1,0 +1,18 @@
+{
+  this.item=item;
+  this.dsid=new DSID(dsid);
+  this.sleepTime=timeinterval;
+  Map<String,BindingConfig> clonedConfigMap=getConfigMap();
+  BindingConfig conf=clonedConfigMap.get(item.getName());
+  if (conf instanceof DigitalSTROMBindingConfigItem) {
+    DigitalSTROMBindingConfigItem confItem=(DigitalSTROMBindingConfigItem)conf;
+    if (confItem.dsmid != null) {
+      if (confItem.consumption != null) {
+        this.consumptionType=confItem.consumption;
+      }
+ else {
+        this.consumptionType=ConsumptionConfig.ACTIVE_POWER;
+      }
+    }
+  }
+}

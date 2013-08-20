@@ -1,0 +1,18 @@
+{
+  if (loginToken != null && !loginToken.trim().equals("")) {
+    String response=null;
+    response=transport.execute(JSONRequestConstants.JSON_SYSTEM_LOGIN_APPLICATION + loginToken);
+    JSONObject responseObj=handler.toJSONObject(response);
+    if (handler.checkResponse(responseObj)) {
+      JSONObject obj=handler.getResultJSONObject(responseObj);
+      String tokenStr=null;
+      if (obj != null && obj.get(JSONApiResponseKeysEnum.SYSTEM_LOGIN.getKey()) != null) {
+        tokenStr=obj.get(JSONApiResponseKeysEnum.SYSTEM_LOGIN.getKey()).toString();
+      }
+      if (tokenStr != null) {
+        return tokenStr;
+      }
+    }
+  }
+  return null;
+}

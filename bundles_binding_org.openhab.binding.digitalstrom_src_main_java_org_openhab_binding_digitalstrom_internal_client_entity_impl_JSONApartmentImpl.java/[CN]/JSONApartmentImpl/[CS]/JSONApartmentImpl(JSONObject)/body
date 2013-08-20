@@ -1,0 +1,11 @@
+{
+  if (jObject.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES.getKey()) instanceof JSONArray) {
+    JSONArray zones=(JSONArray)jObject.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES.getKey());
+    for (int i=0; i < zones.size(); i++) {
+      if (zones.get(i) instanceof org.json.simple.JSONObject) {
+        Zone zone=new JSONZoneImpl((JSONObject)zones.get(i));
+        zoneMap.put(zone.getZoneId(),zone);
+      }
+    }
+  }
+}

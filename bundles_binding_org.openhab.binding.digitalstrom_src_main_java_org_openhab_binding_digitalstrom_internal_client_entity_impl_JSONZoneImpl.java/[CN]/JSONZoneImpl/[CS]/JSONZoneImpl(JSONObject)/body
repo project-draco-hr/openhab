@@ -1,0 +1,36 @@
+{
+  this.groupList=new LinkedList<DetailedGroupInfo>();
+  this.deviceList=new LinkedList<Device>();
+  if (object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_NAME.getKey()) != null) {
+    this.name=object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_NAME.getKey()).toString();
+  }
+  String zoneIdStr=null;
+  if (object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_ID.getKey()) != null) {
+    zoneIdStr=object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_ID.getKey()).toString();
+  }
+  if (zoneIdStr == null) {
+    if (object.get(JSONApiResponseKeysEnum.QUERY_ZONE_ID.getKey()) != null) {
+      zoneIdStr=object.get(JSONApiResponseKeysEnum.QUERY_ZONE_ID.getKey()).toString();
+    }
+  }
+  if (zoneIdStr != null) {
+    try {
+      this.zoneId=Integer.parseInt(zoneIdStr);
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by getting zoneID: " + zoneIdStr);
+    }
+  }
+  if (object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_DEVICES.getKey()) instanceof org.json.simple.JSONArray) {
+    JSONArray list=(JSONArray)object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_DEVICES.getKey());
+    for (int i=0; i < list.size(); i++) {
+      this.deviceList.add(new JSONDeviceImpl((JSONObject)list.get(i)));
+    }
+  }
+  if (object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_GROUPS.getKey()) instanceof org.json.simple.JSONArray) {
+    JSONArray groupList=(JSONArray)object.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE_ZONES_GROUPS.getKey());
+    for (int i=0; i < groupList.size(); i++) {
+      this.groupList.add(new JSONDetailedGroupInfoImpl((JSONObject)groupList.get(i)));
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  if (!isReadingFile()) {
+    setSensorReading(true);
+    int value=digitalSTROM.getDeviceOutputValue(getToken(),this.device.getDSID(),null,this.index);
+    setSensorReading(false);
+    logger.info("OutputValueThread on Demand : " + value + ", DSID: "+ this.device.getDSID().getValue());
+    if (value != 1) {
+switch (this.index) {
+case 0:
+        this.device.setOutputValue(value);
+      break;
+case 4:
+    this.device.setSlatPosition(value);
+  break;
+default :
+break;
+}
+}
+}
+this.cleanUp();
+}

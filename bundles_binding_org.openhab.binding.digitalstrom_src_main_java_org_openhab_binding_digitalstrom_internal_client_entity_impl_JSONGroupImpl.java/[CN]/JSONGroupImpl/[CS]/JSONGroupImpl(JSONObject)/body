@@ -1,0 +1,13 @@
+{
+  if (object.get(JSONApiResponseKeysEnum.GROUP_NAME.getKey()) != null) {
+    name=object.get(JSONApiResponseKeysEnum.GROUP_NAME.getKey()).toString();
+  }
+  if (object.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()) != null) {
+    try {
+      this.groupId=Short.parseShort(object.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()).toString());
+    }
+ catch (    java.lang.NumberFormatException e) {
+      logger.error("NumberFormatException by getting groupID: " + object.get(JSONApiResponseKeysEnum.GROUP_ID.getKey()).toString());
+    }
+  }
+}

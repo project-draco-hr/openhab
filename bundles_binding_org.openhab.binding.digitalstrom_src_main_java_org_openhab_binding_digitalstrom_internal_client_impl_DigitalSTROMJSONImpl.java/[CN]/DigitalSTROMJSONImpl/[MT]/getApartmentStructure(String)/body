@@ -1,0 +1,12 @@
+{
+  String response=null;
+  response=transport.execute(JSONRequestConstants.JSON_APARTMENT_GET_STRUCTURE + JSONRequestConstants.PARAMETER_TOKEN + token);
+  JSONObject responseObj=handler.toJSONObject(response);
+  if (handler.checkResponse(responseObj)) {
+    JSONObject apartObj=handler.getResultJSONObject(responseObj);
+    if (apartObj != null && apartObj.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE.getKey()) != null) {
+      return new JSONApartmentImpl((JSONObject)apartObj.get(JSONApiResponseKeysEnum.APARTMENT_GET_STRUCTURE.getKey()));
+    }
+  }
+  return null;
+}

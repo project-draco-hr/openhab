@@ -1,0 +1,14 @@
+{
+  Map<String,BindingConfig> confMap=getConfigMap();
+  Collection<Item> items=getNameToItemMap().values();
+  if (items != null) {
+    for (    Item item : items) {
+      DigitalSTROMBindingConfigItem confItem=(DigitalSTROMBindingConfigItem)confMap.get(item.getName());
+      if (confItem != null) {
+        if (!confItem.isValidMeterItem() && !confItem.isValidSceneItem()) {
+          updateItemState(item);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  String response=null;
+  response=transport.execute(JSONRequestConstants.JSON_SYSTEM_TIME + JSONRequestConstants.PARAMETER_TOKEN + token);
+  JSONObject responseObj=handler.toJSONObject(response);
+  if (handler.checkResponse(responseObj)) {
+    JSONObject obj=handler.getResultJSONObject(responseObj);
+    if (obj != null && obj.get(JSONApiResponseKeysEnum.SYSTEM_GET_TIME.getKey()) != null) {
+      int time=-1;
+      try {
+        time=Integer.parseInt(obj.get(JSONApiResponseKeysEnum.SYSTEM_GET_TIME.getKey()).toString());
+      }
+ catch (      java.lang.NumberFormatException e) {
+        logger.error("NumberFormatException by getTime: " + obj.get(JSONApiResponseKeysEnum.SYSTEM_GET_TIME.getKey()).toString());
+      }
+      return time;
+    }
+  }
+  return -1;
+}

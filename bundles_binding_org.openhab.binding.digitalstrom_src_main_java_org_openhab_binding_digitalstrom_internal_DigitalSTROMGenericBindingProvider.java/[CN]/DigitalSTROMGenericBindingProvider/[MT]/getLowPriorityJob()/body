@@ -1,0 +1,10 @@
+{
+  Thread job=null;
+synchronized (lowPriorityJobBox) {
+    if (lowPriorityJobBox.size() > 0) {
+      job=lowPriorityJobBox.get(0);
+      lowPriorityJobBox.remove(job);
+    }
+  }
+  return job;
+}
