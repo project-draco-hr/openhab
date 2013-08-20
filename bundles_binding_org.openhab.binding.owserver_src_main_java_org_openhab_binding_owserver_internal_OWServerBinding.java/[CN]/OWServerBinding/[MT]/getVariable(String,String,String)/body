@@ -1,0 +1,43 @@
+{
+  DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+  DocumentBuilder builder=null;
+  try {
+    builder=factory.newDocumentBuilder();
+  }
+ catch (  ParserConfigurationException e) {
+    logger.error("Error parsing OWServer XML response " + e.getMessage());
+  }
+  Document document=null;
+  try {
+    InputSource is=new InputSource(new StringReader(response));
+    document=builder.parse(is);
+  }
+ catch (  SAXException e) {
+    logger.error("Error reading OWServer XML response " + e.getMessage());
+  }
+catch (  IOException e) {
+    logger.error("Error reading OWServer XML response " + e.getMessage());
+  }
+  NodeList nodeList=document.getDocumentElement().getChildNodes();
+  for (int i=0; i < nodeList.getLength(); i++) {
+    Node node=nodeList.item(i);
+    if (node.getNodeName().startsWith("owd_")) {
+      boolean romMatch=false;
+      NodeList childNodes=node.getChildNodes();
+      for (int j=0; j < childNodes.getLength(); j++) {
+        Node cNode=childNodes.item(j);
+        if (cNode instanceof Element) {
+          String content=cNode.getLastChild().getTextContent().trim();
+          if (cNode.getNodeName().equals("ROMId") & content.equals(romId)) {
+            romMatch=true;
+          }
+          String nname=cNode.getNodeName();
+          if (nname.equals(name) & romMatch == true) {
+            return content;
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

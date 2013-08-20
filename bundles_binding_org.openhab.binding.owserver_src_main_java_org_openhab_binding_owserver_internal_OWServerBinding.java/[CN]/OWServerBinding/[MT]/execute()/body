@@ -1,0 +1,55 @@
+{
+  for (  OWServerBindingProvider provider : providers) {
+    for (    String itemName : provider.getInBindingItemNames()) {
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        logger.debug("Item '{}' is about to be refreshed now",itemName);
+        String unit=provider.getServerId(itemName);
+        OWServerConfig server=serverList.get(unit);
+        needsUpdate=false;
+        if (server == null) {
+          needsUpdate=false;
+          logger.error("Unknown OW server referenced: " + unit);
+        }
+ else {
+          age=System.currentTimeMillis() - server.lastUpdate;
+          if (age >= cacheDuration)           needsUpdate=true;
+        }
+        String response=null;
+        if (needsUpdate == true) {
+          String address="http://" + server.host + "/details.xml";
+          logger.debug("Getting OWSERVER data from " + address);
+          response=HttpUtil.executeUrl("GET",address,timeout);
+          server.cache=response;
+          if (response == null) {
+            server.lastUpdate=(long)0;
+            logger.error("No response received from '{}'",address);
+          }
+ else {
+            server.lastUpdate=System.currentTimeMillis();
+          }
+          serverList.put(address,server);
+        }
+ else {
+          logger.debug("Using OWSERVER cache");
+          response=server.cache;
+        }
+        if (response != null) {
+          String value=getVariable(response,provider.getRomId(itemName),provider.getName(itemName));
+          if (value != null) {
+            Class<? extends Item> itemType=provider.getItemType(itemName);
+            State state=createState(itemType,value);
+            eventPublisher.postUpdate(itemName,state);
+          }
+        }
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}

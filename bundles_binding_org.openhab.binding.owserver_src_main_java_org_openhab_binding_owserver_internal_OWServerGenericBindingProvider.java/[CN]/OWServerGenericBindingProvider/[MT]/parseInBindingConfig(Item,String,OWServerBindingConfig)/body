@@ -1,0 +1,18 @@
+{
+  Matcher matcher=IN_BINDING_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("bindingConfig '" + bindingConfig + "' doesn't represent a valid in-binding-configuration. A valid configuration is matched by the RegExp '"+ IN_BINDING_PATTERN+ "'");
+  }
+  matcher.reset();
+  OWServerBindingConfigElement configElement;
+  while (matcher.find()) {
+    configElement=new OWServerBindingConfigElement();
+    configElement.serverId=matcher.group(1);
+    configElement.romId=matcher.group(2);
+    configElement.name=matcher.group(3);
+    configElement.refreshInterval=Integer.valueOf(matcher.group(4)).intValue();
+    logger.debug("OWSERVER: " + configElement);
+    config.put(IN_BINDING_KEY,configElement);
+  }
+  return config;
+}

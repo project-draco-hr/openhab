@@ -1,0 +1,47 @@
+{
+  if (config != null) {
+    Enumeration<String> keys=config.keys();
+    if (serverList == null) {
+      serverList=new HashMap<String,OWServerConfig>();
+    }
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String serverId=matcher.group(1);
+      OWServerConfig deviceConfig=serverList.get(serverId);
+      if (deviceConfig == null) {
+        deviceConfig=new OWServerConfig();
+        serverList.put(serverId,deviceConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("host".equals(configKey)) {
+        deviceConfig.host=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"The given OWServer configKey '" + configKey + "' is unknown");
+      }
+    }
+    String timeoutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(timeoutString)) {
+      timeout=Integer.parseInt(timeoutString);
+    }
+    String granularityString=(String)config.get("granularity");
+    if (StringUtils.isNotBlank(granularityString)) {
+      granularity=Integer.parseInt(granularityString);
+    }
+    String cacheString=(String)config.get("cache");
+    if (StringUtils.isNotBlank(cacheString)) {
+      cacheDuration=Integer.parseInt(cacheString);
+    }
+    setProperlyConfigured(true);
+  }
+}

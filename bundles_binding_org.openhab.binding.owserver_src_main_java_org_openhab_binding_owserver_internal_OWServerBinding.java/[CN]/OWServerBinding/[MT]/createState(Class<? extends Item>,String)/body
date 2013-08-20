@@ -1,0 +1,23 @@
+{
+  try {
+    if (itemType.isAssignableFrom(NumberItem.class)) {
+      return DecimalType.valueOf(transformedResponse);
+    }
+ else     if (itemType.isAssignableFrom(ContactItem.class)) {
+      return OpenClosedType.valueOf(transformedResponse);
+    }
+ else     if (itemType.isAssignableFrom(SwitchItem.class)) {
+      return OnOffType.valueOf(transformedResponse);
+    }
+ else     if (itemType.isAssignableFrom(RollershutterItem.class)) {
+      return PercentType.valueOf(transformedResponse);
+    }
+ else {
+      return StringType.valueOf(transformedResponse);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Couldn't create state of type '{}' for value '{}'",itemType,transformedResponse);
+    return StringType.valueOf(transformedResponse);
+  }
+}
