@@ -1,0 +1,11 @@
+{
+  if (commandLine == null || source == null) {
+    throw new TransformationException("the given parameters 'commandLine' and 'source' must not be null");
+  }
+  logger.debug("about to transform '{}' by the commanline '{}'",source,commandLine);
+  commandLine=String.format(commandLine,source);
+  long startTime=System.currentTimeMillis();
+  String result=ExecUtil.executeCommandLineAndWaitResponse(commandLine,5000);
+  logger.trace("command line execution elapsed {} ms",System.currentTimeMillis() - startTime);
+  return result;
+}
