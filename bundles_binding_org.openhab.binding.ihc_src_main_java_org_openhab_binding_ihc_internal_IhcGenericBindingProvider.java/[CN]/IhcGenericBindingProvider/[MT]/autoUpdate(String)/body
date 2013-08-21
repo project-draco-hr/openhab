@@ -1,7 +1,9 @@
 {
   if (providesBindingFor(itemName)) {
-    logger.debug("AutoUpdate for item {} canceled",itemName);
-    return false;
+    if (!isOutBindingOnly(itemName)) {
+      logger.debug("AutoUpdate for item {} canceled",itemName);
+      return Boolean.FALSE;
+    }
   }
   return null;
 }
