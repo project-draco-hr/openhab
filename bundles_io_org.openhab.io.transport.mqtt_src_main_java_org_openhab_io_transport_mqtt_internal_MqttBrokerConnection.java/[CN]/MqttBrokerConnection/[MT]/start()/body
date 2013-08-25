@@ -1,0 +1,18 @@
+{
+  if (StringUtils.isEmpty(url)) {
+    logger.debug("No url defined for MQTT broker connection '{}'. Not starting.",name);
+    return;
+  }
+  logger.info("Starting MQTT broker connection '{}'",name);
+  openConnection();
+  if (reconnectTimer != null) {
+    reconnectTimer.cancel();
+  }
+  for (  MqttMessageConsumer c : consumers) {
+    startConsumer(c);
+  }
+  for (  MqttMessageProducer p : producers) {
+    startProducer(p);
+  }
+  started=true;
+}

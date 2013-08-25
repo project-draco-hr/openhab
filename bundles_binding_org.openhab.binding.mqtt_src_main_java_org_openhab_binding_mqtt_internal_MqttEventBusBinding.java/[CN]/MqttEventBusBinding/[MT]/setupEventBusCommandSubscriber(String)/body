@@ -1,0 +1,27 @@
+{
+  if (StringUtils.isBlank(topic)) {
+    logger.debug("No topic defined for Event Bus Command Subsriber");
+    return;
+  }
+  try {
+    topic=StringUtils.replace(topic,"${item}","+");
+    commandSubscriber=new MqttMessageSubscriber(brokerName + ":" + topic+ ":command:default"){
+      @Override public void processMessage(      String topic,      byte[] message){
+        Command command;
+        try {
+          command=getCommand(new String(message));
+        }
+ catch (        Exception e) {
+          logger.error("Error parsing command from message.",e);
+          return;
+        }
+        eventPublisher.postCommand(getItemNameFromTopic(getTopic(),topic),command);
+      }
+    }
+;
+    mqttService.registerMessageConsumer(brokerName,commandSubscriber);
+  }
+ catch (  Exception e) {
+    logger.error("Could not create event bus command subscriber: {}",e.getMessage());
+  }
+}

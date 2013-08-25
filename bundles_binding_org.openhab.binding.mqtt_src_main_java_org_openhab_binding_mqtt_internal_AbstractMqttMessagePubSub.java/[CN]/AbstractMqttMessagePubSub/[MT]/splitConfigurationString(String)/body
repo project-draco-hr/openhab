@@ -1,0 +1,10 @@
+{
+  if (StringUtils.isEmpty(configString)) {
+    return new String[0];
+  }
+  String[] result=StringUtils.replaceEachRepeatedly(configString,new String[]{"\\:"},new String[]{TEMP_COLON_REPLACEMENT}).split(":");
+  for (int i=0; i < result.length; i++) {
+    result[i]=StringUtils.replaceEachRepeatedly(result[i],new String[]{TEMP_COLON_REPLACEMENT},new String[]{":"});
+  }
+  return result;
+}

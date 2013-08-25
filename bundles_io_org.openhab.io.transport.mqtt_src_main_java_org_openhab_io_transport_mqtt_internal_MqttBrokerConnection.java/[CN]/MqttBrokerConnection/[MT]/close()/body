@@ -1,0 +1,12 @@
+{
+  logger.debug("Closing connection to {}",name);
+  try {
+    if (started) {
+      client.disconnect();
+    }
+  }
+ catch (  MqttException e) {
+    logger.error("Error closing connection to {}.",name,e);
+  }
+  started=false;
+}

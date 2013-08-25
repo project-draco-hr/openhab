@@ -1,0 +1,12 @@
+{
+  final List<String> sentMessage=new ArrayList<String>();
+  MqttMessagePublisher publisher=new MqttMessagePublisher(configString);
+  publisher.setSenderChannel(new MqttSenderChannel(){
+    @Override public void publish(    String topic,    byte[] message){
+      sentMessage.add(new String(message));
+    }
+  }
+);
+  publisher.publish(publisher.getTopic(),message.getBytes());
+  return sentMessage.get(0);
+}

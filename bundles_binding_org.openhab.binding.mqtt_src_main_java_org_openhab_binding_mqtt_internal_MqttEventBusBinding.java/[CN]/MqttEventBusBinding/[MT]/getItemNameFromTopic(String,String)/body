@@ -1,0 +1,15 @@
+{
+  String itemName="error-parsing-name-from-topic";
+  if (StringUtils.isEmpty(actualTopic) || actualTopic.indexOf('/') == -1) {
+    return itemName;
+  }
+  String[] definitionParts=topicDefinition.split("/");
+  String[] actualParts=actualTopic.split("/");
+  for (int i=0; i < definitionParts.length; i++) {
+    if (definitionParts[i].equalsIgnoreCase("+")) {
+      itemName=actualParts[i];
+      break;
+    }
+  }
+  return itemName;
+}

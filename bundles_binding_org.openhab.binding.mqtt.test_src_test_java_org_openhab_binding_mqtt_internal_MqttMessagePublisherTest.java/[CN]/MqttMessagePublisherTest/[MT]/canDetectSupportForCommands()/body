@@ -1,0 +1,18 @@
+{
+  testCommandSupport("broker:/topic:command:OFF:0",OnOffType.OFF,true);
+  testCommandSupport("broker:/topic:command:OFF:0",OnOffType.ON,false);
+  testCommandSupport("broker:/topic:command:*:0",OnOffType.OFF,true);
+  testCommandSupport("broker:/topic:command:off:0",OnOffType.OFF,true);
+  testCommandSupport("broker:/topic:commAnd:100:0",DecimalType.valueOf("100"),true);
+  testCommandSupport("broker:/topic:command:100:0",DecimalType.valueOf("99"),false);
+  testCommandSupport("broker:/topic:command:20:0",PercentType.HUNDRED,false);
+  testCommandSupport("broker:/topic:command:100:0",PercentType.HUNDRED,true);
+  testCommandSupport("broker:/topic:command:100:0",PercentType.ZERO,false);
+  testCommandSupport("broker:/topic:command:5:0",PercentType.ZERO,false);
+  testCommandSupport("broker:/topic:command:CLOSED:0",OpenClosedType.CLOSED,true);
+  testCommandSupport("broker:/topic:command:OPEN:0",OpenClosedType.CLOSED,false);
+  testCommandSupport("broker:/topic:state:*:0",OpenClosedType.CLOSED,false);
+  testCommandSupport("broker:/topic:state:CLOSED:0",OpenClosedType.CLOSED,false);
+  System.out.println(HSBType.BLUE);
+  testCommandSupport("broker:/topic:command:240.0,100.0,100.0:0",HSBType.BLUE,true);
+}

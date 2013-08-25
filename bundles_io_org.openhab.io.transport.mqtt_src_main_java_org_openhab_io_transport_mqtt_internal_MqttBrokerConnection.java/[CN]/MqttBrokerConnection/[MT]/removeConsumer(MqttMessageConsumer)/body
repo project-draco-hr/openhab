@@ -1,0 +1,12 @@
+{
+  logger.debug("Removing message consumer for topic '{}' from '{}'",subscriber.getTopic(),name);
+  try {
+    if (started) {
+      client.unsubscribe(subscriber.getTopic());
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error unsubscribing topic '{}' from '{}'",subscriber.getTopic(),name);
+  }
+  consumers.remove(subscriber);
+}

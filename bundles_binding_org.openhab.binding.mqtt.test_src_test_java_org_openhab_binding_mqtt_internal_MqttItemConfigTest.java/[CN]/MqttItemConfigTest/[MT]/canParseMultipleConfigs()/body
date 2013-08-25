@@ -1,0 +1,5 @@
+{
+  MqttItemConfig c=new MqttItemConfig("myItem",">[mybroker:/mytopic:command:ON:1],>[mybroker:/mytopic:command:OFF:0],<[mybroker:/myHome/doorbell:state:XSLT(doorbell.xslt)], <[mybroker:/myHome/doorbell:command:ON], <[mybroker:/myHome/doorbell:state:XSLT(doorbell.xslt)]");
+  assertEquals(2,c.getMessagePublishers().size());
+  assertEquals(3,c.getMessageSubscribers().size());
+}

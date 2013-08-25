@@ -1,0 +1,13 @@
+{
+  if (StringUtils.isBlank(topic)) {
+    logger.debug("No topic defined for Event Bus Command Publisher");
+    return;
+  }
+  try {
+    commandPublisher=new MqttMessagePublisher(brokerName + ":" + topic+ ":command:*:default");
+    mqttService.registerMessageProducer(brokerName,commandPublisher);
+  }
+ catch (  Exception e) {
+    logger.error("Could not create event bus command publisher: {}",e.getMessage());
+  }
+}

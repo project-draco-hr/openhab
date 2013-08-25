@@ -1,0 +1,10 @@
+{
+  logger.debug("Stopping MQTT Service...");
+  Enumeration<String> e=brokerConnections.keys();
+  while (e.hasMoreElements()) {
+    MqttBrokerConnection conn=brokerConnections.get(e.nextElement());
+    logger.info("Stopping connection {}",conn.getName());
+    conn.close();
+  }
+  logger.debug("MQTT Service stopped.");
+}

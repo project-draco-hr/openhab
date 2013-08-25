@@ -1,0 +1,11 @@
+{
+  MqttMessageSubscriber subscriber=new MqttMessageSubscriber("mybroker:/mytopic:command:default");
+  assertEquals(StringType.valueOf("test"),subscriber.getCommand("test"));
+  assertEquals(StringType.valueOf("{\"person\"{\"name\":\"me\"}}"),subscriber.getCommand("{\"person\"{\"name\":\"me\"}}"));
+  assertEquals(StringType.valueOf(""),subscriber.getCommand(""));
+  assertEquals(OnOffType.ON,subscriber.getCommand("ON"));
+  assertEquals(HSBType.valueOf("5,6,5"),subscriber.getCommand("5,6,5"));
+  assertEquals(DecimalType.ZERO,subscriber.getCommand(DecimalType.ZERO.toString()));
+  assertEquals(PercentType.HUNDRED,subscriber.getCommand(PercentType.HUNDRED.toString()));
+  assertEquals(PercentType.valueOf("80"),subscriber.getCommand(PercentType.valueOf("80").toString()));
+}

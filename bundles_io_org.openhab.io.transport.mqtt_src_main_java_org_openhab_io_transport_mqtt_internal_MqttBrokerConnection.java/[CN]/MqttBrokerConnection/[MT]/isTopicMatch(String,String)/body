@@ -1,0 +1,22 @@
+{
+  if (source.equals(target)) {
+    return true;
+  }
+  if (target.indexOf('+') == -1 && target.indexOf('#') == -1) {
+    return false;
+  }
+ else {
+    String regex=target;
+    regex=StringUtils.replace(regex,"+","[a-zA-Z1-9]*");
+    regex=StringUtils.replace(regex,"#","[a-zA-Z1-9/]*");
+    boolean result=source.matches(regex);
+    if (result) {
+      logger.trace("Topic match for '{}' and '{}' using regex {}",new Object[]{source,target,regex});
+      return true;
+    }
+ else {
+      logger.trace("No topic match for '{}' and '{}' using regex {}",new Object[]{source,target,regex});
+      return false;
+    }
+  }
+}

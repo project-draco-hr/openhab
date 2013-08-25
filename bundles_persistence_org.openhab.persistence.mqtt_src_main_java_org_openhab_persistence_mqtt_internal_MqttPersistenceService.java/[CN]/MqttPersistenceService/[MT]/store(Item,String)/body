@@ -1,0 +1,13 @@
+{
+  if (!configured) {
+    logger.trace("MQTT Persistence not configured yet. Cannot store item state for {}",item.getName());
+    return;
+  }
+  try {
+    publisher.publish(item,alias);
+    logger.debug("Published item state '{}' for item '{}'",item.getState(),item.getName());
+  }
+ catch (  Exception e) {
+    logger.error("Error sending persistency message for item '{}' : {}",item.getName(),e);
+  }
+}

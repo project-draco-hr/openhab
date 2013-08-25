@@ -1,0 +1,9 @@
+{
+  MqttItemConfig itemConfig=getBindingProvider().getItemConfig(itemName);
+  for (  MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
+    if (publisher.supportsState(newState)) {
+      logger.debug("Publishing state {} to {}",newState.toString(),publisher.getTopic());
+      publisher.publish(publisher.getTopic(),newState.toString().getBytes());
+    }
+  }
+}

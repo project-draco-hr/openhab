@@ -1,0 +1,56 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final String itemName=item.getName();
+  logger.trace("Starting to load MQTT config for item {}",itemName);
+  if (StringUtils.isEmpty(bindingConfig)) {
+    throw new BindingConfigParseException("Missing mqtt binding configuration for item " + itemName);
+  }
+  final MqttItemConfig itemConfig=new MqttItemConfig(itemName,bindingConfig);
+  for (  MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
+    subscriber.setItemName(item.getName());
+    mqttService.registerMessageConsumer(subscriber.getBroker(),subscriber);
+  }
+  addBindingChangeListener(new BindingChangeListener(){
+    @Override public void bindingChanged(    BindingProvider provider,    String changedItemName){
+      if (itemName.equals(changedItemName) && !provider.providesBindingFor(itemName)) {
+        logger.debug("Removing message consumers for item {}",itemName);
+        for (        MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
+          mqttService.unregisterMessageConsumer(subscriber.getBroker(),subscriber);
+        }
+      }
+    }
+    @Override public void allBindingsChanged(    BindingProvider provider){
+      if (!provider.providesBindingFor(itemName)) {
+        logger.debug("Removing message consumers for item {}",itemName);
+        for (        MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
+          mqttService.unregisterMessageConsumer(subscriber.getBroker(),subscriber);
+        }
+      }
+    }
+  }
+);
+  for (  MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
+    publisher.setItemName(item.getName());
+    mqttService.registerMessageProducer(publisher.getBroker(),publisher);
+  }
+  addBindingChangeListener(new BindingChangeListener(){
+    @Override public void bindingChanged(    BindingProvider provider,    String changedItemName){
+      if (itemName.equals(changedItemName) && !provider.providesBindingFor(itemName)) {
+        logger.debug("Removing message publishers for item {}",itemName);
+        for (        MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
+          mqttService.unregisterMessageProducer(publisher.getBroker(),publisher);
+        }
+      }
+    }
+    @Override public void allBindingsChanged(    BindingProvider provider){
+      if (!provider.providesBindingFor(itemName)) {
+        logger.debug("Removing message publishers for item {}",itemName);
+        for (        MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
+          mqttService.unregisterMessageProducer(publisher.getBroker(),publisher);
+        }
+      }
+    }
+  }
+);
+  addBindingConfig(item,itemConfig);
+}

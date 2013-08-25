@@ -1,0 +1,14 @@
+{
+  assertEquals("test",getPublishedMessage("broker:/topic:command:*:test","dummy"));
+  assertEquals("test",getPublishedMessage("broker:/topic:state:*:test","dummy"));
+  assertEquals("eisen",getPublishedMessage("broker:/topic:state:*:eisen",OnOffType.ON.toString()));
+  assertEquals("funk",getPublishedMessage("broker:/topic:state:*:funk",OnOffType.ON.toString()));
+  assertEquals("{\"person\"{\"name\":\"me\"}}",getPublishedMessage("broker:/topic:state:*:{\"person\"{\"name\"\\:\"me\"}}",OnOffType.ON.toString()));
+  assertEquals("ON",getPublishedMessage("broker:/topic:command:*:default",OnOffType.ON.toString()));
+  assertEquals("OFF",getPublishedMessage("broker:/topic:command:*:default",OnOffType.OFF.toString()));
+  assertEquals("UP",getPublishedMessage("broker:/topic:command:*:default",UpDownType.UP.toString()));
+  assertEquals("100",getPublishedMessage("broker:/topic:command:*:default",PercentType.HUNDRED.toString()));
+  assertEquals("80,81,82",getPublishedMessage("broker:/topic:command:*:default",HSBType.valueOf("80,81,82").toString()));
+  assertEquals("0",getPublishedMessage("broker:/topic:command:*:default",DecimalType.ZERO.toString()));
+  assertEquals("ahah",getPublishedMessage("broker:/topic:command:*:default",StringType.valueOf("ahah").toString()));
+}

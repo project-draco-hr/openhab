@@ -1,0 +1,21 @@
+{
+  Object state=item.getState().toString();
+  if (item.getState() instanceof DecimalType) {
+    state=((DecimalType)item.getState()).toBigDecimal();
+  }
+ else   if (item.getState() instanceof DateTimeType) {
+    state=((DateTimeType)item.getState()).getCalendar();
+  }
+ else   if (item.getState() instanceof OnOffType) {
+    state=item.getState().equals(OnOffType.ON) ? "1" : "0";
+  }
+ else   if (item.getState() instanceof OpenClosedType) {
+    state=item.getState().equals(OpenClosedType.OPEN) ? "1" : "0";
+  }
+ else   if (item.getState() instanceof UpDownType) {
+    state=item.getState().equals(UpDownType.UP) ? "1" : "0";
+  }
+  String message=format(messageTemplate,item.getName(),trimToEmpty(alias),state,currentTimeMillis());
+  String destination=format(topic,item.getName(),trimToEmpty(alias),state,currentTimeMillis());
+  channel.publish(destination,message.getBytes());
+}

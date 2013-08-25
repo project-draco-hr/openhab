@@ -1,0 +1,21 @@
+{
+  if (StringUtils.isBlank(brokerName)) {
+    return;
+  }
+  if (commandPublisher != null) {
+    mqttService.unregisterMessageProducer(brokerName,commandPublisher);
+    commandPublisher=null;
+  }
+  if (statePublisher != null) {
+    mqttService.unregisterMessageProducer(brokerName,statePublisher);
+    statePublisher=null;
+  }
+  if (commandSubscriber != null) {
+    mqttService.unregisterMessageConsumer(brokerName,commandSubscriber);
+    commandSubscriber=null;
+  }
+  if (stateSubscriber != null) {
+    mqttService.unregisterMessageConsumer(brokerName,stateSubscriber);
+    stateSubscriber=null;
+  }
+}

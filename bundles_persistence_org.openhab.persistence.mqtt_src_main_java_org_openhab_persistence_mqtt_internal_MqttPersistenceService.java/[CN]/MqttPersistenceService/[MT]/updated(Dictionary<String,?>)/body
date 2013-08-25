@@ -1,0 +1,13 @@
+{
+  if (properties == null || properties.isEmpty()) {
+    logger.trace("No config properties available.");
+    return;
+  }
+  brokerName=getProperty(properties,"broker");
+  topic=getProperty(properties,"topic");
+  messageTemplate=getProperty(properties,"message");
+  configured=true;
+  logger.debug("Configuration updated for MQTT Persistence.");
+  deactivate();
+  activate();
+}

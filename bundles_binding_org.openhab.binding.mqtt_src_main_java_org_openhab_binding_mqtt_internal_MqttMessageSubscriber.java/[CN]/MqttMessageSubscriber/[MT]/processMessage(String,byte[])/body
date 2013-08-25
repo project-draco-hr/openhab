@@ -1,0 +1,26 @@
+{
+  try {
+    if (getTransformationServiceName() != null && getTransformationService() == null) {
+      initTransformService();
+    }
+    String value=new String(message);
+    if (getTransformationService() != null) {
+      value=getTransformationService().transform(getTransformationServiceParam(),value);
+    }
+ else     if (getTransformationRule() != null && !getTransformationRule().equalsIgnoreCase("default")) {
+      value=getTransformationRule();
+    }
+    value=StringUtils.replace(value,"${itemName}",getItemName());
+    if (getMessageType().equals(MessageType.COMMAND)) {
+      Command command=getCommand(value);
+      eventPublisher.postCommand(getItemName(),command);
+    }
+ else {
+      State state=getState(value);
+      eventPublisher.postUpdate(getItemName(),state);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error processing MQTT message.",e);
+  }
+}

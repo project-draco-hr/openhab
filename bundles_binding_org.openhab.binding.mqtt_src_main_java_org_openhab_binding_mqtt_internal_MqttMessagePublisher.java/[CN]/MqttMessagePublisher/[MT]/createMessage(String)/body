@@ -1,0 +1,20 @@
+{
+  if (getTransformationServiceName() != null && getTransformationService() == null) {
+    initTransformService();
+  }
+  String content=value;
+  if (getTransformationService() != null) {
+    content=getTransformationService().transform(getTransformationServiceParam(),value);
+  }
+ else   if (getTransformationRule() != null && !getTransformationRule().equalsIgnoreCase("default")) {
+    content=getTransformationRule();
+  }
+  if (getMessageType().equals(MessageType.STATE)) {
+    content=StringUtils.replace(content,"${state}",value);
+  }
+ else {
+    content=StringUtils.replace(content,"${command}",value);
+  }
+  content=StringUtils.replace(content,"${itemName}",getItemName());
+  return content.getBytes();
+}

@@ -1,0 +1,10 @@
+{
+  if (getTransformationService() != null) {
+    return;
+  }
+  BundleContext context=MqttActivator.getContext();
+  transformationService=TransformationHelper.getTransformationService(context,getTransformationServiceName());
+  if (transformationService == null) {
+    logger.debug("No transformation service found for {}",getTransformationServiceName());
+  }
+}

@@ -1,0 +1,25 @@
+{
+  String[] configurationStrings=bindingConfig.split("],");
+  for (  String config : configurationStrings) {
+    config=config.trim();
+    String type=config.substring(0,1);
+    int firstPos=config.indexOf('[');
+    int lastPos=config.lastIndexOf(']');
+    String configContent=config.substring(firstPos + 1);
+    if (lastPos != -1) {
+      configContent=config.substring(firstPos + 1,lastPos);
+    }
+    if (type.equals("<")) {
+      MqttMessageSubscriber subscribeConfig=new MqttMessageSubscriber(configContent);
+      subscribeConfigurations.add(subscribeConfig);
+    }
+ else     if (type.equals(">")) {
+      MqttMessagePublisher publishConfig=new MqttMessagePublisher(configContent);
+      publishConfigurations.add(publishConfig);
+    }
+ else {
+      throw new BindingConfigParseException("Invalid mqtt binding configuration '" + configContent + "' for item "+ itemName);
+    }
+  }
+  logger.debug("Loaded MQTT config for item '{}' : {} subscribers, {} publishers",new Object[]{itemName,subscribeConfigurations.size(),publishConfigurations.size()});
+}

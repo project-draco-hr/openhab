@@ -1,0 +1,16 @@
+{
+  try {
+    validateConfig("mybroker:/mytopic:command:1","mybroker","/mytopic",MessageType.COMMAND,"1");
+    validateConfig("mybroker1:/a/long/topic/goes/here:command:default","mybroker1","/a/long/topic/goes/here",MessageType.COMMAND,"default");
+    validateConfig("mybroker1:/a/long/topic/goes/here:command:dummyfunction","mybroker1","/a/long/topic/goes/here",MessageType.COMMAND,"dummyfunction");
+    validateConfig("mybroker1:/wildcard/+/topic/#:command:xslt(myfile.xslt)","mybroker1","/wildcard/+/topic/#",MessageType.COMMAND,"xslt(myfile.xslt)");
+    validateConfig("testbroker:/mytopic:state:json(/group/person[2]/value)","testbroker","/mytopic",MessageType.STATE,"json(/group/person[2]/value)");
+    validateConfig("mybroker:/mytopic:command:file(/tmp/myfile.txt)","mybroker","/mytopic",MessageType.COMMAND,"file(/tmp/myfile.txt)");
+    validateConfig("mybroker:/mytopic:command:file(/tmp/myfile.txt)","mybroker","/mytopic",MessageType.COMMAND,"file(/tmp/myfile.txt)");
+    validateConfig("mybroker:/mytopic:command:file(c\\:\\tmp\\myfile.txt)","mybroker","/mytopic",MessageType.COMMAND,"file(c:\\tmp\\myfile.txt)");
+  }
+ catch (  BindingConfigParseException e) {
+    e.printStackTrace();
+    throw e;
+  }
+}

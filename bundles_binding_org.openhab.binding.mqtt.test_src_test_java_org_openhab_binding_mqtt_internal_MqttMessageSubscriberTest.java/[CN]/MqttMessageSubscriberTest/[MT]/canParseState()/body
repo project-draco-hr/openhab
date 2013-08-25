@@ -1,0 +1,7 @@
+{
+  MqttMessageSubscriber subscriber=new MqttMessageSubscriber("mybroker:/mytopic:state:default");
+  assertEquals(OnOffType.ON,subscriber.getState("ON"));
+  assertEquals(StringType.valueOf(""),subscriber.getState(""));
+  assertEquals(StringType.valueOf("test"),subscriber.getState("test"));
+  assertEquals(StringType.valueOf("{\"person\"{\"name\":\"me\"}}"),subscriber.getState("{\"person\"{\"name\":\"me\"}}"));
+}

@@ -1,0 +1,27 @@
+{
+  if (StringUtils.isBlank(topic)) {
+    logger.debug("No topic defined for Event Bus State Subsriber");
+    return;
+  }
+  try {
+    topic=StringUtils.replace(topic,"${item}","+");
+    stateSubscriber=new MqttMessageSubscriber(brokerName + ":" + topic+ ":state:default"){
+      @Override public void processMessage(      String topic,      byte[] message){
+        State state;
+        try {
+          state=getState(new String(message));
+        }
+ catch (        Exception e) {
+          logger.error("Error parsing state from message.",e);
+          return;
+        }
+        eventPublisher.postUpdate(getItemNameFromTopic(getTopic(),topic),state);
+      }
+    }
+;
+    mqttService.registerMessageConsumer(brokerName,stateSubscriber);
+  }
+ catch (  Exception e) {
+    logger.error("Could not create event bus state subscriber: {}",e.getMessage());
+  }
+}

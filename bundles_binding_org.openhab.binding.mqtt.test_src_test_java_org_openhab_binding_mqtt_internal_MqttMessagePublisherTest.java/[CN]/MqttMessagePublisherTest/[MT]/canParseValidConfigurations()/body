@@ -1,0 +1,10 @@
+{
+  validateConfig("mybroker:/mytopic:command:ON:1","mybroker","/mytopic",MessageType.COMMAND,"ON","1");
+  validateConfig("mybroker1:/a/long/topic/goes/here:command:ON:default","mybroker1","/a/long/topic/goes/here",MessageType.COMMAND,"ON","default");
+  validateConfig("mybroker1:/wildcard/not/topic:command:ON:xslt(myfile.xslt)","mybroker1","/wildcard/not/topic",MessageType.COMMAND,"ON","xslt(myfile.xslt)");
+  validateConfig("mybroker:/mytopic:command:*:file(/tmp/myfile.txt)","mybroker","/mytopic",MessageType.COMMAND,"*","file(/tmp/myfile.txt)");
+  validateConfig("mybroker:/mytopic:command:*:file(/tmp/myfile.txt)","mybroker","/mytopic",MessageType.COMMAND,"*","file(/tmp/myfile.txt)");
+  String jsonMessage="{\"message\"\\: \"command\",\"origin\"\\: \"openhab\",\"data\"\\: {\"lamp1\"\\: \"ON\"}} ";
+  String jsonMessageNoEsc="{\"message\": \"command\",\"origin\": \"openhab\",\"data\": {\"lamp1\": \"ON\"}}";
+  validateConfig("testbroker:/mytopic:state:OFF:" + jsonMessage + "","testbroker","/mytopic",MessageType.STATE,"OFF",jsonMessageNoEsc);
+}

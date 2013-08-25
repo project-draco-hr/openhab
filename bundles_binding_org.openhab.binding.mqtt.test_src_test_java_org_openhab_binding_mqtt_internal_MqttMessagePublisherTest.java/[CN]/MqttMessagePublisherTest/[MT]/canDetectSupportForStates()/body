@@ -1,0 +1,17 @@
+{
+  testStateSupport("broker:/topic:state:OFF:0",OnOffType.OFF,true);
+  testStateSupport("broker:/topic:state:OFF:0",OnOffType.ON,false);
+  testStateSupport("broker:/topic:state:*:0",OnOffType.OFF,true);
+  testStateSupport("broker:/topic:state:off:0",OnOffType.OFF,true);
+  testStateSupport("broker:/topic:stAte:100:0",DecimalType.valueOf("100"),true);
+  testStateSupport("broker:/topic:state:100:0",DecimalType.valueOf("99"),false);
+  testStateSupport("broker:/topic:state:20:0",PercentType.HUNDRED,false);
+  testStateSupport("broker:/topic:state:100:0",PercentType.HUNDRED,true);
+  testStateSupport("broker:/topic:state:100:0",PercentType.ZERO,false);
+  testStateSupport("broker:/topic:state:0:0",PercentType.ZERO,true);
+  testStateSupport("broker:/topic:state:CLOSED:0",OpenClosedType.CLOSED,true);
+  testStateSupport("broker:/topic:state:OPEN:0",OpenClosedType.CLOSED,false);
+  testStateSupport("broker:/topic:command:*:0",OpenClosedType.CLOSED,false);
+  testStateSupport("broker:/topic:command:CLOSED:0",OpenClosedType.CLOSED,false);
+  testStateSupport("broker:/topic:state:240.0,100.0,100.0:0",HSBType.BLUE,true);
+}

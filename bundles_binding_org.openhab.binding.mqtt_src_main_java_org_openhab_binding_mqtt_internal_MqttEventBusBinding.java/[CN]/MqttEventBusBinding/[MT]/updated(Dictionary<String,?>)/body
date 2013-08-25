@@ -1,0 +1,18 @@
+{
+  logger.debug("Configuring MQTT Event Bus Binding");
+  if (properties == null || properties.isEmpty()) {
+    logger.debug("No mqtt-eventbus properties found. Cannot configure.");
+    return;
+  }
+  deactivate();
+  brokerName=(String)properties.get("broker");
+  if (StringUtils.isEmpty(brokerName)) {
+    logger.debug("No broker name configured for MQTT EventBusBinding");
+    return;
+  }
+  setupEventBusStatePublisher((String)properties.get("statePublishTopic"));
+  setupEventBusStateSubscriber((String)properties.get("stateSubscribeTopic"));
+  setupEventBusCommandPublisher((String)properties.get("commandPublishTopic"));
+  setupEventBusCommandSubscriber((String)properties.get("commandSubscribeTopic"));
+  logger.debug("MQTT Event Bus Binding initialization completed.");
+}

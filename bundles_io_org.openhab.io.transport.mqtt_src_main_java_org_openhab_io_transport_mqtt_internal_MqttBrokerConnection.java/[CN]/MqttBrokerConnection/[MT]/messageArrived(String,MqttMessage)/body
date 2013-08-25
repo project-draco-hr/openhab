@@ -1,0 +1,8 @@
+{
+  logger.trace("Received message on topic '{}' : {}",topic,new String(message.getPayload()));
+  for (  MqttMessageConsumer consumer : consumers) {
+    if (isTopicMatch(topic,consumer.getTopic())) {
+      consumer.processMessage(topic,message.getPayload());
+    }
+  }
+}
