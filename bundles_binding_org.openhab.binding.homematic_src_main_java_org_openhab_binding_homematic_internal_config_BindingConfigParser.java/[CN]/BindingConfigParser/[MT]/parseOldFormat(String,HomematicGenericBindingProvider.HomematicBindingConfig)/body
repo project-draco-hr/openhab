@@ -1,0 +1,9 @@
+{
+  String[] configParts=configLine.trim().split("[:#]");
+  if (configParts.length != 3) {
+    throw new BindingConfigParseException("Homematic device configurations must contain three parts " + "<physicalDeviceAddress>:<channel>#<parameterKey>");
+  }
+  config.id=configParts[0];
+  config.channel=configParts[1];
+  config.parameter=configParts[2];
+}

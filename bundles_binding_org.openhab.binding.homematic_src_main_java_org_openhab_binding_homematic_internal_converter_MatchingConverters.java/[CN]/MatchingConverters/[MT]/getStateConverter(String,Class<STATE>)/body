@@ -1,3 +1,7 @@
 {
-  return (Class<? extends StateConverter<?,STATE>>)stateConverters.get(protocolValue).get(state);
+  StateToConverterMap map=stateConverters.get(parameterId);
+  if (map == null) {
+    return null;
+  }
+  return (Class<? extends StateConverter<?,STATE>>)map.get(state);
 }

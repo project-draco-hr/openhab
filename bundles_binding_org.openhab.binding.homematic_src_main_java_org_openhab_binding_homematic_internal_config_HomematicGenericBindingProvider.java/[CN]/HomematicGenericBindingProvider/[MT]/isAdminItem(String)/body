@@ -1,3 +1,7 @@
 {
-  return getAdminItem(itemName) != null;
+  HomematicBindingConfig config=(HomematicBindingConfig)bindingConfigs.get(itemName);
+  if (config == null || !config.id.equals(AdminItem.ID)) {
+    return false;
+  }
+  return config.id.equals(AdminItem.ID);
 }

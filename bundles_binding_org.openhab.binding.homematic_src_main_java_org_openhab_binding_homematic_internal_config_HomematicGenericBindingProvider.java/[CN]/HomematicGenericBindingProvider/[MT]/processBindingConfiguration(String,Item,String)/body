@@ -1,10 +1,6 @@
 {
   HomematicBindingConfig config=new HomematicBindingConfig();
-  if (bindingConfig.startsWith(AdminItem.PREFIX)) {
-    config.adminItem=AdminItem.fromBindingConfig(bindingConfig);
-  }
- else {
-    config.parameterAddress=ParameterAddress.fromBindingConfig(bindingConfig);
-  }
+  BindingConfigParser parser=new BindingConfigParser();
+  parser.parse(bindingConfig,config);
   addBindingConfig(item,config);
 }

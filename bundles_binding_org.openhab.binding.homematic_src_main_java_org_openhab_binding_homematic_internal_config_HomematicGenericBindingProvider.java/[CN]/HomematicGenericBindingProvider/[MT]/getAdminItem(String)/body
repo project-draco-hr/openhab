@@ -1,4 +1,7 @@
 {
   HomematicBindingConfig config=(HomematicBindingConfig)bindingConfigs.get(itemName);
-  return config != null ? config.adminItem : null;
+  if (config == null || !isAdminItem(itemName)) {
+    return null;
+  }
+  return new AdminItem(config.parameter);
 }

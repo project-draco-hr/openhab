@@ -5,17 +5,18 @@
       handleAdminCommand(provider.getAdminItem(itemName),command);
     }
  else {
-      ParameterAddress parameterAddress=provider.getParameterAddress(itemName);
-      State actualState=provider.getItem(itemName).getState();
-      String parameterKey=parameterAddress.getParameterKey();
-      CommandConverter<?,?> commandConverter=converterFactory.getCommandConverter(parameterKey,command);
+      HomematicParameterAddress parameterAddress=provider.getParameterAddress(itemName);
+      Item item=provider.getItem(itemName);
+      State actualState=item.getState();
+      String parameterKey=parameterAddress.getParameterId();
+      CommandConverter<?,?> commandConverter=converterFactory.getCommandConverter(parameterAddress,command);
       if (commandConverter == null) {
         logger.warn("No command converter found for {}. No command will be executed.",parameterAddress);
         return;
       }
       State newState=commandConverter.convertFrom(actualState,command);
       if (command instanceof StopMoveType && parameterKey.equals(ParameterKey.LEVEL.name())) {
-        parameterAddress=ParameterAddress.from(parameterAddress.getAddress(),ParameterKey.STOP.name());
+        parameterAddress=HomematicParameterAddress.from(parameterAddress.getAddress(),ParameterKey.STOP.name());
       }
       setStateOnDevice(newState,parameterAddress);
     }

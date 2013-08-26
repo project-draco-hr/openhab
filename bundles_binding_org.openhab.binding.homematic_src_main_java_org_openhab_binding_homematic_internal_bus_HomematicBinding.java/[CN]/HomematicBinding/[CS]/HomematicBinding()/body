@@ -21,6 +21,7 @@
   converterFactory.addStateConverter(ParameterKey.STATE.name(),OpenClosedType.class,BooleanOpenCloseConverter.class);
   converterFactory.addStateConverter(ParameterKey.TEMPERATURE.name(),DecimalType.class,TemperatureConverter.class);
   converterFactory.addStateConverter(ParameterKey.SETPOINT.name(),DecimalType.class,TemperatureConverter.class);
+  converterFactory.addStateConverter(ParameterKey.MODE_TEMPERATUR_VALVE.name(),DecimalType.class,IntegerDecimalConverter.class);
   converterFactory.addStateConverter(ParameterKey.VALVE_STATE.name(),PercentType.class,IntegerPercentConverter.class);
   converterFactory.addStateConverter(ParameterKey.VALVE_STATE.name(),OnOffType.class,IntegerPercentageOnOffConverter.class);
   converterFactory.addStateConverter(ParameterKey.VALVE_STATE.name(),OpenClosedType.class,IntegerPercentageOpenClosedConverter.class);
@@ -28,4 +29,7 @@
   converterFactory.addStateConverter(ParameterKey.ERROR.name(),DecimalType.class,IntegerDecimalConverter.class);
   converterFactory.addStateConverter(ParameterKey.UNREACH.name(),OnOffType.class,BooleanOnOffConverter.class);
   converterFactory.addStateConverter(ParameterKey.LOWBAT.name(),OnOffType.class,BooleanOnOffConverter.class);
+  DeviceConfigLocator locator=new DeviceConfigLocator("HM-LC-Bl1-FM.xml");
+  List<ConfiguredDevice> configuredDevices=locator.findAll();
+  converterFactory.addConfiguredDevices(configuredDevices);
 }

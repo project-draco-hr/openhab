@@ -1,0 +1,12 @@
+{
+  try {
+    JAXBContext context=JAXBContext.newInstance(ConfiguredDevice.class);
+    Unmarshaller unmarshaller=context.createUnmarshaller();
+    InputStream stream=Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+    ConfiguredDevice configuredDevice=(ConfiguredDevice)unmarshaller.unmarshal(stream);
+    return configuredDevice;
+  }
+ catch (  JAXBException e) {
+    throw new RuntimeException(e);
+  }
+}

@@ -1,8 +1,8 @@
 {
-  ConverterFactory factory=new ConverterFactory();
+  ConverterFactory factory=new ConverterFactory(ccu);
   factory.addStateConverter(PARAMETER_KEY,OPEN_HAB_STATE,TestDecimalTypeConverter.class);
   factory.addStateConverter(PARAMETER_KEY,OPEN_HAB_STATE_2,TestPercentageTypeConverter.class);
-  StateConverter<?,?> toConverter=factory.getToStateConverter(PARAMETER_KEY,new DimmerItem(PARAMETER_KEY));
+  StateConverter<?,?> toConverter=factory.getToStateConverter(parameterAddress,new DimmerItem(PARAMETER_KEY));
   assertNotNull("toConverter",toConverter);
   assertEquals("ToConverter Class",TestPercentageTypeConverter.class,toConverter.getClass());
 }

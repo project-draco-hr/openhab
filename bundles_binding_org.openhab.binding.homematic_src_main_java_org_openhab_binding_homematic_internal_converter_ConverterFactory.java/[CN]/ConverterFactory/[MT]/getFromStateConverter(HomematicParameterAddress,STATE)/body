@@ -1,0 +1,17 @@
+{
+  Class<?> stateConverter;
+  String type=ccu.getPhysicalDevice(parameterAddress.getDeviceId()).getDeviceDescription().getType();
+  if (customConverters.containsKey(parameterAddress.getAsString())) {
+    stateConverter=customConverters.get(parameterAddress.getAsString());
+  }
+ else   if (configuredDevicesConverters.containsKey(type)) {
+    stateConverter=configuredDevicesConverters.get(type).getStateConverter(parameterAddress.getParameterId(),state.getClass());
+  }
+ else {
+    stateConverter=converters.getStateConverter(parameterAddress.getParameterId(),state.getClass());
+    if (stateConverter == null) {
+      return null;
+    }
+  }
+  return (StateConverter<?,?>)instantiate(stateConverter);
+}

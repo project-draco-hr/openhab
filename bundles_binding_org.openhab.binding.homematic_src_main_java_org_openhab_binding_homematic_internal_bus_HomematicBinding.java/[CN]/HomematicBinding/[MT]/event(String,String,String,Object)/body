@@ -1,9 +1,9 @@
 {
-  ParameterAddress parameterAddress=ParameterAddress.from(address,parameterKey);
+  HomematicParameterAddress parameterAddress=HomematicParameterAddress.from(address,parameterKey);
   logger.debug("Received new value {} for device at {}",valueObject,parameterAddress);
   Item item=getItemForParameter(parameterAddress);
   if (item != null) {
-    StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress.getParameterKey(),item);
+    StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress,item);
     if (converter == null) {
       logger.warn("No converter found for " + parameterAddress + " - doing nothing.");
       return null;

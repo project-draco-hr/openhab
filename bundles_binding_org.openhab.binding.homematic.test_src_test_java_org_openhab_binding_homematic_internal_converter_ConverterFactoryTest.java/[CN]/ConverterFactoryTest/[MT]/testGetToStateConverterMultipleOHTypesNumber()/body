@@ -1,8 +1,8 @@
 {
-  ConverterFactory factory=new ConverterFactory();
+  ConverterFactory factory=new ConverterFactory(ccu);
   factory.addStateConverter(PARAMETER_KEY,OPEN_HAB_STATE,TestDecimalTypeConverter.class);
   factory.addStateConverter(PARAMETER_KEY,OPEN_HAB_STATE_2,TestPercentageTypeConverter.class);
-  StateConverter<?,?> toConverter=factory.getToStateConverter(PARAMETER_KEY,new NumberItem(PARAMETER_KEY));
+  StateConverter<?,?> toConverter=factory.getToStateConverter(parameterAddress,new NumberItem(PARAMETER_KEY));
   assertNotNull("toConverter",toConverter);
   assertEquals("ToConverter Class",TestDecimalTypeConverter.class,toConverter.getClass());
 }
