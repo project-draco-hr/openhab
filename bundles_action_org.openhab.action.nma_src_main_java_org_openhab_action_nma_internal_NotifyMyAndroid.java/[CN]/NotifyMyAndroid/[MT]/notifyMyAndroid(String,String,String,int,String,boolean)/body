@@ -38,10 +38,12 @@
       addEncodedParameter(data,MESSAGE_KEY_CONTENT_TYPE,"text/html");
     }
     String content=data.toString();
+    logger.debug("Executing post to " + API_URL + " with the following content: "+ content);
     String response=HttpUtil.executeUrl("POST",API_URL,IOUtils.toInputStream(content),CONTENT_TYPE,timeout);
+    logger.debug("Raw response: " + response);
     try {
       String responseMessage=parseResponse(response);
-      if (!StringUtils.isEmpty(response)) {
+      if (StringUtils.isEmpty(responseMessage)) {
         return true;
       }
  else {
@@ -50,7 +52,7 @@
       }
     }
  catch (    Exception e) {
-      logger.warn("Can't parse response from NMA: " + response);
+      logger.warn("Can't parse response from NMA: " + response,e);
       return false;
     }
   }
