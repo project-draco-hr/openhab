@@ -1,0 +1,25 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  try {
+    if (bindingConfig != null) {
+      String[] configParts=bindingConfig.split(";");
+      if (configParts.length > 3) {
+        throw new BindingConfigParseException("milight binding configuration must not have more than three parts");
+      }
+      if (item instanceof ColorItem) {
+        BindingConfig milightBindingConfig=(BindingConfig)new MilightBindingConfig(configParts[0],configParts[1],BindingType.rgb.name());
+        addBindingConfig(item,milightBindingConfig);
+      }
+ else       if (item instanceof DimmerItem || item instanceof SwitchItem) {
+        BindingConfig milightBindingConfig=(BindingConfig)new MilightBindingConfig(configParts[0],configParts[1],configParts.length < 3 ? null : configParts[2]);
+        addBindingConfig(item,milightBindingConfig);
+      }
+    }
+ else {
+      logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+    }
+  }
+ catch (  ArrayIndexOutOfBoundsException e) {
+    logger.warn("bindingConfig is invalid (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}

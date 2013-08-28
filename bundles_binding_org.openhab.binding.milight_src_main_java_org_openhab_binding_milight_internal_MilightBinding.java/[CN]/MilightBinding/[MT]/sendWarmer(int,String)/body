@@ -1,0 +1,11 @@
+{
+  int newPercent=getCurrentState(bulb,bridgeId,BindingType.brightness).intValue() + 10;
+  if (newPercent > 100) {
+    newPercent=100;
+  }
+  PercentType newValue=new PercentType(newPercent);
+  String messageBytes="3E:00:55";
+  sendMessage(messageBytes,bridgeId);
+  setCurrentState(bulb,bridgeId,newValue,BindingType.brightness);
+  return newValue;
+}

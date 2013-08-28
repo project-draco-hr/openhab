@@ -1,0 +1,12 @@
+{
+  if (messageBytes == null) {
+    logger.error("messageBytes must not be null");
+  }
+  byte[] buffer=new byte[3];
+  String[] hex=messageBytes.split("(\\:|\\-)");
+  int hexIndex=0;
+  for (hexIndex=0; hexIndex < 3; hexIndex++) {
+    buffer[hexIndex]=(byte)Integer.parseInt(hex[hexIndex],16);
+  }
+  return buffer;
+}

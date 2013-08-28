@@ -1,0 +1,19 @@
+{
+  String bridgeIp=bridgeIpConfig.get(bridgeId);
+  Integer bridgePort=bridgePortConfig.get(bridgeId);
+  if (bridgePort == null) {
+    bridgePort=DEFAULT_PORT;
+  }
+  try {
+    byte[] buffer=getMessageBytes(messageBytes);
+    InetAddress IPAddress=InetAddress.getByName(bridgeIp);
+    DatagramPacket packet=new DatagramPacket(buffer,buffer.length,IPAddress,bridgePort);
+    DatagramSocket datagramSocket=new DatagramSocket();
+    datagramSocket.send(packet);
+    datagramSocket.close();
+    logger.debug("Sent packet '{}' to bridge '{}' ({}:{})",new Object[]{messageBytes,bridgeId,bridgeIp,bridgePort});
+  }
+ catch (  Exception e) {
+    logger.error("milight: Failed to send Message to '{}",bridgeIp,e);
+  }
+}
