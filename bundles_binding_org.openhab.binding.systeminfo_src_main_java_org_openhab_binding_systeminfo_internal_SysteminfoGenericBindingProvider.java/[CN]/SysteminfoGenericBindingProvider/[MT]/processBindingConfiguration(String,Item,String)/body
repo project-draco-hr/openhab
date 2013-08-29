@@ -1,0 +1,25 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  SysteminfoBindingConfig config=new SysteminfoBindingConfig();
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length < 2 && configParts.length > 3) {
+    throw new BindingConfigParseException("Systeminf binding must contain 2-3 parts separated by ':'");
+  }
+  String commandType=configParts[0].trim();
+  try {
+    config.commandType=SysteminfoCommandType.getCommandType(commandType);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("'" + commandType + "' is not a valid command type");
+  }
+  try {
+    config.refreshInterval=Integer.valueOf(configParts[1]);
+  }
+ catch (  NumberFormatException e) {
+    throw new BindingConfigParseException("'" + configParts[1] + "' is not a valid refresh interval");
+  }
+  if (configParts.length > 2) {
+    config.target=configParts[2].trim();
+  }
+  addBindingConfig(item,config);
+}

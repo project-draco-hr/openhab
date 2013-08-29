@@ -1,0 +1,136 @@
+{
+  State state=UnDefType.UNDEF;
+  long pid;
+  try {
+switch (commandType) {
+case LOAD_AVERAGE_1MIN:
+      state=new DecimalType(sigar.getLoadAverage()[0]);
+    break;
+case LOAD_AVERAGE_5MIN:
+  state=new DecimalType(sigar.getLoadAverage()[1]);
+break;
+case LOAD_AVERAGE_15MIN:
+state=new DecimalType(sigar.getLoadAverage()[2]);
+break;
+case CPU_COMBINED:
+state=new DecimalType(sigar.getCpuPerc().getCombined() * 100);
+break;
+case CPU_USER:
+state=new DecimalType(sigar.getCpuPerc().getUser() * 100);
+break;
+case CPU_SYSTEM:
+state=new DecimalType(sigar.getCpuPerc().getSys() * 100);
+break;
+case CPU_NICE:
+state=new DecimalType(sigar.getCpuPerc().getNice() * 100);
+break;
+case CPU_WAIT:
+state=new DecimalType(sigar.getCpuPerc().getWait() * 100);
+break;
+case UPTIME:
+state=new DecimalType(sigar.getUptime().getUptime());
+break;
+case UPTIME_FORMATTED:
+state=new StringType(getElapsedTime((long)sigar.getUptime().getUptime()));
+break;
+case MEM_FREE_PERCENT:
+state=new DecimalType(sigar.getMem().getFreePercent());
+break;
+case MEM_USED_PERCENT:
+state=new DecimalType(sigar.getMem().getUsedPercent());
+break;
+case MEM_FREE:
+state=new DecimalType(formatBytes(sigar.getMem().getFree(),units));
+break;
+case MEM_USED:
+state=new DecimalType(formatBytes(sigar.getMem().getUsed(),units));
+break;
+case MEM_ACTUAL_FREE:
+state=new DecimalType(formatBytes(sigar.getMem().getActualFree(),units));
+break;
+case MEM_ACTUAL_USED:
+state=new DecimalType(formatBytes(sigar.getMem().getActualUsed(),units));
+break;
+case MEM_TOTAL:
+state=new DecimalType(formatBytes(sigar.getMem().getTotal(),units));
+break;
+case SWAP_FREE:
+state=new DecimalType(formatBytes(sigar.getSwap().getFree(),units));
+break;
+case SWAP_TOTAL:
+state=new DecimalType(formatBytes(sigar.getSwap().getTotal(),units));
+break;
+case SWAP_USED:
+state=new DecimalType(formatBytes(sigar.getSwap().getUsed(),units));
+break;
+case SWAP_PAGE_IN:
+state=new DecimalType(formatBytes(sigar.getSwap().getPageIn(),units));
+break;
+case SWAP_PAGE_OUT:
+state=new DecimalType(formatBytes(sigar.getSwap().getPageOut(),units));
+break;
+case NET_RX_BYTES:
+state=new DecimalType(formatBytes(sigar.getNetInterfaceStat(target).getRxBytes(),units));
+break;
+case NET_TX_BYTES:
+state=new DecimalType(formatBytes(sigar.getNetInterfaceStat(target).getTxBytes(),units));
+break;
+case DISK_READS:
+state=new DecimalType(sigar.getDiskUsage(target).getReads());
+break;
+case DISK_WRITES:
+state=new DecimalType(sigar.getDiskUsage(target).getWrites());
+break;
+case DISK_READ_BYTES:
+state=new DecimalType(formatBytes(sigar.getDiskUsage(target).getReadBytes(),units));
+break;
+case DISK_WRITE_BYTES:
+state=new DecimalType(formatBytes(sigar.getDiskUsage(target).getWriteBytes(),units));
+break;
+case DIR_USAGE:
+state=new DecimalType(formatBytes(sigar.getDirUsage(target).getDiskUsage(),units));
+break;
+case DIR_FILES:
+state=new DecimalType(sigar.getDirUsage(target).getFiles());
+break;
+case PROCESS_REAL_MEM:
+pid=getPid(target);
+state=new DecimalType(formatBytes(sigar.getProcMem(pid).getResident(),units));
+break;
+case PROCESS_VIRTUAL_MEM:
+pid=getPid(target);
+state=new DecimalType(formatBytes(sigar.getProcMem(pid).getSize(),units));
+break;
+case PROCESS_CPU_PERCENT:
+pid=getPid(target);
+state=new DecimalType(sigar.getProcCpu(pid).getPercent() * 100);
+break;
+case PROCESS_CPU_SYSTEM:
+pid=getPid(target);
+state=new DecimalType(sigar.getProcCpu(pid).getSys());
+break;
+case PROCESS_CPU_USER:
+pid=getPid(target);
+state=new DecimalType(sigar.getProcCpu(pid).getUser());
+break;
+case PROCESS_CPU_TOTAL:
+pid=getPid(target);
+state=new DecimalType(sigar.getProcCpu(pid).getTotal());
+break;
+case PROCESS_UPTIME:
+pid=getPid(target);
+state=new DecimalType(getProcessUptime(pid));
+break;
+case PROCESS_UPTIME_FORMATTED:
+pid=getPid(target);
+state=new StringType(getElapsedTime(getProcessUptime(pid)));
+break;
+default :
+break;
+}
+}
+ catch (SigarException e) {
+logger.error("Error occured while reading KPI's",e);
+}
+return state;
+}

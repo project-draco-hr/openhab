@@ -1,0 +1,26 @@
+{
+  if (sigarImpl == null) {
+    sigarImpl=new Sigar();
+  }
+  if (sigar == null) {
+    sigar=SigarProxyCache.newInstance(sigarImpl,1000);
+  }
+  logger.info("Using Sigar version {}",Sigar.VERSION_STRING);
+  try {
+    String[] interfaces=sigar.getNetInterfaceList();
+    logger.debug("valid net interfaces: {}",Arrays.toString(interfaces));
+    FileSystem[] filesystems=sigar.getFileSystemList();
+    logger.debug("file systems: {}",Arrays.toString(filesystems));
+    List<String> disks=new ArrayList<String>();
+    for (int i=0; i < filesystems.length; i++) {
+      FileSystem fs=filesystems[i];
+      if (fs.getType() == FileSystem.TYPE_LOCAL_DISK) {
+        disks.add(fs.getDevName());
+      }
+    }
+    logger.debug("valid disk names: {}",Arrays.toString(disks.toArray()));
+  }
+ catch (  SigarException e) {
+    logger.error("System monitor error: {}",e);
+  }
+}

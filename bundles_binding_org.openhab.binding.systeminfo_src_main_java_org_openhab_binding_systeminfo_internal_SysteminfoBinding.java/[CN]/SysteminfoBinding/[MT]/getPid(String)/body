@@ -1,0 +1,29 @@
+{
+  long pid;
+  ProcessFinder processFinder=new ProcessFinder(sigarImpl);
+  String query;
+  if (processName.equals("$$")) {
+    pid=sigar.getPid();
+    logger.debug("Return own pid {}",pid);
+    return pid;
+  }
+ else   if (processName.startsWith("*")) {
+    query="State.Name.sw=" + processName.replace("*","");
+  }
+ else   if (processName.endsWith("*")) {
+    query="State.Name.ew=" + processName.replace("*","");
+  }
+ else   if (processName.startsWith("=")) {
+    query="State.Name.eq=" + processName.replace("=","");
+  }
+ else   if (processName.startsWith("#")) {
+    query=processName.replace("#","");
+  }
+ else {
+    query="State.Name.ct=" + processName;
+  }
+  logger.debug("Query pid by '{}'",query);
+  pid=processFinder.findSingleProcess(query);
+  logger.debug("Return pid {}",pid);
+  return pid;
+}

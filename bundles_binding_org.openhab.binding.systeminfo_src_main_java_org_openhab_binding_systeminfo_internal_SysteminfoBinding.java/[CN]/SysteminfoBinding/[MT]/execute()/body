@@ -1,0 +1,27 @@
+{
+  for (  SysteminfoBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      int refreshInterval=provider.getRefreshInterval(itemName);
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        logger.debug("item '{}' is about to be refreshed now",itemName);
+        SysteminfoCommandType commmandType=provider.getCommandType(itemName);
+        Class<? extends Item> itemType=provider.getItemType(itemName);
+        String target=provider.getTarget(itemName);
+        State state=getData(commmandType,itemType,target);
+        if (state != null) {
+          eventPublisher.postUpdate(itemName,state);
+        }
+ else {
+          logger.error("No response received from command '{}'",commmandType);
+        }
+        lastUpdateMap.put(itemName,System.currentTimeMillis());
+      }
+    }
+  }
+}
