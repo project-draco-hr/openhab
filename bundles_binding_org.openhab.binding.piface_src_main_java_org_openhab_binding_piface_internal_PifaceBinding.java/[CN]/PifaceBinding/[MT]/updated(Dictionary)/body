@@ -1,0 +1,34 @@
+{
+  stopMonitors();
+  pifaceNodes.clear();
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String value=(String)config.get(key);
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      String[] keyParts=key.split("\\.");
+      String pifaceId=keyParts[0];
+      String configKey=keyParts[1];
+      if (!pifaceNodes.containsKey(pifaceId)) {
+        pifaceNodes.put(pifaceId,new PifaceNode(pifaceId));
+      }
+      PifaceNode pifaceNode=pifaceNodes.get(pifaceId);
+      if (configKey.equals(CONFIG_KEY_HOST)) {
+        pifaceNode.host=value;
+      }
+ else       if (configKey.equals(CONFIG_KEY_LISTENER_PORT)) {
+        pifaceNode.listenerPort=Integer.parseInt(value);
+      }
+ else       if (configKey.equals(CONFIG_KEY_MONITOR_PORT)) {
+        pifaceNode.monitorPort=Integer.parseInt(value);
+      }
+ else {
+        throw new ConfigurationException(key,"Unrecognised configuration parameter: " + configKey);
+      }
+    }
+    startMonitors();
+  }
+}

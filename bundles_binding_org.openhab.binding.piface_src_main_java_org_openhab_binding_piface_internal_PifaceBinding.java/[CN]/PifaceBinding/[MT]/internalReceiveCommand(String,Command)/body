@@ -1,0 +1,28 @@
+{
+  for (  PifaceBindingProvider provider : getProvidersForItemName(itemName)) {
+    PifacePin pin=provider.getPifacePin(itemName);
+    if (pin == null) {
+      logger.warn("No Piface pin configuration exists for '" + itemName + "'");
+      continue;
+    }
+    if (pin.getPinType() == PifacePin.PinType.IN) {
+      logger.warn("Unable to send a command to a Piface 'IN' pin - these pin types are read-only");
+      continue;
+    }
+    String pifaceId=pin.getPifaceId();
+    int pinNumber=pin.getPinNumber();
+    PifaceNode node=pifaceNodes.get(pifaceId);
+    if (node == null) {
+      logger.warn("No Piface node for id " + pifaceId);
+      continue;
+    }
+    String host=node.host;
+    int listenerPort=node.listenerPort;
+    if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
+      sendDigitalWrite(host,listenerPort,pinNumber,1);
+    }
+ else {
+      sendDigitalWrite(host,listenerPort,pinNumber,0);
+    }
+  }
+}

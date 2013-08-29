@@ -1,0 +1,29 @@
+def start():
+    global verbose
+    listenerport = 0
+    broadcastport = 0
+    try:
+        (opts, args) = getopt.getopt(sys.argv[1:], 'hl:b:v', ['help', 'listenerport=', 'broadcastport='])
+    except getopt.GetoptError:
+        print_usage(sys.argv[0])
+        sys.exit(2)
+    for (opt, arg) in opts:
+        if (opt == '-v'):
+            verbose = True
+        elif (opt in ('-h', '--help')):
+            print_usage(sys.argv[0])
+            sys.exit()
+        elif (opt in ('-l', '--listenerport')):
+            listenerport = int(arg)
+        elif (opt in ('-b', '--broadcastport')):
+            broadcastport = int(arg)
+    pfio.init()
+    if (broadcastport != 0):
+        if verbose:
+            print ('Starting monitor on %d...' % broadcastport)
+        thread.start_new_thread(start_client, (broadcastport,))
+    if (listenerport != 0):
+        if verbose:
+            print ('Starting listener on %d...' % listenerport)
+        server = SocketServer.UDPServer((get_hostname(), listenerport), UDPHandler)
+        server.serve_forever()

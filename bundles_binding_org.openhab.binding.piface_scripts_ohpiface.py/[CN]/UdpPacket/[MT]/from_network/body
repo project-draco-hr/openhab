@@ -1,0 +1,6 @@
+def from_network(self, raw_struct):
+    'Returns this packet with new values interpereted from\n        the struct received'
+    (self.command,) = struct.unpack('B', raw_struct[0])
+    (self.pin,) = struct.unpack('B', raw_struct[1])
+    (self.value,) = struct.unpack('B', raw_struct[2])
+    return self

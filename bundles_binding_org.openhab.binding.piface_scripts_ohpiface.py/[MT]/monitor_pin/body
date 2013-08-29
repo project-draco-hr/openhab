@@ -1,0 +1,7 @@
+def monitor_pin(pin, value, sock, port):
+    latest = pfio.digital_read(pin)
+    if (latest != value):
+        if verbose:
+            print ('Pin %d changed to %d' % (pin, latest))
+        send(pin, latest, sock, port)
+    return latest

@@ -1,0 +1,8 @@
+def get_hostname():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    hostname = s.getsockname()[0]
+    s.close()
+    if verbose:
+        print ('Hostname resolved to %s' % hostname)
+    return hostname

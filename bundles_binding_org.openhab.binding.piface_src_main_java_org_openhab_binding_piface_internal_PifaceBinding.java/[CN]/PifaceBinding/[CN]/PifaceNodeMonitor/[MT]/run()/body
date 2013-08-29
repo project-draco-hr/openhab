@@ -1,0 +1,26 @@
+{
+  logger.debug(getName() + " started monitoring port " + monitorPort);
+  DatagramSocket socket=null;
+  try {
+    socket=new DatagramSocket(monitorPort);
+    byte[] receiveData=new byte[100];
+    DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
+    while (!interrupted) {
+      socket.receive(receivePacket);
+      int pinNumber=receiveData[0];
+      int pinValue=receiveData[1];
+      logger.debug(getName() + " received message for pin " + pinNumber+ " (value="+ pinValue+ ")");
+      for (      String itemName : getItemNamesForPin(pifaceId,PifacePin.PinType.IN,pinNumber)) {
+        updateItemState(itemName,pinValue);
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.error(getName() + " failed",e);
+  }
+ finally {
+    if (socket != null) {
+      socket.close();
+    }
+  }
+}

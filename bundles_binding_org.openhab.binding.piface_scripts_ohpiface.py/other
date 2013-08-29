@@ -1,0 +1,26 @@
+'\nohpiface.py\nA network listener for handling openHAB UDP commands for PiFace pins\n'
+import getopt
+import signal
+import socket
+import struct
+import sys
+import thread
+import time
+import piface.pfio as pfio
+import SocketServer
+WRITE_OUT_CMD = 1
+WRITE_OUT_ACK = 2
+READ_OUT_CMD = 3
+READ_OUT_ACK = 4
+READ_IN_CMD = 5
+READ_IN_ACK = 6
+DIGITAL_WRITE_CMD = 7
+DIGITAL_WRITE_ACK = 8
+DIGITAL_READ_CMD = 9
+DIGITAL_READ_ACK = 10
+verbose = False
+poll = 0.1
+if (__name__ == '__main__'):
+    signal.signal(signal.SIGINT, cleanup)
+    signal.signal(signal.SIGTERM, cleanup)
+    start()

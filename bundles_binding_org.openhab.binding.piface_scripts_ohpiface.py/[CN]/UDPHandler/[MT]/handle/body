@@ -1,0 +1,17 @@
+def handle(self):
+    data = self.request[0]
+    socket = self.request[1]
+    packet = UdpPacket().from_network(data)
+    if (packet.command == DIGITAL_WRITE_CMD):
+        if verbose:
+            print ('Digital write request for pin %d -> %d' % (packet.pin, packet.value))
+        pfio.digital_write(packet.pin, packet.value)
+        response = UdpPacket(DIGITAL_WRITE_ACK, packet.pin)
+        socket.sendto(response.for_network(), self.client_address)
+    elif (packet.command == DIGITAL_READ_CMD):
+        if verbose:
+            print ('Digital read request for pin %d' % packet.pin)
+        response = UdpPacket(DIGITAL_READ_ACK, packet.pin, pfio.digital_read(packet.pin))
+        socket.sendto(response.for_network(), self.client_address)
+    elif verbose:
+        print ('Unkown packet command (%d). Ignoring.' % packet.command)

@@ -1,0 +1,19 @@
+{
+  Class<? extends Item> itemType=getItemType(itemName);
+  if (itemType.equals(SwitchItem.class)) {
+    if (value == 0) {
+      eventPublisher.postUpdate(itemName,OnOffType.OFF);
+    }
+ else     if (value == 1) {
+      eventPublisher.postUpdate(itemName,OnOffType.ON);
+    }
+  }
+  if (itemType.equals(ContactItem.class)) {
+    if (value == 0) {
+      eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+    }
+ else     if (value == 1) {
+      eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+    }
+  }
+}
