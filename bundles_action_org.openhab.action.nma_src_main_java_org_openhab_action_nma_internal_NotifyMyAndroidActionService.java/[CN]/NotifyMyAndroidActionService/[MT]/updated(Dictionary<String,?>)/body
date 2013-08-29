@@ -7,18 +7,24 @@
     if (!StringUtils.isEmpty(appName)) {
       NotifyMyAndroid.appName=appName;
     }
-    try {
-      NotifyMyAndroid.timeout=Integer.parseInt((String)config.get(PARAM_KEY_TIMEOUT));
-    }
- catch (    NumberFormatException e) {
-      logger.warn("Can't parse the timeout value, falling back to default value");
+    String timeOut=(String)config.get(PARAM_KEY_TIMEOUT);
+    if (!StringUtils.isEmpty(timeOut)) {
+      try {
+        NotifyMyAndroid.timeout=Integer.parseInt((String)config.get(PARAM_KEY_TIMEOUT));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the timeout value, falling back to default value");
+      }
     }
     NotifyMyAndroid.apiKey=(String)config.get(PARAM_KEY_API_KEY);
-    try {
-      NotifyMyAndroid.defaultPriotiy=Integer.parseInt((String)config.get(PARAM_KEY_DEFAULT_PRIORITY));
-    }
- catch (    NumberFormatException e) {
-      logger.warn("Can't parse the default priority value, falling back to default value");
+    String defaultPriority=(String)config.get(PARAM_KEY_DEFAULT_PRIORITY);
+    if (!StringUtils.isEmpty(defaultPriority)) {
+      try {
+        NotifyMyAndroid.defaultPriotiy=Integer.parseInt((String)config.get(PARAM_KEY_DEFAULT_PRIORITY));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the default priority value, falling back to default value");
+      }
     }
     NotifyMyAndroid.defaultUrl=(String)config.get(PARAM_KEY_DEFAULT_URL);
   }
