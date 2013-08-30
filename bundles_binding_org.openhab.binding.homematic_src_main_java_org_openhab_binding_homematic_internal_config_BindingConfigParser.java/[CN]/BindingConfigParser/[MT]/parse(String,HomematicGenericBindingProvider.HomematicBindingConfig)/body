@@ -1,6 +1,9 @@
 {
   if (isOldFormat(configLine)) {
-    logger.warn("You are using the old Homematic item format. Please update your item definitions.");
+    if (!warningIssued) {
+      logger.warn("You are using the old Homematic item format. Please update your item definitions.");
+      warningIssued=true;
+    }
     parseOldFormat(configLine,config);
   }
  else {
