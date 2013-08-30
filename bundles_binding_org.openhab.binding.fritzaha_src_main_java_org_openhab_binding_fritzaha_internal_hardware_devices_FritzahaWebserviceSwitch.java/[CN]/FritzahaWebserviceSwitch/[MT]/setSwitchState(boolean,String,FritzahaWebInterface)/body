@@ -1,0 +1,6 @@
+{
+  logger.debug("Setting Switch with AIN " + id + " to value "+ (onOff ? "on" : "off"));
+  String path="webservices/homeautoswitch.lua";
+  String args="switchcmd=setswitch" + (onOff ? "on" : "off") + "&ain="+ id;
+  webIface.asyncGet(path,args,new FritzahaWebserviceUpdateSwitchCallback(path,args,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+}

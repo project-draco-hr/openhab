@@ -1,0 +1,14 @@
+{
+  String valueType;
+  if (type == MeterType.POWER) {
+    valueType="power";
+  }
+ else   if (type == MeterType.ENERGY) {
+    valueType="energy";
+  }
+ else   return;
+  logger.debug("Getting " + valueType + " value for AIN "+ id);
+  String path="webservices/homeautoswitch.lua";
+  String args="switchcmd=getswitch" + valueType + "&ain="+ id;
+  webIface.asyncGet(path,args,new FritzahaWebserviceUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+}

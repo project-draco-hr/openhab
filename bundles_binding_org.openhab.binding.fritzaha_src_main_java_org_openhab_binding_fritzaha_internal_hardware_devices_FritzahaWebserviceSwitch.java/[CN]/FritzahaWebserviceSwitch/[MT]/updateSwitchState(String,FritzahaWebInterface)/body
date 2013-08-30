@@ -1,0 +1,6 @@
+{
+  logger.debug("Getting Switch value for AIN " + id);
+  String path="webservices/homeautoswitch.lua";
+  String args="switchcmd=getswitchstate&ain=" + id;
+  webIface.asyncGet(path,args,new FritzahaWebserviceUpdateSwitchCallback(path,args,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+}

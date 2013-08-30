@@ -1,0 +1,22 @@
+{
+  if (!isAuthenticated())   authenticate();
+  HttpExchange postExchange=new FritzahaContentExchange(callback);
+  postExchange.setMethod("POST");
+  postExchange.setURL(getURL(path));
+  try {
+    postExchange.setRequestContent(new ByteArrayBuffer(addSID(args).getBytes("UTF-8")));
+  }
+ catch (  UnsupportedEncodingException e1) {
+    logger.error("An encoding error occurred in the POST arguments");
+    return null;
+  }
+  postExchange.setRequestContentType("application/x-www-form-urlencoded;charset=utf-8");
+  try {
+    asyncclient.send(postExchange);
+  }
+ catch (  IOException e) {
+    logger.error("An I/O error occurred while sending the POST request to " + getURL(path));
+    return null;
+  }
+  return postExchange;
+}

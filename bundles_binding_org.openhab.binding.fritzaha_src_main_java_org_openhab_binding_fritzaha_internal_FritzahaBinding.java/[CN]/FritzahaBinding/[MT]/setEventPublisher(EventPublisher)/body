@@ -1,0 +1,8 @@
+{
+  super.setEventPublisher(eventPublisher);
+  for (  Host currentHostData : hostCache.values()) {
+    currentHostData.eventPublisher=eventPublisher;
+    FritzahaWebInterface currentHost=currentHostData.getConnection();
+    currentHost.setEventPublisher(eventPublisher);
+  }
+}

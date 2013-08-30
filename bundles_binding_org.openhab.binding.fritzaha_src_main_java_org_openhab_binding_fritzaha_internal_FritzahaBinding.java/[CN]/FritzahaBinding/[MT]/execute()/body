@@ -1,0 +1,19 @@
+{
+  logger.debug("execute() method is called!");
+  for (  FritzahaBindingProvider currentProvider : providers) {
+    for (    String currentItem : currentProvider.getItemNames()) {
+      FritzahaDevice currentDevice=currentProvider.getDeviceConfig(currentItem);
+      String currentHostId=currentDevice.getHost();
+      if (!hostCache.containsKey(currentHostId))       continue;
+      FritzahaWebInterface currentHost=hostCache.get(currentHostId).getConnection();
+      if (currentDevice instanceof FritzahaSwitchedOutlet) {
+        FritzahaSwitchedOutlet currentSwitch=(FritzahaSwitchedOutlet)currentDevice;
+        currentSwitch.updateSwitchState(currentItem,currentHost);
+      }
+ else       if (currentDevice instanceof FritzahaOutletMeter) {
+        FritzahaOutletMeter currentMeter=(FritzahaOutletMeter)currentDevice;
+        currentMeter.updateMeterValue(currentItem,currentHost);
+      }
+    }
+  }
+}

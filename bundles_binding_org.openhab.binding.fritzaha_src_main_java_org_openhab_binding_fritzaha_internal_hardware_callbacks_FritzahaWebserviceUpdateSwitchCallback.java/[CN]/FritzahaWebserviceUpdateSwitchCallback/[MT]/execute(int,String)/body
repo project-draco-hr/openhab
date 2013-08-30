@@ -1,0 +1,7 @@
+{
+  super.execute(status,response);
+  if (validRequest) {
+    logger.debug("Received State response " + response + " for item "+ itemName);
+    webIface.postUpdate(itemName,"1".equals(response.trim()) ? OnOffType.ON : OnOffType.OFF);
+  }
+}

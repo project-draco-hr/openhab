@@ -1,0 +1,53 @@
+{
+  super.execute(status,response);
+  if (validRequest) {
+    logger.debug("Received State response " + response + " for item "+ itemName);
+    String valueType;
+    if (type == MeterType.VOLTAGE) {
+      valueType="MM_Value_Volt";
+    }
+ else     if (type == MeterType.CURRENT) {
+      valueType="MM_Value_Amp";
+    }
+ else     if (type == MeterType.POWER) {
+      valueType="MM_Value_Power";
+    }
+ else     return;
+    ObjectMapper jsonReader=new ObjectMapper();
+    Map<String,String> deviceData;
+    try {
+      deviceData=jsonReader.readValue(response,Map.class);
+    }
+ catch (    JsonParseException e) {
+      logger.error("Error parsing JSON:\n" + response);
+      return;
+    }
+catch (    JsonMappingException e) {
+      logger.error("Error mapping JSON:\n" + response);
+      return;
+    }
+catch (    IOException e) {
+      logger.error("An I/O error occured while decoding JSON:\n" + response);
+      return;
+    }
+    if (deviceData.containsKey(valueType)) {
+      BigDecimal meterValue=new BigDecimal(deviceData.get(valueType));
+      BigDecimal meterValueScaled;
+switch (type) {
+case VOLTAGE:
+        meterValueScaled=meterValue.scaleByPowerOfTen(-3);
+      break;
+case CURRENT:
+    meterValueScaled=meterValue.scaleByPowerOfTen(-4);
+  break;
+case POWER:
+meterValueScaled=meterValue.scaleByPowerOfTen(-2);
+break;
+default :
+meterValueScaled=meterValue;
+}
+webIface.postUpdate(itemName,new DecimalType(meterValueScaled));
+}
+ else logger.error("Response did not contain " + valueType);
+}
+}

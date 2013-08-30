@@ -1,0 +1,26 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  FritzahaBindingProvider commandProvider=null;
+  FritzahaSwitchedOutlet switchDevice=null;
+  for (  FritzahaBindingProvider currentProvider : providers) {
+    if (!currentProvider.getItemNames().contains(itemName))     continue;
+    FritzahaDevice device=currentProvider.getDeviceConfig(itemName);
+    if (!(device instanceof FritzahaSwitchedOutlet))     continue;
+    switchDevice=(FritzahaSwitchedOutlet)device;
+    commandProvider=currentProvider;
+    break;
+  }
+  if (commandProvider == null || switchDevice == null) {
+    logger.error("No provider found for item " + itemName);
+    return;
+  }
+  if (command instanceof OnOffType) {
+    String deviceHostID=switchDevice.getHost();
+    FritzahaWebInterface deviceHost=hostCache.get(deviceHostID).getConnection();
+    boolean valueToSet=(command == OnOffType.ON);
+    switchDevice.setSwitchState(valueToSet,itemName,deviceHost);
+  }
+ else {
+    logger.debug("Unsupported command type for item " + itemName);
+  }
+}

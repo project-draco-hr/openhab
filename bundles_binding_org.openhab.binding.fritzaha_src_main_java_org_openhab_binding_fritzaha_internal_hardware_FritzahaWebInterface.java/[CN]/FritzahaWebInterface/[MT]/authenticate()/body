@@ -1,0 +1,44 @@
+{
+  String loginXml=HttpUtil.executeUrl("GET",getURL("login_sid.lua",addSID("")),10 * timeout);
+  if (loginXml == null) {
+    logger.error("FritzBox does not respond");
+    return null;
+  }
+  Matcher sidmatch=SID_PATTERN.matcher(loginXml);
+  if (!sidmatch.find()) {
+    logger.error("FritzBox does not respond with SID");
+    logger.debug("Output:\n" + loginXml);
+    return null;
+  }
+  sid=sidmatch.group(1);
+  Matcher accmatch=ACCESS_PATTERN.matcher(loginXml);
+  if (accmatch.find()) {
+    if (accmatch.group(1) == "2")     logger.info("Resuming FritzBox connection with SID " + sid);
+    return sid;
+  }
+  Matcher challengematch=CHALLENGE_PATTERN.matcher(loginXml);
+  if (!challengematch.find()) {
+    logger.error("FritzBox does not respond with challenge for authentication");
+    return null;
+  }
+  String challenge=challengematch.group(1);
+  String response=createResponse(challenge);
+  loginXml=HttpUtil.executeUrl("GET",getURL("login_sid.lua",(!username.equals("") ? ("username=" + username + "&") : "") + "response=" + response),timeout);
+  if (loginXml == null) {
+    logger.error("FritzBox does not respond");
+    return null;
+  }
+  sidmatch=SID_PATTERN.matcher(loginXml);
+  if (!sidmatch.find()) {
+    logger.error("FritzBox does not respond with SID");
+    return null;
+  }
+  sid=sidmatch.group(1);
+  accmatch=ACCESS_PATTERN.matcher(loginXml);
+  if (accmatch.find()) {
+    if (accmatch.group(1) == "2")     logger.info("Established FritzBox connection with SID " + sid);
+    return sid;
+  }
+  logger.error("User " + username + " has no access to FritzBox home automation functions");
+  return null;
+}

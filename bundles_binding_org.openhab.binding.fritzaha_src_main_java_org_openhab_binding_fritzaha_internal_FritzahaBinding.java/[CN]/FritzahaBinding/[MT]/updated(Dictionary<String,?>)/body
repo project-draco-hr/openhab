@@ -1,0 +1,52 @@
+{
+  if (config != null) {
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      if ("refresh".equals(key)) {
+        refreshInterval=Long.parseLong((String)config.get("refresh"));
+        continue;
+      }
+      Matcher matcher=DEVICES_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port|protocol|username|password>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String hostId=matcher.group(1);
+      Host host=hostCache.get(hostId);
+      if (host == null) {
+        host=new Host(hostId);
+        host.eventPublisher=eventPublisher;
+        hostCache.put(hostId,host);
+        logger.debug("Created new FritzAHA host " + hostId);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("host".equals(configKey)) {
+        host.host=value;
+      }
+ else       if ("port".equals(configKey)) {
+        host.port=Integer.valueOf(value);
+      }
+ else       if ("protocol".equals(configKey)) {
+        host.protocol=value;
+      }
+ else       if ("username".equals(configKey)) {
+        host.username=value;
+      }
+ else       if ("password".equals(configKey)) {
+        host.password=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    setProperlyConfigured(true);
+    logger.debug("FritzAHA Binding configured");
+  }
+}

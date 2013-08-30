@@ -1,0 +1,6 @@
+{
+  logger.debug("Setting Switch with Device ID " + id + " to value "+ (onOff ? "on" : "off"));
+  String path="net/home_auto_query.lua";
+  String args="xhr=1&command=SwitchOnOff&value_to_set=" + (onOff ? 1 : 0) + "&id="+ id;
+  webIface.asyncPost(path,args,new FritzahaQueryscriptUpdateSwitchCallback(path,args,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+}

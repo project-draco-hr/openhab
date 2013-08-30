@@ -1,0 +1,26 @@
+{
+  super.execute(status,response);
+  if (validRequest) {
+    logger.debug("Received State response " + response + " for item "+ itemName);
+    ObjectMapper jsonReader=new ObjectMapper();
+    Map<String,String> deviceData;
+    try {
+      deviceData=jsonReader.readValue(response,Map.class);
+    }
+ catch (    JsonParseException e) {
+      logger.error("Error parsing JSON:\n" + response);
+      return;
+    }
+catch (    JsonMappingException e) {
+      logger.error("Error mapping JSON:\n" + response);
+      return;
+    }
+catch (    IOException e) {
+      logger.error("An I/O error occured while decoding JSON:\n" + response);
+      return;
+    }
+    if (deviceData.containsKey("DeviceSwitchState")) {
+      webIface.postUpdate(itemName,"1".equals(deviceData.get("DeviceSwitchState")) ? OnOffType.ON : OnOffType.OFF);
+    }
+  }
+}

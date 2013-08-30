@@ -1,0 +1,6 @@
+{
+  logger.debug("Getting Switch value for Device ID " + id);
+  String path="net/home_auto_query.lua";
+  String args="xhr=1&command=OutletStates&id=" + id;
+  webIface.asyncGet(path,args,new FritzahaQueryscriptUpdateSwitchCallback(path,args,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+}

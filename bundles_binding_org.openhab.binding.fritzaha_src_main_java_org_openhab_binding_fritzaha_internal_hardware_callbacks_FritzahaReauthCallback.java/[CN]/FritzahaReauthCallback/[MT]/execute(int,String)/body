@@ -1,0 +1,16 @@
+{
+  if (status != 200 || "".equals(response) || ".".equals(response)) {
+    validRequest=false;
+    if (retries >= 1) {
+      webIface.authenticate();
+      retries--;
+      if (httpMethod == Method.GET) {
+        webIface.asyncGet(path,args,retryCallback);
+      }
+ else       if (httpMethod == Method.POST) {
+        webIface.asyncPost(path,args,retryCallback);
+      }
+    }
+  }
+ else   validRequest=true;
+}

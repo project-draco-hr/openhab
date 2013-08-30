@@ -1,0 +1,22 @@
+{
+  String handshake=challenge.concat("-").concat(password);
+  MessageDigest md5;
+  try {
+    md5=MessageDigest.getInstance("MD5");
+  }
+ catch (  NoSuchAlgorithmException e) {
+    logger.error("This version of Java does not support MD5 hashing");
+    return "";
+  }
+  byte[] handshakeHash;
+  try {
+    handshakeHash=md5.digest(handshake.getBytes("UTF-16LE"));
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("This version of Java does not understand UTF-16LE encoding");
+    return "";
+  }
+  String response=challenge.concat("-");
+  for (  byte handshakeByte : handshakeHash)   response=response.concat(String.format("%02x",handshakeByte));
+  return response;
+}

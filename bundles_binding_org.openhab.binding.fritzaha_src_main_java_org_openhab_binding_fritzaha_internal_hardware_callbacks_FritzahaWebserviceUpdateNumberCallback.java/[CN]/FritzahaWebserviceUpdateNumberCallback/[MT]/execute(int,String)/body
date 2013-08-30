@@ -1,0 +1,17 @@
+{
+  super.execute(status,response);
+  if (validRequest) {
+    logger.debug("Received State response " + response + " for item "+ itemName);
+    BigDecimal meterValue=new BigDecimal(response.trim());
+    BigDecimal meterValueScaled;
+switch (type) {
+case POWER:
+      meterValueScaled=meterValue.scaleByPowerOfTen(-3);
+    break;
+case ENERGY:
+default :
+  meterValueScaled=meterValue;
+}
+webIface.postUpdate(itemName,new DecimalType(meterValueScaled));
+}
+}

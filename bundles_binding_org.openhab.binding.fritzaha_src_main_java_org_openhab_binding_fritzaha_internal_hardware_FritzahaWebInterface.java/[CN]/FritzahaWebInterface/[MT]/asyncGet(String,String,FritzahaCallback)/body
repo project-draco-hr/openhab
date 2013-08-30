@@ -1,0 +1,15 @@
+{
+  if (!isAuthenticated())   authenticate();
+  HttpExchange getExchange=new FritzahaContentExchange(callback);
+  getExchange.setMethod("GET");
+  getExchange.setURL(getURL(path,addSID(args)));
+  try {
+    asyncclient.send(getExchange);
+  }
+ catch (  IOException e) {
+    logger.error("An I/O error occurred while sending the GET request " + getURL(path,addSID(args)));
+    return null;
+  }
+  logger.debug("GETting URL " + getURL(path,addSID(args)));
+  return getExchange;
+}
