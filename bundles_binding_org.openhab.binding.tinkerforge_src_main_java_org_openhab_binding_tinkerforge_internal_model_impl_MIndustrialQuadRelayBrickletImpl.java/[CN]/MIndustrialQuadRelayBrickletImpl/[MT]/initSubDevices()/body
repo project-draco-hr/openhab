@@ -1,3 +1,13 @@
 {
-  throw new UnsupportedOperationException();
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=1; i < 5; i++) {
+    MIndustrialQuadRelay relay=factory.createMIndustrialQuadRelay();
+    relay.setUid(uid);
+    String subId="relay" + String.valueOf(i);
+    logger.debug("addSubDevice " + subId);
+    relay.setSubId(subId);
+    relay.init();
+    relay.setMbrick(this);
+    getMsubdevices().add(relay);
+  }
 }
