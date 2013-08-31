@@ -12,7 +12,7 @@
         executedRules.add(rule);
       }
  catch (      ScriptExecutionException e) {
-        if (e.getCause() instanceof ItemNotFoundException) {
+        if (e.getCause() instanceof ItemNotFoundException || e.getCause().getMessage().contains("cannot be resolved to an item or type")) {
         }
  else {
           logger.error("Error during the execution of startup rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
