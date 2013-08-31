@@ -10,8 +10,10 @@
     if (deviceConfig.getCommandType().equals(BindingType.brightness) || deviceConfig.getCommandType().equals(BindingType.rgb)) {
       if (OnOffType.ON.equals(command)) {
         sendOn(bulb,bridgeId);
-        Thread.sleep(100);
-        sendFull(bulb,bridgeId);
+        if (deviceConfig.getCommandType().equals(BindingType.brightness)) {
+          Thread.sleep(100);
+          sendFull(bulb,bridgeId);
+        }
       }
  else       if (OnOffType.OFF.equals(command)) {
         sendOff(bulb,bridgeId);
