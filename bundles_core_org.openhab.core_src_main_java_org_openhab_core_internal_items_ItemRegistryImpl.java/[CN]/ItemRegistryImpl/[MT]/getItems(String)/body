@@ -1,12 +1,10 @@
 {
   String regex=pattern.replace("?",".?").replace("*",".*?");
   Collection<Item> matchedItems=new ArrayList<Item>();
-synchronized (itemMap) {
-    for (    Collection<Item> items : itemMap.values()) {
-      for (      Item item : items) {
-        if (item.getName().matches(regex)) {
-          matchedItems.add(item);
-        }
+  for (  Collection<Item> items : itemMap.values()) {
+    for (    Item item : items) {
+      if (item.getName().matches(regex)) {
+        matchedItems.add(item);
       }
     }
   }

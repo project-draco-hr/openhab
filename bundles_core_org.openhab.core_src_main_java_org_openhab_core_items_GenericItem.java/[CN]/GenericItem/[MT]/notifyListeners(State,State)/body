@@ -1,8 +1,6 @@
 {
-  HashSet<StateChangeListener> clonedListeners=null;
-synchronized (listeners) {
-    clonedListeners=new HashSet<StateChangeListener>(listeners);
-  }
+  Set<StateChangeListener> clonedListeners=null;
+  clonedListeners=new CopyOnWriteArraySet<StateChangeListener>(listeners);
   for (  StateChangeListener listener : clonedListeners) {
     listener.stateUpdated(this,newState);
   }

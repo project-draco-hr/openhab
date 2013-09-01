@@ -1,10 +1,8 @@
 {
   if (!itemMap.containsKey(itemProvider)) {
-    Collection<Item> items=Collections.synchronizedCollection(itemProvider.getItems());
+    Collection<Item> items=new CopyOnWriteArraySet<Item>(itemProvider.getItems());
     itemProvider.addItemChangeListener(this);
-synchronized (itemMap) {
-      itemMap.put(itemProvider,items);
-    }
+    itemMap.put(itemProvider,items);
     logger.debug("Item provider '{}' has been added.",itemProvider.getClass().getSimpleName());
     allItemsChanged(itemProvider,null);
   }

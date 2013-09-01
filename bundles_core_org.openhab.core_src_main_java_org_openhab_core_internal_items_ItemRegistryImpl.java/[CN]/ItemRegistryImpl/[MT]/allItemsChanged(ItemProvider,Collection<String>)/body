@@ -2,19 +2,15 @@
   if (oldItemNames == null || oldItemNames.isEmpty()) {
     oldItemNames=new HashSet<String>();
     Collection<Item> oldItems;
-synchronized (itemMap) {
-      oldItems=itemMap.get(provider);
-    }
+    oldItems=itemMap.get(provider);
     if (oldItems != null && oldItems.size() > 0) {
       for (      Item oldItem : oldItems) {
         oldItemNames.add(oldItem.getName());
       }
     }
   }
-  Collection<Item> items=Collections.synchronizedCollection(new ArrayList<Item>());
-synchronized (itemMap) {
-    itemMap.put(provider,items);
-  }
+  Collection<Item> items=new CopyOnWriteArrayList<Item>();
+  itemMap.put(provider,items);
   for (  Item item : provider.getItems()) {
     if (initializeItem(item)) {
       items.add(item);
