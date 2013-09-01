@@ -1,0 +1,25 @@
+{
+  if (baseClass == MBaseDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBAROMETER_TEMPERATURE__LOGGER:
+      return ModelPackage.MBASE_DEVICE__LOGGER;
+case ModelPackage.MBAROMETER_TEMPERATURE__UID:
+    return ModelPackage.MBASE_DEVICE__UID;
+case ModelPackage.MBAROMETER_TEMPERATURE__ENABLED_A:
+  return ModelPackage.MBASE_DEVICE__ENABLED_A;
+default :
+return -1;
+}
+}
+if (baseClass == MSubDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBAROMETER_TEMPERATURE__SUB_ID:
+return ModelPackage.MSUB_DEVICE__SUB_ID;
+case ModelPackage.MBAROMETER_TEMPERATURE__MBRICK:
+return ModelPackage.MSUB_DEVICE__MBRICK;
+default :
+return -1;
+}
+}
+return super.eBaseStructuralFeatureID(derivedFeatureID,baseClass);
+}

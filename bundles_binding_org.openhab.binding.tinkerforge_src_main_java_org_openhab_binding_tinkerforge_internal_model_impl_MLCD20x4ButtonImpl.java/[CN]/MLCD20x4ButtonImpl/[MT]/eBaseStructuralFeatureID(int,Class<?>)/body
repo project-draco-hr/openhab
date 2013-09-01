@@ -1,0 +1,25 @@
+{
+  if (baseClass == MBaseDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MLCD2_0X4_BUTTON__LOGGER:
+      return ModelPackage.MBASE_DEVICE__LOGGER;
+case ModelPackage.MLCD2_0X4_BUTTON__UID:
+    return ModelPackage.MBASE_DEVICE__UID;
+case ModelPackage.MLCD2_0X4_BUTTON__ENABLED_A:
+  return ModelPackage.MBASE_DEVICE__ENABLED_A;
+default :
+return -1;
+}
+}
+if (baseClass == MSubDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MLCD2_0X4_BUTTON__SUB_ID:
+return ModelPackage.MSUB_DEVICE__SUB_ID;
+case ModelPackage.MLCD2_0X4_BUTTON__MBRICK:
+return ModelPackage.MSUB_DEVICE__MBRICK;
+default :
+return -1;
+}
+}
+return super.eBaseStructuralFeatureID(derivedFeatureID,baseClass);
+}

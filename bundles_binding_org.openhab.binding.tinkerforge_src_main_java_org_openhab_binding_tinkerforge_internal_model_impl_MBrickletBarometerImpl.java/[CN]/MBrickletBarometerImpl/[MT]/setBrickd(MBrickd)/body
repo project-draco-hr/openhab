@@ -1,0 +1,11 @@
+{
+  if (newBrickd != eInternalContainer() || (eContainerFeatureID() != ModelPackage.MBRICKLET_BAROMETER__BRICKD && newBrickd != null)) {
+    if (EcoreUtil.isAncestor(this,newBrickd))     throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+    NotificationChain msgs=null;
+    if (eInternalContainer() != null)     msgs=eBasicRemoveFromContainer(msgs);
+    if (newBrickd != null)     msgs=((InternalEObject)newBrickd).eInverseAdd(this,ModelPackage.MBRICKD__MDEVICES,MBrickd.class,msgs);
+    msgs=basicSetBrickd(newBrickd,msgs);
+    if (msgs != null)     msgs.dispatch();
+  }
+ else   if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MBRICKLET_BAROMETER__BRICKD,newBrickd,newBrickd));
+}

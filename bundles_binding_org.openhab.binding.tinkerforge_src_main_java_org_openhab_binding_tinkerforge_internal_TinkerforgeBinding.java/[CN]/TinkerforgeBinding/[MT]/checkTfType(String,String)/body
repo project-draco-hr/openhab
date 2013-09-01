@@ -1,0 +1,20 @@
+{
+  ModelPackage modelPackage=ModelPackage.eINSTANCE;
+  boolean deviceFound=false;
+  for (  EClassifier eClassifier : modelPackage.getEClassifiers()) {
+    if (eClassifier instanceof EClass) {
+      EList<EAttribute> attributes=((EClass)eClassifier).getEAllAttributes();
+      for (      EAttribute attribute : attributes) {
+        if (attribute.getName().equals("deviceType")) {
+          if (attribute.getDefaultValueLiteral().equals(deviceType)) {
+            deviceFound=true;
+            break;
+          }
+        }
+      }
+    }
+  }
+  if (!deviceFound) {
+    throw new ConfigurationException(ohId,"unknown device type: " + deviceType);
+  }
+}

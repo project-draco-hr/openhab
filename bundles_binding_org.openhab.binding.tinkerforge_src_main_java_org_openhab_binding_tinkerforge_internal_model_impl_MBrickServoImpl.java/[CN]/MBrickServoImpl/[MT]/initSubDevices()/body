@@ -1,0 +1,13 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=0; i < 7; i++) {
+    MServo mServo=factory.createMServo();
+    mServo.setUid(uid);
+    String subId="servo" + String.valueOf(i);
+    logger.debug("addSubDevice " + subId);
+    mServo.setSubId(subId);
+    mServo.init();
+    mServo.setMbrick(this);
+    getMsubdevices().add(mServo);
+  }
+}

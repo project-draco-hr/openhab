@@ -1,0 +1,32 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("threshold"))) {
+      setThreshold(tfConfig.getThreshold());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
+  }
+  tinkerforgeDevice=new BrickletAmbientLight(uid,ipConnection);
+  try {
+    tinkerforgeDevice.setIlluminanceCallbackPeriod(callbackPeriod);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  tinkerforgeDevice.addIlluminanceListener(new BrickletAmbientLight.IlluminanceListener(){
+    @Override public void illuminance(    int newIlluminance){
+      if (newIlluminance > (illuminance + threshold) || newIlluminance < (illuminance - threshold)) {
+        setSensorValue(newIlluminance / 10.0);
+        setIlluminance(newIlluminance);
+      }
+ else {
+        logger.trace(String.format("new illuminance: %s old: %s",newIlluminance,illuminance));
+      }
+    }
+  }
+);
+}

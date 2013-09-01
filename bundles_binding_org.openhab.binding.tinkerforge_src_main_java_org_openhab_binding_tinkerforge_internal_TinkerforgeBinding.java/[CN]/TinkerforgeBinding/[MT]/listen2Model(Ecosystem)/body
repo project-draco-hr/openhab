@@ -1,0 +1,16 @@
+{
+  EContentAdapter modelAdapter=new EContentAdapter(){
+    @Override public void notifyChanged(    Notification notification){
+      super.notifyChanged(notification);
+      logger.debug("TinkerforgeNotifier was notified");
+      if (notification.getEventType() == Notification.ADD || notification.getEventType() == Notification.ADD_MANY || notification.getEventType() == Notification.REMOVE || notification.getEventType() == Notification.REMOVE_MANY) {
+        initializeTFDevices(notification);
+      }
+ else {
+        processTFDeviceValues(notification);
+      }
+    }
+  }
+;
+  tinkerforgeEcosystem.eAdapters().add(modelAdapter);
+}

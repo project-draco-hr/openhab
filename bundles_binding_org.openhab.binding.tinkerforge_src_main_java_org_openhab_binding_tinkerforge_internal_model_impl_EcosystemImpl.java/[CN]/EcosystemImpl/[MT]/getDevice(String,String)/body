@@ -1,0 +1,29 @@
+{
+  EList<MBrickd> _mbrickds=getMbrickds();
+  for (  final MBrickd mbrickd : _mbrickds) {
+{
+      final MBaseDevice mDevice=mbrickd.getDevice(uid);
+      if (mDevice != null) {
+        if (subId == null) {
+          return mDevice;
+        }
+ else {
+          if (mDevice instanceof MSubDeviceHolder) {
+            final MSubDeviceHolder<?> mBrick=((MSubDeviceHolder<?>)mDevice);
+            EList<?> _msubdevices=mBrick.getMsubdevices();
+            for (            final Object ms : _msubdevices) {
+              if ((ms instanceof MSubDevice<?>)) {
+                final MSubDevice<?> msubdevice=((MSubDevice<?>)ms);
+                String _subId=msubdevice.getSubId();
+                if (_subId.equals(subId)) {
+                  return ((MBaseDevice)msubdevice);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

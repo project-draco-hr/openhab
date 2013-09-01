@@ -1,0 +1,11 @@
+{
+  MBrickletLCD20x4 masterBrick=getMbrick();
+  if (masterBrick == null) {
+    logger.error("{} disable: no brick found for Button: {} ",LoggerConstants.TFINIT,subId);
+  }
+ else {
+    BrickletLCD20x4 brickletLCD20x4=masterBrick.getTinkerforgeDevice();
+    if (buttonPressedListener != null)     brickletLCD20x4.removeButtonPressedListener(buttonPressedListener);
+    if (buttonReleasedListener != null)     brickletLCD20x4.removeButtonReleasedListener(buttonReleasedListener);
+  }
+}

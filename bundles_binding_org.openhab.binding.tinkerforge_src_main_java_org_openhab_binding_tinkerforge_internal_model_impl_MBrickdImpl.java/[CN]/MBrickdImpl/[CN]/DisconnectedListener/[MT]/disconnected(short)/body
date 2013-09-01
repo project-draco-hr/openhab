@@ -1,0 +1,12 @@
+{
+  logger.trace("disconnected listener was called.",LoggerConstants.TFINIT);
+  setIsConnected(false);
+  ArrayList<String> deviceUidList=new ArrayList<String>();
+  for (  MDevice<?> mDevice : mdevices) {
+    deviceUidList.add(mDevice.getUid());
+  }
+  for (  String uid : deviceUidList) {
+    removeDevice(uid);
+  }
+  makeConnect();
+}

@@ -1,0 +1,16 @@
+{
+  MBrickd brickd=tinkerforgeEcosystem.getBrickd(host,port);
+  if (brickd == null) {
+    brickd=modelFactory.createMBrickd();
+    brickd.setHost(host);
+    brickd.setPort(port);
+    brickd.setEcosystem(tinkerforgeEcosystem);
+    tinkerforgeEcosystem.getMbrickds().add(brickd);
+    brickd.init();
+    brickd.connect();
+    logger.debug("{} Tinkerforge new brickd for host: {}",LoggerConstants.TFINIT,host);
+  }
+ else {
+    logger.debug("{} Tinkerforge found existing brickd for host: {}",LoggerConstants.TFINIT,host);
+  }
+}

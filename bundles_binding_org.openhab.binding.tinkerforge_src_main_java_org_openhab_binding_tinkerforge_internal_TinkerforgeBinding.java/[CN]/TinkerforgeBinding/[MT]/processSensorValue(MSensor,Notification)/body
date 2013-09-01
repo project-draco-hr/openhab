@@ -1,0 +1,11 @@
+{
+  double newDoubleValue=notification.getNewDoubleValue();
+  String uid=((MBaseDevice)sensor).getUid();
+  String subId=null;
+  if (sensor instanceof MSubDevice<?>) {
+    subId=((MSubDevice<?>)sensor).getSubId();
+    logger.trace("{} Notifier found MSubDevice sensor value for: {}",LoggerConstants.TFMODELUPDATE,subId);
+  }
+ else   logger.trace("{} Notifier found mDevice sensor value for: {}",LoggerConstants.TFMODELUPDATE,uid);
+  postUpdate(uid,subId,DecimalType.valueOf(String.valueOf(newDoubleValue)));
+}

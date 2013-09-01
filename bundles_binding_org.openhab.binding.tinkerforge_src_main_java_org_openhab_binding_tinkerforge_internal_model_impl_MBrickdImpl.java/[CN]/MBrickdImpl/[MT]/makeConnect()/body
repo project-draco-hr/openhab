@@ -1,0 +1,18 @@
+{
+  try {
+    logger.debug("trying to establish connection to {}:{}",host,port);
+    ipConnection.connect(getHost(),getPort());
+  }
+ catch (  AlreadyConnectedException e) {
+    logger.debug("connect successful: {}:{}",host,port);
+  }
+catch (  ConnectException e) {
+    logger.debug("connect failed with ConnectionException: {}:{}",host,port);
+  }
+catch (  UnknownHostException e) {
+    logger.error("fatal error: {}",e);
+  }
+catch (  IOException e) {
+    logger.error("connect failed with IOException {}",e);
+  }
+}

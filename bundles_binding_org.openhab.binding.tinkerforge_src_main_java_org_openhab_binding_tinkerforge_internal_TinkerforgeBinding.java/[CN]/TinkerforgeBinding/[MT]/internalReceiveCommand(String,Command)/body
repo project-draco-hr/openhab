@@ -1,0 +1,41 @@
+{
+  for (  TinkerforgeBindingProvider provider : providers) {
+    for (    String itemNameP : provider.getItemNames()) {
+      if (itemNameP.equals(itemName)) {
+        String deviceUid=provider.getUid(itemName);
+        String deviceSubId=provider.getSubId(itemName);
+        String deviceName=provider.getName(itemName);
+        if (deviceName != null) {
+          String[] ids=getDeviceIdsForDeviceName(deviceName);
+          deviceUid=ids[0];
+          deviceSubId=ids[1];
+        }
+        logger.trace("found item for command: uid: {}, subid: {}",deviceUid,deviceSubId);
+        MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
+        if (mDevice != null) {
+          if (command instanceof OnOffType) {
+            logger.debug("found onoff command");
+            if (mDevice instanceof MInSwitchActor) {
+              OnOffType cmd=(OnOffType)command;
+              SwitchState state=(cmd.equals(OnOffType.OFF)) ? SwitchState.OFF : SwitchState.ON;
+              ((MSwitchActor)mDevice).setSwitchState(state);
+            }
+ else {
+              logger.error("received OnOff command for non-SwitchActor");
+            }
+          }
+ else           if (command instanceof StringType) {
+            logger.debug("found string command");
+            if (mDevice instanceof MTextActor) {
+              ((MTextActor)mDevice).setText(command.toString());
+            }
+          }
+ else {
+            logger.error("got unknown command type: {}",command.toString());
+          }
+        }
+ else         logger.error("no tinkerforge device found for command");
+      }
+    }
+  }
+}

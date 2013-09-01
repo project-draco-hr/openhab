@@ -1,0 +1,11 @@
+{
+  logger.debug("{} Connected listener was called.",LoggerConstants.TFINIT);
+  setIsConnected(true);
+  ipcon.addEnumerateListener(new EnumerateListener());
+  try {
+    ipcon.enumerate();
+  }
+ catch (  NotConnectedException e) {
+    logger.error("{} enumeration failed with NotConnectedException",LoggerConstants.TFINIT);
+  }
+}

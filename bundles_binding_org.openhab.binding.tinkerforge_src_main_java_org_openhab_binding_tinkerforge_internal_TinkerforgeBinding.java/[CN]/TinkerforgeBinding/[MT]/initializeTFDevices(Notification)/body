@@ -1,0 +1,40 @@
+{
+  if (notification.getNotifier() instanceof MBrickd) {
+    int featureID=notification.getFeatureID(MBrickd.class);
+    if (featureID == ModelPackage.MBRICKD__MDEVICES) {
+      if (notification.getEventType() == Notification.ADD) {
+        MDevice<?> mDevice=(MDevice<?>)notification.getNewValue();
+        addMDevice(mDevice,mDevice.getUid(),null);
+      }
+ else       if (notification.getEventType() == Notification.ADD_MANY) {
+        logger.debug("{} Notifier: add many called: ",LoggerConstants.TFINIT);
+      }
+ else       if (notification.getEventType() == Notification.REMOVE) {
+        if (notification instanceof MBaseDevice) {
+          MBaseDevice mDevice=(MBaseDevice)notification.getOldValue();
+          String uid=mDevice.getUid();
+          String subId=null;
+          if (notification instanceof MSubDevice<?>) {
+            MSubDevice<?> mSubDevice=(MSubDevice<?>)notification.getOldValue();
+            subId=mSubDevice.getSubId();
+          }
+          if (searchConfiguredItemName(uid,subId) != null) {
+            mDevice.disable();
+            logger.debug("{} Notifier: removing device: {}",LoggerConstants.TFINIT,uid);
+            postUpdate(uid,subId,UnDefType.UNDEF);
+          }
+        }
+      }
+    }
+  }
+ else   if (notification.getNotifier() instanceof MSubDeviceHolder<?>) {
+    int featureID=notification.getFeatureID(MSubDeviceHolder.class);
+    if (featureID == ModelPackage.MSUB_DEVICE_HOLDER__MSUBDEVICES) {
+      logger.debug("{} MSubdevices Notifier called",LoggerConstants.TFINITSUB);
+      if (notification.getEventType() == Notification.ADD) {
+        MSubDevice<?> mSubDevice=(MSubDevice<?>)notification.getNewValue();
+        addMDevice(mSubDevice,mSubDevice.getUid(),mSubDevice.getSubId());
+      }
+    }
+  }
+}

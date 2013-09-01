@@ -1,0 +1,11 @@
+{
+  if (newOhConfig != eInternalContainer() || (eContainerFeatureID() != ModelPackage.OHTF_DEVICE__OH_CONFIG && newOhConfig != null)) {
+    if (EcoreUtil.isAncestor(this,newOhConfig))     throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+    NotificationChain msgs=null;
+    if (eInternalContainer() != null)     msgs=eBasicRemoveFromContainer(msgs);
+    if (newOhConfig != null)     msgs=((InternalEObject)newOhConfig).eInverseAdd(this,ModelPackage.OH_CONFIG__OH_TF_DEVICES,OHConfig.class,msgs);
+    msgs=basicSetOhConfig(newOhConfig,msgs);
+    if (msgs != null)     msgs.dispatch();
+  }
+ else   if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.OHTF_DEVICE__OH_CONFIG,newOhConfig,newOhConfig));
+}

@@ -1,0 +1,11 @@
+{
+  if (newEcosystem != eInternalContainer() || (eContainerFeatureID() != ModelPackage.MBRICKD__ECOSYSTEM && newEcosystem != null)) {
+    if (EcoreUtil.isAncestor(this,newEcosystem))     throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+    NotificationChain msgs=null;
+    if (eInternalContainer() != null)     msgs=eBasicRemoveFromContainer(msgs);
+    if (newEcosystem != null)     msgs=((InternalEObject)newEcosystem).eInverseAdd(this,ModelPackage.ECOSYSTEM__MBRICKDS,Ecosystem.class,msgs);
+    msgs=basicSetEcosystem(newEcosystem,msgs);
+    if (msgs != null)     msgs.dispatch();
+  }
+ else   if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MBRICKD__ECOSYSTEM,newEcosystem,newEcosystem));
+}

@@ -1,0 +1,67 @@
+{
+  if (getDevice(uid) != null) {
+    logger.debug("{} device already exists. uid: {}",LoggerConstants.TFINIT,uid);
+  }
+ else {
+    ModelFactory factory=ModelFactory.eINSTANCE;
+    MDevice<?> mDevice=null;
+    logger.debug("{} addDevice called",LoggerConstants.TFINIT);
+    if (deviceIdentifier == BrickletTemperature.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice temperature",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickletTemperature();
+      mDevice.setDeviceIdentifier(BrickletTemperature.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletHumidity.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice humidity",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickletHumidity();
+      mDevice.setDeviceIdentifier(BrickletHumidity.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickServo.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice BrickServo",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickServo();
+      mDevice.setDeviceIdentifier(BrickServo.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletDualRelay.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice BrickletDualRelayBricklet",LoggerConstants.TFINIT);
+      mDevice=factory.createMDualRelayBricklet();
+      mDevice.setDeviceIdentifier(BrickletDualRelay.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletBarometer.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice BrickletBarometer",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickletBarometer();
+      mDevice.setDeviceIdentifier(BrickletBarometer.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletAmbientLight.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice AmbientLight",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickletAmbientLight();
+      mDevice.setDeviceIdentifier(BrickletAmbientLight.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletDistanceIR.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice DistanceIR",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickletDistanceIR();
+      mDevice.setDeviceIdentifier(BrickletDistanceIR.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickDC.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice BrickDC",LoggerConstants.TFINIT);
+      mDevice=factory.createMBrickDC();
+      mDevice.setDeviceIdentifier(BrickDC.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletLCD20x4.DEVICE_IDENTIFIER) {
+      logger.debug("addDevice BrickletLCD20x4");
+      mDevice=factory.createMBrickletLCD20x4();
+      mDevice.setDeviceIdentifier(BrickletLCD20x4.DEVICE_IDENTIFIER);
+    }
+    if (mDevice != null) {
+      mDevice.setIpConnection(getIpConnection());
+      logger.debug("{} addDevice uid: {}",LoggerConstants.TFINIT,uid);
+      mDevice.setUid(uid);
+      mDevice.setConnectedUid(connectedUid);
+      mDevice.init();
+      mDevice.setBrickd(this);
+      if (mDevice instanceof MSubDeviceHolder) {
+        logger.debug("{} initSubDevices uid: {}",LoggerConstants.TFINIT,uid);
+        ((MSubDeviceHolder<MSubDevice<?>>)mDevice).initSubDevices();
+      }
+    }
+  }
+}

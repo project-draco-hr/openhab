@@ -1,0 +1,31 @@
+{
+  tinkerforgeDevice=new BrickDC(uid,ipConnection);
+  if (tfConfig != null) {
+    logger.debug("found tfConfig");
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("acceleration"))) {
+      setAcceleration(tfConfig.getAcceleration());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("pwmFrequency"))) {
+      setPwmFrequency(tfConfig.getPwmFrequency());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("switchOnVelocity"))) {
+      setSwitchOnVelocity(tfConfig.getSwitchOnVelocity());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("driveMode"))) {
+      setDriveMode(DCDriveMode.get(tfConfig.getDriveMode()));
+    }
+  }
+  try {
+    tinkerforgeDevice.setAcceleration(acceleration);
+    tinkerforgeDevice.setPWMFrequency(pwmFrequency);
+    if (driveMode == DCDriveMode.BRAKE)     tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_BRAKE);
+ else     if (driveMode == DCDriveMode.COAST)     tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_COAST);
+    tinkerforgeDevice.enable();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

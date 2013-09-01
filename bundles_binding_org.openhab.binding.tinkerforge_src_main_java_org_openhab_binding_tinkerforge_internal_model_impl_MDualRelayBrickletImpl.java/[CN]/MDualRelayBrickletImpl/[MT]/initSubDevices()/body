@@ -1,0 +1,13 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=1; i < 3; i++) {
+    MDualRelay mrelay=factory.createMDualRelay();
+    mrelay.setUid(uid);
+    String subId="relay" + String.valueOf(i);
+    logger.debug("addSubDevice " + subId);
+    mrelay.setSubId(subId);
+    mrelay.init();
+    mrelay.setMbrick(this);
+    getMsubdevices().add(mrelay);
+  }
+}

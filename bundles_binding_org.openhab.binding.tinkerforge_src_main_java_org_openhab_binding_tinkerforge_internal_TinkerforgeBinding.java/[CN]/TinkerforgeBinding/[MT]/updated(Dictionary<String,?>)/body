@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    if (isConnected) {
+      disconnectModel();
+    }
+    connectModel();
+    ohConfig=modelFactory.createOHConfig();
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    logger.debug("{} updated called",LoggerConstants.TFOPENHABCONFIG);
+    Map<String,Map<String,String>> configContainer=createConfigContainer(config);
+    for (    Map<String,String> deviceConfig : configContainer.values()) {
+      createOHTFDeviceConfig(deviceConfig);
+    }
+    String cfgHostsLine=(String)config.get(ConfigKey.hosts.name());
+    parseCfgHostsAndConnect(cfgHostsLine);
+    setProperlyConfigured(true);
+  }
+}

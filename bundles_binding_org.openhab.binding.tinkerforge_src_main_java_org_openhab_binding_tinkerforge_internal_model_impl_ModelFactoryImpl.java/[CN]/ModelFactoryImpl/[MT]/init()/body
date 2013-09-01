@@ -1,0 +1,12 @@
+{
+  try {
+    ModelFactory theModelFactory=(ModelFactory)EPackage.Registry.INSTANCE.getEFactory("org.openhab.binding.tinkerforge.internal.model");
+    if (theModelFactory != null) {
+      return theModelFactory;
+    }
+  }
+ catch (  Exception exception) {
+    EcorePlugin.INSTANCE.log(exception);
+  }
+  return new ModelFactoryImpl();
+}

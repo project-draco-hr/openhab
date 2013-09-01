@@ -1,0 +1,26 @@
+{
+  String logId=subId == null ? uid : uid + " " + subId;
+  OHTFDevice<?> deviceConfig=ohConfig.getConfigByTFId(uid,subId);
+  if (deviceConfig != null && device.getEnabledA().compareAndSet(false,true)) {
+    if (subId != null) {
+      MDevice<?> masterDevice=(MDevice<?>)device.eContainer();
+      if (masterDevice.getEnabledA().compareAndSet(false,true)) {
+        logger.debug("{} enabling masterDevice {}",LoggerConstants.TFINITSUB,masterDevice.getUid());
+        masterDevice.enable();
+      }
+    }
+    if (device instanceof MTFConfigConsumer<?>) {
+      logger.debug("{} found MTFConfigConsumer id {}",LoggerConstants.TFINIT,logId);
+      TFConfig deviceTfConfig=deviceConfig.getTfConfig();
+      if (deviceTfConfig != null) {
+        logger.debug("{} setting tfConfig for {}",LoggerConstants.TFINIT,logId);
+        ((MTFConfigConsumer<EObject>)device).setTfConfig(deviceTfConfig);
+      }
+    }
+ else {
+      logger.debug("{} Notifier not found MTFConfigConsumer {}",LoggerConstants.TFINIT,logId);
+    }
+  }
+  device.enable();
+  logger.debug("{} adding/enabling device: {}",LoggerConstants.TFINIT,logId);
+}

@@ -1,0 +1,18 @@
+{
+  try {
+    State state=getMbrick().getTinkerforgeDevice().getState();
+    if (relayNum == 1) {
+      return (state.relay1) ? SwitchState.ON : SwitchState.OFF;
+    }
+ else {
+      return (state.relay2) ? SwitchState.ON : SwitchState.OFF;
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  return SwitchState.UNDEF;
+}

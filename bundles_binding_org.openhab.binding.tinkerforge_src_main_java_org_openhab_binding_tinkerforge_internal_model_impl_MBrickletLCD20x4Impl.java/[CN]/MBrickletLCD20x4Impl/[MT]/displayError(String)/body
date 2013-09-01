@@ -1,0 +1,15 @@
+{
+  if (displayErrors) {
+    try {
+      tinkerforgeDevice.clearDisplay();
+      tinkerforgeDevice.writeLine((short)0,(short)0,errorPrefix);
+      tinkerforgeDevice.writeLine((short)1,(short)0,msg);
+    }
+ catch (    TimeoutException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+    }
+catch (    NotConnectedException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    }
+  }
+}

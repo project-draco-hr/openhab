@@ -1,0 +1,11 @@
+{
+  if (newMbrick != eInternalContainer() || (eContainerFeatureID() != ModelPackage.MSERVO__MBRICK && newMbrick != null)) {
+    if (EcoreUtil.isAncestor(this,newMbrick))     throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+    NotificationChain msgs=null;
+    if (eInternalContainer() != null)     msgs=eBasicRemoveFromContainer(msgs);
+    if (newMbrick != null)     msgs=((InternalEObject)newMbrick).eInverseAdd(this,ModelPackage.MSUB_DEVICE_HOLDER__MSUBDEVICES,MSubDeviceHolder.class,msgs);
+    msgs=basicSetMbrick(newMbrick,msgs);
+    if (msgs != null)     msgs.dispatch();
+  }
+ else   if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MSERVO__MBRICK,newMbrick,newMbrick));
+}

@@ -1,0 +1,16 @@
+{
+  String[] cfgHostsEntries=cfgHostsLine.split("\\s");
+  for (int i=0; i < cfgHostsEntries.length; i++) {
+    String cfgHostEntry=cfgHostsEntries[i];
+    String[] cfgHostAndPort=cfgHostEntry.split(":",2);
+    String host=cfgHostAndPort[0];
+    int port;
+    if (cfgHostAndPort.length == 2) {
+      port=Integer.parseInt(cfgHostAndPort[1]);
+    }
+ else {
+      port=BRICKD_DEFAULT_PORT;
+    }
+    connectBrickd(host,port);
+  }
+}
