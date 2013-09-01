@@ -1,0 +1,17 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+switch (dataType) {
+case U8:
+case U16:
+case U32:
+    state=new DecimalType((long)value);
+  break;
+case S8:
+case S16:
+case S32:
+BigDecimal bd=new BigDecimal(value).setScale(2,RoundingMode.HALF_EVEN);
+state=new DecimalType(bd);
+break;
+}
+return state;
+}

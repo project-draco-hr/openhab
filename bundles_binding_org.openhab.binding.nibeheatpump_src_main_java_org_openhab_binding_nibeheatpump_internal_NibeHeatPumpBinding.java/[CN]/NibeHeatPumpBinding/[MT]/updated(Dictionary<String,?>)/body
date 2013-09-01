@@ -1,0 +1,16 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    String PortString=(String)config.get("udpPort");
+    if (StringUtils.isNotBlank(PortString)) {
+      udpPort=Integer.parseInt(PortString);
+    }
+    serialPort=(String)config.get("serialPort");
+    String testPortString=(String)config.get("simulate");
+    if (StringUtils.isNotBlank(testPortString)) {
+      simulateHeatPump=Boolean.parseBoolean(testPortString);
+    }
+    messageListener=new NibeHeatPumpMessageListener();
+    messageListener.start();
+  }
+}

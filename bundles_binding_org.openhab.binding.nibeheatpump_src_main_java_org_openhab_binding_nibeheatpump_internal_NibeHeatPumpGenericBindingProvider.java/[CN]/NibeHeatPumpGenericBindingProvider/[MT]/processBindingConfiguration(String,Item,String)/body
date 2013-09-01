@@ -1,0 +1,12 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  NibeHeatpumpBindingConfig config=new NibeHeatpumpBindingConfig();
+  String itemId=bindingConfig.trim();
+  if (itemId.startsWith("0x")) {
+    config.itemId=Integer.parseInt(itemId.replace("0x",""),16);
+  }
+ else {
+    config.itemId=Integer.parseInt(itemId);
+  }
+  addBindingConfig(item,config);
+}
