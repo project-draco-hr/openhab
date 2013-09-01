@@ -1,9 +1,14 @@
 {
   String[] configParts=configLine.trim().split("[:#]");
-  if (configParts.length != 3) {
+  if (configParts.length == 2 && configParts[0].equals(AdminItem.ID)) {
+    config.admin=configParts[1];
+  }
+ else   if (configParts.length == 3) {
+    config.id=configParts[0];
+    config.channel=configParts[1];
+    config.parameter=configParts[2];
+  }
+ else {
     throw new BindingConfigParseException("Homematic device configurations must contain three parts " + "<physicalDeviceAddress>:<channel>#<parameterKey>");
   }
-  config.id=configParts[0];
-  config.channel=configParts[1];
-  config.parameter=configParts[2];
 }
