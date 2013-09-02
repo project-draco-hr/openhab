@@ -1,4 +1,10 @@
 {
+  if (SystemUtils.IS_OS_LINUX) {
+    File portDevFile=new File(m_Parameters.getPortName());
+    if (!portDevFile.exists()) {
+      throw new Exception("Modbus serial device " + m_Parameters.getPortName() + " doesn't exist!");
+    }
+  }
   try {
     m_PortIdentifyer=CommPortIdentifier.getPortIdentifier(m_Parameters.getPortName());
   }
