@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command SWITCH_BINARY_SET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)SWITCH_BINARY_SET,(byte)(level > 0 ? 0xFF : 0x00)};
+  result.setMessagePayload(newPayload);
+  return result;
+}

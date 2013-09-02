@@ -1,0 +1,15 @@
+{
+  logger.debug("Process Multi-channel endpoint Report");
+  boolean changingNumberOfEndpoints=(serialMessage.getMessagePayloadByte(offset) & 0x80) != 0;
+  endpointsAreTheSameDeviceClass=(serialMessage.getMessagePayloadByte(offset) & 0x40) != 0;
+  int endpoints=serialMessage.getMessagePayloadByte(offset + 1) & 0x7F;
+  logger.debug("Changing number of endpoints = {}",changingNumberOfEndpoints ? "true" : false);
+  logger.debug("Endpoints are the same device class = {}",endpointsAreTheSameDeviceClass ? "true" : false);
+  logger.debug("Number of endpoints = {}",endpoints);
+  if (changingNumberOfEndpoints)   logger.warn("Changing number of endpoints, expect some weird behavior during multi channel handling.");
+  for (int i=1; i <= endpoints; i++) {
+    ZWaveEndpoint endpoint=new ZWaveEndpoint(i);
+    this.endpoints.put(i,endpoint);
+    if (!endpointsAreTheSameDeviceClass || i == 1)     this.getController().sendData(this.getMultiChannelCapabilityGetMessage(endpoint));
+  }
+}

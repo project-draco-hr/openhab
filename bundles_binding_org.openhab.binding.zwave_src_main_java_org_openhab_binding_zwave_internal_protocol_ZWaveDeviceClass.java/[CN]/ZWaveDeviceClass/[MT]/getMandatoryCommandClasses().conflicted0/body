@@ -1,0 +1,33 @@
+{
+switch (this) {
+case NOT_KNOWN:
+    return new CommandClass[0];
+case REMOTE_CONTROLLER:
+case STATIC_CONTOLLER:
+case REPEATER_SLAVE:
+case TOGGLE_SWITCH:
+case REMOTE_SWITCH:
+case WINDOW_COVERING:
+case THERMOSTAT:
+case AV_CONTROL_POINT:
+  return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC};
+case BINARY_SWITCH:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.SWITCH_BINARY};
+case MULTILEVEL_SWITCH:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.SWITCH_MULTILEVEL};
+case BINARY_SENSOR:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.SENSOR_BINARY};
+case MULTILEVEL_SENSOR:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.SENSOR_MULTILEVEL};
+case PULSE_METER:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.METER_PULSE};
+case ENTRY_CONTROL:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.LOCK};
+case ALARM_SENSOR:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.ALARM};
+case SEMI_INTEROPERABLE:
+return new CommandClass[]{CommandClass.NO_OPERATION,CommandClass.BASIC,CommandClass.MANUFACTURER_SPECIFIC,CommandClass.VERSION,CommandClass.PROPRIETARY};
+default :
+return new CommandClass[0];
+}
+}

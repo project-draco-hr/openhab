@@ -1,0 +1,15 @@
+{
+switch (this.getVersion()) {
+case 1:
+    for (    ZWaveCommandClass commandClass : this.getNode().getCommandClasses()) {
+      if (commandClass.getCommandClass() == CommandClass.NO_OPERATION)       continue;
+      this.getController().sendData(this.getMultiInstanceGetMessage(commandClass.getCommandClass()));
+    }
+  break;
+case 2:
+this.getController().sendData(this.getMultiChannelEndpointGetMessage());
+break;
+default :
+logger.warn(String.format("Unknown version %d for command class %s (0x%02x)",this.getVersion(),this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

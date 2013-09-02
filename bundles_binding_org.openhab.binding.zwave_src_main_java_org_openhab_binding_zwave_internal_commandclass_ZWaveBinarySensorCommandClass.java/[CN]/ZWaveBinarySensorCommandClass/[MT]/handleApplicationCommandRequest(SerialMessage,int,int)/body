@@ -1,0 +1,26 @@
+{
+  logger.trace("Handle Message Sensor Binary Request");
+  logger.debug(String.format("Received Sensor Binary Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SENSOR_BINARY_GET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case SENSOR_BINARY_REPORT:
+logger.trace("Process Sensor Binary Report");
+int value=serialMessage.getMessagePayloadByte(offset + 1);
+logger.debug(String.format("Sensor Binary report from nodeId = %d, value = 0x%02X",this.getNode().getNodeId(),value));
+Object eventValue;
+if (value == 0) {
+eventValue="CLOSED";
+}
+ else {
+eventValue="OPEN";
+}
+ZWaveEvent zEvent=new ZWaveEvent(ZWaveEventType.SENSOR_EVENT,this.getNode().getNodeId(),endpoint,eventValue);
+this.getController().notifyEventListeners(zEvent);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

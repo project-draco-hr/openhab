@@ -1,0 +1,51 @@
+{
+  logger.trace("Handle Message Application Update Request");
+  int nodeId=incomingMessage.getMessagePayloadByte(1);
+  logger.trace("Application Update Request from Node " + nodeId);
+  UpdateState updateState=UpdateState.getUpdateState(incomingMessage.getMessagePayloadByte(0));
+switch (updateState) {
+case NODE_INFO_RECEIVED:
+    logger.debug("Application update request, node information received.");
+  int length=incomingMessage.getMessagePayloadByte(2);
+ZWaveNode node=getNode(nodeId);
+if (node.wasReceived(incomingMessage)) {
+logger.warn("Message received before from node {}, ignoring message.",nodeId);
+return;
+}
+node.resetResendCount();
+for (int i=6; i < length + 3; i++) {
+int data=incomingMessage.getMessagePayloadByte(i);
+if (data == 0xef) {
+break;
+}
+logger.debug(String.format("Adding command class 0x%02X to the list of supported command classes.",data));
+ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,this);
+if (commandClass != null) node.addCommandClass(commandClass);
+}
+node.advanceNodeStage();
+if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
+notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+transactionCompleted.release();
+logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+}
+break;
+case NODE_INFO_REQ_FAILED:
+logger.debug("Application update request, Node Info Request Failed, re-request node info.");
+SerialMessage requestInfoMessage=this.lastSentMessage;
+if (requestInfoMessage.getMessageClass() != SerialMessageClass.RequestNodeInfo) {
+logger.warn("Got application update request without node info request, ignoring.");
+return;
+}
+if (--requestInfoMessage.attempts >= 0) {
+logger.error("Got Node Info Request Failed while sending this serial message. Requeueing");
+this.enqueue(requestInfoMessage);
+}
+ else {
+logger.warn("Node Info Request Failed 3x. Discarding message: {}",lastSentMessage.toString());
+}
+transactionCompleted.release();
+break;
+default :
+logger.warn(String.format("TODO: Implement Application Update Request Handling of %s (0x%02X).",updateState.getLabel(),updateState.getKey()));
+}
+}

@@ -1,0 +1,25 @@
+{
+  logger.trace("Handle Message Manufacture Specific Request");
+  logger.debug(String.format("Received Manufacture Specific Information for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case MANUFACTURER_SPECIFIC_GET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case MANUFACTURER_SPECIFIC_REPORT:
+logger.trace("Process Manufacturer Specific Report");
+int tempMan=((serialMessage.getMessagePayloadByte(offset + 1)) << 8) | (serialMessage.getMessagePayloadByte(offset + 2));
+int tempDeviceType=((serialMessage.getMessagePayloadByte(offset + 3)) << 8) | (serialMessage.getMessagePayloadByte(offset + 4));
+int tempDeviceId=((serialMessage.getMessagePayloadByte(offset + 5)) << 8) | (serialMessage.getMessagePayloadByte(offset + 6));
+this.getNode().setManufacturer(tempMan);
+this.getNode().setDeviceType(tempDeviceType);
+this.getNode().setDeviceId(tempDeviceId);
+logger.debug(String.format("Node %d Manufacturer ID = 0x%04x",this.getNode().getNodeId(),this.getNode().getManufacturer()));
+logger.debug(String.format("Node %d Device Type = 0x%04x",this.getNode().getNodeId(),this.getNode().getDeviceType()));
+logger.debug(String.format("Node %d Device ID = 0x%04x",this.getNode().getNodeId(),this.getNode().getDeviceId()));
+this.getNode().advanceNodeStage();
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command No Operation for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Ping);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),1,(byte)getCommandClass().getKey()};
+  result.setMessagePayload(newPayload);
+  return result;
+}

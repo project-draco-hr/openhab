@@ -1,0 +1,8 @@
+{
+  CommandClass key=commandClass.getCommandClass();
+  if (!supportedCommandClasses.containsKey(key)) {
+    supportedCommandClasses.put(key,commandClass);
+    if (commandClass instanceof ZWaveEventListener)     this.controller.addEventListener((ZWaveEventListener)commandClass);
+    this.lastUpdated=Calendar.getInstance().getTime();
+  }
+}

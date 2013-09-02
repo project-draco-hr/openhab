@@ -1,0 +1,53 @@
+{
+  logger.trace("Handle Message Send Data Request");
+  int callbackId=incomingMessage.getMessagePayloadByte(0);
+  TransmissionState status=TransmissionState.getTransmissionState(incomingMessage.getMessagePayloadByte(1));
+  SerialMessage originalMessage=this.lastSentMessage;
+  if (status == null) {
+    logger.warn("Transmission state not found, ignoring.");
+    return;
+  }
+  logger.debug("CallBack ID = {}",callbackId);
+  logger.debug(String.format("Status = %s (0x%02x)",status.getLabel(),status.getKey()));
+  if (originalMessage == null || originalMessage.getCallbackId() != callbackId) {
+    logger.warn("Already processed another send data request for this callback Id, ignoring.");
+    return;
+  }
+  ZWaveNode node=this.getNode(originalMessage.getMessageNode());
+switch (status) {
+case COMPLETE_OK:
+    node.resetResendCount();
+  if (node != null && node.getNodeStage() == NodeStage.NODEBUILDINFO_PING) {
+    node.advanceNodeStage();
+  }
+if (incomingMessage.getMessageClass() == originalMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
+  notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+  transactionCompleted.release();
+  logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+}
+return;
+case COMPLETE_NO_ACK:
+case COMPLETE_FAIL:
+case COMPLETE_NOT_IDLE:
+case COMPLETE_NOROUTE:
+try {
+if (node.getNodeStage() == NodeStage.NODEBUILDINFO_DEAD || originalMessage.getPriority() == SerialMessagePriority.Ping || originalMessage.getPriority() == SerialMessagePriority.Low) return;
+if (!node.isListening()) {
+ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+if (wakeUpCommandClass != null) {
+  wakeUpCommandClass.setAwake(false);
+  wakeUpCommandClass.putInWakeUpQueue(originalMessage);
+  return;
+}
+}
+node.incrementResendCount();
+logger.error("Got an error while sending data to node {}. Resending message.",node.getNodeId());
+this.sendData(originalMessage);
+}
+  finally {
+transactionCompleted.release();
+logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+}
+default :
+}
+}

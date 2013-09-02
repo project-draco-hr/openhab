@@ -1,0 +1,15 @@
+{
+  ZWaveNode node=this.getNode(nodeId);
+  SerialMessage serialMessage=null;
+  ZWaveMultiLevelSwitchCommandClass zwaveCommandClass=(ZWaveMultiLevelSwitchCommandClass)node.resolveCommandClass(CommandClass.SWITCH_MULTILEVEL,endpoint);
+  if (zwaveCommandClass == null) {
+    logger.error("No Command Class found on node {}, instance/endpoint {} to request level.",nodeId,endpoint);
+    return;
+  }
+  serialMessage=node.encapsulate(zwaveCommandClass.decreaseLevelMessage(),zwaveCommandClass,endpoint);
+  if (serialMessage != null) {
+    this.sendData(serialMessage);
+    ZWaveEvent zEvent=new ZWaveEvent(ZWaveEventType.DIMMER_EVENT,nodeId,endpoint,zwaveCommandClass.getLevel());
+    this.notifyEventListeners(zEvent);
+  }
+}

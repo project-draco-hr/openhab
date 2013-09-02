@@ -1,0 +1,70 @@
+{
+  logger.trace("Handle Message Sensor Alarm Request");
+  logger.debug(String.format("Received Sensor Alarm Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SENSOR_ALARM_GET:
+case SENSOR_ALARM_SUPPORTED_GET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case SENSOR_ALARM_REPORT:
+logger.trace("Process Sensor Alarm Report");
+int sourceNode=serialMessage.getMessagePayloadByte(offset + 1);
+int alarmTypeCode=serialMessage.getMessagePayloadByte(offset + 2);
+int value=serialMessage.getMessagePayloadByte(offset + 3);
+logger.debug(String.format("Sensor Alarm report from nodeId = %d",this.getNode().getNodeId()));
+logger.debug(String.format("Source node ID = %d",sourceNode));
+logger.debug(String.format("Value = 0x%02x",value));
+AlarmType alarmType=AlarmType.getAlarmType(alarmTypeCode);
+if (alarmType == null) {
+logger.error(String.format("Unknown Alarm Type = 0x%02x, ignoring report.",alarmTypeCode));
+return;
+}
+logger.debug(String.format("Alarm Type = %s (0x%02x)",alarmType.getLabel(),alarmTypeCode));
+this.alarmValues.put(alarmType,value);
+for (Integer alarmValue : this.alarmValues.values()) {
+value|=alarmValue;
+}
+Object eventValue;
+if (value == 0) {
+eventValue="CLOSED";
+}
+ else {
+eventValue="OPEN";
+}
+ZWaveEvent zEvent=new ZWaveEvent(ZWaveEventType.SENSOR_EVENT,this.getNode().getNodeId(),endpoint,eventValue);
+this.getController().notifyEventListeners(zEvent);
+break;
+case SENSOR_ALARM_SUPPORTED_REPORT:
+logger.debug("Process Sensor Supported Alarm Report");
+int numBytes=serialMessage.getMessagePayloadByte(offset + 1);
+int manufacturerId=this.getNode().getManufacturer();
+int deviceType=this.getNode().getDeviceType();
+if (manufacturerId == 0x010F && deviceType == 0x0700) {
+logger.warn("Detected Fibaro FGK - 101 Door / Window sensor, activating workaround for incorrect encoding of supported alarm bitmap.");
+for (int i=0; i < numBytes; ++i) {
+int index=serialMessage.getMessagePayloadByte(offset + i + 2);
+if (index >= AlarmType.values().length) continue;
+AlarmType alarmTypeToAdd=AlarmType.getAlarmType(index);
+this.alarmValues.put(alarmTypeToAdd,0x00);
+logger.debug(String.format("Added alarm type %s (0x%02x)",alarmTypeToAdd.getLabel(),index));
+}
+}
+ else {
+for (int i=0; i < numBytes; ++i) {
+for (int bit=0; bit < 8; ++bit) {
+if (((serialMessage.getMessagePayloadByte(offset + i + 2)) & (1 << bit)) == 0) continue;
+int index=(i << 3) + bit;
+if (index >= AlarmType.values().length) continue;
+AlarmType alarmTypeToAdd=AlarmType.getAlarmType(index);
+this.alarmValues.put(alarmTypeToAdd,0x00);
+logger.debug(String.format("Added alarm type %s (0x%02x)",alarmTypeToAdd.getLabel(),index));
+}
+}
+}
+this.getNode().advanceNodeStage();
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

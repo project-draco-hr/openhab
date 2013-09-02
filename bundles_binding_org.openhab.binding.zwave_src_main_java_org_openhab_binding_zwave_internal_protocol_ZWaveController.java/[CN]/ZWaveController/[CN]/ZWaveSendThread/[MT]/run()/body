@@ -1,0 +1,40 @@
+{
+  logger.debug("Starting Z-Wave send thread");
+  while (!interrupted()) {
+    try {
+      lastSentMessage=sendQueue.take();
+      logger.debug("Took message from queue for sending. Queue length = {}",sendQueue.size());
+    }
+ catch (    InterruptedException e1) {
+      break;
+    }
+    if (lastSentMessage == null)     continue;
+    transactionCompleted.drainPermits();
+    byte[] buffer=lastSentMessage.getMessageBuffer();
+    logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+    try {
+      serialPort.getOutputStream().write(buffer);
+    }
+ catch (    IOException e) {
+      logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
+      break;
+    }
+    try {
+      if (!transactionCompleted.tryAcquire(1,ZWAVE_RESPONSE_TIMEOUT,TimeUnit.MILLISECONDS)) {
+        if (--lastSentMessage.attempts >= 0 && lastSentMessage.getPriority() != SerialMessagePriority.Ping && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
+          logger.error("Timeout while sending message to node {}. Requeueing",lastSentMessage.getMessageNode());
+          enqueue(lastSentMessage);
+        }
+ else {
+          logger.warn("Discarding message: {}",lastSentMessage.toString());
+        }
+        continue;
+      }
+      logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+    }
+ catch (    InterruptedException e) {
+      break;
+    }
+  }
+  logger.debug("Stopped Z-Wave send thread");
+}

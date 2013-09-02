@@ -1,0 +1,73 @@
+{
+  if ((this.isProperlyConfigured() == false) | (isZwaveNetworkReady == false)) {
+    logger.debug("internalReceiveCommand Called, But Not Properly Configure yet or Zwave Network Isn't Ready, returning.");
+    return;
+  }
+  logger.trace("internalReceiveCommand(itemname = {}, Command = {})",itemName,command.toString());
+  for (  ZWaveBindingProvider provider : providers) {
+    ZWaveBindingConfig bindingConfig=provider.getZwaveBindingConfig(itemName);
+    int nodeId=bindingConfig.getNodeId();
+    int endpoint=bindingConfig.getEndpoint();
+    ZWaveBindingAction action=bindingConfig.getAction();
+    boolean restoreLastValue=false;
+    boolean onSent=false;
+    ZWaveNode node=zController.getNode(nodeId);
+    if (node == null) {
+      logger.error("Node with id {} not found, ignoring command",nodeId);
+      return;
+    }
+    logger.trace("BindingProvider = {}",provider.toString());
+    logger.debug("Got nodeId = {}, endpoint = {}, action = {}",new Object[]{nodeId,endpoint,action});
+switch (action) {
+case RESTORE_LAST_VALUE:
+      restoreLastValue=true;
+case NONE:
+    if (this.zController.isConnected()) {
+      logger.trace("ZWaveController is connected");
+      if (command == OnOffType.ON) {
+        logger.trace("Sending ON");
+        ZWaveCommandClass multiLevel=node.resolveCommandClass(CommandClass.SWITCH_MULTILEVEL,endpoint);
+        if (multiLevel != null && !restoreLastValue) {
+          this.zController.sendValue(nodeId,endpoint,99);
+        }
+ else {
+          this.zController.sendValue(nodeId,endpoint,255);
+          onSent=multiLevel != null;
+        }
+      }
+ else       if (command == OnOffType.OFF) {
+        logger.trace("Sending OFF");
+        this.zController.sendValue(nodeId,endpoint,0);
+      }
+ else       if (command == IncreaseDecreaseType.INCREASE) {
+        this.zController.increaseLevel(nodeId,endpoint);
+      }
+ else       if (command == IncreaseDecreaseType.DECREASE) {
+        this.zController.decreaseLevel(nodeId,endpoint);
+      }
+ else       if (command instanceof PercentType) {
+        PercentType pt=(PercentType)command;
+        int value=pt.intValue();
+        if (value == 100) {
+          value=99;
+        }
+        logger.trace("Sending PercentType, value " + value);
+        this.zController.sendValue(nodeId,endpoint,value);
+      }
+ else {
+        logger.warn("Unknown command >{}<",command.toString());
+      }
+    }
+ else {
+      logger.warn("ZWaveController is not connected");
+    }
+  break;
+default :
+logger.warn("ZWave Binding Action not supported for a command! ZWave Binding Action = {}",action);
+return;
+}
+if (!onSent && command instanceof State) {
+eventPublisher.postUpdate(itemName,(State)command);
+}
+}
+}

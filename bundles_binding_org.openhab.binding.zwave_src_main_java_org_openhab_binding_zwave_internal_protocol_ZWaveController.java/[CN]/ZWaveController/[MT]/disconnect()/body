@@ -1,0 +1,28 @@
+{
+  if (sendThread != null) {
+    sendThread.interrupt();
+    try {
+      sendThread.join();
+    }
+ catch (    InterruptedException e) {
+    }
+    sendThread=null;
+  }
+  if (receiveThread != null) {
+    receiveThread.interrupt();
+    try {
+      receiveThread.join();
+    }
+ catch (    InterruptedException e) {
+    }
+    receiveThread=null;
+  }
+  if (transactionCompleted.availablePermits() < 0)   transactionCompleted.release(transactionCompleted.availablePermits());
+  transactionCompleted.drainPermits();
+  logger.trace("Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+  if (this.serialPort != null) {
+    this.serialPort.close();
+    this.serialPort=null;
+  }
+  logger.info("Disconnected from serial port");
+}

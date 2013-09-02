@@ -1,0 +1,12 @@
+{
+  SerialMessage serialMessage=new SerialMessage(buffer);
+  if (serialMessage.isValid) {
+    logger.trace("Message is valid, sending ACK");
+    sendResponse(ACK);
+  }
+ else {
+    logger.error("Message is not valid, discarding");
+    return;
+  }
+  handleIncomingMessage(serialMessage);
+}

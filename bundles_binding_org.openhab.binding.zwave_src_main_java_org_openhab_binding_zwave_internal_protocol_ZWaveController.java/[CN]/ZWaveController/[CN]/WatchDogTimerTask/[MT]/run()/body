@@ -1,0 +1,13 @@
+{
+  logger.trace("Watchdog: Checking Serial threads");
+  if ((receiveThread != null && !receiveThread.isAlive()) || (sendThread != null && !sendThread.isAlive())) {
+    logger.warn("Threads not alive, respawning");
+    disconnect();
+    try {
+      connect(serialPortName);
+    }
+ catch (    SerialInterfaceException e) {
+      logger.error("unable to restart Serial threads: {}",e.getLocalizedMessage());
+    }
+  }
+}

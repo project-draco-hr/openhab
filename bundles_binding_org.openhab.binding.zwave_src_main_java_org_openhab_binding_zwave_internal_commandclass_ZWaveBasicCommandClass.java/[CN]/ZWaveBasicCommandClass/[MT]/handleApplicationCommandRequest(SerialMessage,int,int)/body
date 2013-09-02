@@ -1,0 +1,21 @@
+{
+  logger.trace("Handle Message Basic Request");
+  logger.debug(String.format("Received Basic Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case BASIC_SET:
+    logger.trace("Process Basic Set");
+  logger.debug("Basic Set sent to the controller will be processed as Basic Report");
+processBasicReport(serialMessage,offset,endpoint);
+break;
+case BASIC_GET:
+logger.warn(String.format("Command 0x%02X not implemented.",command));
+return;
+case BASIC_REPORT:
+logger.trace("Process Basic Report");
+processBasicReport(serialMessage,offset,endpoint);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

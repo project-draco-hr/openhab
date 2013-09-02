@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command MULTI_INSTANCE_GET for node {} and command class {}",this.getNode().getNodeId(),commandClass.getLabel());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)MULTI_INSTANCE_GET,(byte)commandClass.getKey()};
+  result.setMessagePayload(newPayload);
+  return result;
+}

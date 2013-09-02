@@ -1,0 +1,24 @@
+{
+  int completeCount=0;
+  if (zwaveNodes.isEmpty())   return;
+  logger.trace("Checking for Dead or Sleeping Nodes.");
+  for (  Map.Entry<Integer,ZWaveNode> entry : zwaveNodes.entrySet()) {
+    if (entry.getValue().getNodeStage() == ZWaveNode.NodeStage.NODEBUILDINFO_EMPTYNODE)     continue;
+    logger.debug(String.format("Node %d has been in Stage %s since %s",entry.getKey(),entry.getValue().getNodeStage().getLabel(),entry.getValue().getQueryStageTimeStamp().toString()));
+    if (entry.getValue().getNodeStage() == ZWaveNode.NodeStage.NODEBUILDINFO_DONE) {
+      completeCount++;
+      continue;
+    }
+    logger.trace("Checking if 1 min has passed in current stage.");
+    if (Calendar.getInstance().getTimeInMillis() < (entry.getValue().getQueryStageTimeStamp().getTime() + QUERY_STAGE_TIMEOUT))     continue;
+    if (entry.getValue().isListening()) {
+      logger.warn(String.format("Node %d may be dead, setting stage to DEAD.",entry.getKey()));
+      entry.getValue().setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_DEAD);
+    }
+    completeCount++;
+  }
+  if (this.zwaveNodes.size() == completeCount) {
+    ZWaveEvent zEvent=new ZWaveEvent(ZWaveEventType.NETWORK_EVENT,1,0,"INIT_DONE");
+    this.notifyEventListeners(zEvent);
+  }
+}

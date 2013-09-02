@@ -1,0 +1,72 @@
+{
+  logger.debug("Starting Z-Wave receive thread");
+  while (!interrupted()) {
+    int nextByte;
+    try {
+      nextByte=serialPort.getInputStream().read();
+      if (nextByte == -1)       continue;
+    }
+ catch (    IOException e) {
+      logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+      break;
+    }
+switch (nextByte) {
+case SOF:
+      int messageLength;
+    try {
+      messageLength=serialPort.getInputStream().read();
+    }
+ catch (    IOException e) {
+      logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+      break;
+    }
+  byte[] buffer=new byte[messageLength + 2];
+buffer[0]=SOF;
+buffer[1]=(byte)messageLength;
+int total=0;
+while (total < messageLength) {
+try {
+int read=serialPort.getInputStream().read(buffer,total + 2,messageLength - total);
+total+=(read > 0 ? read : 0);
+}
+ catch (IOException e) {
+logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+return;
+}
+}
+logger.trace("Reading message finished");
+logger.debug("Message = " + SerialMessage.bb2hex(buffer));
+processIncomingMessage(buffer);
+SOFCount++;
+break;
+case ACK:
+logger.trace("Received ACK");
+ACKCount++;
+break;
+case NAK:
+logger.error("Message not acklowledged by controller (NAK), discarding");
+transactionCompleted.release();
+logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+NAKCount++;
+break;
+case CAN:
+logger.error("Message cancelled by controller (CAN), resending");
+try {
+Thread.sleep(100);
+}
+ catch (InterruptedException e) {
+break;
+}
+enqueue(lastSentMessage);
+transactionCompleted.release();
+logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+CANCount++;
+break;
+default :
+logger.warn(String.format("Out of Frame flow. Got 0x%02X. Sending NAK.",nextByte));
+sendResponse(NAK);
+OOFCount++;
+}
+}
+logger.debug("Stopped Z-Wave receive thread");
+}

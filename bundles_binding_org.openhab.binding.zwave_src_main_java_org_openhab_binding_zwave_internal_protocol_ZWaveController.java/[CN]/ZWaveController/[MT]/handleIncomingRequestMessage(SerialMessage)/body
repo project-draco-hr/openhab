@@ -1,0 +1,17 @@
+{
+  logger.debug("Message type = REQUEST");
+switch (incomingMessage.getMessageClass()) {
+case ApplicationCommandHandler:
+    handleApplicationCommandRequest(incomingMessage);
+  break;
+case SendData:
+handleSendDataRequest(incomingMessage);
+break;
+case ApplicationUpdate:
+handleApplicationUpdateRequest(incomingMessage);
+break;
+default :
+logger.warn(String.format("TODO: Implement processing of Request Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
+break;
+}
+}

@@ -1,0 +1,15 @@
+{
+  ZWaveNode node=this.getNode(nodeId);
+  ZWaveGetCommands zwaveCommandClass=null;
+  SerialMessage serialMessage=null;
+  for (  CommandClass commandClass : new CommandClass[]{CommandClass.SENSOR_BINARY,CommandClass.SENSOR_ALARM,CommandClass.SENSOR_MULTILEVEL,CommandClass.SWITCH_MULTILEVEL,CommandClass.SWITCH_BINARY,CommandClass.BASIC}) {
+    zwaveCommandClass=(ZWaveGetCommands)node.resolveCommandClass(commandClass,endpoint);
+    if (zwaveCommandClass != null)     break;
+  }
+  if (zwaveCommandClass == null) {
+    logger.error("No Command Class found on node {}, instance/endpoint {} to request value.",nodeId,endpoint);
+    return;
+  }
+  serialMessage=node.encapsulate(zwaveCommandClass.getValueMessage(),(ZWaveCommandClass)zwaveCommandClass,endpoint);
+  if (serialMessage != null)   this.sendData(serialMessage);
+}

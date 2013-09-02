@@ -1,0 +1,24 @@
+{
+  logger.trace("Handle Message Sensor Multi Level Request");
+  logger.debug(String.format("Received Sensor Multi Level Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SENSOR_MULTI_LEVEL_GET:
+case SENSOR_MULTI_LEVEL_SUPPORTED_GET:
+case SENSOR_MULTI_LEVEL_SUPPORTED_REPORT:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case SENSOR_MULTI_LEVEL_REPORT:
+logger.trace("Process Multi Level Sensor Report");
+logger.debug(String.format("Sensor Multi Level report from nodeId = %d",this.getNode().getNodeId()));
+int sensorTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
+logger.debug(String.format("Sensor Type = (0x%02x)",sensorTypeCode));
+byte[] valueData=Arrays.copyOfRange(serialMessage.getMessagePayload(),offset + 2,serialMessage.getMessagePayload().length);
+BigDecimal value=extractValue(valueData);
+ZWaveEvent zEvent=new ZWaveEvent(ZWaveEventType.SENSOR_EVENT,this.getNode().getNodeId(),endpoint,value);
+this.getController().notifyEventListeners(zEvent);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

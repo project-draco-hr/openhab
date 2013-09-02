@@ -1,0 +1,14 @@
+{
+  logger.debug("Creating new message for application command MULTI_CHANNEL_ENCAP for node {} and endpoint {}",this.getNode().getNodeId(),endpoint.getEndpointId());
+  byte[] payload=serialMessage.getMessagePayload();
+  byte[] newPayload=new byte[payload.length + 4];
+  System.arraycopy(payload,0,newPayload,0,2);
+  System.arraycopy(payload,0,newPayload,4,payload.length);
+  newPayload[1]+=4;
+  newPayload[2]=(byte)this.getCommandClass().getKey();
+  newPayload[3]=MULTI_CHANNEL_ENCAP;
+  newPayload[4]=0x01;
+  newPayload[5]=(byte)endpoint.getEndpointId();
+  serialMessage.setMessagePayload(newPayload);
+  return serialMessage;
+}

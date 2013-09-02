@@ -1,0 +1,120 @@
+{
+  this.setQueryStageTimeStamp(Calendar.getInstance().getTime());
+switch (this.nodeStage) {
+case NODEBUILDINFO_EMPTYNODE:
+    try {
+      this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_PROTOINFO);
+      this.controller.identifyNode(this.nodeId);
+    }
+ catch (    SerialInterfaceException e) {
+      logger.error("Got error: {}, while identifying node {}",e.getLocalizedMessage(),this.nodeId);
+    }
+  break;
+case NODEBUILDINFO_PROTOINFO:
+if (nodeId != this.controller.getOwnNodeId()) {
+  ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)supportedCommandClasses.get(CommandClass.NO_OPERATION);
+  if (zwaveCommandClass == null)   break;
+  this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_PING);
+  this.controller.sendData(zwaveCommandClass.getNoOperationMessage());
+}
+ else {
+  this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_DONE);
+}
+break;
+case NODEBUILDINFO_PING:
+case NODEBUILDINFO_WAKEUP:
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_DETAILS);
+this.controller.requestNodeInfo(nodeId);
+break;
+case NODEBUILDINFO_DETAILS:
+ZWaveManufacturerSpecificCommandClass manufacturerSpecific=(ZWaveManufacturerSpecificCommandClass)this.getCommandClass(CommandClass.MANUFACTURER_SPECIFIC);
+if (manufacturerSpecific != null) {
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_MANSPEC01);
+this.controller.sendData(manufacturerSpecific.getManufacturerSpecificMessage());
+break;
+}
+logger.warn("Node {} does not support MANUFACTURER_SPECIFIC, proceeding to version node stage.",this.getNodeId());
+case NODEBUILDINFO_MANSPEC01:
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_VERSION);
+ZWaveVersionCommandClass version=(ZWaveVersionCommandClass)this.getCommandClass(CommandClass.VERSION);
+boolean checkVersionCalled=false;
+for (ZWaveCommandClass zwaveCommandClass : this.getCommandClasses()) {
+if (version != null && zwaveCommandClass.getMaxVersion() > 1) {
+version.checkVersion(zwaveCommandClass);
+checkVersionCalled=true;
+}
+ else zwaveCommandClass.setVersion(1);
+}
+if (checkVersionCalled) break;
+case NODEBUILDINFO_VERSION:
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_INSTANCES);
+ZWaveMultiInstanceCommandClass multiInstance=(ZWaveMultiInstanceCommandClass)this.getCommandClass(CommandClass.MULTI_INSTANCE);
+if (multiInstance != null) {
+multiInstance.initEndpoints();
+break;
+}
+logger.trace("Node {} does not support MULTI_INSTANCE, proceeding to static node stage.",this.getNodeId());
+case NODEBUILDINFO_INSTANCES:
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_STATIC);
+if (queriesPending == -1) {
+queriesPending=0;
+for (ZWaveCommandClass zwaveCommandClass : this.getCommandClasses()) {
+logger.trace("Inspecting command class {}",zwaveCommandClass.getCommandClass().getLabel());
+if (zwaveCommandClass instanceof ZWaveCommandClassInitialization) {
+logger.debug("Found initializable command class {}",zwaveCommandClass.getCommandClass().getLabel());
+ZWaveCommandClassInitialization zcci=(ZWaveCommandClassInitialization)zwaveCommandClass;
+int instances=zwaveCommandClass.getInstances();
+if (instances == 0) {
+Collection<SerialMessage> initqueries=zcci.initialize();
+for (SerialMessage serialMessage : initqueries) {
+this.controller.sendData(serialMessage);
+queriesPending++;
+}
+}
+ else {
+for (int i=1; i <= instances; i++) {
+Collection<SerialMessage> initqueries=zcci.initialize();
+for (SerialMessage serialMessage : initqueries) {
+this.controller.sendData(this.encapsulate(serialMessage,zwaveCommandClass,i));
+queriesPending++;
+}
+}
+}
+}
+ else if (zwaveCommandClass instanceof ZWaveMultiInstanceCommandClass) {
+ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)zwaveCommandClass;
+for (ZWaveEndpoint endpoint : multiInstanceCommandClass.getEndpoints()) {
+for (ZWaveCommandClass endpointCommandClass : endpoint.getCommandClasses()) {
+logger.trace("Inspecting command class {} for endpoint {}",endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
+if (endpointCommandClass instanceof ZWaveCommandClassInitialization) {
+logger.debug("Found initializable command class {}",endpointCommandClass.getCommandClass().getLabel());
+ZWaveCommandClassInitialization zcci2=(ZWaveCommandClassInitialization)endpointCommandClass;
+Collection<SerialMessage> initqueries=zcci2.initialize();
+for (SerialMessage serialMessage : initqueries) {
+this.controller.sendData(this.encapsulate(serialMessage,endpointCommandClass,endpoint.getEndpointId()));
+queriesPending++;
+}
+}
+}
+}
+}
+}
+}
+if (queriesPending-- > 0) break;
+logger.trace("Done getting static values, proceeding to done node stage.",this.getNodeId());
+case NODEBUILDINFO_STATIC:
+this.setNodeStage(ZWaveNode.NodeStage.NODEBUILDINFO_DONE);
+initializationComplete=true;
+if (this.isListening()) return;
+ZWaveWakeUpCommandClass wakeup=(ZWaveWakeUpCommandClass)this.getCommandClass(CommandClass.WAKE_UP);
+if (wakeup == null) return;
+logger.debug("Node {} is a battery operated device. Tell it to go to sleep.",this.getNodeId());
+this.controller.sendData(wakeup.getNoMoreInformationMessage());
+break;
+case NODEBUILDINFO_DONE:
+case NODEBUILDINFO_DEAD:
+break;
+default :
+logger.error("Unknown node state {} encountered on Node {}",this.nodeStage.getLabel(),this.getNodeId());
+}
+}

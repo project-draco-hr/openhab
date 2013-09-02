@@ -1,0 +1,28 @@
+{
+  logger.info("Connecting to serial port {}",serialPortName);
+  try {
+    CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(serialPortName);
+    CommPort commPort=portIdentifier.open("org.openhab.binding.zwave",2000);
+    this.serialPort=(SerialPort)commPort;
+    this.serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    this.serialPort.enableReceiveThreshold(1);
+    this.serialPort.enableReceiveTimeout(ZWAVE_RECEIVE_TIMEOUT);
+    this.receiveThread=new ZWaveReceiveThread();
+    this.receiveThread.start();
+    this.sendThread=new ZWaveSendThread();
+    this.sendThread.start();
+    logger.info("Serial port is initialized");
+  }
+ catch (  NoSuchPortException e) {
+    logger.error(e.getLocalizedMessage());
+    throw new SerialInterfaceException(e.getLocalizedMessage(),e);
+  }
+catch (  PortInUseException e) {
+    logger.error(e.getLocalizedMessage());
+    throw new SerialInterfaceException(e.getLocalizedMessage(),e);
+  }
+catch (  UnsupportedCommOperationException e) {
+    logger.error(e.getLocalizedMessage());
+    throw new SerialInterfaceException(e.getLocalizedMessage(),e);
+  }
+}

@@ -1,0 +1,18 @@
+{
+  logger.trace("Process Multi-instance Encapsulation");
+  int instance=serialMessage.getMessagePayloadByte(offset);
+  int commandClassCode=serialMessage.getMessagePayloadByte(offset + 1);
+  CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
+  if (commandClass == null) {
+    logger.error(String.format("Unsupported command class 0x%02x",commandClassCode));
+    return;
+  }
+  logger.debug(String.format("Node %d Requested Command Class = %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
+  ZWaveCommandClass zwaveCommandClass=this.getNode().getCommandClass(commandClass);
+  if (zwaveCommandClass == null) {
+    logger.error(String.format("Unsupported command class %s (0x%02x)",commandClass.getLabel(),commandClassCode));
+    return;
+  }
+  logger.debug(String.format("Node %d, Instance = %d, calling handleApplicationCommandRequest.",this.getNode().getNodeId(),instance));
+  zwaveCommandClass.handleApplicationCommandRequest(serialMessage,offset + 3,instance);
+}

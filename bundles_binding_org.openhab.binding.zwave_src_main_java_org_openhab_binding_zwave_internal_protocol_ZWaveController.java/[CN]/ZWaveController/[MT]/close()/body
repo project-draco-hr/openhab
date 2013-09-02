@@ -1,0 +1,14 @@
+{
+  if (watchdog != null) {
+    watchdog.cancel();
+    watchdog=null;
+  }
+  disconnect();
+  for (  Object listener : this.zwaveEventListeners.toArray()) {
+    if (!(listener instanceof ZWaveNode))     continue;
+    this.zwaveEventListeners.remove(listener);
+  }
+  this.zwaveNodes.clear();
+  this.sendQueue.clear();
+  logger.info("Stopped Z-Wave controller");
+}

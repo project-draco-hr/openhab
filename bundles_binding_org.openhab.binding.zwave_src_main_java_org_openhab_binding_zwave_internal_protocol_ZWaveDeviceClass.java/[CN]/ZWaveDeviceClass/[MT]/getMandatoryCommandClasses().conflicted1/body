@@ -1,0 +1,62 @@
+{
+switch (this) {
+case NOT_USED:
+case PORTABLE_REMOTE_CONTROLLER:
+case PC_CONTROLLER:
+case BASIC_REPEATER_SLAVE:
+case SWITCH_REMOTE_BINARY:
+case SWITCH_REMOTE_MULTILEVEL:
+case SWITCH_REMOTE_TOGGLE_BINARY:
+case SWITCH_REMOTE_TOGGLE_MULTILEVEL:
+case ROUTING_SENSOR_BINARY:
+case ROUTING_SENSOR_MULTILEVEL:
+case DOOR_LOCK:
+case THERMOSTAT_HEATING:
+    return new CommandClass[0];
+case PORTABLE_SCENE_CONTROLLER:
+case SCENE_CONTROLLER:
+  return new CommandClass[]{CommandClass.ASSOCIATION,CommandClass.SCENE_CONTROLLER_CONF,CommandClass.MANUFACTURER_SPECIFIC};
+case POWER_SWITCH_BINARY:
+case POWER_SWITCH_MULTILEVEL:
+return new CommandClass[]{CommandClass.SWITCH_ALL};
+case SCENE_SWITCH_BINARY:
+case SCENE_SWITCH_MULTILEVEL:
+return new CommandClass[]{CommandClass.SCENE_ACTIVATION,CommandClass.SCENE_ACTUATOR_CONF,CommandClass.SWITCH_ALL,CommandClass.MANUFACTURER_SPECIFIC};
+case MOTOR_MULTIPOSITION:
+return new CommandClass[]{CommandClass.VERSION,CommandClass.MANUFACTURER_SPECIFIC};
+case MOTOR_CONTROL_CLASS_A:
+case MOTOR_CONTROL_CLASS_B:
+case MOTOR_CONTROL_CLASS_C:
+return new CommandClass[]{CommandClass.SWITCH_BINARY,CommandClass.VERSION,CommandClass.MANUFACTURER_SPECIFIC};
+case SWITCH_TOGGLE_BINARY:
+return new CommandClass[]{CommandClass.SWITCH_TOGGLE_BINARY};
+case SWITCH_TOGGLE_MULTILEVEL:
+return new CommandClass[]{CommandClass.SWITCH_TOGGLE_MULTILEVEL};
+case ENERGY_PRODUCTION:
+return new CommandClass[]{CommandClass.ENERGY_PRODUCTION};
+case SIMPLE_WINDOW_COVERING:
+return new CommandClass[]{CommandClass.BASIC_WINDOW_COVERING};
+case THERMOSTAT_GENERAL:
+return new CommandClass[]{CommandClass.MANUFACTURER_SPECIFIC,CommandClass.THERMOSTAT_MODE,CommandClass.THERMOSTAT_SETPOINT};
+case SETBACK_SCHEDULE_THERMOSTAT:
+return new CommandClass[]{CommandClass.CLIMATE_CONTROL_SCHEDULE,CommandClass.MANUFACTURER_SPECIFIC,CommandClass.MULTI_CMD,CommandClass.VERSION};
+case SATELLITE_RECEIVER:
+return new CommandClass[]{CommandClass.SIMPLE_AV_CONTROL,CommandClass.MANUFACTURER_SPECIFIC,CommandClass.VERSION};
+case ALARM_SENSOR_ROUTING_BASIC:
+case SMOKE_SENSOR_ROUTING_BASIC:
+return new CommandClass[]{CommandClass.MANUFACTURER_SPECIFIC,CommandClass.ASSOCIATION,CommandClass.VERSION};
+case ALARM_SENSOR_ROUTING:
+case ALARM_SENSOR_ZENSOR_ADVANCED:
+case SMOKE_SENSOR_ROUTING:
+case SMOKE_SENSOR_ZENSOR_ADVANCED:
+return new CommandClass[]{CommandClass.MANUFACTURER_SPECIFIC,CommandClass.BATTERY,CommandClass.ASSOCIATION,CommandClass.VERSION};
+case ALARM_SENSOR_ZENSOR_BASIC:
+case SMOKE_SENSOR_ZENSOR_BASIC:
+return new CommandClass[]{CommandClass.MANUFACTURER_SPECIFIC,CommandClass.VERSION};
+case ALARM_SENSOR_ZENSOR:
+case SMOKE_SENSOR_ZENSOR:
+return new CommandClass[]{CommandClass.MANUFACTURER_SPECIFIC,CommandClass.BATTERY,CommandClass.VERSION};
+default :
+return new CommandClass[0];
+}
+}

@@ -1,0 +1,34 @@
+{
+  logger.trace("Handle Message Application Command Request");
+  int nodeId=incomingMessage.getMessagePayloadByte(1);
+  logger.debug("Application Command Request from Node " + nodeId);
+  ZWaveNode node=getNode(nodeId);
+  if (node == null) {
+    logger.warn("Node {} not initialized yet, ignoring message.",nodeId);
+    return;
+  }
+  if (node.wasReceived(incomingMessage)) {
+    logger.warn("Message received before from node {}, ignoring message.",nodeId);
+    return;
+  }
+  node.resetResendCount();
+  int commandClassCode=incomingMessage.getMessagePayloadByte(3);
+  CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
+  if (commandClass == null) {
+    logger.error(String.format("Unsupported command class 0x%02x",commandClassCode));
+    return;
+  }
+  logger.debug(String.format("Incoming command class %s (0x%02x)",commandClass.getLabel(),commandClass.getKey()));
+  ZWaveCommandClass zwaveCommandClass=node.getCommandClass(commandClass);
+  if (zwaveCommandClass == null) {
+    logger.error(String.format("Unsupported command class %s (0x%02x)",commandClass.getLabel(),commandClassCode));
+    return;
+  }
+  logger.trace("Found Command Class {}, passing to handleApplicationCommandRequest",zwaveCommandClass.getCommandClass().getLabel());
+  zwaveCommandClass.handleApplicationCommandRequest(incomingMessage,4,1);
+  if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && nodeId == this.lastSentMessage.getMessageNode() && !incomingMessage.isTransActionCanceled()) {
+    notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+    transactionCompleted.release();
+    logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+  }
+}

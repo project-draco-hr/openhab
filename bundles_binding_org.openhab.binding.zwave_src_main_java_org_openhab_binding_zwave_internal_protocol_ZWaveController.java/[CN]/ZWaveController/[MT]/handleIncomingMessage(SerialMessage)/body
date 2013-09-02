@@ -1,0 +1,14 @@
+{
+  logger.debug("Incoming message to process");
+  logger.debug(incomingMessage.toString());
+switch (incomingMessage.getMessageType()) {
+case Request:
+    handleIncomingRequestMessage(incomingMessage);
+  break;
+case Response:
+handleIncomingResponseMessage(incomingMessage);
+break;
+default :
+logger.warn("Unsupported incomingMessageType: 0x%02X",incomingMessage.getMessageType());
+}
+}

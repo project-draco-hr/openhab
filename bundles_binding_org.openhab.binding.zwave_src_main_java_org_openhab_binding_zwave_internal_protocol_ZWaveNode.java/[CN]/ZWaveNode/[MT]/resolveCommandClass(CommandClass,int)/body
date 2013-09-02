@@ -1,0 +1,13 @@
+{
+  ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)supportedCommandClasses.get(CommandClass.MULTI_INSTANCE);
+  if (multiInstanceCommandClass != null && multiInstanceCommandClass.getVersion() == 2) {
+    ZWaveEndpoint endpoint=multiInstanceCommandClass.getEndpoint(endpointId);
+    if (endpoint != null) {
+      ZWaveCommandClass result=endpoint.getCommandClass(commandClass);
+      if (result != null)       return result;
+    }
+  }
+  ZWaveCommandClass result=getCommandClass(commandClass);
+  if (multiInstanceCommandClass != null && multiInstanceCommandClass.getVersion() == 1 && result.getInstances() < endpointId)   return null;
+  return endpointId == 1 ? result : null;
+}

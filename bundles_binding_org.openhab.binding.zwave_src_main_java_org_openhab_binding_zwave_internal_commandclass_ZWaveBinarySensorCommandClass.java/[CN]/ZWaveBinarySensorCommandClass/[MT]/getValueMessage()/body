@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command SENSOR_BINARY_GET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)SENSOR_BINARY_GET};
+  result.setMessagePayload(newPayload);
+  return result;
+}
