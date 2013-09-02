@@ -9,7 +9,7 @@
     reader=new InputStreamReader(new FileInputStream(path));
   }
  catch (  FileNotFoundException e) {
-    throw new TransformationException("an error occured durin script loading",e);
+    throw new TransformationException("An error occured while loading script.",e);
   }
   ScriptEngineManager manager=new ScriptEngineManager();
   ScriptEngine engine=manager.getEngineByName("javascript");
@@ -20,15 +20,11 @@
     result=engine.eval(reader);
   }
  catch (  ScriptException e) {
-    throw new TransformationException("an error occured during script execution",e);
+    throw new TransformationException("An error occured while executing script.",e);
   }
  finally {
-    try {
-      reader.close();
-    }
- catch (    IOException e) {
-    }
+    IOUtils.closeQuietly(reader);
   }
-  logger.trace("java script execution elapsed {} ms",System.currentTimeMillis() - startTime);
+  logger.trace("JavaScript execution elapsed {} ms",System.currentTimeMillis() - startTime);
   return String.valueOf(result);
 }
