@@ -1,0 +1,11 @@
+{
+  testSplit(new String[]{"AA#N1234","56\r#N12345","6\rDD"},new NikobusCommand[]{new NikobusCommand("AA"),new NikobusCommand("#N123456",2)});
+  String[] tmp=new String[60];
+  for (int i=0; i < 60; i++) {
+    tmp[i]="#N123456\r";
+  }
+  testSplit(new String[]{"#N123456\r"},new NikobusCommand[]{new NikobusCommand("#N123456",1)});
+  testSplit(tmp,new NikobusCommand[]{new NikobusCommand("#N123456",25),new NikobusCommand("#N123456",37),new NikobusCommand("#N123456",49)});
+  testSplit(new String[]{"AA#N123456\r#$5012#N12345","6\rDD"},new NikobusCommand[]{new NikobusCommand("AA"),new NikobusCommand("#N123456"),new NikobusCommand("#"),new NikobusCommand("$5012"),new NikobusCommand("#N123456")});
+  testSplit(new String[]{"AA#N1234","56\r#N12345","6\rDD"},new NikobusCommand[]{new NikobusCommand("AA"),new NikobusCommand("#N123456",2)});
+}

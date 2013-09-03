@@ -1,0 +1,20 @@
+{
+  if (input == null) {
+    return null;
+  }
+  int check=CRC_INIT;
+  for (  byte b : DatatypeConverter.parseHexBinary(input)) {
+    for (int i=0; i < 8; i++) {
+      if (((b >> (7 - i) & 1) == 1) ^ ((check >> 15 & 1) == 1)) {
+        check=check << 1;
+        check=check ^ POLYNOMIAL;
+      }
+ else {
+        check=check << 1;
+      }
+    }
+  }
+  check=check & CRC_INIT;
+  String checksum=StringUtils.leftPad(Integer.toHexString(check),4,"0");
+  return (input + checksum).toUpperCase();
+}

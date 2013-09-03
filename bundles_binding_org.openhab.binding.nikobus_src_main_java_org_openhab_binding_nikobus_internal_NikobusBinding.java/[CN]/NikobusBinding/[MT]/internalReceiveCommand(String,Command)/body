@@ -1,0 +1,23 @@
+{
+  log.trace("Received command {} for item {}",command.toString(),itemName);
+  AbstractNikobusItemConfig itemBinding=null;
+  for (  NikobusBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      itemBinding=provider.getItemConfig(itemName);
+      break;
+    }
+  }
+  if (providers.size() == 0) {
+    log.error("No providers");
+  }
+  if (itemBinding == null) {
+    log.trace("No item found");
+    return;
+  }
+  try {
+    itemBinding.processCommand(command,this);
+  }
+ catch (  Exception e) {
+    log.error("Error processing commmand {} for item {} : {}",new Object[]{command.toString(),itemBinding.getName(),e.getMessage()});
+  }
+}

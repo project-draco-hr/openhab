@@ -1,0 +1,26 @@
+{
+  NikobusCommandReceiver parser=new NikobusCommandReceiver(null);
+  final List<NikobusCommand> receivedCmds=new ArrayList<NikobusCommand>();
+  LinkedBlockingQueue<byte[]> queue=new LinkedBlockingQueue<byte[]>();
+  parser.setBufferQueue(queue);
+  parser.register(new NikobusCommandListener(){
+    @Override public void processNikobusCommand(    NikobusCommand command,    NikobusBinding binding){
+      receivedCmds.add(new NikobusCommand(command.getCommand(),command.getRepeats()));
+    }
+  }
+);
+  for (  String s : values) {
+    byte[] bb=s.getBytes();
+    queue.put(bb);
+  }
+  Thread t=new Thread(parser);
+  t.start();
+  Thread.sleep(1000);
+  t.interrupt();
+  for (int i=0; i < commands.length; i++) {
+    NikobusCommand c=receivedCmds.get(i);
+    assertEquals(commands[i].getCommand(),c.getCommand());
+    assertEquals(commands[i].getRepeats(),c.getRepeats());
+  }
+  assertEquals(commands.length,receivedCmds.size());
+}

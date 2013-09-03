@@ -1,0 +1,18 @@
+{
+  if (command != null) {
+    if (command.getCommand().equals(commandBuilder.toString())) {
+      command.incrementCount();
+    }
+ else {
+      publishCommand();
+      command=new NikobusCommand(commandBuilder.toString());
+    }
+  }
+ else {
+    command=new NikobusCommand(commandBuilder.toString());
+  }
+  if (command.getRepeats() >= NikobusCommand.MAX_REPEAT) {
+    publishCommand();
+  }
+  commandBuilder=new StringBuilder();
+}

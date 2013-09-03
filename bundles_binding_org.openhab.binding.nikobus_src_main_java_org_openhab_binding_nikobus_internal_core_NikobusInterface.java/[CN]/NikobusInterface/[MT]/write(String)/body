@@ -1,0 +1,10 @@
+{
+  if (hasReceivedData() && !isConnected()) {
+    log.warn("Nikobus interface connected lost. Reconnecting...");
+    connect();
+  }
+  log.debug("Sending : {}",message);
+  port.getOutputStream().write(message.getBytes());
+  port.getOutputStream().write("\r".getBytes());
+  port.getOutputStream().flush();
+}

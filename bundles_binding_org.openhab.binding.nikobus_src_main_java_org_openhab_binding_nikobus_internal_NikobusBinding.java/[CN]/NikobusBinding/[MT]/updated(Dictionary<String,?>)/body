@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    String configuredCacheLocation=(String)config.get("cache.location");
+    if (StringUtils.isNotBlank(configuredCacheLocation)) {
+      log.trace("Setting cache location to {}",configuredCacheLocation);
+      cacheLocation=configuredCacheLocation;
+    }
+    String configuredSerialPort=(String)config.get("serial.port");
+    if (StringUtils.isNotBlank(configuredSerialPort)) {
+      log.trace("Setting serial port to {}",configuredSerialPort);
+      serialInterface.setPort(configuredSerialPort);
+    }
+    String configuredInterval=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(configuredInterval)) {
+      refreshInterval=Long.parseLong(configuredInterval);
+      log.trace("Setting refresh interval to {}",refreshInterval);
+      startRefreshScheduler();
+    }
+    connect();
+  }
+}

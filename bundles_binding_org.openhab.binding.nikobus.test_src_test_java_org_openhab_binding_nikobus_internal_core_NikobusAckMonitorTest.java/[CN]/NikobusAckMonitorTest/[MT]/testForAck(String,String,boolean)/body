@@ -1,0 +1,13 @@
+{
+  NikobusCommand expectedAck=new NikobusCommand("",ack,100);
+  NikobusCommand receivedCommand=new NikobusCommand(command);
+  NikobusAckMonitor mon=new NikobusAckMonitor(expectedAck);
+  try {
+    mon.processNikobusCommand(receivedCommand,binding);
+    mon.waitForAck(sender);
+    assertTrue(expected);
+  }
+ catch (  TimeoutException e) {
+    assertFalse(expected);
+  }
+}

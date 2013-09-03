@@ -1,0 +1,11 @@
+{
+  try {
+    Thread.sleep(500);
+    binding.sendCommand(new NikobusCommand(command + checksum,expectedAck,2000));
+    return true;
+  }
+ catch (  Exception e) {
+    log.error("Found invalid checksum {} = {}",command,checksum);
+    return false;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  String ack=null;
+  long availableTime=command.getTimeout();
+  long startTime=System.currentTimeMillis();
+  while (availableTime > 0) {
+    try {
+      ack=receivedCommands.poll(availableTime,TimeUnit.MILLISECONDS);
+    }
+ catch (    InterruptedException e) {
+      log.warn("MonitorThread interrupted.");
+      break;
+    }
+    if (ack != null && ack.startsWith(command.getAck().toUpperCase())) {
+      log.trace("Received expected ack '{}'",ack);
+      return true;
+    }
+ else     if (ack == null) {
+      log.trace("No ack received within poll time ({}).",command.getTimeout());
+    }
+    availableTime=command.getTimeout() - (System.currentTimeMillis() - startTime);
+  }
+  return false;
+}

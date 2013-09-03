@@ -1,0 +1,16 @@
+{
+  if (!command.getCommand().equals(getAddress())) {
+    return;
+  }
+  if (command.getRepeats() <= NikobusCommand.MAX_REPEAT) {
+    notifyModulesChanged(command.getRepeats() == NikobusCommand.MAX_REPEAT,binding);
+  }
+  if (command.getRepeats() >= NikobusCommand.MAX_REPEAT && type == PressType.SHORT) {
+    return;
+  }
+ else   if (command.getRepeats() < NikobusCommand.MAX_REPEAT && type == PressType.LONG) {
+    return;
+  }
+  log.trace("Processing command {}",command.getCommand());
+  binding.postUpdate(getName(),OnOffType.ON);
+}

@@ -1,0 +1,14 @@
+{
+  if (checksum == null) {
+    properties.remove(command);
+  }
+ else {
+    properties.put(command,checksum);
+  }
+  try {
+    properties.store(new FileOutputStream(new File(path)),null);
+  }
+ catch (  Exception e) {
+    log.error("Error persisting command cache: {}",e.getMessage());
+  }
+}

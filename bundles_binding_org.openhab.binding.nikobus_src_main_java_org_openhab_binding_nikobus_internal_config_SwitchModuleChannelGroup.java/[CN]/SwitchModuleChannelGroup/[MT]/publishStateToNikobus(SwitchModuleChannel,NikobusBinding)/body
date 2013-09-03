@@ -1,0 +1,26 @@
+{
+  log.trace("Publishing group {}-{} status to eventbus and nikobus",address,group);
+  binding.postUpdate(switchModuleChannel.getName(),switchModuleChannel.getState());
+  StringBuilder command=new StringBuilder();
+  command.append(statusUpdateGroup);
+  command.append(address);
+  for (int i=0; i < 6; i++) {
+    if (channels[i] == null) {
+      command.append(LOW_BYTE);
+    }
+ else     if (channels[i].getState().equals(OnOffType.OFF)) {
+      command.append(LOW_BYTE);
+    }
+ else {
+      command.append(HIGH_BYTE);
+    }
+  }
+  command.append(HIGH_BYTE);
+  NikobusCommand cmd=addChecksumToCommand(new NikobusCommand(STATUS_CHANGE_CMD + CRCUtil.appendCRC(command.toString())),binding);
+  try {
+    binding.sendCommand(cmd);
+  }
+ catch (  Exception e) {
+    log.error("Error sending command.",e);
+  }
+}

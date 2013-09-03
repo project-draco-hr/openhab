@@ -1,0 +1,21 @@
+{
+  NikobusModule module=getBindingProvider().getModule(moduleAddress);
+  final NikobusCommand cmd=module.getStatusRequestCommand(this);
+  cmd.setWaitForSilence(delayedSend);
+  cmd.setMaxRetryCount(10);
+  if (commandSender.isCommandRedundant(cmd)) {
+    return;
+  }
+  Runnable updater=new Runnable(){
+    @Override public void run(){
+      try {
+        sendCommand(cmd);
+      }
+ catch (      Exception e) {
+        log.error("Error occurred during status request.",e);
+      }
+    }
+  }
+;
+  statusRequestService.submit(updater);
+}

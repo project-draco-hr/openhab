@@ -1,0 +1,43 @@
+{
+  if (isConnected()) {
+    return;
+  }
+  lastEventTimestamp=0;
+  if (serialPort == null) {
+    throw new Exception("No serial port defined. Check your configuration.");
+  }
+  openCommPort(serialPort);
+  write(RS232_SET_CMD_MODE);
+  write(RS232_DISCONNECT);
+  write(RS232_RESET_DEVICE);
+  write(PC_LINK_IDENTIFIER);
+  write("#L0");
+  write("#E0");
+  write("#L0");
+  write("#E1");
+  long start=System.currentTimeMillis();
+  while (start - System.currentTimeMillis() < 2000) {
+    if (!hasReceivedData()) {
+      Thread.sleep(200);
+    }
+ else {
+      break;
+    }
+  }
+  if (isConnected()) {
+    log.info("Connected to Nikobus :-)");
+  }
+ else {
+    log.error("Could not connect to Nikobus.");
+    if (port != null) {
+      try {
+        port.removeEventListener();
+        port.getInputStream().close();
+        port.getOutputStream().close();
+      }
+ catch (      IOException e) {
+      }
+      port.close();
+    }
+  }
+}

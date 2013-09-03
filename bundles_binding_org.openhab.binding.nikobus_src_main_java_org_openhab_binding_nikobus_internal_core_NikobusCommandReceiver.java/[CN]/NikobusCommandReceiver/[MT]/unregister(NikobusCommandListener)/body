@@ -1,0 +1,7 @@
+{
+  List<NikobusCommandListener> currentListeners=atomicListReference.get();
+  List<NikobusCommandListener> newListeners=new ArrayList<NikobusCommandListener>();
+  newListeners.addAll(currentListeners);
+  newListeners.remove(receiver);
+  atomicListReference.set(newListeners);
+}

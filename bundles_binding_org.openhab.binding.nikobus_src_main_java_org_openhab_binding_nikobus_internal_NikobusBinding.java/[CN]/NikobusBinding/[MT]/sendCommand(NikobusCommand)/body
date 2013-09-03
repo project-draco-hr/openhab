@@ -1,0 +1,17 @@
+{
+  if (cmd.getAck() != null) {
+    log.trace("Sending command with ack {}",cmd.getCommand());
+    NikobusAckMonitor monitor=new NikobusAckMonitor(cmd);
+    commandReceiver.register(monitor);
+    try {
+      monitor.waitForAck(commandSender);
+    }
+  finally {
+      commandReceiver.unregister(monitor);
+    }
+  }
+ else {
+    log.trace("Sending command without waiting for ack {}",cmd.getCommand());
+    commandSender.sendCommand(cmd);
+  }
+}

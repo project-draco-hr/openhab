@@ -1,0 +1,45 @@
+{
+  String checksum=cache.get(command);
+  if (checksum != null) {
+    if (type == AnalysisType.VERIFY) {
+      return verifyChecksum(command,checksum,expectedAck);
+    }
+ else {
+      return true;
+    }
+  }
+ else {
+    if (type != AnalysisType.GUESS) {
+      return false;
+    }
+  }
+  long start=System.currentTimeMillis();
+  boolean found=false;
+  int i;
+  for (i=0; i < 256; i++) {
+    checksum=StringUtils.leftPad(Integer.toHexString(i).toUpperCase(),2,"0");
+    try {
+      binding.sendCommand(new NikobusCommand(command + checksum,expectedAck,100));
+      log.info("Found possible match.");
+      break;
+    }
+ catch (    Exception e) {
+    }
+  }
+  for (int j=i - 5; j <= i; j++) {
+    checksum=StringUtils.leftPad(Integer.toHexString(j).toUpperCase(),2,"0");
+    try {
+      binding.sendCommand(new NikobusCommand(command + checksum,expectedAck,400));
+      log.info("Found checksum in {} ms using {} attempts.",(System.currentTimeMillis() - start),(i + j + 1));
+      cache.put(command,checksum);
+      found=true;
+      break;
+    }
+ catch (    Exception e) {
+    }
+  }
+  if (!found) {
+    log.error("Could not determine checksum for {}",command);
+  }
+  return found;
+}

@@ -1,0 +1,13 @@
+{
+  NikobusBindingProvider bindingProvider=(NikobusBindingProvider)provider;
+  for (  String itemName : provider.getItemNames()) {
+    if (!provider.providesBindingFor(itemName)) {
+      log.trace("Removing command listener for item {}",itemName);
+      unregister(bindingProvider.getItemConfig(itemName));
+    }
+ else {
+      register(bindingProvider.getItemConfig(itemName));
+      log.trace("Registering command listener for item {} ",itemName);
+    }
+  }
+}

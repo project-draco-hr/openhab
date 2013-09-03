@@ -1,0 +1,23 @@
+{
+  log.debug("Command sender started.");
+  try {
+    while (true && !stopped) {
+      NikobusCommand command=sendQueue.take();
+      if (command.getWaitForSilence()) {
+        waitForQuietBus();
+      }
+      log.trace("Sending command {}",command.getCommand());
+      for (int i=0; i < command.getRepeats(); i++) {
+        serialInterface.writeMessage(command.getCommand());
+      }
+      command.incrementSentCount();
+      Thread.sleep(50);
+    }
+  }
+ catch (  InterruptedException e) {
+    log.debug("Command sender stopped.");
+  }
+catch (  Exception e) {
+    log.error("Error writing command.",e);
+  }
+}

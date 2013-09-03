@@ -1,0 +1,10 @@
+{
+  SwitchModuleChannel item=group1.addChannel("test4",4);
+  item.setState(OnOffType.ON);
+  Mockito.when(cache.get(Mockito.anyString())).thenReturn("49");
+  group1.publishStateToNikobus(item,binding);
+  Mockito.verify(binding,Mockito.times(1)).getCache();
+  Mockito.verify(binding,Mockito.times(1)).sendCommand(command.capture());
+  NikobusCommand cmd=command.getAllValues().get(0);
+  assertEquals("$1E156C94000000FF0000FF60E149",cmd.getCommand());
+}

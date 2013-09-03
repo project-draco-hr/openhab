@@ -1,0 +1,11 @@
+{
+  log.trace("Looking up checksum for command from cache {}",command.getCommand());
+  CommandCache cache=binding.getCache();
+  String checksum=cache.get(command.getCommand());
+  if (checksum == null || checksum.length() == 0) {
+    log.error("Cannot find checksum value in cache for command {}. Please run analyzer first.",command);
+    return null;
+  }
+  command.setCommand(command.getCommand() + checksum);
+  return command;
+}

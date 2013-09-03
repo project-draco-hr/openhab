@@ -1,0 +1,37 @@
+{
+  if (log.isDebugEnabled()) {
+    Enumeration portIdentifiers=CommPortIdentifier.getPortIdentifiers();
+    while (portIdentifiers.hasMoreElements()) {
+      CommPortIdentifier id=(CommPortIdentifier)portIdentifiers.nextElement();
+      log.debug("Found port: {} x {}",id.getName(),id.getCurrentOwner());
+    }
+  }
+  CommPortIdentifier portIdentifier=null;
+  try {
+    portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
+  }
+ catch (  NoSuchPortException e) {
+    log.debug("Port not found during first attempt : {}",e.getMessage());
+  }
+  if (portIdentifier == null) {
+    try {
+      System.setProperty(SERIAL_PORT_PROPERTY_NAME,portName);
+      portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
+    }
+ catch (    Exception e) {
+      log.debug("Port not found during second attempt : {}",e.getMessage());
+      System.clearProperty(SERIAL_PORT_PROPERTY_NAME);
+    }
+  }
+  if (portIdentifier == null) {
+    throw new Exception("Serial port '" + portName + "' not found.");
+  }
+  if (portIdentifier.isCurrentlyOwned()) {
+    throw new Exception("Serial port '" + portName + "' is in use.");
+  }
+  port=(SerialPort)portIdentifier.open(this.getClass().getSimpleName(),CONNECT_TIMEOUT);
+  log.info("Connected to serial port '{}'",portIdentifier.getName());
+  port.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+  port.notifyOnDataAvailable(true);
+  port.addEventListener(this);
+}

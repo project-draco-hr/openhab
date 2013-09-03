@@ -1,0 +1,12 @@
+{
+  sender=new NikobusCommandSender(null){
+    @Override public void sendCommand(    NikobusCommand cmd){
+      cmd.incrementSentCount();
+    }
+  }
+;
+  testForAck("mytest","ADFADFMYTE",false);
+  testForAck("mytest","MYTESTTT",true);
+  testForAck("mytest","ADFADFMYTE",false);
+  testForAck("mytest1","MYTEST1",true);
+}

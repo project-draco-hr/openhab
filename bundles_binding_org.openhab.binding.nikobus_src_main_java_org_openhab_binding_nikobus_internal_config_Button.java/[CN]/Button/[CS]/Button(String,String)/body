@@ -1,0 +1,10 @@
+{
+  super(name,extractAddress(config));
+  if (config.indexOf("LONG") != -1) {
+    type=PressType.LONG;
+  }
+  if (config.indexOf("[") != -1) {
+    String modulesConfig=config.substring(config.indexOf("[") + 1,config.lastIndexOf(']'));
+    impactedModules=modulesConfig.split(",");
+  }
+}

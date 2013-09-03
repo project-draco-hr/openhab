@@ -1,0 +1,15 @@
+{
+  commandReceiver=new NikobusCommandReceiver(this);
+  commandReceiver.setBufferQueue(serialInterface.getBufferQueue());
+  Thread receiverThread=new Thread(commandReceiver);
+  receiverThread.setName("Nikobus Receiver");
+  receiverThread.setDaemon(true);
+  receiverThread.start();
+  log.debug("Started Command Receiver Thread.");
+  commandSender=new NikobusCommandSender(serialInterface);
+  Thread senderThread=new Thread(commandSender);
+  senderThread.setName("Nikobus Sender");
+  senderThread.setDaemon(true);
+  senderThread.start();
+  log.debug("Started Command Sender Thread.");
+}

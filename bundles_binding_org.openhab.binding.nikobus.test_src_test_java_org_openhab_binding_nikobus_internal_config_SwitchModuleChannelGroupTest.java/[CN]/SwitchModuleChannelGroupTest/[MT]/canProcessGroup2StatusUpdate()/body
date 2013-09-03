@@ -1,0 +1,10 @@
+{
+  SwitchModuleChannel item=group2.addChannel("test11",11);
+  item.setState(OnOffType.OFF);
+  group2.processNikobusCommand(new NikobusCommand("$0517"),binding);
+  group2.processNikobusCommand(new NikobusCommand("$1C6C940000000000FF00557CF8"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test11",OnOffType.ON);
+  group2.processNikobusCommand(new NikobusCommand("$0517"),binding);
+  group2.processNikobusCommand(new NikobusCommand("$1C6C9400000000FF00FF557CF8"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test11",OnOffType.OFF);
+}

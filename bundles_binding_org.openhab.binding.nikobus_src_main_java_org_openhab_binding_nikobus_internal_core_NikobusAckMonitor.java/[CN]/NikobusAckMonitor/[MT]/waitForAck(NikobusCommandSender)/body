@@ -1,0 +1,15 @@
+{
+  commandSender.sendCommand(command);
+  if (isAckReceived()) {
+    return;
+  }
+  while (command.getSentCount() < command.getMaxRetryCount()) {
+    if (command.getSentCount() > 0) {
+      commandSender.sendCommand(command);
+    }
+    if (isAckReceived()) {
+      return;
+    }
+  }
+  throw new TimeoutException("No ACK received within timeout and retry count.");
+}

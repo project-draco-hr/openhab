@@ -1,0 +1,9 @@
+{
+  log.trace("Processing command {}",command.toString());
+  if (command == OnOffType.ON && getAddress().length() == 8) {
+    int times=(type == PressType.LONG) ? NikobusCommand.MAX_REPEAT : 1;
+    binding.sendCommand(new NikobusCommand(getAddress(),times));
+    binding.sendCommand(new NikobusCommand(END_OF_TRANSMISSION));
+  }
+  notifyModulesChanged(false,binding);
+}

@@ -1,0 +1,24 @@
+{
+  log.info("Closing Nikobus connection.");
+  if (!isConnected()) {
+    return;
+  }
+  lastEventTimestamp=0;
+  port.removeEventListener();
+  try {
+    write(RS232_DISCONNECT);
+  }
+ catch (  Exception e) {
+    log.error("Could not send disconnect command",e);
+  }
+  if (port != null) {
+    try {
+      port.getInputStream().close();
+      port.getOutputStream().close();
+    }
+ catch (    IOException e) {
+      log.error("Error closing port: {}",e.getMessage());
+    }
+    port.close();
+  }
+}

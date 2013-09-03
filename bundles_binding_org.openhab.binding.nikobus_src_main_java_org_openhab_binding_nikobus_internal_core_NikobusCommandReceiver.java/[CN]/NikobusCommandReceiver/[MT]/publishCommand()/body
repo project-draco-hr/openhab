@@ -1,0 +1,10 @@
+{
+  if ((command.getRepeats() >= NikobusCommand.MAX_REPEAT) && ((command.getRepeats() - NikobusCommand.MAX_REPEAT) % (NikobusCommand.MAX_REPEAT / 2) != 0)) {
+    return;
+  }
+  log.debug("Received {}",command.toString());
+  List<NikobusCommandListener> currentListeners=atomicListReference.get();
+  for (  NikobusCommandListener receiver : currentListeners) {
+    receiver.processNikobusCommand(command,binding);
+  }
+}

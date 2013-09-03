@@ -1,0 +1,62 @@
+{
+  try {
+    String cmd=intp.nextArgument();
+    if (cmd.equals("help")) {
+      intp.println(getHelp());
+      return null;
+    }
+    if (cmd.equals("connect")) {
+      binding.connect();
+      return null;
+    }
+    if (cmd.equals("send")) {
+      String data=intp.nextArgument();
+      if (data != null && data.length() > 0) {
+        binding.sendCommand(new NikobusCommand(data));
+      }
+ else {
+        intp.println("Missing command argument. Enclose command in single quotes. E.g. nikobus send '#N0D4CE6'");
+        intp.print(getHelp());
+      }
+      return null;
+    }
+    if (cmd.equals("status")) {
+      intp.println(binding.getConnectionStatus());
+      intp.println("Command Cache Location: " + binding.getCache().getPath());
+      return null;
+    }
+    String address=intp.nextArgument();
+    if (address == null || address.length() != 4) {
+      intp.println(getHelp());
+      return null;
+    }
+ else {
+      address=address.toUpperCase();
+    }
+    String group=intp.nextArgument();
+    int groupNum=1;
+    if (group != null && !(group.equals("1") || group.equals("2"))) {
+      intp.println("Invalid group specified. Use group 1 or 2.");
+    }
+ else     if (group != null) {
+      groupNum=Integer.parseInt(group);
+    }
+    SwitchModuleAnalyzer analyzer=new SwitchModuleAnalyzer(groupNum);
+    analyzer.setBinding(binding);
+    intp.println("Starting analyzer for module " + address + ", group "+ groupNum);
+    if (cmd.equals("analyze")) {
+      analyzer.analyze(address);
+    }
+    if (cmd.equals("count")) {
+      analyzer.count(address);
+    }
+    if (cmd.equals("verify")) {
+      analyzer.verify(address);
+    }
+    return null;
+  }
+ catch (  Exception e) {
+    intp.print(getHelp());
+  }
+  return null;
+}

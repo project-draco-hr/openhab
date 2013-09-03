@@ -1,0 +1,10 @@
+{
+  List<NikobusCommandListener> currentListeners=atomicListReference.get();
+  if (currentListeners.contains(receiver)) {
+    return;
+  }
+  List<NikobusCommandListener> newListeners=new ArrayList<NikobusCommandListener>();
+  newListeners.addAll(currentListeners);
+  newListeners.add(receiver);
+  atomicListReference.set(newListeners);
+}

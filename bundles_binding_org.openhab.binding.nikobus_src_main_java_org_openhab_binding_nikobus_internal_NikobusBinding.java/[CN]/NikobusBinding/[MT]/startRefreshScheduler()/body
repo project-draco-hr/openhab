@@ -1,0 +1,35 @@
+{
+  if (refreshService != null) {
+    refreshService.shutdownNow();
+  }
+  final NikobusBinding self=this;
+  if (refreshInterval > 0) {
+    refreshService=Executors.newScheduledThreadPool(1);
+    Runnable refreshCommand=new Runnable(){
+      @Override public void run(){
+        List<NikobusModule> allModules=getBindingProvider().getAllModules();
+        if (allModules == null || allModules.isEmpty()) {
+          log.trace("No modules available to refresh");
+          return;
+        }
+        if (nextModuleToRefresh >= allModules.size()) {
+          nextModuleToRefresh=0;
+        }
+        NikobusModule m=allModules.get(nextModuleToRefresh);
+        log.trace("Requesting scheduled status update for {}",m.getAddress());
+        NikobusCommand cmd=m.getStatusRequestCommand(self);
+        cmd.setWaitForSilence(true);
+        try {
+          sendCommand(cmd);
+        }
+ catch (        Exception e) {
+          log.error("Error occurred during scheduled status refresh.",e);
+        }
+        nextModuleToRefresh++;
+      }
+    }
+;
+    refreshService.scheduleAtFixedRate(refreshCommand,600,refreshInterval,TimeUnit.SECONDS);
+    log.debug("Refresh service started. Will refresh a module every {} seconds.",refreshInterval);
+  }
+}

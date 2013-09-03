@@ -1,0 +1,24 @@
+{
+  if (event.getEventType() != SerialPortEvent.DATA_AVAILABLE) {
+    return;
+  }
+  InputStream is=null;
+  try {
+    lastEventTimestamp=System.currentTimeMillis();
+    is=port.getInputStream();
+    int available=is.available();
+    if (available == 0) {
+      log.warn("Received data available event, but no data was found!");
+      return;
+    }
+    byte[] buffer=new byte[available];
+    is.read(buffer,0,available);
+    bufferQueue.add(buffer);
+    if (available != 1 || buffer[0] != 13) {
+      log.trace("Received: {}",new String(buffer));
+    }
+  }
+ catch (  IOException e) {
+    log.error("Error receiving data on serial port {}: {}",port.getName(),e.getMessage());
+  }
+}
