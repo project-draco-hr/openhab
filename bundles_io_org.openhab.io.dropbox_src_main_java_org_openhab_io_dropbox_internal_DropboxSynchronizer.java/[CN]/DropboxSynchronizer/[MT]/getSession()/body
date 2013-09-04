@@ -1,13 +1,14 @@
 {
-  AppKeyPair appKeys=new AppKeyPair(DropboxSynchronizer.appKey,DropboxSynchronizer.appSecret);
-  WebAuthSession session=new WebAuthSession(appKeys,AccessType.APP_FOLDER);
-  if (accessToken == null) {
+  DbxAppInfo appInfo=new DbxAppInfo(DropboxSynchronizer.appKey,DropboxSynchronizer.appSecret);
+  DbxRequestConfig config=new DbxRequestConfig("openHAB/1.0",Locale.getDefault().toString());
+  DbxWebAuthNoRedirect webAuth=new DbxWebAuthNoRedirect(config,appInfo);
+  if (webAuth == null) {
     File authFile=new File(contentDir + AUTH_FILE_NAME);
     if (authFile.exists()) {
       accessToken=extractAccessTokenFrom(authFile);
     }
  else {
-      accessToken=authorizeOpenHAB(session,authFile);
+      accessToken=authorizeOpenHAB(webAuth,authFile);
     }
   }
   if (accessToken != null) {

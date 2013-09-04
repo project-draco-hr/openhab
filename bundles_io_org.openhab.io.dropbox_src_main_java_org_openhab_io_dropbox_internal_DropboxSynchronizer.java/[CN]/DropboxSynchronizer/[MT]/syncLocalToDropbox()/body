@@ -1,6 +1,6 @@
 {
   logger.debug("Started synchronization from local to Dropbox ...");
-  WebAuthSession session=getSession();
+  DbxWebAuthNoRedirect session=getSession();
   if (session == null) {
     return;
   }
@@ -62,7 +62,7 @@
  else {
       logger.debug("Deleted cache file '{}' since there are changes. It will be recreated while next synchronization loop.",dropboxEntryFile.getPath());
     }
-    DeltaPage<Entry> deltaPage=dropbox.delta(lastCursor);
+    DbxDelta<Entry> deltaPage=dropbox.delta(lastCursor);
     writeLastCursorFile(deltaPage,new File(contentDir + DELTA_CURSOR_FILE_NAME));
   }
  else {

@@ -1,0 +1,12 @@
+{
+  DbxWebAuthNoRedirect webAuth=getSession();
+  authFinish=webAuth.finish(code);
+  if (authFinish != null) {
+    logger.debug("Got token pair from Dropbox (key={}, secret={}) -> serialize to file for later use!",accessToken.key,accessToken.secret);
+    writeLocalFile(authFile,accessToken.key + FIELD_DELIMITER + accessToken.secret);
+  }
+ else {
+    logger.debug("AccessToken hasn't been updated by Dropbox. This is likely because the authorization timeslot timed out. Thus we didn't write an authfile for later use.");
+    accessToken=null;
+  }
+}
