@@ -1,15 +1,20 @@
 {
   boolean isUpload=UPLOAD_JOB_KEY.compareTo(context.getJobDetail().getKey()) == 0;
-  DropboxSynchronizer synchronizer=DropboxSynchronizer.instance;
-  if (synchronizer != null) {
-    if (isUpload) {
-      synchronizer.syncLocalToDropbox();
+  try {
+    DropboxSynchronizer synchronizer=DropboxSynchronizer.instance;
+    if (synchronizer != null) {
+      if (isUpload) {
+        synchronizer.syncLocalToDropbox();
+      }
+ else {
+        synchronizer.syncDropboxToLocal();
+      }
     }
  else {
-      synchronizer.syncDropboxToLocal();
+      logger.debug("DropboxSynchronizer instance hasn't been initialized properly!");
     }
   }
- else {
-    logger.debug("DropboxSynchronizer instance hasn't been initialized properly!");
+ catch (  DropboxException de) {
+    logger.error("Synchronization files with Dropbox throws an exception",de);
   }
 }
