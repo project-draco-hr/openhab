@@ -12,14 +12,14 @@
     logger.debug("Node {} is dead, not sending message.",node.getNodeId());
     return;
   }
-  if (!node.isListening() && serialMessage.getPriority() != SerialMessagePriority.Low && serialMessage.getPriority() != SerialMessagePriority.Ping) {
+  if (!node.isListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
     if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
       wakeUpCommandClass.putInWakeUpQueue(serialMessage);
       return;
     }
   }
-  serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE);
+  serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE | TRANSMIT_OPTION_EXPLORE);
   if (++sentDataPointer > 0xFF)   sentDataPointer=1;
   serialMessage.setCallbackId(sentDataPointer);
   logger.debug("Callback ID = {}",sentDataPointer);

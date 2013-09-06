@@ -8,10 +8,6 @@ case NODE_INFO_RECEIVED:
     logger.debug("Application update request, node information received.");
   int length=incomingMessage.getMessagePayloadByte(2);
 ZWaveNode node=getNode(nodeId);
-if (node.wasReceived(incomingMessage)) {
-logger.warn("Message received before from node {}, ignoring message.",nodeId);
-return;
-}
 node.resetResendCount();
 for (int i=6; i < length + 3; i++) {
 int data=incomingMessage.getMessagePayloadByte(i);

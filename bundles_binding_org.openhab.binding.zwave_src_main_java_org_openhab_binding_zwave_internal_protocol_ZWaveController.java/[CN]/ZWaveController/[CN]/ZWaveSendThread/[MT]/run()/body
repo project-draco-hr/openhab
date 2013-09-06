@@ -21,9 +21,10 @@
     }
     try {
       if (!transactionCompleted.tryAcquire(1,ZWAVE_RESPONSE_TIMEOUT,TimeUnit.MILLISECONDS)) {
-        if (--lastSentMessage.attempts >= 0 && lastSentMessage.getPriority() != SerialMessagePriority.Ping && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
+        if (--lastSentMessage.attempts >= 0) {
           logger.error("Timeout while sending message to node {}. Requeueing",lastSentMessage.getMessageNode());
-          enqueue(lastSentMessage);
+          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData)           handleFailedSendDataRequest(lastSentMessage);
+ else           enqueue(lastSentMessage);
         }
  else {
           logger.warn("Discarding message: {}",lastSentMessage.toString());

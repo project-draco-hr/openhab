@@ -7,10 +7,6 @@
     logger.warn("Node {} not initialized yet, ignoring message.",nodeId);
     return;
   }
-  if (node.wasReceived(incomingMessage)) {
-    logger.warn("Message received before from node {}, ignoring message.",nodeId);
-    return;
-  }
   node.resetResendCount();
   int commandClassCode=incomingMessage.getMessagePayloadByte(3);
   CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
