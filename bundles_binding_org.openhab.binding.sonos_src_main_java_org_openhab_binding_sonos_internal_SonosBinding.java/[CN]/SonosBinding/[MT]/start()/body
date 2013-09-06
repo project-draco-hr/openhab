@@ -1,5 +1,8 @@
 {
-  logger.debug("Sonos binding has been started.");
+  if (bindingStarted) {
+    logger.trace("Tried to start Sonos polling although it is already started!");
+    return;
+  }
   upnpService=new UpnpServiceImpl(new SonosUpnpServiceConfiguration(),listener);
   try {
     if (sonosPlayersFromCfg != null) {
@@ -17,4 +20,6 @@
   }
   pollingThread.setDaemon(true);
   pollingThread.start();
+  bindingStarted=true;
+  logger.debug("Sonos Binding Discovery has been started.");
 }
