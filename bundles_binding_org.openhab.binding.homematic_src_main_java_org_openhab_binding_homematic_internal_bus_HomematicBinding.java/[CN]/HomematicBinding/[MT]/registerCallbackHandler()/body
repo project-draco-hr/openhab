@@ -7,7 +7,9 @@
   cbServer.start();
   Runtime.getRuntime().addShutdownHook(new Thread(){
     @Override public void run(){
-      removeCallbackHandler(cbServer);
+      if (cbServer != null) {
+        removeCallbackHandler(cbServer);
+      }
     }
   }
 );
