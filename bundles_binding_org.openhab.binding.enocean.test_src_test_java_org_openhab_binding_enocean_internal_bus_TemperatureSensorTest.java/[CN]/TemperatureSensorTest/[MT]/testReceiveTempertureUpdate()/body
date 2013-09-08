@@ -1,0 +1,9 @@
+{
+  parameterAddress=new EnoceanParameterAddress(EnoceanId.fromString(EnoceanBindingProviderMock.DEVICE_ID),TemperaturSensor.PARAMETER_ID);
+  provider.setParameterAddress(parameterAddress);
+  binding.addBindingProvider(provider);
+  provider.setItem(new NumberItem("dummie"));
+  BigDecimal temperature=new BigDecimal("20.3");
+  binding.valueChanged(parameterAddress,new NumberWithUnit(Unit.DEGREE_CELSIUS,temperature));
+  assertEquals("Update State",new DecimalType(temperature),publisher.getUpdateState());
+}

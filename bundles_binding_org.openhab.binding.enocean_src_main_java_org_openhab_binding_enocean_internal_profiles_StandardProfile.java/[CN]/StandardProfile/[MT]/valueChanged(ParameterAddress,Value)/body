@@ -1,0 +1,15 @@
+{
+  for (  Item item : items) {
+    if (item == null) {
+      continue;
+    }
+    StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress.getParameterId(),item);
+    if (converter == null) {
+      logger.warn("No converter found for " + parameterAddress + " - doing nothing.");
+      return;
+    }
+    State value=converter.convertTo(valueObject);
+    logger.debug("Received new value {} for items {}",value,items);
+    eventPublisher.postUpdate(item.getName(),value);
+  }
+}

@@ -1,0 +1,39 @@
+{
+  ButtonState buttonState=(ButtonState)valueObject;
+  Command command=null;
+  if (buttonDownPressed(parameterAddress)) {
+switch (buttonState) {
+case PRESSED:
+      startDimmerThread(IncreaseDecreaseType.INCREASE);
+    buttonOPressedTime=System.currentTimeMillis();
+  break;
+case RELEASED:
+stopDimmerThread();
+if (isLongOButtonReleased()) {
+buttonOPressedTime=0;
+}
+ else {
+command=OnOffType.ON;
+}
+break;
+}
+}
+ else if (buttonUpPressed(parameterAddress)) {
+switch (buttonState) {
+case PRESSED:
+startDimmerThread(IncreaseDecreaseType.DECREASE);
+buttonIPressedTime=System.currentTimeMillis();
+break;
+case RELEASED:
+stopDimmerThread();
+if (isLongIButtonReleased()) {
+buttonIPressedTime=0;
+}
+ else {
+command=OnOffType.OFF;
+}
+break;
+}
+}
+postCommand(command);
+}

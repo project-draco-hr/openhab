@@ -1,0 +1,12 @@
+{
+  EnoceanParameterAddress parameterAddress=provider.getParameterAddress(itemName);
+  Item item=provider.getItem(itemName);
+  if (item == null) {
+    logger.warn("No item found for " + parameterAddress + " - doing nothing.");
+    return;
+  }
+  State value=getValueFromDevice(parameterAddress,item);
+  if (value != null) {
+    eventPublisher.postUpdate(itemName,value);
+  }
+}

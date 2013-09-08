@@ -1,0 +1,19 @@
+{
+  logger.debug("Received new value {} for device at {}",valueObject,parameterAddress);
+  Profile profile=null;
+  if (profiles.containsKey(parameterAddress.getAsString())) {
+    profile=profiles.get(parameterAddress.getAsString());
+  }
+ else   if (profiles.containsKey(parameterAddress.getChannelAsString())) {
+    profile=profiles.get(parameterAddress.getChannelAsString());
+  }
+ else   if (profiles.containsKey(parameterAddress.getDeviceAsString())) {
+    profile=profiles.get(parameterAddress.getDeviceAsString());
+  }
+ else {
+    Item item=getItemForParameter(parameterAddress);
+    profile=new StandardProfile(item,eventPublisher);
+    addProfile(item,parameterAddress,profile);
+  }
+  profile.valueChanged(parameterAddress,valueObject);
+}

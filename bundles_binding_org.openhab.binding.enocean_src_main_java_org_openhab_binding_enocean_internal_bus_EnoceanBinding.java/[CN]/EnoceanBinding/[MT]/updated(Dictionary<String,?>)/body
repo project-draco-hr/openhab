@@ -1,0 +1,29 @@
+{
+  if (config == null) {
+    return;
+  }
+  serialPort=(String)config.get(CONFIG_KEY_SERIAL_PORT);
+  if (connector != null) {
+    connector.disconnect();
+  }
+  try {
+    connect();
+  }
+ catch (  RuntimeException e) {
+    if (e.getCause() instanceof NoSuchPortException) {
+      StringBuilder sb=new StringBuilder("Available ports are:\n");
+      Enumeration<?> portList=CommPortIdentifier.getPortIdentifiers();
+      while (portList.hasMoreElements()) {
+        CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+        if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+          sb.append(id.getName() + "\n");
+        }
+      }
+      sb.deleteCharAt(sb.length() - 1);
+      throw new ConfigurationException(CONFIG_KEY_SERIAL_PORT,"Serial port '" + serialPort + "' could not be opened. "+ sb.toString());
+    }
+ else {
+      throw e;
+    }
+  }
+}

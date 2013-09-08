@@ -1,0 +1,15 @@
+{
+  while (mayRun()) {
+    try {
+      Thread.sleep(SLEEP_PERIOD_MS);
+    }
+ catch (    InterruptedException e) {
+      logger.warn("DimmerThread got interrupted. This should not happen.",e);
+    }
+    if (!mayRun()) {
+      return;
+    }
+    logger.debug("Post new value {} for items {}",command,items);
+    postCommand(command);
+  }
+}

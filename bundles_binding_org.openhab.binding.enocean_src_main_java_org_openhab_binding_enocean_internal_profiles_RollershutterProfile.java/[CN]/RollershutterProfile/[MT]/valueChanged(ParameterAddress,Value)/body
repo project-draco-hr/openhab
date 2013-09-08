@@ -1,0 +1,64 @@
+{
+  ButtonState buttonState=(ButtonState)valueObject;
+  Command command=null;
+  if (RockerSwitch.BUTTON_O.equals(parameterAddress.getParameterId())) {
+switch (buttonState) {
+case PRESSED:
+      if (belongsToLastShortButtonPress()) {
+        command=StopMoveType.STOP;
+        lastButtonShortPressTime=0;
+        belongsToLastShortButtonPress=true;
+        buttonOPressedTime=System.currentTimeMillis();
+      }
+ else {
+        command=UpDownType.UP;
+        buttonOPressedTime=System.currentTimeMillis();
+      }
+    break;
+case RELEASED:
+  if (isLongOButtonReleased()) {
+    command=StopMoveType.STOP;
+    buttonOPressedTime=0;
+  }
+ else   if (belongsToLastShortButtonPress) {
+    lastButtonShortPressTime=0;
+    belongsToLastShortButtonPress=false;
+  }
+ else {
+    lastButtonShortPressTime=System.currentTimeMillis();
+  }
+break;
+}
+}
+ else if (RockerSwitch.BUTTON_I.equals(parameterAddress.getParameterId())) {
+switch (buttonState) {
+case PRESSED:
+if (belongsToLastShortButtonPress()) {
+command=StopMoveType.STOP;
+lastButtonShortPressTime=0;
+belongsToLastShortButtonPress=true;
+buttonIPressedTime=System.currentTimeMillis();
+}
+ else {
+command=UpDownType.DOWN;
+buttonIPressedTime=System.currentTimeMillis();
+}
+break;
+case RELEASED:
+if (isLongIButtonReleased()) {
+command=StopMoveType.STOP;
+buttonIPressedTime=0;
+}
+ else if (belongsToLastShortButtonPress) {
+lastButtonShortPressTime=0;
+belongsToLastShortButtonPress=false;
+}
+ else {
+lastButtonShortPressTime=System.currentTimeMillis();
+}
+break;
+}
+}
+logger.debug("Received new value {} for items {}",command,items);
+postCommand(command);
+}

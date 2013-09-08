@@ -1,0 +1,27 @@
+{
+  EnoceanParameterAddress parameterAddress=enoceanBindingProvider.getParameterAddress(itemName);
+  EEPId eep=enoceanBindingProvider.getEEP(itemName);
+  esp3Host.addDeviceProfile(parameterAddress.getEnoceanDeviceId(),eep);
+  Item item=enoceanBindingProvider.getItem(itemName);
+  Class<Profile> customProfileClass=enoceanBindingProvider.getCustomProfile(itemName);
+  if (customProfileClass != null) {
+    Constructor<Profile> constructor;
+    Profile profile;
+    try {
+      constructor=customProfileClass.getConstructor(Item.class,EventPublisher.class);
+      profile=constructor.newInstance(item,eventPublisher);
+      addProfile(item,parameterAddress,profile);
+    }
+ catch (    Exception e) {
+      logger.error("Could not create class for profile " + customProfileClass,e);
+    }
+  }
+ else   if (RockerSwitch.EEP_ID_1.equals(eep) || RockerSwitch.EEP_ID_2.equals(eep)) {
+    if (item.getClass().equals(RollershutterItem.class)) {
+      addRollershutterProfile(enoceanBindingProvider,itemName,parameterAddress);
+    }
+    if (item.getClass().equals(DimmerItem.class)) {
+      addDimmerProfile(enoceanBindingProvider,itemName,parameterAddress);
+    }
+  }
+}

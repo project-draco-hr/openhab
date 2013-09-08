@@ -1,0 +1,11 @@
+{
+  logger.info("Connecting to Enocean [serialPort='{}' ].",new Object[]{serialPort});
+  connector=new EnoceanSerialConnector();
+  connector.connect(serialPort);
+  esp3Host=new ESP3Host(connector);
+  esp3Host.addParameterChangeListener(this);
+  for (  EnoceanBindingProvider provider : providers) {
+    initializeAllItemsInProvider(provider);
+  }
+  esp3Host.start();
+}

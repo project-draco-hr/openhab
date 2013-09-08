@@ -1,0 +1,15 @@
+{
+  for (  EnoceanBindingProvider provider : providers) {
+    logger.debug("Checking provider with names {}",provider.getItemNames());
+    ParameterAddress parameterAddress=provider.getParameterAddress(itemName);
+    State actualState=provider.getItem(itemName).getState();
+    String parameterKey=parameterAddress.getParameterId();
+    CommandConverter<?,?> commandConverter=converterFactory.getCommandConverter(parameterKey,command);
+    if (commandConverter == null) {
+      logger.debug("No command converter found for {}. No command will be executed.",parameterAddress);
+      return;
+    }
+    State newState=commandConverter.convertFrom(actualState,command);
+    setStateOnDevice(newState,parameterAddress);
+  }
+}

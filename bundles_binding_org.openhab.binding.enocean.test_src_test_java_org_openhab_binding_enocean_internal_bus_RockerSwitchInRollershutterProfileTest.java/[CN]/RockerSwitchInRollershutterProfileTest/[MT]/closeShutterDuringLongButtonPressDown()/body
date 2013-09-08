@@ -1,0 +1,9 @@
+{
+  EnoceanParameterAddress valueParameterAddress=new EnoceanParameterAddress(EnoceanId.fromString(EnoceanBindingProviderMock.DEVICE_ID),RockerSwitch.BUTTON_I);
+  binding.valueChanged(valueParameterAddress,ButtonState.PRESSED);
+  assertEquals("Update State",UpDownType.DOWN,publisher.popLastCommand());
+  waitFor(LONG_PRESS_DELAY);
+  binding.valueChanged(valueParameterAddress,ButtonState.RELEASED);
+  assertEquals("Update State",StopMoveType.STOP,publisher.popLastCommand());
+  assertEquals("No new state expected",null,publisher.popLastCommand());
+}

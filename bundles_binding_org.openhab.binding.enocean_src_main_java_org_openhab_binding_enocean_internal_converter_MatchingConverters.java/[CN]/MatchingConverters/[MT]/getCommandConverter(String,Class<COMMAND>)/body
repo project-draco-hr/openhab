@@ -1,0 +1,8 @@
+{
+  CommandToConverterMap commandToConverterMap=commandConverters.get(protocolValue);
+  if (commandToConverterMap == null) {
+    logger.debug("ProtocolValue " + protocolValue + " is not configured. If the command is a state this will result in no error.");
+    return null;
+  }
+  return (Class<? extends CommandConverter<?,COMMAND>>)commandToConverterMap.get(command);
+}

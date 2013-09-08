@@ -1,0 +1,23 @@
+{
+  ButtonState buttonState=(ButtonState)valueObject;
+  if (buttonUpPressed(parameterAddress)) {
+switch (buttonState) {
+case PRESSED:
+      startDimmerThread(IncreaseDecreaseType.INCREASE);
+    break;
+case RELEASED:
+  stopDimmerThread();
+break;
+}
+}
+ else if (buttonDownPressed(parameterAddress)) {
+switch (buttonState) {
+case PRESSED:
+startDimmerThread(IncreaseDecreaseType.DECREASE);
+break;
+case RELEASED:
+stopDimmerThread();
+break;
+}
+}
+}

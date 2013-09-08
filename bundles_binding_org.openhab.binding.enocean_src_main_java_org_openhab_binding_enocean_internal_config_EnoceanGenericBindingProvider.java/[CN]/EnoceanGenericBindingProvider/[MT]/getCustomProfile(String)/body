@@ -1,0 +1,18 @@
+{
+  EnoceanBindingConfig config=(EnoceanBindingConfig)bindingConfigs.get(itemName);
+  if (config == null || config.profile == null) {
+    return null;
+  }
+  String fullClassName=config.profile;
+  if (!fullClassName.contains(".")) {
+    fullClassName=PACKAGE_PREFIX_PROFILES + fullClassName;
+  }
+  Class<Profile> profileClass=null;
+  try {
+    profileClass=(Class<Profile>)Class.forName(fullClassName);
+  }
+ catch (  Exception e) {
+    logger.error("Could not create class for profile " + config.profile,e);
+  }
+  return profileClass;
+}
