@@ -3,6 +3,10 @@
   EEPId eep=enoceanBindingProvider.getEEP(itemName);
   esp3Host.addDeviceProfile(parameterAddress.getEnoceanDeviceId(),eep);
   Item item=enoceanBindingProvider.getItem(itemName);
+  if (profiles.containsKey(parameterAddress.getAsString())) {
+    Profile profile=profiles.get(parameterAddress.getAsString());
+    profile.removeItem(item);
+  }
   Class<Profile> customProfileClass=enoceanBindingProvider.getCustomProfile(itemName);
   if (customProfileClass != null) {
     Constructor<Profile> constructor;
@@ -18,10 +22,12 @@
   }
  else   if (RockerSwitch.EEP_ID_1.equals(eep) || RockerSwitch.EEP_ID_2.equals(eep)) {
     if (item.getClass().equals(RollershutterItem.class)) {
-      addRollershutterProfile(enoceanBindingProvider,itemName,parameterAddress);
+      RollershutterProfile profile=new RollershutterProfile(item,eventPublisher);
+      addProfile(item,parameterAddress,profile);
     }
     if (item.getClass().equals(DimmerItem.class)) {
-      addDimmerProfile(enoceanBindingProvider,itemName,parameterAddress);
+      DimmerOnOffProfile profile=new DimmerOnOffProfile(item,eventPublisher);
+      addProfile(item,parameterAddress,profile);
     }
   }
 }
