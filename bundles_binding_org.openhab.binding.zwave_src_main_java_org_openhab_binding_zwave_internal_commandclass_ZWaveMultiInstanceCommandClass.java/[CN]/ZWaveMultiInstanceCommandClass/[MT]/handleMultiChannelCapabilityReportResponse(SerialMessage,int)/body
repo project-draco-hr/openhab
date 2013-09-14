@@ -7,6 +7,7 @@
   logger.debug("Endpoints are the same device class = {}",endpointsAreTheSameDeviceClass ? "true" : false);
   int startId=this.endpointsAreTheSameDeviceClass ? 1 : receivedEndpointId;
   int endId=this.endpointsAreTheSameDeviceClass ? this.endpoints.size() : receivedEndpointId;
+  boolean supportsBasicCommandClass=this.getNode().supportsCommandClass(CommandClass.BASIC);
   for (int endpointId=startId; endpointId <= endId; endpointId++) {
     ZWaveEndpoint endpoint=this.endpoints.get(endpointId);
     if (endpoint == null) {
@@ -33,6 +34,10 @@
     deviceClass.setBasicDeviceClass(basic);
     deviceClass.setGenericDeviceClass(generic);
     deviceClass.setSpecificDeviceClass(specific);
+    if (supportsBasicCommandClass) {
+      ZWaveCommandClass commandClass=new ZWaveBasicCommandClass(this.getNode(),this.getController(),endpoint);
+      endpoint.addCommandClass(commandClass);
+    }
     for (int i=0; i < serialMessage.getMessagePayload().length - offset - 3; i++) {
       int data=serialMessage.getMessagePayloadByte(offset + 3 + i);
       if (data == 0xef) {
@@ -40,7 +45,14 @@
       }
       logger.debug(String.format("Adding command class 0x%02X to the list of supported command classes.",data));
       ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
-      if (commandClass != null)       endpoint.addCommandClass(commandClass);
+      if (commandClass == null) {
+        continue;
+      }
+      endpoint.addCommandClass(commandClass);
+      ZWaveCommandClass parentClass=this.getNode().getCommandClass(commandClass.getCommandClass());
+      if (parentClass != null) {
+        commandClass.setVersion(parentClass.getVersion());
+      }
     }
   }
   if (this.endpointsAreTheSameDeviceClass)   this.getNode().advanceNodeStage();
