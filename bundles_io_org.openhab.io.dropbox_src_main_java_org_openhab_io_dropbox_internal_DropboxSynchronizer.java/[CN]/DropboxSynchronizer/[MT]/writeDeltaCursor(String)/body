@@ -1,0 +1,8 @@
+{
+  if (!deltaCursor.equals(lastCursor)) {
+    logger.trace("Delta-Cursor changed (lastCursor '{}', newCursor '{}')",lastCursor,deltaCursor);
+    File cursorFile=DropboxActivator.getContext().getDataFile(DELTA_CURSOR_FILE_NAME);
+    writeLocalFile(cursorFile,deltaCursor);
+    lastCursor=deltaCursor;
+  }
+}

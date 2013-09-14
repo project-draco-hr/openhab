@@ -1,0 +1,66 @@
+{
+  logger.debug("Started synchronization from local to Dropbox ...");
+  Map<String,Long> dropboxEntries=new HashMap<String,Long>();
+  WithChildren metadata=client.getMetadataWithChildren("/");
+  File dropboxEntryFile=new File(contentDir + DROPBOX_ENTRIES_FILE_NAME);
+  if (!dropboxEntryFile.exists() || !metadata.hash.equals(lastHash)) {
+    collectDropboxEntries(client,dropboxEntries,"/");
+    serializeDropboxEntries(dropboxEntryFile,dropboxEntries);
+    lastHash=metadata.hash;
+  }
+ else {
+    logger.trace("Dropbox entry file '{}' exists -> extract content",dropboxEntryFile.getPath());
+    dropboxEntries=extractDropboxEntries(dropboxEntryFile);
+  }
+  Map<String,Long> localEntries=new HashMap<String,Long>();
+  collectLocalEntries(localEntries,contentDir);
+  logger.debug("There are '{}' local entries that met the upload filters ...",localEntries.size());
+  boolean isChanged=false;
+  for (  java.util.Map.Entry<String,Long> entry : localEntries.entrySet()) {
+    if (dropboxEntries.containsKey(entry.getKey())) {
+      if (entry.getValue().compareTo(dropboxEntries.get(entry.getKey())) > 0) {
+        logger.trace("Local file '{}' is newer - upload to Dropbox!",entry.getKey());
+        if (!fakeMode) {
+          uploadFile(client,entry.getKey(),true);
+        }
+        isChanged=true;
+      }
+    }
+ else {
+      logger.trace("Local file '{}' doesn't exist in Dropbox - upload to Dropbox!",entry.getKey());
+      if (!fakeMode) {
+        uploadFile(client,entry.getKey(),false);
+      }
+      isChanged=true;
+    }
+    dropboxEntries.remove(entry.getKey());
+  }
+  for (  String path : dropboxEntries.keySet()) {
+    for (    String filter : uploadFilterElements) {
+      if (path.matches(filter)) {
+        if (!fakeMode) {
+          client.delete(path);
+        }
+        isChanged=true;
+        logger.debug("Successfully deleted file '{}' from Dropbox",path);
+      }
+ else {
+        logger.trace("skipped file '{}' since it doesn't match the given filter arguments.",path);
+      }
+    }
+  }
+  if (isChanged) {
+    boolean success=FileUtils.deleteQuietly(dropboxEntryFile);
+    if (!success) {
+      logger.warn("Couldn't delete file '{}'",dropboxEntryFile.getPath());
+    }
+ else {
+      logger.debug("Deleted cache file '{}' since there are changes. It will be recreated while next synchronization loop.",dropboxEntryFile.getPath());
+    }
+    DbxDelta<DbxEntry> delta=client.getDelta(lastCursor);
+    writeDeltaCursor(delta.cursor);
+  }
+ else {
+    logger.debug("No files changed locally > no deltas to upload to Dropbox ...");
+  }
+}

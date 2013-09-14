@@ -1,0 +1,12 @@
+{
+  File file=new File(contentDir + File.separator + dropboxPath);
+  FileInputStream inputStream=new FileInputStream(file);
+  try {
+    DbxWriteMode mode=overwrite ? DbxWriteMode.force() : DbxWriteMode.add();
+    DbxEntry.File uploadedFile=client.uploadFile(dropboxPath,mode,file.length(),inputStream);
+    logger.debug("successfully uploaded file '{}'. New revision is '{}'",uploadedFile.toString(),uploadedFile.rev);
+  }
+  finally {
+    inputStream.close();
+  }
+}
