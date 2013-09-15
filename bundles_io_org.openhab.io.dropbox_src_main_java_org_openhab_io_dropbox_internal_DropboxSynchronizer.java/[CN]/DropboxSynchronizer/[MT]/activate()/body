@@ -1,6 +1,9 @@
 {
   DropboxSynchronizer.instance=this;
-  if (!isAuthenticated()) {
+  if (isAuthenticated()) {
+    startSynchronizationJobs();
+  }
+ else {
     try {
       startAuthentication();
     }
@@ -9,5 +12,4 @@
       ;
     }
   }
-  startSynchronizationJobs();
 }
