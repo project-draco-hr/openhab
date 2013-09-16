@@ -1,0 +1,14 @@
+{
+  if (isAuthenticated()) {
+    startSynchronizationJobs();
+  }
+ else {
+    try {
+      startAuthentication();
+    }
+ catch (    DbxException e) {
+      logger.warn("Couldn't start authentication process: {}",e.getMessage());
+      ;
+    }
+  }
+}
