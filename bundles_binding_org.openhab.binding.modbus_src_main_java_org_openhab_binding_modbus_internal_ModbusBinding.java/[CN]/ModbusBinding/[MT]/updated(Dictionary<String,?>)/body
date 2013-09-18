@@ -1,7 +1,7 @@
 {
-  Collections.synchronizedMap(modbusSlaves).clear();
+  modbusSlaves.clear();
   if (config != null) {
-    Enumeration keys=config.keys();
+    Enumeration<String> keys=config.keys();
     while (keys.hasMoreElements()) {
       String key=(String)keys.nextElement();
       if ("service.pid".equals(key)) {
@@ -10,20 +10,22 @@
       Matcher matcher=EXTRACT_MODBUS_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
         if ("poll".equals(key)) {
-          poll=Integer.valueOf((String)config.get(key));
+          if (StringUtils.isNotBlank((String)config.get(key))) {
+            pollInterval=Integer.valueOf((String)config.get(key));
+          }
         }
  else         if ("writemultipleregisters".equals(key)) {
           ModbusSlave.setWriteMultipleRegisters(Boolean.valueOf(config.get(key).toString()));
         }
  else {
-          logger.debug("given modbus-slave-config-key '" + key + "' does not follow the expected pattern 'poll' or '<slaveId>.<connection|id|start|length|type>'");
+          logger.debug("given modbus-slave-config-key '" + key + "' does not follow the expected pattern 'pollInterval' or '<slaveId>.<connection|id|start|length|type>'");
         }
         continue;
       }
       matcher.reset();
       matcher.find();
       String slave=matcher.group(2);
-      ModbusSlave modbusSlave=Collections.synchronizedMap(modbusSlaves).get(slave);
+      ModbusSlave modbusSlave=modbusSlaves.get(slave);
       if (modbusSlave == null) {
         if (matcher.group(1).equals(TCP_PREFIX)) {
           modbusSlave=new ModbusTcpSlave(slave);
@@ -31,8 +33,10 @@
  else         if (matcher.group(1).equals(SERIAL_PREFIX)) {
           modbusSlave=new ModbusSerialSlave(slave);
         }
- else         throw new ConfigurationException(slave,"the given slave type '" + slave + "' is unknown");
-        Collections.synchronizedMap(modbusSlaves).put(slave,modbusSlave);
+ else {
+          throw new ConfigurationException(slave,"the given slave type '" + slave + "' is unknown");
+        }
+        modbusSlaves.put(slave,modbusSlave);
       }
       String configKey=matcher.group(3);
       String value=(String)config.get(key);
@@ -72,8 +76,9 @@
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }
     }
-  }
-  for (  ModbusSlave slave : Collections.synchronizedMap(modbusSlaves).values()) {
-    slave.connect();
+    for (    ModbusSlave slave : modbusSlaves.values()) {
+      slave.connect();
+    }
+    setProperlyConfigured(true);
   }
 }

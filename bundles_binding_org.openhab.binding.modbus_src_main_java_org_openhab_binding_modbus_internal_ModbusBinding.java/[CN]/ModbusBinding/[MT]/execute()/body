@@ -1,9 +1,9 @@
 {
   Collection<ModbusSlave> slaves=new HashSet<ModbusSlave>();
 synchronized (slaves) {
-    slaves.addAll(ModbusConfiguration.getAllSlaves());
+    slaves.addAll(modbusSlaves.values());
   }
   for (  ModbusSlave slave : slaves) {
-    slave.update(binding);
+    slave.update(this);
   }
 }
