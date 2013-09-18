@@ -1,0 +1,83 @@
+{
+  if (!serverIsFound()) {
+    login();
+  }
+ else {
+    if (digitalSTROM.getTime(getSessionToken()) == -1) {
+      logger.warn("test method failed ... new login now");
+      login();
+    }
+  }
+  for (  DigitalSTROMBindingProvider provider : providers) {
+    for (    DigitalSTROMBindingConfig itemConf : provider.getAllCircuitConsumptionItems()) {
+      String itemName=itemConf.itemName;
+      int refreshInterval=itemConf.timeinterval;
+      Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+      if (lastUpdateTimeStamp == null) {
+        lastUpdateTimeStamp=0L;
+      }
+      long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+      boolean needsUpdate=age >= refreshInterval;
+      if (needsUpdate) {
+        logger.debug("item '{}' is about to be refreshed now",itemName);
+        int consumptionValue=-1;
+        if (itemConf.consumption == null || itemConf.consumption.equals(ConsumptionConfig.OUTPUT_CURRENT))         itemConf.consumption=ConsumptionConfig.ACTIVE_POWER;
+switch (itemConf.consumption) {
+case ACTIVE_POWER:
+          List<CachedMeteringValue> consumptionList=digitalSTROM.getLatest(getSessionToken(),MeteringTypeEnum.consumption,".meters(" + itemConf.dsmid.getValue().toLowerCase() + ")",null);
+        if (consumptionList != null) {
+          consumptionValue=0;
+          for (          CachedMeteringValue value : consumptionList) {
+            consumptionValue+=value.getValue();
+          }
+        }
+      break;
+case ELECTRIC_METER:
+    List<CachedMeteringValue> energyList=digitalSTROM.getLatest(getSessionToken(),MeteringTypeEnum.energy,".meters(" + itemConf.dsmid.getValue().toLowerCase() + ")",MeteringUnitsEnum.Wh);
+  if (energyList != null) {
+    consumptionValue=0;
+    for (    CachedMeteringValue value : energyList) {
+      consumptionValue+=value.getValue();
+    }
+  }
+break;
+default :
+break;
+}
+org.openhab.core.types.State state=UnDefType.NULL;
+if (consumptionValue != -1) {
+state=new DecimalType(consumptionValue);
+}
+if (state != null) {
+eventPublisher.postUpdate(itemName,state);
+}
+lastUpdateMap.put(itemName,System.currentTimeMillis());
+}
+}
+for (DigitalSTROMBindingConfig itemConf : provider.getAllDeviceConsumptionItems()) {
+String itemName=itemConf.itemName;
+int refreshInterval=itemConf.timeinterval;
+Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
+if (lastUpdateTimeStamp == null) {
+lastUpdateTimeStamp=0L;
+}
+long age=System.currentTimeMillis() - lastUpdateTimeStamp;
+boolean needsUpdate=age >= refreshInterval;
+if (needsUpdate) {
+logger.debug("item '{}' is about to be refreshed now",itemName);
+Device device=getDsidToDeviceMap().get(itemConf.dsid.getValue());
+if (device != null) {
+SensorIndexEnum sensorIndex=null;
+try {
+sensorIndex=SensorIndexEnum.valueOf(itemConf.consumption.name());
+}
+ catch (Exception e) {
+sensorIndex=SensorIndexEnum.ACTIVE_POWER;
+}
+addLowPriorityJob(new DeviceConsumptionSensorJob(device,sensorIndex));
+lastUpdateMap.put(itemName,System.currentTimeMillis());
+}
+}
+}
+}
+}

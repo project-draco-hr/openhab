@@ -1,0 +1,20 @@
+{
+synchronized (lowPrioritySensorJobs) {
+    for (Iterator<SensorJob> iter=lowPrioritySensorJobs.iterator(); iter.hasNext(); ) {
+      SensorJob job=iter.next();
+      if (job.getDsid().equals(dsid))       iter.remove();
+    }
+  }
+synchronized (mediumPrioritySensorJobs) {
+    for (Iterator<SensorJob> iter=mediumPrioritySensorJobs.iterator(); iter.hasNext(); ) {
+      SensorJob job=iter.next();
+      if (job.getDsid().equals(dsid))       iter.remove();
+    }
+  }
+synchronized (highPrioritySensorJobs) {
+    for (Iterator<SensorJob> iter=highPrioritySensorJobs.iterator(); iter.hasNext(); ) {
+      SensorJob job=iter.next();
+      if (job.getDsid().equals(dsid))       iter.remove();
+    }
+  }
+}

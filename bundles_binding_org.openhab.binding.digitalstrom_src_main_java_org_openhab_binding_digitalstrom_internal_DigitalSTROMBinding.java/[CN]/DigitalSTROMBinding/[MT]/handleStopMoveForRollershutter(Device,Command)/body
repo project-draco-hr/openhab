@@ -1,0 +1,21 @@
+{
+  if (((org.openhab.core.library.types.StopMoveType)cm).equals(StopMoveType.MOVE)) {
+    boolean transmitted=digitalSTROM.callDeviceScene(getSessionToken(),device.getDSID(),null,ZoneSceneEnum.AREA_STEPPING_CONTINUE,false);
+    if (transmitted) {
+      addEcho(device.getDSID().getValue(),(short)ZoneSceneEnum.AREA_STEPPING_CONTINUE.getSceneNumber());
+    }
+ else {
+      logger.error("could NOT transmit command MOVE for dsid: " + device.getDSID().getValue());
+    }
+  }
+ else   if (((org.openhab.core.library.types.StopMoveType)cm).equals(StopMoveType.STOP)) {
+    boolean transmitted=digitalSTROM.callDeviceScene(getSessionToken(),device.getDSID(),null,ZoneSceneEnum.STOP,false);
+    if (transmitted) {
+      addEcho(device.getDSID().getValue(),(short)ZoneSceneEnum.STOP.getSceneNumber());
+      initDeviceOutputValue(device,DeviceConstants.DEVICE_SENSOR_OUTPUT);
+    }
+ else {
+      logger.warn("could NOT transmit command STOP for dsid: " + device.getDSID().getValue());
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  for (  DigitalSTROMBindingProvider provider : this.providers) {
+    Collection<String> itemNames=provider.getItemNames();
+    for (    String itemName : itemNames) {
+      DigitalSTROMBindingConfig confItem=getConfigForItemName(itemName);
+      if (confItem != null && confItem.dsid != null) {
+        if (rawDsidToDeviceMap.size() == 0 && serverIsFound()) {
+          rawDsidToDeviceMap=getAllDigitalSTROMDevicesMap();
+        }
+        Device device=rawDsidToDeviceMap.get(confItem.dsid.getValue());
+        if (device != null) {
+          addDevice(itemName,device);
+          updateItemState(confItem.item);
+          handleStructure(digitalSTROM.getApartmentStructure(getSessionToken()));
+        }
+      }
+    }
+  }
+}

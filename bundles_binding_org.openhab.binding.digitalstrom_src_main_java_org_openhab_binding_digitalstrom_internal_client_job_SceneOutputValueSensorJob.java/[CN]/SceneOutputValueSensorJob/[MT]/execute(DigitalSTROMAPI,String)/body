@@ -1,0 +1,7 @@
+{
+  DeviceConfig config=digitalSTROM.getDeviceConfig(token,this.device.getDSID(),null,DeviceParameterClassEnum.CLASS_128,this.sceneId);
+  if (config != null) {
+    this.device.setSceneOutputValue(this.sceneId,(short)config.getValue());
+    logger.info("UPDATED sceneOutputValue for dsid: " + this.device.getDSID() + ", sceneID: "+ sceneId+ ", value: "+ config.getValue());
+  }
+}

@@ -1,0 +1,49 @@
+{
+  if (groupId == 0) {
+    Map<String,Device> clonedDeviceMap=getDsidToDeviceMap();
+    Set<String> dsidSet=clonedDeviceMap.keySet();
+    for (    String dsid : dsidSet) {
+      Device device=clonedDeviceMap.get(dsid);
+      if (device != null) {
+        if (!device.containsSceneConfig(sceneId)) {
+          getSceneSpec(device,sceneId);
+        }
+        if (!device.doIgnoreScene(sceneId)) {
+          short output=device.getSceneOutputValue(sceneId);
+          if (output != -1) {
+            device.setOutputValue(output);
+          }
+ else {
+            initDeviceOutputValue(device,DeviceConstants.DEVICE_SENSOR_OUTPUT);
+            initSceneOutputValue(device,sceneId);
+          }
+        }
+      }
+    }
+  }
+ else   if (groupId != -1) {
+    Map<String,Device> clonedDeviceMap=getDsidToDeviceMap();
+    Map<Short,List<String>> map=getDigitalSTROMZoneGroupMap().get(0);
+    List<String> dsidList=map.get(groupId);
+    if (dsidList != null) {
+      for (      String dsid : dsidList) {
+        Device device=clonedDeviceMap.get(dsid);
+        if (device != null) {
+          if (!device.containsSceneConfig(sceneId)) {
+            getSceneSpec(device,sceneId);
+          }
+          if (!device.doIgnoreScene(sceneId)) {
+            short output=device.getSceneOutputValue(sceneId);
+            if (output != -1) {
+              device.setOutputValue(output);
+            }
+ else {
+              initDeviceOutputValue(device,DeviceConstants.DEVICE_SENSOR_OUTPUT);
+              initSceneOutputValue(device,sceneId);
+            }
+          }
+        }
+      }
+    }
+  }
+}

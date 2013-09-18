@@ -1,0 +1,25 @@
+{
+  if (provider instanceof DigitalSTROMBindingProvider) {
+    Device device=deviceMap.get(itemName);
+    if (device != null) {
+      List<String> itemNamesForDsid=getItemNamesForDsid(device.getDSID().getValue());
+      if (itemNamesForDsid.size() == 1) {
+        device.removeDeviceListener(this);
+        removeSensorJobs(device.getDSID());
+      }
+    }
+    deviceMap.remove(itemName);
+    DigitalSTROMBindingConfig confItem=getConfigForItemName(itemName);
+    if (confItem != null && confItem.dsid != null) {
+      if (rawDsidToDeviceMap.size() == 0 && serverIsFound()) {
+        rawDsidToDeviceMap=getAllDigitalSTROMDevicesMap();
+      }
+      device=rawDsidToDeviceMap.get(confItem.dsid.getValue());
+      if (device != null) {
+        addDevice(itemName,device);
+        updateItemState(confItem.item);
+        handleStructure(digitalSTROM.getApartmentStructure(getSessionToken()));
+      }
+    }
+  }
+}
