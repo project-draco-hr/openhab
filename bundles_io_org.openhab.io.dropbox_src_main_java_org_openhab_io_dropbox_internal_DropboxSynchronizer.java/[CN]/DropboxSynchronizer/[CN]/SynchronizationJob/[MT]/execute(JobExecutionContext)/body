@@ -1,20 +1,26 @@
 {
   boolean isUpload=UPLOAD_JOB_KEY.compareTo(context.getJobDetail().getKey()) == 0;
-  try {
-    DropboxSynchronizer synchronizer=DropboxSynchronizer.instance;
-    if (synchronizer != null) {
-      if (isUpload) {
-        synchronizer.syncLocalToDropbox();
+  DropboxSynchronizer synchronizer=DropboxSynchronizer.instance;
+  if (synchronizer != null) {
+    try {
+      DbxClient client=getClient(synchronizer);
+      if (client != null) {
+        if (isUpload) {
+          synchronizer.syncLocalToDropbox(client);
+        }
+ else {
+          synchronizer.syncDropboxToLocal(client);
+        }
       }
  else {
-        synchronizer.syncDropboxToLocal();
+        logger.info("Couldn't create Dropbox client. Most likely there has been no " + "access token found. Please restart authentication process by typing " + "'startAuthentication' on the OSGi console");
       }
     }
- else {
-      logger.debug("DropboxSynchronizer instance hasn't been initialized properly!");
+ catch (    Exception e) {
+      logger.warn("Synchronizing data with Dropbox throws an exception: {}",e.getMessage());
     }
   }
- catch (  DropboxException de) {
-    logger.error("Synchronization files with Dropbox throws an exception",de);
+ else {
+    logger.debug("DropboxSynchronizer instance hasn't been initialized properly!");
   }
 }

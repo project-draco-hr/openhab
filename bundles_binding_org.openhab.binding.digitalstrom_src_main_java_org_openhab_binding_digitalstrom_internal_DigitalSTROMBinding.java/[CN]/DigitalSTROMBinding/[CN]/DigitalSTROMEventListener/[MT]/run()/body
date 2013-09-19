@@ -1,0 +1,33 @@
+{
+  while (!this.shutdown) {
+    String request=this.getEventAsRequest(this.ID,500);
+    if (request != null) {
+      String response=this.transport.execute(request,2 * this.timeout,this.timeout);
+      JSONObject responseObj=this.handler.toJSONObject(response);
+      if (this.handler.checkResponse(responseObj)) {
+        JSONObject obj=this.handler.getResultJSONObject(responseObj);
+        if (obj != null && obj.get(JSONApiResponseKeysEnum.EVENT_GET_EVENT.getKey()) instanceof JSONArray) {
+          JSONArray array=(JSONArray)obj.get(JSONApiResponseKeysEnum.EVENT_GET_EVENT.getKey());
+          try {
+            handleEvent(array);
+          }
+ catch (          Exception e) {
+            logger.warn("EXCEPTION in eventListener thread : " + e.getLocalizedMessage());
+          }
+        }
+      }
+ else {
+        String errorStr=null;
+        if (responseObj != null && responseObj.get(JSONApiResponseKeysEnum.EVENT_GET_EVENT_ERROR.getKey()) != null) {
+          errorStr=responseObj.get(JSONApiResponseKeysEnum.EVENT_GET_EVENT_ERROR.getKey()).toString();
+        }
+        if (errorStr != null && errorStr.equals(this.INVALID_SESSION)) {
+          this.subscribe();
+        }
+ else         if (errorStr != null) {
+          logger.error("Unknown error message in event response: " + errorStr);
+        }
+      }
+    }
+  }
+}

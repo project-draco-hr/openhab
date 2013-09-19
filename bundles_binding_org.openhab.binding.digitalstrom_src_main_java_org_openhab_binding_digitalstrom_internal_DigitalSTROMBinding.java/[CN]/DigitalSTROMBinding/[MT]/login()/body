@@ -1,0 +1,15 @@
+{
+  if (applicationToken != null) {
+    String token=digitalSTROM.loginApplication(applicationToken);
+    if (token == null && user != null && password != null) {
+      token=digitalSTROM.login(user,password);
+    }
+    setSessionToken(token);
+  }
+ else   if (this.user != null && this.password != null) {
+    setSessionToken(digitalSTROM.login(user,password));
+  }
+  if (serverIsFound()) {
+    handleStructure(digitalSTROM.getApartmentStructure(getSessionToken()));
+  }
+}

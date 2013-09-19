@@ -1,0 +1,16 @@
+{
+  int value=digitalSTROM.getDeviceOutputValue(token,this.device.getDSID(),null,this.index);
+  logger.info("DeviceOutputValue on Demand : " + value + ", DSID: "+ this.device.getDSID().getValue());
+  if (value != 1) {
+switch (this.index) {
+case 0:
+      this.device.setOutputValue(value);
+    break;
+case 4:
+  this.device.setSlatPosition(value);
+break;
+default :
+break;
+}
+}
+}

@@ -1,0 +1,8 @@
+{
+  if (!deltaCursor.equals(lastCursor)) {
+    logger.trace("Delta-Cursor changed (lastCursor '{}', newCursor '{}')",lastCursor,deltaCursor);
+    File cursorFile=new File(contentDir + DELTA_CURSOR_FILE_NAME);
+    writeLocalFile(cursorFile,deltaCursor);
+    lastCursor=deltaCursor;
+  }
+}

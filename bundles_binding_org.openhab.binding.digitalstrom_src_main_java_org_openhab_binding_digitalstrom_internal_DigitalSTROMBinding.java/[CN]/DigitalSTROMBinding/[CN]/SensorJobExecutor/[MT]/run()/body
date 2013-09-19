@@ -1,0 +1,19 @@
+{
+  while (!this.shutdown) {
+    SensorJob job=getHighPriorityJob();
+    if (job == null) {
+      job=getMediumPriorityJob();
+      if (job == null)       job=getLowPriorityJob();
+    }
+    if (job != null) {
+      job.execute(digitalSTROM,getSessionToken());
+    }
+    try {
+      sleep(this.sleepTime);
+    }
+ catch (    InterruptedException e) {
+      this.shutdown();
+      logger.error("InterruptedException in SensorJobExecutor Thread ... " + e.getStackTrace());
+    }
+  }
+}

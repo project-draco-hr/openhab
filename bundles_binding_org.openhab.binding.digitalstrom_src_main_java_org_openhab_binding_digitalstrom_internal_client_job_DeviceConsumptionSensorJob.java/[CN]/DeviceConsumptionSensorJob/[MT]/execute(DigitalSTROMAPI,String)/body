@@ -1,0 +1,14 @@
+{
+  int consumption=digitalSTROM.getDeviceSensorValue(token,this.device.getDSID(),null,this.sensorIndex);
+  logger.info("DeviceConsumption : " + consumption + ", DSID: "+ this.device.getDSID().getValue());
+switch (this.sensorIndex) {
+case ACTIVE_POWER:
+    this.device.setPowerConsumption(consumption);
+  break;
+case OUTPUT_CURRENT:
+this.device.setElectricMeterValue(consumption);
+break;
+default :
+break;
+}
+}

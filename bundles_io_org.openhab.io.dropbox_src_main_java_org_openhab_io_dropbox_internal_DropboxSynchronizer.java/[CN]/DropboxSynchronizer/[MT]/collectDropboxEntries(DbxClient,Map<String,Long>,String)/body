@@ -1,0 +1,11 @@
+{
+  WithChildren entries=client.getMetadataWithChildren(path);
+  for (  DbxEntry entry : entries.children) {
+    if (entry.isFolder()) {
+      collectDropboxEntries(client,dropboxEntries,entry.path);
+    }
+ else {
+      dropboxEntries.put(entry.path,entry.asFile().lastModified.getTime());
+    }
+  }
+}

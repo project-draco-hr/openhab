@@ -1,0 +1,37 @@
+{
+  if (config != null) {
+    String refreshIntervalStr=(String)config.get("refreshinterval");
+    if (StringUtils.isNotBlank(refreshIntervalStr)) {
+      granularity=Integer.parseInt(refreshIntervalStr);
+    }
+    String uriStr=(String)config.get("uri");
+    if (StringUtils.isNotBlank(uriStr)) {
+      uri=uriStr;
+    }
+    String connectTimeoutStr=(String)config.get("connectTimeout");
+    if (StringUtils.isNotBlank(connectTimeoutStr)) {
+      connectTimeout=Integer.parseInt(connectTimeoutStr);
+    }
+    String readTimeoutStr=(String)config.get("readTimeout");
+    if (StringUtils.isNotBlank(readTimeoutStr)) {
+      readTimeout=Integer.parseInt(readTimeoutStr);
+    }
+    String applicationTokenStr=(String)config.get("loginToken");
+    if (StringUtils.isNotBlank(applicationTokenStr)) {
+      applicationToken=applicationTokenStr;
+    }
+    String userStr=(String)config.get("user");
+    if (StringUtils.isNotBlank(userStr)) {
+      user=userStr;
+    }
+    String passwordStr=(String)config.get("password");
+    if (StringUtils.isNotBlank(passwordStr)) {
+      password=passwordStr;
+    }
+    this.digitalSTROM=new DigitalSTROMJSONImpl(uri,connectTimeout,readTimeout);
+    registerDigitalSTROMEventListener();
+    startSensorJobExecutor();
+    initializeDevices();
+    setProperlyConfigured(true);
+  }
+}

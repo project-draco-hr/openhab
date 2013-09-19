@@ -1,0 +1,15 @@
+{
+  String content=null;
+  if (file.exists()) {
+    try {
+      List<String> lines=FileUtils.readLines(file);
+      if (lines.size() > 0) {
+        content=lines.get(0);
+      }
+    }
+ catch (    IOException ioe) {
+      logger.debug("Handling of cursor file throws an Exception",ioe);
+    }
+  }
+  return content;
+}

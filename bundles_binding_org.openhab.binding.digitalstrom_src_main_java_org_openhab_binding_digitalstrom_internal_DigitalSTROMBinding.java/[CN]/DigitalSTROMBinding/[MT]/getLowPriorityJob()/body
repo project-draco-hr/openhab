@@ -1,0 +1,10 @@
+{
+  SensorJob job=null;
+synchronized (lowPrioritySensorJobs) {
+    if (lowPrioritySensorJobs.size() > 0) {
+      job=lowPrioritySensorJobs.get(0);
+      lowPrioritySensorJobs.remove(job);
+    }
+  }
+  return job;
+}

@@ -1,8 +1,17 @@
 {
   for (  DigitalSTROMBindingProvider provider : providers) {
-    provider.removeItemListener(this);
-    provider.shutdownBinding();
     provider.removeBindingChangeListener(this);
   }
+  if (digitalSTROMEventListener != null) {
+    digitalSTROMEventListener.shutdown();
+    digitalSTROMEventListener=null;
+  }
+  if (sensorJobExecutor != null) {
+    sensorJobExecutor.shutdown();
+    sensorJobExecutor=null;
+  }
+  removeAllDeviceListener();
+  deallocateResources();
   providers.clear();
+  digitalSTROM.logout();
 }
