@@ -1,0 +1,39 @@
+{
+  Socket socket=null;
+  BufferedReader reader=null;
+  try {
+    String raw=null;
+    boolean cont=true;
+    while (cont) {
+      raw=reader.readLine();
+      if (raw == null) {
+        cont=false;
+        continue;
+      }
+      Message message;
+      try {
+        message=processRawMessage(raw);
+        if (message != null) {
+          if (message.getType() == MessageType.L) {
+            cont=false;
+          }
+          message.debug();
+        }
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
+    }
+    socket.close();
+    Thread.sleep(5000);
+  }
+ catch (  UnknownHostException e) {
+    e.printStackTrace();
+  }
+catch (  IOException e) {
+    e.printStackTrace();
+  }
+catch (  InterruptedException e) {
+    e.printStackTrace();
+  }
+}

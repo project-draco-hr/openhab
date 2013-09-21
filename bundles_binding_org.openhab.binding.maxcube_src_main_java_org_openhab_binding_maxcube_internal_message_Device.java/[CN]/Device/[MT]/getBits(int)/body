@@ -1,0 +1,14 @@
+{
+  String zeroBitString=String.format("%0" + 8 + 'd',0);
+  String binaryString=Integer.toBinaryString(value);
+  binaryString=zeroBitString.substring(binaryString.length()) + binaryString;
+  boolean[] bits=new boolean[8];
+  for (int pos=7; pos > 0; pos--) {
+    bits[7 - pos]=binaryString.substring(pos,pos + 1).equalsIgnoreCase("1") ? true : false;
+  }
+  for (  boolean bit : bits) {
+    String b=bit == true ? "1" : "0";
+    System.out.print(b);
+  }
+  return bits;
+}

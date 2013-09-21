@@ -1,0 +1,17 @@
+{
+  super(raw);
+  String[] tokens=this.getPayload().split(Message.DELIMETER);
+  rfAddress=tokens[0];
+  byte[] bytes=Base64.decodeBase64(tokens[1].getBytes());
+  int[] data=new int[bytes.length];
+  for (int i=0; i < bytes.length; i++) {
+    data[i]=bytes[i] & 0xFF;
+  }
+  length=data[0];
+  if (length != data.length) {
+  }
+  String rfAddress2=Utils.toHex(data[1],data[2],data[3]);
+  if (rfAddress != rfAddress2) {
+  }
+  deviceType=DeviceType.create(data[4]);
+}

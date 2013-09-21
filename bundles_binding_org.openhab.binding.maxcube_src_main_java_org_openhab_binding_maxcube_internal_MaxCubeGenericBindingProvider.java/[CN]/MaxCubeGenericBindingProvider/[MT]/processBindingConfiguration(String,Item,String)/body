@@ -1,0 +1,14 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length != 3) {
+    throw new BindingConfigParseException("MAX!Cube configuration requires three configuration parts.");
+  }
+  MaxCubeBindingConfig config=new MaxCubeBindingConfig();
+  item.getName();
+  config.hostname=configParts[0];
+  config.port=Integer.valueOf(configParts[1]);
+  config.timeout=Integer.valueOf(configParts[2]);
+  config.refreshIntervall=Integer.valueOf(configParts[3]);
+  addBindingConfig(item,config);
+}
