@@ -1,0 +1,9 @@
+{
+  if (raw.length == 0) {
+    return null;
+  }
+  String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
+  Device device=Device.create(rfAddress,configurations);
+  boolean[] bits=getBits(Utils.fromByte(raw[4]));
+  return device;
+}

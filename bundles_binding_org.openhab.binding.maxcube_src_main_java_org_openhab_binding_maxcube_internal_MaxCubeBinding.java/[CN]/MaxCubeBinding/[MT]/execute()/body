@@ -1,5 +1,6 @@
 {
   ArrayList<Configuration> configurations=new ArrayList<Configuration>();
+  ArrayList<Device> devices=new ArrayList<Device>();
   Socket socket=null;
   BufferedReader reader=null;
   try {
@@ -16,14 +17,16 @@
       Message message;
       try {
         message=processRawMessage(raw);
+        logger.debug(message.debug());
         if (message != null) {
           if (message.getType() == MessageType.C) {
             configurations.add(Configuration.create(message));
           }
  else           if (message.getType() == MessageType.L) {
+            devices.addAll(((L_Message)message).getDevices(configurations));
+            logger.debug("MAX!Cube binding: " + devices.size() + "devices found.");
             cont=false;
           }
-          message.debug();
         }
       }
  catch (      Exception e) {
