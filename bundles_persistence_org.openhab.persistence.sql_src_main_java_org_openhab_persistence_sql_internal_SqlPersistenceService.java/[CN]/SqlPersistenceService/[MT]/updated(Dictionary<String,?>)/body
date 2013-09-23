@@ -1,5 +1,19 @@
 {
   if (config != null) {
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      if (!matcher.group(1).equals("sqltype"))       continue;
+      String itemType=matcher.group(2).toUpperCase() + "ITEM";
+      String value=(String)config.get(key);
+      sqlTypes.put(itemType,value);
+    }
     driverClass=(String)config.get("driverClass");
     if (StringUtils.isBlank(driverClass)) {
       throw new ConfigurationException("sql:driverClass","The SQL driver class is missing - please configure the sql:driverClass parameter in openhab.cfg");
@@ -15,6 +29,10 @@
     password=(String)config.get("password");
     if (StringUtils.isBlank(password)) {
       throw new ConfigurationException("sql:password","The SQL password is missing. Attempting to connect without password. To specify a password configure the sql:password parameter in openhab.cfg.");
+    }
+    String errorThresholdString=(String)config.get("reconnectCnt");
+    if (StringUtils.isNotBlank(errorThresholdString)) {
+      errReconnectThreshold=Integer.parseInt(errorThresholdString);
     }
     disconnectFromDatabase();
     connectToDatabase();
