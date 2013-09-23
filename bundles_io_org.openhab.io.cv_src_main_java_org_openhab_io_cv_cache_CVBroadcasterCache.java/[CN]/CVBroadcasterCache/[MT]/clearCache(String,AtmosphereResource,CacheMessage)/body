@@ -1,0 +1,14 @@
+{
+  if (message == null) {
+    return;
+  }
+  String clientId=uuid(r);
+  ClientQueue clientQueue;
+synchronized (messages) {
+    clientQueue=messages.get(clientId);
+    if (clientQueue != null) {
+      logger.trace("Removing for AtmosphereResource {} cached message {}",r.uuid(),message.getMessage());
+      clientQueue.getQueue().remove(message);
+    }
+  }
+}

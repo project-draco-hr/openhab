@@ -1,0 +1,12 @@
+{
+  Object o=config.getAtmosphereConfig().properties().get("shared");
+  if (o != null) {
+    shared=Boolean.parseBoolean(o.toString());
+  }
+  if (shared) {
+    taskScheduler=ExecutorsFactory.getScheduler(config.getAtmosphereConfig());
+  }
+ else {
+    taskScheduler=Executors.newSingleThreadScheduledExecutor();
+  }
+}

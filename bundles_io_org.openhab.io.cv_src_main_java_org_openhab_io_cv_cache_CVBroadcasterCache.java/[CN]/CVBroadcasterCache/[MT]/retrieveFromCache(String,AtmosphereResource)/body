@@ -1,0 +1,44 @@
+{
+  String clientId=uuid(r);
+  long now=System.currentTimeMillis();
+  List<Object> result=new ArrayList<Object>();
+  ClientQueue clientQueue;
+synchronized (messages) {
+    activeClients.put(clientId,now);
+    clientQueue=messages.remove(clientId);
+  }
+  List<CacheMessage> clientMessages;
+  if (clientQueue == null) {
+    clientMessages=Collections.emptyList();
+  }
+ else {
+    clientMessages=clientQueue.getQueue();
+  }
+  ItemStateListBean response=new ItemStateListBean(new ItemListBean());
+  for (  CacheMessage cacheMessage : clientMessages) {
+    if (cacheMessage.getMessage() instanceof ItemStateListBean) {
+      ItemStateListBean cachedStateList=(ItemStateListBean)cacheMessage.getMessage();
+      response.stateList.entries.addAll(cachedStateList.stateList.entries);
+      if (response.index < cachedStateList.index) {
+        response.index=cachedStateList.index;
+      }
+    }
+ else     if (cacheMessage.getMessage() instanceof Item) {
+      Item item=(Item)cacheMessage.getMessage();
+      response.stateList.entries.add(new JAXBElement(new QName(item.getName()),String.class,item.getState().toString()));
+    }
+  }
+  if (response.stateList.entries.size() > 0) {
+    if (response.index == 0) {
+      response.index=System.currentTimeMillis();
+    }
+    result.add(response);
+  }
+  if (logger.isTraceEnabled()) {
+synchronized (messages) {
+      logger.trace("Retrieved for AtmosphereResource {} cached messages {}",r.uuid(),result);
+      logger.trace("Available cached message {}",messages);
+    }
+  }
+  return result;
+}

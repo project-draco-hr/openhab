@@ -1,0 +1,9 @@
+{
+  ClientQueue clientQueue=messages.get(clientId);
+  if (clientQueue == null) {
+    clientQueue=new ClientQueue();
+    messages.put(clientId,clientQueue);
+  }
+  clientQueue.getQueue().addLast(message);
+  clientQueue.getIds().add(message.getId());
+}
