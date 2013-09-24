@@ -1,0 +1,21 @@
+{
+  logger.debug("Heatmiser Command: {} to {}",itemName,command);
+  HeatmiserBindingProvider providerCmd=null;
+  for (  HeatmiserBindingProvider provider : this.providers) {
+    int address=provider.getAddress(itemName);
+    if (address != -1) {
+      providerCmd=provider;
+      break;
+    }
+  }
+  if (providerCmd == null)   return;
+  int address=providerCmd.getAddress(itemName);
+  Functions function=providerCmd.getFunction(itemName);
+  for (  HeatmiserThermostat thermostat : thermostatTable) {
+    if (thermostat.getAddress() == address) {
+      byte[] commandPacket=thermostat.formatCommand(function,command);
+      connector.sendMessage(commandPacket);
+      return;
+    }
+  }
+}

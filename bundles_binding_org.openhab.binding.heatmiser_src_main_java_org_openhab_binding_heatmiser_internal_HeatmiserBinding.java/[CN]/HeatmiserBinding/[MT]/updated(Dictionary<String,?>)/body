@@ -1,0 +1,22 @@
+{
+  logger.debug("HEATMISER updated() method is called!");
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String localAddress=(String)config.get("address");
+    if (StringUtils.isNotBlank(localAddress)) {
+      ipAddress=localAddress;
+    }
+    String portConfig=(String)config.get("port");
+    if (StringUtils.isNotBlank(portConfig)) {
+      ipPort=Integer.parseInt(portConfig);
+    }
+ else {
+      ipPort=1024;
+    }
+    listen();
+    setProperlyConfigured(true);
+  }
+}

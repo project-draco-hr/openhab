@@ -1,0 +1,45 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    HeatmiserBindingConfig config=new HeatmiserBindingConfig();
+    config.itemType=item.getClass();
+    Matcher bindingMatcher=BINDING_PATTERN.matcher(bindingConfig);
+    if (!bindingMatcher.matches()) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of two parts [config=" + bindingMatcher+ "]");
+    }
+ else {
+      config.address=Integer.parseInt(bindingMatcher.group(1));
+      config.function=Functions.valueOf(bindingMatcher.group(2));
+switch (config.function) {
+case SETTEMP:
+        break;
+case FROSTTEMP:
+case ROOMTEMP:
+case FLOORTEMP:
+      if (config.itemType != NumberItem.class && config.itemType != StringItem.class) {
+        logger.error("Only Number and String allowed for Heatmiser:{} function",config.function);
+        config=null;
+      }
+    break;
+case WATERSTATE:
+case HEATSTATE:
+case ONOFF:
+  if (config.itemType != SwitchItem.class && config.itemType != StringItem.class) {
+    logger.error("Only Switch and String allowed for Heatmiser:{} function",config.function);
+    config=null;
+  }
+break;
+default :
+config=null;
+logger.error("Unknown or unsupported Heatmiser function: {}",bindingConfig);
+break;
+}
+}
+if (config != null) {
+addBindingConfig(item,config);
+}
+}
+ else {
+logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+}
+}

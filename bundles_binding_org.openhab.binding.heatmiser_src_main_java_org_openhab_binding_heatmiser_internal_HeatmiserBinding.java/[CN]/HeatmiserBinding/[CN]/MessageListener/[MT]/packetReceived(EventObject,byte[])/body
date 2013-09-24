@@ -1,0 +1,29 @@
+{
+  thermostatPacket=new HeatmiserThermostat();
+  if (thermostatPacket.setData(packet) == false)   return;
+  for (  HeatmiserThermostat thermostat : thermostatTable) {
+    if (thermostat.getAddress() == thermostatPacket.getAddress()) {
+      thermostat.setData(packet);
+      processItems(thermostat);
+      return;
+    }
+  }
+  HeatmiserThermostat newThermostat=null;
+switch (thermostatPacket.getModel()) {
+case PRT:
+case PRTE:
+    newThermostat=new HeatmiserPRT();
+  break;
+case PRTHW:
+newThermostat=new HeatmiserPRTHW();
+break;
+default :
+logger.error("Unknown heatmiser thermostat type {} at address {}",thermostatPacket.getModel(),thermostatPacket.getAddress());
+break;
+}
+if (newThermostat != null) {
+newThermostat.setData(packet);
+thermostatTable.add(newThermostat);
+processItems(newThermostat);
+}
+}

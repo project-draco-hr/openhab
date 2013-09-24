@@ -1,0 +1,37 @@
+{
+  for (  HeatmiserBindingProvider provider : providers) {
+    for (    String itemName : provider.getBindingItemsAtAddress(thermostat.getAddress())) {
+      State state=null;
+switch (provider.getFunction(itemName)) {
+case FROSTTEMP:
+        state=thermostat.getFrostTemperature(provider.getItemType(itemName));
+      break;
+case FLOORTEMP:
+    state=thermostat.getFloorTemperature(provider.getItemType(itemName));
+  break;
+case ONOFF:
+state=thermostat.getState(provider.getItemType(itemName));
+break;
+case HEATSTATE:
+state=thermostat.getHeatState(provider.getItemType(itemName));
+break;
+case ROOMTEMP:
+state=thermostat.getTemperature(provider.getItemType(itemName));
+break;
+case SETTEMP:
+state=thermostat.getSetTemperature(provider.getItemType(itemName));
+break;
+case WATERSTATE:
+state=thermostat.getWaterState(provider.getItemType(itemName));
+break;
+default :
+break;
+}
+if (state != null) {
+eventPublisher.postUpdate(itemName,state);
+}
+ else {
+}
+}
+}
+}
