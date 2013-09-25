@@ -1,13 +1,11 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   String[] configParts=bindingConfig.trim().split(":");
-  if (configParts.length != 3) {
-    throw new BindingConfigParseException("MAX!Cube configuration requires three configuration parts.");
+  if (configParts.length < 1) {
+    throw new BindingConfigParseException("MAX!Cube configuration requires at least serial number for a MAX!Cube device.");
   }
   MaxCubeBindingConfig config=new MaxCubeBindingConfig();
   item.getName();
-  config.hostname=configParts[0];
-  config.port=Integer.valueOf(configParts[1]);
-  config.refreshIntervall=Integer.valueOf(configParts[2]);
+  config.serialNumber=configParts[0];
   addBindingConfig(item,config);
 }

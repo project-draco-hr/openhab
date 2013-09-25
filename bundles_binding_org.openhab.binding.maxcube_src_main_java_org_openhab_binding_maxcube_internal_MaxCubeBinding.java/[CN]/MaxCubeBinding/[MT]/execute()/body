@@ -34,11 +34,27 @@
       }
     }
     socket.close();
+    for (    MaxCubeBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String serialNumber=provider.getSerialNumber(itemName);
+        Device device=findDevice(serialNumber,devices);
+        if (device == null) {
+          logger.info("Cannot find MAX!cube device with serial number '{}'",serialNumber);
+          continue;
+        }
+switch (device.getType()) {
+case ShutterContact:
+          eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+        break;
+default :
+    }
   }
- catch (  UnknownHostException e) {
-    e.printStackTrace();
-  }
-catch (  IOException e) {
-    e.printStackTrace();
-  }
+}
+}
+ catch (UnknownHostException e) {
+e.printStackTrace();
+}
+catch (IOException e) {
+e.printStackTrace();
+}
 }

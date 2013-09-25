@@ -5,5 +5,17 @@
   String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
   Device device=Device.create(rfAddress,configurations);
   boolean[] bits=getBits(Utils.fromByte(raw[4]));
+  if (device.getType() == DeviceType.ShutterContact) {
+    ShutterContact shutterContact=(ShutterContact)device;
+    bits=getBits(Utils.fromByte(raw[5]));
+    if (bits[1] == true && bits[0] == false) {
+      shutterContact.setShutterState(OpenClosedType.OPEN);
+    }
+ else     if (bits[1] == false && bits[0] == false) {
+      shutterContact.setShutterState(OpenClosedType.CLOSED);
+    }
+ else {
+    }
+  }
   return device;
 }
