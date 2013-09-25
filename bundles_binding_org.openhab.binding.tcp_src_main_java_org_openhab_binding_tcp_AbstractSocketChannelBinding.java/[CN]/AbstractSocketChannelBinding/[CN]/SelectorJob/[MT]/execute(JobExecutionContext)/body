@@ -1,0 +1,338 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  AbstractSocketChannelBinding theBinding=(AbstractSocketChannelBinding)dataMap.get("Binding");
+  boolean jobDone=false;
+  while (!jobDone) {
+synchronized (theBinding.selector) {
+      try {
+        theBinding.selector.selectNow();
+      }
+ catch (      IOException e) {
+      }
+    }
+    Iterator<SelectionKey> it=theBinding.selector.selectedKeys().iterator();
+    while (it.hasNext()) {
+      SelectionKey selKey=(SelectionKey)it.next();
+      it.remove();
+      if (selKey.isValid()) {
+        if (selKey == theBinding.listenerKey) {
+          if (selKey.isAcceptable()) {
+            try {
+              SocketChannel newChannel=theBinding.listenerChannel.accept();
+              logger.info("Received connection request from {}",newChannel.getRemoteAddress());
+              AbstractSocketChannelBinding.Channel firstChannel=theBinding.channels.getFirstNotServed(Direction.IN,(InetSocketAddress)newChannel.getRemoteAddress());
+              if (firstChannel != null) {
+                if (firstChannel.direction == Direction.IN) {
+                  if (useAddressMask && (firstChannel.host.equals("*") || firstChannel.port.equals("*"))) {
+                    logger.info("{}:{} is an allowed masked remote end. The channel will now be configured",firstChannel.host,firstChannel.port);
+                  }
+ else {
+                    logger.info("{} is an allowed remote end. The channel will now be configured",firstChannel.remote);
+                  }
+                  if (firstChannel.channel == null || !firstChannel.channel.isOpen()) {
+                    firstChannel.channel=newChannel;
+                    firstChannel.isBlocking=false;
+                    firstChannel.buffer=null;
+                    if (AbstractSocketChannelBinding.itemShareChannels) {
+                      theBinding.channels.replace(firstChannel.item,firstChannel.direction,(InetSocketAddress)newChannel.getRemoteAddress(),firstChannel.channel);
+                    }
+                    if (AbstractSocketChannelBinding.bindingShareChannels) {
+                      theBinding.channels.replace(firstChannel.direction,(InetSocketAddress)newChannel.getRemoteAddress(),firstChannel.channel);
+                    }
+                    if (AbstractSocketChannelBinding.directionsShareChannels) {
+                      theBinding.channels.replace((InetSocketAddress)newChannel.getRemoteAddress(),firstChannel.channel);
+                    }
+                    try {
+                      newChannel.configureBlocking(false);
+                    }
+ catch (                    IOException e) {
+                      logger.error("An exception occurred while configuring a channel: {}",e.getMessage());
+                    }
+synchronized (theBinding.selector) {
+                      theBinding.selector.wakeup();
+                      try {
+                        newChannel.register(theBinding.selector,newChannel.validOps());
+                      }
+ catch (                      ClosedChannelException e1) {
+                        logger.error("An exception occurred while registering a selector: {}",e1.getMessage());
+                      }
+                    }
+                    theBinding.configureChannel(firstChannel);
+                  }
+ else {
+                    logger.info("We previously already accepted a connection from the remote end {} for this channel. Goodbye",firstChannel.remote);
+                    newChannel.close();
+                  }
+                }
+ else {
+                  logger.info("Disconnecting the remote end {} that tries to connect an outbound only port",newChannel.getRemoteAddress());
+                  newChannel.close();
+                }
+              }
+ else {
+                logger.info("Disconnecting the unallowed remote end {}",newChannel.getRemoteAddress());
+                newChannel.close();
+              }
+            }
+ catch (            IOException e) {
+              logger.error("An exception occurred while configuring a channel: {}",e.getMessage());
+            }
+          }
+        }
+ else {
+          SocketChannel theSocketChannel=(SocketChannel)selKey.channel();
+          AbstractSocketChannelBinding.Channel theChannel=theBinding.channels.get(theSocketChannel);
+          if (selKey.isConnectable()) {
+            theBinding.channels.setAllReconnecting(theSocketChannel,false);
+            boolean result=false;
+            boolean error=false;
+            try {
+              result=theSocketChannel.finishConnect();
+            }
+ catch (            NoConnectionPendingException e) {
+              logger.warn("The channel  {} has no connection pending ({})",theSocketChannel,e.getMessage());
+              error=true;
+            }
+catch (            ClosedChannelException e) {
+              logger.warn("The channel  {} is closed ({})",theSocketChannel,e.getMessage());
+              error=true;
+            }
+catch (            IOException e) {
+              logger.warn("The channel {} has encountered an unknown IO Exception: {}",theSocketChannel,e.getMessage());
+              error=true;
+            }
+            if (error) {
+              Scheduler scheduler=null;
+              try {
+                scheduler=StdSchedulerFactory.getDefaultScheduler();
+              }
+ catch (              SchedulerException e1) {
+                logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+              }
+              JobDataMap map=new JobDataMap();
+              map.put("Channel",theChannel);
+              map.put("Binding",theBinding);
+              JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").usingJobData(map).build();
+              Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+              try {
+                if (job != null && trigger != null && selKey != theBinding.listenerKey) {
+                  if (!theChannel.isReconnecting) {
+                    theBinding.channels.setAllReconnecting(theSocketChannel,true);
+                    scheduler.scheduleJob(job,trigger);
+                  }
+                }
+              }
+ catch (              SchedulerException e) {
+                logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+              }
+            }
+ else {
+              if (result) {
+                InetSocketAddress remote=null;
+                try {
+                  remote=(InetSocketAddress)theSocketChannel.getRemoteAddress();
+                }
+ catch (                IOException e) {
+                  logger.error("An exception occurred while getting the remote address of channel {} ({})",theSocketChannel,e.getMessage());
+                }
+                logger.info("The channel for {} is now connected",remote);
+                if (AbstractSocketChannelBinding.itemShareChannels) {
+                  theBinding.channels.replace(theChannel.item,theChannel.direction,remote,theChannel.channel);
+                }
+                if (AbstractSocketChannelBinding.bindingShareChannels) {
+                  theBinding.channels.replace(theChannel.direction,remote,theChannel.channel);
+                }
+                if (AbstractSocketChannelBinding.directionsShareChannels) {
+                  theBinding.channels.replace(remote,theChannel.channel);
+                }
+                theBinding.configureChannel(theChannel);
+                Scheduler scheduler=null;
+                try {
+                  scheduler=StdSchedulerFactory.getDefaultScheduler();
+                }
+ catch (                SchedulerException e1) {
+                  logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+                }
+                JobDataMap map=new JobDataMap();
+                map.put("Channel",theChannel);
+                map.put("Binding",theBinding);
+                JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").usingJobData(map).build();
+                Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").withSchedule(cronSchedule(reconnectCron)).build();
+                try {
+                  if (job != null && trigger != null && selKey != theBinding.listenerKey) {
+                    scheduler.scheduleJob(job,trigger);
+                  }
+                }
+ catch (                SchedulerException e) {
+                  logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+                }
+              }
+            }
+          }
+ else           if (selKey.isReadable()) {
+            ByteBuffer readBuffer=ByteBuffer.allocate(maximumBufferSize);
+            int numberBytesRead=0;
+            boolean error=false;
+            try {
+              numberBytesRead=theSocketChannel.read(readBuffer);
+            }
+ catch (            NotYetConnectedException e) {
+              logger.warn("The channel for {} has no connection pending ({})",theChannel.remote,e.getMessage());
+              if (!theSocketChannel.isConnectionPending()) {
+                error=true;
+              }
+            }
+catch (            IOException e) {
+              logger.warn("The channel for {} has encountered an unknown IO Exception: {}",theChannel.remote,e.getMessage());
+              error=true;
+            }
+            if (numberBytesRead == -1) {
+              try {
+                theSocketChannel.close();
+              }
+ catch (              IOException e) {
+                logger.warn("The channel for {} is closed ({})",theChannel.remote,e.getMessage());
+              }
+              error=true;
+            }
+            if (error) {
+              if (theChannel.direction == Direction.OUT) {
+                Scheduler scheduler=null;
+                try {
+                  scheduler=StdSchedulerFactory.getDefaultScheduler();
+                }
+ catch (                SchedulerException e1) {
+                  logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+                }
+                JobDataMap map=new JobDataMap();
+                map.put("Channel",theChannel);
+                map.put("Binding",theBinding);
+                JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").usingJobData(map).build();
+                Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+                try {
+                  if (job != null && trigger != null && selKey != theBinding.listenerKey) {
+                    if (!theChannel.isReconnecting) {
+                      theBinding.channels.setAllReconnecting(theSocketChannel,true);
+                      scheduler.scheduleJob(job,trigger);
+                    }
+                  }
+                }
+ catch (                SchedulerException e) {
+                  logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+                }
+              }
+ else {
+                theChannel.channel=null;
+              }
+            }
+ else {
+              ArrayList<AbstractSocketChannelBinding.Channel> channelsToServe=new ArrayList<AbstractSocketChannelBinding.Channel>();
+              channelsToServe=theBinding.channels.getAll(theSocketChannel);
+              if (channelsToServe.size() > 0) {
+                readBuffer.flip();
+                boolean isBlocking=theBinding.channels.isBlocking(theSocketChannel);
+                if (isBlocking) {
+                  theChannel=theBinding.channels.getBlocking(theSocketChannel);
+                  theChannel.buffer=readBuffer;
+                  theChannel.isBlocking=false;
+                }
+ else {
+                  for (                  AbstractSocketChannelBinding.Channel aChannel : channelsToServe) {
+                    logger.debug("Parsing the received buffer {} for channel {}",new String(readBuffer.array()),aChannel);
+                    theBinding.parseChanneledBuffer(aChannel,readBuffer);
+                  }
+                }
+              }
+ else {
+                try {
+                  logger.warn("No channel is active or defined for the data we received from {}. It will be discarded.",theSocketChannel.getRemoteAddress());
+                }
+ catch (                IOException e) {
+                  logger.error("An exception occurred while getting the remote address of the channel {} ({})",theSocketChannel,e.getMessage());
+                }
+              }
+            }
+          }
+ else           if (selKey.isWritable()) {
+            boolean isBlocking=theBinding.channels.isBlocking(theSocketChannel);
+            if (isBlocking) {
+            }
+ else {
+              AbstractSocketChannelBinding.WriteBufferElement theElement=null;
+              Iterator<AbstractSocketChannelBinding.WriteBufferElement> iterator=theBinding.writeQueue.iterator();
+              while (iterator.hasNext()) {
+                AbstractSocketChannelBinding.WriteBufferElement anElement=iterator.next();
+                if (anElement.channel.channel.equals(theSocketChannel)) {
+                  theElement=anElement;
+                  break;
+                }
+              }
+              if (theElement != null && theElement.buffer != null) {
+                logger.debug("Picked {} from the queue",theElement);
+                if (theElement.isBlocking) {
+                  theElement.channel.isBlocking=true;
+                }
+                boolean error=false;
+                theElement.buffer.rewind();
+                try {
+                  logger.debug("Sending {} for the outbound channel {}->{}",new Object[]{new String(theElement.buffer.array()),theElement.channel.channel.getLocalAddress(),theElement.channel.channel.getRemoteAddress()});
+                  theSocketChannel.write(theElement.buffer);
+                }
+ catch (                NotYetConnectedException e) {
+                  logger.warn("The channel for {} has no connection pending ({})",theChannel.remote,e.getMessage());
+                  if (!theSocketChannel.isConnectionPending()) {
+                    error=true;
+                  }
+                }
+catch (                ClosedChannelException e) {
+                  logger.warn("The channel for {} is closed ({})",theChannel.remote,e.getMessage());
+                  error=true;
+                }
+catch (                IOException e) {
+                  logger.warn("The channel for {} has encountered an unknown IO Exception: {}",theChannel.remote,e.getMessage());
+                  error=true;
+                }
+                if (error) {
+                  if (theElement.channel.direction == Direction.OUT) {
+                    Scheduler scheduler=null;
+                    try {
+                      scheduler=StdSchedulerFactory.getDefaultScheduler();
+                    }
+ catch (                    SchedulerException e1) {
+                      logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+                    }
+                    JobDataMap map=new JobDataMap();
+                    map.put("Channel",theElement.channel);
+                    map.put("Binding",theBinding);
+                    JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").usingJobData(map).build();
+                    Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+                    try {
+                      if (job != null && trigger != null && selKey != theBinding.listenerKey) {
+                        if (!theElement.channel.isReconnecting) {
+                          theBinding.channels.setAllReconnecting(theSocketChannel,true);
+                          scheduler.scheduleJob(job,trigger);
+                        }
+                      }
+                    }
+ catch (                    SchedulerException e) {
+                      logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+                    }
+                  }
+ else {
+                    theElement.channel.channel=null;
+                  }
+                }
+ else {
+                  if (theElement != null) {
+                    theBinding.writeQueue.remove(theElement);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    jobDone=true;
+  }
+}
