@@ -1,9 +1,10 @@
 {
+  Device returnValue=null;
   for (  Configuration c : configurations) {
     if (c.getRFAddress().toUpperCase().equals(rfAddress.toUpperCase())) {
 switch (c.getDeviceType()) {
 case HeatingThermostat:
-        return new HeatingThermostat();
+        return new HeatingThermostat(c);
 case ShutterContact:
       return new ShutterContact();
 case WallMountedThermostat:
@@ -11,5 +12,5 @@ case WallMountedThermostat:
 }
 }
 }
-return null;
+return returnValue;
 }
