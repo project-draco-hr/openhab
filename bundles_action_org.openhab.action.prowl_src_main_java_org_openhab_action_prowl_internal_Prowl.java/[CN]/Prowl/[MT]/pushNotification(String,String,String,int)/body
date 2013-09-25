@@ -14,7 +14,7 @@
     if (StringUtils.isNotBlank(Prowl.url)) {
       client.setProwlUrl(Prowl.url);
     }
-    ProwlEvent event=new DefaultProwlEvent(Prowl.apiKey,"openhab",subject,message,normalizedPriority);
+    ProwlEvent event=new DefaultProwlEvent(apiKey,"openhab",subject,message,normalizedPriority);
     try {
       String returnMessage=client.pushEvent(event);
       logger.info(returnMessage);
@@ -25,7 +25,7 @@
     }
   }
  else {
-    logger.error("Cannot push Prowl notification because of missing configuration settings. The current settings are: " + "apiKey: '{}', priority: {}, url: '{}'",new String[]{apiKey,String.valueOf(normalizedPriority),url});
+    logger.error("Cannot push Prowl notification because of missing configuration settings. The current settings are: " + "apiKey: '{}', priority: {}, url: '{}'",new Object[]{apiKey,String.valueOf(normalizedPriority),url});
   }
   return success;
 }
