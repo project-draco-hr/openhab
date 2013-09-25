@@ -46,8 +46,8 @@
           JobDataMap map=new JobDataMap();
           map.put("Stick",stick);
           map.put("MAC",stick.getDevice(anElement.getId()).MAC);
-          JobDetail job=newJob(type.getJobClass()).withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise-" + provider.toString()).usingJobData(map).build();
-          Trigger trigger=newTrigger().withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise-" + provider.toString()).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(anElement.getInterval())).build();
+          JobDetail job=newJob(type.getJobClass()).withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise").usingJobData(map).build();
+          Trigger trigger=newTrigger().withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise").startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(anElement.getInterval())).build();
           try {
             sched.scheduleJob(job,trigger);
           }
