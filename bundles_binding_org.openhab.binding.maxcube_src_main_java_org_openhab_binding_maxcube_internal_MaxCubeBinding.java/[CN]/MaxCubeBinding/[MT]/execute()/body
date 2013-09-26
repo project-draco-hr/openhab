@@ -43,12 +43,16 @@
           continue;
         }
 switch (device.getType()) {
-case ShutterContact:
-          eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+case HeatingThermostat:
+          eventPublisher.postUpdate(itemName,device.getBatteryLowStringType());
         break;
+case ShutterContact:
+      eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+    eventPublisher.postUpdate(itemName,device.getBatteryLowStringType());
+  break;
 default :
-    }
-  }
+}
+}
 }
 }
  catch (UnknownHostException e) {
