@@ -8,6 +8,12 @@
   if (device.getType() == DeviceType.ShutterContact) {
     ShutterContact shutterContact=(ShutterContact)device;
     bits=getBits(Utils.fromByte(raw[5]));
+    shutterContact.setLowBattery(bits[7]);
+    shutterContact.setLinkError(bits[6]);
+    shutterContact.setPanelLock(bits[5]);
+    shutterContact.setGatewayOk(bits[4]);
+    shutterContact.setError(bits[3]);
+    shutterContact.setValid(bits[2]);
     if (bits[1] == true && bits[0] == false) {
       shutterContact.setShutterState(OpenClosedType.OPEN);
     }
