@@ -4,24 +4,47 @@
   }
   String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
   Device device=Device.create(rfAddress,configurations);
-  boolean[] bits=getBits(Utils.fromByte(raw[4]));
-  if (device.getType() == DeviceType.ShutterContact) {
-    ShutterContact shutterContact=(ShutterContact)device;
-    bits=getBits(Utils.fromByte(raw[5]));
-    shutterContact.setLowBattery(bits[7]);
-    shutterContact.setLinkError(bits[6]);
-    shutterContact.setPanelLock(bits[5]);
-    shutterContact.setGatewayOk(bits[4]);
-    shutterContact.setError(bits[3]);
-    shutterContact.setValid(bits[2]);
-    if (bits[1] == true && bits[0] == false) {
-      shutterContact.setShutterState(OpenClosedType.OPEN);
-    }
- else     if (bits[1] == false && bits[0] == false) {
-      shutterContact.setShutterState(OpenClosedType.CLOSED);
-    }
- else {
-    }
+  boolean[] bits1=getBits(Utils.fromByte(raw[4]));
+  boolean[] bits2=getBits(Utils.fromByte(raw[5]));
+  device.setInitialized(bits1[1]);
+  device.setAnswer(bits1[2]);
+  device.setError(bits1[3]);
+  device.setValid(bits1[4]);
+  device.setDstSettingActive(bits2[3]);
+  device.setGatewayKnown(bits2[4]);
+  device.setPanelLocked(bits2[5]);
+  device.setLinkStatusError(bits2[6]);
+  device.setBatteryLow(bits2[7]);
+switch (device.getType()) {
+case HeatingThermostat:
+    HeatingThermostat heatingThermostat=(HeatingThermostat)device;
+  if (bits2[0] == false && bits2[0] == false) {
+    heatingThermostat.setMode(ThermostatModeType.AUTOMATIC);
   }
-  return device;
+ else   if (bits2[0] == false && bits2[1] == false) {
+    heatingThermostat.setMode(ThermostatModeType.MANUAL);
+  }
+ else   if (bits2[1] == false && bits2[0] == false) {
+    heatingThermostat.setMode(ThermostatModeType.VACATION);
+  }
+ else   if (bits2[1] == false && bits2[1] == false) {
+    heatingThermostat.setMode(ThermostatModeType.BOOST);
+  }
+ else {
+  }
+break;
+case ShutterContact:
+ShutterContact shutterContact=(ShutterContact)device;
+if (bits2[1] == true && bits2[0] == false) {
+shutterContact.setShutterState(OpenClosedType.OPEN);
+}
+ else if (bits2[1] == false && bits2[0] == false) {
+shutterContact.setShutterState(OpenClosedType.CLOSED);
+}
+ else {
+}
+break;
+default :
+}
+return device;
 }
