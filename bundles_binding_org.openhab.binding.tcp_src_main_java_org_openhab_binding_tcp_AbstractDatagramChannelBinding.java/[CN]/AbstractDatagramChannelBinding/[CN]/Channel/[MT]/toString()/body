@@ -1,0 +1,43 @@
+{
+  try {
+    String response=null;
+    response="Channel [item=" + item + ", remote="+ remote+ ", buffer=";
+    if (buffer != null) {
+      response=response + new String(buffer.array());
+    }
+    response=response + ", direction=" + direction+ ", isBlocking="+ isBlocking+ ", command="+ command+ ", isReconnecting="+ isReconnecting;
+    if (channel != null) {
+      response=response + ", channel=";
+      try {
+        if (channel.getLocalAddress() != null) {
+          response=response + channel.getLocalAddress();
+        }
+      }
+ catch (      Exception e) {
+        response=response + "N/A";
+      }
+      try {
+        if (channel.getRemoteAddress() != null) {
+          response=response + "::" + channel.getRemoteAddress();
+        }
+      }
+ catch (      Exception e) {
+        response=response + "::N/A";
+      }
+    }
+    if (lastRemote != null) {
+      response=response + ", lastremote=";
+      response=response + lastRemote.getHostString();
+      response=response + "::" + lastRemote.getPort();
+    }
+    if (useAddressMask) {
+      response=response + ", host=" + host+ ", port="+ port;
+    }
+    response=response + "]";
+    return response;
+  }
+ catch (  Exception e) {
+    logger.error("An exception occurred while converting Channel to String {}",e.getMessage());
+  }
+  return "";
+}
