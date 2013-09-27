@@ -1,0 +1,20 @@
+{
+  if (stick != null) {
+    Scheduler sched=null;
+    try {
+      sched=StdSchedulerFactory.getDefaultScheduler();
+    }
+ catch (    SchedulerException e) {
+      logger.error("An exception occurred while getting a reference to the Quarz Scheduler");
+    }
+    try {
+      for (      JobKey jobKey : sched.getJobKeys(jobGroupEquals("Plugwise"))) {
+        sched.deleteJob(jobKey);
+      }
+    }
+ catch (    SchedulerException e) {
+      logger.error("An exception occurred while deleting the Plugwise Quartz jobs ({})",e.getMessage());
+    }
+    stick.close();
+  }
+}
