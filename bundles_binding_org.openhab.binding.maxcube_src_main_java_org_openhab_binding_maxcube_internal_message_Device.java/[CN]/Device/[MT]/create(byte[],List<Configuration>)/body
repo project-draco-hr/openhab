@@ -32,6 +32,13 @@ case HeatingThermostat:
   }
  else {
   }
+heatingThermostat.setValvePosition(raw[6] & 0xFF);
+heatingThermostat.setTemperatureSetpoint(raw[7] & 0xFF);
+String hexDate=Utils.toHex(raw[8] & 0xFF,raw[9] & 0xFF);
+int dateValue=Utils.fromHex(hexDate);
+int timeValue=raw[10] & 0xFF;
+Date date=Utils.resolveDateTime(dateValue,timeValue);
+heatingThermostat.setDateSetpoint(date);
 break;
 case ShutterContact:
 ShutterContact shutterContact=(ShutterContact)device;
