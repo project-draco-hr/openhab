@@ -44,12 +44,11 @@
         }
 switch (device.getType()) {
 case HeatingThermostat:
-          eventPublisher.postUpdate(itemName,device.getBatteryLowStringType());
+          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTermperatureSetpoint());
         break;
 case ShutterContact:
       eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
-    eventPublisher.postUpdate(itemName,device.getBatteryLowStringType());
-  break;
+    break;
 default :
 }
 }
