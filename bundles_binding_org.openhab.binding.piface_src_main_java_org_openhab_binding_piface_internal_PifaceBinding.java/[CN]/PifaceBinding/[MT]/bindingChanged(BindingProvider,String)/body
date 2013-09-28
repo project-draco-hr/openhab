@@ -1,9 +1,9 @@
 {
   if (provider instanceof PifaceBindingProvider) {
     PifaceBindingProvider pifaceProvider=(PifaceBindingProvider)provider;
-    PifaceBindingConfig bindingConfig=pifaceProvider.getPifaceBindingConfig(itemName);
-    if (bindingConfig != null && isInitialisableBindingConfig(bindingConfig)) {
-      bindingConfigsToInitialise.add(bindingConfig);
+    PifacePin pin=pifaceProvider.getPifacePin(itemName);
+    if (pin != null && !pifacePinsToInitialise.contains(pin)) {
+      pifacePinsToInitialise.add(pin);
     }
   }
 }

@@ -1,11 +1,11 @@
 {
   for (  PifaceBindingProvider provider : getProvidersForItemName(itemName)) {
-    PifaceBindingConfig pin=provider.getPifaceBindingConfig(itemName);
+    PifacePin pin=provider.getPifacePin(itemName);
     if (pin == null) {
       logger.warn("No Piface pin configuration exists for '" + itemName + "'");
       continue;
     }
-    if (pin.getBindingType() == PifaceBindingConfig.BindingType.IN) {
+    if (pin.getPinType() == PifacePin.PinType.IN) {
       logger.warn("Unable to send a command to a Piface 'IN' pin - these pin types are read-only");
       continue;
     }

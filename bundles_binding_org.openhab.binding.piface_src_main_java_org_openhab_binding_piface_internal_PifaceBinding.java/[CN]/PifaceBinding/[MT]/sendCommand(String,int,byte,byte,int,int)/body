@@ -11,10 +11,6 @@
     byte[] receiveData=new byte[16];
     DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
     socket.receive(receivePacket);
-    if (receiveData[0] == PifaceCommand.ERROR_ACK.toByte()) {
-      logger.error("Error 'ack' received");
-      return ERROR_RESPONSE;
-    }
     if (receiveData[0] != commandAck) {
       logger.error("Unexpected 'ack' code received - expecting " + commandAck + " but got "+ receiveData[0]);
       return ERROR_RESPONSE;
