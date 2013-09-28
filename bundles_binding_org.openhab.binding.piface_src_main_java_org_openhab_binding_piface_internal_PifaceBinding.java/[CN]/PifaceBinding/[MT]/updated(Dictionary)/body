@@ -9,6 +9,10 @@
       if ("service.pid".equals(key)) {
         continue;
       }
+      if ("watchdog.interval".equalsIgnoreCase(key)) {
+        watchdogInterval=Integer.parseInt(value);
+        continue;
+      }
       String[] keyParts=key.split("\\.");
       String pifaceId=keyParts[0];
       String configKey=keyParts[1];
@@ -30,5 +34,6 @@
       }
     }
     startMonitors();
+    setProperlyConfigured(true);
   }
 }

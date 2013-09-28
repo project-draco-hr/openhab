@@ -1,0 +1,14 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing PiFace binding configuration => watchdog cycle aborted!");
+    return;
+  }
+  for (  Map.Entry<String,PifaceNode> entry : pifaceNodes.entrySet()) {
+    String pifaceId=entry.getKey();
+    PifaceNode node=entry.getValue();
+    int value=sendWatchdog(node.host,node.listenerPort);
+    for (    String itemName : getItemNamesForPin(pifaceId,BindingType.WATCHDOG,0)) {
+      updateItemState(itemName,value);
+    }
+  }
+}
