@@ -3,6 +3,7 @@
   if (bindingConfig != null) {
     Matcher inMatcher=IN_BINDING_PATTERN.matcher(bindingConfig);
     Matcher outMatcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
+    if (!inMatcher.matches())     inMatcher=IN_BINDING_PATTERN_TRANSFORM.matcher(bindingConfig);
     if (!outMatcher.matches() && !inMatcher.matches()) {
       throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of four [config=" + inMatcher+ "] or five parts [config="+ outMatcher+ "]");
     }
@@ -27,6 +28,7 @@
         newElement.community=new OctetString(inMatcher.group(2).toString());
         newElement.oid=new OID(inMatcher.group(3).toString());
         newElement.refreshInterval=Integer.valueOf(inMatcher.group(4)).intValue();
+        if (inMatcher.groupCount() == 5)         newElement.setTransformationRule(inMatcher.group(5));
         config.put(IN_BINDING_KEY,newElement);
       }
     }
