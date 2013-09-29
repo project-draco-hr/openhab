@@ -1,0 +1,15 @@
+{
+  byte[] data=new byte[11];
+  data[0]=0x0A;
+  data[1]=RFXComBaseMessage.PacketType.LIGHTING5.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId >> 16) & 0xFF);
+  data[5]=(byte)((sensorId >> 8) & 0xFF);
+  data[6]=(byte)(sensorId & 0xFF);
+  data[7]=unitcode;
+  data[8]=command.toByte();
+  data[9]=dimmingLevel;
+  data[10]=(byte)((signalLevel & 0x0F) << 4);
+  return data;
+}
