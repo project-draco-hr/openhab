@@ -10,6 +10,13 @@
         Variable variable=pdu.getVariable(oid);
         if (variable != null) {
           Class<? extends Item> itemType=provider.getItemType(itemName);
+          String value=variable.toString();
+          try {
+            value=provider.doTransformation(itemName,value);
+          }
+ catch (          TransformationException e) {
+            logger.error("Transformation error with item {}: {}",itemName,e);
+          }
           State state=null;
           if (itemType.isAssignableFrom(StringItem.class)) {
             state=StringType.valueOf(variable.toString());
