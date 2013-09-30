@@ -1,11 +1,7 @@
 {
   logger.debug("HEATMISER execute() method is called!");
-  if (pollingTable == null) {
-    logger.debug("HEATMISER: pollingTable null");
-    return;
-  }
+  if (pollingTable == null)   return;
   if (pollIterator == null) {
-    logger.debug("HEATMISER: rebuild pollingTable");
     pollingTable=new ArrayList<Integer>();
     if (pollingTable == null) {
       logger.error("HEATMISER error creating pollingTable");
@@ -13,10 +9,7 @@
     }
     for (int address=0; address < 16; address++) {
       for (      HeatmiserBindingProvider provider : providers) {
-        if (provider.getBindingItemsAtAddress(address).size() != 0) {
-          logger.debug("HEATMISER: ADD address {} to pollingTable",address);
-          pollingTable.add(address);
-        }
+        if (provider.getBindingItemsAtAddress(address).size() != 0)         pollingTable.add(address);
       }
     }
     pollIterator=pollingTable.iterator();
@@ -29,9 +22,6 @@
   HeatmiserThermostat pollThermostat=new HeatmiserThermostat();
   logger.debug("HEATMISER: polling {}",pollAddress);
   pollThermostat.setAddress((byte)pollAddress);
-  if (pollIterator.hasNext() == false) {
-    logger.debug("HEATMISER: pollingTable hasNext null");
-    pollIterator=null;
-  }
+  if (pollIterator.hasNext() == false)   pollIterator=null;
   connector.sendMessage(pollThermostat.pollThermostat());
 }

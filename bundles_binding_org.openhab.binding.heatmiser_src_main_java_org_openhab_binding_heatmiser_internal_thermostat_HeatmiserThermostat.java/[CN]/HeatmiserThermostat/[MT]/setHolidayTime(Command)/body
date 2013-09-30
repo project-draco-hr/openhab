@@ -1,0 +1,9 @@
+{
+  byte[] cmdBytes=new byte[2];
+  int time=Integer.parseInt(command.toString());
+  if (time < 0)   time=0;
+  if (time > 32000)   time=0;
+  cmdBytes[0]=(byte)(time & 0xff);
+  cmdBytes[1]=(byte)((time >> 8) & 0xff);
+  return makePacket(true,24,2,cmdBytes);
+}
