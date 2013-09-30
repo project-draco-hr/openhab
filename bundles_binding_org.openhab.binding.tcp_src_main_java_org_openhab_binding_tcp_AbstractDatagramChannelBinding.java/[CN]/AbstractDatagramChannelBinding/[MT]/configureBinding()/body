@@ -1,0 +1,31 @@
+{
+  Scheduler scheduler=null;
+  try {
+    scheduler=StdSchedulerFactory.getDefaultScheduler();
+  }
+ catch (  SchedulerException e1) {
+    logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+  }
+  JobDataMap map=new JobDataMap();
+  map.put("Binding",this);
+  JobDetail job=newJob(SelectorJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),this.toString()).usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),this.toString()).startNow().build();
+  try {
+    scheduler.getListenerManager().addJobListener(new SelectorJobListener(),KeyMatcher.keyEquals(job.getKey()));
+  }
+ catch (  SchedulerException e1) {
+    logger.error("An exception occurred while getting a Quartz Listener Manager: {}",e1.getMessage());
+  }
+  try {
+    scheduler.scheduleJob(job,trigger);
+  }
+ catch (  SchedulerException e) {
+    logger.error("An exception occurred while scheduling a finish job with the Quartz Scheduler : {}",e.getMessage());
+  }
+  try {
+    selector=Selector.open();
+  }
+ catch (  IOException e) {
+    logger.error("An exception occurred while registering the selector: {}",e.getMessage());
+  }
+}
