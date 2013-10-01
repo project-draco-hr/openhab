@@ -1,0 +1,37 @@
+{
+  SocketChannel theSocketChannel=theChannel.channel;
+  if (isBlockingWriteRead) {
+    if (theBuffer != null) {
+      if (theSocketChannel.isConnected() || queueUntilConnected) {
+        writeQueue.add(new WriteBufferElement(theChannel,theBuffer,true));
+      }
+      long currentElapsedTimeMillis=System.currentTimeMillis();
+      while (theChannel.buffer == null && (System.currentTimeMillis() - currentElapsedTimeMillis) < timeOut) {
+        try {
+          Thread.sleep(50);
+        }
+ catch (        InterruptedException e) {
+          logger.warn("Exception occurred while waiting waiting during a blocking buffer write");
+        }
+      }
+      ByteBuffer responseBuffer=null;
+synchronized (this) {
+        responseBuffer=theChannel.buffer;
+        theChannel.buffer=null;
+        theChannel.isBlocking=false;
+      }
+      return responseBuffer;
+    }
+ else {
+      return theBuffer;
+    }
+  }
+ else {
+    if (theBuffer != null) {
+      if (theSocketChannel.isConnected() || queueUntilConnected) {
+        writeQueue.add(new WriteBufferElement(theChannel,theBuffer,false));
+      }
+    }
+    return theBuffer;
+  }
+}
