@@ -10,8 +10,8 @@
   @SuppressWarnings("rawtypes") AbstractSocketChannelBinding theBinding=(AbstractSocketChannelBinding)dataMap.get("Binding");
   JobDataMap map=new JobDataMap();
   map.put("Binding",theBinding);
-  JobDetail job=newJob(SelectorJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").usingJobData(map).build();
-  Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),"AbstractSocketChannelBinding").startNow().build();
+  JobDetail job=newJob(SelectorJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).startNow().build();
   try {
     scheduler.getListenerManager().addJobListener(new SelectorJobListener(),KeyMatcher.keyEquals(job.getKey()));
   }
@@ -22,6 +22,6 @@
     scheduler.scheduleJob(job,trigger);
   }
  catch (  SchedulerException e) {
-    logger.error("An exception occurred while scheduling a read job with the Quartz Scheduler");
+    logger.error("Error scheduling a finish job with the Quartz Scheduler : {}",e.getMessage());
   }
 }

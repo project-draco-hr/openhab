@@ -10,8 +10,8 @@
   @SuppressWarnings("rawtypes") AbstractDatagramChannelBinding theBinding=(AbstractDatagramChannelBinding)dataMap.get("Binding");
   JobDataMap map=new JobDataMap();
   map.put("Binding",theBinding);
-  JobDetail job=newJob(SelectorJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").usingJobData(map).build();
-  Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").startNow().build();
+  JobDetail job=newJob(SelectorJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Select-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).startNow().build();
   try {
     scheduler.getListenerManager().addJobListener(new SelectorJobListener(),KeyMatcher.keyEquals(job.getKey()));
   }

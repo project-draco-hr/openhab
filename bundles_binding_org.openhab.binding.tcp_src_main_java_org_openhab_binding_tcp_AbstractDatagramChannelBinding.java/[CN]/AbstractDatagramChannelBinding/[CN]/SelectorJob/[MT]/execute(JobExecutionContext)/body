@@ -5,7 +5,7 @@
   while (!jobDone) {
 synchronized (theBinding.selector) {
       try {
-        theBinding.selector.selectNow();
+        theBinding.selector.select(theBinding.selectTimeOut);
       }
  catch (      IOException e) {
       }
@@ -19,7 +19,7 @@ synchronized (theBinding.selector) {
         AbstractDatagramChannelBinding.Channel theChannel=theBinding.channels.get(theDatagramChannel);
         if (selKey.isReadable()) {
           InetSocketAddress clientAddress=null;
-          ByteBuffer readBuffer=ByteBuffer.allocate(maximumBufferSize);
+          ByteBuffer readBuffer=ByteBuffer.allocate(theBinding.maximumBufferSize);
           int numberBytesRead=0;
           boolean error=false;
           if (selKey == theBinding.listenerKey) {
@@ -86,8 +86,8 @@ catch (            IOException e) {
               map.put("Binding",theBinding);
               JobDetail job=null;
               Trigger trigger=null;
-              job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").usingJobData(map).build();
-              trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+              job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).usingJobData(map).build();
+              trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).startAt(futureDate(theBinding.reconnectInterval,IntervalUnit.SECOND)).build();
               try {
                 if (job != null && trigger != null && selKey != theBinding.listenerKey) {
                   if (!theChannel.isReconnecting) {
@@ -120,10 +120,9 @@ catch (            IOException e) {
               }
  else {
                 for (                AbstractDatagramChannelBinding.Channel aChannel : channelsToServe) {
-                  if (AbstractDatagramChannelBinding.useAddressMask) {
+                  if (theBinding.useAddressMask) {
                     aChannel.lastRemote=clientAddress;
                   }
-                  logger.debug("Parsing the received buffer {} for channel {}",new String(readBuffer.array()),aChannel);
                   theBinding.parseChanneledBuffer(aChannel,readBuffer);
                 }
               }
@@ -178,7 +177,7 @@ catch (            IOException e) {
               theElement.buffer.rewind();
               if (selKey == theBinding.listenerKey) {
                 try {
-                  if (AbstractDatagramChannelBinding.useAddressMask && theElement.channel.remote == null) {
+                  if (theBinding.useAddressMask && theElement.channel.remote == null) {
                     if (theElement.channel.lastRemote != null) {
                       logger.debug("Sending {} for the masked inbound channel {}:{} to the remote address {}",new Object[]{new String(theElement.buffer.array()),theElement.channel.host,theElement.channel.port,theElement.channel.lastRemote});
                       theBinding.listenerChannel.send(theElement.buffer,theElement.channel.lastRemote);
@@ -233,8 +232,8 @@ catch (                IOException e) {
                   map.put("Binding",theBinding);
                   JobDetail job=null;
                   Trigger trigger=null;
-                  job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").usingJobData(map).build();
-                  trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+                  job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).usingJobData(map).build();
+                  trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),theBinding.toString()).startAt(futureDate(theBinding.reconnectInterval,IntervalUnit.SECOND)).build();
                   try {
                     if (job != null && trigger != null && selKey != theBinding.listenerKey) {
                       if (!theElement.channel.isReconnecting) {
