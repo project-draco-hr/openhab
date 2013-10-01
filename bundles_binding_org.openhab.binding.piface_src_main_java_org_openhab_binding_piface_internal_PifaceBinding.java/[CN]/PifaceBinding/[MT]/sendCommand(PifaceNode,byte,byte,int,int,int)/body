@@ -1,13 +1,13 @@
 {
-  logger.debug("Sending command (" + command + ") to "+ host+ ":"+ port+ " for pin "+ pinNumber+ " (value="+ pinValue+ ")");
+  logger.debug("Sending command (" + command + ") to "+ node.host+ ":"+ node.listenerPort+ " for pin "+ pinNumber+ " (value="+ pinValue+ ")");
   logger.debug("Attempt " + attempt + "...");
   DatagramSocket socket=null;
   try {
     socket=new DatagramSocket();
-    socket.setSoTimeout(SOCKET_TIMEOUT_MS);
-    InetAddress inetAddress=InetAddress.getByName(host);
+    socket.setSoTimeout(node.socketTimeout);
+    InetAddress inetAddress=InetAddress.getByName(node.host);
     byte[] sendData=new byte[]{command,(byte)pinNumber,(byte)pinValue};
-    DatagramPacket sendPacket=new DatagramPacket(sendData,sendData.length,inetAddress,port);
+    DatagramPacket sendPacket=new DatagramPacket(sendData,sendData.length,inetAddress,node.listenerPort);
     socket.send(sendPacket);
     byte[] receiveData=new byte[16];
     DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
@@ -28,7 +28,7 @@
     return receiveData[2];
   }
  catch (  IOException e) {
-    logger.error("Failed to send command (" + command + ") to "+ host+ ":"+ port+ " (attempt "+ attempt+ ")",e);
+    logger.error("Failed to send command (" + command + ") to "+ node.host+ ":"+ node.listenerPort+ " (attempt "+ attempt+ ")",e);
     return ERROR_RESPONSE;
   }
  finally {
