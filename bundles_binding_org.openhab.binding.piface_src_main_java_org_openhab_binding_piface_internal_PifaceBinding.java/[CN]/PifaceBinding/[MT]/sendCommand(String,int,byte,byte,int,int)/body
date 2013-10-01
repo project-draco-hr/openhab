@@ -1,38 +1,11 @@
 {
-  logger.debug("Sending command (" + command + ") to "+ host+ ":"+ port+ " for pin "+ pinNumber+ " (value="+ pinValue+ ")");
-  DatagramSocket socket=null;
-  try {
-    socket=new DatagramSocket();
-    socket.setSoTimeout(SOCKET_TIMEOUT_MS);
-    InetAddress inetAddress=InetAddress.getByName(host);
-    byte[] sendData=new byte[]{command,(byte)pinNumber,(byte)pinValue};
-    DatagramPacket sendPacket=new DatagramPacket(sendData,sendData.length,inetAddress,port);
-    socket.send(sendPacket);
-    byte[] receiveData=new byte[16];
-    DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
-    socket.receive(receivePacket);
-    if (receiveData[0] == PifaceCommand.ERROR_ACK.toByte()) {
-      logger.error("Error 'ack' received");
-      return ERROR_RESPONSE;
-    }
-    if (receiveData[0] != commandAck) {
-      logger.error("Unexpected 'ack' code received - expecting " + commandAck + " but got "+ receiveData[0]);
-      return ERROR_RESPONSE;
-    }
-    if (receiveData[1] != pinNumber) {
-      logger.error("Invalid pin received - expecting " + pinNumber + " but got "+ receiveData[1]);
-      return ERROR_RESPONSE;
-    }
-    logger.debug("Command successfully sent and acknowledged (returned " + receiveData[2] + ")");
-    return receiveData[2];
+  int attempt=1;
+  while (attempt <= MAX_RETRIES) {
+    byte response=sendCommand(host,port,command,commandAck,pinNumber,pinValue,attempt);
+    if (response != ERROR_RESPONSE)     return response;
+    logger.warn("Command failed, retrying...");
+    attempt++;
   }
- catch (  IOException e) {
-    logger.error("Failed to send UDP packet",e);
-    return ERROR_RESPONSE;
-  }
- finally {
-    if (socket != null) {
-      socket.close();
-    }
-  }
+  logger.warn("Command failed " + MAX_RETRIES + " times. Stopping.");
+  return ERROR_RESPONSE;
 }
