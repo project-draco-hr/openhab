@@ -32,8 +32,8 @@
           JobDataMap map=new JobDataMap();
           map.put("Channel",theChannel);
           map.put("Binding",this);
-          JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").usingJobData(map).build();
-          Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),"AbstractDatagramChannelBinding").startNow().build();
+          JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).usingJobData(map).build();
+          Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).startNow().build();
           try {
             if (job != null && trigger != null) {
               if (!theChannel.isReconnecting) {

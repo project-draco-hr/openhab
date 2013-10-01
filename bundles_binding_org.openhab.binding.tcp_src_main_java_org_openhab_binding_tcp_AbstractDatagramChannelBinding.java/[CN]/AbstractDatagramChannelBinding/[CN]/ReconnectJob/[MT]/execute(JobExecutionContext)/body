@@ -42,13 +42,13 @@ synchronized (theBinding.selector) {
         }
         try {
           if (theChannel.channel != null) {
-            if (AbstractDatagramChannelBinding.itemShareChannels) {
+            if (theBinding.itemShareChannels) {
               theBinding.channels.replace(theChannel.item,theChannel.direction,theChannel.remote,theChannel.channel);
             }
-            if (AbstractDatagramChannelBinding.bindingShareChannels) {
+            if (theBinding.bindingShareChannels) {
               theBinding.channels.replace(theChannel.direction,theChannel.remote,theChannel.channel);
             }
-            if (AbstractDatagramChannelBinding.directionsShareChannels) {
+            if (theBinding.directionsShareChannels) {
               theBinding.channels.replace(theChannel.remote,theChannel.channel);
             }
             theChannel.isBlocking=false;
