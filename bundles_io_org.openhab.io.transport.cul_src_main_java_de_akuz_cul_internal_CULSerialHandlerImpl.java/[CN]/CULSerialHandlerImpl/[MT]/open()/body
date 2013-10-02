@@ -1,0 +1,40 @@
+{
+  try {
+    CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(deviceName);
+    if (portIdentifier.isCurrentlyOwned()) {
+      throw new CULDeviceException("The port " + deviceName + " is currenty used by "+ portIdentifier.getCurrentOwner());
+    }
+    CommPort port=portIdentifier.open(this.getClass().getName(),2000);
+    if (!(port instanceof SerialPort)) {
+      throw new CULDeviceException("The device " + deviceName + " is not a serial port");
+    }
+    serialPort=(SerialPort)port;
+    serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_EVEN);
+    is=serialPort.getInputStream();
+    os=serialPort.getOutputStream();
+    br=new BufferedReader(new InputStreamReader(is));
+    bw=new BufferedWriter(new OutputStreamWriter(os));
+    serialPort.notifyOnDataAvailable(true);
+    serialPort.addEventListener(this);
+    this.mode=mode;
+    sendRaw(mode.getCommand() + "\r\n");
+  }
+ catch (  NoSuchPortException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  PortInUseException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  UnsupportedCommOperationException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  IOException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  TooManyListenersException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  CULCommunicationException e) {
+    throw new CULDeviceException(e);
+  }
+}

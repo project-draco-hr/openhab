@@ -1,0 +1,14 @@
+{
+synchronized (openDevices) {
+    if (handler instanceof CULHandlerInternal) {
+      CULHandlerInternal internalHandler=(CULHandlerInternal)handler;
+      if (!internalHandler.hasListeners()) {
+        openDevices.remove(handler);
+        internalHandler.close();
+      }
+ else {
+        logger.warn("Can't close device because it still has listeners");
+      }
+    }
+  }
+}

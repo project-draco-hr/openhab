@@ -1,0 +1,27 @@
+{
+  try {
+    sendRaw("X00\r\n");
+  }
+ catch (  CULCommunicationException e1) {
+    log.warn("Exception while resetting the CUL mode");
+  }
+  if (serialPort != null) {
+    serialPort.removeEventListener();
+  }
+  try {
+    if (br != null) {
+      br.close();
+    }
+    if (is != null) {
+      is.close();
+    }
+  }
+ catch (  IOException e) {
+    log.error("Can't close the input and output streams propberly",e);
+  }
+ finally {
+    if (serialPort != null) {
+      serialPort.close();
+    }
+  }
+}

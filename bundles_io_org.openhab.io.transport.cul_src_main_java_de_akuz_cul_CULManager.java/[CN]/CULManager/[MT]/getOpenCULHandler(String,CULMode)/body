@@ -1,0 +1,17 @@
+{
+  logger.debug("Trying to open device " + deviceName + " in mode "+ mode.toString());
+synchronized (openDevices) {
+    if (openDevices.containsKey(deviceName)) {
+      CULHandler handler=openDevices.get(deviceName);
+      if (handler.getCULMode() == mode) {
+        return handler;
+      }
+ else {
+        throw new CULDeviceException("The device " + deviceName + " is already open in mode "+ mode.toString());
+      }
+    }
+    CULHandler handler=createNewHandler(deviceName,mode);
+    openDevices.put(deviceName,handler);
+    return handler;
+  }
+}

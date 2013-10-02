@@ -1,0 +1,13 @@
+{
+  CULSerialHandlerImpl handler=new CULSerialHandlerImpl(deviceName,mode);
+  handler.open();
+  if (mode == CULMode.ASK_SIN) {
+    try {
+      handler.sendRaw("Ar\r\n");
+    }
+ catch (    CULCommunicationException e) {
+      throw new CULDeviceException("Can't set AskSin receiption mode",e);
+    }
+  }
+  return handler;
+}

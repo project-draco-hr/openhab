@@ -1,0 +1,18 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  FHTBindingConfig config=null;
+  for (  FHTBindingProvider provider : providers) {
+    config=provider.getConfigByItemName(itemName);
+    if (config != null) {
+      break;
+    }
+  }
+  if (config != null) {
+    if (Datapoint.DESIRED_TEMP == config.getDatapoint() && command instanceof DecimalType) {
+      setDesiredTemperature(config,(DecimalType)command);
+    }
+ else {
+      logger.error("You can only manipulate the desired temperature via commands, all other data points are read only");
+    }
+  }
+}

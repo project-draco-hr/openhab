@@ -1,0 +1,18 @@
+{
+  if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+    try {
+      String data=br.readLine();
+      if (!"EOB".equals(data)) {
+        log.debug("Received message from CUL: " + data);
+        for (        CULListener listener : listeners) {
+          listener.dataReceived(data);
+        }
+      }
+    }
+ catch (    IOException e) {
+      for (      CULListener listener : listeners) {
+        listener.error(e);
+      }
+    }
+  }
+}

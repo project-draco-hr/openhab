@@ -1,0 +1,19 @@
+{
+  if (!sendString.endsWith("\r\n")) {
+    sendString=sendString + "\r\n";
+  }
+  log.debug("Sending raw message to CUL: " + sendString);
+  if (bw == null) {
+    throw new CULCommunicationException("BufferedWriter is null, probably the device is not open");
+  }
+synchronized (bw) {
+    try {
+      bw.write(sendString);
+      bw.flush();
+    }
+ catch (    IOException e) {
+      log.error("Can't write to CUL",e);
+      throw new CULCommunicationException(e);
+    }
+  }
+}
