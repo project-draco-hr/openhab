@@ -4,15 +4,11 @@
       String data=br.readLine();
       if (!"EOB".equals(data)) {
         log.debug("Received message from CUL: " + data);
-        for (        CULListener listener : listeners) {
-          listener.dataReceived(data);
-        }
+        notifyDataReceived(data);
       }
     }
  catch (    IOException e) {
-      for (      CULListener listener : listeners) {
-        listener.error(e);
-      }
+      notifyError(e);
     }
   }
 }
