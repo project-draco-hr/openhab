@@ -1,13 +1,45 @@
 {
-  CULSerialHandlerImpl handler=new CULSerialHandlerImpl(deviceName,mode);
-  handler.open();
-  if (mode == CULMode.ASK_SIN) {
-    try {
-      handler.sendRaw("Ar\r\n");
-    }
- catch (    CULCommunicationException e) {
-      throw new CULDeviceException("Can't set AskSin receiption mode",e);
-    }
+  String deviceType=getPrefix(deviceName);
+  String deviceAddress=getRawDeviceName(deviceName);
+  Class<? extends CULHandler> culHanlderclass=deviceTypeClasses.get(deviceType);
+  if (culHanlderclass == null) {
+    throw new CULDeviceException("No class for the device type " + deviceType + " is registred");
   }
-  return handler;
+  Class<?>[] constructorParametersTypes={String.class,CULMode.class};
+  try {
+    Constructor<? extends CULHandler> culHanlderConstructor=culHanlderclass.getConstructor(constructorParametersTypes);
+    Object[] parameters={deviceAddress,mode};
+    CULHandler culHandler=culHanlderConstructor.newInstance(parameters);
+    List<String> initCommands=mode.getCommands();
+    if (!(culHandler instanceof CULHandlerInternal)) {
+      throw new CULDeviceException("This CULHanlder class does not implement the internal interface: " + culHanlderclass.getCanonicalName());
+    }
+    CULHandlerInternal internalHandler=(CULHandlerInternal)culHandler;
+    internalHandler.close();
+    for (    String command : initCommands) {
+      culHandler.send(command);
+    }
+    return culHandler;
+  }
+ catch (  SecurityException e1) {
+    throw new CULDeviceException("Not allowed to access the constructor ",e1);
+  }
+catch (  NoSuchMethodException e1) {
+    throw new CULDeviceException("Can't find the constructor to build the CULHandler",e1);
+  }
+catch (  IllegalArgumentException e) {
+    throw new CULDeviceException("Invalid arguments for constructor. Device name: " + deviceAddress + " CULMode "+ mode,e);
+  }
+catch (  InstantiationException e) {
+    throw new CULDeviceException("Can't instantiate CULHandler object",e);
+  }
+catch (  IllegalAccessException e) {
+    throw new CULDeviceException("Can't instantiate CULHandler object",e);
+  }
+catch (  InvocationTargetException e) {
+    throw new CULDeviceException("Can't instantiate CULHandler object",e);
+  }
+catch (  CULCommunicationException e) {
+    throw new CULDeviceException("Can't initialise RF mode",e);
+  }
 }

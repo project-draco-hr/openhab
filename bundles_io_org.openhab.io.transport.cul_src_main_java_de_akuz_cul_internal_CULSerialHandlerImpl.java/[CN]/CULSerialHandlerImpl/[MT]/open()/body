@@ -16,8 +16,6 @@
     bw=new BufferedWriter(new OutputStreamWriter(os));
     serialPort.notifyOnDataAvailable(true);
     serialPort.addEventListener(this);
-    this.mode=mode;
-    sendRaw(mode.getCommand() + "\r\n");
   }
  catch (  NoSuchPortException e) {
     throw new CULDeviceException(e);
@@ -32,9 +30,6 @@ catch (  IOException e) {
     throw new CULDeviceException(e);
   }
 catch (  TooManyListenersException e) {
-    throw new CULDeviceException(e);
-  }
-catch (  CULCommunicationException e) {
     throw new CULDeviceException(e);
   }
 }

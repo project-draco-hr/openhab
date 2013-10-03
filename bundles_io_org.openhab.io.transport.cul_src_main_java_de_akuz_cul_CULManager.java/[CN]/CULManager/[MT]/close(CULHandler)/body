@@ -4,6 +4,12 @@ synchronized (openDevices) {
       CULHandlerInternal internalHandler=(CULHandlerInternal)handler;
       if (!internalHandler.hasListeners()) {
         openDevices.remove(handler);
+        try {
+          handler.send("X00");
+        }
+ catch (        CULCommunicationException e) {
+          logger.warn("Couldn't reset rf mode to X00");
+        }
         internalHandler.close();
       }
  else {
