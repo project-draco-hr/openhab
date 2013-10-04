@@ -1,21 +1,22 @@
 {
   String deviceType=getPrefix(deviceName);
   String deviceAddress=getRawDeviceName(deviceName);
-  Class<? extends CULHandler> culHanlderclass=deviceTypeClasses.get(deviceType);
-  if (culHanlderclass == null) {
+  logger.debug("Searching class for device type " + deviceAddress);
+  Class<? extends CULHandler> culHandlerclass=deviceTypeClasses.get(deviceType);
+  if (culHandlerclass == null) {
     throw new CULDeviceException("No class for the device type " + deviceType + " is registred");
   }
   Class<?>[] constructorParametersTypes={String.class,CULMode.class};
   try {
-    Constructor<? extends CULHandler> culHanlderConstructor=culHanlderclass.getConstructor(constructorParametersTypes);
+    Constructor<? extends CULHandler> culHanlderConstructor=culHandlerclass.getConstructor(constructorParametersTypes);
     Object[] parameters={deviceAddress,mode};
     CULHandler culHandler=culHanlderConstructor.newInstance(parameters);
     List<String> initCommands=mode.getCommands();
     if (!(culHandler instanceof CULHandlerInternal)) {
-      throw new CULDeviceException("This CULHanlder class does not implement the internal interface: " + culHanlderclass.getCanonicalName());
+      throw new CULDeviceException("This CULHanlder class does not implement the internal interface: " + culHandlerclass.getCanonicalName());
     }
     CULHandlerInternal internalHandler=(CULHandlerInternal)culHandler;
-    internalHandler.close();
+    internalHandler.open();
     for (    String command : initCommands) {
       culHandler.send(command);
     }
