@@ -1,0 +1,16 @@
+{
+  if (deviceName != null && this.deviceName != null && this.deviceName.equals(deviceName)) {
+    return;
+  }
+  if (this.deviceName != null && cul != null) {
+    closeCUL();
+  }
+  try {
+    cul=CULManager.getOpenCULHandler(deviceName,CULMode.SLOW_RF);
+    cul.registerListener(this);
+    this.deviceName=deviceName;
+  }
+ catch (  CULDeviceException e) {
+    logger.error("Can't get CULHandler",e);
+  }
+}

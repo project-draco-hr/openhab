@@ -1,0 +1,17 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String deviceName=(String)config.get(CONFIG_KEY_DEVICE_NAME);
+    if (!StringUtils.isEmpty(deviceName)) {
+      setNewDeviceName(deviceName);
+    }
+ else {
+      setProperlyConfigured(false);
+      throw new ConfigurationException(CONFIG_KEY_DEVICE_NAME,"Device name not configured");
+    }
+    setProperlyConfigured(true);
+  }
+}

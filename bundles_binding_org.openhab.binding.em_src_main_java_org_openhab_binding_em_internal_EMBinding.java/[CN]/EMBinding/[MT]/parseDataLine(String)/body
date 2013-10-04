@@ -1,0 +1,32 @@
+{
+  String typeString=data.substring(1,3);
+  String address=data.substring(3,5);
+  String counterString=data.substring(5,7);
+  if (!checkNewMessage(address,counterString)) {
+    logger.warn("Received message from " + address + " more than once");
+    return;
+  }
+  String cumulatedValueString=data.substring(7,11);
+  String lastValueString=null;
+  String topValueString=null;
+  if (data.length() > 11) {
+    lastValueString=data.substring(11,15);
+    topValueString=data.substring(15,19);
+  }
+  EMBindingConfig emConfig=findConfig(typeString,address,Datapoint.CUMULATED_VALUE);
+  if (emConfig != null) {
+    updateItem(emConfig,cumulatedValueString);
+  }
+  if (!StringUtils.isEmpty(lastValueString)) {
+    emConfig=findConfig(typeString,address,Datapoint.LAST_VALUE);
+    if (emConfig != null) {
+      updateItem(emConfig,lastValueString);
+    }
+  }
+  if (!StringUtils.isEmpty(topValueString)) {
+    emConfig=findConfig(typeString,address,Datapoint.TOP_VALUE);
+    if (emConfig != null) {
+      updateItem(emConfig,topValueString);
+    }
+  }
+}
