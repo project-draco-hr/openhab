@@ -1,4 +1,7 @@
 {
+  if (!checkCULDevice()) {
+    return;
+  }
   logger.debug("Processing " + temperatureCommandQueue.size() + " waiting FHT temperature commands");
   Map<String,FHTDesiredTemperatureCommand> copyMap=new HashMap<String,FHTDesiredTemperatureCommand>(temperatureCommandQueue);
   for (  Entry<String,FHTDesiredTemperatureCommand> entry : copyMap.entrySet()) {
