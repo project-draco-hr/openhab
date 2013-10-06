@@ -1,4 +1,10 @@
 {
+  try {
+    selector=Selector.open();
+  }
+ catch (  IOException e) {
+    logger.error("An exception occurred while registering the selector: {}",e.getMessage());
+  }
   Scheduler scheduler=null;
   try {
     scheduler=StdSchedulerFactory.getDefaultScheduler();
@@ -21,11 +27,5 @@
   }
  catch (  SchedulerException e) {
     logger.error("An exception occurred while scheduling a finish job with the Quartz Scheduler : {}",e.getMessage());
-  }
-  try {
-    selector=Selector.open();
-  }
- catch (  IOException e) {
-    logger.error("An exception occurred while registering the selector: {}",e.getMessage());
   }
 }
