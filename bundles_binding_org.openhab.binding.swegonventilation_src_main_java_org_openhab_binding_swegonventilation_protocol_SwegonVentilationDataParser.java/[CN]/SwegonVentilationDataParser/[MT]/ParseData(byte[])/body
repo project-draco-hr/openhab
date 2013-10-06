@@ -1,0 +1,23 @@
+{
+  if (data[0] == (byte)0x64) {
+    @SuppressWarnings("unused") byte unknownByte=data[1];
+    @SuppressWarnings("unused") byte destinationAddress=data[2];
+    @SuppressWarnings("unused") byte sourceAddress=data[3];
+    byte dataLen=data[4];
+    byte msgType=data[5];
+    byte[] d=new byte[dataLen - 3];
+    for (int i=8; i < (data.length - 3); i++)     d[i - 8]=data[i];
+switch (msgType) {
+case (byte)0x21:
+      return parseMessage21(d);
+case (byte)0x71:
+    return parseMessage71(d);
+case (byte)0x73:
+  return parseMessage73(d);
+}
+}
+ else {
+throw new SwegonVentilationException("Illegal data");
+}
+return null;
+}

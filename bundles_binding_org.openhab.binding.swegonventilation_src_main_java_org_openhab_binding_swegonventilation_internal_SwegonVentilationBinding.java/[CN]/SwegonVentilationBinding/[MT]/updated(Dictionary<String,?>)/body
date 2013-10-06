@@ -1,0 +1,16 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    String PortString=(String)config.get("udpPort");
+    if (StringUtils.isNotBlank(PortString)) {
+      udpPort=Integer.parseInt(PortString);
+    }
+    serialPort=(String)config.get("serialPort");
+    String simulateString=(String)config.get("simulate");
+    if (StringUtils.isNotBlank(simulateString)) {
+      simulator=Boolean.parseBoolean(simulateString);
+    }
+    messageListener=new MessageListener();
+    messageListener.start();
+  }
+}
