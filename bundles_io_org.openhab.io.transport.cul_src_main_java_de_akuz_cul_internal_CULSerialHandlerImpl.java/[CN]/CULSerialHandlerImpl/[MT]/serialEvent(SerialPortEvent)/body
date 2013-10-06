@@ -2,10 +2,15 @@
   if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
     try {
       String data=br.readLine();
-      if (!"EOB".equals(data)) {
+      if ("EOB".equals(data)) {
         log.debug("Received message from CUL: " + data);
-        notifyDataReceived(data);
+        return;
       }
+ else       if ("LOVF".equals(data)) {
+        log.warn("Limit Overflow: Last message lost. You are using more than 1% transmitting time. Reduce the number of rf messages");
+        return;
+      }
+      notifyDataReceived(data);
     }
  catch (    IOException e) {
       notifyError(e);
