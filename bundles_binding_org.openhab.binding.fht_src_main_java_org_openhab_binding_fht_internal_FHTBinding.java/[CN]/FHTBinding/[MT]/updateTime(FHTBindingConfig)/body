@@ -2,9 +2,5 @@
   Date date=new Date();
   String[] rawDateValues=configDateFormat.format(date).split(":");
   String device=config.getFullAddress();
-  writeRegister(device,"64",Utils.convertDecimalStringToHexString(rawDateValues[0]));
-  writeRegister(device,"63",Utils.convertDecimalStringToHexString(rawDateValues[1]));
-  writeRegister(device,"62",Utils.convertDecimalStringToHexString(rawDateValues[2]));
-  writeRegister(device,"61",Utils.convertDecimalStringToHexString(rawDateValues[3]));
-  writeRegister(device,"60",Utils.convertDecimalStringToHexString(rawDateValues[4]));
+  writeRegisters(device,new WriteRegisterCommand("64",Utils.convertDecimalStringToHexString(rawDateValues[0])),new WriteRegisterCommand("63",Utils.convertDecimalStringToHexString(rawDateValues[1])),new WriteRegisterCommand("62",Utils.convertDecimalStringToHexString(rawDateValues[2])),new WriteRegisterCommand("61",Utils.convertDecimalStringToHexString(rawDateValues[3])),new WriteRegisterCommand("60",Utils.convertDecimalStringToHexString(rawDateValues[4])));
 }

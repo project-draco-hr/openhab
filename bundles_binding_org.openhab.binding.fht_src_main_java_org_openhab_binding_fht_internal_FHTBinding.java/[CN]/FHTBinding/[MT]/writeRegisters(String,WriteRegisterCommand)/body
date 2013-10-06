@@ -1,0 +1,23 @@
+{
+  if (commands == null || commands.length == 0) {
+    logger.warn("No commands to write to the CUL");
+    return;
+  }
+  if (commands.length > 8) {
+    logger.error("We can only send 8 commands at once to the CUL. Discarding all commands");
+    return;
+  }
+  StringBuffer sendBuffer=new StringBuffer(8);
+  sendBuffer.append('F');
+  sendBuffer.append(deviceAddress);
+  for (  WriteRegisterCommand command : commands) {
+    sendBuffer.append(command.register);
+    sendBuffer.append(command.value);
+  }
+  try {
+    cul.send(sendBuffer.toString());
+  }
+ catch (  CULCommunicationException e) {
+    logger.error("Error while writing multiple write register commands to the CUL",e);
+  }
+}
