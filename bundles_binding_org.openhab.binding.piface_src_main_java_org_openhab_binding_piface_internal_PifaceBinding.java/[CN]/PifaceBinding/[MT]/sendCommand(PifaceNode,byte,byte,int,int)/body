@@ -1,0 +1,10 @@
+{
+  int attempt=1;
+  while (attempt <= node.maxRetries) {
+    byte response=sendCommand(node,command,commandAck,pinNumber,pinValue,attempt);
+    if (response != ERROR_RESPONSE)     return response;
+    attempt++;
+  }
+  logger.warn("Command failed " + node.maxRetries + " times. Stopping.");
+  return ERROR_RESPONSE;
+}

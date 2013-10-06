@@ -3,7 +3,7 @@
     try {
       PifaceNode node=pifaceNodes.get(bindingConfig.getPifaceId());
       if (node == null)       continue;
-      int value=sendDigitalRead(node.host,node.listenerPort,bindingConfig.getPinNumber());
+      int value=sendDigitalRead(node,bindingConfig.getPinNumber());
       for (      String itemName : getItemNamesForPin(bindingConfig.getPifaceId(),bindingConfig.getBindingType(),bindingConfig.getPinNumber()))       updateItemState(itemName,value);
       bindingConfigsToInitialise.remove(bindingConfig);
     }
