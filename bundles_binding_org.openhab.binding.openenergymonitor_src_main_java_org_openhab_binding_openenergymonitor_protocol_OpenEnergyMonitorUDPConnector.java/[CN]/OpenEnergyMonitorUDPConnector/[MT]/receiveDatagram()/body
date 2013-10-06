@@ -1,0 +1,25 @@
+{
+  final int PACKETSIZE=255;
+  try {
+    if (socket == null) {
+      socket=new DatagramSocket(port);
+    }
+    DatagramPacket packet=new DatagramPacket(new byte[PACKETSIZE],PACKETSIZE);
+    socket.receive(packet);
+    String[] bytes=new String(Arrays.copyOfRange(packet.getData(),0,packet.getLength() - 1)).split(" ");
+    ByteBuffer bytebuf=ByteBuffer.allocate(bytes.length);
+    for (int i=0; i < bytes.length; i++) {
+      if (bytes[i].isEmpty() == false) {
+        byte b=(byte)Integer.parseInt(bytes[i]);
+        bytebuf.put(b);
+      }
+    }
+    return bytebuf.array();
+  }
+ catch (  SocketException e) {
+    throw new OpenEnergyMonitorException(e);
+  }
+catch (  IOException e) {
+    throw new OpenEnergyMonitorException(e);
+  }
+}

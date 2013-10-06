@@ -1,0 +1,11 @@
+{
+  HashMap<String,Long> variables=new HashMap<String,Long>();
+  byte address=data[0];
+  for (  Entry<String,OpenEnergyMonitorParserRule> entry : parsingRules.entrySet()) {
+    OpenEnergyMonitorParserRule rule=entry.getValue();
+    if (rule.getAddress() == address) {
+      variables.put(entry.getKey(),toLong(rule.getParseBytes(),data));
+    }
+  }
+  return variables;
+}

@@ -1,0 +1,17 @@
+{
+  try {
+    String[] parts=rule.split(":");
+    if (parts.length != 2) {
+      throw new OpenEnergyMonitorException("Invalid parser rule '" + rule + "'");
+    }
+    this.address=Byte.parseByte(parts[0]);
+    String[] b=parts[1].split("\\|");
+    bytesIndex=new int[b.length];
+    for (int i=0; i < b.length; i++) {
+      bytesIndex[i]=Integer.parseInt(b[i]);
+    }
+  }
+ catch (  Exception e) {
+    throw new OpenEnergyMonitorException("Invalid parser rule",e);
+  }
+}

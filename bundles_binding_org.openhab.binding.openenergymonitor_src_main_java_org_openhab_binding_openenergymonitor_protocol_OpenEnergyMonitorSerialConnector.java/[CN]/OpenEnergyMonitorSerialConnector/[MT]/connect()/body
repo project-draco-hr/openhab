@@ -1,0 +1,12 @@
+{
+  try {
+    CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
+    CommPort commPort=portIdentifier.open(this.getClass().getName(),2000);
+    serialPort=(SerialPort)commPort;
+    serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    in=serialPort.getInputStream();
+  }
+ catch (  Exception e) {
+    throw new OpenEnergyMonitorException(e);
+  }
+}

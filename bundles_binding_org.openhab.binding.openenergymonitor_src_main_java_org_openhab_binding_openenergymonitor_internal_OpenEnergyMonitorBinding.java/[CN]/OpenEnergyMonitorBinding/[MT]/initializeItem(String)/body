@@ -1,0 +1,21 @@
+{
+  for (  OpenEnergyMonitorBindingProvider provider : providers) {
+    OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
+    if (function != null) {
+      try {
+        Item item=getItemFromItemName(itemName);
+        if (item != null) {
+          State currentState=item.getState();
+          if (currentState.getClass() != UnDefType.class) {
+            double val=((DecimalType)currentState).doubleValue();
+            logger.debug("Restore current state of the item {} = {}",itemName,val);
+            valueStore.setLatestValue(itemName,val);
+          }
+        }
+      }
+ catch (      Exception e) {
+        logger.debug("initializeItem failed",e);
+      }
+    }
+  }
+}
