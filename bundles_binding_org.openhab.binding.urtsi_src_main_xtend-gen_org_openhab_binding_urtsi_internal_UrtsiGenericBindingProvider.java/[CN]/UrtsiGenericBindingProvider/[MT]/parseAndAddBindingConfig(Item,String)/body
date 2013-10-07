@@ -1,0 +1,33 @@
+{
+  final Matcher matcher=UrtsiGenericBindingProvider.CONFIG_BINDING_PATTERN.matcher(bindingConfig);
+  boolean _matches=matcher.matches();
+  boolean _not=(!_matches);
+  if (_not) {
+    String _plus=("bindingConfig \'" + bindingConfig);
+    String _plus_1=(_plus + "\' doesn\'t contain a valid Urtsii-binding-configuration. A valid configuration is matched by the RegExp \'");
+    String _pattern=UrtsiGenericBindingProvider.CONFIG_BINDING_PATTERN.pattern();
+    String _plus_2=(_plus_1 + _pattern);
+    String _plus_3=(_plus_2 + "\'");
+    BindingConfigParseException _bindingConfigParseException=new BindingConfigParseException(_plus_3);
+    throw _bindingConfigParseException;
+  }
+  matcher.reset();
+  boolean _find=matcher.find();
+  if (_find) {
+    String _group=matcher.group(1);
+    String _group_1=matcher.group(2);
+    Integer _valueOf=Integer.valueOf(_group_1);
+    UrtsiItemConfiguration _urtsiItemConfiguration=new UrtsiItemConfiguration(_group,(_valueOf).intValue());
+    final UrtsiItemConfiguration urtsiConfig=_urtsiItemConfiguration;
+    this.addBindingConfig(item,urtsiConfig);
+  }
+ else {
+    String _plus_4=("bindingConfig \'" + bindingConfig);
+    String _plus_5=(_plus_4 + "\' doesn\'t contain a valid Urtsii-binding-configuration. A valid configuration is matched by the RegExp \'");
+    String _pattern_1=UrtsiGenericBindingProvider.CONFIG_BINDING_PATTERN.pattern();
+    String _plus_6=(_plus_5 + _pattern_1);
+    String _plus_7=(_plus_6 + "\'");
+    BindingConfigParseException _bindingConfigParseException_1=new BindingConfigParseException(_plus_7);
+    throw _bindingConfigParseException_1;
+  }
+}

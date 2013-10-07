@@ -1,0 +1,14 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  boolean _notEquals=(!Objects.equal(bindingConfig,null));
+  if (_notEquals) {
+    this.parseAndAddBindingConfig(item,bindingConfig);
+  }
+ else {
+    String _bindingType=this.getBindingType();
+    String _plus=(_bindingType + " bindingConfig is NULL (item=");
+    String _plus_1=(_plus + item);
+    String _plus_2=(_plus_1 + ") -> processing bindingConfig aborted!");
+    UrtsiGenericBindingProvider.logger.warn(_plus_2);
+  }
+}
