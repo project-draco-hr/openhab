@@ -1,9 +1,9 @@
 {
-  logger.debug("Configuring MQTT Event Bus Binding");
   if (properties == null || properties.isEmpty()) {
-    logger.debug("No mqtt-eventbus properties found. Cannot configure.");
+    logger.trace("No mqtt-eventbus properties configured.");
     return;
   }
+  logger.debug("Initializing MQTT Event Bus Binding");
   deactivate();
   brokerName=(String)properties.get("broker");
   if (StringUtils.isEmpty(brokerName)) {

@@ -1,10 +1,11 @@
 {
   if (StringUtils.isBlank(topic)) {
-    logger.debug("No topic defined for Event Bus State Subsriber");
+    logger.trace("No topic defined for Event Bus State Subsriber");
     return;
   }
   try {
     topic=StringUtils.replace(topic,"${item}","+");
+    logger.debug("Setting up Event Bus State Subscriber for topic {}",topic);
     stateSubscriber=new MqttMessageSubscriber(brokerName + ":" + topic+ ":state:default"){
       @Override public void processMessage(      String topic,      byte[] message){
         State state;
