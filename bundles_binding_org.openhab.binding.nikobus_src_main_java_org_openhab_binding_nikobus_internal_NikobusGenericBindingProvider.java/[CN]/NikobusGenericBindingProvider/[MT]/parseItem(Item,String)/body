@@ -1,0 +1,23 @@
+{
+  if (config == null || config.trim().length() == 0) {
+    throw new BindingConfigParseException("Invalid config for item " + item.getName());
+  }
+  if (config.matches(BUTTON_CONFIG_PATTERN)) {
+    return new Button(item.getName(),config);
+  }
+  if (config.matches(MODULE_CHANNEL_PATTERN)) {
+    String address=config.split(":")[0];
+    int channelNum=Integer.parseInt(config.split(":")[1]);
+    int group=channelNum > 6 ? 2 : 1;
+    String moduleKey=address + "-" + group;
+    NikobusModule module=getModule(moduleKey);
+    if (module == null) {
+      log.trace("Creating channel group {}",moduleKey);
+      module=new ModuleChannelGroup(address,group);
+      allModules.add(module);
+      modules.put(moduleKey,module);
+    }
+    return ((ModuleChannelGroup)module).addChannel(item.getName(),channelNum,item.getAcceptedCommandTypes());
+  }
+  throw new BindingConfigParseException("Could not determine item type from config: " + config);
+}
