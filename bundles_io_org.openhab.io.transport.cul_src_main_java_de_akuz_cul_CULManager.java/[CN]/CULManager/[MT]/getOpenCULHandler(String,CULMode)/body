@@ -4,6 +4,7 @@ synchronized (openDevices) {
     if (openDevices.containsKey(deviceName)) {
       CULHandler handler=openDevices.get(deviceName);
       if (handler.getCULMode() == mode) {
+        logger.debug("Device " + deviceName + " is already open in mode "+ mode.toString()+ ", returning already openend handler");
         return handler;
       }
  else {
