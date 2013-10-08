@@ -101,6 +101,7 @@ synchronized (this) {
                 logger.error("An exception occurred while opening a channel: {}",e2.getMessage());
               }
               try {
+                newSocketChannel.socket().setKeepAlive(true);
                 newSocketChannel.configureBlocking(false);
               }
  catch (              IOException e) {
