@@ -1,3 +1,10 @@
 {
-  parseData(data);
+  if (data.startsWith("K") && data.length() == 9) {
+    logger.debug("Received raw S300TH data: " + data);
+    parseS300THData(data);
+  }
+ else   if (data.startsWith("K") && data.length() == 15) {
+    logger.debug("Received raw KS300 data: " + data);
+    parseKS300Data(data);
+  }
 }
