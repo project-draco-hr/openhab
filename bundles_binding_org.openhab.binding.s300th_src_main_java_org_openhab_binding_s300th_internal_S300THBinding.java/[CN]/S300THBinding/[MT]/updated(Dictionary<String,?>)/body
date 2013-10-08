@@ -1,0 +1,19 @@
+{
+  logger.debug("Received new config");
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String deviceName=(String)config.get(KEY_DEVICE_NAME);
+    if (StringUtils.isEmpty(deviceName)) {
+      logger.error("No device name configured");
+      setProperlyConfigured(false);
+      throw new ConfigurationException(KEY_DEVICE_NAME,"The device name can't be empty");
+    }
+ else {
+      setNewDeviceName(deviceName);
+    }
+    setProperlyConfigured(true);
+  }
+}
