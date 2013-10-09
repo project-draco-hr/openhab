@@ -1,4 +1,5 @@
 {
+  log.debug("Opening serial CUL connection for " + deviceName);
   try {
     CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(deviceName);
     if (portIdentifier.isCurrentlyOwned()) {
@@ -15,6 +16,7 @@
     br=new BufferedReader(new InputStreamReader(is));
     bw=new BufferedWriter(new OutputStreamWriter(os));
     serialPort.notifyOnDataAvailable(true);
+    log.debug("Adding serial port event listener");
     serialPort.addEventListener(this);
   }
  catch (  NoSuchPortException e) {
