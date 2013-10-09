@@ -1,9 +1,10 @@
 {
   if (StringUtils.isBlank(topic)) {
-    logger.debug("No topic defined for Event Bus Command Publisher");
+    logger.trace("No topic defined for Event Bus Command Publisher");
     return;
   }
   try {
+    logger.debug("Setting up Event Bus Command Publisher for topic {}",topic);
     commandPublisher=new MqttMessagePublisher(brokerName + ":" + topic+ ":command:*:default");
     mqttService.registerMessageProducer(brokerName,commandPublisher);
   }
