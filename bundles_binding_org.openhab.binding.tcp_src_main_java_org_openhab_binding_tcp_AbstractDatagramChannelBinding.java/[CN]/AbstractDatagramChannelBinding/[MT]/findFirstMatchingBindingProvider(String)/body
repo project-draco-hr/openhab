@@ -1,0 +1,20 @@
+{
+  P firstMatchingProvider=null;
+  for (  P provider : this.providers) {
+    if (!useAddressMask) {
+      List<InetSocketAddress> socketAddresses=provider.getInetSocketAddresses(itemName);
+      if (socketAddresses != null && socketAddresses.size() > 0) {
+        firstMatchingProvider=provider;
+        break;
+      }
+    }
+ else {
+      List<Command> commands=provider.getAllCommands(itemName);
+      if (commands != null && commands.size() > 0) {
+        firstMatchingProvider=provider;
+        break;
+      }
+    }
+  }
+  return firstMatchingProvider;
+}

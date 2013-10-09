@@ -1,14 +1,2 @@
 {
-  for (  PifacePin pin : clonedList) {
-    try {
-      PifaceNode node=pifaceNodes.get(pin.getPifaceId());
-      if (node == null)       continue;
-      int pinValue=sendDigitalRead(node.host,node.listenerPort,pin.getPinNumber());
-      for (      String itemName : getItemNamesForPin(pin.getPifaceId(),pin.getPinType(),pin.getPinNumber()))       updateItemState(itemName,pinValue);
-      pifacePinsToInitialise.remove(pin);
-    }
- catch (    Exception e) {
-      logger.warn("Failed to initialise value for Piface pin {} ({}): {}",new Object[]{pin.getPinNumber(),pin.getPifaceId(),e.getMessage()});
-    }
-  }
 }

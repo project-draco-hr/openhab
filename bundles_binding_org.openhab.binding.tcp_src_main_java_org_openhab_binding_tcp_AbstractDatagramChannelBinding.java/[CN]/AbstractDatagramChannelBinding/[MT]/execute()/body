@@ -1,0 +1,394 @@
+{
+  for (  P provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      for (      Command aCommand : ((P)provider).getAllCommands(itemName)) {
+        String remoteHost=((P)provider).getHost(itemName,aCommand);
+        String remotePort=((P)provider).getPortAsString(itemName,aCommand);
+        Direction direction=((P)provider).getDirection(itemName,aCommand);
+        InetSocketAddress remoteAddress=null;
+        if (!(remoteHost.equals("*") || remotePort.equals("*"))) {
+          remoteAddress=new InetSocketAddress(remoteHost,Integer.parseInt(remotePort));
+        }
+        Channel newChannel=null;
+        Channel existingChannel=null;
+        if (useAddressMask && (remoteHost.equals("*") || remotePort.equals("*"))) {
+          newChannel=new Channel(itemName,aCommand,remoteHost,remotePort,((P)provider).getDirection(itemName,aCommand),false,null,false,null);
+          existingChannel=channels.get(itemName,aCommand,direction,remoteHost,remotePort);
+        }
+ else {
+          newChannel=new Channel(itemName,aCommand,remoteAddress,((P)provider).getDirection(itemName,aCommand),false,null,false,null);
+          existingChannel=channels.get(itemName,aCommand,direction,remoteAddress);
+        }
+        if (existingChannel == null) {
+          if (direction == Direction.IN) {
+            boolean assigned=false;
+            if (useAddressMask && (remoteHost.equals("*") || remotePort.equals("*"))) {
+              logger.warn("When using address masks we will not verify if we are already listening to similar incoming connections");
+              logger.info("We will accept data coming from the remote end {}:{}",remoteHost,remotePort);
+            }
+ else {
+              if (channels.contains(itemName,aCommand,Direction.IN,remoteAddress)) {
+                logger.warn("We already listen for incoming connections from {}",remoteAddress);
+              }
+ else {
+                if (itemShareChannels) {
+                  Channel firstChannel=channels.getFirstServed(itemName,direction,remoteAddress);
+                  if (firstChannel != null) {
+                    newChannel.channel=firstChannel.channel;
+                    assigned=true;
+                  }
+                }
+                if (bindingShareChannels) {
+                  Channel firstChannel=channels.getFirstServed(direction,remoteAddress);
+                  if (firstChannel != null) {
+                    newChannel.channel=firstChannel.channel;
+                    assigned=true;
+                  }
+                }
+                if (directionsShareChannels) {
+                  Channel firstChannel=channels.getFirstServed(remoteAddress);
+                  if (firstChannel != null) {
+                    newChannel.channel=firstChannel.channel;
+                    assigned=true;
+                  }
+                }
+              }
+            }
+            if (!assigned) {
+              newChannel.channel=listenerChannel;
+            }
+            if (useAddressMask && (remoteHost.equals("*") || remotePort.equals("*"))) {
+              logger.info("We will accept data coming from the remote end with mask {}:{}",remoteHost,remotePort);
+            }
+ else {
+              logger.info("We will accept data coming from the remote end {}",remoteAddress);
+            }
+            logger.debug("Setting up the inbound channel {}",newChannel);
+            channels.add(newChannel);
+          }
+ else           if (direction == Direction.OUT) {
+            boolean assigned=false;
+            if (useAddressMask && (remoteHost.equals("*") || remotePort.equals("*"))) {
+              logger.error("We do not accept outgoing connections for Items that do use address masks");
+            }
+ else {
+              channels.add(newChannel);
+              if (newChannel.channel == null) {
+                if (itemShareChannels) {
+                  Channel firstChannel=channels.getFirstServed(itemName,direction,remoteAddress);
+                  if (firstChannel != null) {
+                    newChannel.channel=firstChannel.channel;
+                    assigned=true;
+                  }
+                }
+                if (bindingShareChannels) {
+                  Channel firstChannel=channels.getFirstServed(direction,remoteAddress);
+                  if (firstChannel != null) {
+                    newChannel.channel=firstChannel.channel;
+                    assigned=true;
+                  }
+                }
+                if (assigned) {
+                  logger.debug("Setting up the outbound assigned channel {} ",newChannel);
+                }
+              }
+synchronized (this) {
+                if (!assigned || newChannel.channel == null) {
+                  DatagramChannel newDatagramChannel=null;
+                  try {
+                    newDatagramChannel=DatagramChannel.open();
+                  }
+ catch (                  IOException e2) {
+                    logger.error("An exception occurred while opening a channel: {}",e2.getMessage());
+                  }
+                  try {
+                    newDatagramChannel.configureBlocking(false);
+                  }
+ catch (                  IOException e) {
+                    logger.error("An exception occurred while configuring a channel: {}",e.getMessage());
+                  }
+synchronized (selector) {
+                    selector.wakeup();
+                    try {
+                      newDatagramChannel.register(selector,newDatagramChannel.validOps());
+                    }
+ catch (                    ClosedChannelException e1) {
+                      logger.error("An exception occurred while registering a selector: {}",e1.getMessage());
+                    }
+                  }
+                  newChannel.channel=newDatagramChannel;
+                  logger.debug("Setting up the outbound channel {}",newChannel);
+                  try {
+                    logger.info("'Connecting' the channel {} ",newChannel);
+                    newDatagramChannel.connect(remoteAddress);
+                  }
+ catch (                  IOException e) {
+                    logger.error("An exception occurred while connecting a channel: {}",e.getMessage());
+                  }
+                }
+ else {
+                  logger.info("There is already an active channel {} for the remote end {}",newChannel.channel,newChannel.remote);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+synchronized (selector) {
+    try {
+      selector.selectNow();
+    }
+ catch (    IOException e) {
+      logger.error("An exception occurred while Selecting ({})",e.getMessage());
+    }
+  }
+  Iterator<SelectionKey> it=selector.selectedKeys().iterator();
+  while (it.hasNext()) {
+    SelectionKey selKey=(SelectionKey)it.next();
+    it.remove();
+    if (selKey.isValid()) {
+      DatagramChannel theDatagramChannel=(DatagramChannel)selKey.channel();
+      Channel theChannel=channels.get(theDatagramChannel);
+      if (selKey.isReadable()) {
+        InetSocketAddress clientAddress=null;
+        ByteBuffer readBuffer=ByteBuffer.allocate(maximumBufferSize);
+        int numberBytesRead=0;
+        boolean error=false;
+        if (selKey == listenerKey) {
+          try {
+            clientAddress=(InetSocketAddress)theDatagramChannel.receive(readBuffer);
+            logger.debug("Received {} on the listener port from {}",new String(readBuffer.array()),clientAddress);
+            numberBytesRead=readBuffer.position();
+          }
+ catch (          Exception e) {
+            error=true;
+          }
+        }
+ else {
+          try {
+            numberBytesRead=theDatagramChannel.read(readBuffer);
+            logger.debug("Received {} bytes ({}) on the channel {}->{}",new Object[]{numberBytesRead,new String(readBuffer.array()),theDatagramChannel.getLocalAddress(),theDatagramChannel.getRemoteAddress()});
+          }
+ catch (          NotYetConnectedException e) {
+            try {
+              logger.warn("The channel for {} has no connection pending ({})",theDatagramChannel.getRemoteAddress(),e.getMessage());
+            }
+ catch (            IOException e1) {
+              logger.error("An exception occurred while getting the remote address of channel {} ({})",theDatagramChannel,e1.getMessage());
+            }
+            error=true;
+          }
+catch (          IOException e) {
+            try {
+              logger.warn("The channel for {} has encountered an unknown IO Exception: {}",theDatagramChannel.getRemoteAddress(),e.getMessage());
+            }
+ catch (            IOException e1) {
+              logger.error("An exception occurred while getting the remote address of channel {} ({})",theDatagramChannel,e1.getMessage());
+            }
+            error=true;
+          }
+        }
+        if (numberBytesRead == -1) {
+          try {
+            if (selKey != listenerKey) {
+              theDatagramChannel.close();
+            }
+          }
+ catch (          IOException e) {
+            try {
+              logger.warn("The channel for {} is closed ({})",theDatagramChannel.getRemoteAddress(),e.getMessage());
+            }
+ catch (            IOException e1) {
+              logger.error("An exception occurred while getting the remote address of channel {} ({})",theDatagramChannel,e1.getMessage());
+            }
+          }
+          error=true;
+        }
+        if (error) {
+          if (selKey != listenerKey) {
+            Scheduler scheduler=null;
+            try {
+              scheduler=StdSchedulerFactory.getDefaultScheduler();
+            }
+ catch (            SchedulerException e1) {
+              logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+            }
+            JobDataMap map=new JobDataMap();
+            map.put("Channel",theChannel);
+            map.put("Binding",this);
+            JobDetail job=null;
+            Trigger trigger=null;
+            job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).usingJobData(map).build();
+            trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+            try {
+              if (job != null && trigger != null && selKey != listenerKey) {
+                if (!theChannel.isReconnecting) {
+                  channels.setAllReconnecting(theDatagramChannel,true);
+                  scheduler.scheduleJob(job,trigger);
+                }
+              }
+            }
+ catch (            SchedulerException e) {
+              logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+            }
+          }
+        }
+ else {
+          ArrayList<Channel> channelsToServe=new ArrayList<Channel>();
+          if (selKey == listenerKey) {
+            channelsToServe=channels.getAll(Direction.IN,clientAddress);
+            if (channelsToServe.size() == 0) {
+              logger.warn("Received data {} from an undefined remote end {}. We will not process it",new String(readBuffer.array()),clientAddress);
+            }
+          }
+ else {
+            channelsToServe=channels.getAll(theDatagramChannel);
+          }
+          if (channelsToServe.size() > 0) {
+            readBuffer.flip();
+            if (channels.isBlocking(theDatagramChannel)) {
+              theChannel=channels.getBlocking(theDatagramChannel);
+              theChannel.buffer=readBuffer;
+            }
+ else {
+              for (              Channel aChannel : channelsToServe) {
+                if (useAddressMask) {
+                  aChannel.lastRemote=clientAddress;
+                }
+                parseChanneledBuffer(aChannel,readBuffer);
+              }
+            }
+          }
+ else {
+            try {
+              if (selKey == listenerKey) {
+                logger.warn("No channel is active or defined for the data we received from {}. It will be discarded.",clientAddress);
+              }
+ else {
+                logger.warn("No channel is active or defined for the data we received from {}. It will be discarded.",theDatagramChannel.getRemoteAddress());
+              }
+            }
+ catch (            IOException e) {
+              logger.error("An exception occurred while getting the remote address of channel {} ({})",theDatagramChannel,e.getMessage());
+            }
+          }
+        }
+      }
+ else       if (selKey.isWritable()) {
+        WriteBufferElement theElement=null;
+        if (selKey == listenerKey) {
+          Iterator<WriteBufferElement> iterator=writeQueue.iterator();
+          while (iterator.hasNext()) {
+            WriteBufferElement anElement=iterator.next();
+            if (anElement.channel.channel.equals(listenerChannel)) {
+              theElement=anElement;
+              break;
+            }
+          }
+        }
+        boolean isBlocking=channels.isBlocking(theDatagramChannel);
+        if (isBlocking) {
+        }
+ else {
+          if (selKey != listenerKey) {
+            Iterator<WriteBufferElement> iterator=writeQueue.iterator();
+            while (iterator.hasNext()) {
+              WriteBufferElement anElement=iterator.next();
+              if (anElement.channel.channel.equals(theDatagramChannel)) {
+                theElement=anElement;
+                break;
+              }
+            }
+          }
+          if (theElement != null && theElement.buffer != null) {
+            logger.debug("Picked {} from the queue",theElement);
+            if (theElement.isBlocking) {
+              theElement.channel.isBlocking=true;
+            }
+            boolean error=false;
+            theElement.buffer.rewind();
+            if (selKey == listenerKey) {
+              try {
+                if (useAddressMask && theElement.channel.remote == null) {
+                  if (theElement.channel.lastRemote != null) {
+                    logger.debug("Sending {} for the masked inbound channel {}:{} to the remote address {}",new Object[]{new String(theElement.buffer.array()),theElement.channel.host,theElement.channel.port,theElement.channel.lastRemote});
+                    listenerChannel.send(theElement.buffer,theElement.channel.lastRemote);
+                  }
+ else {
+                    logger.warn("I do not know where to send the data {}",new String(theElement.buffer.array()));
+                  }
+                }
+ else {
+                  logger.debug("Sending {} for the inbound channel {}:{} to the remote address {}",new Object[]{new String(theElement.buffer.array()),theElement.channel.host,theElement.channel.port,theElement.channel.remote});
+                  listenerChannel.send(theElement.buffer,theElement.channel.remote);
+                }
+              }
+ catch (              IOException e) {
+                if (theElement.channel.lastRemote != null) {
+                  logger.error("An exception occurred while sending data to the remote end {} ({})",theElement.channel.lastRemote,e.getMessage());
+                }
+ else {
+                  logger.error("An exception occurred while sending data to the remote end {} ({})",theElement.channel.remote,e.getMessage());
+                }
+              }
+            }
+ else {
+              try {
+                logger.debug("Sending {} for the outbound channel {}:{} to the remote address {}",new Object[]{new String(theElement.buffer.array()),theElement.channel.host,theElement.channel.port,theElement.channel.remote});
+                theDatagramChannel.write(theElement.buffer);
+              }
+ catch (              NotYetConnectedException e) {
+                logger.warn("The channel for {} has no connection pending ({})",theElement.channel.remote,e.getMessage());
+                error=true;
+              }
+catch (              ClosedChannelException e) {
+                logger.warn("The channel for {} is closed ({})",theElement.channel.remote,e.getMessage());
+                error=true;
+              }
+catch (              IOException e) {
+                logger.warn("The channel for {} has encountered an unknown IO Exception: {}",theElement.channel.remote,e.getMessage());
+                error=true;
+              }
+            }
+            if (error) {
+              if (selKey != listenerKey) {
+                Scheduler scheduler=null;
+                try {
+                  scheduler=StdSchedulerFactory.getDefaultScheduler();
+                }
+ catch (                SchedulerException e1) {
+                  logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+                }
+                JobDataMap map=new JobDataMap();
+                map.put("Channel",theElement.channel);
+                map.put("Binding",this);
+                JobDetail job=null;
+                Trigger trigger=null;
+                job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).usingJobData(map).build();
+                trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).startAt(futureDate(reconnectInterval,IntervalUnit.SECOND)).build();
+                try {
+                  if (job != null && trigger != null && selKey != listenerKey) {
+                    if (!theElement.channel.isReconnecting) {
+                      channels.setAllReconnecting(theElement.channel.channel,true);
+                      scheduler.scheduleJob(job,trigger);
+                    }
+                  }
+                }
+ catch (                SchedulerException e) {
+                  logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+                }
+              }
+            }
+ else {
+              if (theElement != null) {
+                writeQueue.remove(theElement);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

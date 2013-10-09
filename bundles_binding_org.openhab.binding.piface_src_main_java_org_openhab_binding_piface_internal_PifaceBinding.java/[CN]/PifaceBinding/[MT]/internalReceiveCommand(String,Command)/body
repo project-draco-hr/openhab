@@ -16,13 +16,11 @@
       logger.warn("No Piface node for id " + pifaceId);
       continue;
     }
-    String host=node.host;
-    int listenerPort=node.listenerPort;
     if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
-      sendDigitalWrite(host,listenerPort,pinNumber,1);
+      sendDigitalWrite(node,pinNumber,1);
     }
  else {
-      sendDigitalWrite(host,listenerPort,pinNumber,0);
+      sendDigitalWrite(node,pinNumber,0);
     }
   }
 }
