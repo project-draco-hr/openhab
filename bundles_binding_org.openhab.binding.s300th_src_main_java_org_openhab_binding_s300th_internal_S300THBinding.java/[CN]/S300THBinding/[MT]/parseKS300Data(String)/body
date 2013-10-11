@@ -1,13 +1,9 @@
 {
-  double rainValue=(Integer.parseInt("" + data.charAt(14) + data.charAt(11)+ data.charAt(12),16)) * 255 / 1000;
-  double windValue=Double.parseDouble(data.charAt(9) + data.charAt(10) + "."+ data.charAt(7));
-  int humidity=Integer.parseInt("" + data.charAt(8) + data.charAt(5));
-  double temperature=Double.parseDouble(data.charAt(6) + data.charAt(4) + "."+ data.charAt(4));
-  int secondByte=Integer.parseInt(String.valueOf(data.charAt(1)),16);
-  boolean isRaining=false;
-  if ((secondByte & 2) > 0) {
-    isRaining=true;
-  }
+  double rainValue=ParseUtils.parseRain(data);
+  double windValue=ParseUtils.parseWind(data);
+  double humidity=ParseUtils.parseHumidity(data);
+  double temperature=ParseUtils.parseTemperature(data);
+  boolean isRaining=ParseUtils.isRaining(data);
   for (  Datapoint datapoint : Datapoint.values()) {
     S300THBindingConfig config=findConfig(KS_300_ADDRESS,datapoint);
     if (config == null) {
