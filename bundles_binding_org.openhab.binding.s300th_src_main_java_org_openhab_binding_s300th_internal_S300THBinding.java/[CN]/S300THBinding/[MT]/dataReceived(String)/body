@@ -1,4 +1,16 @@
 {
+  if (data.startsWith("K")) {
+    int firstByte=Integer.parseInt(data.substring(1,2),16);
+    int typByte=Integer.parseInt(data.substring(2,3),16) & 7;
+    int sfirstByte=firstByte & 7;
+    if (sfirstByte == 7) {
+    }
+ else {
+      if (data.length() == 11) {
+        parseS300THData(data);
+      }
+    }
+  }
   if (data.startsWith("K") && data.length() == 9) {
     logger.debug("Received raw S300TH data: " + data);
     parseS300THData(data);
