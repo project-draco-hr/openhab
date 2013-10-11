@@ -7,8 +7,8 @@
   }
  else {
     String regex=target;
-    regex=StringUtils.replace(regex,"+","[a-zA-Z1-9]*");
-    regex=StringUtils.replace(regex,"#","[a-zA-Z1-9/]*");
+    regex=StringUtils.replace(regex,"+","[^/]*");
+    regex=StringUtils.replace(regex,"#",".*");
     boolean result=source.matches(regex);
     if (result) {
       logger.trace("Topic match for '{}' and '{}' using regex {}",new Object[]{source,target,regex});
