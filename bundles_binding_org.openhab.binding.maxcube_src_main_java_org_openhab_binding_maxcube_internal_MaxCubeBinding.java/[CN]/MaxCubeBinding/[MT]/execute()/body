@@ -44,11 +44,14 @@
         }
 switch (device.getType()) {
 case HeatingThermostat:
-          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTermperatureSetpoint());
+          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
         break;
 case ShutterContact:
       eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
     break;
+case WallMountedThermostat:
+  eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getTemperatureSetpoint());
+break;
 default :
 }
 }
