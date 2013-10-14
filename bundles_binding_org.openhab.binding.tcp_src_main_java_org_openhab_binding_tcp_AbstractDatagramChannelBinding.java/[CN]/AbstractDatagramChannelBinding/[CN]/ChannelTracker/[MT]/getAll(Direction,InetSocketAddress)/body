@@ -1,0 +1,32 @@
+{
+synchronized (this) {
+    ArrayList<Channel> selectedChannels=new ArrayList<Channel>();
+    if (useAddressMask) {
+      Iterator<C> it=iterator();
+      while (it.hasNext()) {
+        C aChannel=it.next();
+        if (direction.equals(aChannel.direction)) {
+          if (aChannel.host.equals("*") && aChannel.port.equals(Integer.toString(remote.getPort()))) {
+            selectedChannels.add(aChannel);
+          }
+ else           if (aChannel.port.equals("*") && aChannel.host.equals(remote.getHostString())) {
+            selectedChannels.add(aChannel);
+          }
+ else           if (aChannel.port.equals("*") && aChannel.host.equals("*")) {
+            selectedChannels.add(aChannel);
+          }
+        }
+      }
+    }
+ else {
+      Iterator<C> it=iterator();
+      while (it.hasNext()) {
+        C aChannel=it.next();
+        if (remote.equals(aChannel.remote) && direction.equals(aChannel.direction)) {
+          selectedChannels.add(aChannel);
+        }
+      }
+    }
+    return selectedChannels;
+  }
+}

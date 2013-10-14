@@ -1,0 +1,60 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  AbstractSocketChannelBinding theBinding=(AbstractSocketChannelBinding)dataMap.get("Binding");
+  AbstractSocketChannelBinding.Channel theChannel=(AbstractSocketChannelBinding.Channel)dataMap.get("Channel");
+  if (theChannel.isReconnecting) {
+    if (theChannel.remote != null && !theChannel.channel.isOpen()) {
+      SelectionKey sKey=theChannel.channel.keyFor(theBinding.selector);
+      if (sKey != null) {
+        sKey.cancel();
+      }
+      try {
+        theChannel.channel.close();
+      }
+ catch (      IOException e) {
+        logger.error("An exception occurred while closing a channel: {}",e.getMessage());
+      }
+      try {
+        theChannel.channel=SocketChannel.open();
+      }
+ catch (      IOException e) {
+        logger.error("An exception occurred while opening a channel: {}",e.getMessage());
+      }
+      theChannel.isBlocking=false;
+      theChannel.buffer=null;
+      try {
+        theChannel.channel.configureBlocking(false);
+      }
+ catch (      Exception e) {
+        logger.error("An exception occurred while configuring a channel: {}",e.getMessage());
+      }
+synchronized (theBinding.selector) {
+        theBinding.selector.wakeup();
+        int interestSet=SelectionKey.OP_READ | SelectionKey.OP_WRITE | SelectionKey.OP_CONNECT;
+        try {
+          if (theChannel.channel != null) {
+            theChannel.channel.register(theBinding.selector,interestSet);
+          }
+        }
+ catch (        ClosedChannelException e1) {
+          logger.error("An exception occurred while registering a selector: {}",e1.getMessage());
+        }
+      }
+      try {
+        if (theChannel.channel != null) {
+          theChannel.channel.connect(theChannel.remote);
+          logger.info("Attempting to reconnect the channel for {}",theChannel.remote);
+        }
+      }
+ catch (      Exception e) {
+        logger.error("An exception occurred while connecting a channel: {}",e.getMessage());
+      }
+    }
+ else {
+      logger.debug("I cannot proceed without remote address");
+    }
+  }
+ else {
+    logger.warn("Already reconnecting the channel for {}",theChannel.remote);
+  }
+}
