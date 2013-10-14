@@ -8,7 +8,7 @@
       }
       Matcher matcher=EXTRACT_PLUGWISE_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
-        logger.debug("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port>'");
+        logger.error("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port>'");
         continue;
       }
       matcher.reset();
@@ -20,7 +20,7 @@
           String value=(String)config.get(key);
           if ("port".equals(configKey)) {
             stick=new Stick(value,this);
-            logger.debug("Plugwise added Stick connected to serial port {}",value);
+            logger.info("Plugwise added Stick connected to serial port {}",value);
           }
  else {
             throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
@@ -37,7 +37,7 @@
         }
         Matcher matcher=EXTRACT_PLUGWISE_CONFIG_PATTERN.matcher(key);
         if (!matcher.matches()) {
-          logger.debug("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port>'");
+          logger.error("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port>'");
           continue;
         }
         matcher.reset();
@@ -58,19 +58,20 @@
             if (plugwiseID.equals("circleplus")) {
               if (stick.getDeviceByMAC(MAC) == null) {
                 device=new CirclePlus(MAC,stick);
-                logger.debug("Plugwise added Circle+ with MAC address: {}",MAC);
+                logger.info("Plugwise added Circle+ with MAC address: {}",MAC);
               }
             }
  else {
               if (stick.getDeviceByMAC(MAC) == null) {
                 device=new Circle(MAC,stick,plugwiseID);
-                logger.debug("Plugwise added Circle with MAC address: {}",MAC);
+                logger.info("Plugwise added Circle with MAC address: {}",MAC);
               }
             }
             stick.plugwiseDeviceCache.add(device);
           }
         }
       }
+      setProperlyConfigured(true);
     }
  else {
       logger.error("Plugwise needs at least one Stick in order to operate");
