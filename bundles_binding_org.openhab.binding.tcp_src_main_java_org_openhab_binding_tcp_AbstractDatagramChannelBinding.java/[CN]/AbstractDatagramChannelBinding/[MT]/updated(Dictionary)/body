@@ -69,15 +69,16 @@
       itemShareChannels=true;
       bindingShareChannels=true;
     }
-    String timeoutString=(String)config.get("selecttimeout");
-    if (StringUtils.isNotBlank(portString)) {
-      selectTimeOut=Integer.parseInt((timeoutString));
+    String refreshString=(String)config.get("refreshinterval");
+    if (StringUtils.isNotBlank(refreshString)) {
+      refreshInterval=Long.parseLong((refreshString));
     }
  else {
-      logger.info("The timeout to wait while selecting ready channels will be set to the default value of {}",selectTimeOut);
+      logger.info("The refresh interval of the worker thread will be set to the default value of {}",refreshInterval);
     }
     if (listenerPort != 0) {
       configureListenerChannel();
     }
+    setProperlyConfigured(true);
   }
 }

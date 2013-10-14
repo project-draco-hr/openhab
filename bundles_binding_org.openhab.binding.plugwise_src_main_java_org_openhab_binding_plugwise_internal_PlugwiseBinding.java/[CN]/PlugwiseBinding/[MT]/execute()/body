@@ -1,0 +1,72 @@
+{
+  if (isProperlyConfigured()) {
+    Scheduler sched=null;
+    try {
+      sched=StdSchedulerFactory.getDefaultScheduler();
+    }
+ catch (    SchedulerException e) {
+      logger.error("An exception occurred while getting a reference to the Quartz Scheduler");
+    }
+    for (    PlugwiseBindingProvider provider : providers) {
+      List<PlugwiseBindingConfigElement> compiledList=((PlugwiseBindingProvider)provider).getIntervalList();
+      Iterator<PlugwiseBindingConfigElement> pbcIterator=compiledList.iterator();
+      while (pbcIterator.hasNext()) {
+        PlugwiseBindingConfigElement anElement=pbcIterator.next();
+        PlugwiseCommandType type=anElement.getCommandType();
+        if (stick.getDevice(anElement.getId()) == null) {
+          logger.info("The Plugwise device with id {} is not yet defined",anElement.getId());
+          Pattern MAC_PATTERN=Pattern.compile("(\\w{16})");
+          Matcher matcher=MAC_PATTERN.matcher(anElement.getId());
+          if (matcher.matches()) {
+            CirclePlus cp=(CirclePlus)stick.getDeviceByName("circleplus");
+            if (cp != null) {
+              if (!cp.getMAC().equals(anElement.getId())) {
+                PlugwiseDevice device=new Circle(anElement.getId(),stick,anElement.getId());
+                stick.plugwiseDeviceCache.add(device);
+                logger.info("Plugwise added Circle with MAC address: {}",anElement.getId());
+              }
+            }
+ else {
+              logger.warn("Plugwise can not guess the device that should be added. Consider defining it in the openHAB configuration file");
+            }
+          }
+ else {
+            logger.warn("Plugwise can not add a valid device without a proper MAC address. {} can not be used",anElement.getId());
+          }
+        }
+        if (stick.getDevice(anElement.getId()) != null) {
+          boolean jobExists=false;
+          try {
+            for (            String group : sched.getJobGroupNames()) {
+              for (              JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                if (jobKey.getName().equals(anElement.getId() + "-" + type.getJobClass().toString())) {
+                  jobExists=true;
+                  break;
+                }
+              }
+            }
+          }
+ catch (          SchedulerException e1) {
+            logger.error("An exception occurred while quering the Quartz Scheduler ({})",e1.getMessage());
+          }
+          if (!jobExists) {
+            JobDataMap map=new JobDataMap();
+            map.put("Stick",stick);
+            map.put("MAC",stick.getDevice(anElement.getId()).MAC);
+            JobDetail job=newJob(type.getJobClass()).withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise-" + provider.toString()).usingJobData(map).build();
+            Trigger trigger=newTrigger().withIdentity(anElement.getId() + "-" + type.getJobClass().toString(),"Plugwise-" + provider.toString()).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(anElement.getInterval())).build();
+            try {
+              sched.scheduleJob(job,trigger);
+            }
+ catch (            SchedulerException e) {
+              logger.error("An exception occurred while scheduling a Quartz Job");
+            }
+          }
+        }
+ else {
+          logger.error("Error scheduling a Quartz Job for a non-defined Plugwise device");
+        }
+      }
+    }
+  }
+}
