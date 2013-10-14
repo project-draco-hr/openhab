@@ -7,13 +7,15 @@
  catch (    SchedulerException e) {
       logger.error("An exception occurred while getting a reference to the Quarz Scheduler");
     }
-    try {
-      for (      JobKey jobKey : sched.getJobKeys(jobGroupEquals("Plugwise"))) {
-        sched.deleteJob(jobKey);
+    for (    PlugwiseBindingProvider provider : providers) {
+      try {
+        for (        JobKey jobKey : sched.getJobKeys(jobGroupEquals("Plugwise-" + provider.toString()))) {
+          sched.deleteJob(jobKey);
+        }
       }
-    }
- catch (    SchedulerException e) {
-      logger.error("An exception occurred while deleting the Plugwise Quartz jobs ({})",e.getMessage());
+ catch (      SchedulerException e) {
+        logger.error("An exception occurred while deleting the Plugwise Quartz jobs ({})",e.getMessage());
+      }
     }
     stick.close();
   }
