@@ -1,0 +1,37 @@
+{
+  if (config != null) {
+    logger.debug("Received new config");
+    Squeezebox.disconnect();
+    String host=null;
+    int port=DEFAULT_CLI_PORT;
+    Map<String,String> playerMap=new HashMap<String,String>();
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher serverMatcher=EXTRACT_SERVER_CONFIG_PATTERN.matcher(key);
+      Matcher playerMatcher=EXTRACT_PLAYER_CONFIG_PATTERN.matcher(key);
+      String value=(String)config.get(key);
+      if (serverMatcher.matches()) {
+        serverMatcher.reset();
+        serverMatcher.find();
+        if ("host".equals(serverMatcher.group(2))) {
+          host=value;
+        }
+ else         if ("cliport".equals(serverMatcher.group(2))) {
+          port=Integer.valueOf(value);
+        }
+      }
+ else       if (playerMatcher.matches()) {
+        playerMap.put(playerMatcher.group(1),value.toString());
+      }
+    }
+    if (StringUtils.isEmpty(host))     throw new ConfigurationException("host","No SqueezeServer host is specified - this property is mandatory");
+    Squeezebox.connect(host,port,playerMap);
+  }
+ else {
+    logger.error("Config was NULL");
+  }
+}

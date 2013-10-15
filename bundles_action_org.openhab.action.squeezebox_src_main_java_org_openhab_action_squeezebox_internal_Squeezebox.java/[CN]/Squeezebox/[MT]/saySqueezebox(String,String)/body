@@ -1,0 +1,28 @@
+{
+  if (!isConnected()) {
+    logger.error("Not connected to a Squeezebox server. Please check your config and consult the openHAB WIKI for instructions on how to configure the Squeezebox properties");
+    return false;
+  }
+  String macAddress=getPlayerMacAddress(playerId);
+  if (macAddress == null) {
+    logger.error("No player exists with id '{}'",playerId);
+    return false;
+  }
+  logger.trace("Translated player id '{}' to MAC address {}",playerId,macAddress);
+  List<String> sentences=getSentences(message,MAX_SENTENCE_LENGTH);
+  for (  String sentence : sentences) {
+    logger.debug("Sending sentence to " + playerId + " ("+ sentence+ ")");
+    String encodedSentence;
+    try {
+      encodedSentence=URLEncoder.encode(sentence,UTF_8_ENCODING);
+    }
+ catch (    UnsupportedEncodingException e) {
+      logger.warn("Failed to encode sentence",e);
+      continue;
+    }
+    encodedSentence=encodedSentence.replace("+","%20");
+    logger.trace("Encoded sentence " + encodedSentence);
+    sendRequest(macAddress + " playlist play " + GOOGLE_TRANSLATE_URL+ encodedSentence);
+  }
+  return true;
+}
