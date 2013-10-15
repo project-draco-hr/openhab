@@ -1,0 +1,14 @@
+{
+  byte newVolume=Byte.parseByte(vol);
+  if (this.volume != newVolume) {
+    this.volume=newVolume;
+    if (0 >= this.volume) {
+      setMuteState(STATES.TRUE);
+    }
+ else {
+      setMuteState(STATES.FALSE);
+      this.unmuteVolume=this.volume;
+    }
+    fireVolumeChangeEvent();
+  }
+}
