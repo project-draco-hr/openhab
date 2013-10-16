@@ -1,0 +1,36 @@
+{
+  if (icon.contains(":") == false) {
+    iconName=new String(icon);
+    return;
+  }
+  if (icon.contains("=") == false) {
+    String[] components=icon.split(":");
+    iconName=new String(components[0]);
+    iconColor=new String(components[1]);
+    return;
+  }
+  String[] arrayAll=icon.split(",");
+  for (  String element : arrayAll) {
+    element.trim();
+    String[] arrayElement=element.split("=");
+    boolean matched=false;
+    if (state instanceof PercentType || state instanceof DecimalType) {
+      if (Double.parseDouble(state.toString()) > Integer.parseInt(arrayElement[0]))       matched=true;
+    }
+ else     if (state instanceof OnOffType || state instanceof OpenClosedType || state instanceof UpDownType|| state instanceof StringType|| state instanceof UnDefType) {
+      if (arrayElement[0].trim().equalsIgnoreCase(state.toString()))       matched=true;
+    }
+ else     if (state instanceof DateTimeType) {
+      Calendar val=((DateTimeType)state).getCalendar();
+      Calendar now=Calendar.getInstance();
+      long secsDif=(now.getTimeInMillis() - val.getTimeInMillis()) / 1000;
+      if (secsDif > Integer.parseInt(arrayElement[0]))       matched=true;
+    }
+    if (matched == true) {
+      String[] arrayComponents=arrayElement[1].split(":");
+      iconName=arrayComponents[0].trim();
+      if (arrayComponents.length == 2)       iconColor=arrayComponents[1].trim();
+      break;
+    }
+  }
+}

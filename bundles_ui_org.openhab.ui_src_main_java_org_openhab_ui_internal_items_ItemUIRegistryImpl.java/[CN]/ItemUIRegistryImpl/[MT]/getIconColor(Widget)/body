@@ -1,0 +1,17 @@
+{
+  String widgetTypeName=w.eClass().getInstanceTypeName().substring(w.eClass().getInstanceTypeName().lastIndexOf(".") + 1);
+  String icon=widgetTypeName.toLowerCase();
+  if (w.getIcon() != null) {
+    icon=w.getIcon();
+  }
+ else {
+    String itemName=w.getItem();
+    if (itemName != null) {
+      String result=getIcon(itemName);
+      if (result != null)       icon=result;
+    }
+  }
+  State stateIcon=getState(w);
+  IconSplitter iconSplit=new IconSplitter(icon,stateIcon);
+  return iconSplit.getIconColor();
+}
