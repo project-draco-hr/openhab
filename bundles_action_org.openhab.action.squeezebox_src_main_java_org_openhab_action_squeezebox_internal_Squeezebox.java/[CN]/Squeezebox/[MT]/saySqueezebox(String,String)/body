@@ -1,28 +1,31 @@
 {
-  if (!isConnected()) {
-    logger.error("Not connected to a Squeezebox server. Please check your config and consult the openHAB WIKI for instructions on how to configure the Squeezebox properties");
+  if (squeezeServer == null) {
+    logger.error("Squeeze Server yet to be initialised.");
     return false;
   }
-  String macAddress=getPlayerMacAddress(playerId);
-  if (macAddress == null) {
-    logger.error("No player exists with id '{}'",playerId);
+  if (!squeezeServer.isConnected()) {
+    logger.error("Not connected to the Squeeze Server. Please check your config and consult the openHAB WIKI for instructions on how to configure the Squeezebox properties.");
     return false;
   }
-  logger.trace("Translated player id '{}' to MAC address {}",playerId,macAddress);
+  SqueezePlayer player=squeezeServer.getPlayerByOhName(playerId);
+  if (player == null) {
+    logger.error("No player exists for id '{}'",playerId);
+    return false;
+  }
   List<String> sentences=getSentences(message,MAX_SENTENCE_LENGTH);
   for (  String sentence : sentences) {
     logger.debug("Sending sentence to " + playerId + " ("+ sentence+ ")");
     String encodedSentence;
     try {
-      encodedSentence=URLEncoder.encode(sentence,UTF_8_ENCODING);
+      encodedSentence=URLEncoder.encode(sentence,"UTF-8");
     }
  catch (    UnsupportedEncodingException e) {
-      logger.warn("Failed to encode sentence",e);
+      logger.warn("Failed to encode sentence '" + sentence + "', skipping.",e);
       continue;
     }
     encodedSentence=encodedSentence.replace("+","%20");
     logger.trace("Encoded sentence " + encodedSentence);
-    sendRequest(macAddress + " playlist play " + GOOGLE_TRANSLATE_URL+ encodedSentence);
+    squeezeServer.sendCommand(player.getId() + " playlist play " + GOOGLE_TRANSLATE_URL+ encodedSentence);
   }
   return true;
 }
