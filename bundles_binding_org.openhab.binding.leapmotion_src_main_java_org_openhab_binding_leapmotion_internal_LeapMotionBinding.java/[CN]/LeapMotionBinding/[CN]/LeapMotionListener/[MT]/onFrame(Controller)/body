@@ -1,0 +1,67 @@
+{
+  Frame frame=controller.frame();
+  GestureList gestures=frame.gestures();
+  for (int i=0; i < gestures.count(); i++) {
+    Gesture gesture=gestures.get(i);
+switch (gesture.type()) {
+case TYPE_KEY_TAP:
+      KeyTapGesture keyTap=new KeyTapGesture(gesture);
+    System.err.println("Key Tap id: " + keyTap.id() + ", "+ keyTap.state()+ ", position: "+ keyTap.position()+ ", direction: "+ keyTap.direction());
+  onKeyTap();
+break;
+case TYPE_CIRCLE:
+CircleGesture circle=new CircleGesture(gesture);
+boolean clockwiseness;
+if (circle.pointable().direction().angleTo(circle.normal()) <= Math.PI / 4) {
+clockwiseness=true;
+}
+ else {
+clockwiseness=false;
+}
+double sweptAngle=0;
+if (circle.state() == com.leapmotion.leap.Gesture.State.STATE_START) {
+}
+ else if (circle.state() == com.leapmotion.leap.Gesture.State.STATE_UPDATE) {
+CircleGesture previousUpdate=new CircleGesture(controller.frame(1).gesture(circle.id()));
+sweptAngle=(circle.progress() - previousUpdate.progress()) * 2 * Math.PI;
+if (circleEventCounter <= CIRCLE_COUNTER_THRESHOLD) {
+circleEventCounter++;
+return;
+}
+ else {
+circleEventCounter=0;
+onCircle(clockwiseness);
+System.err.println("Circle id: " + circle.id() + ", "+ circle.state()+ ", progress: "+ circle.progress()+ ", radius: "+ circle.radius()+ ", angle: "+ Math.toDegrees(sweptAngle)+ ", "+ clockwiseness);
+}
+}
+ else if (circle.state() == com.leapmotion.leap.Gesture.State.STATE_STOP) {
+}
+break;
+default :
+System.err.println("Unknown gesture type.");
+break;
+}
+}
+if (!frame.hands().isEmpty()) {
+noHand=false;
+Hand hand=frame.hands().get(0);
+FingerList fingers=hand.fingers();
+if (!fingers.isEmpty()) {
+if (fingers.count() > 2) {
+if (palmCounter <= PALM_COUNTER_THRESHOLD) {
+palmCounter++;
+}
+ else {
+palmCounter=0;
+onPalmShown(fingers.count(),hand.palmPosition().getY(),hand.palmPosition().getX(),hand.palmPosition().getZ());
+}
+}
+}
+}
+ else {
+if (!noHand) {
+noHand=true;
+System.err.println("no hand");
+}
+}
+}

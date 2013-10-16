@@ -1,0 +1,14 @@
+{
+  logger.debug("on key tap");
+  for (  LeapMotionBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      Command command=lastOnOffCommandCache.get(itemName);
+      if (command == null) {
+        command=OnOffType.OFF;
+      }
+      command=OnOffType.ON.equals(command) ? OnOffType.OFF : OnOffType.ON;
+      lastOnOffCommandCache.put(itemName,(OnOffType)command);
+      eventPublisher.sendCommand(itemName,command);
+    }
+  }
+}

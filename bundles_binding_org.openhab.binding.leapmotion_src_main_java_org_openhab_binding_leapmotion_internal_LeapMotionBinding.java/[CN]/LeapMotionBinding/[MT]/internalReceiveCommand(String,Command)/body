@@ -1,0 +1,18 @@
+{
+  super.internalReceiveCommand(itemName,command);
+  if (!(command instanceof OnOffType || command instanceof HSBType)) {
+    return;
+  }
+  for (  LeapMotionBindingProvider provider : providers) {
+    for (    String configuredItemName : provider.getItemNames()) {
+      if (configuredItemName.equals(itemName)) {
+        if (command instanceof OnOffType) {
+          lastOnOffCommandCache.put(itemName,(OnOffType)command);
+        }
+ else         if (command instanceof HSBType) {
+          lastHsbCommandCache.put(itemName,(HSBType)command);
+        }
+      }
+    }
+  }
+}
