@@ -11,9 +11,20 @@
       if (result != null)       icon=result;
     }
   }
-  State stateIcon=getState(w);
-  IconSplitter iconSplit=new IconSplitter(icon,stateIcon);
-  if (iconSplit != null)   icon=iconSplit.getIconName();
+  if (icon.contains("=") == true) {
+    State state=getState(w);
+    String[] arrayAll=icon.split(",");
+    for (    String element : arrayAll) {
+      element.trim();
+      String[] arrayElement=element.split("=");
+      arrayElement[0]=arrayElement[0].trim();
+      arrayElement[1]=arrayElement[1].trim();
+      if (matchStateToValue(state,arrayElement[0]) == true) {
+        icon=arrayElement[1].trim();
+        break;
+      }
+    }
+  }
   if (!icon.contains("-")) {
     Object state=getState(w);
     if (!state.equals(UnDefType.UNDEF)) {
