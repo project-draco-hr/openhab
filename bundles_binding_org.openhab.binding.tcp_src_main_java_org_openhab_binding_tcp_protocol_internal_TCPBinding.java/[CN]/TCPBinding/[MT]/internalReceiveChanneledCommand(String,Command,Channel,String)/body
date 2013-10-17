@@ -1,14 +1,8 @@
 {
   ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
   if (command != null) {
-    String tcpCommandName=null;
-    if (command instanceof DecimalType) {
-      tcpCommandName=commandAsString;
-    }
- else {
-      tcpCommandName=provider.getProtocolCommand(itemName,command);
-    }
-    tcpCommandName=preAmble + tcpCommandName + postAmble;
+    String transformedMessage=transformResponse(provider.getProtocolCommand(itemName,command),commandAsString);
+    String tcpCommandName=preAmble + transformedMessage + postAmble;
     ByteBuffer outputBuffer=ByteBuffer.allocate(tcpCommandName.getBytes().length);
     try {
       outputBuffer.put(tcpCommandName.getBytes("ASCII"));
