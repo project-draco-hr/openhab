@@ -1,0 +1,31 @@
+{
+  String[] playersList=decode(message).split("playerindex:\\d+\\s");
+  for (  String playerParams : playersList) {
+    String[] parameterList=playerParams.split("\\s");
+    String macAddress=null;
+    for (    String parameter : parameterList) {
+      if (parameter.contains("playerid")) {
+        macAddress=parameter.substring(parameter.indexOf(":") + 1);
+        break;
+      }
+    }
+    if (macAddress == null)     continue;
+    SqueezePlayer player=playersByMacAddress.get(macAddress);
+    if (player == null)     continue;
+    for (    String parameter : parameterList) {
+      if (parameter.contains("ip")) {
+        player.setIpAddr(parameter.substring(parameter.indexOf(":") + 1));
+      }
+ else       if (parameter.contains("uuid")) {
+        player.setUuid(parameter.substring(parameter.indexOf(":") + 1));
+      }
+ else       if (parameter.contains("name")) {
+        player.setName(parameter.substring(parameter.indexOf(":") + 1));
+      }
+ else       if (parameter.contains("model")) {
+        player.setModel(parameter.substring(parameter.indexOf(":") + 1));
+      }
+    }
+    sendCommand(player.getMacAddress() + " status - 1 subscribe:10 tags:yagJlN");
+  }
+}

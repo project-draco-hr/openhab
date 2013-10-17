@@ -13,7 +13,7 @@
     return;
   }
   logger.debug("Executed commandLine '{}' for player '{}'",playerCommand,playerId);
-  SqueezePlayer player=squeezeServer.getPlayerByOhName(playerId);
+  SqueezePlayer player=squeezeServer.getPlayer(playerId);
   if (player == null) {
     logger.warn("No Squeezebox player configured with id '{}', ignoring.",playerId);
     return;
@@ -39,16 +39,16 @@
   try {
 switch (command) {
 case MUTE:
-      squeezeServer.mute(playerId,true);
+      squeezeServer.mute(playerId);
     break;
 case UNMUTE:
-  squeezeServer.mute(playerId,false);
+  squeezeServer.unMute(playerId);
 break;
 case VOLUME_INCREASE:
-squeezeServer.volume(playerId,true);
+squeezeServer.volumeUp(playerId);
 break;
 case VOLUME_DECREASE:
-squeezeServer.volume(playerId,false);
+squeezeServer.volumeDown(playerId);
 break;
 case VOLUME:
 squeezeServer.setVolume(playerId,Integer.parseInt(argument));
@@ -57,19 +57,19 @@ case PLAY:
 squeezeServer.play(playerId);
 break;
 case PAUSE:
-squeezeServer.pause(playerId,true);
+squeezeServer.pause(playerId);
 break;
 case POWER_ON:
-squeezeServer.power(playerId,true);
+squeezeServer.powerOn(playerId);
 break;
 case POWER_OFF:
-squeezeServer.power(playerId,false);
+squeezeServer.powerOff(playerId);
 break;
 case NEXT:
-squeezeServer.navigate(playerId,false);
+squeezeServer.next(playerId);
 break;
 case PREV:
-squeezeServer.navigate(playerId,true);
+squeezeServer.prev(playerId);
 break;
 case STOP:
 squeezeServer.stop(playerId);

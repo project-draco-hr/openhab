@@ -1,0 +1,9 @@
+{
+  logger.debug("SqueezePlayer " + id + " -> new volume: "+ Integer.toString(volume));
+  String[] itemNames=getItemNamesByPlayerAndPlayerCommand(id,PlayerCommandTypeMapping.VOLUME);
+  for (  String itemName : itemNames) {
+    if (StringUtils.isNotBlank(itemName)) {
+      eventPublisher.postUpdate(itemName,new PercentType(volume));
+    }
+  }
+}
