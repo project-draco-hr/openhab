@@ -1,0 +1,62 @@
+{
+  P provider=findFirstMatchingBindingProvider(itemName);
+  if (provider == null) {
+    logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  if (command != null) {
+    List<Command> commands=provider.getQualifiedCommands(itemName,command);
+    for (    Command someCommand : commands) {
+      Channel theChannel=null;
+      if (useAddressMask && (((P)provider).getHost(itemName,someCommand).equals("*") || ((P)provider).getPortAsString(itemName,someCommand).equals("*"))) {
+        theChannel=channels.get(itemName,someCommand,((P)provider).getDirection(itemName,someCommand),((P)provider).getHost(itemName,someCommand),((P)provider).getPortAsString(itemName,someCommand));
+      }
+ else {
+        theChannel=channels.get(itemName,someCommand,((P)provider).getDirection(itemName,someCommand),new InetSocketAddress(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand)));
+      }
+      DatagramChannel theDatagramChannel=null;
+      if (theChannel != null) {
+        theDatagramChannel=theChannel.channel;
+      }
+      if (theDatagramChannel != null) {
+        boolean result=internalReceiveChanneledCommand(itemName,someCommand,theChannel,command.toString());
+        if (!theDatagramChannel.isConnected() && theDatagramChannel != listenerChannel) {
+          logger.warn("The channel for {} has a connection problem. Data will queued to the new channel when it is successfully set up.",theChannel.remote);
+          Scheduler scheduler=null;
+          try {
+            scheduler=StdSchedulerFactory.getDefaultScheduler();
+          }
+ catch (          SchedulerException e1) {
+            logger.error("An exception occurred while getting the Quartz scheduler: {}",e1.getMessage());
+          }
+          JobDataMap map=new JobDataMap();
+          map.put("Channel",theChannel);
+          map.put("Binding",this);
+          JobDetail job=newJob(ReconnectJob.class).withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).usingJobData(map).build();
+          Trigger trigger=newTrigger().withIdentity(Integer.toHexString(hashCode()) + "-Reconnect-" + Long.toString(System.currentTimeMillis()),this.toString()).startNow().build();
+          try {
+            if (job != null && trigger != null) {
+              if (!theChannel.isReconnecting) {
+                theChannel.isReconnecting=true;
+                scheduler.scheduleJob(job,trigger);
+              }
+            }
+          }
+ catch (          SchedulerException e) {
+            logger.error("An exception occurred while scheduling a job with the Quartz Scheduler {}",e.getMessage());
+          }
+        }
+        if (result) {
+          List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,someCommand);
+          State newState=createStateFromString(stateTypeList,command.toString());
+          if (newState != null) {
+            eventPublisher.postUpdate(itemName,newState);
+          }
+        }
+      }
+ else {
+        logger.error("there is no channel that services [itemName={}, command={}]",itemName,command);
+      }
+    }
+  }
+}

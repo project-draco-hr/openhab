@@ -1,0 +1,22 @@
+{
+synchronized (this) {
+    Iterator<C> it=iterator();
+    while (it.hasNext()) {
+      C aChannel=it.next();
+      if (useAddressMask && (aChannel.host.equals("*") || aChannel.port.equals("*")) && !channel.equals(aChannel.channel)) {
+        if (aChannel.host.equals("*") && aChannel.port.equals(Integer.toString(remoteAddress.getPort()))) {
+          aChannel.channel=channel;
+        }
+ else         if (aChannel.port.equals("*") && aChannel.host.equals(remoteAddress.getHostString())) {
+          aChannel.channel=channel;
+        }
+ else         if (aChannel.port.equals("*") && aChannel.host.equals("*")) {
+          aChannel.channel=channel;
+        }
+      }
+ else       if (remoteAddress.equals(aChannel.remote) && !channel.equals(aChannel.channel)) {
+        aChannel.channel=channel;
+      }
+    }
+  }
+}

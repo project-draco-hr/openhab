@@ -1,0 +1,43 @@
+{
+  ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  if (command != null) {
+    String transformedMessage=transformResponse(provider.getProtocolCommand(itemName,command),commandAsString);
+    String tcpCommandName=preAmble + transformedMessage + postAmble;
+    ByteBuffer outputBuffer=ByteBuffer.allocate(tcpCommandName.getBytes().length);
+    try {
+      outputBuffer.put(tcpCommandName.getBytes("ASCII"));
+    }
+ catch (    UnsupportedEncodingException e) {
+      logger.warn("Exception while attempting an unsupported encoding scheme");
+    }
+    ByteBuffer result=null;
+    try {
+      result=writeBuffer(outputBuffer,sChannel,blocking,timeOut);
+    }
+ catch (    Exception e) {
+      logger.error("An exception occurred while writing a buffer to a channel: {}",e.getMessage());
+    }
+    if (result != null && blocking) {
+      logger.info("Received {} from the remote end {}",new String(result.array()),sChannel.toString());
+      String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,command),new String(result.array()));
+      if (updateWithResponse) {
+        List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,command);
+        State newState=createStateFromString(stateTypeList,transformedResponse);
+        if (newState != null) {
+          eventPublisher.postUpdate(itemName,newState);
+        }
+ else {
+          logger.warn("Can not parse transformed output " + transformedResponse + " to match command {} on item {}  ",command,itemName);
+        }
+        return false;
+      }
+ else {
+        return true;
+      }
+    }
+ else {
+      return true;
+    }
+  }
+  return false;
+}

@@ -1,9 +1,10 @@
 {
   if (StringUtils.isBlank(topic)) {
-    logger.debug("No topic defined for Event Bus State Publisher");
+    logger.trace("No topic defined for Event Bus State Publisher");
     return;
   }
   try {
+    logger.debug("Setting up Event Bus State Publisher for topic {}",topic);
     statePublisher=new MqttMessagePublisher(brokerName + ":" + topic+ ":state:*:default");
     mqttService.registerMessageProducer(brokerName,statePublisher);
   }

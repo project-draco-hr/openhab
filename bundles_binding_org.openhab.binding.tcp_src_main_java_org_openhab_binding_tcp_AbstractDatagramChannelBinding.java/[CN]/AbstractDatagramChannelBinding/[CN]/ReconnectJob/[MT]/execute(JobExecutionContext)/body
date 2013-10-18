@@ -1,0 +1,75 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  AbstractDatagramChannelBinding theBinding=(AbstractDatagramChannelBinding)dataMap.get("Binding");
+  AbstractDatagramChannelBinding.Channel theChannel=(AbstractDatagramChannelBinding.Channel)dataMap.get("Channel");
+  if (theChannel.isReconnecting) {
+    if (theChannel.remote != null) {
+      if (theChannel.channel != theBinding.listenerChannel) {
+        SelectionKey sKey=theChannel.channel.keyFor(theBinding.selector);
+        if (sKey != null) {
+          sKey.cancel();
+        }
+        try {
+          theChannel.channel.close();
+        }
+ catch (        IOException e) {
+          logger.error("An exception occurred while closing a channel: {}",e.getMessage());
+        }
+        try {
+          theChannel.channel=DatagramChannel.open();
+        }
+ catch (        IOException e) {
+          logger.error("An exception occurred while opening a channel: {}",e.getMessage());
+        }
+        theChannel.isBlocking=false;
+        theChannel.buffer=null;
+        try {
+          theChannel.channel.configureBlocking(false);
+        }
+ catch (        Exception e) {
+          logger.error("An exception occurred while configuring a channel: {}",e.getMessage());
+        }
+synchronized (theBinding.selector) {
+          theBinding.selector.wakeup();
+          try {
+            if (theChannel.channel != null) {
+              theChannel.channel.register(theBinding.selector,theChannel.channel.validOps());
+            }
+          }
+ catch (          ClosedChannelException e1) {
+            logger.error("An exception occurred while registering a selector: {}",e1.getMessage());
+          }
+        }
+        try {
+          if (theChannel.channel != null) {
+            if (theBinding.itemShareChannels) {
+              theBinding.channels.replace(theChannel.item,theChannel.direction,theChannel.remote,theChannel.channel);
+            }
+            if (theBinding.bindingShareChannels) {
+              theBinding.channels.replace(theChannel.direction,theChannel.remote,theChannel.channel);
+            }
+            if (theBinding.directionsShareChannels) {
+              theBinding.channels.replace(theChannel.remote,theChannel.channel);
+            }
+            theChannel.isBlocking=false;
+            theBinding.channels.setAllReconnecting(theChannel.channel,false);
+            theChannel.channel.connect(theChannel.remote);
+            logger.info("Attempting to reconnect the channel for {}",theChannel.remote);
+          }
+        }
+ catch (        Exception e) {
+          logger.error("An exception occurred while connecting a channel: {}",e.getMessage());
+        }
+      }
+ else {
+        logger.warn("The listener channel can not be closed!");
+      }
+    }
+ else {
+      logger.debug("I cannot proceed without remote address");
+    }
+  }
+ else {
+    logger.warn("Already reconnecting the channel for {}",theChannel.remote);
+  }
+}

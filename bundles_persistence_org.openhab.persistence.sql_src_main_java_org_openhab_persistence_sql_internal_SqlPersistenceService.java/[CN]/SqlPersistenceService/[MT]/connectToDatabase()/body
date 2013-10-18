@@ -1,9 +1,10 @@
 {
   try {
-    logger.debug("Attempting to connect to database " + url);
+    errCnt=0;
+    logger.debug("SQL: Attempting to connect to database " + url);
     Class.forName(driverClass).newInstance();
     connection=DriverManager.getConnection(url,user,password);
-    logger.debug("Connected to database " + url);
+    logger.debug("SQL: Connected to database " + url);
     Statement st=connection.createStatement();
     int result=st.executeUpdate("SHOW TABLES LIKE 'Items'");
     st.close();
@@ -22,6 +23,6 @@
     st.close();
   }
  catch (  Exception e) {
-    logger.error("Failed connecting to the SQL database using: driverClass=" + driverClass + ", url="+ url+ ", user="+ user+ ", password="+ password,e);
+    logger.error("SQL: Failed connecting to the SQL database using: driverClass=" + driverClass + ", url="+ url+ ", user="+ user+ ", password="+ password,e);
   }
 }

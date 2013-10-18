@@ -1,0 +1,20 @@
+{
+  try {
+    listenerChannel=DatagramChannel.open();
+    listenerChannel.socket().bind(new InetSocketAddress(listenerPort));
+    listenerChannel.configureBlocking(false);
+    logger.info("Listening for incoming data on {}",listenerChannel.getLocalAddress());
+synchronized (selector) {
+      selector.wakeup();
+      try {
+        listenerKey=listenerChannel.register(selector,listenerChannel.validOps());
+      }
+ catch (      ClosedChannelException e1) {
+        logger.error("An exception occurred while registering a selector: {}",e1.getMessage());
+      }
+    }
+  }
+ catch (  Exception e3) {
+    logger.error("An exception occurred while creating the Listener Channel on port number {} ({})",listenerPort,e3.getMessage());
+  }
+}

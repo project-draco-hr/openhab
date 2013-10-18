@@ -1,0 +1,13 @@
+{
+  int pos=rule.indexOf('(');
+  if (pos == -1)   return false;
+  transformationName=rule.substring(0,pos);
+  transformationParam=rule.substring(pos + 1,rule.length() - 1);
+  BundleContext context=SnmpActivator.getContext();
+  transformationService=TransformationHelper.getTransformationService(context,transformationName);
+  if (transformationService == null) {
+    logger.debug("No transformation service found for {}",transformationName);
+    return false;
+  }
+  return true;
+}
