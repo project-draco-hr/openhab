@@ -4,8 +4,12 @@
       ItemModel model=(ItemModel)modelRepository.getModel(modelName);
       if (model != null) {
         for (        ModelItem modelItem : model.getItems()) {
-          Item item=createItemFromModelItem(modelItem);
-          internalDispatchBindings(reader,modelName,item,modelItem.getBindings());
+          for (          String itemType : itemTypes) {
+            if (itemType.equals(modelItem.getType())) {
+              Item item=createItemFromModelItem(modelItem);
+              internalDispatchBindings(reader,modelName,item,modelItem.getBindings());
+            }
+          }
         }
       }
  else {
