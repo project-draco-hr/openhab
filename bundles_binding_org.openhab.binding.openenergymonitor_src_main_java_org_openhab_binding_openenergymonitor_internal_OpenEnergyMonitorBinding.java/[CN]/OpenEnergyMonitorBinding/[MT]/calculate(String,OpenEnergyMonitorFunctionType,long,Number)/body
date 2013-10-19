@@ -4,13 +4,13 @@
     double result;
 switch (function) {
 case KWH:
-      result=calcEnergy(value,timeElapsed) / 1000;
+      result=calcEnergy(value.doubleValue(),timeElapsed) / 1000;
     result=valueStore.incLatestValue(itemName,result);
   state=new DecimalType(result);
 break;
 case KWHD:
 int currentDay=Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-result=calcEnergy(value,timeElapsed) / 1000;
+result=calcEnergy(value.doubleValue(),timeElapsed) / 1000;
 if (currentDay != lastRecordedDay) {
 valueStore.setLatestValue(itemName,result);
 lastRecordedDay=currentDay;
@@ -22,18 +22,18 @@ state=new DecimalType(result);
 break;
 case CUMULATIVE:
 double latestValue=valueStore.getLatestValue(itemName);
-if (value < latestValue) {
-result=valueStore.incLatestValue(itemName,value);
+if (value.doubleValue() < latestValue) {
+result=valueStore.incLatestValue(itemName,value.doubleValue());
 }
  else {
-valueStore.setLatestValue(itemName,value);
+valueStore.setLatestValue(itemName,value.doubleValue());
 }
-state=new DecimalType(value);
+state=new DecimalType(value.doubleValue());
 break;
 }
 }
  else {
-state=new DecimalType(value);
+state=new DecimalType(value.doubleValue());
 }
 return state;
 }

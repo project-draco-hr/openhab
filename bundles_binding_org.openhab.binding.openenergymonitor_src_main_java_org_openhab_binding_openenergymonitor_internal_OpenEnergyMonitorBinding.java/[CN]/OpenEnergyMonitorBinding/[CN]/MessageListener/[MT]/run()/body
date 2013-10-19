@@ -19,34 +19,36 @@
       lastTime=dataReceived;
       logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
       logger.debug("time elapsed {}ms",timeElapsed);
-      HashMap<String,Long> vals=dataParser.parseData(data);
+      HashMap<String,Number> vals=dataParser.parseData(data);
       for (      OpenEnergyMonitorBindingProvider provider : providers) {
         for (        String itemName : provider.getItemNames()) {
-          for (          Entry<String,Long> entry : vals.entrySet()) {
+          for (          Entry<String,Number> entry : vals.entrySet()) {
             String key=entry.getKey();
-            long value=entry.getValue();
-            boolean found=false;
-            org.openhab.core.types.State state=null;
-            String variable=provider.getVariable(itemName);
-            if (variable.equals(key)) {
-              OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
-              state=calculate(itemName,function,timeElapsed,(double)value);
-              found=true;
-            }
- else             if (variable.contains(key) && variable.matches(".*[+-/*^%].*")) {
-              logger.debug("Eval key={}, variable={}",key,variable);
-              String tmp=replaceVariables(vals,variable);
-              double result=new DoubleEvaluator().evaluate(tmp);
-              logger.debug("Eval '{}={}={}'",variable,tmp,result);
-              OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
-              state=calculate(itemName,function,timeElapsed,result);
-              found=true;
-            }
-            if (found) {
-              state=transformData(provider.getTransformationType(itemName),provider.getTransformationFunction(itemName),state);
-              if (state != null) {
-                eventPublisher.postUpdate(itemName,state);
-                break;
+            Number value=entry.getValue();
+            if (key != null && value != null) {
+              boolean found=false;
+              org.openhab.core.types.State state=null;
+              String variable=provider.getVariable(itemName);
+              if (variable.equals(key)) {
+                OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
+                state=calculate(itemName,function,timeElapsed,value);
+                found=true;
+              }
+ else               if (variable.contains(key) && variable.matches(".*[+-/*^%].*")) {
+                logger.debug("Eval key={}, variable={}",key,variable);
+                String tmp=replaceVariables(vals,variable);
+                double result=new DoubleEvaluator().evaluate(tmp);
+                logger.debug("Eval '{}={}={}'",variable,tmp,result);
+                OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
+                state=calculate(itemName,function,timeElapsed,result);
+                found=true;
+              }
+              if (found) {
+                state=transformData(provider.getTransformationType(itemName),provider.getTransformationFunction(itemName),state);
+                if (state != null) {
+                  eventPublisher.postUpdate(itemName,state);
+                  break;
+                }
               }
             }
           }
