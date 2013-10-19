@@ -1,8 +1,10 @@
 {
   try {
     logger.debug("trying to establish connection to {}:{}",host,port);
+    ipConnection.setAutoReconnect(autoReconnect);
+    ipConnection.addDisconnectedListener(new DisconnectedListener());
+    ipConnection.addEnumerateListener(new EnumerateListener());
     ipConnection.connect(getHost(),getPort());
-    ipConnection.setAutoReconnect(true);
   }
  catch (  AlreadyConnectedException e) {
     logger.debug("connect successful: {}:{}",host,port);
