@@ -1,0 +1,12 @@
+{
+  serialPort.removeEventListener();
+  try {
+    IOUtils.closeQuietly(serialPort.getInputStream());
+    IOUtils.closeQuietly(serialPort.getOutputStream());
+    serialPort.close();
+  }
+ catch (  IOException e) {
+    logger.error("An exception occurred while closing the serial port {} ({})",serialPort,e.getMessage());
+  }
+  initialised=false;
+}

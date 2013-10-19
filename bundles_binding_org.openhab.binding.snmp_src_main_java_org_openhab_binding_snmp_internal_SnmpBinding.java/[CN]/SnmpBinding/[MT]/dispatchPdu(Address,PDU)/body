@@ -10,15 +10,22 @@
         Variable variable=pdu.getVariable(oid);
         if (variable != null) {
           Class<? extends Item> itemType=provider.getItemType(itemName);
+          String value=variable.toString();
+          try {
+            value=provider.doTransformation(itemName,value);
+          }
+ catch (          TransformationException e) {
+            logger.error("Transformation error with item {}: {}",itemName,e);
+          }
           State state=null;
           if (itemType.isAssignableFrom(StringItem.class)) {
-            state=StringType.valueOf(variable.toString());
+            state=StringType.valueOf(value);
           }
  else           if (itemType.isAssignableFrom(NumberItem.class)) {
-            state=DecimalType.valueOf(variable.toString());
+            state=DecimalType.valueOf(value);
           }
  else           if (itemType.isAssignableFrom(SwitchItem.class)) {
-            state=OnOffType.valueOf(variable.toString());
+            state=OnOffType.valueOf(value);
           }
           if (state != null) {
             eventPublisher.postUpdate(itemName,state);

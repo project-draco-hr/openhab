@@ -1,0 +1,13 @@
+{
+  String theUpdate=new String(byteBuffer.array());
+  ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,aCommand);
+  String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,aCommand),theUpdate);
+  State newState=createStateFromString(stateTypeList,transformedResponse);
+  if (newState != null) {
+    eventPublisher.postUpdate(itemName,newState);
+  }
+ else {
+    logger.warn("Can not parse input " + theUpdate + " to match command {} on item {}  ",aCommand,itemName);
+  }
+}

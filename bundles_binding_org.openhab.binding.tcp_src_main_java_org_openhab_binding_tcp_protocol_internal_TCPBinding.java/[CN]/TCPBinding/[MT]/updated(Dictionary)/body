@@ -1,2 +1,41 @@
 {
+  super.updated(config);
+  if (config != null) {
+    String timeOutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(timeOutString)) {
+      timeOut=Integer.parseInt((timeOutString));
+    }
+ else {
+      logger.info("The maximum time out for blocking write operations will be set to the default vaulue of {}",timeOut);
+    }
+    String blockingString=(String)config.get("blocking");
+    if (StringUtils.isNotBlank(blockingString)) {
+      blocking=Boolean.parseBoolean((blockingString));
+    }
+ else {
+      logger.info("The blocking nature of read/write operations will be set to the default vaulue of {}",blocking);
+    }
+    String preambleString=(String)config.get("preamble");
+    if (StringUtils.isNotBlank(preambleString)) {
+      preAmble=preambleString.replaceAll("\\\\","\\");
+    }
+ else {
+      logger.info("The preamble for all write operations will be set to the default vaulue of {}",preAmble);
+    }
+    String postambleString=(String)config.get("postamble");
+    if (StringUtils.isNotBlank(postambleString)) {
+      postAmble=postambleString.replaceAll("\\\\","\\");
+      ;
+    }
+ else {
+      logger.info("The postamble for all write operations will be set to the default vaulue of {}",postAmble);
+    }
+    String updatewithresponseString=(String)config.get("updatewithresponse");
+    if (StringUtils.isNotBlank(updatewithresponseString)) {
+      updateWithResponse=Boolean.parseBoolean((updatewithresponseString));
+    }
+ else {
+      logger.info("Updating states with returned values will be set to the default vaulue of {}",updateWithResponse);
+    }
+  }
 }

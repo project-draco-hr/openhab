@@ -5,7 +5,7 @@
     for (    Command command : config.keySet()) {
       InetSocketAddress anAddress=null;
       try {
-        anAddress=new InetSocketAddress(InetAddress.getByName(config.get(command).getHost()),config.get(command).getPort());
+        anAddress=new InetSocketAddress(InetAddress.getByName(config.get(command).getHost()),Integer.parseInt(config.get(command).getPort()));
       }
  catch (      UnknownHostException e) {
         logger.warn("Could not resolve the hostname {} for item {}",config.get(command).getHost(),itemName);

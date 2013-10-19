@@ -1,10 +1,16 @@
 {
   String[] parts=bindingConfig.split(":");
-  if (parts.length != 3) {
-    throw new BindingConfigParseException("Item '" + item.getName() + "' has an invalid binding config - expecting 3 tokens (<id>:<type>:<pin>) but found "+ bindingConfig);
+  if (parts.length < 2) {
+    throw new BindingConfigParseException("Item '" + item.getName() + "' has an invalid binding config - expecting at least 2 tokens (<id>:<type>[:<pin>]) but found "+ bindingConfig);
   }
   String pifaceId=parts[0];
-  PifacePin.PinType pinType=PifacePin.PinType.parse(parts[1]);
-  Integer pinNumber=Integer.parseInt(parts[2]);
-  return new PifacePin(pifaceId,pinType,pinNumber,item.getClass());
+  PifaceBindingConfig.BindingType bindingType=PifaceBindingConfig.BindingType.parse(parts[1]);
+  Integer pinNumber=0;
+  if (!bindingType.equals(PifaceBindingConfig.BindingType.WATCHDOG)) {
+    if (parts.length != 3) {
+      throw new BindingConfigParseException("Item '" + item.getName() + "' has an invalid binding config - expecting at 3 tokens (<id>:IN|OUT:<pin>) but found "+ bindingConfig);
+    }
+    pinNumber=Integer.parseInt(parts[2]);
+  }
+  return new PifaceBindingConfig(pifaceId,bindingType,pinNumber,item.getClass());
 }
