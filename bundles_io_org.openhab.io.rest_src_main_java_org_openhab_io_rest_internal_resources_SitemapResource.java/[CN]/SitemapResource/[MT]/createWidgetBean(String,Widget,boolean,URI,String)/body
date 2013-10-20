@@ -1,5 +1,6 @@
 {
   ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
+  if (itemUIRegistry.getVisiblity(widget) == false)   return null;
   WidgetBean bean=new WidgetBean();
   if (widget.getItem() != null) {
     Item item=ItemResource.getItem(widget.getItem());
@@ -21,8 +22,11 @@
       int cntWidget=0;
       for (      Widget child : children) {
         widgetId+="_" + cntWidget;
-        bean.widgets.add(createWidgetBean(sitemapName,child,drillDown,uri,widgetId));
-        cntWidget++;
+        WidgetBean subWidget=createWidgetBean(sitemapName,child,drillDown,uri,widgetId);
+        if (subWidget != null) {
+          bean.widgets.add(subWidget);
+          cntWidget++;
+        }
       }
     }
  else     if (children.size() > 0) {

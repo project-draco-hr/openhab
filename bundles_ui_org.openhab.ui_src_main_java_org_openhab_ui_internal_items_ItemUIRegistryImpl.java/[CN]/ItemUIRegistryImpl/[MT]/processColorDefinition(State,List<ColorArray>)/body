@@ -1,0 +1,21 @@
+{
+  if (colorList == null)   return null;
+  if (colorList.size() == 0)   return null;
+  String colorString=null;
+  if (colorList.size() == 1 && colorList.get(0).getArg() == null)   colorString=colorList.get(0).getState();
+ else {
+    for (    ColorArray color : colorList) {
+      if (color.getState() == null) {
+        logger.error("Error parsing color");
+        continue;
+      }
+      if (matchStateToValue(state,color.getState()) == true) {
+        colorString=color.getArg();
+        break;
+      }
+    }
+  }
+  if (colorString == null)   return null;
+  if (colorString.startsWith("\"") && colorString.endsWith("\""))   colorString=colorString.substring(1,colorString.length() - 1);
+  return colorString;
+}

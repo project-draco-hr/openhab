@@ -1,0 +1,22 @@
+{
+  List<VisibilityRule> ruleList=w.getVisibility();
+  if (ruleList == null)   return true;
+  if (ruleList.size() == 0)   return true;
+  for (  VisibilityRule rule : w.getVisibility()) {
+    if (rule.getItem() == null)     continue;
+    if (rule.getState() == null)     continue;
+    Item item;
+    try {
+      item=itemRegistry.getItem(rule.getItem());
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("Cannot retrieve visibility item for widget {}",w.eClass().getInstanceTypeName());
+      return true;
+    }
+    State state=item.getState();
+    if (matchStateToValue(state,rule.getState()) == true) {
+      return true;
+    }
+  }
+  return false;
+}
