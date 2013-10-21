@@ -20,6 +20,7 @@
  else     if (widget instanceof Video) {
       Video video=(Video)widget;
       uriString=video.getUrl();
+      uriArray=video.getUrlArray();
     }
  else {
       if (widget == null) {
@@ -28,6 +29,10 @@
  else {
         throw new ServletException("Widget type '" + widget.getClass().getName() + "' is not supported!");
       }
+    }
+    State itemState=itemUIRegistry.getItemState(widget.getItem());
+    if (itemState != null && itemState instanceof StringType) {
+      uriString=itemState.toString();
     }
     if (widget.getItem() != null) {
       State state=itemUIRegistry.getItemState(widget.getItem());
@@ -43,6 +48,9 @@
   }
  else {
     throw new ServletException("Sitemap '" + sitemapName + "' could not be found!");
+  }
+  if (uriString == null) {
+    throw new ServletException("URI not resolved");
   }
   HttpClient httpClient=new HttpClient();
   try {
