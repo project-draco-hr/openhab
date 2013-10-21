@@ -1,5 +1,21 @@
 {
-  SwitchState oldSwitchState=switchState;
-  switchState=newSwitchState == null ? SWITCH_STATE_EDEFAULT : newSwitchState;
-  if (eNotificationRequired())   eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MINDUSTRIAL_QUAD_RELAY__SWITCH_STATE,oldSwitchState,switchState));
+  switchState=newSwitchState;
+  logger.debug("setSwitchState called on: {}",MIndustrialQuadRelayBrickletImpl.class);
+  try {
+    if (switchState == SwitchState.OFF) {
+      logger.debug("setSwitchState off");
+      getMbrick().getTinkerforgeDevice().setSelectedValues(DEFAULT_SELECTION_MASK << (relayNum - 1),OFF_BYTE);
+    }
+ else     if (switchState == SwitchState.ON) {
+      logger.debug("setSwitchState on");
+      getMbrick().getTinkerforgeDevice().setSelectedValues(DEFAULT_SELECTION_MASK << (relayNum - 1),DEFAULT_SELECTION_MASK << (relayNum - 1));
+    }
+ else     logger.error("unkown switchstate");
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
 }

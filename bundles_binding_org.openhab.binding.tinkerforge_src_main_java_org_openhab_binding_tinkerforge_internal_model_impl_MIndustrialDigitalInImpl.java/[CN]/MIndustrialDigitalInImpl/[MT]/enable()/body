@@ -1,0 +1,12 @@
+{
+  setSwitchState(SwitchState.OFF);
+  MBrickletIndustrialDigitalIn4 masterBrick=getMbrick();
+  if (masterBrick == null) {
+    logger.error("{} No brick found for Digital4In: {} ",LoggerConstants.TFINIT,subId);
+  }
+ else {
+    BrickletIndustrialDigitalIn4 brickletIndustrialDigitalIn4=masterBrick.getTinkerforgeDevice();
+    interruptListener=new InterruptListener();
+    brickletIndustrialDigitalIn4.addInterruptListener(interruptListener);
+  }
+}
