@@ -1,0 +1,12 @@
+{
+  for (  Map.Entry<String,InsteonHubProxy> entry : proxies.entrySet()) {
+    try {
+      String deviceUid=entry.getKey();
+      InsteonHubProxy receiverProxy=entry.getValue();
+      sendUpdates(receiverProxy,deviceUid);
+    }
+ catch (    Throwable t) {
+      logger.error("Error polling device states on Insteon Hub '" + entry.getKey() + "'",t);
+    }
+  }
+}

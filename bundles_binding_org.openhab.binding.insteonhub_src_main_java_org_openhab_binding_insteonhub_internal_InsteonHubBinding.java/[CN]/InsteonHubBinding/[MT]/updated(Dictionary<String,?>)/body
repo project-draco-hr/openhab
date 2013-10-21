@@ -1,0 +1,45 @@
+{
+  logger.debug(BINDING_NAME + " updated");
+  try {
+    if (config != null) {
+      for (      InsteonHubProxy proxy : proxies.values()) {
+        proxy.stop();
+      }
+      proxies.clear();
+      String refreshIntervalString=(String)config.get("refresh");
+      if (StringUtils.isNotBlank(refreshIntervalString)) {
+        refreshInterval=Long.parseLong(refreshIntervalString);
+      }
+      Enumeration<String> keys=config.keys();
+      while (keys.hasMoreElements()) {
+        String key=keys.nextElement();
+        if (key.endsWith(CONFIG_KEY_HOST)) {
+          String host=(String)config.get(key);
+          int separatorIdx=key.indexOf('.');
+          String hubId, keyPrefix;
+          if (separatorIdx == -1) {
+            hubId=DEFAULT_HUB_ID;
+            keyPrefix="";
+          }
+ else {
+            hubId=key.substring(0,separatorIdx);
+            keyPrefix=hubId + ".";
+          }
+          String user=(String)config.get(keyPrefix + CONFIG_KEY_USER);
+          String pass=(String)config.get(keyPrefix + CONFIG_KEY_PASS);
+          String portStr=(String)config.get(keyPrefix + CONFIG_KEY_PORT);
+          int port=StringUtils.isBlank(portStr) ? InsteonHubProxy.DEFAULT_PORT : Integer.parseInt(config.get(keyPrefix + CONFIG_KEY_PORT).toString());
+          InsteonHubProxy proxy=new InsteonHubProxy(host,port,user,pass,new AsyncEventPublisher(hubId));
+          proxies.put(hubId,proxy);
+          if (activated) {
+            proxy.start();
+          }
+        }
+      }
+      setProperlyConfigured(true);
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error configuring " + getName(),t);
+  }
+}

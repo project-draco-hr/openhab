@@ -1,0 +1,42 @@
+{
+  InsteonHubBindingConfig config=InsteonHubBindingConfigUtil.getConfigForItem(providers,itemName);
+  if (config == null) {
+    logger.error(BINDING_NAME + " received command for unknown item '" + itemName+ "'");
+    return;
+  }
+  InsteonHubProxy proxy=proxies.get(config.getHubId());
+  if (proxy == null) {
+    logger.error(BINDING_NAME + " received command for unknown hub id '" + config.getHubId()+ "'");
+    return;
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug(BINDING_NAME + " processing command '" + command+ "' of type '"+ command.getClass().getSimpleName()+ "' for item '"+ itemName+ "'");
+  }
+  try {
+    BindingType type=config.getBindingType();
+    if (type == BindingType.digital) {
+      if (command instanceof OnOffType) {
+        proxy.setPower(config.getDevice(),command == OnOffType.ON,false);
+      }
+    }
+ else     if (type == BindingType.analog) {
+      if (command instanceof OnOffType) {
+        int level=command == OnOffType.ON ? 255 : 0;
+        proxy.setLevel(config.getDevice(),level);
+      }
+ else       if (command instanceof IncreaseDecreaseType || command instanceof UpDownType) {
+        int adjustAmt=command == IncreaseDecreaseType.INCREASE || command == UpDownType.UP ? 30 : -30;
+        proxy.adjustLevel(config.getDevice(),adjustAmt);
+      }
+ else {
+        byte percentByte=Byte.parseByte(command.toString());
+        float percent=percentByte * .01f;
+        int level=(int)(255 * percent);
+        proxy.setLevel(config.getDevice(),level);
+      }
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error processing command '" + command + "' for item '"+ itemName+ "'",t);
+  }
+}

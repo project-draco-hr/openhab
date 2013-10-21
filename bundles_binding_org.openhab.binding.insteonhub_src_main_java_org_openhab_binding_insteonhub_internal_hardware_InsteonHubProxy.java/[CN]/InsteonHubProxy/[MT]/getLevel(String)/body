@@ -1,0 +1,26 @@
+{
+  StringBuilder url=new StringBuilder();
+  url.append("/sx.xml?");
+  url.append(device);
+  url.append("=");
+  url.append(COMMAND_STATUS);
+  url.append("00");
+  String response=httpGet(url.toString());
+  int startIdx=response.indexOf(STATUS_PREFIX);
+  if (startIdx == -1) {
+    throw new IOException("Unexpected response: " + response);
+  }
+  try {
+    String hex=response.substring(startIdx + STATUS_PREFIX.length());
+    hex=hex.substring(0,hex.indexOf('"'));
+    hex=hex.substring(hex.length() - 2);
+    int value=Hex.decodeHex(hex.toCharArray())[0];
+    if (value < 0) {
+      value+=256;
+    }
+    return value;
+  }
+ catch (  Exception e) {
+    throw new IOException("Unexpected response: " + response,e);
+  }
+}

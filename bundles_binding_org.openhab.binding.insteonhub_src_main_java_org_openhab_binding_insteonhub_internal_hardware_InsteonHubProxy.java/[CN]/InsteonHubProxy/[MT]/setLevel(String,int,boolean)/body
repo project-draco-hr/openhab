@@ -1,0 +1,26 @@
+{
+  if (level > LEVEL_MAX) {
+    level=LEVEL_MAX;
+  }
+ else   if (level < LEVEL_MIN) {
+    level=LEVEL_MIN;
+  }
+  String levelHex=byteToHex((byte)level);
+  String command;
+  if ("00".equals(levelHex)) {
+    command=ramp ? COMMAND_OFF_RAMP : COMMAND_OFF_FAST;
+  }
+ else   if ("FF".equals(levelHex)) {
+    command=ramp ? COMMAND_ON_RAMP : COMMAND_ON_FAST;
+  }
+ else {
+    command=COMMAND_ON_RAMP;
+  }
+  StringBuilder url=new StringBuilder();
+  url.append("/sx.xml?");
+  url.append(device);
+  url.append("=");
+  url.append(command);
+  url.append(levelHex);
+  return httpGet(url.toString());
+}
