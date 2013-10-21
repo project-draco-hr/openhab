@@ -1,11 +1,13 @@
 {
   SqueezeboxBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
   if (provider == null) {
-    logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
+    logger.warn("Cannot find matching binding provider [itemName={}, command={}], ignoring.",itemName,command);
     return;
   }
   String playerCommand=provider.getPlayerCommand(itemName,command.toString());
-  if (StringUtils.isNotBlank(playerCommand)) {
-    executePlayerCommand(playerCommand);
+  if (StringUtils.isEmpty(playerCommand)) {
+    logger.warn("Invalid player command [itemName={}, command={}], ignoring.",itemName,command);
+    return;
   }
+  executePlayerCommand(playerCommand);
 }

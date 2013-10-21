@@ -1,0 +1,13 @@
+{
+  String[] itemNames=getItemNamesByPlayerAndPlayerCommand(id,type);
+  for (  String itemName : itemNames) {
+    if (StringUtils.isNotBlank(itemName)) {
+      if (newState) {
+        eventPublisher.postUpdate(itemName,OnOffType.ON);
+      }
+ else {
+        eventPublisher.postUpdate(itemName,OnOffType.OFF);
+      }
+    }
+  }
+}

@@ -2,45 +2,45 @@
   if (provider instanceof SqueezeboxBindingProvider) {
     logger.debug("Squeezebox bindingChanged: " + itemName);
     SqueezeboxBindingProvider squeezeProvider=(SqueezeboxBindingProvider)provider;
-    String playerName;
-    if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.VOLUME.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshVolume();
+    String playerId;
+    if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.VOLUME.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshVolume();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_POWERED.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshPower();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_POWERED.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshPower();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_MUTED.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshMute();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_MUTED.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshMute();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.TITLE.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshTitle();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.TITLE.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshTitle();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_PLAYING.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshPlay();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_PLAYING.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshMode();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_STOPPED.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshStop();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_STOPPED.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshMode();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_PAUSED.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshPause();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.IS_PAUSED.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshMode();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.ALBUM.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshAlbum();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.ALBUM.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshAlbum();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.COVERART.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshArt();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.COVERART.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshArt();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.YEAR.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshYear();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.YEAR.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshYear();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.ARTIST.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshArtist();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.ARTIST.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshArtist();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.GENRE.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshGenre();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.GENRE.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshGenre();
     }
- else     if (!(playerName=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.REMOTETITLE.getPlayerCommand())).equals("")) {
-      squeezeServer.getPlayerByOhName(playerName).refreshRemoteTitle();
+ else     if (!StringUtils.isEmpty(playerId=squeezeProvider.getPlayerByItemnameAndCommand(itemName,PlayerCommandTypeMapping.REMOTETITLE.getPlayerCommand()))) {
+      squeezeServer.getPlayer(playerId).refreshRemoteTitle();
     }
   }
 }

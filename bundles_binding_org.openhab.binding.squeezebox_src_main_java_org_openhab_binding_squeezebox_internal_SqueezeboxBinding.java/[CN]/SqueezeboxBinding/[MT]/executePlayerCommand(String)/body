@@ -2,86 +2,96 @@
   String playerId="";
   String playerCommand="";
   String argument="";
-  Pattern cmdPattern=Pattern.compile("(\\w*):(.*)");
-  Matcher m=cmdPattern.matcher(playerCommandLine);
-  if (m.matches()) {
-    playerId=m.group(1);
-    playerCommand=m.group(2);
+  Pattern pattern=Pattern.compile("(\\w*):(.*)");
+  Matcher matcher=pattern.matcher(playerCommandLine);
+  if (matcher.matches()) {
+    playerId=matcher.group(1);
+    playerCommand=matcher.group(2);
   }
-  logger.info("executed commandLine '{}' for player '{}'",playerCommand,playerId);
-  if (null != squeezeServer) {
-    PlayerCommandTypeMapping command;
-    if (playerCommand.contains("=")) {
-      command=PlayerCommandTypeMapping.fromString(playerCommand.substring(0,playerCommand.indexOf("=")));
-      try {
-        argument=URLEncoder.encode(playerCommand.substring(playerCommand.indexOf("=") + 1),"UTF-8").replace("+","%20");
-      }
- catch (      UnsupportedEncodingException e) {
-        logger.error("error while encoding message");
-      }
+  if (squeezeServer == null) {
+    logger.warn("Squeeze Server not initialised or configured yet, ignoring commandLine '{}' for player '{}'",playerCommand,playerId);
+    return;
+  }
+  logger.debug("Executed commandLine '{}' for player '{}'",playerCommand,playerId);
+  SqueezePlayer player=squeezeServer.getPlayer(playerId);
+  if (player == null) {
+    logger.warn("No Squeezebox player configured with id '{}', ignoring.",playerId);
+    return;
+  }
+  PlayerCommandTypeMapping command;
+  if (playerCommand.contains("=")) {
+    command=PlayerCommandTypeMapping.fromString(playerCommand.substring(0,playerCommand.indexOf("=")));
+    try {
+      argument=URLEncoder.encode(playerCommand.substring(playerCommand.indexOf("=") + 1),"UTF-8").replace("+","%20");
     }
+ catch (    UnsupportedEncodingException e) {
+      logger.error("Error while encoding message, ignoring.");
+      return;
+    }
+  }
  else {
-      command=PlayerCommandTypeMapping.fromString(playerCommand);
-    }
-    SqueezePlayer player=squeezeServer.getPlayerByOhName(playerId);
-    if ((null != player) && (null != command)) {
-      try {
+    command=PlayerCommandTypeMapping.fromString(playerCommand);
+  }
+  if (command == null) {
+    logger.warn("Could not match to a Squeezebox command for commandLine '{}', ignoring.",playerCommand);
+    return;
+  }
+  try {
 switch (command) {
 case MUTE:
-          squeezeServer.muteByOhName(playerId,true);
-        break;
-case UNMUTE:
-      squeezeServer.muteByOhName(playerId,false);
+      squeezeServer.mute(playerId);
     break;
+case UNMUTE:
+  squeezeServer.unMute(playerId);
+break;
 case VOLUME_INCREASE:
-  squeezeServer.increaseVolumeByOhName(playerId);
+squeezeServer.volumeUp(playerId);
 break;
 case VOLUME_DECREASE:
-squeezeServer.decreaseVolumeByOhName(playerId);
+squeezeServer.volumeDown(playerId);
 break;
 case VOLUME:
-squeezeServer.setVolumeByOhName(playerId,argument);
+squeezeServer.setVolume(playerId,Integer.parseInt(argument));
 break;
 case PLAY:
-squeezeServer.playByOhName(playerId);
+squeezeServer.play(playerId);
 break;
 case PAUSE:
-squeezeServer.pauseByOhName(playerId,true);
+squeezeServer.pause(playerId);
 break;
 case POWER_ON:
-squeezeServer.powerByOhName(playerId,true);
+squeezeServer.powerOn(playerId);
 break;
 case POWER_OFF:
-squeezeServer.powerByOhName(playerId,false);
+squeezeServer.powerOff(playerId);
 break;
 case NEXT:
-squeezeServer.navigateByOhName(playerId,false);
+squeezeServer.next(playerId);
 break;
 case PREV:
-squeezeServer.navigateByOhName(playerId,true);
+squeezeServer.prev(playerId);
 break;
 case STOP:
-squeezeServer.stopByOhName(playerId);
+squeezeServer.stop(playerId);
 break;
 case HTTP:
-squeezeServer.playUrlByOhName(playerId,"http://" + argument);
+squeezeServer.playUrl(playerId,"http://" + argument);
 break;
 case FILE:
-squeezeServer.playUrlByOhName(playerId,"file://" + argument);
+squeezeServer.playUrl(playerId,"file://" + argument);
 break;
 case ADD:
-squeezeServer.syncPlayer(playerId,"",true);
+squeezeServer.syncPlayer(playerId,argument);
 break;
 case REMOVE:
-squeezeServer.syncPlayer(playerId,argument,false);
+squeezeServer.unSyncPlayer(playerId);
 break;
 default :
+logger.warn("Unknown playerCommand '{}'",playerCommand);
 break;
 }
 }
  catch (Exception e) {
-logger.warn("unknow playerCommand '{}'",playerCommand);
-}
-}
+logger.warn("Error executing playerCommand '" + playerCommand + "'",e);
 }
 }
