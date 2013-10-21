@@ -1,0 +1,16 @@
+{
+  if (sensorValue != null) {
+    eventPublisher.postUpdate(itemName,UnDefType.UNDEF);
+    logger.debug("execute called: sensorValue was null");
+    return;
+  }
+  Object value=null;
+  if (sensorValue instanceof Double) {
+    value=DecimalType.valueOf(String.valueOf(sensorValue));
+  }
+ else   if (sensorValue instanceof DigitalState) {
+    value=sensorValue == DigitalState.HIGH ? 1 : 0;
+  }
+  eventPublisher.postUpdate(itemName,DecimalType.valueOf(String.valueOf(value)));
+  logger.debug("execute called: found sensorValue: {}",sensorValue);
+}

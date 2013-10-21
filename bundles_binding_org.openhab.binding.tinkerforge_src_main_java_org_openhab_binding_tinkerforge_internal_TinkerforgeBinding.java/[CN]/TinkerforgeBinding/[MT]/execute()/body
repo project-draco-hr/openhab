@@ -13,15 +13,7 @@
       MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
       if (mDevice != null) {
         if (mDevice instanceof MSensor) {
-          Double sensorValue=((MSensor)mDevice).fetchSensorValue();
-          if (sensorValue != null) {
-            eventPublisher.postUpdate(itemName,DecimalType.valueOf(String.valueOf(sensorValue)));
-            logger.debug("execute called: found sensorValue: {}",sensorValue);
-          }
- else {
-            eventPublisher.postUpdate(itemName,UnDefType.UNDEF);
-            logger.debug("execute called: sensorValue was null");
-          }
+          handleSensorValue(((MSensor<?>)mDevice).fetchSensorValue(),itemName);
         }
  else         if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
           SwitchState switchState=((MInSwitchActor)mDevice).getSwitchState();
