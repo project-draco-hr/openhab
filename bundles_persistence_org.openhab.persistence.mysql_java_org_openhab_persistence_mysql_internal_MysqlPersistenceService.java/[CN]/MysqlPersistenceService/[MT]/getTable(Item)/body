@@ -1,0 +1,62 @@
+{
+  Statement statement=null;
+  String sqlCmd=null;
+  int rowId=0;
+  String itemName=item.getName();
+  String tableName=sqlTables.get(itemName);
+  if (tableName != null)   return tableName;
+  try {
+    sqlCmd=new String("INSERT INTO Items (ItemName) VALUES ('" + itemName + "')");
+    statement=connection.createStatement();
+    statement.executeUpdate(sqlCmd,Statement.RETURN_GENERATED_KEYS);
+    ResultSet resultSet=statement.getGeneratedKeys();
+    if (resultSet != null && resultSet.next()) {
+      rowId=resultSet.getInt(1);
+    }
+    if (rowId == 0) {
+      throw new SQLException("mySQL: Creating table for item '" + itemName + "' failed.");
+    }
+    tableName=new String("Item" + rowId);
+    logger.debug("mySQL: new item " + itemName + " is Item"+ rowId);
+  }
+ catch (  SQLException e) {
+    logger.error("mySQL: Could not create table for item '" + itemName + "': "+ e.getMessage());
+  }
+ finally {
+    if (statement != null) {
+      try {
+        statement.close();
+      }
+ catch (      SQLException logOrIgnore) {
+      }
+    }
+  }
+  if (tableName == null)   return null;
+  String mysqlType=new String("DOUBLE");
+  String itemType=item.getClass().toString().toUpperCase();
+  itemType=itemType.substring(itemType.lastIndexOf('.') + 1);
+  if (sqlTypes.get(itemType) != null) {
+    mysqlType=sqlTypes.get(itemType);
+  }
+  sqlCmd=new String("CREATE TABLE " + tableName + " (Time DATETIME, Value "+ mysqlType+ ", PRIMARY KEY(Time));");
+  logger.debug("SQL: " + sqlCmd);
+  try {
+    statement=connection.createStatement();
+    statement.executeUpdate(sqlCmd);
+    logger.debug("mySQL: Table created for item '" + itemName + "' with datatype "+ mysqlType+ " in SQL database.");
+    sqlTables.put(itemName,tableName);
+  }
+ catch (  Exception e) {
+    logger.error("mySQL: Could not create table for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
+  }
+ finally {
+    if (statement != null) {
+      try {
+        statement.close();
+      }
+ catch (      Exception hidden) {
+      }
+    }
+  }
+  return tableName;
+}
