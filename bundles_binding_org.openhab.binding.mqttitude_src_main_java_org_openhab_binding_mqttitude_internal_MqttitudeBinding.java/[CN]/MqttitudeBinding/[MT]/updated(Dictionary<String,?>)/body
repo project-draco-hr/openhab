@@ -1,0 +1,15 @@
+{
+  if (properties == null || properties.isEmpty()) {
+    logger.trace("No config properties available.");
+    return;
+  }
+  float homeLat=Float.parseFloat(getMandatoryProperty(properties,"home.lat"));
+  float homeLon=Float.parseFloat(getMandatoryProperty(properties,"home.lon"));
+  if (homeLat == 0)   throw new ConfigurationException("mqttitude:home.lat","No latitude specified for 'home'");
+  if (homeLon == 0)   throw new ConfigurationException("mqttitude:home.lon","No longitude specified for 'home'");
+  homeLocation=new Location(homeLat,homeLon);
+  geoFence=Float.parseFloat(getOptionalProperty(properties,"geofence","100"));
+  logger.debug("Configuration updated for Mqttitude binding.");
+  unregisterConsumers();
+  registerConsumers();
+}

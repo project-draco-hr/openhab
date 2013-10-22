@@ -1,0 +1,5 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (StringUtils.isEmpty(bindingConfig))   throw new BindingConfigParseException("Null config for " + item.getName() + " - expecting an Mqttitude topic");
+  addBindingConfig(item,new MqttitudeItemConfig(item.getName(),bindingConfig));
+}
