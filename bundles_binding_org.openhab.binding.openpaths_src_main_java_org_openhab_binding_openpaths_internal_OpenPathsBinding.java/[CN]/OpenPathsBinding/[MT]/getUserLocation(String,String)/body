@@ -8,17 +8,25 @@
     logger.error("Failed to request the OpenPaths location: " + response.getCode());
     return null;
   }
+  Map<String,String> locationData;
   try {
-    JSONParser parser=new JSONParser();
-    JSONArray array=(JSONArray)parser.parse(response.getBody());
-    JSONObject obj=(JSONObject)array.get(0);
-    float latitude=Float.parseFloat(obj.get("lat").toString());
-    float longitude=Float.parseFloat(obj.get("lon").toString());
-    String device=obj.get("device").toString();
-    return new Location(latitude,longitude,device);
+    ObjectMapper jsonReader=new ObjectMapper();
+    locationData=jsonReader.readValue(response.getBody(),Map.class);
   }
- catch (  ParseException e) {
-    logger.error("Failed to parse the OpenPaths response: " + response.getBody(),e);
+ catch (  JsonParseException e) {
+    logger.error("Error parsing JSON:\n" + response.getBody());
     return null;
   }
+catch (  JsonMappingException e) {
+    logger.error("Error mapping JSON:\n" + response.getBody());
+    return null;
+  }
+catch (  IOException e) {
+    logger.error("An I/O error occured while decoding JSON:\n" + response.getBody());
+    return null;
+  }
+  float latitude=Float.parseFloat(locationData.get("lat").toString());
+  float longitude=Float.parseFloat(locationData.get("lon").toString());
+  String device=locationData.get("device").toString();
+  return new Location(latitude,longitude,device);
 }
