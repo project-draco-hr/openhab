@@ -14,7 +14,7 @@
     try {
       byte[] data=connector.receiveDatagram();
       logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
-      HashMap<SwegonVentilationCommandType,Integer> regValues=SwegonVentilationDataParser.ParseData(data);
+      HashMap<SwegonVentilationCommandType,Integer> regValues=SwegonVentilationDataParser.parseData(data);
       if (regValues != null) {
         logger.debug("regValues (len={}): {}",regValues.size(),regValues);
         Set<Map.Entry<SwegonVentilationCommandType,Integer>> set=regValues.entrySet();
