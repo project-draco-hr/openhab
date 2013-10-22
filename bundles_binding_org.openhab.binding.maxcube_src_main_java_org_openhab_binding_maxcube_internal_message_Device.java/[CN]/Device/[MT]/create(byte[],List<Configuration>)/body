@@ -4,8 +4,8 @@
   }
   String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
   Device device=Device.create(rfAddress,configurations);
-  boolean[] bits1=getBits(Utils.fromByte(raw[4]));
-  boolean[] bits2=getBits(Utils.fromByte(raw[5]));
+  boolean[] bits1=Utils.getBits(Utils.fromByte(raw[4]));
+  boolean[] bits2=Utils.getBits(Utils.fromByte(raw[5]));
   device.setInitialized(bits1[1]);
   device.setAnswer(bits1[2]);
   device.setError(bits1[3]);
