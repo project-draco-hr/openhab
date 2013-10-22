@@ -1,0 +1,18 @@
+{
+  if (!isConnectionClosed) {
+    ArtDmxPacket dmx=new ArtDmxPacket();
+    dmx.setUniverse(0,0);
+    dmx.setSequenceID(sequenceID % 255);
+    dmx.setDMX(buffer,buffer.length);
+    if (!receiverNodes.isEmpty()) {
+      for (      ArtNetNode receiver : receiverNodes) {
+        logger.trace("Sending " + buffer.length + " Bytes to "+ receiver.getIPAddress().toString());
+        artnet.unicastPacket(dmx,receiver);
+      }
+    }
+ else {
+      artnet.broadcastPacket(dmx);
+    }
+    sequenceID++;
+  }
+}
