@@ -1,0 +1,26 @@
+{
+  Color color=LINECOLORS[counter % LINECOLORS.length];
+  String label=itemUIRegistry.getLabel(item.getName());
+  if (label != null)   label=item.getName();
+  FilterCriteria filter=new FilterCriteria();
+  filter.setBeginDate(dateTimeBegin);
+  filter.setEndDate(dateTimeEnd);
+  filter.setItemName(item.getName());
+  filter.setOrdering(Ordering.ASCENDING);
+  Iterable<HistoricItem> result=service.query(filter);
+  Iterator<HistoricItem> it=result.iterator();
+  Collection<Date> xData=new ArrayList<Date>();
+  Collection<Number> yData=new ArrayList<Number>();
+  while (it.hasNext()) {
+    HistoricItem historicItem=it.next();
+    org.openhab.core.types.State state=historicItem.getState();
+    if (state instanceof DecimalType) {
+      DecimalType value=(DecimalType)state;
+      xData.add(historicItem.getTimestamp());
+      yData.add(value);
+    }
+  }
+  Series series=chart.addDateSeries("downloads",xData,yData);
+  series.setLineStyle(SeriesLineStyle.SOLID);
+  chart.addDateSeries(label,xData,yData);
+}

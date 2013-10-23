@@ -1,0 +1,43 @@
+{
+  int width=480;
+  try {
+    width=Integer.parseInt(req.getParameter("w"));
+  }
+ catch (  Exception e) {
+  }
+  int height=240;
+  try {
+    height=Integer.parseInt(req.getParameter("h"));
+  }
+ catch (  Exception e) {
+  }
+  Long period=PERIODS.get(req.getParameter("period"));
+  if (period == null) {
+    period=PERIODS.get("D");
+  }
+  Chart chart=new ChartBuilder().width(width).height(height).theme(ChartTheme.Matlab).build();
+  chart.getStyleManager().setPlotGridLinesVisible(false);
+  String serviceName="mysql";
+  QueryablePersistenceService service=getPersistenceServices().get(serviceName);
+  if (service == null) {
+    logger.debug("Persistence service not found '{}'.",serviceName);
+  }
+  if (!(service instanceof QueryablePersistenceService)) {
+    logger.debug("Persistence service not queryable '{}'.",serviceName);
+  }
+  Date dateTimeEnd=new Date();
+  Date dateTimeBegin=new Date(dateTimeEnd.getTime() - period);
+  configureContents(service,dateTimeBegin,dateTimeEnd,chart,req);
+  try {
+    BufferedImage bi=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_RGB);
+    res.setContentType("image/png");
+    BufferedImage lBufferedImage=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_RGB);
+    Graphics2D lGraphics2D=lBufferedImage.createGraphics();
+    chart.paint(lGraphics2D);
+    ImageIO.write(lBufferedImage,"png",res.getOutputStream());
+    javax.imageio.ImageIO.write(bi,"png",res.getOutputStream());
+  }
+ catch (  FileNotFoundException e) {
+    throw new ServletException("Could not read database files for all requested items.",e);
+  }
+}
