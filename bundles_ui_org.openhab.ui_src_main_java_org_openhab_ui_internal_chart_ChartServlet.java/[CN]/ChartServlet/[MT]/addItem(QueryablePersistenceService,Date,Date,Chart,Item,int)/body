@@ -1,7 +1,10 @@
 {
   Color color=LINECOLORS[counter % LINECOLORS.length];
   String label=itemUIRegistry.getLabel(item.getName());
-  if (label != null)   label=item.getName();
+  if (label != null && label.contains("[") && label.contains("]")) {
+    label=label.substring(0,label.indexOf('['));
+  }
+  if (label == null)   label=item.getName();
   FilterCriteria filter=new FilterCriteria();
   filter.setBeginDate(dateTimeBegin);
   filter.setEndDate(dateTimeEnd);
@@ -20,7 +23,7 @@
       yData.add(value);
     }
   }
-  Series series=chart.addDateSeries("downloads",xData,yData);
-  series.setLineStyle(SeriesLineStyle.SOLID);
-  chart.addDateSeries(label,xData,yData);
+  Series series=chart.addDateSeries(label,xData,yData);
+  series.setMarker(SeriesMarker.NONE);
+  series.setLineColor(color);
 }
