@@ -1,13 +1,17 @@
 {
-  Color color=LINECOLORS[counter % LINECOLORS.length];
-  String label=itemUIRegistry.getLabel(item.getName());
-  if (label != null && label.contains("[") && label.contains("]")) {
-    label=label.substring(0,label.indexOf('['));
+  Color color=LINECOLORS[seriesCounter % LINECOLORS.length];
+  seriesCounter++;
+  String label=null;
+  if (itemUIRegistry != null) {
+    label=itemUIRegistry.getLabel(item.getName());
+    if (label != null && label.contains("[") && label.contains("]")) {
+      label=label.substring(0,label.indexOf('['));
+    }
   }
   if (label == null)   label=item.getName();
   FilterCriteria filter=new FilterCriteria();
-  filter.setBeginDate(dateTimeBegin);
-  filter.setEndDate(dateTimeEnd);
+  filter.setBeginDate(timeBegin);
+  filter.setEndDate(timeEnd);
   filter.setItemName(item.getName());
   filter.setOrdering(Ordering.ASCENDING);
   Iterable<HistoricItem> result=service.query(filter);

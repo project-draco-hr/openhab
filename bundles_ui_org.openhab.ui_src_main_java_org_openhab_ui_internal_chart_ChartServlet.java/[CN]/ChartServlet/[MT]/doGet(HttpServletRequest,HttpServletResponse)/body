@@ -16,25 +16,17 @@
   if (period == null) {
     period=PERIODS.get("D");
   }
-  Chart chart=new ChartBuilder().width(width).height(height).theme(ChartTheme.Matlab).build();
-  String serviceName="mysql";
-  QueryablePersistenceService service=getPersistenceServices().get(serviceName);
-  if (service == null) {
-    logger.debug("Persistence service not found '{}'.",serviceName);
-    throw new ServletException("Persistence service not found.");
+  Date timeEnd=new Date();
+  Date timeBegin=new Date(timeEnd.getTime() - period);
+  String serviceName=req.getParameter("service");
+  ChartProvider provider=getChartProviders().get("default");
+  if (provider == null)   throw new ServletException("Could not get chart provider.");
+  res.setContentType(provider.getChartType());
+  try {
+    BufferedImage chart=provider.createChart(serviceName,null,timeBegin,timeEnd,height,width,req.getParameter("items"),req.getParameter("groups"));
+    ImageIO.write(chart,"png",res.getOutputStream());
   }
-  if (!(service instanceof QueryablePersistenceService)) {
-    logger.debug("Persistence service not queryable '{}'.",serviceName);
-    throw new ServletException("Persistence service not queryable.");
+ catch (  ItemNotFoundException e) {
+    logger.debug("Item not found error while generating chart.");
   }
-  Date dateTimeEnd=new Date();
-  Date dateTimeBegin=new Date(dateTimeEnd.getTime() - period);
-  configureContents(service,dateTimeBegin,dateTimeEnd,chart,req);
-  BufferedImage bi=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_RGB);
-  res.setContentType("image/png");
-  BufferedImage lBufferedImage=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_RGB);
-  Graphics2D lGraphics2D=lBufferedImage.createGraphics();
-  chart.paint(lGraphics2D);
-  ImageIO.write(lBufferedImage,"png",res.getOutputStream());
-  javax.imageio.ImageIO.write(bi,"png",res.getOutputStream());
 }

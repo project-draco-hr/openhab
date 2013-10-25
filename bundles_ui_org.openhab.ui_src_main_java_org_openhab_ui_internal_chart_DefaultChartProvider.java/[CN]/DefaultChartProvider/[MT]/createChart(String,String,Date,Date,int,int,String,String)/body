@@ -1,0 +1,42 @@
+{
+  QueryablePersistenceService persistenceService;
+  int seriesCounter=0;
+  Chart chart=new ChartBuilder().width(width).height(height).build();
+  persistenceService=null;
+  if (service != null) {
+    persistenceService=getPersistenceServices().get(service);
+  }
+ else {
+    persistenceService=getPersistenceServices().entrySet().iterator().next().getValue();
+  }
+  if (persistenceService == null) {
+    logger.debug("Persistence service not found '{}'.",service);
+    return null;
+  }
+  if (items != null) {
+    String[] itemNames=items.split(",");
+    for (    String itemName : itemNames) {
+      Item item=itemUIRegistry.getItem(itemName);
+      addItem(chart,persistenceService,startTime,endTime,item,seriesCounter);
+    }
+  }
+  if (groups != null) {
+    String[] groupNames=groups.split(",");
+    for (    String groupName : groupNames) {
+      Item item=itemUIRegistry.getItem(groupName);
+      if (item instanceof GroupItem) {
+        GroupItem groupItem=(GroupItem)item;
+        for (        Item member : groupItem.getMembers()) {
+          addItem(chart,persistenceService,startTime,endTime,member,seriesCounter);
+        }
+      }
+ else {
+        throw new ItemNotFoundException("Item '" + item.getName() + "' defined in groups is not a group.");
+      }
+    }
+  }
+  BufferedImage lBufferedImage=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_ARGB);
+  Graphics2D lGraphics2D=lBufferedImage.createGraphics();
+  chart.paint(lGraphics2D);
+  return lBufferedImage;
+}
