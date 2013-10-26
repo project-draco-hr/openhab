@@ -1,0 +1,25 @@
+{
+  HashMap<String,TinkerforgeBindingProvider> providerMap=new HashMap<>();
+  for (  TinkerforgeBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String deviceUid=provider.getUid(itemName);
+      String subDeviceId=provider.getSubId(itemName);
+      String deviceName=provider.getName(itemName);
+      if (deviceName != null) {
+        logger.trace("found item for command: name {}",deviceName);
+        OHTFDevice<?> ohtfDevice=ohConfig.getConfigByOHId(deviceName);
+        deviceUid=ohtfDevice.getUid();
+        deviceName=ohtfDevice.getSubid();
+      }
+      if (uid.equals(deviceUid)) {
+        if (subId == null && subDeviceId == null) {
+          providerMap.put(itemName,provider);
+        }
+ else         if (subId != null && subId.equals(subDeviceId)) {
+          providerMap.put(itemName,provider);
+        }
+      }
+    }
+  }
+  return providerMap;
+}

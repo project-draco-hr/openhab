@@ -13,17 +13,17 @@
       MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
       if (mDevice != null) {
         if (mDevice instanceof MSensor) {
-          handleSensorValue(((MSensor<?>)mDevice).fetchSensorValue(),itemName);
+          postUpdate(deviceUid,deviceSubId,((MSensor<?>)mDevice).fetchSensorValue());
         }
  else         if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
           SwitchState switchState=((MInSwitchActor)mDevice).getSwitchState();
           if (switchState == null) {
             logger.debug("execute called: found MInSwitchActor state: null");
-            eventPublisher.postUpdate(itemName,UnDefType.UNDEF);
+            postUpdate(deviceUid,deviceSubId,UnDefType.UNDEF);
           }
  else {
             OnOffType state=(switchState == SwitchState.OFF) ? OnOffType.OFF : OnOffType.ON;
-            eventPublisher.postUpdate(itemName,state);
+            postUpdate(deviceUid,deviceSubId,state);
             logger.debug("execute called: found MInSwitchActor state: {}",switchState);
           }
         }

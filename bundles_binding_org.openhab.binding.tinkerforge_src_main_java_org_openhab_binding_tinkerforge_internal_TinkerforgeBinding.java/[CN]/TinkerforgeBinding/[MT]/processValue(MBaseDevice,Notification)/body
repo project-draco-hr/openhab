@@ -1,0 +1,13 @@
+{
+  Object newValue=notification.getNewValue();
+  String uid=device.getUid();
+  String subId=null;
+  if (device instanceof MSubDevice<?>) {
+    subId=((MSubDevice<?>)device).getSubId();
+    logger.trace("{} Notifier found MSubDevice sensor value for: {}",LoggerConstants.TFMODELUPDATE,subId);
+  }
+ else {
+    logger.trace("{} Notifier found mDevice sensor value for: {}",LoggerConstants.TFMODELUPDATE,uid);
+  }
+  postUpdate(uid,subId,newValue);
+}

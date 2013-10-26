@@ -1,0 +1,42 @@
+{
+  HashMap<String,TinkerforgeBindingProvider> providerMap=getBindingProviders(uid,subId);
+  if (providerMap.size() == 0) {
+    logger.debug("{} found no item for uid {}, subid {}",LoggerConstants.TFMODELUPDATE,uid,subId);
+  }
+  for (  Entry<String,TinkerforgeBindingProvider> entry : providerMap.entrySet()) {
+    String itemName=entry.getKey();
+    TinkerforgeBindingProvider provider=entry.getValue();
+    State value=null;
+    if (sensorValue instanceof Double) {
+      value=DecimalType.valueOf(String.valueOf(sensorValue));
+    }
+ else     if (sensorValue instanceof DigitalState) {
+      if (provider.getItemType(itemName).isAssignableFrom(NumberItem.class)) {
+        value=(State)(sensorValue == DecimalType.valueOf("1") ? DigitalState.HIGH : DecimalType.valueOf("0"));
+      }
+ else       if (provider.getItemType(itemName).isAssignableFrom(ContactItem.class)) {
+        value=(State)(sensorValue == OpenClosedType.OPEN ? DigitalState.HIGH : OpenClosedType.CLOSED);
+      }
+ else {
+        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+      }
+    }
+ else     if (sensorValue instanceof SwitchState) {
+      value=(sensorValue == SwitchState.OFF) ? OnOffType.OFF : OnOffType.ON;
+      if (provider.getItemType(itemName).isAssignableFrom(NumberItem.class)) {
+        value=(State)(sensorValue == DecimalType.valueOf("1") ? DigitalState.HIGH : DecimalType.valueOf("0"));
+      }
+ else       if (provider.getItemType(itemName).isAssignableFrom(ContactItem.class)) {
+        value=(State)(sensorValue == OpenClosedType.OPEN ? SwitchState.ON : OpenClosedType.CLOSED);
+      }
+ else {
+        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+      }
+    }
+ else     if (sensorValue == UnDefType.UNDEF || sensorValue == null) {
+      value=UnDefType.UNDEF;
+    }
+    eventPublisher.postUpdate(itemName,value);
+    logger.debug("{} postupdate: found sensorValue: {} for item {}",LoggerConstants.TFMODELUPDATE,sensorValue,itemName);
+  }
+}
