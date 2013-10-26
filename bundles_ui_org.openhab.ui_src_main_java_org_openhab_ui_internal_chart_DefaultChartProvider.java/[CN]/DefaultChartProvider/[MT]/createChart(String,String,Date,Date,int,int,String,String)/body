@@ -10,8 +10,7 @@
     persistenceService=getPersistenceServices().entrySet().iterator().next().getValue();
   }
   if (persistenceService == null) {
-    logger.debug("Persistence service not found '{}'.",service);
-    return null;
+    throw new IllegalArgumentException("Persistence service not found '" + service + "'.");
   }
   if (items != null) {
     String[] itemNames=items.split(",");
