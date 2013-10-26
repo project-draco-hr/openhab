@@ -1,6 +1,6 @@
 {
-  logger.debug("SqueezePlayer " + id + " -> mode: "+ mode.toString());
-  commonStateChange(id,mode.equals(Mode.play),PlayerCommandTypeMapping.IS_PLAYING);
-  commonStateChange(id,mode.equals(Mode.pause),PlayerCommandTypeMapping.IS_PAUSED);
-  commonStateChange(id,mode.equals(Mode.stop),PlayerCommandTypeMapping.IS_STOPPED);
+  logger.debug("SqueezePlayer " + playerId + " -> mode: "+ mode.toString());
+  booleanStateChange(playerId,CommandType.PLAY,mode.equals(Mode.play));
+  booleanStateChange(playerId,CommandType.PAUSE,mode.equals(Mode.pause));
+  booleanStateChange(playerId,CommandType.STOP,mode.equals(Mode.stop));
 }

@@ -12,36 +12,36 @@
       String value=messagePart.substring("mode%3A".length());
       player.setMode(Mode.valueOf(value));
     }
- else     if (messagePart.startsWith("current_title%3A")) {
-      String value=messagePart.substring("current_title%3A".length());
-      player.setCurrentTitle(decode(value));
+ else     if (messagePart.startsWith("title%3A")) {
+      String value=messagePart.substring("title%3A".length());
+      player.setTitle(decode(value));
     }
- else     if (messagePart.startsWith("genre%3A")) {
-      String value=messagePart.substring("genre%3A".length());
-      player.setGenre(decode(value));
+ else     if (messagePart.startsWith("remote_title%3A")) {
+      String value=messagePart.substring("remote_title%3A".length());
+      player.setRemoteTitle(decode(value));
     }
  else     if (messagePart.startsWith("artist%3A")) {
       String value=messagePart.substring("artist%3A".length());
       player.setArtist(decode(value));
     }
- else     if (messagePart.startsWith("year%3A")) {
-      String value=messagePart.substring("year%3A".length());
-      player.setYear(decode(value));
-    }
  else     if (messagePart.startsWith("album%3A")) {
       String value=messagePart.substring("album%3A".length());
       player.setAlbum(decode(value));
+    }
+ else     if (messagePart.startsWith("genre%3A")) {
+      String value=messagePart.substring("genre%3A".length());
+      player.setGenre(decode(value));
+    }
+ else     if (messagePart.startsWith("year%3A")) {
+      String value=messagePart.substring("year%3A".length());
+      player.setYear(Integer.parseInt(value));
     }
  else     if (messagePart.startsWith("artwork_track_id%3A")) {
       String value=messagePart.substring("artwork_track_id%3A".length());
       if (!value.startsWith(" ")) {
         value="http://" + host + ":"+ webPort+ "/music/"+ value+ "/cover.jpg";
       }
-      player.setArt(decode(value));
-    }
- else     if (messagePart.startsWith("remote_title%3A")) {
-      String value=messagePart.substring("remote_title%3A".length());
-      player.setRemoteTitle(decode(value));
+      player.setCoverArt(decode(value));
     }
   }
 }

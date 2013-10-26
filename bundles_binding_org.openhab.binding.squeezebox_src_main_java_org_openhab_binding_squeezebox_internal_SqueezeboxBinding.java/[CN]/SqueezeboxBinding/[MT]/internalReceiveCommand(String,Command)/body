@@ -1,13 +1,70 @@
 {
-  SqueezeboxBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
-  if (provider == null) {
-    logger.warn("Cannot find matching binding provider [itemName={}, command={}], ignoring.",itemName,command);
+  if (squeezeServer == null) {
+    logger.warn("Squeeze Server not initialised or configured yet, ignoring command '{}' for item '{}'",command.toString(),itemName);
     return;
   }
-  String playerCommand=provider.getPlayerCommand(itemName,command.toString());
-  if (StringUtils.isEmpty(playerCommand)) {
-    logger.warn("Invalid player command [itemName={}, command={}], ignoring.",itemName,command);
-    return;
-  }
-  executePlayerCommand(playerCommand);
+  logger.trace("internalReceiveCommand(itemname = {}, command = {})",itemName,command.toString());
+  for (  SqueezeboxBindingProvider provider : providers) {
+    SqueezeboxBindingConfig bindingConfig=provider.getSqueezeboxBindingConfig(itemName);
+    String playerId=bindingConfig.getPlayerId();
+    SqueezePlayer player=squeezeServer.getPlayer(playerId);
+    if (player == null) {
+      logger.warn("No Squeezebox player configured with id '{}'. Ignoring.",playerId);
+      continue;
+    }
+    try {
+switch (bindingConfig.getCommandType()) {
+case POWER:
+        if (command.equals(OnOffType.ON))         squeezeServer.powerOn(playerId);
+ else         if (command.equals(OnOffType.OFF))         squeezeServer.powerOff(playerId);
+      break;
+case MUTE:
+    if (command.equals(OnOffType.ON))     squeezeServer.mute(playerId);
+ else     if (command.equals(OnOffType.OFF))     squeezeServer.unMute(playerId);
+  break;
+case VOLUME:
+if (command.equals(IncreaseDecreaseType.INCREASE)) squeezeServer.volumeUp(playerId);
+ else if (command.equals(IncreaseDecreaseType.DECREASE)) squeezeServer.volumeDown(playerId);
+ else if (command.equals(UpDownType.UP)) squeezeServer.volumeUp(playerId);
+ else if (command.equals(UpDownType.DOWN)) squeezeServer.volumeDown(playerId);
+ else if (command instanceof DecimalType) squeezeServer.setVolume(playerId,((DecimalType)command).intValue());
+break;
+case PLAY:
+if (command.equals(OnOffType.ON)) squeezeServer.play(playerId);
+ else if (command.equals(OnOffType.OFF)) squeezeServer.stop(playerId);
+break;
+case PAUSE:
+if (command.equals(OnOffType.ON)) squeezeServer.pause(playerId);
+ else if (command.equals(OnOffType.OFF)) squeezeServer.play(playerId);
+break;
+case STOP:
+if (command.equals(OnOffType.ON)) squeezeServer.stop(playerId);
+ else if (command.equals(OnOffType.OFF)) squeezeServer.play(playerId);
+break;
+case NEXT:
+if (command.equals(OnOffType.ON)) squeezeServer.next(playerId);
+break;
+case PREV:
+if (command.equals(OnOffType.ON)) squeezeServer.prev(playerId);
+break;
+case HTTP:
+if (command.equals(OnOffType.ON)) squeezeServer.playUrl(playerId,"http://" + bindingConfig.getExtra());
+ else if (command.equals(OnOffType.OFF)) squeezeServer.stop(playerId);
+break;
+case FILE:
+if (command.equals(OnOffType.ON)) squeezeServer.playUrl(playerId,"file://" + bindingConfig.getExtra());
+ else if (command.equals(OnOffType.OFF)) squeezeServer.stop(playerId);
+break;
+case SYNC:
+if (command.equals(OnOffType.ON)) squeezeServer.syncPlayer(playerId,bindingConfig.getExtra());
+ else if (command.equals(OnOffType.OFF)) squeezeServer.unSyncPlayer(playerId);
+break;
+default :
+logger.warn("Unsupported command type '{}'",bindingConfig.getCommandType());
+}
+}
+ catch (Exception e) {
+logger.warn("Error executing command type '" + bindingConfig.getCommandType() + "'",e);
+}
+}
 }
