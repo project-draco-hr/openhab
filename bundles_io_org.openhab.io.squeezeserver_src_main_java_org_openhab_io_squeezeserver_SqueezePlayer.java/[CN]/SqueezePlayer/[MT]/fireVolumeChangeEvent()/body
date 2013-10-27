@@ -1,0 +1,17 @@
+{
+  PlayerEvent event=new PlayerEvent(this);
+  Iterator<SqueezePlayerEventListener> itr=playerListeners.iterator();
+  int tmpVolume;
+  if (this.volume < 0) {
+    tmpVolume=0;
+  }
+ else   if (this.volume > 100) {
+    tmpVolume=100;
+  }
+ else {
+    tmpVolume=this.volume;
+  }
+  while (itr.hasNext()) {
+    itr.next().volumeChangeEvent(event,this.playerId,tmpVolume);
+  }
+}
