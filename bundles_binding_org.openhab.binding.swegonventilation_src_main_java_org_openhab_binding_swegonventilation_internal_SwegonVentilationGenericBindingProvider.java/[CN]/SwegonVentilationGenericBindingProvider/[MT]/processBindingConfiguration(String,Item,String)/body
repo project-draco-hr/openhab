@@ -1,0 +1,17 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  SwegonVentilationBindingConfig config=new SwegonVentilationBindingConfig();
+  config.itemType=item.getClass();
+  String commandType=bindingConfig.trim();
+  try {
+    SwegonVentilationCommandType.validateBinding(commandType,config.itemType);
+    config.commandType=SwegonVentilationCommandType.getCommandType(commandType);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("'" + commandType + "' is not a valid command type");
+  }
+catch (  InvalidClassException e) {
+    throw new BindingConfigParseException("Not valid class for command type '" + commandType + "'");
+  }
+  addBindingConfig(item,config);
+}
