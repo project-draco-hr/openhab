@@ -44,7 +44,15 @@
         }
 switch (device.getType()) {
 case HeatingThermostat:
-          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
+          if (provider.getBindingType(itemName) == BindingType.VALVE) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());
+          }
+ else           if (provider.getBindingType(itemName) == BindingType.BATTERY) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getBatteryLow());
+          }
+ else {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
+          }
         break;
 case ShutterContact:
       eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
