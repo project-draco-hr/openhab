@@ -14,6 +14,10 @@
     logger.warn("No Squeezebox player exists with name '{}'. Ignoring action.",playerId);
     return false;
   }
+  if (volume != -1) {
+    logger.trace("Setting player state: volume {}",volume);
+    squeezeServer.setVolume(playerId,volume);
+  }
   squeezeServer.playUrl(playerId,url);
   return true;
 }
