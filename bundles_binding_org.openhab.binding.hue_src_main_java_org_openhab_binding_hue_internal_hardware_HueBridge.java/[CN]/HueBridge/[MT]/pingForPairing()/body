@@ -2,7 +2,6 @@
   int countdownInSeconds=100;
   while (countdownInSeconds > 0) {
     logger.info("Please press the connect button on the Hue bridge. Waiting for pairing for " + countdownInSeconds + " seconds...");
-    Client client=Client.create();
     WebResource webResource=client.resource("http://" + ip + "/api");
     String input="{\"username\":\"" + getSecret() + "\",\"devicetype\":\"openHAB_binding\"}";
     ClientResponse response=webResource.type("application/json").post(ClientResponse.class,input);
