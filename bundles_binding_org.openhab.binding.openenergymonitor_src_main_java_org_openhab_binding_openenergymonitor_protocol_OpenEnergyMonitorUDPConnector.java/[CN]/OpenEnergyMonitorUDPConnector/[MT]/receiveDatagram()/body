@@ -1,10 +1,9 @@
 {
-  final int PACKETSIZE=255;
   try {
     if (socket == null) {
       socket=new DatagramSocket(port);
     }
-    DatagramPacket packet=new DatagramPacket(new byte[PACKETSIZE],PACKETSIZE);
+    DatagramPacket packet=new DatagramPacket(new byte[MAX_PACKET_SIZE],MAX_PACKET_SIZE);
     socket.receive(packet);
     String[] bytes=new String(Arrays.copyOfRange(packet.getData(),0,packet.getLength() - 1)).split(" ");
     ByteBuffer bytebuf=ByteBuffer.allocate(bytes.length);
