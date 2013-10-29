@@ -1,0 +1,45 @@
+{
+  logger.trace("Handle Message Sensor Multi Level Request");
+  logger.debug(String.format("Received Sensor Multi Level Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SENSOR_MULTI_LEVEL_GET:
+case SENSOR_MULTI_LEVEL_SUPPORTED_GET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case SENSOR_MULTI_LEVEL_SUPPORTED_REPORT:
+logger.debug("Process Multi Level Supported Sensor Report");
+int payloadLength=serialMessage.getMessagePayload().length;
+for (int i=offset + 1; i < payloadLength; ++i) {
+for (int bit=0; bit < 8; ++bit) {
+if (((serialMessage.getMessagePayloadByte(i)) & (1 << bit)) == 0) continue;
+int index=((i - (offset + 1)) * 8) + bit + 1;
+if (index >= SensorType.values().length) continue;
+SensorType sensorTypeToAdd=SensorType.getSensorType(index);
+this.sensors.add(sensorTypeToAdd);
+logger.debug(String.format("Added sensor type %s (0x%02x)",sensorTypeToAdd.getLabel(),index));
+}
+}
+this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+break;
+case SENSOR_MULTI_LEVEL_REPORT:
+logger.trace("Process Multi Level Sensor Report");
+logger.debug(String.format("Sensor Multi Level report from nodeId = %d",this.getNode().getNodeId()));
+int sensorTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
+logger.debug(String.format("Sensor Type = (0x%02x)",sensorTypeCode));
+SensorType sensorType=SensorType.getSensorType(sensorTypeCode);
+if (sensorType == null) {
+logger.error(String.format("Unknown Alarm Type = 0x%02x, ignoring report.",sensorTypeCode));
+return;
+}
+if (!sensors.contains(sensorType)) this.sensors.add(sensorType);
+BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
+logger.debug(String.format("Sensor Value = (%f)",value));
+ZWaveMultiLevelSensorValueEvent zEvent=new ZWaveMultiLevelSensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,value);
+this.getController().notifyEventListeners(zEvent);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}
