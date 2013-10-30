@@ -1,0 +1,27 @@
+{
+  ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
+  ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
+  ZWaveCommandClass commandClass;
+  String commandClassName=bindingConfiguration.getArguments().get("command");
+  if (node.getNodeStage() != NodeStage.DONE)   return;
+  if (commandClassName != null) {
+    commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
+    if (commandClass == null) {
+      logger.warn("No command class found for item = {}, command class name = {}, ignoring command.",itemName,commandClassName);
+      return;
+    }
+  }
+ else {
+    commandClass=resolveConverter(provider.getItem(itemName),node,bindingConfiguration.getEndpoint());
+  }
+  if (commandClass == null) {
+    logger.warn("No converter found for item = {}, ignoring command.",itemName);
+    return;
+  }
+  ZWaveCommandClassConverter<ZWaveCommandClass> converter=(ZWaveCommandClassConverter<ZWaveCommandClass>)getConverter(commandClass.getCommandClass());
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, ignoring command.",itemName);
+    return;
+  }
+  converter.receiveCommand(provider.getItem(itemName),command,node,commandClass,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
+}

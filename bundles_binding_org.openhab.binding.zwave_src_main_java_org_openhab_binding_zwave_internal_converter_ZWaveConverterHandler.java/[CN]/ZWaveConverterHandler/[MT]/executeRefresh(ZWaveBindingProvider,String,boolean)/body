@@ -1,0 +1,39 @@
+{
+  ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
+  ZWaveCommandClass commandClass;
+  String commandClassName=bindingConfiguration.getArguments().get("command");
+  if (!forceRefresh && bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval())   return;
+  ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
+  if (node == null)   return;
+  if (commandClassName != null) {
+    if (commandClassName.equalsIgnoreCase("info")) {
+      infoConverter.executeRefresh(provider.getItem(itemName),node,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
+      return;
+    }
+    if (node.getNodeStage() != NodeStage.DONE)     return;
+    commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
+    if (commandClass == null) {
+      logger.warn("No command class found for item = {}, command class name = {}, ignoring execute refresh.",itemName,commandClassName);
+      return;
+    }
+  }
+ else {
+    commandClass=resolveConverter(provider.getItem(itemName),node,bindingConfiguration.getEndpoint());
+  }
+  if (commandClass == null) {
+    logger.warn("No converter found for item = {}, ignoring execute refresh.",itemName);
+    return;
+  }
+  ZWaveCommandClassConverter<ZWaveCommandClass> converter=(ZWaveCommandClassConverter<ZWaveCommandClass>)getConverter(commandClass.getCommandClass());
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, ignoring execute refresh.",itemName);
+    return;
+  }
+  if (bindingConfiguration.getRefreshInterval() == null) {
+    bindingConfiguration.setRefreshInterval(converter.getRefreshInterval());
+    if (!forceRefresh && 0 == bindingConfiguration.getRefreshInterval())     return;
+  }
+  if (!forceRefresh && bindingConfiguration.getLastRefreshed() != null && (bindingConfiguration.getLastRefreshed().getTime() + (bindingConfiguration.getRefreshInterval() * 1000) > Calendar.getInstance().getTimeInMillis()))   return;
+  bindingConfiguration.setLastRefreshed(Calendar.getInstance().getTime());
+  converter.executeRefresh(node,commandClass,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
+}
