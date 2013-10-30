@@ -1,0 +1,29 @@
+{
+  logger.debug("Loading ZWave product database.");
+  URL url=OpenHABConfiguration.class.getResource("resources/");
+  if (url == null) {
+    logger.debug("ZWave product database not found.");
+    return null;
+  }
+  ZWaveConfigManufacturerList products=null;
+  FileInputStream fin;
+  try {
+    fin=new FileInputStream(url + "manufacturer_specific.xml");
+    XStream xstream=new XStream(new StaxDriver());
+    xstream.alias("ManufacturerSpecificData",ZWaveConfigManufacturerList.class);
+    xstream.processAnnotations(ZWaveConfigManufacturerList.class);
+    products=(ZWaveConfigManufacturerList)xstream.fromXML(fin);
+    fin.close();
+  }
+ catch (  FileNotFoundException e) {
+    return null;
+  }
+catch (  IOException e) {
+    return null;
+  }
+  if (products == null)   return null;
+  for (  ZWaveConfigManufacturer m : products.manufacturers) {
+    if (m.id == manufacturer)     return m;
+  }
+  return null;
+}

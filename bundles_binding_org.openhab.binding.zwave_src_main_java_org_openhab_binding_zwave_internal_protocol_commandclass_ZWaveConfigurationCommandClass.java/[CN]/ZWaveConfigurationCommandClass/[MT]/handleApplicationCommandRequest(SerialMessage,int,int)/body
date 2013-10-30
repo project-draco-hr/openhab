@@ -1,0 +1,19 @@
+{
+  logger.trace("Handle Message Configuration Request");
+  logger.debug(String.format("Received Configuration Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case CONFIGURATIONCMD_SET:
+    logger.trace("Process Configuration Set");
+  processConfigurationReport(serialMessage,offset);
+break;
+case CONFIGURATIONCMD_GET:
+return;
+case CONFIGURATIONCMD_REPORT:
+logger.trace("Process Configuration Report");
+processConfigurationReport(serialMessage,offset);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}
