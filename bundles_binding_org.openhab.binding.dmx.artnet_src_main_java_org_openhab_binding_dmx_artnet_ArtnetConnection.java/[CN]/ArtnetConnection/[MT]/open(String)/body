@@ -1,0 +1,16 @@
+{
+  logger.debug("artnet-config: " + connectionString);
+  for (  String configString : connectionString.split(",")) {
+    logger.debug("adding artnet receiver " + configString);
+    ArtNetNode node=new ArtNetNode();
+    node.setIPAddress(InetAddress.getByName(configString));
+    receiverNodes.add(node);
+  }
+  try {
+    artnet.start();
+    isConnectionClosed=false;
+  }
+ catch (  ArtNetException e) {
+    logger.error(e.fillInStackTrace().toString());
+  }
+}

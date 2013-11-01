@@ -1,0 +1,22 @@
+{
+  if (StringUtils.isEmpty(message))   return new ArrayList<String>();
+  String[] words=StringUtils.split(message,' ');
+  List<String> sentences=new ArrayList<String>();
+  String sentence="";
+  for (  String word : words) {
+    if (word.length() == 0) {
+      continue;
+    }
+    if (word.length() > maxSentenceLength) {
+      logger.warn("Unable to say '{}' as this word is longer than the maximum sentence allowed ({})",word,maxSentenceLength);
+      continue;
+    }
+    if (sentence.length() + word.length() > maxSentenceLength) {
+      sentences.add(sentence.substring(0,sentence.length() - 1));
+      sentence="";
+    }
+    sentence+=word + " ";
+  }
+  if (sentence.length() > 0)   sentences.add(sentence.substring(0,sentence.length() - 1));
+  return sentences;
+}

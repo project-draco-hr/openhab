@@ -1,0 +1,15 @@
+{
+  State state=UnDefType.UNDEF;
+  try {
+    if (itemType == SwitchItem.class) {
+      state=value == 0 ? OnOffType.OFF : OnOffType.ON;
+    }
+ else     if (itemType == NumberItem.class) {
+      state=new DecimalType(value);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Cannot convert value '{}' to data type {}",value,itemType);
+  }
+  return state;
+}

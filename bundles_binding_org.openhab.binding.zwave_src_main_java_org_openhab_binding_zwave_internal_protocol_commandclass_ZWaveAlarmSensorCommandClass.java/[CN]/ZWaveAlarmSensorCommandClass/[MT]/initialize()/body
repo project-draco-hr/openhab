@@ -1,0 +1,13 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  if (this.getNode().getManufacturer() == 0x010F && this.getNode().getDeviceType() == 0x0501) {
+    logger.warn("Detected Fibaro FGBS001 Universal Sensor - this device fails to respond to SENSOR_ALARM_GET and SENSOR_ALARM_SUPPORTED_GET.");
+    return result;
+  }
+  if (this.getNode().getManufacturer() == 0x010F && this.getNode().getDeviceType() == 0x0600) {
+    logger.warn("Detected Fibaro FGWPE Wall Plug - this device fails to respond to SENSOR_ALARM_GET and SENSOR_ALARM_SUPPORTED_GET.");
+    return result;
+  }
+  result.add(this.getSupportedMessage());
+  return result;
+}

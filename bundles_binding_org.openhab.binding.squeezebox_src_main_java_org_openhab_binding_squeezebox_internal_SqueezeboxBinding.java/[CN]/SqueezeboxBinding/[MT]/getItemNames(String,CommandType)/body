@@ -1,0 +1,12 @@
+{
+  List<String> itemNames=new ArrayList<String>();
+  for (  SqueezeboxBindingProvider provider : this.providers) {
+    for (    String itemName : provider.getItemNames()) {
+      SqueezeboxBindingConfig bindingConfig=provider.getSqueezeboxBindingConfig(itemName);
+      if (!bindingConfig.getPlayerId().equals(playerId))       continue;
+      if (!bindingConfig.getCommandType().equals(commandType))       continue;
+      itemNames.add(itemName);
+    }
+  }
+  return itemNames;
+}
