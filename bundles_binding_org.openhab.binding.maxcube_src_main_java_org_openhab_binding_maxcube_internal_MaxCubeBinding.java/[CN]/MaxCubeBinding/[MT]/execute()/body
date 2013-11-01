@@ -67,8 +67,16 @@ default :
 }
  catch (UnknownHostException e) {
 logger.warn("Cannot establish connection with MAX!cube lan gateway while connecting to '{}'",ip);
+StringWriter stringWriter=new StringWriter();
+PrintWriter printWriter=new PrintWriter(stringWriter);
+e.printStackTrace(printWriter);
+logger.debug(stringWriter.toString());
 }
 catch (IOException e) {
 logger.warn("Cannot read data from MAX!cube lan gateway while connecting to '{}'",ip);
+StringWriter stringWriter=new StringWriter();
+PrintWriter printWriter=new PrintWriter(stringWriter);
+e.printStackTrace(printWriter);
+logger.debug(stringWriter.toString());
 }
 }
