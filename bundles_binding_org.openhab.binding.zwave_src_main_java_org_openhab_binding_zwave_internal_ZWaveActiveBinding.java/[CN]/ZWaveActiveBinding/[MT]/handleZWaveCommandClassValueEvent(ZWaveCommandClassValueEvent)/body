@@ -1,0 +1,13 @@
+{
+  boolean handled=false;
+  logger.debug("Got a value event from Z-Wave network for nodeId = {}, endpoint = {}, command class = {}, value = {}",new Object[]{event.getNodeId(),event.getEndpoint(),event.getCommandClass().getLabel(),event.getValue()});
+  for (  ZWaveBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      ZWaveBindingConfig bindingConfig=provider.getZwaveBindingConfig(itemName);
+      if (bindingConfig.getNodeId() != event.getNodeId() || bindingConfig.getEndpoint() != event.getEndpoint())       continue;
+      converterHandler.handleEvent(provider,itemName,event);
+      handled=true;
+    }
+  }
+  if (!handled)   logger.warn("No item bound for event from nodeId = {}, endpoint = {}, command class = {}, value = {}, ignoring.",new Object[]{event.getNodeId(),event.getEndpoint(),event.getCommandClass().getLabel(),event.getValue()});
+}
