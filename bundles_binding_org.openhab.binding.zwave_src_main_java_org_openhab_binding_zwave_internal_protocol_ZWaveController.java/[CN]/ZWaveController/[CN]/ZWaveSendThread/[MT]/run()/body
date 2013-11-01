@@ -9,6 +9,16 @@
       break;
     }
     if (lastSentMessage == null)     continue;
+    if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+      ZWaveNode node=getNode(lastSentMessage.getMessageNode());
+      if (node != null && !node.isListening() && !node.isFrequentlyListening() && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
+        ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+        if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
+          wakeUpCommandClass.putInWakeUpQueue(lastSentMessage);
+          continue;
+        }
+      }
+    }
     transactionCompleted.drainPermits();
     byte[] buffer=lastSentMessage.getMessageBuffer();
     logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
@@ -21,6 +31,18 @@
     }
     try {
       if (!transactionCompleted.tryAcquire(1,ZWAVE_RESPONSE_TIMEOUT,TimeUnit.MILLISECONDS)) {
+        timeOutCount.incrementAndGet();
+        if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+          buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
+          logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+          try {
+            serialPort.getOutputStream().write(buffer);
+          }
+ catch (          IOException e) {
+            logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
+            break;
+          }
+        }
         if (--lastSentMessage.attempts >= 0) {
           logger.error("Timeout while sending message to node {}. Requeueing",lastSentMessage.getMessageNode());
           if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData)           handleFailedSendDataRequest(lastSentMessage);

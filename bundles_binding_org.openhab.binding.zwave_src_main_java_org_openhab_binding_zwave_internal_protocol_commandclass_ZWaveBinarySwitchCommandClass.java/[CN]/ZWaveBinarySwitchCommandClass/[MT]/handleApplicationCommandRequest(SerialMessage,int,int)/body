@@ -1,0 +1,22 @@
+{
+  logger.trace("Handle Message Switch Binary Request");
+  logger.debug(String.format("Received Switch Binary Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SWITCH_BINARY_SET:
+    logger.trace("Process Switch Binary Set");
+  logger.debug("Switch Binary Set sent to the controller will be processed as Switch Binary Report");
+processSwitchBinaryReport(serialMessage,offset,endpoint);
+break;
+case SWITCH_BINARY_GET:
+logger.warn(String.format("Command 0x%02X not implemented.",command));
+return;
+case SWITCH_BINARY_REPORT:
+logger.trace("Process Switch Binary Report");
+processSwitchBinaryReport(serialMessage,offset,endpoint);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

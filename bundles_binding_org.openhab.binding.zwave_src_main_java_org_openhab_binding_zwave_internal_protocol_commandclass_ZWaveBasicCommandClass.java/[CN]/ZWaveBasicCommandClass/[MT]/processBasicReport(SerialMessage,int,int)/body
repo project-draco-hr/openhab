@@ -1,0 +1,6 @@
+{
+  int value=serialMessage.getMessagePayloadByte(offset + 1);
+  logger.debug(String.format("Basic report from nodeId = %d, value = 0x%02X",this.getNode().getNodeId(),value));
+  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);
+  this.getController().notifyEventListeners(zEvent);
+}

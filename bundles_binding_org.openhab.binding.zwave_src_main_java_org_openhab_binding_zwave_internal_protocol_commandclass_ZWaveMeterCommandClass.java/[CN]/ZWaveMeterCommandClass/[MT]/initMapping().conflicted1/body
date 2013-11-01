@@ -1,0 +1,9 @@
+{
+  codeToMeterScaleMapping=new HashMap<MeterType,Map<Integer,MeterScale>>();
+  nameToMeterScaleMapping=new HashMap<String,MeterScale>();
+  for (  MeterScale s : values()) {
+    if (!codeToMeterScaleMapping.containsKey(s.getMeterType()))     codeToMeterScaleMapping.put(s.getMeterType(),new HashMap<Integer,MeterScale>());
+    codeToMeterScaleMapping.get(s.getMeterType()).put(s.getScale(),s);
+    nameToMeterScaleMapping.put(s.name().toLowerCase(),s);
+  }
+}
