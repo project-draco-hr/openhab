@@ -30,7 +30,7 @@
         }
       }
  catch (      Exception e) {
-        e.printStackTrace();
+        logger.debug("MAX!Cube binding: Failed to process message received by MAX! protocol.");
       }
     }
     socket.close();
@@ -66,9 +66,9 @@ default :
 }
 }
  catch (UnknownHostException e) {
-e.printStackTrace();
+logger.warn("Cannot establish connection with MAX!cube lan gateway while connecting to '{}'",ip);
 }
 catch (IOException e) {
-e.printStackTrace();
+logger.warn("Cannot read data from MAX!cube lan gateway while connecting to '{}'",ip);
 }
 }
