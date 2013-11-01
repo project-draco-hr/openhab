@@ -1,8 +1,14 @@
 {
   ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
   if (command != null) {
-    String transformedMessage=transformResponse(provider.getProtocolCommand(itemName,command),commandAsString);
-    String UDPCommandName=preAmble + transformedMessage + postAmble;
+    String UDPCommandName=null;
+    if (command instanceof DecimalType) {
+      UDPCommandName=commandAsString;
+    }
+ else {
+      UDPCommandName=provider.getProtocolCommand(itemName,command);
+    }
+    UDPCommandName=preAmble + UDPCommandName + postAmble;
     ByteBuffer outputBuffer=ByteBuffer.allocate(UDPCommandName.getBytes().length);
     try {
       outputBuffer.put(UDPCommandName.getBytes("ASCII"));

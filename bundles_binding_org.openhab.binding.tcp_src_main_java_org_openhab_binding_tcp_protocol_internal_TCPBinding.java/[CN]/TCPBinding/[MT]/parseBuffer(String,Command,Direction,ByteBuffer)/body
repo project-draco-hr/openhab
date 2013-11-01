@@ -2,8 +2,16 @@
   String theUpdate=new String(byteBuffer.array());
   ProtocolBindingProvider provider=findFirstMatchingBindingProvider(itemName);
   List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,aCommand);
-  String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,aCommand),theUpdate);
-  State newState=createStateFromString(stateTypeList,transformedResponse);
+  State newState=null;
+  if (aCommand instanceof DecimalType) {
+    String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,aCommand),theUpdate);
+    newState=createStateFromString(stateTypeList,transformedResponse);
+  }
+ else {
+    if (provider.getProtocolCommand(itemName,aCommand).equals(theUpdate)) {
+      newState=createStateFromString(stateTypeList,aCommand.toString());
+    }
+  }
   if (newState != null) {
     eventPublisher.postUpdate(itemName,newState);
   }
