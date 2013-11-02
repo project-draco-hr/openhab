@@ -1,6 +1,7 @@
 {
   boolean matched=false;
   logger.debug("MATCH CHECK: Type is " + state.getClass().toString());
+  if (value.startsWith("\"") && value.endsWith("\""))   value=value.substring(1,value.length() - 1);
   if (state instanceof PercentType || state instanceof DecimalType) {
     logger.debug("MATCH CHECK: Decimal: " + state.toString() + " "+ value);
     try {
