@@ -1,29 +1,44 @@
 {
+  if (zController == null)   return null;
   List<OpenHABConfigurationRecord> records=new ArrayList<OpenHABConfigurationRecord>();
   OpenHABConfigurationRecord record;
   ZWaveNode node;
   if (domain.equals("status")) {
+    return null;
   }
   if (domain.equals("nodes")) {
     for (int nodeId=0; nodeId < 256; nodeId++) {
       node=zController.getNode(nodeId);
-      if (node != null) {
-        record=new OpenHABConfigurationRecord("DeviceId","Device ID",true);
-        record.value=Integer.toString(node.getDeviceId());
-        records.add(record);
-        ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
-        if (manufacturer == null)         continue;
-        record=new OpenHABConfigurationRecord("Manufacturer","Manufacturer",true);
-        record.value=manufacturer.name;
-        records.add(record);
-        ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId());
-        if (product != null)         continue;
-        record=new OpenHABConfigurationRecord("Product","Product",true);
-        record.value=product.name;
-        records.add(record);
-        records.addAll(loadDeviceConfig(product.config));
-      }
+      if (node == null)       continue;
+      ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
+      if (manufacturer == null)       continue;
+      ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+      if (product == null)       continue;
+      record=new OpenHABConfigurationRecord("node" + nodeId,"Node " + nodeId,true);
+      record.value=product.name;
+      records.add(record);
     }
+    return records;
   }
-  return records;
+  if (domain.startsWith("node/")) {
+    int nodeId=Integer.parseInt(domain.substring(domain.indexOf('/')));
+    node=zController.getNode(nodeId);
+    if (node == null)     return null;
+    record=new OpenHABConfigurationRecord("DeviceId","Device ID",true);
+    record.value=Integer.toString(node.getDeviceId());
+    records.add(record);
+    ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
+    if (manufacturer == null)     return null;
+    record=new OpenHABConfigurationRecord("Manufacturer","Manufacturer",true);
+    record.value=manufacturer.name;
+    records.add(record);
+    ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+    if (product == null)     return null;
+    record=new OpenHABConfigurationRecord("Product","Product",true);
+    record.value=product.name;
+    records.add(record);
+    if (product.config != null)     records.addAll(loadDeviceConfig(node,product.config));
+    return records;
+  }
+  return null;
 }

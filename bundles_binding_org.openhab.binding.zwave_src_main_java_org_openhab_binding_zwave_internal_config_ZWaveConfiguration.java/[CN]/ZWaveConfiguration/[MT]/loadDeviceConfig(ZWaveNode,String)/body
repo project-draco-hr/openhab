@@ -1,0 +1,33 @@
+{
+  logger.debug("Loading ZWave produce information file");
+  List<OpenHABConfigurationRecord> records=new ArrayList<OpenHABConfigurationRecord>();
+  ZWaveConfigProductList products=null;
+  FileInputStream fin;
+  try {
+    fin=new FileInputStream(FOLDER_NAME + "/" + file);
+    XStream xstream=new XStream(new StaxDriver());
+    xstream.alias("Product",ZWaveConfigProductList.class);
+    xstream.alias("CommandClass",ZWaveConfigCommandClass.class);
+    xstream.alias("Value",ZWaveConfigValue.class);
+    xstream.alias("Item",ZWaveConfigItem.class);
+    xstream.alias("Associations",ZWaveConfigAssociation.class);
+    xstream.alias("Group",ZWaveConfigGroup.class);
+    xstream.processAnnotations(ZWaveConfigProductList.class);
+    products=(ZWaveConfigProductList)xstream.fromXML(fin);
+    fin.close();
+  }
+ catch (  FileNotFoundException e) {
+    return null;
+  }
+catch (  IOException e) {
+    return null;
+  }
+  for (  ZWaveConfigValue value : products.CommandClass.get(0).Value) {
+    OpenHABConfigurationRecord record=new OpenHABConfigurationRecord("Parameter: " + value.index,value.label,false);
+    Integer val=node.configGetParameter(value.index);
+    if (val != null)     record.value=val.toString();
+ else     record.value=value.value.toString();
+    records.add(record);
+  }
+  return records;
+}
