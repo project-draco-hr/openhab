@@ -1,0 +1,13 @@
+{
+  byte[] sn=new byte[10];
+  for (int i=0; i < 10; i++) {
+    sn[i]=(byte)bytes[i + 8];
+  }
+  try {
+    return new String(sn,"UTF-8");
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.debug("Cannot encode serial number from C message due to encoding issues.");
+  }
+  return "";
+}

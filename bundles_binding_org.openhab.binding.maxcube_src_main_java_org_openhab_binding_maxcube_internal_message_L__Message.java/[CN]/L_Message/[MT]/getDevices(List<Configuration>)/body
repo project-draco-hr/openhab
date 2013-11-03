@@ -1,0 +1,9 @@
+{
+  byte[] decodedRawMessage=Base64.decodeBase64(getPayload().getBytes());
+  MaxTokenizer tokenizer=new MaxTokenizer(decodedRawMessage);
+  while (tokenizer.hasMoreElements()) {
+    byte[] token=tokenizer.nextElement();
+    devices.add(Device.create(token,configurations));
+  }
+  return devices;
+}
