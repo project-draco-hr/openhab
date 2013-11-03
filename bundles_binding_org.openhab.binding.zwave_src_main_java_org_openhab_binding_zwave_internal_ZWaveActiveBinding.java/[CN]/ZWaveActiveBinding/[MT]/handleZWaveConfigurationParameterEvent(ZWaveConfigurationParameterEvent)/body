@@ -1,0 +1,13 @@
+{
+  logger.debug("Configuration parameter received nodeId = {}, parameter = {}, value = {}",new Object[]{event.getNodeId(),event.getParameter(),event.getValue()});
+  ZWaveNode node=zController.getNode(event.getNodeId());
+  if (node == null) {
+    logger.debug("Configuration parameter for nodeId {}. Node doesn't exist.",event.getNodeId());
+    return;
+  }
+  ZWaveConfigValue parameter=new ZWaveConfigValue();
+  parameter.index=event.getParameter();
+  parameter.value=event.getValue();
+  parameter.size=event.getSize();
+  node.configUpdateParameter(parameter);
+}

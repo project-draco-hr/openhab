@@ -1,7 +1,7 @@
 {
   logger.debug("Creating new message for application command CONFIGURATIONCMD_GET for node {}",this.getNode().getNodeId());
   SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
-  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)CONFIGURATIONCMD_GET};
+  byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)CONFIGURATIONCMD_GET,(byte)(parameter & 0xff)};
   result.setMessagePayload(newPayload);
   return result;
 }

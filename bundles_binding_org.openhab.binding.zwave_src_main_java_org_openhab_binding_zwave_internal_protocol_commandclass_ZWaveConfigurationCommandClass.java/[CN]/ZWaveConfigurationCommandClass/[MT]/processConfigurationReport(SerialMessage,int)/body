@@ -1,11 +1,12 @@
 {
-  int value=serialMessage.getMessagePayloadByte(offset + 1);
-  int parameter=serialMessage.getMessagePayloadByte(1);
-  int size=serialMessage.getMessagePayloadByte(1);
-  int paramValue=0;
+  int parameter=serialMessage.getMessagePayloadByte(offset + 1);
+  int size=serialMessage.getMessagePayloadByte(offset + 2);
+  int value=0;
   for (int i=0; i < size; ++i) {
-    paramValue<<=8;
-    paramValue|=serialMessage.getMessagePayloadByte(2);
+    value<<=8;
+    value|=serialMessage.getMessagePayloadByte(offset + 3 + i);
   }
-  logger.debug(String.format("Switch Configuration report from nodeId = %d, parammeter = %d, value = 0x%02X",this.getNode().getNodeId(),parameter,value));
+  logger.debug(String.format("Node configuration report from nodeId = %d, parammeter = %d, value = 0x%02X",this.getNode().getNodeId(),parameter,value));
+  ZWaveConfigurationParameterEvent zEvent=new ZWaveConfigurationParameterEvent(this.getNode().getNodeId(),parameter,value,size);
+  this.getController().notifyEventListeners(zEvent);
 }
