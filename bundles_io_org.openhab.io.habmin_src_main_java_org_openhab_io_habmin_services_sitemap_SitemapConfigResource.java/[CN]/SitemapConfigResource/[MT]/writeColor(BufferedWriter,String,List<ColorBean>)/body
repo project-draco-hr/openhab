@@ -1,0 +1,13 @@
+{
+  if (colorList == null || colorList.size() == 0)   return;
+  boolean first=true;
+  for (  ColorBean color : colorList) {
+    if (color.state == null && color.color == null)     continue;
+    if (first == true)     out.write(colorName + "=[");
+ else     out.write(", ");
+    if (color.color == null)     out.write("\"" + color.state + "\"");
+ else     out.write(color.state + "=\"" + color.color+ "\"");
+    first=false;
+  }
+  if (first == false)   out.write("]");
+}

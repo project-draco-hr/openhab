@@ -1,0 +1,102 @@
+{
+  if (models == null)   return false;
+  String orgName="configurations/persistence/" + modelFile;
+  String newName="configurations/persistence/" + modelFile + ".new";
+  String bakName="configurations/persistence/" + modelFile + ".bak";
+  try {
+    FileWriter fw=null;
+    fw=new FileWriter(newName,false);
+    BufferedWriter out=new BufferedWriter(fw);
+    out.write("// Persistence strategies have a name and a definition and are referred to in the \"Items\" section\r\n");
+    out.write("Strategies {\r\n");
+    List<Strategy> strategyList=models.getStrategies();
+    for (int cnt=0; cnt < strategyList.size(); cnt++) {
+      Strategy modelStrategy=strategyList.get(cnt);
+      if (modelStrategy instanceof CronStrategyImpl) {
+        CronStrategyImpl cronStrategy=(CronStrategyImpl)modelStrategy;
+        out.write("\t" + cronStrategy.getName() + "\t: \""+ cronStrategy.getCronExpression()+ "\"\r\n");
+      }
+    }
+    out.write("\r\n\t// If no strategy is specified for an item entry below, the default list will be used.");
+    out.write("\r\n\tdefault = ");
+    List<Strategy> defaultList=models.getDefaults();
+    for (int cnt=0; cnt < defaultList.size(); cnt++) {
+      Strategy modelStrategy=defaultList.get(cnt);
+      out.write(modelStrategy.getName() + " ");
+    }
+    out.write("\r\n}\r\n\r\n");
+    out.write("/*\r\n");
+    out.write(" * Each line in this section defines for which item(s) which strategy(ies) should be applied.\r\n");
+    out.write(" * You can list single items, use \"*\" for all items or \"groupitem*\" for all members of a group\r\n");
+    out.write(" * item (excl. the group item itself).\r\n");
+    out.write(" */\r\n");
+    out.write("Items {\r\n");
+    List<PersistenceConfiguration> configList=models.getConfigs();
+    for (    PersistenceConfiguration config : configList) {
+      for (int cnt=0; cnt < config.getItems().size(); cnt++) {
+        EObject modelItem=config.getItems().get(cnt);
+        if (modelItem instanceof GroupConfig) {
+          GroupConfig group=(GroupConfig)modelItem;
+          out.write("\t" + group.getGroup() + "*");
+        }
+        if (modelItem instanceof ItemConfig) {
+          ItemConfig item=(ItemConfig)modelItem;
+          if (item.getItem().equals(itemName))           continue;
+          out.write("\t" + item.getItem());
+        }
+        if (modelItem instanceof AllConfig) {
+          out.write("\t*");
+        }
+        out.write(" : strategy = ");
+        strategyList=config.getStrategies();
+        for (int scnt=0; scnt < strategyList.size(); scnt++) {
+          if (scnt != 0)           out.write(", ");
+          Strategy modelStrategy=strategyList.get(scnt);
+          out.write(modelStrategy.getName());
+        }
+        out.write("\r\n");
+      }
+    }
+    if (bean.itemstrategies != null && bean.itemstrategies.size() > 0) {
+      List<String> strategies=new ArrayList<String>();
+      for (      String s : bean.itemstrategies) {
+        if (s != null && s.length() > 0) {
+          strategies.add(s);
+        }
+      }
+      if (strategies.size() > 0) {
+        out.write("\t" + itemName + " : strategy = ");
+        boolean first=true;
+        for (        String strategy : strategies) {
+          if (first == false)           out.write(", ");
+          out.write(strategy);
+          first=false;
+        }
+      }
+    }
+    out.write("\r\n}\r\n");
+    out.close();
+    fw.close();
+    File bakFile=new File(bakName);
+    File orgFile=new File(orgName);
+    File newFile=new File(newName);
+    if (bakFile.exists())     bakFile.delete();
+    if (orgFile.renameTo(bakFile) == true) {
+      newFile.renameTo(orgFile);
+    }
+ else {
+      logger.error("Error renaming file {} to {}",orgFile.getName(),bakFile.getName());
+    }
+    InputStream inFile;
+    try {
+      inFile=new FileInputStream(orgName);
+      repo.addOrRefreshModel(modelFile,inFile);
+    }
+ catch (    FileNotFoundException e) {
+      logger.error("Error refreshing item file " + modelFile + ":",e);
+    }
+  }
+ catch (  IOException e) {
+  }
+  return true;
+}

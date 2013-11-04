@@ -1,0 +1,46 @@
+{
+  String fname=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT);
+  try {
+    List<String> sitemapData;
+    if (copyname != null && !copyname.isEmpty()) {
+      String fcopyname=new String("configurations/sitemaps/" + copyname + SITEMAP_FILEEXT);
+      sitemapData=IOUtils.readLines(new FileInputStream(fcopyname));
+      for (int cnt=0; cnt < sitemapData.size(); cnt++) {
+        Matcher matcher=SITEMAP_DEFINITION.matcher(sitemapData.get(cnt));
+        if (matcher.matches()) {
+          sitemapData.set(cnt,"sitemap " + sitemapname + " label=\""+ matcher.group(2)+ "\"");
+          break;
+        }
+      }
+    }
+ else {
+      sitemapData=new ArrayList<String>();
+      sitemapData.add("sitemap " + sitemapname + " label=\"Main Menu\"");
+      sitemapData.add("{");
+      sitemapData.add("}");
+    }
+    File file=new File(fname);
+    if (!file.exists()) {
+      FileWriter fw;
+      fw=new FileWriter(file,false);
+      BufferedWriter out=new BufferedWriter(fw);
+      IOUtils.writeLines(sitemapData,"\r\n",out);
+      out.close();
+      ModelRepository repo=HABminApplication.getModelRepository();
+      if (repo != null) {
+        InputStream inFile;
+        try {
+          inFile=new FileInputStream(fname);
+          repo.addOrRefreshModel(sitemapname + SITEMAP_FILEEXT,inFile);
+        }
+ catch (        FileNotFoundException e) {
+          logger.debug("Error refreshing new sitemap " + sitemapname + ":",e);
+        }
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.debug("Error writing to sitemap file " + sitemapname + ":",e);
+  }
+  return getSitemapBeans(uri);
+}

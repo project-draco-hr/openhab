@@ -1,0 +1,10 @@
+{
+  String orgName=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT);
+  String bakName=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT+ ".bak");
+  File orgFile=new File(orgName);
+  File bakFile=new File(bakName);
+  orgFile.renameTo(bakFile);
+  ModelRepository repo=HABminApplication.getModelRepository();
+  repo.removeModel(sitemapname + SITEMAP_FILEEXT);
+  return getSitemapBeans(uri);
+}

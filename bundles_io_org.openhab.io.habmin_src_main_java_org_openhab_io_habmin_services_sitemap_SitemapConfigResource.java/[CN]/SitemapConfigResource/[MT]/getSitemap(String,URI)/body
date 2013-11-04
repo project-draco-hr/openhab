@@ -1,0 +1,13 @@
+{
+  WidgetConfigBean bean=new WidgetConfigBean();
+  Sitemap sitemap=getSitemap(sitemapName);
+  bean.label=sitemap.getLabel();
+  bean.icon=sitemap.getIcon();
+  if (sitemap.getChildren() != null) {
+    for (    Widget widget : sitemap.getChildren()) {
+      WidgetConfigBean subWidget=createWidgetBean(sitemapName,widget,uri);
+      bean.widgets.add(subWidget);
+    }
+  }
+  return bean;
+}

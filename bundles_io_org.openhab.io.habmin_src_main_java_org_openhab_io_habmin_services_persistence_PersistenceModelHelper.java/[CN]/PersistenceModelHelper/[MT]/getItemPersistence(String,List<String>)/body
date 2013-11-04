@@ -1,0 +1,33 @@
+{
+  if (models == null)   return null;
+  ItemPersistenceBean bean=new ItemPersistenceBean();
+  bean.service=serviceName;
+  bean.itemstrategies=new ArrayList<String>();
+  bean.groupstrategies=new ArrayList<String>();
+  List<PersistenceConfiguration> configList=models.getConfigs();
+  for (  PersistenceConfiguration config : configList) {
+    for (int cnt=0; cnt < config.getItems().size(); cnt++) {
+      EObject modelItem=config.getItems().get(cnt);
+      if (modelItem instanceof GroupConfigImpl) {
+        for (        String group : itemGroups) {
+          if (((GroupConfigImpl)modelItem).getGroup().equalsIgnoreCase(group)) {
+            for (int str=0; str < config.getStrategies().size(); str++) {
+              Strategy strategyItem=config.getStrategies().get(str);
+              bean.groupstrategies.add(strategyItem.getName());
+            }
+          }
+        }
+      }
+      if (modelItem instanceof ItemConfigImpl) {
+        if (((ItemConfigImpl)modelItem).getItem().equals(itemName)) {
+          for (int str=0; str < config.getStrategies().size(); str++) {
+            Strategy strategyItem=config.getStrategies().get(str);
+            bean.itemstrategies.add(strategyItem.getName());
+          }
+        }
+      }
+    }
+  }
+  if (bean.itemstrategies.isEmpty() && bean.groupstrategies.isEmpty())   return null;
+  return bean;
+}

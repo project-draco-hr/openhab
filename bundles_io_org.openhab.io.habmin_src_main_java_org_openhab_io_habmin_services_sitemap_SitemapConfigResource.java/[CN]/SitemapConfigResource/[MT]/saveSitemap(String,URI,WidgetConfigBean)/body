@@ -1,0 +1,40 @@
+{
+  String orgName=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT);
+  String newName=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT+ ".new");
+  String bakName=new String("configurations/sitemaps/" + sitemapname + SITEMAP_FILEEXT+ ".bak");
+  if (sitemap == null)   return null;
+  if (sitemap.widgets == null)   return null;
+  File file=new File(newName);
+  FileWriter fw;
+  try {
+    fw=new FileWriter(file,false);
+    BufferedWriter out=new BufferedWriter(fw);
+    WidgetConfigBean main=sitemap.widgets.get(0);
+    out.write("sitemap " + sitemapname);
+    if (main.label != null && main.label.isEmpty() == false)     out.write(" label=\"" + main.label + "\"");
+    if (main.icon != null && main.icon.isEmpty() == false)     out.write(" icon=\"" + main.icon + "\"");
+    out.write("\r\n{\r\n");
+    writeWidget(out,main.widgets,1);
+    out.write("}\r\n");
+    out.close();
+  }
+ catch (  IOException e) {
+    logger.debug("Error writing to sitemap file " + sitemapname + ":",e);
+  }
+  File bakFile=new File(bakName);
+  File orgFile=new File(orgName);
+  File newFile=new File(newName);
+  if (bakFile.exists())   bakFile.delete();
+  ModelRepository repo=HABminApplication.getModelRepository();
+  if (repo != null) {
+    InputStream inFile;
+    try {
+      inFile=new FileInputStream(newName);
+      repo.addOrRefreshModel(sitemapname + SITEMAP_FILEEXT,inFile);
+    }
+ catch (    FileNotFoundException e) {
+      logger.debug("Error refreeshing new sitemap " + sitemapname + ":",e);
+    }
+  }
+  return getSitemap(sitemapname,uri);
+}
