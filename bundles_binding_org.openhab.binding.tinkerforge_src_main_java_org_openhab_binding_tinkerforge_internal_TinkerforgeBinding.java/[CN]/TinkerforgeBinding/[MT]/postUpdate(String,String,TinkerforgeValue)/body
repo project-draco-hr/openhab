@@ -1,0 +1,48 @@
+{
+  HashMap<String,TinkerforgeBindingProvider> providerMap=getBindingProviders(uid,subId);
+  if (providerMap.size() == 0) {
+    logger.debug("{} found no item for uid {}, subid {}",LoggerConstants.TFMODELUPDATE,uid,subId);
+  }
+  for (  Entry<String,TinkerforgeBindingProvider> entry : providerMap.entrySet()) {
+    String itemName=entry.getKey();
+    TinkerforgeBindingProvider provider=entry.getValue();
+    Class<? extends Item> itemType=provider.getItemType(itemName);
+    State value=UnDefType.UNDEF;
+    if (sensorValue instanceof DecimalValue) {
+      value=DecimalType.valueOf(String.valueOf(sensorValue));
+    }
+ else     if (sensorValue instanceof HighLowValue) {
+      if (itemType.isAssignableFrom(NumberItem.class) || itemType.isAssignableFrom(StringItem.class)) {
+        value=sensorValue == HighLowValue.HIGH ? DecimalType.valueOf("1") : DecimalType.valueOf("0");
+      }
+ else       if (itemType.isAssignableFrom(ContactItem.class)) {
+        value=sensorValue == HighLowValue.HIGH ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+      }
+ else       if (itemType.isAssignableFrom(SwitchItem.class)) {
+        value=sensorValue == HighLowValue.HIGH ? OnOffType.ON : OnOffType.OFF;
+      }
+ else {
+        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+      }
+    }
+ else     if (sensorValue instanceof OnOffValue) {
+      if (itemType.isAssignableFrom(NumberItem.class) || itemType.isAssignableFrom(StringItem.class)) {
+        value=sensorValue == OnOffValue.ON ? DecimalType.valueOf("1") : DecimalType.valueOf("0");
+      }
+ else       if (itemType.isAssignableFrom(ContactItem.class)) {
+        value=sensorValue == OnOffValue.ON ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+      }
+ else       if (itemType.isAssignableFrom(SwitchItem.class)) {
+        value=sensorValue == OnOffValue.ON ? OnOffType.ON : OnOffType.OFF;
+      }
+ else {
+        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+      }
+    }
+ else     if (sensorValue == UnDefValue.UNDEF || sensorValue == null) {
+      value=UnDefType.UNDEF;
+    }
+    eventPublisher.postUpdate(itemName,value);
+    logger.debug("{} postupdate: found sensorValue: {} for item {}",LoggerConstants.TFMODELUPDATE,sensorValue,itemName);
+  }
+}

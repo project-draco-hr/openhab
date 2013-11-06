@@ -322,10 +322,8 @@ MBrickletLCD20x4 mBrickletLCD20x4=(MBrickletLCD20x4)theEObject;
 T result=caseMBrickletLCD20x4(mBrickletLCD20x4);
 if (result == null) result=caseMDevice(mBrickletLCD20x4);
 if (result == null) result=caseMTextActor(mBrickletLCD20x4);
-if (result == null) result=caseMInSwitchActor(mBrickletLCD20x4);
 if (result == null) result=caseMSubDeviceHolder(mBrickletLCD20x4);
 if (result == null) result=caseMBaseDevice(mBrickletLCD20x4);
-if (result == null) result=caseMSwitchActor(mBrickletLCD20x4);
 if (result == null) result=defaultCase(theEObject);
 return result;
 }
@@ -336,13 +334,35 @@ T result=caseMTextActor(mTextActor);
 if (result == null) result=defaultCase(theEObject);
 return result;
 }
+case ModelPackage.MLCD_SUB_DEVICE:
+{
+MLCDSubDevice mlcdSubDevice=(MLCDSubDevice)theEObject;
+T result=caseMLCDSubDevice(mlcdSubDevice);
+if (result == null) result=caseMSubDevice(mlcdSubDevice);
+if (result == null) result=caseMBaseDevice(mlcdSubDevice);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case ModelPackage.MLCD2_0X4_BACKLIGHT:
+{
+MLCD20x4Backlight mlcd20x4Backlight=(MLCD20x4Backlight)theEObject;
+T result=caseMLCD20x4Backlight(mlcd20x4Backlight);
+if (result == null) result=caseMInSwitchActor(mlcd20x4Backlight);
+if (result == null) result=caseMLCDSubDevice(mlcd20x4Backlight);
+if (result == null) result=caseMSwitchActor(mlcd20x4Backlight);
+if (result == null) result=caseMSubDevice(mlcd20x4Backlight);
+if (result == null) result=caseMBaseDevice(mlcd20x4Backlight);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
 case ModelPackage.MLCD2_0X4_BUTTON:
 {
 MLCD20x4Button mlcd20x4Button=(MLCD20x4Button)theEObject;
 T result=caseMLCD20x4Button(mlcd20x4Button);
 if (result == null) result=caseMOutSwitchActor(mlcd20x4Button);
-if (result == null) result=caseMSubDevice(mlcd20x4Button);
+if (result == null) result=caseMLCDSubDevice(mlcd20x4Button);
 if (result == null) result=caseMSwitchActor(mlcd20x4Button);
+if (result == null) result=caseMSubDevice(mlcd20x4Button);
 if (result == null) result=caseMBaseDevice(mlcd20x4Button);
 if (result == null) result=defaultCase(theEObject);
 return result;

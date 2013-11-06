@@ -21,7 +21,7 @@ catch (  NotConnectedException e) {
   tinkerforgeDevice.addHumidityListener(new BrickletHumidity.HumidityListener(){
     @Override public void humidity(    int newHumidity){
       if (newHumidity > (humiditiy + threshold) || newHumidity < (humiditiy - threshold)) {
-        setSensorValue(newHumidity / 10.0);
+        setSensorValue(new DecimalValue(newHumidity / 10.0));
         setHumiditiy(newHumidity);
       }
  else {

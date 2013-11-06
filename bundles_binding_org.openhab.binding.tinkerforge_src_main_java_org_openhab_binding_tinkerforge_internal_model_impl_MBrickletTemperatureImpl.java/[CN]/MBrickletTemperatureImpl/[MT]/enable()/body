@@ -21,7 +21,7 @@ catch (  NotConnectedException e) {
   tinkerforgeDevice.addTemperatureListener(new BrickletTemperature.TemperatureListener(){
     @Override public void temperature(    short newTemperature){
       if ((newTemperature > (temperature + threshold)) || (newTemperature < (temperature - threshold))) {
-        setSensorValue(newTemperature / 100.0);
+        setSensorValue(new DecimalValue(newTemperature / 100.0));
         setTemperature(newTemperature);
       }
  else {

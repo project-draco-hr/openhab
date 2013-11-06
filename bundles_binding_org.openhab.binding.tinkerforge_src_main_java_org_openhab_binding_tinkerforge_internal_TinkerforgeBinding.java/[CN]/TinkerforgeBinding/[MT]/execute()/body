@@ -16,16 +16,9 @@
           postUpdate(deviceUid,deviceSubId,((MSensor<?>)mDevice).fetchSensorValue());
         }
  else         if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
-          SwitchState switchState=((MInSwitchActor)mDevice).getSwitchState();
-          if (switchState == null) {
-            logger.debug("execute called: found MInSwitchActor state: null");
-            postUpdate(deviceUid,deviceSubId,UnDefType.UNDEF);
-          }
- else {
-            OnOffType state=(switchState == SwitchState.OFF) ? OnOffType.OFF : OnOffType.ON;
-            postUpdate(deviceUid,deviceSubId,state);
-            logger.debug("execute called: found MInSwitchActor state: {}",switchState);
-          }
+          OnOffValue switchState=((MInSwitchActor)mDevice).fetchSwitchState();
+          postUpdate(deviceUid,deviceSubId,switchState);
+          logger.debug("execute called: found MInSwitchActor state: {}",switchState);
         }
       }
     }

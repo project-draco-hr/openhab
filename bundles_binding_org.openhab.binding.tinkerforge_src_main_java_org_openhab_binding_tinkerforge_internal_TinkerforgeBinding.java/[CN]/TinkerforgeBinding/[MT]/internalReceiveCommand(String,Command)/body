@@ -17,8 +17,8 @@
             logger.debug("found onoff command");
             if (mDevice instanceof MInSwitchActor) {
               OnOffType cmd=(OnOffType)command;
-              SwitchState state=(cmd.equals(OnOffType.OFF)) ? SwitchState.OFF : SwitchState.ON;
-              ((MSwitchActor)mDevice).setSwitchState(state);
+              OnOffValue state=cmd == OnOffType.OFF ? OnOffValue.OFF : OnOffValue.ON;
+              ((MSwitchActor)mDevice).turnSwitch(state);
             }
  else {
               logger.error("received OnOff command for non-SwitchActor");
