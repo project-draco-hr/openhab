@@ -1,0 +1,28 @@
+{
+  logger.debug(String.format("Received Configuration Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case ASSOCIATIONCMD_SET:
+    logger.trace("Process Association Set");
+  processConfigurationReport(serialMessage,offset);
+break;
+case ASSOCIATIONCMD_GET:
+logger.trace("Process Association Get");
+return;
+case ASSOCIATIONCMD_REPORT:
+logger.trace("Process Association Report");
+processConfigurationReport(serialMessage,offset);
+break;
+case ASSOCIATIONCMD_REMOVE:
+logger.trace("Process Association Remove");
+return;
+case ASSOCIATIONCMD_GROUPINGSGET:
+logger.trace("Process Association GroupingsGet");
+return;
+case ASSOCIATIONCMD_GROUPINGSREPORT:
+logger.trace("Process Association GroupingsReport");
+return;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}
