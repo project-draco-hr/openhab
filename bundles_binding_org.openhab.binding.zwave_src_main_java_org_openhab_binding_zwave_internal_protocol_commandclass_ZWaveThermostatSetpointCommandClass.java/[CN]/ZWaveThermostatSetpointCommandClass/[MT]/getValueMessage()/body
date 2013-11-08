@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command THERMOSTAT_SETPOINT_GET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Get);
+  byte[] payload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),THERMOSTAT_SETPOINT_GET,(byte)SetpointType.HEATING.getKey()};
+  result.setMessagePayload(payload);
+  return result;
+}

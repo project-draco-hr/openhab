@@ -1,0 +1,20 @@
+{
+  logger.trace("Handle Message Thermostat Setpoint Request");
+  logger.debug(String.format("Received Thermostat Setpoint Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case THERMOSTAT_SETPOINT_SET:
+case THERMOSTAT_SETPOINT_GET:
+case THERMOSTAT_SETPOINT_SUPPORTED_GET:
+case THERMOSTAT_SETPOINT_SUPPORTED_REPORT:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case THERMOSTAT_SETPOINT_REPORT:
+logger.trace("Process Thermostat Setpoint Report");
+processThermostatSetpointReport(serialMessage,offset,endpoint);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}
