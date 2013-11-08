@@ -79,7 +79,9 @@
   g2=createEGenericType(this.getMBrickletIndustrialDigitalIn4());
   g1.getETypeArguments().add(g2);
   mIndustrialDigitalInEClass.getEGenericSuperTypes().add(g1);
-  g1=createEGenericType(this.getMOutSwitchActor());
+  g1=createEGenericType(this.getMSensor());
+  g2=createEGenericType(this.getDigitalValue());
+  g1.getETypeArguments().add(g2);
   mIndustrialDigitalInEClass.getEGenericSuperTypes().add(g1);
   mOutSwitchActorEClass.getESuperTypes().add(this.getMSwitchActor());
   mInSwitchActorEClass.getESuperTypes().add(this.getMSwitchActor());
@@ -313,6 +315,11 @@
   initEOperation(getMSwitchActor__FetchSwitchState(),this.getSwitchState(),"fetchSwitchState",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mOutSwitchActorEClass,MOutSwitchActor.class,"MOutSwitchActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEClass(mInSwitchActorEClass,MInSwitchActor.class,"MInSwitchActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEClass(digitalActorEClass,DigitalActor.class,"DigitalActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getDigitalActor_DigitalState(),this.getDigitalValue(),"digitalState",null,0,1,DigitalActor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  op=initEOperation(getDigitalActor__TurnDigital__HighLowValue(),null,"turnDigital",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getDigitalValue(),"digitalState",0,1,!IS_UNIQUE,IS_ORDERED);
+  initEOperation(getDigitalActor__FetchDigitalValue(),this.getDigitalValue(),"fetchDigitalValue",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mSubDeviceEClass,MSubDevice.class,"MSubDevice",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMSubDevice_SubId(),theEcorePackage.getEString(),"subId",null,0,1,MSubDevice.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   g1=createEGenericType(mSubDeviceEClass_B);
@@ -408,6 +415,7 @@
   initEDataType(mTinkerBrickletIndustrialQuadRelayEDataType,BrickletIndustrialQuadRelay.class,"MTinkerBrickletIndustrialQuadRelay",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mTinkerBrickletIndustrialDigitalIn4EDataType,BrickletIndustrialDigitalIn4.class,"MTinkerBrickletIndustrialDigitalIn4",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(switchStateEDataType,OnOffValue.class,"SwitchState",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
+  initEDataType(digitalValueEDataType,HighLowValue.class,"DigitalValue",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mTinkerBrickServoEDataType,BrickServo.class,"MTinkerBrickServo",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mTinkerforgeValueEDataType,TinkerforgeValue.class,"MTinkerforgeValue",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mDecimalValueEDataType,DecimalValue.class,"MDecimalValue",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
