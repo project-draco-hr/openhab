@@ -3,11 +3,11 @@
   try {
     if (state == OnOffValue.OFF) {
       logger.debug("setSwitchValue off");
-      getMbrick().getTinkerforgeDevice().setSelectedValues(DEFAULT_SELECTION_MASK << (relayNum - 1),OFF_BYTE);
+      getMbrick().getTinkerforgeDevice().setSelectedValues(mask,OFF_BYTE);
     }
  else     if (state == OnOffValue.ON) {
       logger.debug("setSwitchState on");
-      getMbrick().getTinkerforgeDevice().setSelectedValues(DEFAULT_SELECTION_MASK << (relayNum - 1),DEFAULT_SELECTION_MASK << (relayNum - 1));
+      getMbrick().getTinkerforgeDevice().setSelectedValues(mask,mask);
     }
  else {
       logger.error("{} unkown switchstate {}",LoggerConstants.TFMODELUPDATE,state);
