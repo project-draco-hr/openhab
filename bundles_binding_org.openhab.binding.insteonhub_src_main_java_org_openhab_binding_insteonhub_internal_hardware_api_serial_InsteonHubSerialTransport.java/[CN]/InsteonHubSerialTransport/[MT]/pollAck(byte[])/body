@@ -1,0 +1,12 @@
+{
+  Ack ack=null;
+  byte[] ackMsg=null;
+  while (ack == null || !Arrays.equals(sent,ackMsg)) {
+    ack=ackQueue.poll(2,TimeUnit.SECONDS);
+    if (ack == null) {
+      return null;
+    }
+    ackMsg=Arrays.copyOfRange(ack.msg,0,ack.msg.length - 1);
+  }
+  return ack;
+}

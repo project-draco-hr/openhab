@@ -4,35 +4,50 @@
     logger.error(BINDING_NAME + " received command for unknown item '" + itemName+ "'");
     return;
   }
-  InsteonHubProxy proxy=proxies.get(config.getHubId());
+  BindingType type=config.getBindingType();
+  String hubId=config.getDeviceInfo().getHubId();
+  String deviceId=config.getDeviceInfo().getDeviceId();
+  InsteonHubProxy proxy=proxies.get(hubId);
   if (proxy == null) {
-    logger.error(BINDING_NAME + " received command for unknown hub id '" + config.getHubId()+ "'");
+    logger.error(BINDING_NAME + " received command for unknown hub id '" + hubId+ "'");
     return;
   }
   if (logger.isDebugEnabled()) {
     logger.debug(BINDING_NAME + " processing command '" + command+ "' of type '"+ command.getClass().getSimpleName()+ "' for item '"+ itemName+ "'");
   }
   try {
-    BindingType type=config.getBindingType();
-    if (type == BindingType.digital) {
+    if (type == BindingType.SWITCH) {
       if (command instanceof OnOffType) {
-        proxy.setPower(config.getDevice(),command == OnOffType.ON,false);
+        proxy.setDevicePower(deviceId,command == OnOffType.ON);
       }
     }
- else     if (type == BindingType.analog) {
+ else     if (type == BindingType.DIMMER) {
       if (command instanceof OnOffType) {
         int level=command == OnOffType.ON ? 255 : 0;
-        proxy.setLevel(config.getDevice(),level);
+        proxy.setDeviceLevel(deviceId,level);
       }
- else       if (command instanceof IncreaseDecreaseType || command instanceof UpDownType) {
-        int adjustAmt=command == IncreaseDecreaseType.INCREASE || command == UpDownType.UP ? 30 : -30;
-        proxy.adjustLevel(config.getDevice(),adjustAmt);
+ else       if (command instanceof IncreaseDecreaseType) {
+        InsteonHubAdjustmentType adjustmentType;
+        if (command == IncreaseDecreaseType.INCREASE)         adjustmentType=InsteonHubAdjustmentType.BRIGHTEN;
+ else         adjustmentType=InsteonHubAdjustmentType.DIM;
+        proxy.doIncrementalDeviceAdjustment(deviceId,adjustmentType);
+      }
+ else       if (command instanceof UpDownType) {
+        InsteonHubAdjustmentType adjustmentType;
+        if (command == UpDownType.UP)         adjustmentType=InsteonHubAdjustmentType.BRIGHTEN;
+ else         adjustmentType=InsteonHubAdjustmentType.DIM;
+        proxy.startDeviceAdjustment(deviceId,adjustmentType);
+      }
+ else       if (command instanceof StopMoveType) {
+        if (command == StopMoveType.STOP) {
+          proxy.stopDeviceAdjustment(deviceId);
+        }
       }
  else {
         byte percentByte=Byte.parseByte(command.toString());
         float percent=percentByte * .01f;
         int level=(int)(255 * percent);
-        proxy.setLevel(config.getDevice(),level);
+        proxy.setDeviceLevel(deviceId,level);
       }
     }
   }

@@ -1,0 +1,36 @@
+{
+  try {
+    while (sender == this) {
+      InsteonHubCommand command=null;
+      try {
+        command=commandQueue.poll(5,TimeUnit.SECONDS);
+      }
+ catch (      InterruptedException e) {
+      }
+      if (command != null) {
+        boolean success=false;
+        int attempt=0;
+        while (!success && attempt < MAX_SEND_ATTEMPTS) {
+          byte[] sent=sendCommand(outputStream,command);
+          if (sent != null) {
+            Ack ack=pollAck(sent);
+            if (ack != null) {
+              success=ack.success;
+            }
+ else {
+              if (logger.isDebugEnabled()) {
+                logger.debug("Timed-out waiting on Ack for " + Hex.encodeHexString(sent));
+              }
+            }
+          }
+          attempt++;
+        }
+      }
+    }
+  }
+ catch (  Throwable t) {
+    t.printStackTrace();
+    InsteonHubBindingLogUtil.logCommunicationFailure(logger,proxy,t);
+    proxy.reconnect();
+  }
+}

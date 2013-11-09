@@ -1,11 +1,9 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   if (bindingConfig != null) {
-    Map<String,String> props=parseProperties(bindingConfig);
-    String hubid=props.get(InsteonHubBindingConfig.KEY_HUB_ID);
-    String device=props.get(InsteonHubBindingConfig.KEY_DEVICE);
-    String bindingType=props.get(InsteonHubBindingConfig.KEY_BINDING_TYPE);
-    InsteonHubBindingConfig config=new InsteonHubBindingConfig(hubid,device,bindingType,item.getName());
+    InsteonHubBindingConfig config=InsteonHubBindingConfig.parse(item.getName(),bindingConfig);
     addBindingConfig(item,config);
+    Set<String> deviceItems=getOrCreateDeviceItems(config.getDeviceInfo());
+    deviceItems.add(config.getItemName());
   }
 }

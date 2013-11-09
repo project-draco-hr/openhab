@@ -1,0 +1,19 @@
+{
+  try {
+    byte[] buf=new byte[8];
+    buf[0]=InsteonHubMsgConst.STX;
+    buf[1]=InsteonHubMsgConst.SND_CODE_SEND_INSTEON_STD_OR_EXT_MSG;
+    System.arraycopy(Hex.decodeHex(device.toCharArray()),0,buf,2,3);
+    buf[5]=(byte)flag;
+    buf[6]=cmd1;
+    buf[7]=cmd2;
+    if (logger.isDebugEnabled()) {
+      logger.debug("Sending message to INSTEON Hub: " + Hex.encodeHexString(buf));
+    }
+    outputStream.write(buf);
+    return buf;
+  }
+ catch (  DecoderException e) {
+    throw new IOException("Could not create message.  Could not encode device hex '" + device + "'",e);
+  }
+}

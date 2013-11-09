@@ -1,0 +1,17 @@
+{
+  while (InsteonHubByteUtil.readByte(in) != InsteonHubMsgConst.STX)   ;
+  byte cmd=InsteonHubByteUtil.readByte(in);
+  Integer msgSize=InsteonHubMsgConst.REC_MSG_SIZES.get(cmd);
+  if (msgSize == null) {
+    logger.warn("Received unknown command type '" + cmd + "'");
+    return null;
+  }
+  byte[] msg=new byte[msgSize];
+  msg[0]=InsteonHubMsgConst.STX;
+  msg[1]=cmd;
+  InsteonHubByteUtil.fillBuffer(in,msg,2);
+  if (logger.isDebugEnabled()) {
+    logger.debug("Received Message from INSTEON Hub: " + Hex.encodeHexString(msg));
+  }
+  return msg;
+}

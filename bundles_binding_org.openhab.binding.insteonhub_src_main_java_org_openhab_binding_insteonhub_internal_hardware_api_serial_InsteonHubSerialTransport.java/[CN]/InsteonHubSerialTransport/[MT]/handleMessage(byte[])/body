@@ -1,0 +1,47 @@
+{
+  byte cmd=msg[1];
+  if (cmd == InsteonHubMsgConst.REC_CODE_INSTEON_STD_MSG) {
+    String device=InsteonHubByteUtil.encodeDeviceHex(msg,2);
+    InsteonHubStdMsgFlags flags=new InsteonHubStdMsgFlags(InsteonHubByteUtil.byteToUnsignedInt(msg[8]));
+    if (flags.isAck()) {
+      alertLevelUpdate(device,InsteonHubByteUtil.byteToUnsignedInt(msg[10]));
+    }
+ else {
+      byte cmd1=msg[9];
+switch (cmd1) {
+case InsteonHubMsgConst.CMD1_OFF:
+case InsteonHubMsgConst.CMD1_ON:
+case InsteonHubMsgConst.CMD1_OFF_FAST:
+case InsteonHubMsgConst.CMD1_ON_FAST:
+        alertLevelUpdate(device,cmd1 == InsteonHubMsgConst.CMD1_ON || cmd1 == InsteonHubMsgConst.CMD1_ON_FAST ? 255 : 0);
+      break;
+case InsteonHubMsgConst.CMD1_DIM:
+case InsteonHubMsgConst.CMD1_BRT:
+case InsteonHubMsgConst.CMD1_STOP_DIM_BRT:
+    proxy.requestDeviceLevel(device);
+  if (logger.isTraceEnabled()) {
+    logger.trace("Requesting level for device " + device);
+  }
+break;
+}
+}
+}
+ else if (cmd == InsteonHubMsgConst.SND_CODE_SEND_INSTEON_STD_OR_EXT_MSG) {
+byte ack=msg[8];
+if (ack == InsteonHubMsgConst.ACK) {
+if (logger.isTraceEnabled()) {
+logger.trace("Received ACK");
+}
+ackQueue.add(new Ack(msg,true));
+}
+ else if (ack == InsteonHubMsgConst.NAK) {
+if (logger.isTraceEnabled()) {
+logger.trace("Received NAK");
+}
+ackQueue.add(new Ack(msg,false));
+}
+while (ackQueue.size() > MAX_ACK_QUEUE_SIZE) {
+ackQueue.poll();
+}
+}
+}
