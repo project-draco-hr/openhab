@@ -1,0 +1,25 @@
+{
+  final Pattern ACTION_PATTERN=Pattern.compile("nodes/node([0-9]+)/([0-9.a-zA-Z]+)/([.a-zA-Z]+)([0-9]+)");
+  Matcher matcher=ACTION_PATTERN.matcher(domain);
+  if (!matcher.matches())   return;
+  int nodeId=Integer.parseInt(matcher.group(1));
+  String type=matcher.group(2).toString();
+  String arg=matcher.group(3).toString();
+  int id=Integer.parseInt(matcher.group(4));
+  if (type.equals("parameters")) {
+    ZWaveNode node=zController.getNode(nodeId);
+    if (node == null)     return;
+    ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
+    if (manufacturer == null)     return;
+    ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+    List<ZWaveConfigValue> config=loadDeviceConfig(node,product.config);
+    int size=1;
+    for (    ZWaveConfigValue cfg : config) {
+      if (cfg.index == id) {
+        size=cfg.size;
+        break;
+      }
+    }
+    node.configParameterSet(id,Integer.parseInt(value),size);
+  }
+}
