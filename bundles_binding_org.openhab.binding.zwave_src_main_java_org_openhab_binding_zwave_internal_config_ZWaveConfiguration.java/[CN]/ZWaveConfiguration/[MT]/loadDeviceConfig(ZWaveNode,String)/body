@@ -22,12 +22,5 @@
 catch (  IOException e) {
     return null;
   }
-  for (  ZWaveConfigValue value : products.CommandClass.get(0).Value) {
-    OpenHABConfigurationRecord record=new OpenHABConfigurationRecord("Parameter: " + value.index,value.label,false);
-    Integer val=node.configGetParameter(value.index);
-    if (val != null)     record.value=val.toString();
- else     record.value=value.value.toString();
-    records.add(record);
-  }
-  return records;
+  return products.CommandClass.get(0).Value;
 }

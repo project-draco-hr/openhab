@@ -14,30 +14,80 @@
       if (manufacturer == null)       continue;
       ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
       if (product == null)       continue;
-      record=new OpenHABConfigurationRecord("node" + nodeId,"Node " + nodeId,true);
+      record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId,"node" + nodeId,"Node " + nodeId,true);
       record.value=product.name;
       records.add(record);
     }
     return records;
   }
-  if (domain.startsWith("node/")) {
-    int nodeId=Integer.parseInt(domain.substring(domain.indexOf('/')));
+  if (domain.startsWith("nodes/node")) {
+    String nodeNumber=domain.substring(10);
+    int next=nodeNumber.indexOf('/');
+    String arg=null;
+    if (next != -1) {
+      arg=nodeNumber.substring(next + 1);
+      nodeNumber=nodeNumber.substring(0,next);
+    }
+    int nodeId=Integer.parseInt(nodeNumber);
     node=zController.getNode(nodeId);
     if (node == null)     return null;
-    record=new OpenHABConfigurationRecord("DeviceId","Device ID",true);
-    record.value=Integer.toString(node.getDeviceId());
-    records.add(record);
     ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
-    if (manufacturer == null)     return null;
-    record=new OpenHABConfigurationRecord("Manufacturer","Manufacturer",true);
-    record.value=manufacturer.name;
-    records.add(record);
-    ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
-    if (product == null)     return null;
-    record=new OpenHABConfigurationRecord("Product","Product",true);
-    record.value=product.name;
-    records.add(record);
-    if (product.config != null)     records.addAll(loadDeviceConfig(node,product.config));
+    ZWaveConfigProduct product;
+    if (manufacturer != null)     product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+ else     product=null;
+    if (arg == null) {
+      if (manufacturer == null) {
+        record=new OpenHABConfigurationRecord("ManufacturerID","Manufacturer ID",true);
+        record.value=Integer.toString(node.getManufacturer());
+        records.add(record);
+        product=new ZWaveConfigProduct();
+      }
+ else {
+        record=new OpenHABConfigurationRecord("Manufacturer","Manufacturer",true);
+        record.value=manufacturer.name;
+        records.add(record);
+        if (product != null) {
+          record=new OpenHABConfigurationRecord("Product","Product",true);
+          record.value=product.name;
+          records.add(record);
+        }
+      }
+      if (product.config == null) {
+        record=new OpenHABConfigurationRecord("DeviceId","Device ID",true);
+        record.value=Integer.toString(node.getDeviceId());
+        records.add(record);
+        record=new OpenHABConfigurationRecord("DeviceType","Device Type",true);
+        record.value=Integer.toString(node.getDeviceType());
+        records.add(record);
+      }
+ else {
+        record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/parameters","parameters","Configuration Parameters",true);
+        record.addAction("Refresh","Refresh");
+        records.add(record);
+        record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/associations","associations","Association Groups",true);
+        records.add(record);
+      }
+    }
+ else     if (arg.equals("parameters")) {
+      product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+      if (product != null) {
+        List<ZWaveConfigValue> config=loadDeviceConfig(node,product.config);
+        for (        ZWaveConfigValue value : config) {
+          record=new OpenHABConfigurationRecord("configuration" + value.index,value.label,false);
+          Integer val=node.configGetParameter(value.index);
+          if (val != null)           record.value=val.toString();
+          if (value.type.equalsIgnoreCase("list")) {
+            record.type=OpenHABConfigurationRecord.TYPE.LIST;
+            for (            ZWaveConfigItem item : value.Item)             record.addValue(Integer.toString(item.value),item.label);
+          }
+ else           if (value.type.equalsIgnoreCase("byte"))           record.type=OpenHABConfigurationRecord.TYPE.BYTE;
+ else           record.type=OpenHABConfigurationRecord.TYPE.INT;
+          records.add(record);
+        }
+      }
+    }
+ else     if (arg.equals("associations")) {
+    }
     return records;
   }
   return null;
