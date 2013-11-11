@@ -1,7 +1,11 @@
 {
   Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
   Iterator<HistoricItem> it=result.iterator();
-  State state=historicState(item,timestamp);
+  HistoricItem itemThen=historicState(item,timestamp);
+  if (itemThen == null) {
+    return (it.hasNext());
+  }
+  State state=itemThen.getState();
   while (it.hasNext()) {
     HistoricItem hItem=it.next();
     if (state != null && !hItem.getState().equals(state)) {

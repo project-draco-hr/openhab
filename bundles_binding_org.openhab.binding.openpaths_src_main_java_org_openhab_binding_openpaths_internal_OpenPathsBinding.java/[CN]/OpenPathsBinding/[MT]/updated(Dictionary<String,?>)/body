@@ -1,0 +1,60 @@
+{
+  openPathsUsers=new HashMap<String,OpenPathsUser>();
+  if (config != null) {
+    float homeLat=0;
+    float homeLong=0;
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String value=(String)config.get(key);
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      if ("home.lat".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          homeLat=Float.parseFloat(value);
+        }
+      }
+ else       if ("home.long".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          homeLong=Float.parseFloat(value);
+        }
+      }
+ else       if ("refresh".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          refreshInterval=Long.parseLong(value);
+        }
+      }
+ else       if ("geofence".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          geoFence=Float.parseFloat(value);
+        }
+      }
+ else {
+        String[] keyParts=key.split("\\.");
+        if (keyParts.length != 2) {
+          throw new ConfigurationException(key,"Invalid OpenPaths user key: " + key);
+        }
+        String name=keyParts[0];
+        String configKey=keyParts[1];
+        if (!openPathsUsers.containsKey(name)) {
+          openPathsUsers.put(name,new OpenPathsUser(name));
+        }
+        OpenPathsUser openPathsUser=openPathsUsers.get(name);
+        if (configKey.equalsIgnoreCase("accesskey")) {
+          openPathsUser.setAccessKey(value);
+        }
+ else         if (configKey.equalsIgnoreCase("secretkey")) {
+          openPathsUser.setSecretKey(value);
+        }
+ else {
+          throw new ConfigurationException(key,"Unrecognised configuration parameter: " + configKey);
+        }
+      }
+    }
+    if (homeLat == 0)     throw new ConfigurationException("home.lat","No latitude specified for 'home'");
+    if (homeLong == 0)     throw new ConfigurationException("home.long","No longitude specified for 'home'");
+    homeLocation=new Location(homeLat,homeLong,"home");
+    setProperlyConfigured(true);
+  }
+}

@@ -1,0 +1,86 @@
+{
+  configurations=new ArrayList<Configuration>();
+  devices=new ArrayList<Device>();
+  Socket socket=null;
+  BufferedReader reader=null;
+  try {
+    String raw=null;
+    socket=new Socket(ip,port);
+    reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    boolean cont=true;
+    while (cont) {
+      raw=reader.readLine();
+      if (raw == null) {
+        cont=false;
+        continue;
+      }
+      Message message;
+      try {
+        message=processRawMessage(raw);
+        message.debug(logger);
+        if (message != null) {
+          if (message.getType() == MessageType.C) {
+            configurations.add(Configuration.create(message));
+          }
+ else           if (message.getType() == MessageType.L) {
+            devices.addAll(((L_Message)message).getDevices(configurations));
+            logger.info(devices.size() + " devices found.");
+            cont=false;
+          }
+        }
+      }
+ catch (      Exception e) {
+        logger.info("Failed to process message received by MAX! protocol.");
+        logger.debug(Utils.getStackTrace(e));
+      }
+    }
+    socket.close();
+    for (    MaxCubeBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String serialNumber=provider.getSerialNumber(itemName);
+        Device device=findDevice(serialNumber,devices);
+        if (device == null) {
+          logger.info("Cannot find MAX!cube device with serial number '{}'",serialNumber);
+          if (logger.isDebugEnabled()) {
+            StringBuilder sb=new StringBuilder();
+            sb.append("Available MAX! devices are:");
+            for (            Device d : devices) {
+              sb.append("\n\t");
+              sb.append(d.getSerialNumber());
+            }
+            logger.debug(sb.toString());
+          }
+          continue;
+        }
+switch (device.getType()) {
+case HeatingThermostat:
+          if (provider.getBindingType(itemName) == BindingType.VALVE) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());
+          }
+ else           if (provider.getBindingType(itemName) == BindingType.BATTERY) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getBatteryLow());
+          }
+ else {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
+          }
+        break;
+case ShutterContact:
+      eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+    break;
+case WallMountedThermostat:
+  eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getTemperatureSetpoint());
+break;
+default :
+}
+}
+}
+}
+ catch (UnknownHostException e) {
+logger.info("Cannot establish connection with MAX!cube lan gateway while connecting to '{}'",ip);
+logger.debug(Utils.getStackTrace(e));
+}
+catch (IOException e) {
+logger.info("Cannot read data from MAX!cube lan gateway while connecting to '{}'",ip);
+logger.debug(Utils.getStackTrace(e));
+}
+}

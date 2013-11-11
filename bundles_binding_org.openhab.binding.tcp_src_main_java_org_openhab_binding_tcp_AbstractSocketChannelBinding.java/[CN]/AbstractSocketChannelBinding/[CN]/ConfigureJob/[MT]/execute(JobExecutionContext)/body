@@ -1,0 +1,8 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  AbstractSocketChannelBinding theBinding=(AbstractSocketChannelBinding)dataMap.get("Binding");
+  AbstractSocketChannelBinding.Channel theChannel=(AbstractSocketChannelBinding.Channel)dataMap.get("Channel");
+  if (theChannel.channel.isConnected()) {
+    theBinding.configureChannel(theChannel);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  if (this.getVersion() > 4) {
+    for (    SensorType sensorType : this.sensors)     result.add(this.getMessage(sensorType));
+  }
+ else {
+    result.add(this.getValueMessage());
+  }
+  return result;
+}

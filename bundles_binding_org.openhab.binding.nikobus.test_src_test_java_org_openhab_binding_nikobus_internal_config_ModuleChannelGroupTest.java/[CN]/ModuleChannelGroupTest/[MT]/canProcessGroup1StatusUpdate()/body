@@ -1,0 +1,10 @@
+{
+  ModuleChannel item=group1.addChannel("test5",5,new ArrayList<Class<? extends Command>>());
+  item.setState(OnOffType.OFF);
+  group1.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group1.processNikobusCommand(new NikobusCommand("$1C6C940000000000FF00557CF8"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test5",OnOffType.ON);
+  group1.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group1.processNikobusCommand(new NikobusCommand("$1C6C9400000000FF00FF557CF8"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test5",OnOffType.OFF);
+}

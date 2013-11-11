@@ -1,0 +1,19 @@
+{
+synchronized (this) {
+    Iterator<C> it=iterator();
+    while (it.hasNext()) {
+      C aChannel=it.next();
+      if (remoteAddress.equals(aChannel.remote) && aChannel.channel == null && direction.equals(aChannel.direction)) {
+        return aChannel;
+      }
+    }
+    Iterator<C> it2=iterator();
+    while (it2.hasNext()) {
+      C aChannel=it2.next();
+      if (remoteAddress.equals(aChannel.remote)) {
+        return aChannel;
+      }
+    }
+    return null;
+  }
+}

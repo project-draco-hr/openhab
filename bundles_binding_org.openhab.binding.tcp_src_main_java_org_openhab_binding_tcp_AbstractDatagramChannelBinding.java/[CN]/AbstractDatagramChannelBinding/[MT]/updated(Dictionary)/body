@@ -1,0 +1,84 @@
+{
+  if (config != null) {
+    String bufferString=(String)config.get("buffersize");
+    if (StringUtils.isNotBlank(bufferString)) {
+      maximumBufferSize=Integer.parseInt((bufferString));
+    }
+ else {
+      logger.info("The maximum buffer will be set to the default value of {}",maximumBufferSize);
+    }
+    String reconnectString=(String)config.get("retryinterval");
+    if (StringUtils.isNotBlank(reconnectString)) {
+      reconnectInterval=Integer.parseInt((reconnectString));
+    }
+ else {
+      logger.info("The interval to retry connection setups will be set to the default value of {}",reconnectInterval);
+    }
+    String cronString=(String)config.get("reconnectcron");
+    if (StringUtils.isNotBlank(cronString)) {
+      reconnectCron=cronString;
+    }
+ else {
+      logger.info("The cron job to reset connections will be set to the default value of {}",reconnectCron);
+    }
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString)) {
+      listenerPort=Integer.parseInt((portString));
+    }
+ else {
+      logger.info("The port to listen for incoming connections will be set to the default value of {}",listenerPort);
+    }
+    String shareString=(String)config.get("itemsharedconnections");
+    if (StringUtils.isNotBlank(shareString)) {
+      itemShareChannels=Boolean.parseBoolean(shareString);
+    }
+ else {
+      logger.info("The setting to share channels within an Item will be set to the default value of {}",itemShareChannels);
+    }
+    String shareString2=(String)config.get("bindingsharedconnections");
+    if (StringUtils.isNotBlank(shareString2)) {
+      bindingShareChannels=Boolean.parseBoolean(shareString2);
+    }
+ else {
+      logger.info("The setting to share channels between the items with the same direction will be set to the default vaulue of {}",bindingShareChannels);
+    }
+    String shareString3=(String)config.get("directionssharedconnections");
+    if (StringUtils.isNotBlank(shareString3)) {
+      directionsShareChannels=Boolean.parseBoolean(shareString3);
+    }
+ else {
+      logger.info("The setting to share channels between directions will be set to the default vaulue of {}",bindingShareChannels);
+    }
+    String shareString4=(String)config.get("addressmask");
+    if (StringUtils.isNotBlank(shareString4)) {
+      useAddressMask=Boolean.parseBoolean(shareString4);
+    }
+ else {
+      logger.info("The setting to use address masks for incoming connections will be set to the default value of {}",useAddressMask);
+    }
+    if (useAddressMask && directionsShareChannels) {
+      logger.warn("The setting to share channels between directions is not compatible with the setting to use address masks. We will override the setting to share between directions");
+      directionsShareChannels=false;
+    }
+    if (bindingShareChannels && !itemShareChannels) {
+      logger.warn("The setting to share channels in the binding is not compatible with the setting to share channels within items. We will override the setting to share between items");
+      itemShareChannels=true;
+    }
+    if (directionsShareChannels && (!bindingShareChannels || !itemShareChannels)) {
+      logger.warn("The setting to share channels between directions is not compatible with the setting to share channels between items or within items. We will override the settings");
+      itemShareChannels=true;
+      bindingShareChannels=true;
+    }
+    String refreshString=(String)config.get("refreshinterval");
+    if (StringUtils.isNotBlank(refreshString)) {
+      refreshInterval=Long.parseLong((refreshString));
+    }
+ else {
+      logger.info("The refresh interval of the worker thread will be set to the default value of {}",refreshInterval);
+    }
+    if (listenerPort != 0) {
+      configureListenerChannel();
+    }
+    setProperlyConfigured(true);
+  }
+}

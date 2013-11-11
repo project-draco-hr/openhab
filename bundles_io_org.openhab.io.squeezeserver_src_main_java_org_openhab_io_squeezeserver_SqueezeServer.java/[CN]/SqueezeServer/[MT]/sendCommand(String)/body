@@ -1,0 +1,11 @@
+{
+  logger.debug("Sending command: {}",command);
+  try {
+    BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+    writer.write(command + NEW_LINE);
+    writer.flush();
+  }
+ catch (  IOException e) {
+    logger.error("Error while sending command to Squeeze Server (" + command + ")",e);
+  }
+}

@@ -1,0 +1,18 @@
+{
+  List<Class<? extends Command>> acceptedCommands=new ArrayList<Class<? extends Command>>();
+  acceptedCommands.add(PercentType.class);
+  ModuleChannel item=group3.addChannel("test2",1,acceptedCommands);
+  item.setState(OnOffType.OFF);
+  group3.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group3.processNikobusCommand(new NikobusCommand("$1C5FCB03400000000000E36D38"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test2",PercentType.valueOf("26"));
+  group3.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group3.processNikobusCommand(new NikobusCommand("$1C5FCB037F000000000009E2C0"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test2",PercentType.valueOf("50"));
+  group3.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group3.processNikobusCommand(new NikobusCommand("$1C5FCB03D90000000000652B76"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test2",PercentType.valueOf("86"));
+  group3.processNikobusCommand(new NikobusCommand("$0512"),binding);
+  group3.processNikobusCommand(new NikobusCommand("$1C5FCB03A70000000000A0143B"),binding);
+  Mockito.verify(binding,Mockito.times(1)).postUpdate("test2",PercentType.valueOf("66"));
+}

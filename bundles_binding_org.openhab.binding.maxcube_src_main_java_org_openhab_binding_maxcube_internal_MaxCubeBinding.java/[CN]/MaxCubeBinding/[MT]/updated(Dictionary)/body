@@ -1,0 +1,18 @@
+{
+  if (config != null) {
+    ip=(String)config.get("ip");
+    if (StringUtils.isBlank(ip)) {
+      throw new ConfigurationException("maxcube:ip","IP address for MAX!Cube must be set");
+    }
+    String portString=(String)config.get("port");
+    if (portString != null && !portString.isEmpty()) {
+      if (port > 0 && port <= 65535) {
+        port=Integer.parseInt(portString);
+      }
+    }
+    String refreshIntervalString=(String)config.get("refreshInterval");
+    if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+  }
+}

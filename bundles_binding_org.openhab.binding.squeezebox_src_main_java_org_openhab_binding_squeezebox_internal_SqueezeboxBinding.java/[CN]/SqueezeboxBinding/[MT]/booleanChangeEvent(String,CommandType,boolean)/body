@@ -1,0 +1,11 @@
+{
+  logger.debug("SqueezePlayer " + playerId + " -> "+ commandType.getCommand()+ ": "+ Boolean.toString(newState));
+  for (  String itemName : getItemNames(playerId,commandType)) {
+    if (newState) {
+      eventPublisher.postUpdate(itemName,OnOffType.ON);
+    }
+ else {
+      eventPublisher.postUpdate(itemName,OnOffType.OFF);
+    }
+  }
+}

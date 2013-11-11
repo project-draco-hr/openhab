@@ -1,0 +1,22 @@
+{
+  int size=buffer[offset] & SIZE_MASK;
+  int precision=(buffer[offset] & PRECISION_MASK) >> PRECISION_SHIFT;
+  int value=0;
+  int i;
+  for (i=0; i < size; ++i) {
+    value<<=8;
+    value|=buffer[offset + i + 1] & 0xFF;
+  }
+  BigDecimal result;
+  if ((buffer[offset + 1] & 0x80) == 0x80) {
+    if (size == 1) {
+      value|=0xffffff00;
+    }
+ else     if (size == 2) {
+      value|=0xffff0000;
+    }
+  }
+  result=BigDecimal.valueOf(value);
+  BigDecimal divisor=BigDecimal.valueOf(Math.pow(10,precision));
+  return result.divide(divisor);
+}

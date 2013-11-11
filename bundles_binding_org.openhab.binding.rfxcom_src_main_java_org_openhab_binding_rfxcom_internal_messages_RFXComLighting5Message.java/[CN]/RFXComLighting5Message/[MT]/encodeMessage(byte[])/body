@@ -1,0 +1,9 @@
+{
+  super.encodeMessage(data);
+  subType=SubType.values()[super.subType];
+  sensorId=(data[4] & 0xFF) << 16 | (data[5] & 0xFF) << 8 | (data[6] & 0xFF) << 0;
+  unitcode=data[7];
+  command=Commands.values()[data[8]];
+  dimmingLevel=data[9];
+  signalLevel=(byte)((data[10] & 0xF0) >> 4);
+}
