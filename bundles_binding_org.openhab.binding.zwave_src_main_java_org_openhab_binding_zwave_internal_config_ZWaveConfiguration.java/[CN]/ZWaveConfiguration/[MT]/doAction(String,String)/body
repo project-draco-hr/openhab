@@ -1,2 +1,25 @@
 {
+  String[] splitDomain=domain.split("/");
+  if (splitDomain.length < 2)   return;
+  if (splitDomain[0].equals("nodes")) {
+    int nodeId=Integer.parseInt(splitDomain[1].substring(4));
+    ZWaveNode node=zController.getNode(nodeId);
+    if (node == null)     return;
+    if (splitDomain.length == 2) {
+      if (action.equals("Save")) {
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.SerializeNode(node);
+      }
+      return;
+    }
+    if (splitDomain[2].equals("parameters")) {
+      if (action.equals("Refresh")) {
+        ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
+        if (manufacturer == null)         return;
+        ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+        List<ZWaveConfigValue> config=loadDeviceConfig(node,product.config);
+        for (        ZWaveConfigValue value : config)         node.configParameterReport(value.index);
+      }
+    }
+  }
 }
