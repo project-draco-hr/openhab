@@ -1,0 +1,9 @@
+{
+  String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes());
+  if (responseType != null) {
+    return Response.ok(getLoginBean(resource),responseType).build();
+  }
+ else {
+    return Response.notAcceptable(null).build();
+  }
+}
