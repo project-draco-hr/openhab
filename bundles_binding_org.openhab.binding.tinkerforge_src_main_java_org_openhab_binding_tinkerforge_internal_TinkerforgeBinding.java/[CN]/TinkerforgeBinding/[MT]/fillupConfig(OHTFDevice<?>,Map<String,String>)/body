@@ -15,6 +15,9 @@
     if (Arrays.asList(ConfigKeyAdmin.values()).contains(property)) {
       continue;
     }
+ else {
+      logger.error("{} found  property {}",LoggerConstants.TFINIT,property);
+    }
     if (features != null) {
       for (      EStructuralFeature feature : features) {
         logger.trace("found feature: {}",feature.getName());
@@ -26,6 +29,13 @@
           }
  else           if (feature.getEType().getInstanceClassName().equals("short")) {
             tfConfig.eSet(feature,Short.parseShort(deviceConfig.get(property)));
+          }
+ else           if (feature.getEType().getInstanceClassName().equals("long")) {
+            tfConfig.eSet(feature,Long.parseLong(deviceConfig.get(property)));
+          }
+ else           if (feature.getEType().getInstanceClassName().equals("boolean")) {
+            logger.debug("{} found boolean value",LoggerConstants.TFINIT);
+            tfConfig.eSet(feature,Boolean.parseBoolean(deviceConfig.get(property)));
           }
  else {
             throw new ConfigurationException(feature.getName(),"unsupported configuration type needed");

@@ -21,6 +21,27 @@
     ohtfDevice.setTfConfig(tfBrickDCConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.io_actuator.name())) {
+    logger.debug("{} setting io_actuator config",LoggerConstants.TFOPENHABCONFIG);
+    TFIOActorConfiguration tfioActorConfiguration=modelFactory.createTFIOActorConfiguration();
+    OHTFDevice<TFIOActorConfiguration> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.setTfConfig(tfioActorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.iosensor.name())) {
+    logger.debug("{} setting iosensor config",LoggerConstants.TFOPENHABCONFIG);
+    TFIOSensorConfiguration tfioSensorConfiguration=modelFactory.createTFIOSensorConfiguration();
+    OHTFDevice<TFIOSensorConfiguration> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.setTfConfig(tfioSensorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrial_digital_4in.name()) || deviceType.equals(TypeKey.bricklet_io16.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.TFOPENHABCONFIG,deviceType);
+    TFInterruptListenerConfiguration tfInterruptListenerConfiguration=modelFactory.createTFInterruptListenerConfiguration();
+    OHTFDevice<TFInterruptListenerConfiguration> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.setTfConfig(tfInterruptListenerConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.TFOPENHABCONFIG,deviceType);
     logger.trace("**** deviceType {}",deviceType);

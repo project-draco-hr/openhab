@@ -20,6 +20,11 @@
               OnOffValue state=cmd == OnOffType.OFF ? OnOffValue.OFF : OnOffValue.ON;
               ((MSwitchActor)mDevice).turnSwitch(state);
             }
+ else             if (mDevice instanceof DigitalActor) {
+              OnOffType cmd=(OnOffType)command;
+              HighLowValue state=cmd == OnOffType.OFF ? HighLowValue.LOW : HighLowValue.HIGH;
+              ((DigitalActor)mDevice).turnDigital(state);
+            }
  else {
               logger.error("received OnOff command for non-SwitchActor");
             }
