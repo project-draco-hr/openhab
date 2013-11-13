@@ -1,0 +1,18 @@
+{
+  int group=serialMessage.getMessagePayloadByte(offset + 1);
+  int maxAssociations=serialMessage.getMessagePayloadByte(offset + 2);
+  int following=serialMessage.getMessagePayloadByte(offset + 3);
+  if (maxAssociations == 0) {
+    return;
+  }
+  if (serialMessage.getMessagePayload().length > 5) {
+    logger.debug("Node {}, association group {} includes the following nodes:",this.getNode().getNodeId(),group);
+    int numAssociations=serialMessage.getMessagePayload().length - 5;
+    for (int cnt=0; cnt < numAssociations; cnt++) {
+      int node=serialMessage.getMessagePayloadByte(offset + 3 + cnt);
+      logger.debug("Node {}",node);
+    }
+  }
+  if (following == 0) {
+  }
+}
