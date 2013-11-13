@@ -21,10 +21,10 @@
   String serviceName=req.getParameter("service");
   ChartProvider provider=getChartProviders().get("default");
   if (provider == null)   throw new ServletException("Could not get chart provider.");
-  res.setContentType(provider.getChartType());
+  res.setContentType("image/" + provider.getChartType());
   try {
     BufferedImage chart=provider.createChart(serviceName,null,timeBegin,timeEnd,height,width,req.getParameter("items"),req.getParameter("groups"));
-    ImageIO.write(chart,"png",res.getOutputStream());
+    ImageIO.write(chart,provider.getChartType(),res.getOutputStream());
   }
  catch (  ItemNotFoundException e) {
     logger.debug("Item not found error while generating chart.");
