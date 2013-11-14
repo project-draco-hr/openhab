@@ -1,0 +1,31 @@
+{
+  if (ipControlSocket == null || !connected || !ipControlSocket.isConnected()) {
+    try {
+      ipControlSocket=new Socket();
+      ipControlSocket.connect(new InetSocketAddress(ip,port),CONNECTION_TIMEOUT);
+      logger.debug("Connected to {} on port {}",ip,port);
+      outStream=new DataOutputStream(ipControlSocket.getOutputStream());
+      inStream=new DataInputStream(ipControlSocket.getInputStream());
+      inBufferedReader=new BufferedReader(new InputStreamReader(inStream));
+      ipControlSocket.setSoTimeout(SOCKET_TIMEOUT);
+      outStream.flush();
+      connected=true;
+      receiverIP=ip;
+      receiverPort=port;
+      if (dataListener == null) {
+        dataListener=new DataListener();
+        dataListener.start();
+      }
+      if (connectionSupervisor == null) {
+        connectionSupervisor=new ConnectionSupervisor(CONNECTION_TEST_INTERVAL);
+      }
+    }
+ catch (    UnknownHostException unknownHost) {
+      logger.error("You are trying to connect to an unknown host!",unknownHost);
+    }
+catch (    IOException ioException) {
+      logger.error("Can't connect: " + ioException.getMessage());
+    }
+  }
+  return connected;
+}

@@ -1,0 +1,36 @@
+{
+  logger.debug("Data listener started");
+  boolean restartConnection=false;
+  while (!interrupted) {
+    try {
+      waitStateMessages();
+    }
+ catch (    IpcontrolException e) {
+      logger.error("Error occured during message waiting",e);
+    }
+catch (    SocketTimeoutException e) {
+      logger.error("No data received during supervision interval ({} sec)!",SOCKET_TIMEOUT);
+      restartConnection=true;
+    }
+catch (    Exception e) {
+      if (interrupted != true && this.isInterrupted() != true) {
+        logger.error("Error occured during message waiting",e);
+        restartConnection=true;
+        mysleep(1000);
+      }
+    }
+    if (restartConnection) {
+      restartConnection=false;
+      closeSocket();
+      logger.debug("Reconnecting...");
+      try {
+        connected=false;
+        connectSocket();
+      }
+ catch (      Exception ex) {
+        logger.error("Reconnection invoking error",ex);
+      }
+    }
+  }
+  logger.debug("Data listener stopped");
+}

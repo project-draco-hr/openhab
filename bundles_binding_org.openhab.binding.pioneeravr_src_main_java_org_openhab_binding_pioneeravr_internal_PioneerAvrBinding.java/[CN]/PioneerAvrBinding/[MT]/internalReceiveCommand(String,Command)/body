@@ -1,0 +1,44 @@
+{
+  if (itemName != null) {
+    PioneerAvrBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+    if (provider == null) {
+      logger.warn("Doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+      return;
+    }
+    logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
+    String tmp=provider.getDeviceCommand(itemName,command.toString());
+    if (tmp == null) {
+      tmp=provider.getDeviceCommand(itemName,WILDCARD_COMMAND_KEY);
+    }
+    String[] commandParts=tmp.split(":");
+    String deviceId=commandParts[0];
+    String deviceCmd=commandParts[1];
+    DeviceConfig device=deviceConfigCache.get(deviceId);
+    PioneerAvrConnection remoteController=device.getConnection();
+    if (device != null && remoteController != null) {
+      if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
+        deviceCmd=deviceCmd.replace(ADVANCED_COMMAND_KEY,"");
+        if (deviceCmd.contains("%")) {
+          deviceCmd=convertOpenHabCommandToDeviceCommand(command,deviceCmd);
+        }
+      }
+ else {
+        IpControlCommand cmd=IpControlCommand.valueOf(deviceCmd);
+        deviceCmd=cmd.getCommand();
+        if (deviceCmd.contains("%")) {
+          deviceCmd=convertOpenHabCommandToDeviceCommand(command,deviceCmd);
+        }
+      }
+      if (deviceCmd != null) {
+        remoteController.send(deviceCmd);
+      }
+ else {
+        logger.warn("Cannot convert value '{}' to eISCP format",command);
+        logger.warn("Cannot convert value '{}' to IpControl format",command);
+      }
+    }
+ else {
+      logger.warn("Cannot find connection details for device id '{}'",deviceId);
+    }
+  }
+}
