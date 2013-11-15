@@ -1,0 +1,14 @@
+{
+  byte[] data=new byte[11];
+  data[0]=0x08;
+  data[1]=RFXComBaseMessage.PacketType.THERMOSTAT1.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=(byte)(temperature);
+  data[7]=(byte)(set);
+  data[8]=(byte)(mode.toByte() & status.toByte());
+  data[9]=(byte)(((signalLevel & 0x0F) << 4));
+  return data;
+}
