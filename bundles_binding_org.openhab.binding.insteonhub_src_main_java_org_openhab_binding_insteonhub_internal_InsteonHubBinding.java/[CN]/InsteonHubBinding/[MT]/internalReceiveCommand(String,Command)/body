@@ -30,7 +30,9 @@
         InsteonHubAdjustmentType adjustmentType;
         if (command == IncreaseDecreaseType.INCREASE)         adjustmentType=InsteonHubAdjustmentType.BRIGHTEN;
  else         adjustmentType=InsteonHubAdjustmentType.DIM;
-        proxy.doIncrementalDeviceAdjustment(deviceId,adjustmentType);
+        if (setDimTimeout(itemName)) {
+          proxy.startDeviceAdjustment(deviceId,adjustmentType);
+        }
       }
  else       if (command instanceof UpDownType) {
         InsteonHubAdjustmentType adjustmentType;
