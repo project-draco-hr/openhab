@@ -21,5 +21,13 @@
         for (        ZWaveConfigValue value : config)         node.configParameterReport(value.index);
       }
     }
+    if (splitDomain[2].equals("associations")) {
+      if (action.equals("Refresh")) {
+        ZWaveConfigManufacturer manufacturer=findManufacturer(node.getManufacturer());
+        if (manufacturer == null)         return;
+        ZWaveConfigProduct product=findProduct(manufacturer,node.getDeviceId(),node.getDeviceType());
+        List<ZWaveConfigValue> config=loadDeviceConfig(node,product.config);
+      }
+    }
   }
 }
