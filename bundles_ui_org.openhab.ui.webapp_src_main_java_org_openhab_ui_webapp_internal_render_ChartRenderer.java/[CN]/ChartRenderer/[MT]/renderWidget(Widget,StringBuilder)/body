@@ -1,8 +1,5 @@
 {
   Chart chart=(Chart)w;
-  if (chart.getService() != null && !chart.getService().equals("rrd4j")) {
-    logger.warn("Chart service '{}' is not supported by the Classic UI, using rrd4j as fallback instead.");
-  }
   try {
     String itemParam=null;
     Item item=itemUIRegistry.getItem(chart.getItem());
@@ -12,7 +9,8 @@
  else {
       itemParam="items=" + chart.getItem();
     }
-    String url="/rrdchart.png?" + itemParam + "&period="+ chart.getPeriod()+ "&random=1";
+    String url="/chart?" + itemParam + "&period="+ chart.getPeriod()+ "&random=1";
+    if (chart.getService() != null)     url+="&service=" + chart.getService();
     String snippet=getSnippet("image");
     if (chart.getRefresh() > 0) {
       snippet=StringUtils.replace(snippet,"%setrefresh%","<script type=\"text/javascript\">imagesToRefreshOnPage=1</script>");
