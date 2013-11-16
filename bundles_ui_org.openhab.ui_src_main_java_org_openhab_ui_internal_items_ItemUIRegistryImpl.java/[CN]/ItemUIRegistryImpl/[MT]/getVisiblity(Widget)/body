@@ -15,7 +15,10 @@
       return true;
     }
     State state=item.getState();
-    if (matchStateToValue(state,rule.getState()) == true) {
+    String value;
+    if (rule.getSign() != null)     value=rule.getSign() + rule.getState();
+ else     value=rule.getState();
+    if (matchStateToValue(state,value,rule.getCondition()) == true) {
       return true;
     }
   }
