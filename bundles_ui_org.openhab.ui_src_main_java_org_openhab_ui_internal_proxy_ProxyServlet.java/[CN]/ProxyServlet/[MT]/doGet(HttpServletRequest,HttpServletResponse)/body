@@ -8,19 +8,16 @@
     throw new ServletException("Parameter 'widget' must be provided!");
   }
   String uriString=null;
-  EList<ConditionArray> uriArray=null;
   Sitemap sitemap=(Sitemap)modelRepository.getModel(sitemapName);
   if (sitemap != null) {
     Widget widget=itemUIRegistry.getWidget(sitemap,widgetId);
     if (widget instanceof Image) {
       Image image=(Image)widget;
       uriString=image.getUrl();
-      uriArray=image.getUrlArray();
     }
  else     if (widget instanceof Video) {
       Video video=(Video)widget;
       uriString=video.getUrl();
-      uriArray=video.getUrlArray();
     }
  else {
       if (widget == null) {
@@ -30,23 +27,9 @@
         throw new ServletException("Widget type '" + widget.getClass().getName() + "' is not supported!");
       }
     }
-    if (widget.getItem() != null) {
-      State state=itemUIRegistry.getItemState(widget.getItem());
-      if (state != null) {
-        for (        ConditionArray url : uriArray) {
-          if (url.getState().equalsIgnoreCase(state.toString())) {
-            uriString=url.getArg();
-            break;
-          }
-        }
-      }
-    }
   }
  else {
     throw new ServletException("Sitemap '" + sitemapName + "' could not be found!");
-  }
-  if (uriString == null) {
-    throw new ServletException("URI not resolved");
   }
   HttpClient httpClient=new HttpClient();
   try {
