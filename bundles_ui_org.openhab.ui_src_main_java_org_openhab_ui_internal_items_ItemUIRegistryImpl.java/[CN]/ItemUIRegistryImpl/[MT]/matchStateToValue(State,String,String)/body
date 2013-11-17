@@ -38,6 +38,7 @@ Calendar val=((DateTimeType)state).getCalendar();
 Calendar now=Calendar.getInstance();
 long secsDif=(now.getTimeInMillis() - val.getTimeInMillis()) / 1000;
 logger.debug("MATCH CHECK: Time: val=" + val.getTimeInMillis() + " now="+ now.getTimeInMillis()+ " dif="+ secsDif+ "s versus "+ value);
+try {
 switch (condition) {
 case EQUAL:
 if (secsDif == Integer.parseInt(value)) matched=true;
@@ -58,6 +59,10 @@ case NOT:
 case NOTEQUAL:
 if (secsDif != Integer.parseInt(value)) matched=true;
 break;
+}
+}
+ catch (NumberFormatException e) {
+logger.debug("MATCH CHECK: Decimal format exception: " + e);
 }
 }
  else if (state instanceof OnOffType || state instanceof OpenClosedType || state instanceof UpDownType|| state instanceof StringType|| state instanceof UnDefType) {

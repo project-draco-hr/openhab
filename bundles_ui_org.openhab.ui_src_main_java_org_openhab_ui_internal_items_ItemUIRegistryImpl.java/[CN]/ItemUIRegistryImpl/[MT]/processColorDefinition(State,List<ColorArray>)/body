@@ -5,14 +5,25 @@
   if (colorList.size() == 1 && colorList.get(0).getState() == null)   colorString=colorList.get(0).getArg();
  else {
     for (    ColorArray color : colorList) {
+      State cmpState=state;
       if (color.getState() == null) {
         logger.error("Error parsing color");
         continue;
       }
+      if (color.getItem() != null) {
+        Item item;
+        try {
+          item=itemRegistry.getItem(color.getItem());
+          cmpState=item.getState();
+        }
+ catch (        ItemNotFoundException e) {
+          logger.error("Cannot retrieve color item {} for widget",color.getItem());
+        }
+      }
       String value;
       if (color.getSign() != null)       value=color.getSign() + color.getState();
  else       value=color.getState();
-      if (matchStateToValue(state,value,color.getCondition()) == true) {
+      if (matchStateToValue(cmpState,value,color.getCondition()) == true) {
         colorString=color.getArg();
         break;
       }
