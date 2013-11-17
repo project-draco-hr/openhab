@@ -18,11 +18,13 @@
   Iterator<HistoricItem> it=result.iterator();
   Collection<Date> xData=new ArrayList<Date>();
   Collection<Number> yData=new ArrayList<Number>();
+  DecimalType initState=null;
   while (it.hasNext()) {
     HistoricItem historicItem=it.next();
     org.openhab.core.types.State state=historicItem.getState();
     if (state instanceof DecimalType) {
       DecimalType value=(DecimalType)state;
+      if (initState == null)       initState=value;
       xData.add(historicItem.getTimestamp());
       yData.add(value);
     }
@@ -32,4 +34,10 @@
   series.setLineStyle(new BasicStroke(1.5f));
   series.setMarker(SeriesMarker.NONE);
   series.setLineColor(color);
+  if (initState.floatValue() > ((series.getyMax().floatValue() - series.getyMin().floatValue()) / 2 + series.getyMin().floatValue())) {
+    legendPosition++;
+  }
+ else {
+    legendPosition--;
+  }
 }

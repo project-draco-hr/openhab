@@ -2,7 +2,6 @@
   QueryablePersistenceService persistenceService;
   int seriesCounter=0;
   Chart chart=new ChartBuilder().width(width).height(height).build();
-  chart.getStyleManager().setLegendPosition(LegendPosition.InsideSW);
   long period=(endTime.getTime() - startTime.getTime()) / 1000;
   String pattern="hh:mm";
   if (period <= 600)   pattern="mm:ss";
@@ -47,6 +46,8 @@
       }
     }
   }
+  if (legendPosition < 0)   chart.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
+ else   chart.getStyleManager().setLegendPosition(LegendPosition.InsideSW);
   BufferedImage lBufferedImage=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_ARGB);
   Graphics2D lGraphics2D=lBufferedImage.createGraphics();
   chart.paint(lGraphics2D);
