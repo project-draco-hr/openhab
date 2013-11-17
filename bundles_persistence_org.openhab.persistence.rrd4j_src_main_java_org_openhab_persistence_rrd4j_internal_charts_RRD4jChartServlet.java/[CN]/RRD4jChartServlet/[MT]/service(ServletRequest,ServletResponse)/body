@@ -1,15 +1,32 @@
 {
-  RrdGraphDef graphDef=new RrdGraphDef();
-  configureImageParameters(graphDef,req);
-  configureContents(graphDef,req);
+  logger.debug("RRD4J Received incoming chart request: ",req);
+  int width=1024;
   try {
-    RrdGraph graph=new RrdGraph(graphDef);
-    BufferedImage bi=new BufferedImage(graph.getRrdGraphInfo().getWidth(),graph.getRrdGraphInfo().getHeight(),BufferedImage.TYPE_INT_RGB);
-    graph.render(bi.getGraphics());
-    res.setContentType("image/png");
-    javax.imageio.ImageIO.write(bi,"png",res.getOutputStream());
+    width=Integer.parseInt(req.getParameter("w"));
   }
- catch (  FileNotFoundException e) {
-    throw new ServletException("Could not read database files for all requested items.",e);
+ catch (  Exception e) {
+  }
+  int height=512;
+  try {
+    height=Integer.parseInt(req.getParameter("h"));
+  }
+ catch (  Exception e) {
+  }
+  Long period=PERIODS.get(req.getParameter("period"));
+  if (period == null) {
+    period=PERIODS.get("D");
+  }
+  Date timeEnd=new Date();
+  Date timeBegin=new Date(timeEnd.getTime() - period);
+  res.setContentType("image/" + getChartType());
+  try {
+    BufferedImage chart=createChart(null,null,timeBegin,timeEnd,height,width,req.getParameter("items"),req.getParameter("groups"));
+    ImageIO.write(chart,getChartType(),res.getOutputStream());
+  }
+ catch (  ItemNotFoundException e) {
+    logger.debug("Item not found error while generating chart.");
+  }
+catch (  IllegalArgumentException e) {
+    logger.debug("Illegal argument in chart: {}",e);
   }
 }
