@@ -3,6 +3,14 @@
   int seriesCounter=0;
   Chart chart=new ChartBuilder().width(width).height(height).build();
   chart.getStyleManager().setLegendPosition(LegendPosition.InsideSW);
+  long period=(endTime.getTime() - startTime.getTime()) / 1000;
+  String pattern="hh:mm";
+  if (period <= 600)   pattern="mm:ss";
+ else   if (period <= 3600)   pattern="hh:mm";
+ else   if (period < 86400)   pattern="hh:mm";
+ else   if (period < 604800)   pattern="DDD hh:mm";
+ else   pattern="DDD dd MMM";
+  chart.getStyleManager().setDatePattern(pattern);
   persistenceService=null;
   if (service != null) {
     persistenceService=getPersistenceServices().get(service);
