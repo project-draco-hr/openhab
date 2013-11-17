@@ -3,8 +3,12 @@
   if (cmd == InsteonHubMsgConst.REC_CODE_INSTEON_STD_MSG) {
     String device=InsteonHubByteUtil.encodeDeviceHex(msg,2);
     InsteonHubStdMsgFlags flags=new InsteonHubStdMsgFlags(InsteonHubByteUtil.byteToUnsignedInt(msg[8]));
-    if (flags.isAck()) {
-      alertLevelUpdate(device,InsteonHubByteUtil.byteToUnsignedInt(msg[10]));
+    if (flags.isAck() && msg[9] == InsteonHubMsgConst.CMD1_STATUS_REQUEST) {
+      int level=InsteonHubByteUtil.byteToUnsignedInt(msg[10]);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Alerting level update device='" + device + "' level="+ level);
+      }
+      alertLevelUpdate(device,level);
     }
  else {
       byte cmd1=msg[9];
@@ -14,15 +18,14 @@ case InsteonHubMsgConst.CMD1_ON:
 case InsteonHubMsgConst.CMD1_OFF_FAST:
 case InsteonHubMsgConst.CMD1_ON_FAST:
         alertLevelUpdate(device,cmd1 == InsteonHubMsgConst.CMD1_ON || cmd1 == InsteonHubMsgConst.CMD1_ON_FAST ? 255 : 0);
-      break;
 case InsteonHubMsgConst.CMD1_DIM:
 case InsteonHubMsgConst.CMD1_BRT:
 case InsteonHubMsgConst.CMD1_STOP_DIM_BRT:
-    proxy.requestDeviceLevel(device);
-  if (logger.isTraceEnabled()) {
-    logger.trace("Requesting level for device " + device);
-  }
-break;
+      proxy.requestDeviceLevel(device);
+    if (logger.isTraceEnabled()) {
+      logger.trace("Requesting level for device " + device);
+    }
+  break;
 }
 }
 }
