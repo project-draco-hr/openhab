@@ -19,7 +19,7 @@
   Date timeEnd=new Date();
   Date timeBegin=new Date(timeEnd.getTime() - period);
   String serviceName=req.getParameter("service");
-  ChartProvider provider=getChartProviders().get("default");
+  ChartProvider provider=getChartProviders().get(providerName);
   if (provider == null)   throw new ServletException("Could not get chart provider.");
   res.setContentType("image/" + provider.getChartType());
   try {
