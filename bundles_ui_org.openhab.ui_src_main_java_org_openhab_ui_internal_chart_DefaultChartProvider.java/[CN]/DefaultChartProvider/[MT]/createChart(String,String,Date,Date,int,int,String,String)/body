@@ -3,12 +3,11 @@
   int seriesCounter=0;
   Chart chart=new ChartBuilder().width(width).height(height).build();
   long period=(endTime.getTime() - startTime.getTime()) / 1000;
-  String pattern="hh:mm";
+  String pattern="HH:mm";
   if (period <= 600)   pattern="mm:ss";
- else   if (period <= 3600)   pattern="hh:mm";
- else   if (period <= 86400)   pattern="hh:mm";
+ else   if (period <= 86400)   pattern="HH:mm";
  else   if (period <= 604800)   pattern="EEE d";
- else   pattern="EEE d MMM";
+ else   pattern="d MMM";
   chart.getStyleManager().setDatePattern(pattern);
   chart.getStyleManager().setAxisTickLabelsFont(new Font("SansSerif",Font.PLAIN,11));
   chart.getStyleManager().setChartPadding(5);
