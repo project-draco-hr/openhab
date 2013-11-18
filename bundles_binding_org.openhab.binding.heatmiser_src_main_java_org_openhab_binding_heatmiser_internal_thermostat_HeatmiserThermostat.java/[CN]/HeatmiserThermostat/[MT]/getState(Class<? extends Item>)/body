@@ -1,5 +1,7 @@
 {
-  if (itemType == StringItem.class)   return dcbState == 1 ? StringType.valueOf("ON") : StringType.valueOf("OFF");
   if (itemType == SwitchItem.class)   return dcbState == 1 ? OnOffType.ON : OnOffType.OFF;
-  return DecimalType.valueOf(Integer.toString(dcbState));
+  if (dcbState == 0)   return StringType.valueOf(States.OFF.toString());
+  if (dcbHolidayTime != 0)   return StringType.valueOf(States.HOLIDAY.toString());
+  if (dcbHoldTime != 0)   return StringType.valueOf(States.HOLD.toString());
+  return StringType.valueOf(States.ON.toString());
 }

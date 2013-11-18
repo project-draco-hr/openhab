@@ -1,6 +1,9 @@
 {
   if (itemType == SwitchItem.class)   return dcbHolidayTime > 0 ? OnOffType.ON : OnOffType.OFF;
   Calendar now=Calendar.getInstance();
+  now.set(Calendar.MINUTE,0);
+  now.set(Calendar.SECOND,0);
+  now.set(Calendar.MILLISECOND,0);
   now.add(Calendar.HOUR,dcbHolidayTime);
   return new DateTimeType(now);
 }
