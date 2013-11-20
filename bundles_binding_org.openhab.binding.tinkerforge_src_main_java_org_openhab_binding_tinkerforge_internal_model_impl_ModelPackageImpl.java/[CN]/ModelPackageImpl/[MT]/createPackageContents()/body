@@ -157,8 +157,10 @@
   createEAttribute(ohtfDeviceEClass,OHTF_DEVICE__UID);
   createEAttribute(ohtfDeviceEClass,OHTF_DEVICE__SUBID);
   createEAttribute(ohtfDeviceEClass,OHTF_DEVICE__OHID);
+  createEAttribute(ohtfDeviceEClass,OHTF_DEVICE__SUB_DEVICE_IDS);
   createEReference(ohtfDeviceEClass,OHTF_DEVICE__TF_CONFIG);
   createEReference(ohtfDeviceEClass,OHTF_DEVICE__OH_CONFIG);
+  createEOperation(ohtfDeviceEClass,OHTF_DEVICE___IS_VALID_SUB_ID__STRING);
   ohConfigEClass=createEClass(OH_CONFIG);
   createEReference(ohConfigEClass,OH_CONFIG__OH_TF_DEVICES);
   createEOperation(ohConfigEClass,OH_CONFIG___GET_CONFIG_BY_TF_ID__STRING_STRING);
@@ -188,6 +190,15 @@
   createEAttribute(tfServoConfigurationEClass,TF_SERVO_CONFIGURATION__PERIOD);
   createEAttribute(tfServoConfigurationEClass,TF_SERVO_CONFIGURATION__OUTPUT_VOLTAGE);
   dcDriveModeEEnum=createEEnum(DC_DRIVE_MODE);
+  noSubIdsEEnum=createEEnum(NO_SUB_IDS);
+  industrialDigitalInSubIDsEEnum=createEEnum(INDUSTRIAL_DIGITAL_IN_SUB_IDS);
+  industrialQuadRelayIDsEEnum=createEEnum(INDUSTRIAL_QUAD_RELAY_IDS);
+  servoSubIDsEEnum=createEEnum(SERVO_SUB_IDS);
+  barometerSubIDsEEnum=createEEnum(BAROMETER_SUB_IDS);
+  io16SubIdsEEnum=createEEnum(IO16_SUB_IDS);
+  dualRelaySubIdsEEnum=createEEnum(DUAL_RELAY_SUB_IDS);
+  lcdButtonSubIdsEEnum=createEEnum(LCD_BUTTON_SUB_IDS);
+  lcdBacklightSubIdsEEnum=createEEnum(LCD_BACKLIGHT_SUB_IDS);
   mipConnectionEDataType=createEDataType(MIP_CONNECTION);
   mTinkerDeviceEDataType=createEDataType(MTINKER_DEVICE);
   mLoggerEDataType=createEDataType(MLOGGER);
@@ -209,4 +220,5 @@
   mTinkerBrickletBarometerEDataType=createEDataType(MTINKER_BRICKLET_BAROMETER);
   mTinkerBrickletAmbientLightEDataType=createEDataType(MTINKER_BRICKLET_AMBIENT_LIGHT);
   mTinkerBrickletLCD20x4EDataType=createEDataType(MTINKER_BRICKLET_LCD2_0X4);
+  enumEDataType=createEDataType(ENUM);
 }
