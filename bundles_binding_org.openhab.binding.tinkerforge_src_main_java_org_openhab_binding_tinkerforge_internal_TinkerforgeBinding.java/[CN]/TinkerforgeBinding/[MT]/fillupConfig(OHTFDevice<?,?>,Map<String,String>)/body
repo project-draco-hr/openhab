@@ -8,7 +8,14 @@
     }
     ohtfDevice.setSubid(subid);
   }
-  ohtfDevice.setOhid(deviceConfig.get(ConfigKeyAdmin.ohId.name()));
+  if (ohConfig.getConfigByTFId(uid,subid) != null) {
+    throw new ConfigurationException(String.format("uid: %s subId: %s",uid,subid),String.format("%s: duplicate device config for uid \"%s\" and subId \"%s\": fix openhab.cfg",LoggerConstants.CONFIG,uid,subid));
+  }
+  String symbolicName=deviceConfig.get(ConfigKeyAdmin.ohId.name());
+  if (ohConfig.getConfigByOHId(symbolicName) != null) {
+    throw new ConfigurationException(String.format("symbolic name: %s",symbolicName),String.format("%s: duplicate device config for symbolic name \"%s\": fix openhab.cfg",LoggerConstants.CONFIG,symbolicName));
+  }
+  ohtfDevice.setOhid(symbolicName);
   EObject tfConfig=ohtfDevice.getTfConfig();
   EList<EStructuralFeature> features=null;
   if (tfConfig != null) {
