@@ -1,4 +1,6 @@
 {
-  ZWaveAssociationCommandClass association=new ZWaveAssociationCommandClass(this,this.controller,null);
-  controller.sendData(association.getConfigMessage(group));
+  NodeAssociation association=new NodeAssociation();
+  configAssociations.put(group,association);
+  ZWaveAssociationCommandClass associationClass=new ZWaveAssociationCommandClass(this,this.controller,null);
+  controller.sendData(associationClass.getAssociationMessage(group));
 }

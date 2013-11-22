@@ -5,14 +5,18 @@
   if (maxAssociations == 0) {
     return;
   }
-  if (serialMessage.getMessagePayload().length > 5) {
+  logger.debug("Node {}, association group {} has max associations " + maxAssociations,this.getNode().getNodeId(),group);
+  ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
+  if (serialMessage.getMessagePayload().length > (offset + 4)) {
     logger.debug("Node {}, association group {} includes the following nodes:",this.getNode().getNodeId(),group);
-    int numAssociations=serialMessage.getMessagePayload().length - 5;
+    int numAssociations=serialMessage.getMessagePayload().length - (offset + 4);
     for (int cnt=0; cnt < numAssociations; cnt++) {
-      int node=serialMessage.getMessagePayloadByte(offset + 3 + cnt);
+      int node=serialMessage.getMessagePayloadByte(offset + 4 + cnt);
+      zEvent.addMember(node);
       logger.debug("Node {}",node);
     }
   }
   if (following == 0) {
   }
+  this.getController().notifyEventListeners(zEvent);
 }

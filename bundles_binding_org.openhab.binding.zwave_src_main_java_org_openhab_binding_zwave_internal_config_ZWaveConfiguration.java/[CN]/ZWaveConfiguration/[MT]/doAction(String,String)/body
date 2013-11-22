@@ -1,2 +1,38 @@
 {
+  String[] splitDomain=domain.split("/");
+  if (splitDomain.length < 2)   return;
+  if (splitDomain[0].equals("nodes")) {
+    int nodeId=Integer.parseInt(splitDomain[1].substring(4));
+    ZWaveNode node=zController.getNode(nodeId);
+    if (node == null)     return;
+    if (splitDomain.length == 2) {
+      if (action.equals("Save")) {
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.SerializeNode(node);
+      }
+      return;
+    }
+    if (splitDomain[2].equals("parameters")) {
+      if (action.equals("Refresh")) {
+        ZWaveProductDatabase database=new ZWaveProductDatabase();
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)         return;
+        List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+        for (        ZWaveDbConfigurationParameter parameter : configList)         node.configParameterReport(parameter.Index);
+      }
+    }
+    if (splitDomain[2].equals("associations")) {
+      if (action.equals("Refresh")) {
+        ZWaveProductDatabase database=new ZWaveProductDatabase();
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)         return;
+        if (splitDomain.length == 3) {
+          List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
+          for (          ZWaveDbAssociationGroup group : groupList)           node.configAssociationReport(group.Index);
+        }
+ else         if (splitDomain.length == 4) {
+          int nodeArg=Integer.parseInt(splitDomain[3].substring(11));
+          node.configAssociationReport(nodeArg);
+        }
+      }
+    }
+  }
 }
