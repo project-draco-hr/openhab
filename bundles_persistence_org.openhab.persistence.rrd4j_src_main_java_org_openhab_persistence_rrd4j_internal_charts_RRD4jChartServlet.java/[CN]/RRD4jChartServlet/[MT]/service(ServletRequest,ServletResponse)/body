@@ -21,7 +21,7 @@
   res.setContentType("image/" + getChartType());
   try {
     BufferedImage chart=createChart(null,null,timeBegin,timeEnd,height,width,req.getParameter("items"),req.getParameter("groups"));
-    ImageIO.write(chart,getChartType(),res.getOutputStream());
+    ImageIO.write(chart,getChartType().toString(),res.getOutputStream());
   }
  catch (  ItemNotFoundException e) {
     logger.debug("Item not found error while generating chart.");

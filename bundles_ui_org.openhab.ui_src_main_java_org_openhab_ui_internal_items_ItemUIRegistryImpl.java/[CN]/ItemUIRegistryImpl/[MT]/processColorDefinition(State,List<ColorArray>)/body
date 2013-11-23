@@ -1,8 +1,14 @@
 {
-  if (colorList == null)   return null;
-  if (colorList.size() == 0)   return null;
+  if (colorList == null) {
+    return null;
+  }
+  if (colorList.size() == 0) {
+    return null;
+  }
   String colorString=null;
-  if (colorList.size() == 1 && colorList.get(0).getState() == null)   colorString=colorList.get(0).getArg();
+  if (colorList.size() == 1 && colorList.get(0).getState() == null) {
+    colorString=colorList.get(0).getArg();
+  }
  else {
     for (    ColorArray color : colorList) {
       State cmpState=state;
@@ -17,7 +23,7 @@
           cmpState=item.getState();
         }
  catch (        ItemNotFoundException e) {
-          logger.error("Cannot retrieve color item {} for widget",color.getItem());
+          logger.warn("Cannot retrieve color item {} for widget",color.getItem());
         }
       }
       String value;

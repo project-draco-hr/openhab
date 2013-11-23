@@ -3,7 +3,7 @@
   if (value.startsWith("\"") && value.endsWith("\""))   value=value.substring(1,value.length() - 1);
   Condition condition=Condition.EQUAL;
   if (matchCondition != null)   condition=Condition.fromString(matchCondition);
-  if (state instanceof PercentType || state instanceof DecimalType) {
+  if (DecimalType.class.isInstance(state)) {
     try {
 switch (condition) {
 case EQUAL:
@@ -62,14 +62,14 @@ break;
 logger.debug("matchStateToValue: Decimal format exception: " + e);
 }
 }
- else if (state instanceof OnOffType || state instanceof OpenClosedType || state instanceof UpDownType|| state instanceof StringType|| state instanceof UnDefType) {
+ else {
 switch (condition) {
 case NOT:
 case NOTEQUAL:
-if (!value.equalsIgnoreCase(state.toString())) matched=true;
+if (!value.equals(state.toString())) matched=true;
 break;
 default :
-if (value.equalsIgnoreCase(state.toString())) matched=true;
+if (value.equals(state.toString())) matched=true;
 break;
 }
 }
