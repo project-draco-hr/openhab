@@ -1,6 +1,5 @@
 {
   Color color=LINECOLORS[seriesCounter % LINECOLORS.length];
-  seriesCounter++;
   String label=null;
   if (itemUIRegistry != null) {
     label=itemUIRegistry.getLabel(item.getName());
@@ -18,26 +17,28 @@
   Iterator<HistoricItem> it=result.iterator();
   Collection<Date> xData=new ArrayList<Date>();
   Collection<Number> yData=new ArrayList<Number>();
-  DecimalType initState=null;
   while (it.hasNext()) {
     HistoricItem historicItem=it.next();
     org.openhab.core.types.State state=historicItem.getState();
     if (state instanceof DecimalType) {
-      DecimalType value=(DecimalType)state;
-      if (initState == null)       initState=value;
       xData.add(historicItem.getTimestamp());
-      yData.add(value);
+      yData.add((DecimalType)state);
     }
   }
-  if (xData.size() < 2 || yData.size() < 2)   return;
+  if (xData.size() == 0)   return false;
+  if (xData.size() == 1) {
+    xData.add(xData.iterator().next());
+    yData.add(yData.iterator().next());
+  }
   Series series=chart.addDateSeries(label,xData,yData);
   series.setLineStyle(new BasicStroke(1.5f));
   series.setMarker(SeriesMarker.NONE);
   series.setLineColor(color);
-  if (initState.floatValue() > ((series.getyMax().floatValue() - series.getyMin().floatValue()) / 2 + series.getyMin().floatValue())) {
+  if (yData.iterator().next().floatValue() > ((series.getyMax().floatValue() - series.getyMin().floatValue()) / 2 + series.getyMin().floatValue())) {
     legendPosition++;
   }
  else {
     legendPosition--;
   }
+  return true;
 }

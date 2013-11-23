@@ -13,6 +13,8 @@
   chart.getStyleManager().setChartPadding(5);
   chart.getStyleManager().setLegendBackgroundColor(Color.LIGHT_GRAY);
   chart.getStyleManager().setChartBackgroundColor(Color.LIGHT_GRAY);
+  chart.getStyleManager().setXAxisMin(startTime.getTime());
+  chart.getStyleManager().setXAxisMax(endTime.getTime());
   persistenceService=null;
   if (service != null) {
     persistenceService=getPersistenceServices().get(service);
@@ -27,7 +29,7 @@
     String[] itemNames=items.split(",");
     for (    String itemName : itemNames) {
       Item item=itemUIRegistry.getItem(itemName);
-      addItem(chart,persistenceService,startTime,endTime,item,seriesCounter++);
+      if (addItem(chart,persistenceService,startTime,endTime,item,seriesCounter))       seriesCounter++;
     }
   }
   if (groups != null) {
@@ -37,13 +39,25 @@
       if (item instanceof GroupItem) {
         GroupItem groupItem=(GroupItem)item;
         for (        Item member : groupItem.getMembers()) {
-          addItem(chart,persistenceService,startTime,endTime,member,seriesCounter++);
+          if (addItem(chart,persistenceService,startTime,endTime,member,seriesCounter))           seriesCounter++;
         }
       }
  else {
         throw new ItemNotFoundException("Item '" + item.getName() + "' defined in groups is not a group.");
       }
     }
+  }
+  if (seriesCounter == 0) {
+    chart.getStyleManager().setLegendVisible(false);
+    Collection<Date> xData=new ArrayList<Date>();
+    Collection<Number> yData=new ArrayList<Number>();
+    xData.add(startTime);
+    yData.add(0);
+    xData.add(endTime);
+    yData.add(0);
+    Series series=chart.addDateSeries("NONE",xData,yData);
+    series.setMarker(SeriesMarker.NONE);
+    series.setLineStyle(new BasicStroke(0f));
   }
   if (legendPosition < 0)   chart.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
  else   chart.getStyleManager().setLegendPosition(LegendPosition.InsideSW);
