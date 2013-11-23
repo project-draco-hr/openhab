@@ -1,0 +1,14 @@
+{
+  boolean isDuplicate=false;
+  final String genericDeviceId=device.getGenericDeviceId();
+  final EList<MSubDevice<?>> genericDevicesList=tinkerforgeEcosystem.getDevices4GenericId(uid,genericDeviceId);
+  if (genericDevicesList.size() != 0) {
+    for (    MSubDevice<?> gd : genericDevicesList) {
+      if (!gd.getSubId().equals(subId) && gd.getEnabledA().get()) {
+        isDuplicate=true;
+        logger.error("{} existing device is uid {} subId {}",LoggerConstants.CONFIG,gd.getUid(),gd.getSubId());
+      }
+    }
+  }
+  return isDuplicate;
+}

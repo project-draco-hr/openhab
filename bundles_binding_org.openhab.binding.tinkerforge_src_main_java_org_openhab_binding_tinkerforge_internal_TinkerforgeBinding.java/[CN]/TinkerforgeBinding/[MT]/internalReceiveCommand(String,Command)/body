@@ -12,7 +12,7 @@
         }
         logger.trace("{} found item for command: uid: {}, subid: {}",LoggerConstants.COMMAND,deviceUid,deviceSubId);
         MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
-        if (mDevice != null) {
+        if (mDevice != null && mDevice.getEnabledA().get()) {
           if (command instanceof OnOffType) {
             logger.trace("{} found onoff command",LoggerConstants.COMMAND);
             if (mDevice instanceof MInSwitchActor) {

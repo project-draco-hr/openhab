@@ -73,11 +73,19 @@ if (result == null) result=caseMSwitchActor(mInSwitchActor);
 if (result == null) result=defaultCase(theEObject);
 return result;
 }
+case ModelPackage.GENERIC_DEVICE:
+{
+GenericDevice genericDevice=(GenericDevice)theEObject;
+T result=caseGenericDevice(genericDevice);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
 case ModelPackage.IO_DEVICE:
 {
 IODevice ioDevice=(IODevice)theEObject;
 T result=caseIODevice(ioDevice);
 if (result == null) result=caseMSubDevice(ioDevice);
+if (result == null) result=caseGenericDevice(ioDevice);
 if (result == null) result=caseMBaseDevice(ioDevice);
 if (result == null) result=defaultCase(theEObject);
 return result;
@@ -221,6 +229,7 @@ T result=caseDigitalActor(digitalActor);
 if (result == null) result=caseIODevice(digitalActor);
 if (result == null) result=caseMTFConfigConsumer(digitalActor);
 if (result == null) result=caseMSubDevice(digitalActor);
+if (result == null) result=caseGenericDevice(digitalActor);
 if (result == null) result=caseMBaseDevice(digitalActor);
 if (result == null) result=defaultCase(theEObject);
 return result;
@@ -245,6 +254,7 @@ if (result == null) result=caseIODevice(digitalSensor);
 if (result == null) result=caseMSensor(digitalSensor);
 if (result == null) result=caseMTFConfigConsumer(digitalSensor);
 if (result == null) result=caseMSubDevice(digitalSensor);
+if (result == null) result=caseGenericDevice(digitalSensor);
 if (result == null) result=caseMBaseDevice(digitalSensor);
 if (result == null) result=defaultCase(theEObject);
 return result;

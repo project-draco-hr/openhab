@@ -11,11 +11,17 @@
     }
     if (device instanceof MTFConfigConsumer<?> && deviceConfig != null) {
       logger.debug("{} found MTFConfigConsumer id {}",LoggerConstants.TFINIT,logId);
-      TFConfig deviceTfConfig=deviceConfig.getTfConfig();
-      logger.debug("{} setting tfConfig for {}",LoggerConstants.TFINIT,logId);
-      ((MTFConfigConsumer<EObject>)device).setTfConfig(deviceTfConfig);
-      device.enable();
-      logger.debug("{} adding/enabling device with config: {}",LoggerConstants.TFINIT,logId);
+      if (device instanceof GenericDevice && checkDuplicateGenericDevice((GenericDevice)device,uid,subId)) {
+        logger.error("{} ignoring duplicate device uid: {}, subId {}, genericId {}. Fix your openhab.cfg!",LoggerConstants.CONFIG,uid,subId);
+        device.getEnabledA().compareAndSet(true,false);
+      }
+ else {
+        TFConfig deviceTfConfig=deviceConfig.getTfConfig();
+        logger.debug("{} setting tfConfig for {}",LoggerConstants.TFINIT,logId);
+        ((MTFConfigConsumer<EObject>)device).setTfConfig(deviceTfConfig);
+        device.enable();
+        logger.debug("{} adding/enabling device with config: {}",LoggerConstants.TFINIT,logId);
+      }
     }
  else     if (device instanceof IODevice) {
       logger.debug("{} ignoring unconfigured  IODevice: {}",LoggerConstants.TFINIT,logId);

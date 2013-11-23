@@ -1,0 +1,25 @@
+{
+  EList<MSubDevice<?>> genericDevicesList=new BasicEList<MSubDevice<?>>();
+  EList<MBrickd> _mbrickds=getMbrickds();
+  for (  final MBrickd mbrickd : _mbrickds) {
+{
+      final MBaseDevice mDevice=mbrickd.getDevice(uid);
+      if (mDevice != null) {
+        if (mDevice instanceof MSubDeviceHolder) {
+          final MSubDeviceHolder<?> mBrick=((MSubDeviceHolder<?>)mDevice);
+          EList<?> _msubdevices=mBrick.getMsubdevices();
+          for (          final Object mg : _msubdevices) {
+            if (mg instanceof GenericDevice) {
+              final GenericDevice mgenericdevice=((GenericDevice)mg);
+              String _genericId=mgenericdevice.getGenericDeviceId();
+              if (_genericId.equals(genericId)) {
+                genericDevicesList.add(((MSubDevice<?>)mgenericdevice));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return genericDevicesList;
+}

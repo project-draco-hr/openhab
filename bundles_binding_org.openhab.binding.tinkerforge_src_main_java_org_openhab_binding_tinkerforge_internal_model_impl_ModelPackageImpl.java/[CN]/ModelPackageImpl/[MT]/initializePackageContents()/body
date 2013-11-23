@@ -35,6 +35,8 @@
   g2=createEGenericType(this.getMBrickletIO16());
   g1.getETypeArguments().add(g2);
   ioDeviceEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getGenericDevice());
+  ioDeviceEClass.getEGenericSuperTypes().add(g1);
   mSubDeviceEClass.getESuperTypes().add(this.getMBaseDevice());
   g1=createEGenericType(this.getMSubDevice());
   g2=createEGenericType(this.getMBrickletLCD20x4());
@@ -260,6 +262,13 @@
   op=initEOperation(getEcosystem__GetDevice__String_String(),this.getMBaseDevice(),"getDevice",0,1,!IS_UNIQUE,IS_ORDERED);
   addEParameter(op,theEcorePackage.getEString(),"uid",0,1,!IS_UNIQUE,IS_ORDERED);
   addEParameter(op,theEcorePackage.getEString(),"subId",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getEcosystem__GetDevices4GenericId__String_String(),null,"getDevices4GenericId",0,-1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,theEcorePackage.getEString(),"uid",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,theEcorePackage.getEString(),"genericId",0,1,!IS_UNIQUE,IS_ORDERED);
+  g1=createEGenericType(this.getMSubDevice());
+  g2=createEGenericType();
+  g1.getETypeArguments().add(g2);
+  initEOperation(op,g1);
   initEOperation(getEcosystem__Disconnect(),null,"disconnect",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mBrickdEClass,MBrickd.class,"MBrickd",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMBrickd_Logger(),this.getMLogger(),"logger",null,0,1,MBrickd.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
@@ -310,6 +319,8 @@
   initEOperation(getMSwitchActor__FetchSwitchState(),this.getSwitchState(),"fetchSwitchState",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mOutSwitchActorEClass,MOutSwitchActor.class,"MOutSwitchActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEClass(mInSwitchActorEClass,MInSwitchActor.class,"MInSwitchActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEClass(genericDeviceEClass,GenericDevice.class,"GenericDevice",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getGenericDevice_GenericDeviceId(),theEcorePackage.getEString(),"genericDeviceId",null,0,1,GenericDevice.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEClass(ioDeviceEClass,IODevice.class,"IODevice",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEClass(mSubDeviceEClass,MSubDevice.class,"MSubDevice",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMSubDevice_SubId(),theEcorePackage.getEString(),"subId",null,0,1,MSubDevice.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);

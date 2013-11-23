@@ -5,6 +5,8 @@
     @SuppressWarnings("unchecked") MSubDeviceHolder<MSubDevice<?>> mSubDeviceHolder=(MSubDeviceHolder<MSubDevice<?>>)device;
     mSubDeviceHolder.getMsubdevices().clear();
   }
-  EcoreUtil.remove(device);
+  if (device != null) {
+    EcoreUtil.remove(device);
+  }
   logger.debug("{} removeDevice called for uid: {}",LoggerConstants.TFINIT,uid);
 }
