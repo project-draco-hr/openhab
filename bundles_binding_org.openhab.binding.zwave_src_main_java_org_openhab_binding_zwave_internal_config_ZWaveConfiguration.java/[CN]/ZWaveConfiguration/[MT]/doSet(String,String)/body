@@ -1,33 +1,35 @@
 {
-  final Pattern ACTION_PATTERN=Pattern.compile("nodes/node([0-9]+)/([0-9.a-zA-Z]+)/([.a-zA-Z]+)([0-9]+)(.+)");
-  Matcher matcher=ACTION_PATTERN.matcher(domain);
-  if (!matcher.matches())   return;
-  int nodeId=Integer.parseInt(matcher.group(1));
-  String type=matcher.group(2).toString();
-  String arg=matcher.group(3).toString();
-  int id=Integer.parseInt(matcher.group(4));
-  if (type.equals("parameters")) {
+  String[] splitDomain=domain.split("/");
+  if (splitDomain.length < 2)   return;
+  if (splitDomain[0].equals("nodes")) {
+    int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null)     return;
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)     return;
-    List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
-    int size=1;
-    for (    ZWaveDbConfigurationParameter parameter : configList) {
-      if (parameter.Index == id) {
-        size=parameter.Size;
-        break;
+    if (splitDomain.length == 3) {
+      if (splitDomain[2].equals("Name"))       node.setName(value);
+      if (splitDomain[2].equals("Location"))       node.setLocation(value);
+    }
+ else     if (splitDomain.length == 4) {
+      if (splitDomain[2].equals("parameters")) {
+        int paramIndex=Integer.parseInt(splitDomain[3].substring(10));
+        List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+        int size=1;
+        for (        ZWaveDbConfigurationParameter parameter : configList) {
+          if (parameter.Index == paramIndex) {
+            size=parameter.Size;
+            break;
+          }
+        }
+        node.configParameterSet(paramIndex,Integer.parseInt(value),size);
+      }
+      if (splitDomain[2].equals("associations")) {
+        int assocId=Integer.parseInt(splitDomain[3].substring(12));
+        int assocArg=Integer.parseInt(splitDomain[4].substring(12));
+        if (value.equalsIgnoreCase("true"))         node.configAssociationAdd(assocId,assocArg);
+ else         node.configAssociationRemove(assocId,assocArg);
       }
     }
-    node.configParameterSet(id,Integer.parseInt(value),size);
-  }
-  if (type.equals("associations")) {
-    ZWaveNode node=zController.getNode(nodeId);
-    if (node == null)     return;
-    ZWaveProductDatabase database=new ZWaveProductDatabase();
-    if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)     return;
-    int nodeArg=Integer.parseInt(matcher.group(5).substring(5));
-    if (value.equalsIgnoreCase("true"))     node.configAssociationAdd(id,nodeArg);
- else     node.configAssociationRemove(id,nodeArg);
   }
 }

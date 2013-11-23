@@ -13,22 +13,20 @@
       node=zController.getNode(nodeId);
       if (node == null)       continue;
       if (node.getManufacturer() == 0)       continue;
+      if (node.getName() == null || node.getName().isEmpty())       record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
+ else       record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/",node.getName());
       if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
         if (database.FindManufacturer(node.getManufacturer()) == false) {
-          record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
           record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
-          record.addAction("Save","Save Node");
-          records.add(record);
-          continue;
         }
-        record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
-        record.value=database.getManufacturerName() + " [ID:" + Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
-        record.addAction("Save","Save Node");
-        records.add(record);
-        continue;
+ else {
+          record.value=database.getManufacturerName() + " [ID:" + Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
+        }
       }
-      record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
-      record.value=database.getProductName();
+ else {
+        if (node.getLocation() == null || node.getLocation().isEmpty())         record.value=database.getProductName();
+ else         record.value=database.getProductName() + ": " + node.getLocation();
+      }
       record.addAction("Save","Save Node");
       records.add(record);
     }
@@ -47,6 +45,12 @@
     if (node == null)     return null;
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (arg.equals("")) {
+      record=new OpenHABConfigurationRecord(domain,"Name","Name",false);
+      record.value=node.getName();
+      records.add(record);
+      record=new OpenHABConfigurationRecord(domain,"Location","Location",false);
+      record.value=node.getLocation();
+      records.add(record);
       if (database.FindManufacturer(node.getManufacturer()) == false) {
         record=new OpenHABConfigurationRecord(domain,"ManufacturerID","Manufacturer ID",true);
         record.value=Integer.toString(node.getManufacturer());
