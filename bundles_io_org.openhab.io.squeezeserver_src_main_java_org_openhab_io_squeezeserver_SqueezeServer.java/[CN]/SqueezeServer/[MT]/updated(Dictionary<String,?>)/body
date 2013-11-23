@@ -6,6 +6,7 @@
   playersById.clear();
   playersByMacAddress.clear();
   if (config == null || config.isEmpty()) {
+    logger.warn("Empty or null configuration. Ignoring.");
     return;
   }
   Enumeration<String> keys=config.keys();
@@ -35,6 +36,9 @@
       SqueezePlayer player=new SqueezePlayer(playerId,macAddress);
       playersById.put(playerId,player);
       playersByMacAddress.put(macAddress,player);
+    }
+ else {
+      logger.warn("Unexpected or unsupported configuration: " + key + ". Ignoring.");
     }
   }
   if (StringUtils.isEmpty(host))   throw new ConfigurationException("host","No Squeeze Server host specified - this property is mandatory");
