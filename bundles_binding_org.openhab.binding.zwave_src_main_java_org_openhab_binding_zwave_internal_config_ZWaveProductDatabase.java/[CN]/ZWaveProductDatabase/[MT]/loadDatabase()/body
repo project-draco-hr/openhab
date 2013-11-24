@@ -1,6 +1,9 @@
 {
   URL entry=FrameworkUtil.getBundle(ZWaveProductDatabase.class).getEntry("database/products.xml");
   if (entry == null) {
+    database=null;
+    logger.error("Unable to load ZWave product database!");
+    return;
   }
   XStream xstream=new XStream(new StaxDriver());
   xstream.alias("Manufacturers",ZWaveDbRoot.class);
