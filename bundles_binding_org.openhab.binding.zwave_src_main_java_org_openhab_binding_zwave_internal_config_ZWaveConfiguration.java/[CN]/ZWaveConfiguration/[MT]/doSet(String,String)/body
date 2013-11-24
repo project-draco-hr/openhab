@@ -1,4 +1,5 @@
 {
+  logger.debug("Set domain '{}' to '{}'",domain,value);
   String[] splitDomain=domain.split("/");
   if (splitDomain.length < 2)   return;
   if (splitDomain[0].equals("nodes")) {
@@ -11,9 +12,9 @@
       if (splitDomain[2].equals("Name"))       node.setName(value);
       if (splitDomain[2].equals("Location"))       node.setLocation(value);
     }
- else     if (splitDomain.length == 5) {
+ else     if (splitDomain.length == 4) {
       if (splitDomain[2].equals("parameters")) {
-        int paramIndex=Integer.parseInt(splitDomain[3].substring(10));
+        int paramIndex=Integer.parseInt(splitDomain[3].substring(13));
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
         int size=1;
         for (        ZWaveDbConfigurationParameter parameter : configList) {
@@ -22,13 +23,22 @@
             break;
           }
         }
+        logger.debug("Set parameter index '{}' to '{}'",paramIndex,value);
         node.configParameterSet(paramIndex,Integer.parseInt(value),size);
       }
+    }
+ else     if (splitDomain.length == 5) {
       if (splitDomain[2].equals("associations")) {
         int assocId=Integer.parseInt(splitDomain[3].substring(11));
         int assocArg=Integer.parseInt(splitDomain[4].substring(4));
-        if (value.equalsIgnoreCase("true"))         node.configAssociationAdd(assocId,assocArg);
- else         node.configAssociationRemove(assocId,assocArg);
+        if (value.equalsIgnoreCase("true")) {
+          logger.debug("Add association index '{}' to '{}'",assocId,assocArg);
+          node.configAssociationAdd(assocId,assocArg);
+        }
+ else {
+          logger.debug("Remove association index '{}' to '{}'",assocId,assocArg);
+          node.configAssociationRemove(assocId,assocArg);
+        }
       }
     }
   }
