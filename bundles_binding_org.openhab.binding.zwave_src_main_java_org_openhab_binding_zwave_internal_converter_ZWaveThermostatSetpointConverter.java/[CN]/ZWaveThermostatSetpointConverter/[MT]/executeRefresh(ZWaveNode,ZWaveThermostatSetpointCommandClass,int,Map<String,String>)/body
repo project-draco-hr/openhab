@@ -1,7 +1,13 @@
 {
-  logger.trace("executeRefresh()");
   logger.debug("Generating poll message for {} for node {} endpoint {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
-  SerialMessage serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,endpointId);
+  SerialMessage serialMessage;
+  String setpointType=arguments.get("setpoint_type");
+  if (setpointType != null) {
+    serialMessage=node.encapsulate(commandClass.getMessage(SetpointType.getSetpointType(Integer.parseInt(setpointType))),commandClass,endpointId);
+  }
+ else {
+    serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,endpointId);
+  }
   if (serialMessage == null) {
     logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
     return;
