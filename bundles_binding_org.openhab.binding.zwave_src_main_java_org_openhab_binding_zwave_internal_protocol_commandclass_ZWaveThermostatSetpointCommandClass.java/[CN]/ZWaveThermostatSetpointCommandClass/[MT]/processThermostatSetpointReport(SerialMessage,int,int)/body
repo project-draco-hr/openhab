@@ -1,0 +1,6 @@
+{
+  BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
+  logger.debug(String.format("Thermostat Setpoint Report from Node ID = %d, value = %s",this.getNode().getNodeId(),value.toPlainString()));
+  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);
+  this.getController().notifyEventListeners(zEvent);
+}
