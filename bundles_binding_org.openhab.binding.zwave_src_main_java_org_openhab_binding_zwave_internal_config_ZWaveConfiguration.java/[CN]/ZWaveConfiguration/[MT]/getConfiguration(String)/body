@@ -134,7 +134,8 @@
         for (int id=0; id < 256; id++) {
           node=zController.getNode(id);
           if (node == null)           continue;
-          record=new OpenHABConfigurationRecord(domain,"node" + id,"Node " + id,false);
+          if (node.getName() == null || node.getName().isEmpty())           record=new OpenHABConfigurationRecord(domain,"node" + id,"Node " + id,false);
+ else           record=new OpenHABConfigurationRecord(domain,"node" + id,node.getName(),false);
           record.type=OpenHABConfigurationRecord.TYPE.LIST;
           record.addValue("true","Member");
           record.addValue("false","Non-Member");
