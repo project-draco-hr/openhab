@@ -17,16 +17,17 @@ switch (status) {
 case COMPLETE_OK:
     ZWaveNode node=this.getNode(originalMessage.getMessageNode());
   node.resetResendCount();
-if (node != null && node.getNodeStage() == NodeStage.NODEBUILDINFO_PING) {
-  node.advanceNodeStage();
+if (node != null && node.getNodeStage() == NodeStage.PING) {
+  node.advanceNodeStage(NodeStage.DETAILS);
 }
 if (incomingMessage.getMessageClass() == originalMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
 return;
 case COMPLETE_NO_ACK:
+timeOutCount.incrementAndGet();
 case COMPLETE_FAIL:
 case COMPLETE_NOT_IDLE:
 case COMPLETE_NOROUTE:

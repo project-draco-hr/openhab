@@ -1,6 +1,6 @@
 {
   String output=getSettingsJson();
-  if (output.contains("error")) {
+  if (output != null && output.contains("error")) {
     logger.info("Hue bridge not paired.");
     Thread pairingThread=new Thread(new BridgePairingProcessor());
     pairingThread.start();

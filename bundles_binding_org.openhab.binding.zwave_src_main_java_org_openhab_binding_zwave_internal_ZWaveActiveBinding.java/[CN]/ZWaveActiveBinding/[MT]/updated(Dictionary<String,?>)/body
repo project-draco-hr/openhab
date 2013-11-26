@@ -1,25 +1,5 @@
 {
   if (config == null)   return;
-  String refreshIntervalString=(String)config.get("refresh");
-  if (StringUtils.isNotBlank(refreshIntervalString)) {
-    try {
-      refreshInterval=Long.parseLong(refreshIntervalString);
-    }
- catch (    NumberFormatException ex) {
-      this.setProperlyConfigured(false);
-      throw new ConfigurationException("refresh",ex.getLocalizedMessage(),ex);
-    }
-  }
-  String refreshDelayString=(String)config.get("refreshThreshold");
-  if (StringUtils.isNotBlank(refreshDelayString)) {
-    try {
-      refreshThreshold=Integer.parseInt(refreshDelayString);
-    }
- catch (    NumberFormatException ex) {
-      this.setProperlyConfigured(false);
-      throw new ConfigurationException("refreshThreshold",ex.getLocalizedMessage(),ex);
-    }
-  }
   if (StringUtils.isNotBlank((String)config.get("port"))) {
     try {
       port=(String)config.get("port");
@@ -27,6 +7,7 @@
       this.setProperlyConfigured(true);
       this.deactivate();
       this.zController=new ZWaveController(port);
+      this.converterHandler=new ZWaveConverterHandler(this.zController,this.eventPublisher);
       zController.initialize();
       zController.addEventListener(this);
       return;

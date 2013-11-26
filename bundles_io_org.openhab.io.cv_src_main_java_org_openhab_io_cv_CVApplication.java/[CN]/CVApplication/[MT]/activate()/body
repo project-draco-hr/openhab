@@ -1,0 +1,26 @@
+{
+  try {
+    com.sun.jersey.core.osgi.Activator jerseyActivator=new com.sun.jersey.core.osgi.Activator();
+    BundleContext bundleContext=FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+    try {
+      jerseyActivator.start(bundleContext);
+    }
+ catch (    Exception e) {
+      logger.error("Could not start Jersey framework",e);
+    }
+    httpPort=Integer.parseInt(bundleContext.getProperty("jetty.port"));
+    httpSSLPort=Integer.parseInt(bundleContext.getProperty("jetty.port.ssl"));
+    httpService.registerServlet(CV_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
+    logger.info("Started Cometvisu API at " + CV_SERVLET_ALIAS);
+    if (discoveryService != null) {
+      discoveryService.registerService(getDefaultServiceDescription());
+      discoveryService.registerService(getSSLServiceDescription());
+    }
+  }
+ catch (  ServletException se) {
+    throw new RuntimeException(se);
+  }
+catch (  NamespaceException se) {
+    throw new RuntimeException(se);
+  }
+}

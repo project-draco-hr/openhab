@@ -1,0 +1,29 @@
+{
+  logger.trace("Handle Message Switch Multi Level Request");
+  logger.debug(String.format("Received Switch Multi Level Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SWITCH_MULTILEVEL_SET:
+case SWITCH_MULTILEVEL_GET:
+case SWITCH_MULTILEVEL_SUPPORTED_GET:
+case SWITCH_MULTILEVEL_SUPPORTED_REPORT:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+case SWITCH_MULTILEVEL_START_LEVEL_CHANGE:
+  return;
+case SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE:
+logger.debug("Process Switch Multi Level Stop Level Change");
+logger.debug("Requesting level from node {}, endpoint {}",this.getNode().getNodeId(),endpoint);
+this.getController().sendData(this.getNode().encapsulate(this.getValueMessage(),this,endpoint));
+break;
+case SWITCH_MULTILEVEL_REPORT:
+logger.trace("Process Switch Multi Level Report");
+int value=serialMessage.getMessagePayloadByte(offset + 1);
+logger.debug(String.format("Switch Multi Level report from nodeId = %d, value = 0x%02X",this.getNode().getNodeId(),value));
+ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);
+this.getController().notifyEventListeners(zEvent);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

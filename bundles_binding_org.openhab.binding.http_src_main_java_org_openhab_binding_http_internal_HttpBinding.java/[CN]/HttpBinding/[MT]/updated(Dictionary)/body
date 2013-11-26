@@ -1,42 +1,45 @@
 {
-  if (config != null) {
-    String timeoutString=(String)config.get("timeout");
-    if (StringUtils.isNotBlank(timeoutString)) {
-      timeout=Integer.parseInt(timeoutString);
-    }
-    String granularityString=(String)config.get("granularity");
-    if (StringUtils.isNotBlank(granularityString)) {
-      granularity=Integer.parseInt(granularityString);
-    }
-    @SuppressWarnings("unchecked") Enumeration<String> keys=config.keys();
-    while (keys.hasMoreElements()) {
-      String key=(String)keys.nextElement();
-      if ("service.pid".equals(key)) {
-        continue;
+synchronized (itemCacheLock) {
+    itemCache.clear();
+    if (config != null) {
+      String timeoutString=(String)config.get("timeout");
+      if (StringUtils.isNotBlank(timeoutString)) {
+        timeout=Integer.parseInt(timeoutString);
       }
-      Matcher matcher=EXTRACT_CACHE_CONFIG_PATTERN.matcher(key);
-      if (!matcher.matches()) {
-        logger.error("given config key '" + key + "' does not follow the expected pattern '<id>.<url|updateInterval>'");
-        continue;
+      String granularityString=(String)config.get("granularity");
+      if (StringUtils.isNotBlank(granularityString)) {
+        granularity=Integer.parseInt(granularityString);
       }
-      matcher.reset();
-      matcher.find();
-      String id=matcher.group(1);
-      CacheConfig cacheConfig=itemCache.get(id);
-      if (cacheConfig == null) {
-        cacheConfig=new CacheConfig(id);
-        itemCache.put(id,cacheConfig);
-      }
-      String configKey=matcher.group(2);
-      String value=(String)config.get(key);
-      if ("url".equals(configKey)) {
-        cacheConfig.url=value;
-      }
- else       if ("updateInterval".equals(configKey)) {
-        cacheConfig.updateInterval=Integer.valueOf(value);
-      }
+      @SuppressWarnings("unchecked") Enumeration<String> keys=config.keys();
+      while (keys.hasMoreElements()) {
+        String key=(String)keys.nextElement();
+        if ("service.pid".equals(key)) {
+          continue;
+        }
+        Matcher matcher=EXTRACT_CACHE_CONFIG_PATTERN.matcher(key);
+        if (!matcher.matches()) {
+          logger.error("given config key '" + key + "' does not follow the expected pattern '<id>.<url|updateInterval>'");
+          continue;
+        }
+        matcher.reset();
+        matcher.find();
+        String cacheId=matcher.group(1);
+        CacheConfig cacheConfig=itemCache.get(cacheId);
+        if (cacheConfig == null) {
+          cacheConfig=new CacheConfig(cacheId);
+          itemCache.put(cacheId,cacheConfig);
+        }
+        String configKey=matcher.group(2);
+        String value=(String)config.get(key);
+        if ("url".equals(configKey)) {
+          cacheConfig.url=value;
+        }
+ else         if ("updateInterval".equals(configKey)) {
+          cacheConfig.updateInterval=Integer.valueOf(value);
+        }
  else {
-        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+          throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+        }
       }
     }
   }

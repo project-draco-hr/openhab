@@ -1,0 +1,17 @@
+{
+  if (StringUtils.isEmpty(playerId))   throw new NullArgumentException("playerId");
+  if (squeezeServer == null) {
+    logger.warn("Squeeze Server yet to be initialised. Ignoring action.");
+    return null;
+  }
+  if (!squeezeServer.isConnected()) {
+    logger.warn("Not connected to the Squeeze Server. Please check your config and consult the openHAB WIKI for instructions on how to configure. Ignoring action.");
+    return null;
+  }
+  SqueezePlayer player=squeezeServer.getPlayer(playerId);
+  if (player == null) {
+    logger.warn("No Squeezebox player exists with name '{}'. Ignoring action.",playerId);
+    return null;
+  }
+  return player;
+}

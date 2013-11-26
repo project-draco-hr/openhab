@@ -1,0 +1,47 @@
+{
+  disconnect();
+  host=null;
+  cliPort=DEFAULT_CLI_PORT;
+  webPort=DEFAULT_WEB_PORT;
+  playersById.clear();
+  playersByMacAddress.clear();
+  if (config == null || config.isEmpty()) {
+    logger.warn("Empty or null configuration. Ignoring.");
+    return;
+  }
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=(String)keys.nextElement();
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    Matcher serverMatcher=SERVER_CONFIG_PATTERN.matcher(key);
+    Matcher playerMatcher=PLAYER_CONFIG_PATTERN.matcher(key);
+    String value=(String)config.get(key);
+    if (serverMatcher.matches()) {
+      String serverConfig=serverMatcher.group(2);
+      if (serverConfig.equals("host")) {
+        host=value;
+      }
+ else       if (serverConfig.equals("cliport")) {
+        cliPort=Integer.valueOf(value);
+      }
+ else       if (serverConfig.equals("webport")) {
+        webPort=Integer.valueOf(value);
+      }
+    }
+ else     if (playerMatcher.matches()) {
+      String playerId=playerMatcher.group(1);
+      String macAddress=value;
+      SqueezePlayer player=new SqueezePlayer(playerId,macAddress);
+      playersById.put(playerId,player);
+      playersByMacAddress.put(macAddress,player);
+    }
+ else {
+      logger.warn("Unexpected or unsupported configuration: " + key + ". Ignoring.");
+    }
+  }
+  if (StringUtils.isEmpty(host))   throw new ConfigurationException("host","No Squeeze Server host specified - this property is mandatory");
+  if (playersById.size() == 0)   throw new ConfigurationException("host","No Squeezebox players specified - there must be at least one player");
+  connect();
+}

@@ -1,0 +1,25 @@
+{
+  logger.trace("Process Multi-instance Report");
+  int commandClassCode=serialMessage.getMessagePayloadByte(offset);
+  int instances=serialMessage.getMessagePayloadByte(offset + 1);
+  if (instances == 0) {
+    setInstances(1);
+  }
+ else {
+    CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
+    if (commandClass == null) {
+      logger.error(String.format("Unsupported command class 0x%02x",commandClassCode));
+      return;
+    }
+    logger.debug(String.format("Node %d Requested Command Class = %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
+    ZWaveCommandClass zwaveCommandClass=this.getNode().getCommandClass(commandClass);
+    if (zwaveCommandClass == null) {
+      logger.error(String.format("Unsupported command class %s (0x%02x)",commandClass.getLabel(),commandClassCode));
+      return;
+    }
+    zwaveCommandClass.setInstances(instances);
+    logger.debug(String.format("Node %d Instances = %d, number of instances set.",this.getNode().getNodeId(),instances));
+  }
+  for (  ZWaveCommandClass zwaveCommandClass : this.getNode().getCommandClasses())   if (zwaveCommandClass.getInstances() == 0)   return;
+  this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
+}
