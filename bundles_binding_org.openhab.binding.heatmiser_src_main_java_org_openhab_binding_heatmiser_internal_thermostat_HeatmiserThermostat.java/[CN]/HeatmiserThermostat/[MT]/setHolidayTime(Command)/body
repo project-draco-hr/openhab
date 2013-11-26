@@ -2,7 +2,13 @@
   byte[] cmdBytes=new byte[2];
   int time=Integer.parseInt(command.toString());
   if (time < 0)   time=0;
-  if (time > 32000)   time=0;
+  if (time > 99)   time=0;
+  time=time * 24;
+  Calendar now=Calendar.getInstance();
+  time-=now.get(Calendar.HOUR_OF_DAY);
+  if (time < 0)   time=0;
+  if (time > (99 * 24))   time=0;
+  logger.debug("Setting holiday time {} days = {} hours.",command.toString(),time);
   cmdBytes[0]=(byte)(time & 0xff);
   cmdBytes[1]=(byte)((time >> 8) & 0xff);
   return makePacket(true,24,2,cmdBytes);
