@@ -6,6 +6,8 @@
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null)     return;
+    ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+    if (configurationCommandClass == null)     return;
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)     return;
     if (splitDomain.length == 3) {
@@ -24,7 +26,8 @@
           }
         }
         logger.debug("Set parameter index '{}' to '{}'",paramIndex,value);
-        node.configParameterSet(paramIndex,Integer.parseInt(value),size);
+        ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,Integer.valueOf(value),size);
+        this.zController.sendData(configurationCommandClass.setConfigMessage(configurationParameter));
       }
     }
  else     if (splitDomain.length == 5) {

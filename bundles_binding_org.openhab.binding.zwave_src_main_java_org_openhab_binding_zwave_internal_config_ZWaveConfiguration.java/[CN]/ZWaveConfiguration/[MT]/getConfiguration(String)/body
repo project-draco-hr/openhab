@@ -43,6 +43,8 @@
     int nodeId=Integer.parseInt(nodeNumber);
     node=zController.getNode(nodeId);
     if (node == null)     return null;
+    ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+    if (configurationCommandClass == null)     return null;
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (arg.equals("")) {
       record=new OpenHABConfigurationRecord(domain,"Name","Name",false);
@@ -86,8 +88,8 @@
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
         for (        ZWaveDbConfigurationParameter parameter : configList) {
           record=new OpenHABConfigurationRecord(domain,"configuration" + parameter.Index,database.getLabel(parameter.Label),false);
-          Integer val=node.configGetParameter(parameter.Index);
-          if (val != null)           record.value=val.toString();
+          ConfigurationParameter configurationParameter=configurationCommandClass.getParameter(parameter.Index);
+          if (parameter != null)           record.value=Integer.toString(configurationParameter.getValue());
           if (parameter.Type.equalsIgnoreCase("list")) {
             record.type=OpenHABConfigurationRecord.TYPE.LIST;
             for (            ZWaveDbConfigurationListItem item : parameter.Item)             record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
