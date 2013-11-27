@@ -58,5 +58,26 @@
       }
     }
   }
+  if (sqlTables.containsKey(tableName) == false) {
+    logger.error("mySQL: Item '" + itemName + "' was not added to the table - removing index");
+    sqlCmd=new String("DELETE FROM Items WHERE ItemName=" + itemName);
+    logger.debug("SQL: " + sqlCmd);
+    try {
+      statement=connection.createStatement();
+      statement.executeUpdate(sqlCmd);
+    }
+ catch (    Exception e) {
+      logger.error("mySQL: Could not remove index for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
+    }
+ finally {
+      if (statement != null) {
+        try {
+          statement.close();
+        }
+ catch (        Exception hidden) {
+        }
+      }
+    }
+  }
   return tableName;
 }
