@@ -21,6 +21,10 @@ if (newValue.equals(PercentType.ZERO)) {
 sendOff(bulb,bridgeId);
 }
  else {
+if (bulb > 5) {
+int decreasePercent=newPercent * 31 / 100;
+messageBytes="4E:" + Integer.toHexString(decreasePercent) + ":55";
+}
 sendMessage(messageBytes,bridgeId);
 }
 setCurrentState(bulb,bridgeId,newValue,BindingType.brightness);
