@@ -1,0 +1,46 @@
+{
+  RrdGraphDef graphDef=new RrdGraphDef();
+  long period=(startTime.getTime() - endTime.getTime()) / 1000;
+  graphDef.setWidth(width);
+  graphDef.setHeight(height);
+  graphDef.setAntiAliasing(true);
+  graphDef.setImageFormat("PNG");
+  graphDef.setStartTime(period);
+  graphDef.setTextAntiAliasing(true);
+  graphDef.setLargeFont(new Font("SansSerif",Font.PLAIN,15));
+  graphDef.setSmallFont(new Font("SansSerif",Font.PLAIN,11));
+  int seriesCounter=0;
+  if (items != null) {
+    String[] itemNames=items.split(",");
+    for (    String itemName : itemNames) {
+      Item item=itemUIRegistry.getItem(itemName);
+      addLine(graphDef,item,seriesCounter++);
+    }
+  }
+  if (groups != null) {
+    String[] groupNames=groups.split(",");
+    for (    String groupName : groupNames) {
+      Item item=itemUIRegistry.getItem(groupName);
+      if (item instanceof GroupItem) {
+        GroupItem groupItem=(GroupItem)item;
+        for (        Item member : groupItem.getMembers()) {
+          addLine(graphDef,member,seriesCounter++);
+        }
+      }
+ else {
+        throw new ItemNotFoundException("Item '" + item.getName() + "' defined in groups is not a group.");
+      }
+    }
+  }
+  RrdGraph graph;
+  try {
+    graph=new RrdGraph(graphDef);
+    BufferedImage bi=new BufferedImage(graph.getRrdGraphInfo().getWidth(),graph.getRrdGraphInfo().getHeight(),BufferedImage.TYPE_INT_RGB);
+    graph.render(bi.getGraphics());
+    return bi;
+  }
+ catch (  IOException e) {
+    logger.error("Error generating graph: {}",e);
+  }
+  return null;
+}
