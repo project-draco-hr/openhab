@@ -9,7 +9,7 @@
   sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
   temperature=data[6];
   set=data[7];
-  mode=Contact.valueOf("HEATING");
+  mode=Mode.values()[data[8] & 0x08 >> 4];
   status=Contact.values()[(data[8] & 0x03)];
   signalLevel=(byte)((data[9] & 0xF0) >> 4);
 }
