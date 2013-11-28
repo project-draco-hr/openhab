@@ -1,5 +1,6 @@
 {
   ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
+  if (itemUIRegistry.getVisiblity(widget) == false)   return null;
   WidgetBean bean=new WidgetBean();
   if (widget.getItem() != null) {
     Item item=ItemResource.getItem(widget.getItem());
@@ -9,6 +10,8 @@
   }
   bean.widgetId=widgetId;
   bean.icon=itemUIRegistry.getIcon(widget);
+  bean.labelcolor=itemUIRegistry.getLabelColor(widget);
+  bean.valuecolor=itemUIRegistry.getValueColor(widget);
   bean.label=itemUIRegistry.getLabel(widget);
   bean.type=widget.eClass().getName();
   if (widget instanceof LinkableWidget) {
@@ -18,8 +21,11 @@
       int cntWidget=0;
       for (      Widget child : children) {
         widgetId+="_" + cntWidget;
-        bean.widgets.add(createWidgetBean(sitemapName,child,drillDown,uri,widgetId));
-        cntWidget++;
+        WidgetBean subWidget=createWidgetBean(sitemapName,child,drillDown,uri,widgetId);
+        if (subWidget != null) {
+          bean.widgets.add(subWidget);
+          cntWidget++;
+        }
       }
     }
  else     if (children.size() > 0) {
@@ -31,7 +37,14 @@
     Switch switchWidget=(Switch)widget;
     for (    Mapping mapping : switchWidget.getMappings()) {
       MappingBean mappingBean=new MappingBean();
-      mappingBean.command=mapping.getCmd();
+      if (mapping.getCmd() != null) {
+        if (mapping.getCmd().startsWith("\"") && mapping.getCmd().endsWith("\"")) {
+          mappingBean.command=mapping.getCmd().substring(1,mapping.getCmd().length() - 1);
+        }
+      }
+ else {
+        mappingBean.command=mapping.getCmd();
+      }
       mappingBean.label=mapping.getLabel();
       bean.mappings.add(mappingBean);
     }
@@ -40,7 +53,14 @@
     Selection selectionWidget=(Selection)widget;
     for (    Mapping mapping : selectionWidget.getMappings()) {
       MappingBean mappingBean=new MappingBean();
-      mappingBean.command=mapping.getCmd();
+      if (mapping.getCmd() != null) {
+        if (mapping.getCmd().startsWith("\"") && mapping.getCmd().endsWith("\"")) {
+          mappingBean.command=mapping.getCmd().substring(1,mapping.getCmd().length() - 1);
+        }
+      }
+ else {
+        mappingBean.command=mapping.getCmd();
+      }
       mappingBean.label=mapping.getLabel();
       bean.mappings.add(mappingBean);
     }

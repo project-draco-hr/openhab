@@ -1,0 +1,77 @@
+{
+  boolean matched=false;
+  if (value.startsWith("\"") && value.endsWith("\""))   value=value.substring(1,value.length() - 1);
+  Condition condition=Condition.EQUAL;
+  if (matchCondition != null)   condition=Condition.fromString(matchCondition);
+  if (DecimalType.class.isInstance(state)) {
+    try {
+switch (condition) {
+case EQUAL:
+        if (Double.parseDouble(state.toString()) == Double.parseDouble(value))         matched=true;
+      break;
+case LTE:
+    if (Double.parseDouble(state.toString()) <= Double.parseDouble(value))     matched=true;
+  break;
+case GTE:
+if (Double.parseDouble(state.toString()) >= Double.parseDouble(value)) matched=true;
+break;
+case GREATER:
+if (Double.parseDouble(state.toString()) > Double.parseDouble(value)) matched=true;
+break;
+case LESS:
+if (Double.parseDouble(state.toString()) < Double.parseDouble(value)) matched=true;
+break;
+case NOT:
+case NOTEQUAL:
+if (Double.parseDouble(state.toString()) != Double.parseDouble(value)) matched=true;
+break;
+}
+}
+ catch (NumberFormatException e) {
+logger.debug("matchStateToValue: Decimal format exception: " + e);
+}
+}
+ else if (state instanceof DateTimeType) {
+Calendar val=((DateTimeType)state).getCalendar();
+Calendar now=Calendar.getInstance();
+long secsDif=(now.getTimeInMillis() - val.getTimeInMillis()) / 1000;
+try {
+switch (condition) {
+case EQUAL:
+if (secsDif == Integer.parseInt(value)) matched=true;
+break;
+case LTE:
+if (secsDif <= Integer.parseInt(value)) matched=true;
+break;
+case GTE:
+if (secsDif >= Integer.parseInt(value)) matched=true;
+break;
+case GREATER:
+if (secsDif > Integer.parseInt(value)) matched=true;
+break;
+case LESS:
+if (secsDif < Integer.parseInt(value)) matched=true;
+break;
+case NOT:
+case NOTEQUAL:
+if (secsDif != Integer.parseInt(value)) matched=true;
+break;
+}
+}
+ catch (NumberFormatException e) {
+logger.debug("matchStateToValue: Decimal format exception: " + e);
+}
+}
+ else {
+switch (condition) {
+case NOT:
+case NOTEQUAL:
+if (!value.equals(state.toString())) matched=true;
+break;
+default :
+if (value.equals(state.toString())) matched=true;
+break;
+}
+}
+return matched;
+}
