@@ -6,7 +6,7 @@
   dcbRoomTemperature=getTemp(41);
   dcbSetTemperature=data[27];
   dcbFloorTemperature=getTemp(39);
-  dcbHolidayTime=data[33] * 256 + data[34];
+  dcbHolidayTime=(data[34] & 0xFF) + ((data[33] & 0xFF) * 256);
   dcbHoldTime=data[35] * 256 + data[36];
   return true;
 }
