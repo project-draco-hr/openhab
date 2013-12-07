@@ -1,0 +1,14 @@
+{
+  logger.info("Checking alive status");
+  if (ccu.getConnection().isAlife()) {
+    return;
+  }
+  logger.info("Connection to CCU is no longer alive - refreshing it");
+  try {
+    removeCallbackHandler();
+  }
+ catch (  Exception e) {
+    logger.debug("Exception while closing connection. This is expected behaviour.");
+  }
+  registerCallbackHandler();
+}
