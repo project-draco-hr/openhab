@@ -1,0 +1,20 @@
+{
+  if (!connected) {
+    if (sysLibrary.OpenDevice(boardNo) == boardNo) {
+      connected=true;
+      lastDigitalInputs=-1;
+      try {
+        Thread.sleep(100);
+      }
+ catch (      InterruptedException e) {
+        e.printStackTrace();
+      }
+      logger.info("K8055: Connect to board: " + boardNo + " succeeeded.");
+    }
+ else {
+      logger.error("K8055: Connect to board: " + boardNo + " failed.");
+    }
+  }
+  ;
+  return connected;
+}
