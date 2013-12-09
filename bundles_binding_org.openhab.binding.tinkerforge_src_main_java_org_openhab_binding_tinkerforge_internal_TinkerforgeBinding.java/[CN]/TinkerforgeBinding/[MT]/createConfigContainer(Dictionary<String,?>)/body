@@ -6,7 +6,7 @@
   keys2ignore.add(ConfigKey.subid.name());
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
-    logger.debug("TFOPENHABCONFIG key:value {} : {}",key,config.get(key));
+    logger.debug("{} key:value {} : {}",LoggerConstants.CONFIG,key,config.get(key));
     if ("service.pid".equals(key)) {
       continue;
     }
@@ -16,6 +16,7 @@
       matcher.find();
       HashMap<String,String> configMap=new HashMap<String,String>();
       String ohId=matcher.group(1);
+      logger.trace("{} found symbolic name: {}",LoggerConstants.CONFIG,ohId);
       configMap.put(ConfigKeyAdmin.ohId.name(),ohId);
       configMap.put(ConfigKey.uid.name(),(String)config.get(key));
       configMap.put(ConfigKey.subid.name(),(String)config.get(ohId + "." + ConfigKey.subid.name()));
@@ -25,6 +26,9 @@
         throw new ConfigurationException(ohId,"type is missing");
       }
       checkTfType(ohId,deviceType);
+      if (configContainer.containsKey(ohId)) {
+        throw new ConfigurationException(ohId,String.format("{} found duplicate entry for symbolic name {}",LoggerConstants.CONFIG,ohId));
+      }
       Enumeration<String> keys2=config.keys();
       Pattern ohIdPattern=Pattern.compile(String.format("^%s\\.(.*?)$",ohId));
       while (keys2.hasMoreElements()) {

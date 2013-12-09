@@ -1,0 +1,19 @@
+{
+  OnOffValue value=OnOffValue.UNDEF;
+  try {
+    int deviceValue=getMbrick().getTinkerforgeDevice().getValue();
+    if ((deviceValue & mask) == mask) {
+      value=OnOffValue.ON;
+    }
+ else {
+      value=OnOffValue.OFF;
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  return value;
+}
