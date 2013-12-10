@@ -7,11 +7,8 @@
  else     if (valueSelector == RFXComValueSelector.BATTERY_LEVEL) {
       state=new DecimalType(obj.batteryLevel);
     }
- else     if (valueSelector == RFXComValueSelector.TEMPERATURE) {
-      state=new DecimalType(obj.temperature);
-    }
- else     if (valueSelector == RFXComValueSelector.SET_POINT) {
-      state=new DecimalType(obj.set);
+ else     if (valueSelector == RFXComValueSelector.HUMIDITY) {
+      state=new DecimalType(obj.humidity);
     }
  else {
       throw new NumberFormatException("Can't convert " + valueSelector + " to NumberItem");
@@ -20,6 +17,9 @@
  else   if (valueSelector.getItemClass() == StringItem.class) {
     if (valueSelector == RFXComValueSelector.RAW_DATA) {
       state=new StringType(DatatypeConverter.printHexBinary(obj.rawMessage));
+    }
+ else     if (valueSelector == RFXComValueSelector.HUMIDITY_STATUS) {
+      state=new StringType(obj.humidityStatus.toString());
     }
  else {
       throw new NumberFormatException("Can't convert " + valueSelector + " to StringItem");

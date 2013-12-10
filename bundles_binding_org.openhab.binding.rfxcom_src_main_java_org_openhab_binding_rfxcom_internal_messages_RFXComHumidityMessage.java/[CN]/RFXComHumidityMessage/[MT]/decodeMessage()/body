@@ -1,0 +1,13 @@
+{
+  byte[] data=new byte[9];
+  data[0]=0x0A;
+  data[1]=RFXComBaseMessage.PacketType.TEMPERATURE_HUMIDITY.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=humidity;
+  data[7]=humidityStatus.toByte();
+  data[8]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}
