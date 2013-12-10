@@ -5,13 +5,5 @@
   handler.registerCallbackReceiver(this);
   cbServer=new CallbackServer(null,callbackPort,handler);
   cbServer.start();
-  Runtime.getRuntime().addShutdownHook(new Thread(){
-    @Override public void run(){
-      if (cbServer != null) {
-        removeCallbackHandler();
-      }
-    }
-  }
-);
-  ccu.getConnection().init("http://" + callbackHost + ":"+ callbackPort+ "/xmlrpc","" + ccu.getConnection().hashCode());
+  ccu.getConnection().init("http://" + callbackHost + ":"+ callbackPort+ "/xmlrpc","OPENHAB");
 }
