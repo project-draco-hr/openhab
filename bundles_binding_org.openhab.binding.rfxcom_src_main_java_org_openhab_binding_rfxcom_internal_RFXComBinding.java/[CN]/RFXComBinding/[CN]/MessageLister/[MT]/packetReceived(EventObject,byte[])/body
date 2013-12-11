@@ -19,14 +19,19 @@ synchronized (notifierObject) {
           boolean inBinding=provider.isInBinding(itemName);
           if (id1.equals(id2) && inBinding) {
             RFXComValueSelector parseItem=provider.getValueSelector(itemName);
-            State value=RFXComDataConverter.convertRFXCOMValueToOpenHABValue(obj,parseItem);
-            eventPublisher.postUpdate(itemName,value);
+            try {
+              State value=RFXComDataConverter.convertRFXCOMValueToOpenHABValue(obj,parseItem);
+              eventPublisher.postUpdate(itemName,value);
+            }
+ catch (            NumberFormatException e) {
+              logger.warn("Data conversion error",e);
+            }
           }
         }
       }
     }
   }
  catch (  IllegalArgumentException e) {
-    logger.debug("Unknown packet received, data: {}",DatatypeConverter.printHexBinary(packet),e);
+    logger.error("Error occured during packet receiving, data: {}",DatatypeConverter.printHexBinary(packet),e);
   }
 }
