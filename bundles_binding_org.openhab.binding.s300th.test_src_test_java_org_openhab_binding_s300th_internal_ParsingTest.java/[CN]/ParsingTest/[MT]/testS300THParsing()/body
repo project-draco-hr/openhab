@@ -1,0 +1,22 @@
+{
+  double temp=ParseUtils.parseTemperature(S300TH_DATA_1);
+  Assert.assertEquals(23.2,temp,0.01);
+  double humidity=ParseUtils.parseHumidity(S300TH_DATA_1);
+  Assert.assertEquals(50.8,humidity,0.01);
+  String address=ParseUtils.parseS300THAddress(S300TH_DATA_1);
+  Assert.assertEquals("1",address);
+  String address2=ParseUtils.parseS300THAddress(S300TH_DATA_2);
+  Assert.assertEquals(address,address2);
+  String address3=ParseUtils.parseS300THAddress(S300TH_DATA_3);
+  Assert.assertEquals("2",address3);
+  for (  String s : ALL_S300TH_DATA) {
+    String addr=ParseUtils.parseS300THAddress(s);
+    double temperature=ParseUtils.parseTemperature(s);
+    if (temperature < 10.0 || temperature > 25.0) {
+      fail("Temp was " + temp);
+    }
+    if (!(addr.equals("1") || addr.equals("2"))) {
+      fail("Address was " + addr);
+    }
+  }
+}

@@ -1,10 +1,21 @@
 {
-  if (data.startsWith("K") && data.length() == 9) {
-    logger.debug("Received raw S300TH data: " + data);
-    parseS300THData(data);
-  }
- else   if (data.startsWith("K") && data.length() == 15) {
-    logger.debug("Received raw KS300 data: " + data);
-    parseKS300Data(data);
+  if (data.startsWith("K")) {
+    int firstByte=Integer.parseInt(data.substring(1,2),16);
+    int typByte=Integer.parseInt(data.substring(2,3),16) & 7;
+    int sfirstByte=firstByte & 7;
+    if (sfirstByte == 7) {
+      logger.debug("Received WS7000 message, but parsing for WS7000 is not implemented");
+    }
+ else {
+      if (data.length() > 8 && data.length() < 13) {
+        parseS300THData(data);
+      }
+      if (data.length() > 13 && data.length() < 16) {
+        parseKS300Data(data);
+      }
+ else {
+        logger.warn("Received unparseable message: " + data);
+      }
+    }
   }
 }

@@ -1,15 +1,8 @@
 {
-  int secondByte=Integer.parseInt(String.valueOf(data.charAt(1)),16);
-  int addressValue=data.charAt(2) + (secondByte & 7);
-  String address=Integer.toHexString(addressValue);
-  String humidityString=data.charAt(7) + data.charAt(8) + "."+ data.charAt(5);
-  String temperatureString=data.charAt(6) + data.charAt(3) + "."+ data.charAt(4);
-  double humidity=Double.parseDouble(humidityString);
-  double temperature=Double.parseDouble(temperatureString);
+  String address=ParseUtils.parseS300THAddress(data);
+  double temperature=ParseUtils.parseTemperature(data);
+  double humidity=ParseUtils.parseHumidity(data);
   logger.debug("Received data from device with address " + address + " : temperature: "+ temperature+ " humidity: "+ humidity);
-  if ((secondByte & 8) > 0) {
-    temperature=temperature * -1;
-  }
   S300THBindingConfig temperatureConfig=findConfig(address,Datapoint.TEMPERATURE);
   if (temperatureConfig != null) {
     updateItem(temperatureConfig.item,temperature);
