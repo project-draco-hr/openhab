@@ -1,8 +1,8 @@
 {
   String address=ParseUtils.parseS300THAddress(data);
   double temperature=ParseUtils.parseTemperature(data);
-  double humidity=ParseUtils.parseHumidity(data);
-  logger.debug("Received data from device with address " + address + " : temperature: "+ temperature+ " humidity: "+ humidity);
+  double humidity=ParseUtils.parseS300THHumidity(data);
+  logger.debug("Received data '" + data + "' from device with address "+ address+ " : temperature: "+ temperature+ " humidity: "+ humidity);
   S300THBindingConfig temperatureConfig=findConfig(address,Datapoint.TEMPERATURE);
   if (temperatureConfig != null) {
     updateItem(temperatureConfig.item,temperature);
