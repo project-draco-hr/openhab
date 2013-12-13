@@ -1,3 +1,5 @@
 {
-  enqueueCommand(InsteonHubCommand.newStopAdjustCommand(device));
+  byte[] msgBuffer=commandPool.checkout();
+  msgBuilder.buildStopDimBrtMessage(msgBuffer,device);
+  enqueueCommand(msgBuffer);
 }

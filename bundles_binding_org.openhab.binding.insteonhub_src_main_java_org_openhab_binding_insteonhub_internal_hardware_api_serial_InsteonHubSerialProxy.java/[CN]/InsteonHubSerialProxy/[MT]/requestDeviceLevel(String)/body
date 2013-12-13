@@ -1,3 +1,5 @@
 {
-  enqueueCommand(InsteonHubCommand.newGetLevelCommand(device));
+  byte[] msgBuffer=commandPool.checkout();
+  msgBuilder.buildRequestLevelMessage(msgBuffer,device);
+  enqueueCommand(msgBuffer);
 }

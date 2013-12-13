@@ -33,18 +33,15 @@ case InsteonHubMsgConst.CMD1_STOP_DIM_BRT:
 byte ack=msg[8];
 if (ack == InsteonHubMsgConst.ACK) {
 if (logger.isTraceEnabled()) {
-logger.trace("Received ACK");
+logger.trace("Received message with ACK: " + Hex.encodeHexString(msg));
 }
-ackQueue.add(new Ack(msg,true));
 }
  else if (ack == InsteonHubMsgConst.NAK) {
-if (logger.isTraceEnabled()) {
-logger.trace("Received NAK");
+if (logger.isDebugEnabled()) {
+logger.debug("Received message with NAK: " + Hex.encodeHexString(msg) + " - Will resend!");
 }
-ackQueue.add(new Ack(msg,false));
-}
-while (ackQueue.size() > MAX_ACK_QUEUE_SIZE) {
-ackQueue.poll();
+byte[] originMsg=Arrays.copyOfRange(msg,0,msg.length - 1);
+enqueueCommand(originMsg);
 }
 }
 }

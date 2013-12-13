@@ -1,8 +1,5 @@
 {
-  if (power) {
-    enqueueCommand(InsteonHubCommand.newOnFastCommand(device));
-  }
- else {
-    enqueueCommand(InsteonHubCommand.newOffFastCommand(device));
-  }
+  byte[] msgBuffer=commandPool.checkout();
+  msgBuilder.buildFastPowerMessage(msgBuffer,device,power);
+  enqueueCommand(msgBuffer);
 }

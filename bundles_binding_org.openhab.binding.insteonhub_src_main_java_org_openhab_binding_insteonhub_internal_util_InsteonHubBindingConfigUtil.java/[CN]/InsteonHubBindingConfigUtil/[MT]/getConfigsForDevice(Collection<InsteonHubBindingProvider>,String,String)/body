@@ -1,10 +1,8 @@
 {
   InsteonHubBindingDeviceInfo deviceInfo=new InsteonHubBindingDeviceInfo(hubId,deviceId);
   List<InsteonHubBindingConfig> configs=new LinkedList<InsteonHubBindingConfig>();
-  Set<String> itemNames=new HashSet<String>();
   for (  InsteonHubBindingProvider provider : providers) {
-    itemNames.clear();
-    provider.getDeviceItemNames(deviceInfo,itemNames);
+    Set<String> itemNames=provider.getDeviceItemNames(deviceInfo);
     for (    String itemName : itemNames) {
       InsteonHubBindingConfig config=provider.getItemConfig(itemName);
       if (config != null) {

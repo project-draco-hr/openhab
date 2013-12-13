@@ -1,8 +1,10 @@
 {
+  Set<String> ret=new LinkedHashSet<String>();
 synchronized (deviceItems) {
     Set<String> items=deviceItems.get(deviceInfo);
     if (items != null) {
-      itemNamesToPopulate.addAll(items);
+      ret.addAll(items);
     }
   }
+  return ret;
 }

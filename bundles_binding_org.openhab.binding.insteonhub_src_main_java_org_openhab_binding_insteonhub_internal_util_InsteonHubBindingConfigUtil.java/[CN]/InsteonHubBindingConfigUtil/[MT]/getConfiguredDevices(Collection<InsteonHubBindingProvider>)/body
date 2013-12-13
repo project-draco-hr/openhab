@@ -1,7 +1,7 @@
 {
-  Set<InsteonHubBindingDeviceInfo> devices=new HashSet<InsteonHubBindingDeviceInfo>();
+  Set<InsteonHubBindingDeviceInfo> ret=new HashSet<InsteonHubBindingDeviceInfo>();
   for (  InsteonHubBindingProvider provider : providers) {
-    provider.getConfiguredDevices(devices);
+    ret.addAll(provider.getConfiguredDevices());
   }
-  return devices;
+  return ret;
 }

@@ -1,8 +1,5 @@
 {
-  if (adjustmentType == InsteonHubAdjustmentType.DIM) {
-    enqueueCommand(InsteonHubCommand.newStartDimCommand(device));
-  }
- else   if (adjustmentType == InsteonHubAdjustmentType.BRIGHTEN) {
-    enqueueCommand(InsteonHubCommand.newStartBrightenCommand(device));
-  }
+  byte[] msgBuffer=commandPool.checkout();
+  msgBuilder.buildStartDimBrtMessage(msgBuffer,device,adjustmentType);
+  enqueueCommand(msgBuffer);
 }
