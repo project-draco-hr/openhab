@@ -9,8 +9,10 @@
       logger.error("Error occured during message waiting",e);
     }
 catch (    SocketTimeoutException e) {
-      logger.error("No data received during supervision interval ({} sec)!",SOCKET_TIMEOUT);
-      restartConnection=true;
+      if (connectionCheckActive == true) {
+        logger.error("No data received during supervision interval ({} msec)!",SOCKET_TIMEOUT);
+        restartConnection=true;
+      }
     }
 catch (    Exception e) {
       if (interrupted != true && this.isInterrupted() != true) {

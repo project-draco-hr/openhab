@@ -16,15 +16,21 @@
         dataListener=new DataListener();
         dataListener.start();
       }
-      if (connectionSupervisor == null) {
-        connectionSupervisor=new ConnectionSupervisor(CONNECTION_TEST_INTERVAL);
+      if (doConnectionCheck == true) {
+        logger.debug("conn check enabled, starting hypervisor");
+        if (connectionSupervisor == null) {
+          connectionSupervisor=new ConnectionSupervisor(CONNECTION_TEST_INTERVAL);
+        }
+      }
+ else {
+        logger.debug("conn check disabled, not starting hypervisor");
       }
     }
  catch (    UnknownHostException unknownHost) {
       logger.error("You are trying to connect to an unknown host!",unknownHost);
     }
 catch (    IOException ioException) {
-      logger.error("Can't connect: " + ioException.getMessage());
+      logger.error("Can't connect " + ip + ":"+ port+ ": "+ ioException.getMessage());
     }
   }
   return connected;

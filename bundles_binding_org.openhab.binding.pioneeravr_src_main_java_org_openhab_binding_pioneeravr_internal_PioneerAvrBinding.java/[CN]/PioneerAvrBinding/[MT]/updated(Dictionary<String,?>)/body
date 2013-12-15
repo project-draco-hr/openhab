@@ -12,7 +12,7 @@
       }
       Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
-        logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port>'");
+        logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port|checkconn>'");
         continue;
       }
       matcher.reset();
@@ -30,6 +30,10 @@
       }
  else       if ("port".equals(configKey)) {
         deviceConfig.port=Integer.valueOf(value);
+      }
+ else       if ("checkconn".equals(configKey)) {
+        if (value.equals("0"))         deviceConfig.connectionCheckActive=false;
+ else         deviceConfig.connectionCheckActive=true;
       }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
