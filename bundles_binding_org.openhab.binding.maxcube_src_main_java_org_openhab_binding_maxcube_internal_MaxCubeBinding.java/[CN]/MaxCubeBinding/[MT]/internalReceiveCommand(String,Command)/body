@@ -11,13 +11,14 @@
   String rfAddress=device.getRFAddress();
   if (command instanceof DecimalType) {
     DecimalType decimalType=(DecimalType)command;
-    S_Command scmd=new S_Command(rfAddress,decimalType.doubleValue());
-    String commandString=scmd.getCommandString();
+    S_Command cmd=new S_Command(rfAddress,device.getRoomId(),decimalType.doubleValue());
+    String commandString=cmd.getCommandString();
     Socket socket=null;
     try {
       socket=new Socket(ip,port);
-      PrintWriter out=new PrintWriter(socket.getOutputStream(),true);
-      out.print(commandString);
+      DataOutputStream stream=new DataOutputStream(socket.getOutputStream());
+      byte[] b=commandString.getBytes();
+      stream.write(b);
       socket.close();
     }
  catch (    UnknownHostException e) {
@@ -26,5 +27,6 @@
 catch (    IOException e) {
       logger.warn("Cannot write data from MAX!cube lan gateway while connecting to '{}'",ip);
     }
+    logger.debug("Command Sent to {}",ip);
   }
 }

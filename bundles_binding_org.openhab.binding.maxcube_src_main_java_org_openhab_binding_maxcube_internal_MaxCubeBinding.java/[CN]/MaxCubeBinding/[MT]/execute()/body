@@ -20,7 +20,34 @@
         message.debug(logger);
         if (message != null) {
           if (message.getType() == MessageType.C) {
-            configurations.add(Configuration.create(message));
+            Configuration c=null;
+            for (            Configuration conf : configurations) {
+              if (conf.getSerialNumber().equalsIgnoreCase(((C_Message)message).getSerialNumber())) {
+                c=conf;
+                break;
+              }
+            }
+            if (c == null) {
+              configurations.add(Configuration.create(message));
+            }
+          }
+ else           if (message.getType() == MessageType.M) {
+            M_Message msg=(M_Message)message;
+            for (            DeviceInformation di : msg.devices) {
+              Configuration c=null;
+              for (              Configuration conf : configurations) {
+                if (conf.getSerialNumber().equalsIgnoreCase(di.getSerialNumber())) {
+                  c=conf;
+                  break;
+                }
+              }
+              if (c == null) {
+                c=Configuration.create(di);
+                configurations.add(c);
+              }
+              c.setRoomId(di.getRoomId());
+              logger.debug("Set {} room id to {}",di.getSerialNumber(),di.getRoomId());
+            }
           }
  else           if (message.getType() == MessageType.L) {
             devices.addAll(((L_Message)message).getDevices(configurations));
