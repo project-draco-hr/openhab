@@ -3,6 +3,9 @@
   if (selProduct == null)   return null;
   URL entry=FrameworkUtil.getBundle(ZWaveProductDatabase.class).getEntry("database/" + selProduct.ConfigFile);
   if (entry == null) {
+    database=null;
+    logger.error("Unable to load ZWave product file: '{}'",selProduct.ConfigFile);
+    return null;
   }
   XStream xstream=new XStream(new StaxDriver());
   xstream.alias("Product",ZWaveDbProductFile.class);
@@ -17,7 +20,7 @@
     productFile=(ZWaveDbProductFile)xstream.fromXML(x);
   }
  catch (  IOException e) {
-    e.printStackTrace();
+    logger.error("Unable to load ZWave product file '{}' : {}",selProduct.ConfigFile,e.toString());
   }
   return productFile;
 }

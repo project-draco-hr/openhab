@@ -1,14 +1,24 @@
 {
   String[] splitDomain=domain.split("/");
-  if (splitDomain.length < 2)   return;
+  if (splitDomain.length < 2) {
+    logger.debug("Error malformed domain in doAction '{}'",domain);
+    return;
+  }
   if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
-    if (node == null)     return;
+    if (node == null) {
+      logger.debug("Error finding node in doAction '{}'",nodeId);
+      return;
+    }
     ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
-    if (configurationCommandClass == null)     return;
+    if (configurationCommandClass == null) {
+      logger.debug("Error getting configurationCommandClass in doAction for node '{}'",nodeId);
+      return;
+    }
     if (splitDomain.length == 2) {
       if (action.equals("Save")) {
+        logger.debug("Saving node '{}'",nodeId);
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
         nodeSerializer.SerializeNode(node);
       }
@@ -16,16 +26,24 @@
     }
     if (splitDomain[2].equals("parameters")) {
       if (action.equals("Refresh")) {
+        logger.debug("Refresh parameters for node '{}'",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
-        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)         return;
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+          logger.debug("Error getting parameters for node '{}' - no database found",nodeId);
+          return;
+        }
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
         for (        ZWaveDbConfigurationParameter parameter : configList)         this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
       }
     }
     if (splitDomain[2].equals("associations")) {
       if (action.equals("Refresh")) {
+        logger.debug("Refresh associations for node '{}'",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
-        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)         return;
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+          logger.debug("Error in doAction for node '{}' - no database found",nodeId);
+          return;
+        }
         if (splitDomain.length == 3) {
           List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
           for (          ZWaveDbAssociationGroup group : groupList)           node.configAssociationReport(group.Index);

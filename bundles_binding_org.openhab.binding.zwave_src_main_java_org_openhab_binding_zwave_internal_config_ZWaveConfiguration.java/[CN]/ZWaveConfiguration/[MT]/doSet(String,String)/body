@@ -1,15 +1,27 @@
 {
   logger.debug("Set domain '{}' to '{}'",domain,value);
   String[] splitDomain=domain.split("/");
-  if (splitDomain.length < 2)   return;
+  if (splitDomain.length < 2) {
+    logger.debug("Error malformed domain in doSet '{}'",domain);
+    return;
+  }
   if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
-    if (node == null)     return;
+    if (node == null) {
+      logger.debug("Error finding node in doSet '{}'",domain);
+      return;
+    }
     ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
-    if (configurationCommandClass == null)     return;
+    if (configurationCommandClass == null) {
+      logger.debug("Error getting configurationCommandClass in doSet for node '{}'",nodeId);
+      return;
+    }
     ZWaveProductDatabase database=new ZWaveProductDatabase();
-    if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false)     return;
+    if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+      logger.debug("Error in doSet for node '{}' - no database found",nodeId);
+      return;
+    }
     if (splitDomain.length == 3) {
       if (splitDomain[2].equals("Name"))       node.setName(value);
       if (splitDomain[2].equals("Location"))       node.setLocation(value);

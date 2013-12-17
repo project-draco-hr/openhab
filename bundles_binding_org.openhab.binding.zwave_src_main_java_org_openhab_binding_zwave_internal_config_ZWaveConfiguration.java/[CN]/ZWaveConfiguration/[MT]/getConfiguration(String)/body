@@ -1,5 +1,8 @@
 {
-  if (domain.endsWith("/") == false)   return null;
+  if (domain.endsWith("/") == false) {
+    logger.debug("Malformed domain request in getConfiguration '{}'",domain);
+    return null;
+  }
   List<OpenHABConfigurationRecord> records=new ArrayList<OpenHABConfigurationRecord>();
   OpenHABConfigurationRecord record;
   ZWaveNode node;
@@ -62,15 +65,23 @@ break;
 }
 return records;
 }
-if (zController == null) return null;
+if (zController == null) {
+logger.debug("Controller not initialised in call to getConfiguration");
+return null;
+}
 if (domain.equals("nodes/")) {
 ZWaveProductDatabase database=new ZWaveProductDatabase();
 for (int nodeId=0; nodeId < 256; nodeId++) {
 node=zController.getNode(nodeId);
 if (node == null) continue;
 if (node.getManufacturer() == 0) continue;
-if (node.getName() == null || node.getName().isEmpty()) record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
- else record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/",node.getName());
+logger.debug("Config sent for node {}",nodeId);
+if (node.getName() == null || node.getName().isEmpty()) {
+record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
+}
+ else {
+record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/",node.getName());
+}
 if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
 if (database.FindManufacturer(node.getManufacturer()) == false) {
 record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
@@ -78,6 +89,7 @@ record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexSt
  else {
 record.value=database.getManufacturerName() + " [ID:" + Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
 }
+logger.debug("No database entry node {}: {}",nodeId,record.value);
 }
  else {
 if (node.getLocation() == null || node.getLocation().isEmpty()) record.value=database.getProductName();
