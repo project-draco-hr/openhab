@@ -74,15 +74,16 @@ ZWaveProductDatabase database=new ZWaveProductDatabase();
 for (int nodeId=0; nodeId < 256; nodeId++) {
 node=zController.getNode(nodeId);
 if (node == null) continue;
-if (node.getManufacturer() == 0) continue;
-logger.debug("Config sent for node {}",nodeId);
+logger.debug("Config requested for node {}",nodeId);
 if (node.getName() == null || node.getName().isEmpty()) {
 record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
 }
  else {
 record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/",node.getName());
 }
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+if (node.getManufacturer() == 0) {
+}
+ else if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
 if (database.FindManufacturer(node.getManufacturer()) == false) {
 record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
 }
@@ -111,8 +112,6 @@ nodeNumber=nodeNumber.substring(0,next);
 int nodeId=Integer.parseInt(nodeNumber);
 node=zController.getNode(nodeId);
 if (node == null) return null;
-ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
-if (configurationCommandClass == null) return null;
 ZWaveProductDatabase database=new ZWaveProductDatabase();
 if (arg.equals("")) {
 record=new OpenHABConfigurationRecord(domain,"Name","Name",false);
@@ -138,6 +137,9 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"DeviceType","Device Type",true);
 record.value=Integer.toString(node.getDeviceType());
 records.add(record);
+record=new OpenHABConfigurationRecord(domain,"Version","Version",true);
+record.value=Integer.toString(node.getVersion());
+records.add(record);
 }
  else {
 record=new OpenHABConfigurationRecord(domain,"Product","Product",true);
@@ -150,14 +152,29 @@ record=new OpenHABConfigurationRecord(domain + "associations/","Association Grou
 record.addAction("Refresh","Refresh");
 records.add(record);
 }
+record=new OpenHABConfigurationRecord(domain + "status/","Status");
+records.add(record);
+}
+ else if (arg.equals("status/")) {
+record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
+record.value=node.getNodeStage().toString();
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"NodeStageTime","Node Stage Time",true);
+record.value=node.getQueryStageTimeStamp().toString();
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"LastUpdated","Last Updated",true);
+record.value=node.getLastUpdated().toString();
+records.add(record);
 }
  else if (arg.equals("parameters/")) {
 if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) != false) {
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+if (configurationCommandClass == null) return null;
 for (ZWaveDbConfigurationParameter parameter : configList) {
 record=new OpenHABConfigurationRecord(domain,"configuration" + parameter.Index,database.getLabel(parameter.Label),false);
 ConfigurationParameter configurationParameter=configurationCommandClass.getParameter(parameter.Index);
-if (parameter != null) record.value=Integer.toString(configurationParameter.getValue());
+if (configurationParameter != null) record.value=Integer.toString(configurationParameter.getValue());
 if (parameter.Type.equalsIgnoreCase("list")) {
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
 for (ZWaveDbConfigurationListItem item : parameter.Item) record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
