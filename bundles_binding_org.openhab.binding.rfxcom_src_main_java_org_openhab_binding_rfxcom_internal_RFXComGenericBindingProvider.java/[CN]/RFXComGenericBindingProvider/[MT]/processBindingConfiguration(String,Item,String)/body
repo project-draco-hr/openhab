@@ -20,13 +20,13 @@
       throw new BindingConfigParseException("RFXCOM out binding second field should contain 2 parts separated by '.'");
     }
     try {
-      config.packetType=RFXComMessageUtils.convertPacketType(types[0].trim());
+      config.packetType=RFXComMessageFactory.convertPacketType(types[0].trim());
     }
- catch (    Exception e) {
+ catch (    IllegalArgumentException e) {
       throw new BindingConfigParseException("Invalid packet type '" + types[0] + "'!");
     }
     try {
-      config.subType=RFXComMessageUtils.convertSubType(config.packetType,types[1].trim());
+      config.subType=RFXComMessageFactory.getMessageInterface(config.packetType).convertSubType(types[1].trim());
     }
  catch (    Exception e) {
       throw new BindingConfigParseException("Invalid sub type '" + types[1] + "'!");
