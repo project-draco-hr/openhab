@@ -8,7 +8,7 @@
       if (logger.isDebugEnabled()) {
         logger.debug("Alerting level update device='" + device + "' level="+ level);
       }
-      alertLevelUpdate(device,level);
+      alertLevelUpdate(device,level,InsteonHubLevelUpdateType.STATUS_RESPONSE);
     }
  else {
       byte cmd1=msg[9];
@@ -17,7 +17,7 @@ case InsteonHubMsgConst.CMD1_OFF:
 case InsteonHubMsgConst.CMD1_ON:
 case InsteonHubMsgConst.CMD1_OFF_FAST:
 case InsteonHubMsgConst.CMD1_ON_FAST:
-        alertLevelUpdate(device,cmd1 == InsteonHubMsgConst.CMD1_ON || cmd1 == InsteonHubMsgConst.CMD1_ON_FAST ? 255 : 0);
+        alertLevelUpdate(device,cmd1 == InsteonHubMsgConst.CMD1_ON || cmd1 == InsteonHubMsgConst.CMD1_ON_FAST ? 255 : 0,InsteonHubLevelUpdateType.STATUS_CHANGE);
 case InsteonHubMsgConst.CMD1_DIM:
 case InsteonHubMsgConst.CMD1_BRT:
 case InsteonHubMsgConst.CMD1_STOP_DIM_BRT:
