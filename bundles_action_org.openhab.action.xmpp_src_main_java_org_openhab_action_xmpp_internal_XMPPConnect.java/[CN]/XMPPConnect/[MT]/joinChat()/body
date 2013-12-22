@@ -1,0 +1,23 @@
+{
+  if (chatroom != null) {
+    if (!initialized) {
+      establishConnection();
+      if (!initialized) {
+        throw new NotInitializedException();
+      }
+    }
+    chat=new MultiUserChat(connection,chatroom);
+    try {
+      if (chatpassword != null) {
+        chat.join(chatnickname,chatpassword);
+      }
+ else {
+        chat.join(chatnickname);
+      }
+      logger.info("Successfuly joined chat '{}' with nickname '{}'.",chatroom,chatnickname);
+    }
+ catch (    XMPPException e) {
+      logger.error("Could not join chat '{}' with nickname '{}': {}",chatroom,chatnickname,e.getMessage());
+    }
+  }
+}
