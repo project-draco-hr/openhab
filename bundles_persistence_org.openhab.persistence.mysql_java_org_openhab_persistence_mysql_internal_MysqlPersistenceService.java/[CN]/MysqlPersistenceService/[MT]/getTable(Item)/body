@@ -31,7 +31,10 @@
       }
     }
   }
-  if (tableName == null)   return null;
+  if (tableName == null) {
+    logger.error("mySQL: tableName was null");
+    return null;
+  }
   String mysqlType=new String("DOUBLE");
   String itemType=item.getClass().toString().toUpperCase();
   itemType=itemType.substring(itemType.lastIndexOf('.') + 1);
