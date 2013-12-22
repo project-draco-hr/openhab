@@ -21,7 +21,7 @@ catch (  NotConnectedException e) {
   tinkerforgeDevice.addDistanceListener(new BrickletDistanceIR.DistanceListener(){
     @Override public void distance(    int newDistance){
       if (newDistance > (distance + threshold) || newDistance < (distance - threshold)) {
-        setSensorValue(newDistance);
+        setSensorValue(new DecimalValue(newDistance));
         setDistance(newDistance);
       }
  else {
@@ -30,4 +30,5 @@ catch (  NotConnectedException e) {
     }
   }
 );
+  setSensorValue(fetchSensorValue());
 }

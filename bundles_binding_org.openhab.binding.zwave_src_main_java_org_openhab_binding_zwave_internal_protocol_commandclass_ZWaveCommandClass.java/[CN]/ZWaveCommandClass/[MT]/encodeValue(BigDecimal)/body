@@ -1,0 +1,24 @@
+{
+  if (value.unscaledValue().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+    throw new ArithmeticException();
+  }
+ else   if (value.unscaledValue().compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)   throw new ArithmeticException();
+  int size=4;
+  if (value.unscaledValue().intValue() >= Byte.MIN_VALUE && value.unscaledValue().intValue() <= Byte.MAX_VALUE) {
+    size=1;
+  }
+ else   if (value.unscaledValue().intValue() >= Short.MIN_VALUE && value.unscaledValue().intValue() <= Short.MAX_VALUE) {
+    size=2;
+  }
+  int precision=value.scale();
+  if (precision < 0) {
+    throw new ArithmeticException();
+  }
+  byte[] result=new byte[size + 1];
+  result[0]=(byte)((precision << PRECISION_SHIFT) | size);
+  int unscaledValue=value.unscaledValue().intValue();
+  for (int i=0; i < size; i++) {
+    result[size - i]=(byte)((unscaledValue >> (i * 8)) & 0xFF);
+  }
+  return result;
+}

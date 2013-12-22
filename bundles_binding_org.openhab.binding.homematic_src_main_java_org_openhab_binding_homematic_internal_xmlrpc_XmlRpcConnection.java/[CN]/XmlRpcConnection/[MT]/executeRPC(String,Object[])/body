@@ -1,8 +1,14 @@
 {
   try {
-    return getXmlRpcClient().execute(mathodName,params);
+    TimingOutCallback callback=new TimingOutCallback(5 * 1000);
+    getXmlRpcClient().executeAsync(methodName,params,callback);
+    return callback.waitForResponse();
   }
- catch (  XmlRpcException e) {
+ catch (  Exception e) {
     throw new HomematicBindingException(e);
+  }
+catch (  Throwable e) {
+    log.error("Throwable catched",e);
+    throw new HomematicBindingException("Throwable catched");
   }
 }
