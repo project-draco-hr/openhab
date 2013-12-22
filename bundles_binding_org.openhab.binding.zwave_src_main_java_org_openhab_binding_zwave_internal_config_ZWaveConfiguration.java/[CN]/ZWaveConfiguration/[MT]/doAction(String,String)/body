@@ -1,19 +1,20 @@
 {
+  logger.debug("doAction domain '{}' to '{}'",domain,action);
   String[] splitDomain=domain.split("/");
   if (splitDomain.length < 2) {
-    logger.debug("Error malformed domain in doAction '{}'",domain);
+    logger.error("Error malformed domain in doAction '{}'",domain);
     return;
   }
   if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null) {
-      logger.debug("Error finding node in doAction '{}'",nodeId);
+      logger.error("Error finding node in doAction '{}'",nodeId);
       return;
     }
     ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
     if (configurationCommandClass == null) {
-      logger.debug("Error getting configurationCommandClass in doAction for node '{}'",nodeId);
+      logger.error("Error getting configurationCommandClass in doAction for node '{}'",nodeId);
       return;
     }
     if (splitDomain.length == 2) {
@@ -29,7 +30,7 @@
         logger.debug("Refresh parameters for node '{}'",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
         if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
-          logger.debug("Error getting parameters for node '{}' - no database found",nodeId);
+          logger.error("Error getting parameters for node '{}' - no database found",nodeId);
           return;
         }
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
@@ -41,7 +42,7 @@
         logger.debug("Refresh associations for node '{}'",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
         if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
-          logger.debug("Error in doAction for node '{}' - no database found",nodeId);
+          logger.error("Error in doAction for node '{}' - no database found",nodeId);
           return;
         }
         if (splitDomain.length == 3) {

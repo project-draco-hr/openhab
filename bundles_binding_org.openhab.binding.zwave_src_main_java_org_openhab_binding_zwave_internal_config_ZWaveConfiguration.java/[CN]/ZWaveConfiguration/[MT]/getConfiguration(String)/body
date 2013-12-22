@@ -1,6 +1,6 @@
 {
   if (domain.endsWith("/") == false) {
-    logger.debug("Malformed domain request in getConfiguration '{}'",domain);
+    logger.error("Malformed domain request in getConfiguration '{}'",domain);
     return null;
   }
   List<OpenHABConfigurationRecord> records=new ArrayList<OpenHABConfigurationRecord>();
@@ -66,7 +66,7 @@ break;
 return records;
 }
 if (zController == null) {
-logger.debug("Controller not initialised in call to getConfiguration");
+logger.error("Controller not initialised in call to getConfiguration");
 return null;
 }
 if (domain.equals("nodes/")) {
