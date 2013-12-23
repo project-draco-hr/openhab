@@ -31,7 +31,10 @@
       }
     }
   }
-  if (tableName == null)   return null;
+  if (tableName == null) {
+    logger.error("mySQL: tableName was null");
+    return null;
+  }
   String mysqlType=new String("DOUBLE");
   String itemType=item.getClass().toString().toUpperCase();
   itemType=itemType.substring(itemType.lastIndexOf('.') + 1);
@@ -58,7 +61,7 @@
       }
     }
   }
-  if (sqlTables.containsKey(tableName) == false) {
+  if (sqlTables.get(itemName) == null) {
     logger.error("mySQL: Item '" + itemName + "' was not added to the table - removing index");
     sqlCmd=new String("DELETE FROM Items WHERE ItemName='" + itemName + "'");
     logger.debug("SQL: " + sqlCmd);
