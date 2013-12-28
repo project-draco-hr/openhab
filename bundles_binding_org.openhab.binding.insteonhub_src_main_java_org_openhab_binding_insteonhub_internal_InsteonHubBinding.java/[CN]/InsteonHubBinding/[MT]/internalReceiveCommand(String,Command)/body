@@ -1,0 +1,59 @@
+{
+  InsteonHubBindingConfig config=InsteonHubBindingConfigUtil.getConfigForItem(providers,itemName);
+  if (config == null) {
+    logger.error(BINDING_NAME + " received command for unknown item '" + itemName+ "'");
+    return;
+  }
+  BindingType type=config.getBindingType();
+  String hubId=config.getDeviceInfo().getHubId();
+  String deviceId=config.getDeviceInfo().getDeviceId();
+  InsteonHubProxy proxy=proxies.get(hubId);
+  if (proxy == null) {
+    logger.error(BINDING_NAME + " received command for unknown hub id '" + hubId+ "'");
+    return;
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug(BINDING_NAME + " processing command '" + command+ "' of type '"+ command.getClass().getSimpleName()+ "' for item '"+ itemName+ "'");
+  }
+  try {
+    if (type == BindingType.SWITCH) {
+      if (command instanceof OnOffType) {
+        proxy.setDevicePower(deviceId,command == OnOffType.ON);
+      }
+    }
+ else     if (type == BindingType.DIMMER) {
+      if (command instanceof OnOffType) {
+        int level=command == OnOffType.ON ? 255 : 0;
+        proxy.setDeviceLevel(deviceId,level);
+      }
+ else       if (command instanceof IncreaseDecreaseType) {
+        InsteonHubAdjustmentType adjustmentType;
+        if (command == IncreaseDecreaseType.INCREASE)         adjustmentType=InsteonHubAdjustmentType.BRIGHTEN;
+ else         adjustmentType=InsteonHubAdjustmentType.DIM;
+        if (setDimTimeout(itemName)) {
+          proxy.startDeviceAdjustment(deviceId,adjustmentType);
+        }
+      }
+ else       if (command instanceof UpDownType) {
+        InsteonHubAdjustmentType adjustmentType;
+        if (command == UpDownType.UP)         adjustmentType=InsteonHubAdjustmentType.BRIGHTEN;
+ else         adjustmentType=InsteonHubAdjustmentType.DIM;
+        proxy.startDeviceAdjustment(deviceId,adjustmentType);
+      }
+ else       if (command instanceof StopMoveType) {
+        if (command == StopMoveType.STOP) {
+          proxy.stopDeviceAdjustment(deviceId);
+        }
+      }
+ else {
+        byte percentByte=Byte.parseByte(command.toString());
+        float percent=percentByte * .01f;
+        int level=(int)(255 * percent);
+        proxy.setDeviceLevel(deviceId,level);
+      }
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error processing command '" + command + "' for item '"+ itemName+ "'",t);
+  }
+}

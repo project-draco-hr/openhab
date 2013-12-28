@@ -1,0 +1,12 @@
+{
+  AtomicLong timeout=itemDimTimeouts.get(itemName);
+  if (timeout == null) {
+    timeout=new AtomicLong(System.currentTimeMillis() + 400);
+    itemDimTimeouts.put(itemName,timeout);
+    return true;
+  }
+ else {
+    long existing=timeout.getAndSet(System.currentTimeMillis() + 400);
+    return existing == 0;
+  }
+}

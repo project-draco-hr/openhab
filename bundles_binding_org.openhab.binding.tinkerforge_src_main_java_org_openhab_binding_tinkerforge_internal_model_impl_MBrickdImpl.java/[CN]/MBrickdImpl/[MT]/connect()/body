@@ -1,9 +1,11 @@
 {
   final IPConnection ipcon=new IPConnection();
   setIpConnection(ipcon);
-  ipcon.setTimeout(timeout);
-  ipcon.setAutoReconnect(false);
-  ipcon.addConnectedListener(new ConnectedListener(ipcon));
-  makeConnect();
+  ipConnection.setTimeout(timeout);
+  ipConnection.setAutoReconnect(autoReconnect);
+  ipConnection.addConnectedListener(new ConnectedListener(ipcon));
+  ipConnection.addDisconnectedListener(new DisconnectedListener());
+  ipConnection.addEnumerateListener(new EnumerateListener());
+  makeConnectThread();
   logger.trace("{} After connect call",LoggerConstants.TFINIT);
 }
