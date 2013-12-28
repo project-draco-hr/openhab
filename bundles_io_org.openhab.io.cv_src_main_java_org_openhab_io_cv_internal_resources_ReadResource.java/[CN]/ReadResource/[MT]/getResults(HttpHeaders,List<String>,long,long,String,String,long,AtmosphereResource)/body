@@ -1,0 +1,15 @@
+{
+  String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes());
+  logger.debug("Received HTTP GET request at '{}' for {} items at index '{}', time '{}', ResponseType: '{}'.",new String[]{uriInfo.getPath(),String.valueOf(itemNames.size()),String.valueOf(index),String.valueOf(cacheDate),responseType});
+  if (index == 0) {
+    if (responseType != null) {
+      throw new WebApplicationException(Response.ok(getItemStateListBean(itemNames,System.currentTimeMillis()),responseType).build());
+    }
+ else {
+      throw new WebApplicationException(Response.notAcceptable(null).build());
+    }
+  }
+  CometVisuBroadcaster itemBroadcaster=(CometVisuBroadcaster)BroadcasterFactory.getDefault().lookup(CometVisuBroadcaster.class,resource.getRequest().getPathInfo(),true);
+  itemBroadcaster.addStateChangeListener(new ItemStateChangeListener(itemNames));
+  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).resumeOnBroadcast(!ResponseTypeHelper.isStreamingTransport(resource.getRequest())).broadcaster(itemBroadcaster).outputComments(true).build();
+}

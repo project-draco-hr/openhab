@@ -1,0 +1,17 @@
+{
+  ItemBean bean;
+  if (item instanceof GroupItem && drillDown) {
+    GroupItem groupItem=(GroupItem)item;
+    GroupItemBean groupBean=new GroupItemBean();
+    Collection<ItemBean> members=new HashSet<ItemBean>();
+    for (    Item member : groupItem.getMembers()) {
+      members.add(createItemBean(member,false));
+    }
+    groupBean.members=members.toArray(new ItemBean[members.size()]);
+    bean=groupBean;
+  }
+ else {
+    bean=new ItemBean(item.getName(),item.getState().toString());
+  }
+  return bean;
+}

@@ -1,0 +1,18 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  try {
+    if (ResponseTypeHelper.isStreamingTransport(request) && originalMessage instanceof Item) {
+      if (message instanceof ItemStateListBean) {
+        return new BroadcastAction(ACTION.CONTINUE,getSingleResponseObject((ItemStateListBean)message,(Item)originalMessage,request));
+      }
+ else {
+        return new BroadcastAction(ACTION.CONTINUE,getSingleResponseObject(null,(Item)originalMessage,request));
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+    return new BroadcastAction(ACTION.ABORT,message);
+  }
+  return new BroadcastAction(ACTION.CONTINUE,message);
+}

@@ -1,0 +1,8 @@
+{
+  if (command != OnOffType.ON)   return;
+  SerialMessage serialMessage=node.encapsulate(commandClass.getResetMessage(),commandClass,endpointId);
+  this.getController().sendData(serialMessage);
+  for (  SerialMessage serialGetMessage : commandClass.getDynamicValues()) {
+    this.getController().sendData(node.encapsulate(serialGetMessage,commandClass,endpointId));
+  }
+}

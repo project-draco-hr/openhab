@@ -1,0 +1,25 @@
+{
+  Map<String,InsteonHubProxy> proxies=new HashMap<String,InsteonHubProxy>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if (key.endsWith(CONFIG_KEY_HOST)) {
+      String host=(String)config.get(key);
+      int separatorIdx=key.indexOf('.');
+      String hubId, keyPrefix;
+      if (separatorIdx == -1) {
+        hubId=InsteonHubBinding.DEFAULT_HUB_ID;
+        keyPrefix="";
+      }
+ else {
+        hubId=key.substring(0,separatorIdx);
+        keyPrefix=hubId + ".";
+      }
+      String portStr=(String)config.get(keyPrefix + CONFIG_KEY_PORT);
+      int port=StringUtils.isBlank(portStr) ? InsteonHubSerialProxy.DEFAULT_PORT : Integer.parseInt(config.get(keyPrefix + CONFIG_KEY_PORT).toString());
+      InsteonHubProxy proxy=new InsteonHubSerialProxy(host,port);
+      proxies.put(hubId,proxy);
+    }
+  }
+  return proxies;
+}

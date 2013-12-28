@@ -2,8 +2,8 @@
   Resource resource=getResource(name);
   if (resource != null) {
 synchronized (resourceSet) {
-      resourceSet.getResources().remove(resource);
       notifyListeners(name,EventType.REMOVED);
+      resourceSet.getResources().remove(resource);
       return true;
     }
   }

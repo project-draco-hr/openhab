@@ -1,0 +1,37 @@
+{
+  logger.debug("Received GET request at '{}' for rrd '{}'.",new String[]{uriInfo.getPath(),rrdName});
+  String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes());
+  if (responseType != null) {
+    try {
+      RrdDb rrdDb=new RrdDb("./etc/rrd4j/" + rrdName);
+      long[] times=Util.getTimestamps(start,end);
+      FetchRequest fetchRequest=rrdDb.createFetchRequest(ConsolFun.valueOf(ds),times[0],times[1],res);
+      FetchData fetchData=fetchRequest.fetchData();
+      StringBuilder buffer=new StringBuilder();
+      long[] timestamps=fetchData.getTimestamps();
+      double[][] values=fetchData.getValues();
+      buffer.append("[");
+      for (int row=0; row < fetchData.getRowCount(); row++) {
+        buffer.append("[" + (timestamps[row] * 1000) + ",");
+        buffer.append("[");
+        ArrayList<String> data=new ArrayList<String>();
+        for (int dsIndex=0; dsIndex < fetchData.getColumnCount(); dsIndex++) {
+          data.add(dsIndex,RrdResource.formatDouble(values[dsIndex][row],"null",true));
+        }
+        buffer.append(StringUtils.join(data,","));
+        buffer.append("]],");
+      }
+      buffer.deleteCharAt(buffer.length() - 1);
+      buffer.append("]");
+      rrdDb.close();
+      return Response.ok(buffer.toString(),responseType).build();
+    }
+ catch (    IOException e) {
+      logger.error(e.getLocalizedMessage());
+    }
+    return Response.serverError().build();
+  }
+ else {
+    return Response.notAcceptable(null).build();
+  }
+}

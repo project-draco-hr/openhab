@@ -1,0 +1,26 @@
+{
+  logger.trace("Initializing ZWaveNodeSerializer.");
+  this.versionedFolderName=String.format("%s/%d.%d/",FOLDER_NAME,ZWaveActivator.getVersion().getMajor(),ZWaveActivator.getVersion().getMinor());
+  File folder=new File(versionedFolderName);
+  if (!folder.exists()) {
+    logger.debug("Creating directory {}",versionedFolderName);
+    folder.mkdirs();
+  }
+  stream.processAnnotations(ZWaveNode.class);
+  stream.processAnnotations(ZWaveEndpoint.class);
+  stream.processAnnotations(ZWaveDeviceClass.class);
+  stream.processAnnotations(ZWaveCommandClass.class);
+  stream.processAnnotations(CommandClass.class);
+  for (  CommandClass commandClass : CommandClass.values()) {
+    Class<? extends ZWaveCommandClass> cc=commandClass.getCommandClassClass();
+    if (cc == null) {
+      continue;
+    }
+    stream.processAnnotations(cc);
+    for (    Class<?> inner : cc.getDeclaredClasses()) {
+      stream.processAnnotations(inner);
+    }
+  }
+  stream.processAnnotations(MeterScale.class);
+  logger.trace("Initialized ZWaveNodeSerializer.");
+}

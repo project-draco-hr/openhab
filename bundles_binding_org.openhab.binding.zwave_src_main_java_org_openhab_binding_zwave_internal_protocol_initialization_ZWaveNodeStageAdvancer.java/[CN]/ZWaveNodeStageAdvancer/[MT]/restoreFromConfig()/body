@@ -1,0 +1,28 @@
+{
+  ZWaveNode restoredNode=nodeSerializer.DeserializeNode(this.node.getNodeId());
+  if (restoredNode == null)   return false;
+  if (restoredNode.getVersion() != this.node.getVersion() || restoredNode.isListening() != this.node.isListening() || restoredNode.isFrequentlyListening() != this.node.isFrequentlyListening() || restoredNode.isRouting() != this.node.isRouting() || !restoredNode.getDeviceClass().equals(this.node.getDeviceClass())) {
+    logger.warn("Config file differs from controler information for node {}, ignoring config.",this.node.getNodeId());
+    return false;
+  }
+  this.node.setDeviceId(restoredNode.getDeviceId());
+  this.node.setDeviceType(restoredNode.getDeviceType());
+  this.node.setManufacturer(restoredNode.getManufacturer());
+  for (  ZWaveCommandClass commandClass : restoredNode.getCommandClasses()) {
+    commandClass.setController(this.controller);
+    commandClass.setNode(this.node);
+    if (commandClass instanceof ZWaveMultiInstanceCommandClass) {
+      for (      ZWaveEndpoint endPoint : ((ZWaveMultiInstanceCommandClass)commandClass).getEndpoints()) {
+        for (        ZWaveCommandClass endpointCommandClass : endPoint.getCommandClasses()) {
+          endpointCommandClass.setController(this.controller);
+          endpointCommandClass.setNode(this.node);
+          endpointCommandClass.setEndpoint(endPoint);
+        }
+      }
+    }
+    this.node.addCommandClass(commandClass);
+  }
+  logger.debug("Restored node {} from config.",this.node.getNodeId());
+  restoredFromConfigfile=true;
+  return true;
+}

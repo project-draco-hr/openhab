@@ -1,0 +1,49 @@
+{
+switch (informationItem) {
+case REPORT_HOMEID:
+    return String.format("0x%08x",node.getHomeId());
+case REPORT_NODEID:
+  return node.getNodeId();
+case REPORT_MANUFACTURER:
+return String.format("0x%04x",node.getManufacturer());
+case REPORT_DEVICE_TYPE:
+return String.format("0x%04x",node.getDeviceType());
+case REPORT_DEVICE_ID:
+return String.format("0x%04x",node.getDeviceId());
+case REPORT_BASIC:
+return String.format("0x%02x",node.getDeviceClass().getBasicDeviceClass().getKey());
+case REPORT_BASIC_LABEL:
+return node.getDeviceClass().getBasicDeviceClass().getLabel();
+case REPORT_GENERIC:
+return String.format("0x%02x",node.getDeviceClass().getGenericDeviceClass().getKey());
+case REPORT_GENERIC_LABEL:
+return node.getDeviceClass().getGenericDeviceClass().getLabel();
+case REPORT_SPECIFIC:
+return String.format("0x%02x",node.getDeviceClass().getSpecificDeviceClass().getKey());
+case REPORT_SPECIFIC_LABEL:
+return node.getDeviceClass().getSpecificDeviceClass().getLabel();
+case REPORT_VERSION:
+return node.getVersion();
+case REPORT_ROUTING:
+return node.isRouting();
+case REPORT_LISTENING:
+return node.isListening();
+case REPORT_DEAD:
+return node.isDead();
+case REPORT_NAK:
+return this.getController().getNAKCount();
+case REPORT_SOF:
+return this.getController().getSOFCount();
+case REPORT_CAN:
+return this.getController().getCANCount();
+case REPORT_ACK:
+return this.getController().getACKCount();
+case REPORT_OOF:
+return this.getController().getOOFCount();
+case REPORT_TIME_OUT:
+return this.getController().getTimeOutCount();
+case REPORT_LASTUPDATE:
+return node.getLastUpdated();
+}
+return null;
+}

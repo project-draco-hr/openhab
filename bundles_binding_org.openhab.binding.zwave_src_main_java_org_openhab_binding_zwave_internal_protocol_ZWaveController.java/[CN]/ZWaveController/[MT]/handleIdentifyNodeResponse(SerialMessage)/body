@@ -2,48 +2,50 @@
   logger.trace("Handle Message Get Node ProtocolInfo Response");
   int nodeId=lastSentMessage.getMessagePayloadByte(0);
   logger.debug("ProtocolInfo for Node = " + nodeId);
+  ZWaveNode node=this.zwaveNodes.get(nodeId);
   boolean listening=(incomingMessage.getMessagePayloadByte(0) & 0x80) != 0 ? true : false;
   boolean routing=(incomingMessage.getMessagePayloadByte(0) & 0x40) != 0 ? true : false;
   int version=(incomingMessage.getMessagePayloadByte(0) & 0x07) + 1;
+  boolean frequentlyListening=(incomingMessage.getMessagePayloadByte(1) & 0x60) != 0 ? true : false;
   logger.debug("Listening = " + listening);
   logger.debug("Routing = " + routing);
   logger.debug("Version = " + version);
-  this.zwaveNodes.get(nodeId).setListening(listening);
-  this.zwaveNodes.get(nodeId).setRouting(routing);
-  this.zwaveNodes.get(nodeId).setVersion(version);
+  logger.debug("fLIRS = " + frequentlyListening);
+  node.setListening(listening);
+  node.setRouting(routing);
+  node.setVersion(version);
+  node.setFrequentlyListening(frequentlyListening);
   Basic basic=Basic.getBasic(incomingMessage.getMessagePayloadByte(3));
   if (basic == null) {
     logger.error(String.format("Basic device class 0x%02x not found",incomingMessage.getMessagePayloadByte(3)));
     return;
   }
+  logger.debug(String.format("Basic = %s 0x%02x",basic.getLabel(),basic.getKey()));
   Generic generic=Generic.getGeneric(incomingMessage.getMessagePayloadByte(4));
   if (generic == null) {
     logger.error(String.format("Generic device class 0x%02x not found",incomingMessage.getMessagePayloadByte(4)));
     return;
   }
+  logger.debug(String.format("Generic = %s 0x%02x",generic.getLabel(),generic.getKey()));
   Specific specific=Specific.getSpecific(generic,incomingMessage.getMessagePayloadByte(5));
   if (specific == null) {
     logger.error(String.format("Specific device class 0x%02x not found",incomingMessage.getMessagePayloadByte(5)));
     return;
   }
-  logger.debug(String.format("Basic = %s 0x%02x",basic.getLabel(),basic.getKey()));
-  logger.debug(String.format("Generic = %s 0x%02x",generic.getLabel(),generic.getKey()));
   logger.debug(String.format("Specific = %s 0x%02x",specific.getLabel(),specific.getKey()));
-  ZWaveDeviceClass deviceClass=this.zwaveNodes.get(nodeId).getDeviceClass();
+  ZWaveDeviceClass deviceClass=node.getDeviceClass();
   deviceClass.setBasicDeviceClass(basic);
   deviceClass.setGenericDeviceClass(generic);
   deviceClass.setSpecificDeviceClass(specific);
-  for (  CommandClass commandClass : generic.getMandatoryCommandClasses()) {
-    ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),this.zwaveNodes.get(nodeId),this);
-    if (zwaveCommandClass != null)     this.zwaveNodes.get(nodeId).addCommandClass(zwaveCommandClass);
+  if (!node.restoreFromConfig()) {
+    for (    CommandClass commandClass : generic.getMandatoryCommandClasses()) {
+      ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,this);
+      if (zwaveCommandClass != null)       this.zwaveNodes.get(nodeId).addCommandClass(zwaveCommandClass);
+    }
+    for (    CommandClass commandClass : specific.getMandatoryCommandClasses()) {
+      ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,this);
+      if (zwaveCommandClass != null)       node.addCommandClass(zwaveCommandClass);
+    }
   }
-  for (  CommandClass commandClass : specific.getMandatoryCommandClasses()) {
-    ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),this.zwaveNodes.get(nodeId),this);
-    if (zwaveCommandClass != null)     this.zwaveNodes.get(nodeId).addCommandClass(zwaveCommandClass);
-  }
-  if (!listening) {
-    ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(CommandClass.WAKE_UP.getKey(),this.zwaveNodes.get(nodeId),this);
-    if (zwaveCommandClass != null)     this.zwaveNodes.get(nodeId).addCommandClass(zwaveCommandClass);
-  }
-  this.getNode(nodeId).advanceNodeStage();
+  node.advanceNodeStage(NodeStage.PING);
 }

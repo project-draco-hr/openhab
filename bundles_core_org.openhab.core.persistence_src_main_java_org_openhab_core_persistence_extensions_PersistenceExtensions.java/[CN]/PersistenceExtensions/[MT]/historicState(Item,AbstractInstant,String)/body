@@ -9,14 +9,14 @@
     filter.setOrdering(Ordering.DESCENDING);
     Iterable<HistoricItem> result=qService.query(filter);
     if (result.iterator().hasNext()) {
-      return result.iterator().next().getState();
+      return result.iterator().next();
     }
  else {
-      return UnDefType.NULL;
+      return null;
     }
   }
  else {
     logger.warn("There is no queryable persistence service registered with the name '{}'",serviceName);
-    return UnDefType.UNDEF;
+    return null;
   }
 }

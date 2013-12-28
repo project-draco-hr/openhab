@@ -7,6 +7,8 @@
     if (sitemap != null) {
       SitemapBean bean=new SitemapBean();
       bean.name=StringUtils.removeEnd(modelName,SITEMAP_FILEEXT);
+      bean.icon=sitemap.getIcon();
+      bean.label=sitemap.getLabel();
       bean.link=UriBuilder.fromUri(uri).path(bean.name).build().toASCIIString();
       bean.homepage=new PageBean();
       bean.homepage.link=bean.link + "/" + sitemap.getName();
