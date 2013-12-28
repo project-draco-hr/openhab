@@ -99,6 +99,17 @@ logger.debug("No database entry node {}: {}",nodeId,record.value);
 if (node.getLocation() == null || node.getLocation().isEmpty()) record.value=database.getProductName();
  else record.value=database.getProductName() + ": " + node.getLocation();
 }
+switch (node.getNodeStage()) {
+case DEAD:
+record.state=OpenHABConfigurationRecord.STATE.ERROR;
+break;
+case DONE:
+record.state=OpenHABConfigurationRecord.STATE.OK;
+break;
+default :
+record.state=OpenHABConfigurationRecord.STATE.INITIALIZING;
+break;
+}
 record.addAction("Save","Save Node");
 records.add(record);
 }
@@ -160,7 +171,7 @@ records.add(record);
 }
  else if (arg.equals("status/")) {
 record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
-record.value=node.getNodeStage().toString();
+record.value=node.getNodeStage().getLabel();
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"NodeStageTime","Node Stage Time",true);
 record.value=node.getQueryStageTimeStamp().toString();
