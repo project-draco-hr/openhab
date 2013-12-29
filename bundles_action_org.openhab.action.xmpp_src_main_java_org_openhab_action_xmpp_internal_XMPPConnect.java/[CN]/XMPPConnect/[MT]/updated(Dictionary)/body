@@ -8,15 +8,24 @@
     }
     XMPPConnect.username=(String)config.get("username");
     XMPPConnect.password=(String)config.get("password");
+    XMPPConnect.chatroom=(String)config.get("chatroom");
+    XMPPConnect.chatnickname=(String)config.get("chatnickname");
+    XMPPConnect.chatpassword=(String)config.get("chatpassword");
     String users=(String)config.get("consoleusers");
     if (!StringUtils.isEmpty(users)) {
       XMPPConnect.consoleUsers=users.split(",");
+    }
+ else {
+      XMPPConnect.consoleUsers=new String[0];
     }
     if (servername == null || servername.isEmpty())     return;
     if (username == null || username.isEmpty())     return;
     if (password == null || password.isEmpty())     return;
     if (port == null) {
       port=5222;
+    }
+    if (chatnickname == null || chatnickname.isEmpty()) {
+      chatnickname="openhab-bot";
     }
     establishConnection();
   }
