@@ -12,11 +12,6 @@
       logger.error("Error finding node in doSet '{}'",domain);
       return;
     }
-    ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
-    if (configurationCommandClass == null) {
-      logger.error("Error getting configurationCommandClass in doSet for node '{}'",nodeId);
-      return;
-    }
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
       logger.error("Error in doSet for node '{}' - no database found",nodeId);
@@ -28,6 +23,11 @@
     }
  else     if (splitDomain.length == 4) {
       if (splitDomain[2].equals("parameters")) {
+        ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+        if (configurationCommandClass == null) {
+          logger.error("Error getting configurationCommandClass in doSet for node '{}'",nodeId);
+          return;
+        }
         int paramIndex=Integer.parseInt(splitDomain[3].substring(13));
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
         int size=1;
@@ -40,6 +40,14 @@
         logger.debug("Set parameter index '{}' to '{}'",paramIndex,value);
         ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,Integer.valueOf(value),size);
         this.zController.sendData(configurationCommandClass.setConfigMessage(configurationParameter));
+      }
+      if (splitDomain[2].equals("Wakeup")) {
+        ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+        if (wakeupCommandClass == null) {
+          logger.error("Error getting wakeupCommandClass in doSet for node '{}'",nodeId);
+          return;
+        }
+        logger.debug("Set wakeup interval to '{}'",value);
       }
     }
  else     if (splitDomain.length == 5) {

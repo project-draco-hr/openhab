@@ -12,11 +12,6 @@
       logger.error("Error finding node in doAction '{}'",nodeId);
       return;
     }
-    ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
-    if (configurationCommandClass == null) {
-      logger.error("Error getting configurationCommandClass in doAction for node '{}'",nodeId);
-      return;
-    }
     if (splitDomain.length == 2) {
       if (action.equals("Save")) {
         logger.debug("Saving node '{}'",nodeId);
@@ -26,6 +21,11 @@
       return;
     }
     if (splitDomain[2].equals("parameters")) {
+      ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+      if (configurationCommandClass == null) {
+        logger.error("Error getting configurationCommandClass in doAction for node '{}'",nodeId);
+        return;
+      }
       if (action.equals("Refresh")) {
         logger.debug("Refresh parameters for node '{}'",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
@@ -35,6 +35,17 @@
         }
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
         for (        ZWaveDbConfigurationParameter parameter : configList)         this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+      }
+    }
+    if (splitDomain[2].equals("wakeup")) {
+      if (action.equals("Refresh")) {
+        logger.debug("Refresh wakeup capabilities for node '{}'",nodeId);
+        ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+        if (wakeupCommandClass == null) {
+          logger.error("Error getting wakeupCommandClass in doAction for node '{}'",nodeId);
+          return;
+        }
+        this.zController.sendData(wakeupCommandClass.getIntervalCapabilitiesMessage());
       }
     }
     if (splitDomain[2].equals("associations")) {
