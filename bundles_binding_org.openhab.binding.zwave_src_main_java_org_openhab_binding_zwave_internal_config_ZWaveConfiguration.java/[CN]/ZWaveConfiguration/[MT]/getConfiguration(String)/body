@@ -74,7 +74,10 @@ if (splitDomain[4].equals("classes")) {
 List<ZWaveDbCommandClass> classList=database.getProductCommandClasses();
 if (classList != null) {
 for (ZWaveDbCommandClass iClass : classList) {
-record=new OpenHABConfigurationRecord(domain,"association" + iClass.Id,ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id).getLabel(),true);
+record=new OpenHABConfigurationRecord(domain,"class" + iClass.Id,ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id).getLabel(),true);
+if (ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id).getCommandClassClass() == null) {
+record.state=OpenHABConfigurationRecord.STATE.WARNING;
+}
 records.add(record);
 }
 }
