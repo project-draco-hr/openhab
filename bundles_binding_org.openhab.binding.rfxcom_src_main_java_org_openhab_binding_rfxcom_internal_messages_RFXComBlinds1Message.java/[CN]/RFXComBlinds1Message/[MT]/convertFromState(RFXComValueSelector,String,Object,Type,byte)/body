@@ -1,0 +1,25 @@
+{
+  subType=(SubType)subType;
+  seqNbr=seqNumber;
+  String[] ids=id.split("\\.");
+  sensorId=Integer.parseInt(ids[0]);
+  unitcode=Byte.parseByte(ids[1]);
+switch (valueSelector) {
+case SHUTTER:
+    if (type instanceof OpenClosedType) {
+      command=(type == OpenClosedType.CLOSED ? Commands.CLOSE : Commands.OPEN);
+    }
+ else     if (type instanceof UpDownType) {
+      command=(type == UpDownType.UP ? Commands.OPEN : Commands.CLOSE);
+    }
+ else     if (type instanceof StopMoveType) {
+      command=Commands.STOP;
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + type + " to Command");
+    }
+  break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
+}
