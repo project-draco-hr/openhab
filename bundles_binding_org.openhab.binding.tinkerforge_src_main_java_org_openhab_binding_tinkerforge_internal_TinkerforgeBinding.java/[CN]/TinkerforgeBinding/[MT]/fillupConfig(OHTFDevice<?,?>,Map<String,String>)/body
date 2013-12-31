@@ -1,0 +1,63 @@
+{
+  String uid=deviceConfig.get(ConfigKey.uid.name());
+  ohtfDevice.setUid(uid);
+  String subid=deviceConfig.get(ConfigKey.subid.name());
+  if (subid != null) {
+    if (!ohtfDevice.isValidSubId(subid)) {
+      throw new ConfigurationException(subid,String.format("\"%s\" is an invalid subId: openhab.cfg has to be fixed!",subid));
+    }
+    ohtfDevice.setSubid(subid);
+  }
+  if (ohConfig.getConfigByTFId(uid,subid) != null) {
+    throw new ConfigurationException(String.format("uid: %s subId: %s",uid,subid),String.format("%s: duplicate device config for uid \"%s\" and subId \"%s\": fix openhab.cfg",LoggerConstants.CONFIG,uid,subid));
+  }
+  String symbolicName=deviceConfig.get(ConfigKeyAdmin.ohId.name());
+  if (ohConfig.getConfigByOHId(symbolicName) != null) {
+    throw new ConfigurationException(String.format("symbolic name: %s",symbolicName),String.format("%s: duplicate device config for symbolic name \"%s\": fix openhab.cfg",LoggerConstants.CONFIG,symbolicName));
+  }
+  ohtfDevice.setOhid(symbolicName);
+  EObject tfConfig=ohtfDevice.getTfConfig();
+  EList<EStructuralFeature> features=null;
+  if (tfConfig != null) {
+    features=tfConfig.eClass().getEAllStructuralFeatures();
+  }
+  ArrayList<String> configKeyList=new ArrayList<String>();
+  for (  ConfigKeyAdmin configKey : ConfigKeyAdmin.values()) {
+    configKeyList.add(configKey.toString());
+  }
+  for (  String property : deviceConfig.keySet()) {
+    if (configKeyList.contains(property)) {
+      continue;
+    }
+ else {
+      logger.trace("{} found  property {}",LoggerConstants.CONFIG,property);
+    }
+    if (features != null) {
+      for (      EStructuralFeature feature : features) {
+        logger.trace("found feature: {}",feature.getName());
+        if (feature.getName().equals(property)) {
+          logger.trace("{} feature type {}",LoggerConstants.CONFIG,feature.getEType().getInstanceClassName());
+          logger.debug("configuring feature: {} for uid {}",feature.getName(),uid);
+          if (feature.getEType().getInstanceClassName().equals("int")) {
+            tfConfig.eSet(feature,Integer.parseInt(deviceConfig.get(property)));
+          }
+ else           if (feature.getEType().getInstanceClassName().equals("short")) {
+            tfConfig.eSet(feature,Short.parseShort(deviceConfig.get(property)));
+          }
+ else           if (feature.getEType().getInstanceClassName().equals("long")) {
+            tfConfig.eSet(feature,Long.parseLong(deviceConfig.get(property)));
+          }
+ else           if (feature.getEType().getInstanceClassName().equals("boolean")) {
+            logger.debug("{} found boolean value",LoggerConstants.CONFIG);
+            tfConfig.eSet(feature,Boolean.parseBoolean(deviceConfig.get(property)));
+          }
+ else {
+            throw new ConfigurationException(feature.getName(),"unsupported configuration type needed");
+          }
+          break;
+        }
+      }
+    }
+  }
+  ohConfig.getOhTfDevices().add(ohtfDevice);
+}

@@ -1,0 +1,45 @@
+{
+  connectThread=new Thread(){
+    boolean connected=false;
+    boolean fatalError=false;
+    @Override public void run(){
+      while (!connected && !fatalError && !isInterrupted()) {
+        try {
+          logger.trace("trying to establish connection to {}:{}",host,port);
+          ipConnection.connect(getHost(),getPort());
+        }
+ catch (        AlreadyConnectedException e) {
+          logger.trace("connect successful: {}:{}",host,port);
+          connected=true;
+        }
+catch (        ConnectException e) {
+          logger.debug("connect failed with ConnectionException: {}:{}",host,port);
+          try {
+            Thread.sleep(1000);
+          }
+ catch (          InterruptedException e1) {
+            logger.debug("connect interrupt recieved: {}:{}",host,port);
+            interrupt();
+          }
+        }
+catch (        UnknownHostException e) {
+          logger.error("fatal error: {}",e);
+          fatalError=true;
+        }
+catch (        IOException e) {
+          logger.error("connect failed with IOException {}",e);
+          try {
+            Thread.sleep(1000);
+          }
+ catch (          InterruptedException e1) {
+            logger.debug("connect interrupt recieved: {}:{}",host,port);
+            interrupt();
+          }
+        }
+      }
+    }
+  }
+;
+  connectThread.setDaemon(true);
+  connectThread.start();
+}

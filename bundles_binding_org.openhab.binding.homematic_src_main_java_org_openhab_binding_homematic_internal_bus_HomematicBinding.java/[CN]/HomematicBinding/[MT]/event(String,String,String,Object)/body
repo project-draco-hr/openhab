@@ -1,6 +1,7 @@
 {
   HomematicParameterAddress parameterAddress=HomematicParameterAddress.from(address,parameterKey);
   logger.debug("Received new value {} for device at {}",valueObject,parameterAddress);
+  lastEventTime=System.currentTimeMillis();
   Item item=getItemForParameter(parameterAddress);
   if (item != null) {
     StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress,item);

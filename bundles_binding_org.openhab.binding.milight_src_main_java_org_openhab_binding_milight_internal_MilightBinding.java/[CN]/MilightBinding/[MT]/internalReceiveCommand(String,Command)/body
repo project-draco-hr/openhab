@@ -29,6 +29,7 @@
         eventPublisher.postUpdate(itemName,newValue);
       }
  else       if (command instanceof PercentType) {
+        logger.debug("milight: command is of type PercentType");
         sendPercent(bulb,bridgeId,(PercentType)command,BindingType.brightness);
       }
     }
@@ -36,6 +37,17 @@
       logger.debug("milight: item is of type nightMode");
       if (OnOffType.ON.equals(command)) {
         sendNightMode(bulb,bridgeId);
+      }
+      if (OnOffType.OFF.equals(command)) {
+        sendOff(bulb,bridgeId);
+      }
+    }
+    if (deviceConfig.getCommandType().equals(BindingType.whiteMode)) {
+      logger.debug("milight: item is of type whiteMode");
+      if (OnOffType.ON.equals(command)) {
+        sendOn(bulb,bridgeId);
+        Thread.sleep(100);
+        sendWhiteMode(bulb,bridgeId);
       }
       if (OnOffType.OFF.equals(command)) {
         sendOff(bulb,bridgeId);
@@ -76,18 +88,22 @@
     if (deviceConfig.getCommandType().equals(BindingType.discoSpeed)) {
       logger.debug("milight: item is of type discoSpeed");
       if (IncreaseDecreaseType.INCREASE.equals(command)) {
+        sendOn(bulb,bridgeId);
+        Thread.sleep(100);
         sendIncreaseSpeed(bulb,bridgeId);
       }
  else       if (IncreaseDecreaseType.DECREASE.equals(command)) {
+        sendOn(bulb,bridgeId);
+        Thread.sleep(100);
         sendDecreaseSpeed(bulb,bridgeId);
       }
  else       if (command instanceof PercentType) {
-        sendPercent(bulb,bridgeId,(PercentType)command,BindingType.colorTemperature);
+        sendPercent(bulb,bridgeId,(PercentType)command,BindingType.discoSpeed);
       }
     }
     if (deviceConfig.getCommandType().equals(BindingType.rgb)) {
       if (command instanceof HSBType) {
-        sendColor(command,bridgeId);
+        sendColor(command,bridgeId,bulb);
       }
     }
   }

@@ -1,0 +1,14 @@
+{
+  try {
+    while (listener == this) {
+      byte[] msg=readMsg(inputStream);
+      if (msg != null) {
+        handleMessage(msg);
+      }
+    }
+  }
+ catch (  Throwable t) {
+    InsteonHubBindingLogUtil.logCommunicationFailure(logger,proxy,t);
+    proxy.reconnect();
+  }
+}

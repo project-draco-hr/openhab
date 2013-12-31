@@ -1,0 +1,15 @@
+{
+  if (password != null) {
+    String type=null;
+    for (    FritzboxBindingProvider provider : providers) {
+      type=provider.getType(itemName);
+      if (type != null) {
+        break;
+      }
+    }
+    logger.info("Fritzbox type: " + type);
+    if (type == null)     return;
+    TelnetCommandThread thread=new TelnetCommandThread(type,command);
+    thread.start();
+  }
+}

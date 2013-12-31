@@ -1,16 +1,19 @@
 {
   if (notification.getNotifier() instanceof MSensor) {
-    MSensor sensor=(MSensor)notification.getNotifier();
+    MSensor<?> sensor=(MSensor<?>)notification.getNotifier();
     int featureID=notification.getFeatureID(MSensor.class);
     if (featureID == ModelPackage.MSENSOR__SENSOR_VALUE) {
-      processSensorValue(sensor,notification);
+      processValue((MBaseDevice)sensor,notification);
     }
   }
  else   if (notification.getNotifier() instanceof MSwitchActor) {
     MSwitchActor switchActor=(MSwitchActor)notification.getNotifier();
     int featureID=notification.getFeatureID(MSwitchActor.class);
     if (featureID == ModelPackage.MSWITCH_ACTOR__SWITCH_STATE) {
-      processSwitchActorValue(switchActor,notification);
+      processValue((MBaseDevice)switchActor,notification);
     }
+  }
+ else {
+    logger.trace("{} ignored notifier {}",LoggerConstants.TFMODELUPDATE,notification.getNotifier());
   }
 }

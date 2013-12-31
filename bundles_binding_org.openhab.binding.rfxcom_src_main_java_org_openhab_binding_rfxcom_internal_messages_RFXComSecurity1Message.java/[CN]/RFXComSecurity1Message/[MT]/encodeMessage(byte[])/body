@@ -1,24 +1,30 @@
 {
   super.encodeMessage(data);
-  subType=SubType.values()[super.subType];
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
   sensorId=(data[4] & 0xFF) << 16 | (data[5] & 0xFF) << 8 | (data[6] & 0xFF);
-  status=Status.values()[data[7]];
+  try {
+    status=Status.values()[data[7]];
+  }
+ catch (  Exception e) {
+    status=Status.UNKNOWN;
+  }
   batteryLevel=(byte)((data[8] & 0xF0) >> 4);
   signalLevel=(byte)(data[8] & 0x0F);
-  for (  Contact c : Contact.values()) {
-    if (c.equals(status)) {
-      contact=c;
-    }
- else {
-      contact=Contact.UNKNOWN;
-    }
+  try {
+    contact=Contact.values()[data[7]];
   }
-  for (  Motion m : Motion.values()) {
-    if (m.equals(status)) {
-      motion=m;
-    }
- else {
-      motion=Motion.UNKNOWN;
-    }
+ catch (  Exception e) {
+    contact=Contact.UNKNOWN;
+  }
+  try {
+    motion=Motion.values()[data[7]];
+  }
+ catch (  Exception e) {
+    motion=Motion.UNKNOWN;
   }
 }
