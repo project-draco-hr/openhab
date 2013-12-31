@@ -20,13 +20,17 @@
       logger.error("Could not create class for profile " + customProfileClass,e);
     }
   }
- else   if (RockerSwitch.EEP_ID_1.equals(eep) || RockerSwitch.EEP_ID_2.equals(eep)) {
+ else   if (EEPId.EEP_F6_02_01.equals(eep) || EEPId.EEP_F6_02_01.equals(eep)) {
     if (item.getClass().equals(RollershutterItem.class)) {
       RollershutterProfile profile=new RollershutterProfile(item,eventPublisher);
       addProfile(item,parameterAddress,profile);
     }
     if (item.getClass().equals(DimmerItem.class)) {
       DimmerOnOffProfile profile=new DimmerOnOffProfile(item,eventPublisher);
+      addProfile(item,parameterAddress,profile);
+    }
+    if (item.getClass().equals(SwitchItem.class) && parameterAddress.getParameterId() == null) {
+      SwitchOnOffProfile profile=new SwitchOnOffProfile(item,eventPublisher);
       addProfile(item,parameterAddress,profile);
     }
   }

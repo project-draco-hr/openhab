@@ -1,5 +1,12 @@
 {
-  MBaseDevice device=getDevice(uid);
-  getMdevices().remove(device);
-  logger.debug("{} removeDevice called",LoggerConstants.TFINIT);
+  MDevice<?> device=(MDevice<?>)getDevice(uid);
+  if (device instanceof MSubDeviceHolder<?>) {
+    logger.debug("{} removing all subdevices",LoggerConstants.TFINIT);
+    @SuppressWarnings("unchecked") MSubDeviceHolder<MSubDevice<?>> mSubDeviceHolder=(MSubDeviceHolder<MSubDevice<?>>)device;
+    mSubDeviceHolder.getMsubdevices().clear();
+  }
+  if (device != null) {
+    EcoreUtil.remove(device);
+  }
+  logger.debug("{} removeDevice called for uid: {}",LoggerConstants.TFINIT,uid);
 }

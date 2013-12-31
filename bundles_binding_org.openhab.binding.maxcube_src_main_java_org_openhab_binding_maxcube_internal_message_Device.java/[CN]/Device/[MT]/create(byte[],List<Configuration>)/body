@@ -1,0 +1,58 @@
+{
+  if (raw.length == 0) {
+    return null;
+  }
+  String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
+  Device device=Device.create(rfAddress,configurations);
+  boolean[] bits1=Utils.getBits(Utils.fromByte(raw[4]));
+  boolean[] bits2=Utils.getBits(Utils.fromByte(raw[5]));
+  device.setInitialized(bits1[1]);
+  device.setAnswer(bits1[2]);
+  device.setError(bits1[3]);
+  device.setValid(bits1[4]);
+  device.setDstSettingActive(bits2[3]);
+  device.setGatewayKnown(bits2[4]);
+  device.setPanelLocked(bits2[5]);
+  device.setLinkStatusError(bits2[6]);
+  device.setBatteryLow(bits2[7]);
+switch (device.getType()) {
+case WallMountedThermostat:
+case HeatingThermostat:
+    HeatingThermostat heatingThermostat=(HeatingThermostat)device;
+  if (bits2[0] == false && bits2[0] == false) {
+    heatingThermostat.setMode(ThermostatModeType.AUTOMATIC);
+  }
+ else   if (bits2[0] == false && bits2[1] == false) {
+    heatingThermostat.setMode(ThermostatModeType.MANUAL);
+  }
+ else   if (bits2[1] == false && bits2[0] == false) {
+    heatingThermostat.setMode(ThermostatModeType.VACATION);
+  }
+ else   if (bits2[1] == false && bits2[1] == false) {
+    heatingThermostat.setMode(ThermostatModeType.BOOST);
+  }
+ else {
+  }
+heatingThermostat.setValvePosition(raw[6] & 0xFF);
+heatingThermostat.setTemperatureSetpoint(raw[7] & 0xFF);
+String hexDate=Utils.toHex(raw[8] & 0xFF,raw[9] & 0xFF);
+int dateValue=Utils.fromHex(hexDate);
+int timeValue=raw[10] & 0xFF;
+Date date=Utils.resolveDateTime(dateValue,timeValue);
+heatingThermostat.setDateSetpoint(date);
+break;
+case ShutterContact:
+ShutterContact shutterContact=(ShutterContact)device;
+if (bits2[1] == true && bits2[0] == false) {
+shutterContact.setShutterState(OpenClosedType.OPEN);
+}
+ else if (bits2[1] == false && bits2[0] == false) {
+shutterContact.setShutterState(OpenClosedType.CLOSED);
+}
+ else {
+}
+break;
+default :
+}
+return device;
+}

@@ -1,0 +1,15 @@
+{
+  Location location=parseLocation(payload);
+  if (location == null)   return;
+  logger.debug("Location received for '{}': {}",itemName,location.toString());
+  double distance=calculateDistance(location,homeLocation);
+  logger.debug("Distance from 'home' calculated as {} for '{}'",distance,itemName);
+  if (distance > geoFence) {
+    logger.debug("Detected that '{}' is outside the geofence ({}m)",itemName,geoFence);
+    eventPublisher.postUpdate(itemName,OnOffType.OFF);
+  }
+ else {
+    logger.debug("Detected that '{}' is inside the geofence ({}m)",itemName,geoFence);
+    eventPublisher.postUpdate(itemName,OnOffType.ON);
+  }
+}

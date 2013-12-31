@@ -1,0 +1,48 @@
+{
+  try {
+    TelnetClient client=new TelnetClient();
+    client.connect(ip);
+    receive(client);
+    sendLine(client,password);
+    receive(client);
+    for (    FritzboxBindingProvider provider : providers) {
+      for (      String item : provider.getItemNames()) {
+        String query=null;
+        String type=provider.getType(item);
+        if (queryMap.containsKey(type)) {
+          query=queryMap.get(type);
+        }
+ else         if (type.startsWith("tam")) {
+          query="ctlmgr_ctl r tam settings/" + type.toUpperCase() + "/Active";
+        }
+ else         if (type.startsWith("query")) {
+          query=type.substring(type.indexOf(":") + 1).trim();
+        }
+ else         continue;
+        sendLine(client,query);
+        String answer=receive(client);
+        String[] lines=answer.split("\r\n");
+        if (lines.length >= 2) {
+          answer=lines[1].trim();
+        }
+        Class<? extends Item> itemType=provider.getItemType(item);
+        org.openhab.core.types.State state=null;
+        if (itemType.isAssignableFrom(SwitchItem.class)) {
+          if (answer.equals("1"))           state=OnOffType.ON;
+ else           state=OnOffType.OFF;
+        }
+ else         if (itemType.isAssignableFrom(NumberItem.class)) {
+          state=new DecimalType(answer);
+        }
+ else         if (itemType.isAssignableFrom(StringItem.class)) {
+          state=new StringType(answer);
+        }
+        if (state != null)         eventPublisher.postUpdate(item,state);
+      }
+    }
+    client.disconnect();
+  }
+ catch (  Exception e) {
+    logger.warn("Could not get item state",e.toString());
+  }
+}

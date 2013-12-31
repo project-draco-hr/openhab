@@ -1,0 +1,20 @@
+{
+  OnOffValue switchValue=OnOffValue.UNDEF;
+  try {
+    State state=getMbrick().getTinkerforgeDevice().getState();
+    if (relayNum == 1) {
+      switchValue=(state.relay1) ? OnOffValue.ON : OnOffValue.OFF;
+    }
+ else {
+      switchValue=(state.relay2) ? OnOffValue.ON : OnOffValue.OFF;
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  setSwitchState(switchValue);
+  return switchValue;
+}

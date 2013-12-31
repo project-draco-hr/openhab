@@ -1,0 +1,22 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length < 1) {
+    throw new BindingConfigParseException("MAX!Cube configuration requires at least serial number for a MAX!Cube device.");
+  }
+  MaxCubeBindingConfig config=new MaxCubeBindingConfig();
+  item.getName();
+  config.serialNumber=configParts[0];
+  for (int i=1; i < configParts.length; i++) {
+    String[] bindingToken=configParts[i].split("=");
+    if (bindingToken[0].equals("type")) {
+      if (bindingToken[1].equals("valve")) {
+        config.bindingType=BindingType.VALVE;
+      }
+ else       if (bindingToken[1].equals("battery")) {
+        config.bindingType=BindingType.BATTERY;
+      }
+    }
+  }
+  addBindingConfig(item,config);
+}

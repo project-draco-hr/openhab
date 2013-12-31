@@ -1,0 +1,19 @@
+{
+  Map<String,String> map=new LinkedHashMap<String,String>();
+  String[] keyValuePairs=str.split(",");
+  for (  String keyValuePair : keyValuePairs) {
+    String key;
+    String value;
+    if (keyValuePair.contains("=")) {
+      String[] split=keyValuePair.split("=");
+      key=split[0].trim();
+      value=split[1].trim();
+    }
+ else {
+      key=keyValuePair.trim();
+      value="true";
+    }
+    map.put(key,value);
+  }
+  return map;
+}

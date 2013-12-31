@@ -1,0 +1,14 @@
+{
+  Collection<ItemBean> beans=new LinkedList<ItemBean>();
+  ItemUIRegistry registry=CVApplication.getItemUIRegistry();
+  for (  String itemName : itemNames) {
+    try {
+      Item item=registry.getItem(itemName);
+      beans.add(createItemBean(item,false));
+    }
+ catch (    ItemNotFoundException e) {
+      logger.debug(e.getMessage());
+    }
+  }
+  return beans;
+}

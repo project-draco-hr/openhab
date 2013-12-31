@@ -1,0 +1,31 @@
+{
+  List<String> sentences=new ArrayList<String>();
+  if (StringUtils.isEmpty(message))   return sentences;
+  if (message.length() <= maxSentenceLength) {
+    sentences.add(message.trim());
+    return sentences;
+  }
+  String current="";
+  for (  String sentence : StringUtils.split(message,'.')) {
+    sentence=sentence.trim();
+    if (sentence.length() == 0) {
+      continue;
+    }
+    if (sentence.length() > maxSentenceLength) {
+      if (current.length() > 0) {
+        sentences.add(current.trim());
+        current="";
+      }
+      sentences.addAll(splitSentence(sentence,maxSentenceLength));
+    }
+ else {
+      if (current.length() + sentence.length() + 2 > maxSentenceLength) {
+        sentences.add(current.trim());
+        current="";
+      }
+      current+=sentence + ". ";
+    }
+  }
+  if (current.length() > 0)   sentences.add(current.trim());
+  return sentences;
+}

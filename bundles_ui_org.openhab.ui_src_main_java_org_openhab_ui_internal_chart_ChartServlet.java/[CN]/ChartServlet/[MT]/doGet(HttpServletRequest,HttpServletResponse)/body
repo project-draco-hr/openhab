@@ -1,0 +1,35 @@
+{
+  logger.debug("Received incoming chart request: ",req);
+  int width=480;
+  try {
+    width=Integer.parseInt(req.getParameter("w"));
+  }
+ catch (  Exception e) {
+  }
+  int height=240;
+  try {
+    height=Integer.parseInt(req.getParameter("h"));
+  }
+ catch (  Exception e) {
+  }
+  Long period=PERIODS.get(req.getParameter("period"));
+  if (period == null) {
+    period=PERIODS.get("D");
+  }
+  Date timeEnd=new Date();
+  Date timeBegin=new Date(timeEnd.getTime() - period);
+  String serviceName=req.getParameter("service");
+  ChartProvider provider=getChartProviders().get(providerName);
+  if (provider == null)   throw new ServletException("Could not get chart provider.");
+  res.setContentType("image/" + provider.getChartType());
+  try {
+    BufferedImage chart=provider.createChart(serviceName,null,timeBegin,timeEnd,height,width,req.getParameter("items"),req.getParameter("groups"));
+    ImageIO.write(chart,provider.getChartType().toString(),res.getOutputStream());
+  }
+ catch (  ItemNotFoundException e) {
+    logger.debug("Item not found error while generating chart.");
+  }
+catch (  IllegalArgumentException e) {
+    logger.debug("Illegal argument in chart: {}",e);
+  }
+}

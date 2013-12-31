@@ -4,7 +4,7 @@ switch (incomingMessage.getMessageClass()) {
 case GetVersion:
     handleGetVersionResponse(incomingMessage);
   if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-    notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+    notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
     transactionCompleted.release();
     logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
   }
@@ -12,7 +12,7 @@ break;
 case MemoryGetId:
 handleMemoryGetId(incomingMessage);
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
@@ -20,7 +20,7 @@ break;
 case SerialApiGetInitData:
 handleSerialApiGetInitDataResponse(incomingMessage);
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
@@ -28,7 +28,7 @@ break;
 case IdentifyNode:
 handleIdentifyNodeResponse(incomingMessage);
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
@@ -39,7 +39,7 @@ break;
 case SerialApiGetCapabilities:
 handleSerialAPIGetCapabilitiesResponse(incomingMessage);
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }

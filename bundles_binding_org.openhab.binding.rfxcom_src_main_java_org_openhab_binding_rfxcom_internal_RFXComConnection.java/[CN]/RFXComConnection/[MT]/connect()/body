@@ -3,7 +3,7 @@
   connector.addEventListener(eventLister);
   connector.connect(serialPort);
   logger.debug("Reset controller");
-  connector.sendMessage(RFXComMessageUtils.CMD_RESET);
+  connector.sendMessage(RFXComMessageFactory.CMD_RESET);
   Thread.sleep(1000);
   if (setMode != null) {
     try {
@@ -15,6 +15,6 @@
     connector.sendMessage(setMode);
   }
  else {
-    connector.sendMessage(RFXComMessageUtils.CMD_STATUS);
+    connector.sendMessage(RFXComMessageFactory.CMD_STATUS);
   }
 }

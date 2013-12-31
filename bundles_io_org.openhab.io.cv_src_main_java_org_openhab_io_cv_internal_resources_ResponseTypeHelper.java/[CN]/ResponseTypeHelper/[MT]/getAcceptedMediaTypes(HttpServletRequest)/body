@@ -1,0 +1,11 @@
+{
+  String[] acceptableMediaTypes=request.getHeader(HttpHeaders.ACCEPT).split(",");
+  List<MediaType> mediaTypes=new ArrayList<MediaType>(acceptableMediaTypes.length);
+  for (  String type : acceptableMediaTypes) {
+    MediaType mediaType=MediaType.valueOf(type.trim());
+    if (mediaType != null) {
+      mediaTypes.add(mediaType);
+    }
+  }
+  return mediaTypes;
+}

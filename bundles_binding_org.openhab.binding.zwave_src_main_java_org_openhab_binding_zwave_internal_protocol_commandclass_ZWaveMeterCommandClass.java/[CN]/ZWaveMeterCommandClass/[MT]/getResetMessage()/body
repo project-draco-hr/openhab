@@ -1,0 +1,8 @@
+{
+  if (this.getVersion() == 1 || !this.canReset)   return null;
+  logger.debug("Creating new message for application command METER_RESET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)METER_RESET};
+  result.setMessagePayload(newPayload);
+  return result;
+}

@@ -1,0 +1,10 @@
+{
+  ModuleChannel item2=group2.addChannel("test12",12,new ArrayList<Class<? extends Command>>());
+  item2.setState(OnOffType.ON);
+  Mockito.when(cache.get(Mockito.anyString())).thenReturn("95");
+  group2.publishStateToNikobus(item2,binding);
+  Mockito.verify(binding,Mockito.times(1)).getCache();
+  Mockito.verify(binding,Mockito.times(1)).sendCommand(command.capture());
+  NikobusCommand cmd=command.getAllValues().get(0);
+  assertEquals("$1E166C940000000000FFFF997295",cmd.getCommand());
+}

@@ -1,0 +1,21 @@
+{
+  BrickletIO16 brickletIO16=getMbrick().getTinkerforgeDevice();
+  try {
+    if (digitalState == HighLowValue.HIGH) {
+      brickletIO16.setSelectedValues(getPort(),(short)mask,(short)mask);
+    }
+ else     if (digitalState == HighLowValue.LOW) {
+      brickletIO16.setSelectedValues(getPort(),(short)mask,(short)0);
+    }
+ else {
+      logger.error("{} unkown digitalState {}",LoggerConstants.TFMODELUPDATE,digitalState);
+    }
+    setDigitalState(digitalState);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}
