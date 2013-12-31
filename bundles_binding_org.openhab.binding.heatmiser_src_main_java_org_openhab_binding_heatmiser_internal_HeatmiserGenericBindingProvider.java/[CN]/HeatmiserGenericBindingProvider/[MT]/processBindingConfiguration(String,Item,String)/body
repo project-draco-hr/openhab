@@ -12,26 +12,25 @@
       config.function=Functions.valueOf(bindingMatcher.group(2));
 switch (config.function) {
 case SETTEMP:
-        break;
 case FROSTTEMP:
 case ROOMTEMP:
 case FLOORTEMP:
-      if (config.itemType != NumberItem.class && config.itemType != StringItem.class) {
-        logger.error("Only Number and String allowed for Heatmiser:{} function",config.function);
-        config=null;
-      }
-    break;
+        if (config.itemType != NumberItem.class && config.itemType != StringItem.class) {
+          logger.error("Only Number and String allowed for Heatmiser:{} function",config.function);
+          config=null;
+        }
+      break;
 case HOLDTIME:
 case HOLIDAYTIME:
-  if (config.itemType != SwitchItem.class && config.itemType != DateTimeItem.class) {
-    logger.error("Only Switch and DateTime allowed for Heatmiser:{} function",config.function);
-    config=null;
-  }
-break;
+    if (config.itemType != SwitchItem.class && config.itemType != DateTimeItem.class) {
+      logger.error("Only Switch and DateTime allowed for Heatmiser:{} function",config.function);
+      config=null;
+    }
+  break;
 case HOLIDAYSET:
 if (config.itemType != SwitchItem.class && config.itemType != NumberItem.class) {
-logger.error("Only Switch and Number allowed for Heatmiser:{} function",config.function);
-config=null;
+  logger.error("Only Switch and Number allowed for Heatmiser:{} function",config.function);
+  config=null;
 }
 break;
 case HOLDMODE:
