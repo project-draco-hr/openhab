@@ -1,0 +1,11 @@
+{
+  logger.debug(BINDING_NAME + " execute");
+  Set<InsteonHubBindingDeviceInfo> deviceInfos=InsteonHubBindingConfigUtil.getConfiguredDevices(providers);
+  for (  InsteonHubBindingDeviceInfo deviceInfo : deviceInfos) {
+    InsteonHubProxy proxy=proxies.get(deviceInfo.getHubId());
+    if (proxy != null) {
+      proxy.requestDeviceLevel(deviceInfo.getDeviceId());
+    }
+  }
+  logger.debug(BINDING_NAME + " execute complete");
+}

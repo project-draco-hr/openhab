@@ -1,0 +1,30 @@
+{
+  logger.debug(BINDING_NAME + " updated");
+  try {
+    if (config != null) {
+      String refreshIntervalString=(String)config.get("refresh");
+      if (StringUtils.isNotBlank(refreshIntervalString)) {
+        refreshInterval=Long.parseLong(refreshIntervalString);
+      }
+      for (      InsteonHubProxy proxy : proxies.values()) {
+        proxy.stop();
+      }
+      proxies.clear();
+      Map<String,InsteonHubProxy> newProxies=InsteonHubProxyFactory.createInstances(config);
+      proxies.putAll(newProxies);
+      for (      Map.Entry<String,InsteonHubProxy> entry : proxies.entrySet()) {
+        String hubId=entry.getKey();
+        InsteonHubProxy proxy=entry.getValue();
+        proxy.addListener(new AsyncEventPublisher(hubId));
+        if (activated) {
+          proxy.start();
+        }
+      }
+      setProperlyConfigured(true);
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error configuring " + getName(),t);
+    setProperlyConfigured(false);
+  }
+}

@@ -1,0 +1,26 @@
+{
+  List<String> parts=new ArrayList<String>();
+  if (StringUtils.isEmpty(sentence))   return parts;
+  if (sentence.length() <= maxSentenceLength) {
+    parts.add(sentence.trim());
+    return parts;
+  }
+  String current="";
+  for (  String word : StringUtils.split(sentence,' ')) {
+    word=word.trim();
+    if (word.length() == 0) {
+      continue;
+    }
+    if (word.length() > maxSentenceLength) {
+      logger.warn("Unable to say '{}' as this word is longer than the maximum sentence allowed ({})",word,maxSentenceLength);
+      continue;
+    }
+    if (current.length() + word.length() > maxSentenceLength) {
+      parts.add(current.trim());
+      current="";
+    }
+    current+=word + " ";
+  }
+  if (current.length() > 0)   parts.add(current.trim());
+  return parts;
+}

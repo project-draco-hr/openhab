@@ -1,0 +1,27 @@
+{
+  String deviceUid=provider.getUid(itemName);
+  Item item=provider.getItem(itemName);
+  String deviceSubId=provider.getSubId(itemName);
+  String deviceName=provider.getName(itemName);
+  if (deviceName != null) {
+    String[] ids=getDeviceIdsForDeviceName(deviceName);
+    deviceUid=ids[0];
+    deviceSubId=ids[1];
+  }
+  MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
+  if (mDevice != null && mDevice.getEnabledA().get()) {
+    if (mDevice instanceof MSensor) {
+      postUpdate(deviceUid,deviceSubId,((MSensor<?>)mDevice).fetchSensorValue());
+    }
+ else     if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
+      OnOffValue switchState=((MInSwitchActor)mDevice).fetchSwitchState();
+      postUpdate(deviceUid,deviceSubId,switchState);
+      logger.debug("execute called: found MInSwitchActor state: {}",switchState);
+    }
+ else     if (mDevice instanceof DigitalActor) {
+      HighLowValue highLowValue=((DigitalActor)mDevice).fetchDigitalValue();
+      postUpdate(deviceUid,deviceSubId,highLowValue);
+      logger.debug("{} execute called: found DigitalActor state: {}",LoggerConstants.TFCOMMAND,highLowValue);
+    }
+  }
+}

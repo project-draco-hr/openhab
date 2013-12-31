@@ -31,7 +31,10 @@
       }
     }
   }
-  if (tableName == null)   return null;
+  if (tableName == null) {
+    logger.error("mySQL: tableName was null");
+    return null;
+  }
   String mysqlType=new String("DOUBLE");
   String itemType=item.getClass().toString().toUpperCase();
   itemType=itemType.substring(itemType.lastIndexOf('.') + 1);
@@ -55,6 +58,27 @@
         statement.close();
       }
  catch (      Exception hidden) {
+      }
+    }
+  }
+  if (sqlTables.get(itemName) == null) {
+    logger.error("mySQL: Item '" + itemName + "' was not added to the table - removing index");
+    sqlCmd=new String("DELETE FROM Items WHERE ItemName='" + itemName + "'");
+    logger.debug("SQL: " + sqlCmd);
+    try {
+      statement=connection.createStatement();
+      statement.executeUpdate(sqlCmd);
+    }
+ catch (    Exception e) {
+      logger.error("mySQL: Could not remove index for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
+    }
+ finally {
+      if (statement != null) {
+        try {
+          statement.close();
+        }
+ catch (        Exception hidden) {
+        }
       }
     }
   }

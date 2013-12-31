@@ -1,0 +1,10 @@
+{
+  TFIOActorConfiguration oldTfConfig=tfConfig;
+  tfConfig=newTfConfig;
+  if (eNotificationRequired()) {
+    ENotificationImpl notification=new ENotificationImpl(this,Notification.SET,ModelPackage.DIGITAL_ACTOR__TF_CONFIG,oldTfConfig,newTfConfig);
+    if (msgs == null)     msgs=notification;
+ else     msgs.add(notification);
+  }
+  return msgs;
+}

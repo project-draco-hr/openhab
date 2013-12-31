@@ -1,0 +1,26 @@
+{
+  subType=(SubType)subType;
+  seqNbr=seqNumber;
+  String ids=id;
+  sensorId=Integer.parseInt(ids);
+switch (valueSelector) {
+case COMMAND:
+    if ((type instanceof OnOffType) && (subType == SubType.X10_SECURITY_REMOTE)) {
+      status=(type == OnOffType.ON ? Status.ARM_AWAY_DELAYED : Status.DISARM);
+    }
+ else {
+      throw new RFXComException("Can't convert " + type + " to Command");
+    }
+  break;
+case STATUS:
+if (type instanceof StringType) {
+  status=Status.valueOf(type.toString());
+}
+ else {
+  throw new RFXComException("Can't convert " + type + " to Status");
+}
+break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
+}
