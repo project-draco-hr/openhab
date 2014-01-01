@@ -1,0 +1,8 @@
+{
+  byte[] cmdByte=new byte[1];
+  byte temperature=((DecimalType)command).byteValue();
+  if (temperature < 5)   temperature=5;
+  if (temperature > 18)   temperature=18;
+  cmdByte[0]=(byte)temperature;
+  return makePacket(true,17,1,cmdByte);
+}
