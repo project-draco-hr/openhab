@@ -177,11 +177,6 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Product","Product",true);
 record.value=database.getProductName();
 records.add(record);
-if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP.getKey()) == true) {
-record=new OpenHABConfigurationRecord(domain + "wakeup/","Wakeup Period");
-record.addAction("Refresh","Refresh");
-records.add(record);
-}
 if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey()) == true) {
 record=new OpenHABConfigurationRecord(domain + "parameters/","Configuration Parameters");
 record.addAction("Refresh","Refresh");
@@ -189,6 +184,11 @@ records.add(record);
 }
 if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey()) == true) {
 record=new OpenHABConfigurationRecord(domain + "associations/","Association Groups");
+record.addAction("Refresh","Refresh");
+records.add(record);
+}
+if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP.getKey()) == true) {
+record=new OpenHABConfigurationRecord(domain + "wakeup/","Wakeup Period");
 record.addAction("Refresh","Refresh");
 records.add(record);
 }
