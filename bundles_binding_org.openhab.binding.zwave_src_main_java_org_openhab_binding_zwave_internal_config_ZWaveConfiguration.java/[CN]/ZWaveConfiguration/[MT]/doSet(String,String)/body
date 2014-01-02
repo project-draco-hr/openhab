@@ -41,13 +41,14 @@
         ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,Integer.valueOf(value),size);
         this.zController.sendData(configurationCommandClass.setConfigMessage(configurationParameter));
       }
-      if (splitDomain[2].equals("Wakeup")) {
+      if (splitDomain[2].equals("wakeup")) {
         ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
         if (wakeupCommandClass == null) {
           logger.error("Error getting wakeupCommandClass in doSet for node '{}'",nodeId);
           return;
         }
         logger.debug("Set wakeup interval to '{}'",value);
+        this.zController.sendData(wakeupCommandClass.setInterval(Integer.parseInt(value)));
       }
     }
  else     if (splitDomain.length == 5) {
