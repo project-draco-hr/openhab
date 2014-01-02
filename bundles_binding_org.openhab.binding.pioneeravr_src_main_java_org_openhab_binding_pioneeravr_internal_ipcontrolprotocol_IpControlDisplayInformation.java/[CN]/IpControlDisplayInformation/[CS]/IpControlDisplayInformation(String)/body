@@ -1,0 +1,19 @@
+{
+  volumeDisplay=false;
+  guidIcon=false;
+  infoText="";
+  byte firstByte=(byte)Integer.parseInt(responsePayload.substring(0,1),16);
+  if ((firstByte & (1 << 0)) == (1 << 0))   guidIcon=true;
+  if ((firstByte & (1 << 1)) == (1 << 1))   volumeDisplay=true;
+  StringBuilder sb=new StringBuilder();
+  for (int i=2; i < responsePayload.length() - 1; i+=2) {
+    String hexAsciiValue=responsePayload.substring(i,i + 2);
+    try {
+      sb.append((char)Integer.parseInt(hexAsciiValue,16));
+    }
+ catch (    Exception e) {
+      logger.error("parsing string failed" + responsePayload + "'",e);
+    }
+  }
+  infoText=sb.toString();
+}

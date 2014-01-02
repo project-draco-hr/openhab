@@ -1,0 +1,16 @@
+{
+  logger.debug("Send command: {}",ipCmd);
+  StringBuilder sb=new StringBuilder();
+  sb.append(ipCmd);
+  sb.append((char)'\r');
+  sendCommand(sb,false,retryCount);
+  if (ipCmd.contentEquals(IpControlCommand.POWER_ON.getCommand())) {
+    try {
+      TimeUnit.MILLISECONDS.sleep(100);
+    }
+ catch (    InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
+    sendCommand(sb,false,retryCount);
+  }
+}
