@@ -1,6 +1,4 @@
 {
-  configurations=new ArrayList<Configuration>();
-  devices=new ArrayList<Device>();
   Socket socket=null;
   BufferedReader reader=null;
   try {
@@ -29,10 +27,11 @@
                   break;
                 }
               }
-              if (c == null) {
-                c=Configuration.create(di);
-                configurations.add(c);
+              if (c != null) {
+                configurations.remove(c);
               }
+              c=Configuration.create(di);
+              configurations.add(c);
               c.setRoomId(di.getRoomId());
             }
           }
@@ -52,7 +51,17 @@
             }
           }
  else           if (message.getType() == MessageType.L) {
-            devices.addAll(((L_Message)message).getDevices(configurations));
+            Collection<? extends Device> tempDevices=((L_Message)message).getDevices(configurations);
+            for (            Device d : tempDevices) {
+              Device existingDevice=findDevice(d.getSerialNumber(),devices);
+              if (existingDevice == null) {
+                devices.add(d);
+              }
+ else {
+                devices.remove(existingDevice);
+                devices.add(d);
+              }
+            }
             logger.info(devices.size() + " devices found.");
             cont=false;
           }

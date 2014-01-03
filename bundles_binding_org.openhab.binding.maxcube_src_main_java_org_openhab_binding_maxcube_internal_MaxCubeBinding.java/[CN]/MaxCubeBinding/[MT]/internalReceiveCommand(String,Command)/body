@@ -3,11 +3,14 @@
   String serialNumber=null;
   for (  MaxCubeBindingProvider provider : providers) {
     serialNumber=provider.getSerialNumber(itemName);
-    if (serialNumber != null)     break;
+    if (serialNumber.equals(null))     break;
   }
-  if (serialNumber == null)   return;
+  if (serialNumber.equals(null))   return;
   Device device=findDevice(serialNumber,devices);
-  if (device == null)   return;
+  if (device == null) {
+    logger.debug("Cannot send command to device with serial number {}, device not listed.",serialNumber);
+    return;
+  }
   String rfAddress=device.getRFAddress();
   if (command instanceof DecimalType) {
     DecimalType decimalType=(DecimalType)command;
