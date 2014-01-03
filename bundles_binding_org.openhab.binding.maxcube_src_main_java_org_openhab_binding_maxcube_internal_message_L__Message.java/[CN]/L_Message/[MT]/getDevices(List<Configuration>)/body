@@ -4,7 +4,10 @@
   MaxTokenizer tokenizer=new MaxTokenizer(decodedRawMessage);
   while (tokenizer.hasMoreElements()) {
     byte[] token=tokenizer.nextElement();
-    devices.add(Device.create(token,configurations));
+    Device tempDevice=Device.create(token,configurations);
+    if (tempDevice != null) {
+      devices.add(tempDevice);
+    }
   }
   return devices;
 }
