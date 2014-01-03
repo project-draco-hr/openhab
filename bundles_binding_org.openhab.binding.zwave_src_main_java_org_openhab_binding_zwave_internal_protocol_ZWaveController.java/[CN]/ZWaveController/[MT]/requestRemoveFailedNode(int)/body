@@ -1,0 +1,7 @@
+{
+  logger.debug("Marking node %d as having failed",nodeId);
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.RemoveFailedNodeID,SerialMessageType.Request,SerialMessageClass.RemoveFailedNodeID,SerialMessagePriority.High);
+  byte[] newPayload={(byte)nodeId};
+  newMessage.setMessagePayload(newPayload);
+  this.enqueue(newMessage);
+}
