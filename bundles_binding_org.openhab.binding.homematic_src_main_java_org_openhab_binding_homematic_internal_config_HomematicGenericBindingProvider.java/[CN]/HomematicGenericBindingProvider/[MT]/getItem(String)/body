@@ -1,3 +1,9 @@
 {
-  return items.get(itemName);
+  try {
+    return itemRegistry.getItem(itemName);
+  }
+ catch (  ItemNotFoundException e) {
+    logger.debug("Item " + itemName + " not found.",e);
+    return null;
+  }
 }
