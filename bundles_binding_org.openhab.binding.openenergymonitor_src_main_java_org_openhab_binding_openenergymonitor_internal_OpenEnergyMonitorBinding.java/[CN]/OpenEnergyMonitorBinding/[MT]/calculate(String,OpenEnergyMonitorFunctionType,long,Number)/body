@@ -5,7 +5,7 @@
 switch (function) {
 case KWH:
       result=calcEnergy(value.doubleValue(),timeElapsed) / 1000;
-    result=valueStore.incValue(itemName,result);
+    result=incToInternalStoreValue(itemName,result);
   state=new DecimalType(result);
 break;
 case KWHD:
@@ -16,14 +16,14 @@ valueStore.setValue(itemName,result);
 lastRecordedDay=currentDay;
 }
  else {
-result=valueStore.incValue(itemName,result);
+result=incToInternalStoreValue(itemName,result);
 }
 state=new DecimalType(result);
 break;
 case CUMULATIVE:
-double latestValue=valueStore.getValue(itemName);
+double latestValue=getValueFromInternalStore(itemName);
 if (value.doubleValue() < latestValue) {
-result=valueStore.incValue(itemName,value.doubleValue());
+result=incToInternalStoreValue(itemName,value.doubleValue());
 }
  else {
 valueStore.setValue(itemName,value.doubleValue());
