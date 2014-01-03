@@ -18,6 +18,12 @@
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
         nodeSerializer.SerializeNode(node);
       }
+      if (action.equals("Delete")) {
+        logger.debug("Delete node '{}'",nodeId);
+        this.zController.requestRemoveFailedNode(nodeId);
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.DeleteNode(nodeId);
+      }
       return;
     }
     if (splitDomain[2].equals("parameters")) {
