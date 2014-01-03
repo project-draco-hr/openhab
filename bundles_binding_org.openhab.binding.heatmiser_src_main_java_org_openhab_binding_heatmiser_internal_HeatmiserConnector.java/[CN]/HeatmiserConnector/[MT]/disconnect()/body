@@ -1,0 +1,17 @@
+{
+  if (socket == null)   return;
+  logger.debug("Interrupt connection");
+  inputThread.interrupt();
+  logger.debug("Close connection");
+  try {
+    out.close();
+  }
+ catch (  IOException e) {
+    logger.error("Error closing Heatmiser connection: ",e.getMessage());
+  }
+  socket=null;
+  in=null;
+  out=null;
+  inputThread=null;
+  logger.debug("Ready");
+}
