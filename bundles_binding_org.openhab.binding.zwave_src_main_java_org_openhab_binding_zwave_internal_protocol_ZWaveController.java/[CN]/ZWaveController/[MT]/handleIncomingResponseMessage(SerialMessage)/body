@@ -49,6 +49,10 @@ handleSendDataResponse(incomingMessage);
 break;
 case RemoveFailedNodeID:
 handleRemoveFailedNodeResponse(incomingMessage);
+if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
+transactionCompleted.release();
+logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+}
 break;
 default :
 logger.warn(String.format("TODO: Implement processing of Response Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
