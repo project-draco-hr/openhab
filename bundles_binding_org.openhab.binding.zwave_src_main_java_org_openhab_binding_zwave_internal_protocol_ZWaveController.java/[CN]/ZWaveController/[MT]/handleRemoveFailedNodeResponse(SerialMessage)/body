@@ -1,7 +1,8 @@
 {
+  incomingMessage.getMessagePayloadByte(0);
   logger.debug("Got RemoveFailedNode response.");
-  if (incomingMessage.getMessageBuffer()[2] != 0x00) {
+  if (incomingMessage.getMessagePayloadByte(0) == 0x00) {
     logger.debug("Remove failed node successfully placed on stack.");
   }
- else   logger.error("Remove failed node not placed on stack due to error.");
+ else   logger.error("Remove failed node not placed on stack due to error 0x{}.",Integer.toHexString(incomingMessage.getMessagePayloadByte(0)));
 }
