@@ -117,21 +117,26 @@ logger.debug("No database entry node {}: {}",nodeId,record.value);
 if (node.getLocation() == null || node.getLocation().isEmpty()) record.value=database.getProductName();
  else record.value=database.getProductName() + ": " + node.getLocation();
 }
+boolean canDelete=false;
 switch (node.getNodeStage()) {
 case DEAD:
 record.state=OpenHABConfigurationRecord.STATE.ERROR;
+canDelete=true;
 break;
 case DONE:
 record.state=OpenHABConfigurationRecord.STATE.OK;
 break;
 default :
 record.state=OpenHABConfigurationRecord.STATE.INITIALIZING;
+canDelete=true;
 break;
 }
 record.addAction("Save","Save Node");
 records.add(record);
+if (canDelete) {
 record.addAction("Delete","Delete Node");
 records.add(record);
+}
 }
 return records;
 }
