@@ -1,0 +1,20 @@
+{
+  PioneerAvrBindingProvider firstMatchingProvider=null;
+  for (  PioneerAvrBindingProvider provider : this.providers) {
+    String tmp=provider.getDeviceCommand(itemName,command.toString());
+    if (tmp != null) {
+      firstMatchingProvider=provider;
+      break;
+    }
+  }
+  if (firstMatchingProvider == null) {
+    for (    PioneerAvrBindingProvider provider : this.providers) {
+      String tmp=provider.getDeviceCommand(itemName,WILDCARD_COMMAND_KEY);
+      if (tmp != null) {
+        firstMatchingProvider=provider;
+        break;
+      }
+    }
+  }
+  return firstMatchingProvider;
+}

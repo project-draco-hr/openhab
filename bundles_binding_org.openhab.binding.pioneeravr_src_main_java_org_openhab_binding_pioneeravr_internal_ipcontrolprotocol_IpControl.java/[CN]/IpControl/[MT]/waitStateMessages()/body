@@ -1,0 +1,24 @@
+{
+  if (connected) {
+    PioneerAvrStatusUpdateEvent event=new PioneerAvrStatusUpdateEvent(this);
+    logger.trace("Waiting status messages");
+    while (true) {
+      String receivedData=inBufferedReader.readLine();
+      if (logger.isTraceEnabled()) {
+        logger.trace("Received {} bytes: {}",receivedData.length(),DatatypeConverter.printHexBinary(receivedData.getBytes()));
+      }
+      try {
+        Iterator<PioneerAvrEventListener> iterator=_listeners.iterator();
+        while (iterator.hasNext()) {
+          ((PioneerAvrEventListener)iterator.next()).statusUpdateReceived(event,receiverIP,receivedData);
+        }
+      }
+ catch (      Exception e) {
+        logger.error("Event listener invoking error",e);
+      }
+    }
+  }
+ else {
+    throw new IOException("Not Connected to Receiver");
+  }
+}

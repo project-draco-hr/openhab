@@ -1,0 +1,30 @@
+{
+  Map<String,String> configMap=stringToMap(configStr);
+  String hubId=configMap.get(KEY_HUB_ID);
+  if (hubId == null) {
+    hubId=InsteonHubBinding.DEFAULT_HUB_ID;
+  }
+  String device=configMap.get(KEY_DEVICE);
+  if (device == null) {
+    throw new IllegalArgumentException(KEY_DEVICE + " is not defined in " + configMap);
+  }
+  device=device.replace(".","");
+  String bindingTypeStr=configMap.get(KEY_BINDING_TYPE);
+  if (bindingTypeStr == null) {
+    throw new IllegalArgumentException(KEY_BINDING_TYPE + " is not defined in " + configMap);
+  }
+  BindingType bindingType=BindingType.parseIgnoreCase(bindingTypeStr);
+  if (bindingType == null) {
+    throw new IllegalArgumentException("Unknown value for " + KEY_BINDING_TYPE + " '"+ bindingTypeStr+ "'");
+  }
+  String onValueStr=configMap.get(KEY_ON_VALUE);
+  Integer onValue=onValueStr == null ? null : Integer.parseInt(onValueStr);
+  String offValueStr=configMap.get(KEY_OFF_VALUE);
+  Integer offValue=offValueStr == null ? null : Integer.parseInt(offValueStr);
+  String openValueStr=configMap.get(KEY_OPEN_VALUE);
+  Integer openValue=openValueStr == null ? null : Integer.parseInt(openValueStr);
+  String closedValueStr=configMap.get(KEY_CLOSED_VALUE);
+  Integer closedValue=closedValueStr == null ? null : Integer.parseInt(closedValueStr);
+  InsteonHubBindingDeviceInfo deviceInfo=new InsteonHubBindingDeviceInfo(hubId,device);
+  return new InsteonHubBindingConfig(itemName,deviceInfo,bindingType,onValue,offValue,openValue,closedValue);
+}
