@@ -1,0 +1,41 @@
+{
+  State state=UnDefType.UNDEF;
+  try {
+    int index;
+    String payloadSubstring=data.substring(cmdType.getResponse().length());
+    if (payloadSubstring.length() == 0)     payloadSubstring="1";
+    if (cmdType.getCommandRef() == IpControlCommandRef.DISPLAY_INFO_QUERY) {
+      IpControlDisplayInformation displayInfo=new IpControlDisplayInformation(payloadSubstring);
+      payloadSubstring=displayInfo.getInfoText();
+      logger.debug("DisplayInfo: converted value '{}' to string '{}'",data,payloadSubstring);
+    }
+    if (itemType == SwitchItem.class) {
+      index=Integer.parseInt(payloadSubstring);
+      state=(index == 0) ? OnOffType.ON : OnOffType.OFF;
+    }
+ else     if (itemType == DimmerItem.class) {
+      if (cmdType.getCommandRef().getCommand() == IpControlCommandRef.VOLUME_QUERY.getCommand() || cmdType.getCommandRef().getCommand() == IpControlCommandRef.VOLUME_SET.getCommand()) {
+        index=convertVolumeToPercent(Integer.parseInt(payloadSubstring));
+      }
+ else {
+        index=Integer.parseInt(payloadSubstring);
+      }
+      state=new PercentType(index);
+    }
+ else     if (itemType == NumberItem.class) {
+      index=Integer.parseInt(payloadSubstring);
+      state=new DecimalType(index);
+    }
+ else     if (itemType == RollershutterItem.class) {
+      index=Integer.parseInt(payloadSubstring);
+      state=new PercentType(index);
+    }
+ else     if (itemType == StringItem.class) {
+      state=new StringType(payloadSubstring);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Cannot convert value '{}' to data type {}",data,itemType);
+  }
+  return state;
+}

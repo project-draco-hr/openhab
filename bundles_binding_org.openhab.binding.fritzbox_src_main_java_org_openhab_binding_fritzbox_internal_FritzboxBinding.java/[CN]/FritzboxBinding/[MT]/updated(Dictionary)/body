@@ -4,7 +4,7 @@
     if (StringUtils.isNotBlank(ip)) {
       if (!ip.equals(FritzboxBinding.ip)) {
         FritzboxBinding.ip=ip;
-        reconnect();
+        conditionalDeActivate();
         try {
           Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
           JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect","FritzBox").build();
@@ -16,6 +16,10 @@
           logger.warn("Could not create daily reconnection job: {}",e.getMessage());
         }
       }
+    }
+    String password=(String)config.get("password");
+    if (StringUtils.isNotBlank(password)) {
+      FritzboxBinding.password=password;
     }
   }
 }
