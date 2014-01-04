@@ -9,11 +9,14 @@ case REQUEST_NEIGHBOR_UPDATE_STARTED:
   break;
 case REQUEST_NEIGHBOR_UPDATE_DONE:
 logger.error("NodeNeighborUpdate DONE");
+networkCmdNode=0;
+transactionCompleted.release();
+requestNodeRoutingInfo(networkCmdNode);
 break;
 case REQUEST_NEIGHBOR_UPDATE_FAILED:
 logger.error("NodeNeighborUpdate FAILED");
-break;
-}
 networkCmdNode=0;
 transactionCompleted.release();
+break;
+}
 }
