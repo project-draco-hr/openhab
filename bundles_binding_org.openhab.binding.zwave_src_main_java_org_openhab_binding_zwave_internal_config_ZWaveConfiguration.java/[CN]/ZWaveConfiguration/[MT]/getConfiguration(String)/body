@@ -272,7 +272,8 @@ break;
 }
 }
 if (group == null) return null;
-List<Integer> members=node.configAssociationGetMembers(groupId);
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+List<Integer> members=associationCommandClass.getGroupMembers(groupId);
 for (int id=0; id < 256; id++) {
 node=zController.getNode(id);
 if (node == null) continue;

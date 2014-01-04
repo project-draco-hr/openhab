@@ -63,13 +63,14 @@
           logger.error("Error in doAction for node '{}' - no database found",nodeId);
           return;
         }
+        ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
         if (splitDomain.length == 3) {
           List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
-          for (          ZWaveDbAssociationGroup group : groupList)           node.configAssociationReport(group.Index);
+          for (          ZWaveDbAssociationGroup group : groupList)           this.zController.sendData(associationCommandClass.getAssociationMessage(group.Index));
         }
  else         if (splitDomain.length == 4) {
           int nodeArg=Integer.parseInt(splitDomain[3].substring(11));
-          node.configAssociationReport(nodeArg);
+          this.zController.sendData(associationCommandClass.getAssociationMessage(nodeArg));
         }
       }
     }

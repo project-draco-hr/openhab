@@ -53,15 +53,16 @@
     }
  else     if (splitDomain.length == 5) {
       if (splitDomain[2].equals("associations")) {
+        ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
         int assocId=Integer.parseInt(splitDomain[3].substring(11));
         int assocArg=Integer.parseInt(splitDomain[4].substring(4));
         if (value.equalsIgnoreCase("true")) {
           logger.debug("Add association index '{}' to '{}'",assocId,assocArg);
-          node.configAssociationAdd(assocId,assocArg);
+          this.zController.sendData(associationCommandClass.setAssociationMessage(assocId,assocArg));
         }
  else {
           logger.debug("Remove association index '{}' to '{}'",assocId,assocArg);
-          node.configAssociationRemove(assocId,assocArg);
+          this.zController.sendData(associationCommandClass.removeAssociationMessage(assocId,assocArg));
         }
       }
     }

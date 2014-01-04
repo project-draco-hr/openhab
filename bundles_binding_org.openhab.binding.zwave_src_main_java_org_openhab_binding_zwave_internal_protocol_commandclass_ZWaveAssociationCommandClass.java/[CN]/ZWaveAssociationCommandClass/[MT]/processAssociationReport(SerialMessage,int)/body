@@ -6,16 +6,22 @@
     return;
   }
   logger.debug("Node {}, association group {} has max associations " + maxAssociations,this.getNode().getNodeId(),group);
+  AssociationGroup association=configAssociations.get(group);
+  if (association == null) {
+    association=new AssociationGroup(group);
+  }
   ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
   if (serialMessage.getMessagePayload().length > (offset + 4)) {
     logger.debug("Node {}, association group {} includes the following nodes:",this.getNode().getNodeId(),group);
     int numAssociations=serialMessage.getMessagePayload().length - (offset + 4);
     for (int cnt=0; cnt < numAssociations; cnt++) {
       int node=serialMessage.getMessagePayloadByte(offset + 4 + cnt);
-      zEvent.addMember(node);
       logger.debug("Node {}",node);
+      zEvent.addMember(node);
+      association.addNode(node);
     }
   }
+  configAssociations.put(group,association);
   if (following == 0) {
   }
   this.getController().notifyEventListeners(zEvent);

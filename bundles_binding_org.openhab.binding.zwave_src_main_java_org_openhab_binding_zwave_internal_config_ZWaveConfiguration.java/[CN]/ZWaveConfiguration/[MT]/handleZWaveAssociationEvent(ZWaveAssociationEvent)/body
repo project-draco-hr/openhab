@@ -1,9 +1,0 @@
-{
-  logger.debug("Association received nodeId = {}, group = {}, new members = {}",new Object[]{event.getNodeId(),event.getGroup(),event.getMemberCnt()});
-  ZWaveNode node=zController.getNode(event.getNodeId());
-  if (node == null) {
-    logger.error("Configuration parameter for nodeId {}. Node doesn't exist.",event.getNodeId());
-    return;
-  }
-  node.configAssociationAddMembers(event.getGroup(),event.getMembers());
-}
