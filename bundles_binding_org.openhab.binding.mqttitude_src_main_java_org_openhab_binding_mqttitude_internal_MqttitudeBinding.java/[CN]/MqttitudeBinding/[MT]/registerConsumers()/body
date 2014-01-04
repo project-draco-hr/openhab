@@ -1,0 +1,10 @@
+{
+  for (  BindingProvider provider : providers) {
+    if (provider instanceof MqttitudeBindingProvider) {
+      MqttitudeBindingProvider mqttitudeProvider=(MqttitudeBindingProvider)provider;
+      for (      String itemName : mqttitudeProvider.getItemNames()) {
+        registerConsumer(mqttitudeProvider.getItemConfig(itemName));
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  SqueezePlayer player=getPlayer(playerId);
+  if (player == null)   return false;
+  if (volume != -1) {
+    logger.trace("Setting player state: volume {}",volume);
+    squeezeServer.setVolume(playerId,volume);
+  }
+  if (StringUtils.isEmpty(url)) {
+    squeezeServer.clearPlaylist(playerId);
+  }
+ else {
+    squeezeServer.playUrl(playerId,url);
+  }
+  return true;
+}

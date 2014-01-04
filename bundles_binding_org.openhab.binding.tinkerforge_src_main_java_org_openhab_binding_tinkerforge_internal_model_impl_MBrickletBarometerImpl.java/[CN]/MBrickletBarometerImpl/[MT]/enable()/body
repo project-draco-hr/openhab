@@ -21,7 +21,7 @@ catch (  NotConnectedException e) {
   tinkerforgeDevice.addAirPressureListener(new BrickletBarometer.AirPressureListener(){
     @Override public void airPressure(    int newAirPressure){
       if (newAirPressure > (airPressure + threshold) || newAirPressure < (airPressure - threshold)) {
-        setSensorValue(newAirPressure / 1000);
+        setSensorValue(new DecimalValue(newAirPressure / 1000));
         setAirPressure(newAirPressure);
       }
  else {
@@ -30,4 +30,5 @@ catch (  NotConnectedException e) {
     }
   }
 );
+  setSensorValue(fetchSensorValue());
 }

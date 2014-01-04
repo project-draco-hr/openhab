@@ -1,0 +1,14 @@
+{
+  byte[] data=new byte[10];
+  data[0]=0x09;
+  data[1]=RFXComBaseMessage.PacketType.BLINDS1.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId >> 16) & 0xFF);
+  data[5]=(byte)((sensorId >> 8) & 0xFF);
+  data[6]=(byte)(sensorId & 0xFF);
+  data[7]=unitcode;
+  data[8]=command.toByte();
+  data[9]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}

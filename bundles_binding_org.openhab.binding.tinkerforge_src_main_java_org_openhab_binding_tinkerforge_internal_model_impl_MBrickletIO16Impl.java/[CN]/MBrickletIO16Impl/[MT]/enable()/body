@@ -1,0 +1,21 @@
+{
+  tinkerforgeDevice=new BrickletIO16(getUid(),getIpConnection());
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("debouncePeriod"))) {
+      setDebouncePeriod(tfConfig.getDebouncePeriod());
+    }
+  }
+  try {
+    tinkerforgeDevice.setResponseExpectedAll(true);
+    logger.debug("{} BrickletIO16 setting debouncePeriod to {}",LoggerConstants.TFINIT,getDebouncePeriod());
+    tinkerforgeDevice.setDebouncePeriod(getDebouncePeriod());
+    tinkerforgeDevice.setPortInterrupt('a',(short)255);
+    tinkerforgeDevice.setPortInterrupt('b',(short)255);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

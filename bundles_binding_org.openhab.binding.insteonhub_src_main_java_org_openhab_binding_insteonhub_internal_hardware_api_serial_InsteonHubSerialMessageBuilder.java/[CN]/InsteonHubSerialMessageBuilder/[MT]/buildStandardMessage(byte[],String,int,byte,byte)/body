@@ -1,0 +1,17 @@
+{
+  if (msgBuffer == null || msgBuffer.length < STD_MSG_SIZE) {
+    msgBuffer=new byte[STD_MSG_SIZE];
+  }
+  msgBuffer[0]=InsteonHubMsgConst.STX;
+  msgBuffer[1]=InsteonHubMsgConst.SND_CODE_SEND_INSTEON_STD_OR_EXT_MSG;
+  try {
+    System.arraycopy(Hex.decodeHex(device.toCharArray()),0,msgBuffer,2,3);
+  }
+ catch (  DecoderException e) {
+    throw new IllegalArgumentException("Bad device id: " + device,e);
+  }
+  msgBuffer[5]=(byte)flag;
+  msgBuffer[6]=cmd1;
+  msgBuffer[7]=cmd2;
+  return msgBuffer;
+}

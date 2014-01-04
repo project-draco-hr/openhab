@@ -1,0 +1,15 @@
+{
+  int value=((PercentType)item.getStateAs(PercentType.class)).intValue();
+switch (command) {
+case DECREASE:
+    if (value >= 0x63)     value=((((int)(0x63 / DIMMER_STEP_SIZE)) + 1) * DIMMER_STEP_SIZE) - DIMMER_STEP_SIZE;
+ else     if (value > 0x00)     value-=DIMMER_STEP_SIZE;
+ else     value=0x00;
+  break;
+case INCREASE:
+value+=DIMMER_STEP_SIZE;
+if (value >= 0x63) value=0x63;
+break;
+}
+return value;
+}

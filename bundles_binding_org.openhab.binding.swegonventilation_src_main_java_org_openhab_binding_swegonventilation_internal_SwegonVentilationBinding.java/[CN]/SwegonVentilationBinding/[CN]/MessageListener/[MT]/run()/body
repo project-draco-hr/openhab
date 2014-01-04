@@ -1,0 +1,47 @@
+{
+  logger.debug("Swegon ventilation system message listener started");
+  SwegonVentilationConnector connector;
+  if (simulator == true)   connector=new SwegonVentilationSimulator();
+ else   if (serialPort != null)   connector=new SwegonVentilationSerialConnector(serialPort);
+ else   connector=new SwegonVentilationUDPConnector(udpPort);
+  try {
+    connector.connect();
+  }
+ catch (  SwegonVentilationException e) {
+    logger.error("Error occured when connecting to Swegon ventilation system",e);
+  }
+  while (!interrupted) {
+    try {
+      byte[] data=connector.receiveDatagram();
+      logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
+      HashMap<SwegonVentilationCommandType,Integer> regValues=SwegonVentilationDataParser.parseData(data);
+      if (regValues != null) {
+        logger.debug("regValues (len={}): {}",regValues.size(),regValues);
+        Set<Map.Entry<SwegonVentilationCommandType,Integer>> set=regValues.entrySet();
+        for (        Entry<SwegonVentilationCommandType,Integer> val : set) {
+          SwegonVentilationCommandType cmdType=val.getKey();
+          Integer value=val.getValue();
+          for (          SwegonVentilationBindingProvider provider : providers) {
+            for (            String itemName : provider.getItemNames()) {
+              SwegonVentilationCommandType commandType=provider.getCommandType(itemName);
+              if (commandType.equals(cmdType)) {
+                Class<? extends Item> itemType=provider.getItemType(itemName);
+                org.openhab.core.types.State state=convertDeviceValueToOpenHabState(itemType,value);
+                eventPublisher.postUpdate(itemName,state);
+              }
+            }
+          }
+        }
+      }
+    }
+ catch (    SwegonVentilationException e) {
+      logger.error("Error occured when received data from Swegon ventilation system",e);
+    }
+  }
+  try {
+    connector.disconnect();
+  }
+ catch (  SwegonVentilationException e) {
+    logger.error("Error occured when disconnecting form Swegon ventilation system",e);
+  }
+}

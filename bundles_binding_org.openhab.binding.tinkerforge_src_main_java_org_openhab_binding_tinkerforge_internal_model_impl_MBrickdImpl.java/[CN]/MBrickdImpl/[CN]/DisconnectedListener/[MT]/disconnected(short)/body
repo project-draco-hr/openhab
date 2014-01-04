@@ -1,12 +1,30 @@
 {
-  logger.trace("disconnected listener was called.",LoggerConstants.TFINIT);
-  setIsConnected(false);
-  ArrayList<String> deviceUidList=new ArrayList<String>();
-  for (  MDevice<?> mDevice : mdevices) {
-    deviceUidList.add(mDevice.getUid());
-  }
-  for (  String uid : deviceUidList) {
-    removeDevice(uid);
-  }
-  makeConnect();
+  modelLock.lock();
+  try {
+    setIsConnected(false);
+    ArrayList<String> deviceUidList=new ArrayList<String>();
+    for (    MDevice<?> mDevice : mdevices) {
+      deviceUidList.add(mDevice.getUid());
+    }
+    for (    String uid : deviceUidList) {
+      removeDevice(uid);
+    }
+switch (connectReason) {
+case 0:
+      connectReasonString="request";
+    break;
+case 1:
+  connectReasonString="unresolvable problem";
+break;
+case 2:
+connectReasonString="shutdown";
+break;
+default :
+break;
+}
+logger.debug("disconnected listener was called, caused by: {}",connectReasonString);
+}
+  finally {
+modelLock.unlock();
+}
 }

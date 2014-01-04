@@ -1,0 +1,23 @@
+{
+  String decoded=new String(payload);
+  ObjectMapper jsonReader=new ObjectMapper();
+  Map<String,String> locationData;
+  try {
+    locationData=jsonReader.readValue(decoded,Map.class);
+  }
+ catch (  JsonParseException e) {
+    logger.error("Error parsing JSON:\n" + decoded);
+    return null;
+  }
+catch (  JsonMappingException e) {
+    logger.error("Error mapping JSON:\n" + decoded);
+    return null;
+  }
+catch (  IOException e) {
+    logger.error("An I/O error occured while decoding JSON:\n" + decoded);
+    return null;
+  }
+  float latitude=Float.parseFloat(locationData.get("lat"));
+  float longitude=Float.parseFloat(locationData.get("lon"));
+  return new Location(latitude,longitude);
+}

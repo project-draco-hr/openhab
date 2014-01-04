@@ -1,7 +1,7 @@
 {
   ZWaveNode node=this.getNode(originalMessage.getMessageNode());
-  if (node.getNodeStage() == NodeStage.NODEBUILDINFO_DEAD)   return;
-  if (!node.isListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
+  if (node.getNodeStage() == NodeStage.DEAD)   return;
+  if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
     if (wakeUpCommandClass != null) {
       wakeUpCommandClass.setAwake(false);
@@ -9,7 +9,7 @@
       return;
     }
   }
- else   if (!node.isListening() && originalMessage.getPriority() == SerialMessagePriority.Low)   return;
+ else   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() == SerialMessagePriority.Low)   return;
   node.incrementResendCount();
   logger.error("Got an error while sending data to node {}. Resending message.",node.getNodeId());
   this.sendData(originalMessage);

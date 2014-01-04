@@ -1,9 +1,9 @@
 {
   try {
-    Object obj=RFXComMessageUtils.decodePacket(data);
+    RFXComMessageInterface obj=RFXComMessageFactory.getMessageInterface(data);
     logger.debug("Data received:\n{}",obj.toString());
   }
- catch (  IllegalArgumentException e) {
+ catch (  RFXComException e) {
     logger.debug("Unknown data received, data: {}",DatatypeConverter.printHexBinary(data));
   }
 }

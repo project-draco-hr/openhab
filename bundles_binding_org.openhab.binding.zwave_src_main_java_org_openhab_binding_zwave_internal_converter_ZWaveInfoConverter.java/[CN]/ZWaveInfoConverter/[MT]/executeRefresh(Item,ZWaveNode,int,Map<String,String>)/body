@@ -1,0 +1,19 @@
+{
+  if (!arguments.containsKey("item"))   return;
+  ZWaveInformationItem informationItem=ZWaveInformationItem.getZWaveBindingAction(arguments.get("item"));
+  if (informationItem == null) {
+    logger.warn("Incorrect information item specified. item name = {}",arguments.get("item"));
+    return;
+  }
+  State state=UnDefType.UNDEF;
+  Object value=getInformationItemValue(node,informationItem);
+  if (value != null) {
+    ZWaveStateConverter<?,?> converter=this.getStateConverter(item,value);
+    if (converter == null) {
+      logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),node.getNodeId(),endpointId);
+      return;
+    }
+    state=converter.convertFromValueToState(value);
+  }
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

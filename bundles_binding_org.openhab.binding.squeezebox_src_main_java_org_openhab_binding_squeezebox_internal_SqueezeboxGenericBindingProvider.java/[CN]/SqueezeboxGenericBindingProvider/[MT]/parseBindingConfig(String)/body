@@ -1,0 +1,10 @@
+{
+  String[] configParts=bindingConfig.split(":");
+  if (configParts.length < 2)   throw new BindingConfigParseException("Squeezebox binding configuration must consist of two parts [config=" + configParts + "]");
+  String playerId=StringUtils.trim(configParts[0]);
+  String command=StringUtils.trim(configParts[1]);
+  CommandType commandType=CommandType.fromString(command);
+  String extra=null;
+  if (configParts.length > 2)   extra=configParts[2];
+  return new SqueezeboxBindingConfig(playerId,commandType,extra);
+}

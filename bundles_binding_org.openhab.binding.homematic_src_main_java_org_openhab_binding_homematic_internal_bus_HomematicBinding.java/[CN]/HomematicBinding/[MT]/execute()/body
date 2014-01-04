@@ -1,0 +1,10 @@
+{
+  long timeSinceLastEvent=System.currentTimeMillis() - lastEventTime;
+  if (timeSinceLastEvent <= checkAlifeIntervallMS) {
+    logger.debug("Last event was only " + timeSinceLastEvent + "ms ago. No need to refresh connection.");
+    return;
+  }
+  logger.info("Refreshing CCU connection.");
+  removeCallbackHandler();
+  registerCallbackHandler();
+}

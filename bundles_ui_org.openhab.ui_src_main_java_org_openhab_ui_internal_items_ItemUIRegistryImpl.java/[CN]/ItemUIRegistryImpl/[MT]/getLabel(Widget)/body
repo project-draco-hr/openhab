@@ -25,7 +25,12 @@
       formatPattern=formatUndefined(formatPattern);
     }
  else     if (state instanceof Type) {
-      formatPattern=((Type)state).format(formatPattern);
+      try {
+        formatPattern=((Type)state).format(formatPattern);
+      }
+ catch (      IllegalArgumentException e) {
+        formatPattern=new String("Err");
+      }
     }
     label=label.substring(0,indexOpenBracket + 1) + formatPattern + label.substring(indexCloseBracket);
   }

@@ -1,11 +1,11 @@
 {
+  logger.debug("{} addDevice called for uid: {}",LoggerConstants.TFINIT,uid);
   if (getDevice(uid) != null) {
     logger.debug("{} device already exists. uid: {}",LoggerConstants.TFINIT,uid);
   }
  else {
     ModelFactory factory=ModelFactory.eINSTANCE;
     MDevice<?> mDevice=null;
-    logger.debug("{} addDevice called",LoggerConstants.TFINIT);
     if (deviceIdentifier == BrickletTemperature.DEVICE_IDENTIFIER) {
       logger.debug("{} addDevice temperature",LoggerConstants.TFINIT);
       mDevice=factory.createMBrickletTemperature();
@@ -25,6 +25,11 @@
       logger.debug("{} addDevice BrickletDualRelayBricklet",LoggerConstants.TFINIT);
       mDevice=factory.createMDualRelayBricklet();
       mDevice.setDeviceIdentifier(BrickletDualRelay.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER) {
+      logger.debug("{} addDevice BrickletIndustrialQuadRelayBricklet",LoggerConstants.TFINIT);
+      mDevice=factory.createMIndustrialQuadRelayBricklet();
+      mDevice.setDeviceIdentifier(BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER);
     }
  else     if (deviceIdentifier == BrickletBarometer.DEVICE_IDENTIFIER) {
       logger.debug("{} addDevice BrickletBarometer",LoggerConstants.TFINIT);
@@ -50,6 +55,16 @@
       logger.debug("addDevice BrickletLCD20x4");
       mDevice=factory.createMBrickletLCD20x4();
       mDevice.setDeviceIdentifier(BrickletLCD20x4.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER) {
+      logger.debug("addDevice BrickletIndustrialDigitalIn4");
+      mDevice=factory.createMBrickletIndustrialDigitalIn4();
+      mDevice.setDeviceIdentifier(BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER);
+    }
+ else     if (deviceIdentifier == BrickletIO16.DEVICE_IDENTIFIER) {
+      logger.debug("addDevice BrickletIO16");
+      mDevice=factory.createMBrickletIO16();
+      mDevice.setDeviceIdentifier(BrickletIO16.DEVICE_IDENTIFIER);
     }
     if (mDevice != null) {
       mDevice.setIpConnection(getIpConnection());

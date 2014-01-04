@@ -1,0 +1,11 @@
+{
+  final TivoBindingProvider bindingProvider=findFirstMatchingBindingProvider(itemName,command);
+  final String tivoCommand=bindingProvider.getTivoCommand(itemName);
+  if (host != null && !host.isEmpty()) {
+    new TivoRemote(host).sendCommand(tivoCommand);
+    logger.debug("Sent '" + tivoCommand + "' to Tivo");
+  }
+ else {
+    logger.error("Cannot send Tivo command as host is invalid: '" + host + "'.");
+  }
+}

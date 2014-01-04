@@ -1,9 +1,25 @@
 {
 switch (eDataType.getClassifierID()) {
-case ModelPackage.SWITCH_STATE:
-    return createSwitchStateFromString(eDataType,initialValue);
 case ModelPackage.DC_DRIVE_MODE:
-  return createDCDriveModeFromString(eDataType,initialValue);
+    return createDCDriveModeFromString(eDataType,initialValue);
+case ModelPackage.NO_SUB_IDS:
+  return createNoSubIdsFromString(eDataType,initialValue);
+case ModelPackage.INDUSTRIAL_DIGITAL_IN_SUB_IDS:
+return createIndustrialDigitalInSubIDsFromString(eDataType,initialValue);
+case ModelPackage.INDUSTRIAL_QUAD_RELAY_IDS:
+return createIndustrialQuadRelayIDsFromString(eDataType,initialValue);
+case ModelPackage.SERVO_SUB_IDS:
+return createServoSubIDsFromString(eDataType,initialValue);
+case ModelPackage.BAROMETER_SUB_IDS:
+return createBarometerSubIDsFromString(eDataType,initialValue);
+case ModelPackage.IO16_SUB_IDS:
+return createIO16SubIdsFromString(eDataType,initialValue);
+case ModelPackage.DUAL_RELAY_SUB_IDS:
+return createDualRelaySubIdsFromString(eDataType,initialValue);
+case ModelPackage.LCD_BUTTON_SUB_IDS:
+return createLCDButtonSubIdsFromString(eDataType,initialValue);
+case ModelPackage.LCD_BACKLIGHT_SUB_IDS:
+return createLCDBacklightSubIdsFromString(eDataType,initialValue);
 case ModelPackage.MIP_CONNECTION:
 return createMIPConnectionFromString(eDataType,initialValue);
 case ModelPackage.MTINKER_DEVICE:
@@ -20,8 +36,20 @@ case ModelPackage.MTINKER_BRICKLET_DUAL_RELAY:
 return createMTinkerBrickletDualRelayFromString(eDataType,initialValue);
 case ModelPackage.MTINKER_BRICKLET_INDUSTRIAL_QUAD_RELAY:
 return createMTinkerBrickletIndustrialQuadRelayFromString(eDataType,initialValue);
+case ModelPackage.MTINKER_BRICKLET_INDUSTRIAL_DIGITAL_IN4:
+return createMTinkerBrickletIndustrialDigitalIn4FromString(eDataType,initialValue);
+case ModelPackage.SWITCH_STATE:
+return createSwitchStateFromString(eDataType,initialValue);
+case ModelPackage.DIGITAL_VALUE:
+return createDigitalValueFromString(eDataType,initialValue);
+case ModelPackage.TINKER_BRICKLET_IO16:
+return createTinkerBrickletIO16FromString(eDataType,initialValue);
 case ModelPackage.MTINKER_BRICK_SERVO:
 return createMTinkerBrickServoFromString(eDataType,initialValue);
+case ModelPackage.MTINKERFORGE_VALUE:
+return createMTinkerforgeValueFromString(eDataType,initialValue);
+case ModelPackage.MDECIMAL_VALUE:
+return createMDecimalValueFromString(eDataType,initialValue);
 case ModelPackage.MTINKER_BRICKLET_HUMIDITY:
 return createMTinkerBrickletHumidityFromString(eDataType,initialValue);
 case ModelPackage.MTINKER_BRICKLET_DISTANCE_IR:
@@ -34,6 +62,8 @@ case ModelPackage.MTINKER_BRICKLET_AMBIENT_LIGHT:
 return createMTinkerBrickletAmbientLightFromString(eDataType,initialValue);
 case ModelPackage.MTINKER_BRICKLET_LCD2_0X4:
 return createMTinkerBrickletLCD20x4FromString(eDataType,initialValue);
+case ModelPackage.ENUM:
+return createEnumFromString(eDataType,initialValue);
 default :
 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 }

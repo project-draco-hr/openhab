@@ -1,10 +1,10 @@
 {
-  log.fine("multicall: " + Arrays.toString(calls));
+  log.debug("multicall: " + Arrays.toString(calls));
   for (  Object obj : calls) {
     Map<String,Object> call=(Map<String,Object>)obj;
     String methodname=call.get("methodName").toString();
     Object[] params=(Object[])call.get("params");
-    log.fine("calls to " + methodname + " with params "+ Arrays.toString(calls));
+    log.debug("calls to {} with params {}",methodname,Arrays.toString(calls));
     XmlRpcRequest req=new XmlRpcClientRequestImpl(new XmlRpcRequestConfig(){
       @Override public TimeZone getTimeZone(){
         return null;
@@ -17,6 +17,6 @@
     XmlRpcHandler handler=mapping.getHandler(methodname);
     handler.execute(req);
   }
-  log.fine("end of multicall");
-  return 0;
+  log.debug("end of multicall");
+  return new Object[]{};
 }

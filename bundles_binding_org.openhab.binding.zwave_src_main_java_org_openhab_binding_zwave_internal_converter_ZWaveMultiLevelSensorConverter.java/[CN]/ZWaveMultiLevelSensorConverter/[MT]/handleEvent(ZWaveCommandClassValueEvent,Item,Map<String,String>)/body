@@ -1,0 +1,12 @@
+{
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
+  String sensorType=arguments.get("sensor_type");
+  ZWaveMultiLevelSensorValueEvent sensorEvent=(ZWaveMultiLevelSensorValueEvent)event;
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+    return;
+  }
+  if (sensorType != null && SensorType.getSensorType(Integer.parseInt(sensorType)) != sensorEvent.getSensorType())   return;
+  State state=converter.convertFromValueToState(event.getValue());
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

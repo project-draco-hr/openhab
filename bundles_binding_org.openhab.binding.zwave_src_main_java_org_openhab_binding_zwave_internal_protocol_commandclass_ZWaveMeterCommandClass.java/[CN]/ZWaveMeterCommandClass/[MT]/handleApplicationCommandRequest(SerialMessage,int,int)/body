@@ -1,0 +1,70 @@
+{
+  logger.trace("Handle Message Meter Request");
+  logger.debug(String.format("Received Meter Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+  MeterScale scale;
+  int meterTypeIndex;
+switch (command) {
+case METER_GET:
+case METER_SUPPORTED_GET:
+case METER_RESET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case METER_REPORT:
+logger.trace("Process Meter Report");
+logger.debug(String.format("Meter report from nodeId = %d",this.getNode().getNodeId()));
+meterTypeIndex=serialMessage.getMessagePayloadByte(offset + 1) & 0x1F;
+if (meterTypeIndex >= MeterType.values().length) {
+logger.warn(String.format("Invalid meter type 0x%02X",meterTypeIndex));
+return;
+}
+meterType=MeterType.getMeterType(meterTypeIndex);
+logger.debug(String.format("Meter Type = %s (0x%02x)",meterType.getLabel(),meterTypeIndex));
+int scaleIndex=(serialMessage.getMessagePayloadByte(offset + 2) & 0x18) >> 0x03;
+if (this.getVersion() > 2) {
+scaleIndex|=((serialMessage.getMessagePayloadByte(offset + 1) & 0x80) >> 0x05);
+}
+scale=MeterScale.getMeterScale(meterType,scaleIndex);
+if (scale == null) {
+logger.warn(String.format("Invalid meter scale 0x%02X",scaleIndex));
+return;
+}
+logger.debug(String.format("Meter Scale = %s (0x%02x)",scale.getUnit(),scale.getScale()));
+if (!this.meterScales.contains(scale)) this.meterScales.add(scale);
+BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
+logger.debug(String.format("Meter Value = (%f)",value));
+ZWaveMeterValueEvent zEvent=new ZWaveMeterValueEvent(this.getNode().getNodeId(),endpoint,meterType,scale,value);
+this.getController().notifyEventListeners(zEvent);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+case METER_SUPPORTED_REPORT:
+logger.trace("Process Meter Supported Report");
+canReset=(serialMessage.getMessagePayloadByte(offset + 1) & 0x80) != 0;
+meterTypeIndex=serialMessage.getMessagePayloadByte(offset + 1) & 0x1F;
+int supportedScales=serialMessage.getMessagePayloadByte(offset + 2);
+if (this.getVersion() == 2) {
+supportedScales&=0x0F;
+}
+if (meterTypeIndex >= MeterType.values().length) {
+logger.warn(String.format("Invalid meter type 0x%02X",meterTypeIndex));
+return;
+}
+meterType=MeterType.getMeterType(meterTypeIndex);
+logger.debug(String.format("Identified meter type %s (0x%02x)",meterType.getLabel(),meterTypeIndex));
+for (int i=0; i < 8; ++i) {
+if ((supportedScales & (1 << i)) == (1 << i)) {
+scale=MeterScale.getMeterScale(meterType,i);
+if (scale == null) {
+logger.warn(String.format("Invalid meter scale 0x%02X",i));
+continue;
+}
+logger.debug(String.format("Meter Scale = %s (0x%02x)",scale.getUnit(),scale.getScale()));
+if (!this.meterScales.contains(scale)) this.meterScales.add(scale);
+}
+}
+this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

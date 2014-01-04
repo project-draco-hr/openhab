@@ -17,13 +17,21 @@
   logger.debug(String.format("Incoming command class %s (0x%02x)",commandClass.getLabel(),commandClass.getKey()));
   ZWaveCommandClass zwaveCommandClass=node.getCommandClass(commandClass);
   if (zwaveCommandClass == null) {
+    logger.debug(String.format("Command class %s (0x%02x) not found on node %d, trying to add it.",commandClass.getLabel(),commandClass.getKey(),nodeId));
+    zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,this);
+    if (zwaveCommandClass != null) {
+      logger.debug(String.format("Adding command class %s (0x%02x)",commandClass.getLabel(),commandClass.getKey()));
+      node.addCommandClass(zwaveCommandClass);
+    }
+  }
+  if (zwaveCommandClass == null) {
     logger.error(String.format("Unsupported command class %s (0x%02x)",commandClass.getLabel(),commandClassCode));
     return;
   }
   logger.trace("Found Command Class {}, passing to handleApplicationCommandRequest",zwaveCommandClass.getCommandClass().getLabel());
   zwaveCommandClass.handleApplicationCommandRequest(incomingMessage,4,1);
   if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && nodeId == this.lastSentMessage.getMessageNode() && !incomingMessage.isTransActionCanceled()) {
-    notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+    notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
     transactionCompleted.release();
     logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
   }

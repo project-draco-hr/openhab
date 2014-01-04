@@ -1,0 +1,30 @@
+{
+  logger.debug("Received command from " + itemName);
+  String serialNumber=null;
+  for (  MaxCubeBindingProvider provider : providers) {
+    serialNumber=provider.getSerialNumber(itemName);
+    if (serialNumber != null)     break;
+  }
+  if (serialNumber == null)   return;
+  Device device=findDevice(serialNumber,devices);
+  if (device == null)   return;
+  String rfAddress=device.getRFAddress();
+  if (command instanceof DecimalType) {
+    DecimalType decimalType=(DecimalType)command;
+    S_Command scmd=new S_Command(rfAddress,decimalType.doubleValue());
+    String commandString=scmd.getCommandString();
+    Socket socket=null;
+    try {
+      socket=new Socket(ip,port);
+      PrintWriter out=new PrintWriter(socket.getOutputStream(),true);
+      out.print(commandString);
+      socket.close();
+    }
+ catch (    UnknownHostException e) {
+      logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);
+    }
+catch (    IOException e) {
+      logger.warn("Cannot write data from MAX!cube lan gateway while connecting to '{}'",ip);
+    }
+  }
+}

@@ -16,14 +16,18 @@
       PacketType packetType=provider.getPacketType(itemName);
       Object subType=provider.getSubType(itemName);
       RFXComValueSelector valueSelector=provider.getValueSelector(itemName);
-      Object obj=RFXComDataConverter.convertOpenHABValueToRFXCOMValue(id,packetType,subType,valueSelector,command,getNextSeqNumber());
-      byte[] data=RFXComMessageUtils.encodePacket(obj);
-      logger.debug("Transmitting data: {}",DatatypeConverter.printHexBinary(data));
-      setResponseMessage(null);
       try {
+        RFXComMessageInterface obj=RFXComMessageFactory.getMessageInterface(packetType);
+        obj.convertFromState(valueSelector,id,subType,command,getNextSeqNumber());
+        byte[] data=obj.decodeMessage();
+        logger.debug("Transmitting data: {}",DatatypeConverter.printHexBinary(data));
+        setResponseMessage(null);
         connector.sendMessage(data);
       }
- catch (      IOException e) {
+ catch (      RFXComException e) {
+        e.printStackTrace();
+      }
+catch (      IOException e) {
         logger.error("Message sending to RFXCOM controller failed.",e);
       }
       try {
