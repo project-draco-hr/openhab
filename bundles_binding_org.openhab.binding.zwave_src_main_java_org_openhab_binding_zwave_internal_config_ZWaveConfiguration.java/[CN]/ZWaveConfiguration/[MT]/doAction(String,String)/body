@@ -64,6 +64,10 @@
           return;
         }
         ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+        if (associationCommandClass == null) {
+          logger.error("Error getting associationCommandClass in doAction for node '{}'",nodeId);
+          return;
+        }
         if (splitDomain.length == 3) {
           List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
           for (          ZWaveDbAssociationGroup group : groupList)           this.zController.sendData(associationCommandClass.getAssociationMessage(group.Index));
