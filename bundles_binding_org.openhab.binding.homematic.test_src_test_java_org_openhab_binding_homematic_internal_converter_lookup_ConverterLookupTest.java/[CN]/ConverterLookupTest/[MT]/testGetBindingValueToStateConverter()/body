@@ -1,0 +1,7 @@
+{
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.STATE.name(),DecimalType.class,IntegerDecimalConverter.class);
+  converterLookup.configureItem(new NumberItem(NUMBER_ITEM_NAME),numberItemAddress);
+  StateConverter<?,?> toStateConverter=converterLookup.getBindingValueToStateConverter(NUMBER_ITEM_NAME);
+  assertNotNull(toStateConverter);
+  assertEquals(IntegerDecimalConverter.class,toStateConverter.getClass());
+}
