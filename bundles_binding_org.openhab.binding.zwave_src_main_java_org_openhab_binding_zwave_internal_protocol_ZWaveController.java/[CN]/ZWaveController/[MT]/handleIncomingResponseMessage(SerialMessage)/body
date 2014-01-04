@@ -54,6 +54,9 @@ transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
 break;
+case GetRoutingInfo:
+handleNodeRoutingInfoRequest(incomingMessage);
+break;
 default :
 logger.warn(String.format("TODO: Implement processing of Response Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
 break;
