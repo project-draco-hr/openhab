@@ -26,9 +26,11 @@
     }
  catch (    UnknownHostException e) {
       logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);
+      logger.debug(Utils.getStackTrace(e));
     }
 catch (    IOException e) {
-      logger.warn("Cannot write data from MAX!cube lan gateway while connecting to '{}'",ip);
+      logger.warn("Cannot write data from MAX!Cube lan gateway while connecting to '{}'",ip);
+      logger.debug(Utils.getStackTrace(e));
     }
     logger.debug("Command Sent to {}",ip);
   }
