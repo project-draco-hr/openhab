@@ -2,16 +2,16 @@
   HomematicParameterAddress parameterAddress=HomematicParameterAddress.from(address,parameterKey);
   logger.debug("Received new value {} for device at {}",valueObject,parameterAddress);
   lastEventTime=System.currentTimeMillis();
-  Item item=getItemForParameter(parameterAddress);
-  if (item != null) {
-    StateConverter<?,?> converter=converterLookup.getBindingValueToStateConverter(item.getName());
+  String itemName=getItemNameForParameter(parameterAddress);
+  if (itemName != null) {
+    StateConverter<?,?> converter=converterLookup.getBindingValueToStateConverter(itemName);
     if (converter == null) {
       logger.warn("No converter found for " + parameterAddress + " - doing nothing.");
       return null;
     }
     State value=converter.convertTo(valueObject);
-    logger.debug("Received new value {} for item {}",value,item);
-    postUpdate(item,value);
+    logger.debug("Received new value {} for item {}",value,itemName);
+    postUpdate(itemName,value);
     if (parameterKey.equals(ParameterKey.WORKING.name())) {
       if (!(Boolean)valueObject) {
       }
