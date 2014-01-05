@@ -1,0 +1,24 @@
+{
+  logger.debug("updated() called");
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String boardNum=(String)config.get("boardno");
+    if (StringUtils.isNotBlank(boardNum)) {
+      try {
+        boardNo=Integer.parseInt(boardNum);
+      }
+ catch (      NumberFormatException e) {
+        logger.error("Invalid board number: " + boardNum);
+        throw new ConfigurationException("boardno",boardNum + " is not a valid board number.");
+      }
+    }
+  }
+ else {
+    logger.info("No config supplied - using default values");
+  }
+  connect();
+  setProperlyConfigured(true);
+}
