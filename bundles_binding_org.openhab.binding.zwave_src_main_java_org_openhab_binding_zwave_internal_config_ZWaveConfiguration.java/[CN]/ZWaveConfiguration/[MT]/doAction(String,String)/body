@@ -55,6 +55,11 @@
         this.zController.sendData(wakeupCommandClass.getIntervalCapabilitiesMessage());
       }
     }
+    if (splitDomain[2].equals("neighbors")) {
+      if (action.equals("Refresh")) {
+        this.zController.requestNodeRoutingInfo(nodeId);
+      }
+    }
     if (splitDomain[2].equals("associations")) {
       if (action.equals("Refresh")) {
         logger.debug("Refresh associations for node '{}'",nodeId);

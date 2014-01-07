@@ -201,6 +201,7 @@ records.add(record);
 }
 }
 record=new OpenHABConfigurationRecord(domain + "neighbors/","Neighbors");
+record.addAction("Refresh","Refresh");
 records.add(record);
 record=new OpenHABConfigurationRecord(domain + "status/","Status");
 records.add(record);
@@ -277,10 +278,10 @@ if (group == null) return null;
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 List<Integer> members=associationCommandClass.getGroupMembers(groupId);
 for (int id=0; id < 256; id++) {
-node=zController.getNode(id);
-if (node == null) continue;
-if (node.getName() == null || node.getName().isEmpty()) record=new OpenHABConfigurationRecord(domain,"node" + id,"Node " + id,false);
- else record=new OpenHABConfigurationRecord(domain,"node" + id,node.getName(),false);
+ZWaveNode nodeList=zController.getNode(id);
+if (nodeList == null) continue;
+if (nodeList.getName() == null || nodeList.getName().isEmpty()) record=new OpenHABConfigurationRecord(domain,"node" + id,"Node " + id,false);
+ else record=new OpenHABConfigurationRecord(domain,"node" + id,nodeList.getName(),false);
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
 record.addValue("true","Member");
 record.addValue("false","Non-Member");
@@ -317,6 +318,20 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Step","Interval Step",true);
 record.value=Integer.toString(wakeupCommandClass.getIntervalStep());
 records.add(record);
+}
+ else if (arg.equals("neighbors/")) {
+if (node.getNeighbors() == null) return null;
+for (Integer neighbor : node.getNeighbors()) {
+ZWaveNode nodeNeighbor=zController.getNode(neighbor);
+String neighborName;
+if (nodeNeighbor == null) neighborName="Node " + neighbor + " (UNKNOWN)";
+ else if (nodeNeighbor.getName() == null || nodeNeighbor.getName().isEmpty()) neighborName="Node " + neighbor;
+ else neighborName=nodeNeighbor.getName();
+record=new OpenHABConfigurationRecord(domain,"node" + neighbor,neighborName,false);
+record.readonly=true;
+if (nodeNeighbor == null) record.state=OpenHABConfigurationRecord.STATE.ERROR;
+records.add(record);
+}
 }
 return records;
 }
