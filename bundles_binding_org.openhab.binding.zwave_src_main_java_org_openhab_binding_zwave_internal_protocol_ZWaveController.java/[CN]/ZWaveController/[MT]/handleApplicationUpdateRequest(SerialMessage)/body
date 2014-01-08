@@ -24,6 +24,10 @@ notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 }
+ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
+if (wakeUp != null) {
+wakeUp.setAwake(true);
+}
 break;
 case NODE_INFO_REQ_FAILED:
 logger.debug("Application update request, Node Info Request Failed, re-request node info.");
