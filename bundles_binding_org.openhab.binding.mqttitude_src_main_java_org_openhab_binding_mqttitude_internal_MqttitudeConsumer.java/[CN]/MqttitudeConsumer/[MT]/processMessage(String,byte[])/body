@@ -5,11 +5,7 @@
   if (jsonPayload == null)   return;
   String type=jsonPayload.get("_type");
   if (StringUtils.isEmpty(type) || !type.equals("location"))   return;
-  if (itemConfigs.size() == 0) {
-    logger.trace("No items configured for this topic, ignoring");
-    return;
-  }
-  for (  MqttitudeItemConfig itemConfig : itemConfigs.values()) {
+  for (  MqttitudeItemConfig itemConfig : getItemConfigs()) {
     logger.trace("Checking item {}...",itemConfig.getItemName());
     if (StringUtils.isEmpty(itemConfig.getRegion())) {
       if (homeLocation == null) {

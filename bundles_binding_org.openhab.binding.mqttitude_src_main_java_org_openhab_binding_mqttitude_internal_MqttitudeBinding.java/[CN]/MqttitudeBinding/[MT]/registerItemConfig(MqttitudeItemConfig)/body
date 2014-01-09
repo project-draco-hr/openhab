@@ -6,7 +6,7 @@
   if (consumer == null) {
     consumer=new MqttitudeConsumer(homeLocation,geoFence);
     consumer.setTopic(topic);
-    logger.debug("Registering Mqttitude consumer for " + topic);
+    logger.debug("Registering Mqttitude consumer for {} (on {})",topic,broker);
     mqttService.registerMessageConsumer(broker,consumer);
     if (!consumers.containsKey(broker))     consumers.put(broker,new ArrayList<MqttitudeConsumer>());
     consumers.get(broker).add(consumer);

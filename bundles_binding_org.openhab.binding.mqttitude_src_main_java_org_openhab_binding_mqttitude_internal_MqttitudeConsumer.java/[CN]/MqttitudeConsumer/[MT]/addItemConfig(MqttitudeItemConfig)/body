@@ -3,5 +3,7 @@
     logger.error("Attempting to add an item config with topic '{}', to a consumer with topic '{}'",itemConfig.getTopic(),topic);
     return;
   }
-  itemConfigs.put(itemConfig.getItemName(),itemConfig);
+synchronized (itemConfigs) {
+    itemConfigs.put(itemConfig.getItemName(),itemConfig);
+  }
 }
