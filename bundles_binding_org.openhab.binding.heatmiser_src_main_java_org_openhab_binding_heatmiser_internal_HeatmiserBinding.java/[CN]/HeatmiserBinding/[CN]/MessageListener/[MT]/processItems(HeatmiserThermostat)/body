@@ -1,0 +1,56 @@
+{
+  for (  HeatmiserBindingProvider provider : providers) {
+    for (    String itemName : provider.getBindingItemsAtAddress(thermostat.getAddress())) {
+      State state=null;
+switch (provider.getFunction(itemName)) {
+case FROSTTEMP:
+        state=thermostat.getFrostTemperature(provider.getItemType(itemName));
+      break;
+case FLOORTEMP:
+    state=thermostat.getFloorTemperature(provider.getItemType(itemName));
+  break;
+case ONOFF:
+state=thermostat.getOnOffState(provider.getItemType(itemName));
+break;
+case HEATSTATE:
+state=thermostat.getHeatState(provider.getItemType(itemName));
+break;
+case ROOMTEMP:
+state=thermostat.getTemperature(provider.getItemType(itemName));
+break;
+case SETTEMP:
+state=thermostat.getSetTemperature(provider.getItemType(itemName));
+break;
+case WATERSTATE:
+state=thermostat.getWaterState(provider.getItemType(itemName));
+break;
+case HOLIDAYTIME:
+state=thermostat.getHolidayTime(provider.getItemType(itemName));
+break;
+case HOLIDAYSET:
+state=thermostat.getHolidaySet(provider.getItemType(itemName));
+break;
+case HOLIDAYMODE:
+state=thermostat.getHolidayMode(provider.getItemType(itemName));
+break;
+case HOLDTIME:
+state=thermostat.getHoldTime(provider.getItemType(itemName));
+break;
+case HOLDMODE:
+state=thermostat.getHoldTime(provider.getItemType(itemName));
+break;
+case STATE:
+state=thermostat.getState(provider.getItemType(itemName));
+break;
+default :
+break;
+}
+if (state != null) {
+eventPublisher.postUpdate(itemName,state);
+}
+ else {
+logger.error("'{}' couldn't be parsed to a State.",itemName);
+}
+}
+}
+}

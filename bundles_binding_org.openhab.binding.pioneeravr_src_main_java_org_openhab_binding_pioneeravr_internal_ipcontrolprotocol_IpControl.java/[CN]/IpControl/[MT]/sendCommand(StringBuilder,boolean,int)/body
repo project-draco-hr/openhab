@@ -1,0 +1,22 @@
+{
+  if (connectSocket()) {
+    try {
+      if (logger.isTraceEnabled()) {
+        logger.trace("Sending {} bytes: {}",ipCmd.length(),DatatypeConverter.printHexBinary(ipCmd.toString().getBytes()));
+      }
+      outStream.writeBytes(ipCmd.toString());
+      outStream.flush();
+    }
+ catch (    IOException ioException) {
+      logger.error("Error occured when sending command",ioException);
+      if (retry > 0) {
+        logger.debug("Retry {}...",retry);
+        closeSocket();
+        sendCommand(ipCmd,closeSocket,retry--);
+      }
+    }
+  }
+  if (closeSocket) {
+    closeSocket();
+  }
+}
