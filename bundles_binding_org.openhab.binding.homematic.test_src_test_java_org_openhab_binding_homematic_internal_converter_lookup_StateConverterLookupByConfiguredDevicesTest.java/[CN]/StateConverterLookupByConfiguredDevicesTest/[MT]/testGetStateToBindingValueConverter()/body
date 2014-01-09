@@ -1,0 +1,10 @@
+{
+  DimmerItem item=new DimmerItem(NUMBER_ITEM_NAME);
+  List<ConfiguredDevice> configuredDevices=new ArrayList<ConfiguredDevice>();
+  DeviceConfigParser parser=new DeviceConfigParser();
+  ConfiguredDevice deviceConfig=parser.parseDeviceConfig("devices/example_device_config.xml");
+  configuredDevices.add(deviceConfig);
+  converterLookup.addConfiguredDevices(configuredDevices);
+  StateConverterMap converter=converterLookup.getStateToBindingValueConverter(item,numberItemAddress);
+  assertEquals(InvertedDoublePercentageConverter.class,converter.get(PercentType.class).getClass());
+}
