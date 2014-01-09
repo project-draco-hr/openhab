@@ -1,9 +1,7 @@
 {
   if (itemConfig == null)   return;
-  String itemName=itemConfig.getItemName();
   String broker=itemConfig.getBroker();
   String topic=itemConfig.getTopic();
-  String region=itemConfig.getRegion();
   MqttitudeConsumer consumer=getConsumer(broker,topic);
   if (consumer == null) {
     consumer=new MqttitudeConsumer(homeLocation,geoFence);
@@ -13,10 +11,5 @@
     if (!consumers.containsKey(broker))     consumers.put(broker,new ArrayList<MqttitudeConsumer>());
     consumers.get(broker).add(consumer);
   }
-  for (  MqttitudeRegion mqttitudeRegion : consumer.getRegions()) {
-    if (mqttitudeRegion.getItemName().equals(itemName)) {
-      consumer.removeRegion(mqttitudeRegion);
-    }
-  }
-  consumer.addRegion(new MqttitudeRegion(itemName,region));
+  consumer.addItemConfig(itemConfig);
 }

@@ -4,14 +4,13 @@
   if (homeLat == 0 || homeLon == 0) {
     homeLocation=null;
     geoFence=0;
-    logger.trace("Home location not configured. All item bindings must be configured with a <region>.");
+    logger.debug("Mqttitude configuration updated, no 'home' location specified. All item bindings must be configured with a <region>.");
   }
  else {
     homeLocation=new Location(homeLat,homeLon);
     geoFence=Float.parseFloat(getOptionalProperty(properties,"geofence","100"));
-    logger.trace("Home location configured at " + homeLocation.toString());
+    logger.debug("Mqttitude configuration updated, 'home' location specified ({}) with a geofence of {}m.",homeLocation.toString(),geoFence);
   }
-  logger.debug("Configuration updated for Mqttitude binding.");
   unregisterAll();
   registerAll();
 }

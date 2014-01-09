@@ -1,9 +1,9 @@
 {
   for (  String broker : consumers.keySet()) {
-    for (    MqttitudeConsumer consumer : getConsumersForBroker(broker)) {
+    for (    MqttitudeConsumer consumer : consumers.get(broker)) {
       logger.debug("Unregistering Mqttitude consumer for " + consumer.getTopic());
       mqttService.unregisterMessageConsumer(broker,consumer);
-      if (consumers.containsKey(broker))       consumers.get(broker).remove(consumer);
     }
   }
+  consumers.clear();
 }

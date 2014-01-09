@@ -1,50 +1,57 @@
 {
   String decoded=new String(payload);
-  logger.trace("Message received on topic '{}': {}",topic,decoded);
+  logger.trace("Message received on topic {}: {}",topic,decoded);
   Map<String,String> jsonPayload=readJsonPayload(decoded);
+  if (jsonPayload == null)   return;
   String type=jsonPayload.get("_type");
   if (StringUtils.isEmpty(type) || !type.equals("location"))   return;
-  for (  MqttitudeRegion region : regions) {
-    logger.trace("Checking item '{}'...",region.getItemName());
-    if (StringUtils.isEmpty(region.getRegion())) {
+  if (itemConfigs.size() == 0) {
+    logger.trace("No items configured for this topic, ignoring");
+    return;
+  }
+  for (  MqttitudeItemConfig itemConfig : itemConfigs.values()) {
+    logger.trace("Checking item {}...",itemConfig.getItemName());
+    if (StringUtils.isEmpty(itemConfig.getRegion())) {
       if (homeLocation == null) {
-        logger.error("Unable to calculate relative location for '{}' as there is no lat/lon configured for 'home'",region.getItemName());
+        logger.error("Unable to calculate relative location for {} as there is no lat/lon configured for 'home'",itemConfig.getItemName());
         continue;
       }
       float latitude=Float.parseFloat(jsonPayload.get("lat"));
       float longitude=Float.parseFloat(jsonPayload.get("lon"));
       Location location=new Location(latitude,longitude);
-      logger.trace("Location received for '{}': {}",region.getItemName(),location.toString());
+      logger.trace("Location received for {}: {}",itemConfig.getItemName(),location.toString());
       double distance=calculateDistance(location,homeLocation);
-      logger.trace("Distance from 'home' calculated as {}m for '{}'",distance,region.getItemName());
       if (distance > geoFence) {
-        logger.debug("'{}' is outside the 'home' geofence ({}m)",region.getItemName(),geoFence);
-        eventPublisher.postUpdate(region.getItemName(),OnOffType.OFF);
+        logger.debug("{} is outside the 'home' geofence ({}m)",itemConfig.getItemName(),distance);
+        eventPublisher.postUpdate(itemConfig.getItemName(),OnOffType.OFF);
       }
  else {
-        logger.debug("'{}' is inside the 'home' geofence ({}m)",region.getItemName(),geoFence);
-        eventPublisher.postUpdate(region.getItemName(),OnOffType.ON);
+        logger.debug("{} is inside the 'home' geofence ({}m)",itemConfig.getItemName(),distance);
+        eventPublisher.postUpdate(itemConfig.getItemName(),OnOffType.ON);
       }
     }
  else {
       String event=jsonPayload.get("event");
       if (StringUtils.isEmpty(event)) {
         logger.trace("Not a location enter/leave event, ignoring");
-        return;
+        continue;
       }
       String desc=jsonPayload.get("desc");
-      if (!region.getRegion().equals(desc)) {
-        logger.trace("Location enter/leave event is for region '{}', ignoring",desc);
-        return;
+      if (StringUtils.isEmpty(desc)) {
+        logger.trace("Location {} event has no region (missing or empty 'desc'), ignoring",event);
+        continue;
       }
-      logger.trace("Received an {} event for region '{}'",event,desc);
+      if (!itemConfig.getRegion().equals(desc)) {
+        logger.trace("Location {} event is for region '{}', ignoring",event,desc);
+        continue;
+      }
       if (event.equals("leave")) {
-        logger.debug("'{}' has left region {}",region.getItemName(),region.getRegion());
-        eventPublisher.postUpdate(region.getItemName(),OnOffType.OFF);
+        logger.debug("{} has left region {}",itemConfig.getItemName(),itemConfig.getRegion());
+        eventPublisher.postUpdate(itemConfig.getItemName(),OnOffType.OFF);
       }
  else {
-        logger.debug("'{}' has entered region {}",region.getItemName(),region.getRegion());
-        eventPublisher.postUpdate(region.getItemName(),OnOffType.ON);
+        logger.debug("{} has entered region {}",itemConfig.getItemName(),itemConfig.getRegion());
+        eventPublisher.postUpdate(itemConfig.getItemName(),OnOffType.ON);
       }
     }
   }
