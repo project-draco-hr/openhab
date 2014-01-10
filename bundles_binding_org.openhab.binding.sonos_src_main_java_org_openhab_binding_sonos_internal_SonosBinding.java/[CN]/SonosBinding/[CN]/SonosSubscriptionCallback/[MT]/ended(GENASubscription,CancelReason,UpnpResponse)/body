@@ -1,2 +1,6 @@
 {
+  logger.warn("The GENA Subscription for serviceID {} ended for device {}",subscription.getService().getServiceId(),subscription.getService().getDevice());
+  Service service=subscription.getService();
+  SonosSubscriptionCallback callback=new SonosSubscriptionCallback(service,interval);
+  upnpService.getControlPoint().execute(callback);
 }

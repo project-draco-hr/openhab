@@ -1,7 +1,7 @@
 {
   boolean result=false;
-  if (sonosID != null) {
-    SonosZonePlayer player=sonosZonePlayerCache.get(sonosID);
+  if (sonosID != null && sonosZonePlayerCache.contains(sonosID)) {
+    SonosZonePlayer player=sonosZonePlayerCache.getById(sonosID);
     if (player != null) {
 switch (sonosCommandType) {
 case SETLED:
@@ -28,10 +28,10 @@ break;
 case GETVOLUME:
 break;
 case ADDMEMBER:
-result=player.addMember(getPlayerForID(commandAsString));
+result=player.addMember(sonosZonePlayerCache.getById(commandAsString));
 break;
 case REMOVEMEMBER:
-result=player.removeMember(getPlayerForID(commandAsString));
+result=player.removeMember(sonosZonePlayerCache.getById(commandAsString));
 break;
 case BECOMESTANDALONEGROUP:
 result=player.becomeStandAlonePlayer();
@@ -71,26 +71,6 @@ break;
  else {
 logger.error("UPNP device is not defined for Sonos Player with ID {}",sonosID);
 return;
-}
-}
-if (result) {
-Type newState=null;
-try {
-newState=createStateForType(sonosCommandType,commandAsString);
-}
- catch (BindingConfigParseException e) {
-logger.error("Error parsing a value {} to a state variable of type {}",commandAsString,sonosCommandType.getTypeClass().toString());
-}
-if (newState != null) {
-if (newState.equals((State)command) || newState instanceof StringType || newState instanceof DecimalType) {
-eventPublisher.postUpdate(itemName,(State)newState);
-}
- else {
-eventPublisher.postUpdate(itemName,(State)command);
-}
-}
- else {
-throw new IllegalClassException("Cannot process update for the command of type " + sonosCommandType.toString());
 }
 }
 }

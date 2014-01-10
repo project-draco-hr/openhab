@@ -1,0 +1,12 @@
+{
+  SonosBindingConfig aBindingConfig=(SonosBindingConfig)bindingConfigs.get(itemName);
+  if (aBindingConfig != null) {
+    for (    Command command : aBindingConfig.keySet()) {
+      SonosBindingConfigElement anElement=aBindingConfig.get(command);
+      if (command == aCommand) {
+        return anElement.getSonosCommand();
+      }
+    }
+  }
+  return null;
+}
