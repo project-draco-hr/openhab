@@ -49,13 +49,7 @@ this.getNode().setNodeStage(NodeStage.WAKEUP);
 this.getNode().advanceNodeStage(NodeStage.DETAILS);
 return;
 }
-logger.debug("Sending {} messages from the wake-up queue of node {}",this.wakeUpQueue.size(),this.getNode().getNodeId());
-while (!this.wakeUpQueue.isEmpty()) {
-serialMessage=this.wakeUpQueue.poll();
-this.getController().sendData(serialMessage);
-}
-logger.trace("No more messages, go back to sleep node {}",this.getNode().getNodeId());
-this.getController().sendData(this.getNoMoreInformationMessage());
+sendPending();
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));

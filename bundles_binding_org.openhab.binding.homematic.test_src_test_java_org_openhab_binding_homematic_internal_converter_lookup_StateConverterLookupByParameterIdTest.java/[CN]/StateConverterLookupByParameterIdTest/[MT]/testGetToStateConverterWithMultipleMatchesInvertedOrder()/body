@@ -1,0 +1,6 @@
+{
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.STATE.name(),OnOffType.class,BooleanOnOffConverter.class);
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.STATE.name(),PercentType.class,IntegerDecimalConverter.class);
+  StateConverter<?,?> toStateConverterNumberItem=parameterIdToStateConverterMap.getBindingValueToStateConverter(new DimmerItem(DIMMER_ITEM_NAME),numberItemAddress);
+  assertEquals(IntegerDecimalConverter.class,toStateConverterNumberItem.getClass());
+}

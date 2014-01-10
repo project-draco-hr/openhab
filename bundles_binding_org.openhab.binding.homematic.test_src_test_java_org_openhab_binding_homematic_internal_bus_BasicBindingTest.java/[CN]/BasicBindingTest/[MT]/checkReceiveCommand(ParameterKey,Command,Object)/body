@@ -1,7 +1,8 @@
 {
   HomematicParameterAddress paramAddress=HomematicParameterAddress.from(MOCK_PARAM_ADDRESS,parameterKey.name());
   provider.setParameterAddress(paramAddress);
-  binding.internalReceiveCommand("default",command);
+  binding.configureConverterForItem(provider,ITEM_NAME,paramAddress,provider.getItem(ITEM_NAME));
+  binding.internalReceiveCommand(ITEM_NAME,command);
   Object value=values.get(parameterKey.name());
   assertEquals("Value",expectedValue,value);
 }
