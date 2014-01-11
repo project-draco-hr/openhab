@@ -15,7 +15,7 @@ if (serialMessage.getMessagePayload().length < offset + 4) {
 logger.error("Unusual response: WAKE_UP_INTERVAL_REPORT with length = {}. Ignored.",serialMessage.getMessagePayload().length);
 return;
 }
-int targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
+targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
 int receivedInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 2)) << 8) | (serialMessage.getMessagePayloadByte(offset + 3));
 logger.debug(String.format("Wake up interval report for nodeId = %d, value = %d seconds, targetNodeId = %d",this.getNode().getNodeId(),receivedInterval,targetNodeId));
 if (targetNodeId != this.getController().getOwnNodeId()) return;
