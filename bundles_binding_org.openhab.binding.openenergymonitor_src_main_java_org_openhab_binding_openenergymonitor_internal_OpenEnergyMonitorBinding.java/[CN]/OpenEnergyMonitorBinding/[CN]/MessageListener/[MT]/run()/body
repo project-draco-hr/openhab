@@ -10,15 +10,10 @@
  catch (  OpenEnergyMonitorException e) {
     logger.error("Error occured when connecting to Open Energy Monitor device",e);
   }
-  long lastTime=0;
   while (!interrupted) {
     try {
       byte[] data=connector.receiveDatagram();
-      long dataReceived=System.currentTimeMillis();
-      long timeElapsed=dataReceived - (lastTime == 0 ? dataReceived : lastTime);
-      lastTime=dataReceived;
       logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
-      logger.debug("time elapsed {}ms",timeElapsed);
       HashMap<String,Number> vals=dataParser.parseData(data);
       for (      OpenEnergyMonitorBindingProvider provider : providers) {
         for (        String itemName : provider.getItemNames()) {
@@ -30,18 +25,21 @@
               org.openhab.core.types.State state=null;
               String variable=provider.getVariable(itemName);
               if (variable.equals(key)) {
-                OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
-                state=calculate(itemName,function,timeElapsed,value);
+                state=new DecimalType(value.doubleValue());
                 found=true;
               }
  else               if (variable.contains(key) && variable.matches(".*[+-/*^%].*")) {
                 logger.debug("Eval key={}, variable={}",key,variable);
                 String tmp=replaceVariables(vals,variable);
-                double result=new DoubleEvaluator().evaluate(tmp);
-                logger.debug("Eval '{}={}={}'",variable,tmp,result);
-                OpenEnergyMonitorFunctionType function=provider.getFunction(itemName);
-                state=calculate(itemName,function,timeElapsed,result);
-                found=true;
+                try {
+                  double result=new DoubleEvaluator().evaluate(tmp);
+                  logger.debug("Eval '{}={}={}'",variable,tmp,result);
+                  state=new DecimalType(result);
+                  found=true;
+                }
+ catch (                Exception e) {
+                  logger.error("Error occured during data evaluation",e);
+                }
               }
               if (found) {
                 state=transformData(provider.getTransformationType(itemName),provider.getTransformationFunction(itemName),state);

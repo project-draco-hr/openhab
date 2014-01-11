@@ -5,22 +5,7 @@
   if (configParts.length > 2) {
     throw new BindingConfigParseException("Open Energy Monitor binding must contain 1-2 parts separated by ':'");
   }
-  try {
-    String[] parts=splitTransformationConfig(configParts[0].trim());
-    if (parts.length > 1) {
-      try {
-        config.function=OpenEnergyMonitorFunctionType.getFunctionType(parts[0]);
-      }
- catch (      IllegalArgumentException e) {
-        throw new BindingConfigParseException("'" + parts[0] + "' is not a valid function type");
-      }
-      config.variable=parts[1];
-    }
-  }
- catch (  IllegalArgumentException e) {
-    config.variable=configParts[0].trim();
-    config.function=null;
-  }
+  config.variable=configParts[0].trim();
   if (configParts.length == 2) {
     String[] parts=splitTransformationConfig(configParts[1].trim());
     config.transformationType=parts[0];
