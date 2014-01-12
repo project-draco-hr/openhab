@@ -41,15 +41,13 @@ break;
 case WAKE_UP_NOTIFICATION:
 logger.trace("Process Wake Up Notification");
 logger.debug("Node {} is awake",this.getNode().getNodeId());
-this.setAwake(true);
 serialMessage.setTransActionCanceled(true);
 if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().getNodeStage() == NodeStage.DEAD)) {
 logger.info("Got Wake Up Notification from node {}, continuing initialization.",this.getNode().getNodeId());
 this.getNode().setNodeStage(NodeStage.WAKEUP);
 this.getNode().advanceNodeStage(NodeStage.DETAILS);
-return;
 }
-sendPending();
+this.setAwake(true);
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
