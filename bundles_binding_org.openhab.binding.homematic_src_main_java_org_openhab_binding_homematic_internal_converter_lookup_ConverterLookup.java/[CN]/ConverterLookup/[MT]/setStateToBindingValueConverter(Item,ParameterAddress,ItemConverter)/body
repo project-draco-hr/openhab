@@ -1,0 +1,14 @@
+{
+  StateConverterMap toBindingValueConverter;
+  if (converterLookupByCustomConverter.getStateToBindingValueConverter(item,parameterAddress) != null) {
+    toBindingValueConverter=converterLookupByCustomConverter.getStateToBindingValueConverter(item,parameterAddress);
+  }
+ else   if (stateConverterLookupByConfiguredDevices.getStateToBindingValueConverter(item,parameterAddress) != null) {
+    toBindingValueConverter=stateConverterLookupByConfiguredDevices.getStateToBindingValueConverter(item,parameterAddress);
+  }
+ else {
+    toBindingValueConverter=converterLookupByParameterId.getStateToBindingValueConverter(item,parameterAddress);
+  }
+  itemConverter.setStateToBindingValueConverter(toBindingValueConverter);
+  logger.debug("StateConverterMap {} initialised for StateToBinding.",toBindingValueConverter);
+}

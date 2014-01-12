@@ -5,4 +5,14 @@
     }
   }
 );
+  converterLookupByConfiguredDevices=new StateConverterLookupByConfiguredDevices();
+  DeviceConfigLocator locator=new DeviceConfigLocator("HM-CC-RT-DN.xml","HM-LC-Dim1L-Pl.xml","HM-LC-BI1PBU-FM.xml","HM-LC-Bl1-FM.xml","HM-LC-Dim2L-SM.xml","HM-LC-Dim2L-CV.xml","HM-LC-Dim1L-CV.xml","HM-LC-Dim1T-Pl.xml","HM-LC-Dim1T-CV.xml","HM-LC-Dim2T-SM.xml","HM-PB-4DIS-WM.xml","HM-Sec-SD.xml","HM-Sec-SC.xml","HM-Sec-RHS.xml");
+  List<ConfiguredDevice> configuredDevices=locator.findAll();
+  converterLookupByConfiguredDevices.addConfiguredDevices(configuredDevices);
+  converterLookup.setConverterLookupByConfiguredDevices(converterLookupByConfiguredDevices);
+  converterLookupByCustomConverter=new StateConverterLookupByCustomConverter();
+  converterLookup.setConverterLookupByCustomConverter(converterLookupByCustomConverter);
+  converterLookupByParameterId=new StateConverterLookupByParameterId();
+  new StateConverterLookupByParameterIdConfigurer().configure(converterLookupByParameterId);
+  converterLookup.setConverterLookupByParameterId(converterLookupByParameterId);
 }
