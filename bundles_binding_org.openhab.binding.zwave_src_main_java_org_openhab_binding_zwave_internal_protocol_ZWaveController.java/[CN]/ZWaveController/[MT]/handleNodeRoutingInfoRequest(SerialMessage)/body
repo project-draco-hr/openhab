@@ -1,9 +1,9 @@
 {
-  logger.debug("Got NodeRoutingInfo request (Node {}).",networkCmdNode);
-  ZWaveNode node=getNode(networkCmdNode);
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("Got NodeRoutingInfo request (Node {}).",nodeId);
+  ZWaveNode node=getNode(nodeId);
   if (node == null) {
-    logger.error("Routing information for unknown node {}",networkCmdNode);
-    networkCmdNode=0;
+    logger.error("Routing information for unknown node {}",nodeId);
     transactionCompleted.release();
     return;
   }
@@ -21,6 +21,5 @@
   if (!hasNeighbors) {
     logger.debug("No neighbors reported");
   }
-  networkCmdNode=0;
   transactionCompleted.release();
 }

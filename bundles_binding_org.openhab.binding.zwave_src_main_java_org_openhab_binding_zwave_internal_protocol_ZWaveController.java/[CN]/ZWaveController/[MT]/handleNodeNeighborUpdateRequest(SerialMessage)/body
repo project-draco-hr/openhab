@@ -2,7 +2,8 @@
   final int REQUEST_NEIGHBOR_UPDATE_STARTED=0x21;
   final int REQUEST_NEIGHBOR_UPDATE_DONE=0x22;
   final int REQUEST_NEIGHBOR_UPDATE_FAILED=0x23;
-  logger.debug("Got NodeNeighborUpdate request (Node {}).",networkCmdNode);
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("Got NodeNeighborUpdate request (Node {}).",nodeId);
 switch (incomingMessage.getMessagePayloadByte(1)) {
 case REQUEST_NEIGHBOR_UPDATE_STARTED:
     logger.error("NodeNeighborUpdate STARTED");
@@ -10,11 +11,9 @@ case REQUEST_NEIGHBOR_UPDATE_STARTED:
 case REQUEST_NEIGHBOR_UPDATE_DONE:
 logger.error("NodeNeighborUpdate DONE");
 transactionCompleted.release();
-networkCmdNode=0;
 break;
 case REQUEST_NEIGHBOR_UPDATE_FAILED:
 logger.error("NodeNeighborUpdate FAILED");
-networkCmdNode=0;
 transactionCompleted.release();
 break;
 }
