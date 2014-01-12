@@ -1,0 +1,57 @@
+{
+  String MaxCubeIP=null;
+  String MaxCubeName=null;
+  String rfAddress=null;
+  Logger logger=LoggerFactory.getLogger(MaxCubeDiscover.class);
+  try {
+    DatagramSocket i=new DatagramSocket();
+    i.setBroadcast(true);
+    byte[] sendData="eQ3Max*\0**********I".getBytes();
+    Enumeration<NetworkInterface> interfaces=NetworkInterface.getNetworkInterfaces();
+    while (interfaces.hasMoreElements()) {
+      NetworkInterface networkInterface=(NetworkInterface)interfaces.nextElement();
+      if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+        continue;
+      }
+      for (      InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+        InetAddress broadcast=interfaceAddress.getBroadcast();
+        if (broadcast == null) {
+          continue;
+        }
+        try {
+          DatagramPacket sendPacket=new DatagramPacket(sendData,sendData.length,broadcast,23272);
+          i.send(sendPacket);
+        }
+ catch (        Exception e) {
+        }
+        logger.trace("Request packet sent to: " + broadcast.getHostAddress() + "; Interface: "+ networkInterface.getDisplayName());
+      }
+    }
+    logger.trace("Done looping over all network interfaces. Now waiting for a reply!");
+    i.close();
+    DatagramSocket c=new DatagramSocket(23272);
+    c.setReuseAddress(true);
+    byte[] recvBuf=new byte[15000];
+    DatagramPacket receivePacket=new DatagramPacket(recvBuf,recvBuf.length);
+    c.receive(receivePacket);
+    logger.trace(">>> Broadcast response from server: " + receivePacket.getAddress());
+    String message=new String(receivePacket.getData()).trim();
+    if (message.startsWith("eQ3Max")) {
+      MaxCubeIP=receivePacket.getAddress().getHostAddress();
+      MaxCubeName=message.substring(0,8);
+      rfAddress=message.substring(8,18);
+      logger.debug("Found at: " + MaxCubeIP);
+      logger.debug("Name    : " + MaxCubeName);
+      logger.debug("Serial  : " + rfAddress);
+      logger.trace("Message : " + message);
+    }
+ else {
+      logger.debug("No Maxcube Found");
+    }
+    c.close();
+  }
+ catch (  IOException ex) {
+    logger.debug(ex.toString());
+  }
+  return MaxCubeIP;
+}
