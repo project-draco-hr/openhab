@@ -27,8 +27,9 @@ newPercent=100;
 }
 PercentType newValue=new PercentType(newPercent);
 if (bulb > 5) {
-int increasePercent=newPercent * 31 / 100;
+int increasePercent=newPercent * rgbwSteps / 100;
 messageBytes="4E:" + Integer.toHexString(increasePercent) + ":55";
+logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
 }
 sendMessage(messageBytes,bridgeId);
 setCurrentState(bulb,bridgeId,newValue,BindingType.brightness);

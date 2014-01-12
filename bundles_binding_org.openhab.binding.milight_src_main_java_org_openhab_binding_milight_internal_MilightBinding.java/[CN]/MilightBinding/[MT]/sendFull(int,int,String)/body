@@ -24,7 +24,8 @@ case 10:
 try {
 sendOn(bulb,bridgeId);
 Thread.sleep(100);
-messageBytes="4E:1F:55";
+messageBytes="4E:" + Integer.toHexString(rgbwSteps) + ":55";
+logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
 }
  catch (InterruptedException e) {
 logger.debug("Sleeping thread has been interrupted.");
