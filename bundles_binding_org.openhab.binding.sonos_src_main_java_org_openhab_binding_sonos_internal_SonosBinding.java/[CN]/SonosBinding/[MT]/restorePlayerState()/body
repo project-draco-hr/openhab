@@ -3,17 +3,17 @@ synchronized (this) {
     if (sonosSavedGroupState != null && sonosSavedPlayerState != null) {
       for (      SonosZoneGroup group : sonosSavedGroupState) {
         for (        String playerName : group.getMembers()) {
-          SonosZonePlayer player=getPlayerForID(playerName);
+          SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
           if (player != null) {
             player.becomeStandAlonePlayer();
           }
         }
       }
       for (      SonosZoneGroup group : sonosSavedGroupState) {
-        SonosZonePlayer coordinator=getPlayerForID(group.getCoordinator());
+        SonosZonePlayer coordinator=sonosZonePlayerCache.getById(group.getCoordinator());
         if (coordinator != null) {
           for (          String playerName : group.getMembers()) {
-            SonosZonePlayer player=getPlayerForID(playerName);
+            SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
             if (player != null) {
               coordinator.addMember(player);
             }
@@ -21,9 +21,9 @@ synchronized (this) {
         }
       }
       for (      SonosZoneGroup group : sonosSavedGroupState) {
-        SonosZonePlayer coordinator=getPlayerForID(group.getCoordinator());
+        SonosZonePlayer coordinator=sonosZonePlayerCache.getById(group.getCoordinator());
         for (        String playerName : group.getMembers()) {
-          SonosZonePlayer player=getPlayerForID(playerName);
+          SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
           if (player != null) {
             SonosZonePlayerState saveState=sonosSavedPlayerState.get(playerName);
             player.setVolume(saveState.volume);
