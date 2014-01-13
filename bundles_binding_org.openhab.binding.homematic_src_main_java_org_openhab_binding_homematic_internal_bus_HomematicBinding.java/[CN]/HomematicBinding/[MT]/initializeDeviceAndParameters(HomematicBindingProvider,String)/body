@@ -6,14 +6,12 @@
     return;
   }
   HomematicParameterAddress parameterAddress=provider.getParameterAddress(itemName);
-  if (provider.getConverter(itemName) != null) {
-    converterFactory.addCustomConverter(parameterAddress,provider.getConverter(itemName));
-  }
   Item item=provider.getItem(itemName);
   if (item == null) {
     logger.warn("No item found for " + parameterAddress + " - doing nothing.");
     return;
   }
+  configureConverterForItem(provider,itemName,parameterAddress,item);
   State value=getValueFromDevice(parameterAddress,item);
-  eventPublisher.postUpdate(itemName,value);
+  postUpdate(itemName,value);
 }

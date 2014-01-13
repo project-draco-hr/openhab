@@ -1,0 +1,8 @@
+{
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.BRIGHTNESS.name(),OnOffType.class,IntegerDecimalConverter.class);
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.STATE.name(),OnOffType.class,BooleanOnOffConverter.class);
+  converterLookup.configureItem(new SwitchItem(SWITCH_ITEM_NAME),switchItemAddress);
+  StateConverter<?,?> toStateConverter=converterLookup.getBindingValueToStateConverter(SWITCH_ITEM_NAME);
+  assertNotNull(toStateConverter);
+  assertEquals(BooleanOnOffConverter.class,toStateConverter.getClass());
+}

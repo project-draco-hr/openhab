@@ -1,0 +1,6 @@
+{
+  parameterIdToStateConverterMap.addStateConverter(ParameterKey.STATE.name(),DecimalType.class,IntegerDecimalConverter.class);
+  StateConverter<?,?> toStateConverter=parameterIdToStateConverterMap.getBindingValueToStateConverter(new NumberItem(NUMBER_ITEM_NAME),numberItemAddress);
+  assertNotNull(toStateConverter);
+  assertEquals(IntegerDecimalConverter.class,toStateConverter.getClass());
+}

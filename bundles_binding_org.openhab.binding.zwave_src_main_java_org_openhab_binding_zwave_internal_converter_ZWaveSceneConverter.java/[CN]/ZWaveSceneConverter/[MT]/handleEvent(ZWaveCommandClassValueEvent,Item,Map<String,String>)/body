@@ -1,0 +1,12 @@
+{
+  int scene=Integer.parseInt(arguments.get("scene"));
+  if (scene != (Integer)event.getValue())   return;
+  Integer state=Integer.parseInt(arguments.get("state"));
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,state);
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+    return;
+  }
+  State itemState=converter.convertFromValueToState(event.getValue());
+  this.getEventPublisher().postUpdate(item.getName(),itemState);
+}
