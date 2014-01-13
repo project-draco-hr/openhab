@@ -1,0 +1,67 @@
+{
+  if (BindingType.brightness.equals(type) && command.equals(PercentType.ZERO)) {
+    sendOff(bulb,bridgeId);
+    return;
+  }
+  if (BindingType.brightness.equals(type) && command.equals(PercentType.HUNDRED)) {
+    sendFull(bulb,rgbwSteps,bridgeId);
+    return;
+  }
+  PercentType oldPercent=getCurrentState(bulb,bridgeId,type);
+  if (oldPercent.equals(PercentType.ZERO))   sendOn(bulb,bridgeId);
+  try {
+    if (bulb < 6) {
+      if (command.compareTo(oldPercent) > 0) {
+        int repeatCount=(command.intValue() - oldPercent.intValue()) / 10;
+        for (int i=0; i <= repeatCount; i++) {
+          Thread.sleep(100);
+          if (BindingType.brightness.equals(type) && bulb < 6) {
+            sendIncrease(bulb,rgbwSteps,bridgeId);
+          }
+ else           if (BindingType.colorTemperature.equals(type)) {
+            sendWarmer(bulb,bridgeId);
+          }
+ else           if (BindingType.discoSpeed.equals(type)) {
+            sendIncreaseSpeed(bulb,bridgeId);
+          }
+ else           if (BindingType.discoMode.equals(type)) {
+            sendDiscoModeUp(bulb,bridgeId);
+          }
+        }
+      }
+ else       if (command.compareTo(oldPercent) < 0) {
+        int repeatCount=(oldPercent.intValue() - command.intValue()) / 10;
+        for (int i=0; i <= repeatCount; i++) {
+          Thread.sleep(100);
+          if (BindingType.brightness.equals(type) && bulb < 6) {
+            sendDecrease(bulb,rgbwSteps,bridgeId);
+          }
+ else           if (BindingType.colorTemperature.equals(type)) {
+            sendCooler(bulb,bridgeId);
+          }
+ else           if (BindingType.discoSpeed.equals(type)) {
+            sendDecreaseSpeed(bulb,bridgeId);
+          }
+ else           if (BindingType.discoMode.equals(type)) {
+            sendDiscoModeDown(bulb,bridgeId);
+          }
+        }
+      }
+    }
+ else     if (bulb > 5) {
+      logger.debug("milight: Dimming RGBW bulb");
+      if (command.intValue() > 0 && command.intValue() < 100) {
+        int newCommand=(command.intValue() * rgbwSteps / 100);
+        sendOn(bulb,bridgeId);
+        Thread.sleep(100);
+        String messageBytes="4E:" + Integer.toHexString(newCommand) + ":55";
+        logger.debug("milight: send dimming packet '{}' to RGBW bulb channel '{}'",messageBytes,bulb);
+        sendMessage(messageBytes,bridgeId);
+      }
+    }
+    setCurrentState(bulb,bridgeId,command,type);
+  }
+ catch (  InterruptedException e) {
+    logger.debug("Sleeping thread has been interrupted.");
+  }
+}
