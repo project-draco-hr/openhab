@@ -1,5 +1,5 @@
 {
-  for (  CULListener listener : listeners) {
-    listener.dataReceived(data);
+  for (  final CULListener listener : listeners) {
+    receiveExecutor.execute(new NotifyDataReceivedRunner(listener,data));
   }
 }
