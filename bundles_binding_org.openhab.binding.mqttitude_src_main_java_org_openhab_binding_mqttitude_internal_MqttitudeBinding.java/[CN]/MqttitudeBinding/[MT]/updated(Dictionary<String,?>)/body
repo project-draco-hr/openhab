@@ -1,15 +1,17 @@
 {
-  if (properties == null || properties.isEmpty()) {
-    logger.trace("No config properties available.");
-    return;
+  if (properties == null || properties.size() == 0)   return;
+  float homeLat=Float.parseFloat(getOptionalProperty(properties,"home.lat","0"));
+  float homeLon=Float.parseFloat(getOptionalProperty(properties,"home.lon","0"));
+  if (homeLat == 0 || homeLon == 0) {
+    homeLocation=null;
+    geoFence=0;
+    logger.debug("Mqttitude binding configuration updated, no 'home' location specified. All item bindings must be configured with a <region>.");
   }
-  float homeLat=Float.parseFloat(getMandatoryProperty(properties,"home.lat"));
-  float homeLon=Float.parseFloat(getMandatoryProperty(properties,"home.lon"));
-  if (homeLat == 0)   throw new ConfigurationException("mqttitude:home.lat","No latitude specified for 'home'");
-  if (homeLon == 0)   throw new ConfigurationException("mqttitude:home.lon","No longitude specified for 'home'");
-  homeLocation=new Location(homeLat,homeLon);
-  geoFence=Float.parseFloat(getOptionalProperty(properties,"geofence","100"));
-  logger.debug("Configuration updated for Mqttitude binding.");
-  unregisterConsumers();
-  registerConsumers();
+ else {
+    homeLocation=new Location(homeLat,homeLon);
+    geoFence=Float.parseFloat(getOptionalProperty(properties,"geofence","100"));
+    logger.debug("Mqttitude binding configuration updated, 'home' location specified ({}) with a geofence of {}m.",homeLocation.toString(),geoFence);
+  }
+  unregisterAll();
+  registerAll();
 }
