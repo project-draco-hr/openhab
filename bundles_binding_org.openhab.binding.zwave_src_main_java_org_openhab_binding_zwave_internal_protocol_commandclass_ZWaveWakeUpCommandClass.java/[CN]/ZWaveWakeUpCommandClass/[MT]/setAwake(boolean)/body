@@ -1,3 +1,13 @@
 {
   this.isAwake=isAwake;
+  if (isAwake) {
+    SerialMessage serialMessage;
+    logger.debug("Sending {} messages from the wake-up queue of node {}",this.wakeUpQueue.size(),this.getNode().getNodeId());
+    while (!this.wakeUpQueue.isEmpty()) {
+      serialMessage=this.wakeUpQueue.poll();
+      this.getController().sendData(serialMessage);
+    }
+    logger.trace("No more messages, go back to sleep node {}",this.getNode().getNodeId());
+    this.getController().sendData(this.getNoMoreInformationMessage());
+  }
 }

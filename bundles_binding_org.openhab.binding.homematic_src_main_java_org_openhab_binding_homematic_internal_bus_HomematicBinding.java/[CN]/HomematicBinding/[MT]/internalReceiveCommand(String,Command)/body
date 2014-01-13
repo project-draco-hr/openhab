@@ -1,4 +1,5 @@
 {
+  logger.debug("Received command {} for item {}",command,itemName);
   for (  HomematicBindingProvider provider : providers) {
     logger.debug("Checking provider with names {}",provider.getItemNames());
     if (provider.isAdminItem(itemName)) {
@@ -6,20 +7,32 @@
     }
  else {
       HomematicParameterAddress parameterAddress=provider.getParameterAddress(itemName);
-      Item item=provider.getItem(itemName);
-      State actualState=item.getState();
-      String parameterKey=parameterAddress.getParameterId();
-      CommandConverter<?,?> commandConverter=converterFactory.getCommandConverter(parameterAddress,command);
-      if (commandConverter == null) {
-        logger.warn("No command converter found for {}. No command will be executed.",parameterAddress);
-        return;
+      State actualState=itemStates.get(itemName);
+      if (actualState == null) {
+        actualState=UnDefType.NULL;
       }
-      State newState=commandConverter.convertFrom(actualState,command);
+      String parameterKey=parameterAddress.getParameterId();
+      State newState;
+      CommandConverter<?,?> commandConverter=converterLookup.getCommandToBindingValueConverter(itemName,command.getClass());
+      if (commandConverter == null) {
+        if (command instanceof State) {
+          logger.debug("CommandConverter not found, using state instead.");
+          State state=(State)command;
+          newState=state;
+        }
+ else {
+          logger.warn("No command converter found for {}. No command will be executed.",parameterAddress);
+          return;
+        }
+      }
+ else {
+        newState=commandConverter.convertFrom(actualState,command);
+      }
       logger.debug("Setting new state " + newState + " on item "+ itemName);
       if (command instanceof StopMoveType && parameterKey.equals(ParameterKey.LEVEL.name())) {
         parameterAddress=HomematicParameterAddress.from(parameterAddress.getAddress(),ParameterKey.STOP.name());
       }
-      setStateOnDevice(newState,parameterAddress);
+      setStateOnDevice(newState,parameterAddress,itemName);
     }
   }
 }
