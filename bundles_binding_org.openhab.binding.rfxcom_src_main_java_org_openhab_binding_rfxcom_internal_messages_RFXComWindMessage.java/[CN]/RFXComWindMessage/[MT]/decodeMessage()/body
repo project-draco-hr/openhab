@@ -1,0 +1,17 @@
+{
+  byte[] data=new byte[16];
+  data[0]=0x10;
+  data[1]=RFXComBaseMessage.PacketType.RAIN.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  short WindD=(short)Math.abs(windDirection);
+  data[6]=(byte)((WindD >> 8) & 0xFF);
+  data[7]=(byte)(WindD & 0xFF);
+  int WindS=(short)Math.abs(windSpeed) * 10;
+  data[10]=(byte)((WindS >> 8) & 0xFF);
+  data[11]=(byte)(WindS & 0xFF);
+  data[16]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}
