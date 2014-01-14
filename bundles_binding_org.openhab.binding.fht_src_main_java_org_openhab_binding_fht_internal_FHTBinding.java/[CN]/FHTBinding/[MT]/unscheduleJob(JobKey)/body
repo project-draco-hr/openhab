@@ -1,0 +1,12 @@
+{
+  if (jobKey == null) {
+    return;
+  }
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    sched.deleteJob(jobKey);
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error while unscheduling time update job",e);
+  }
+}

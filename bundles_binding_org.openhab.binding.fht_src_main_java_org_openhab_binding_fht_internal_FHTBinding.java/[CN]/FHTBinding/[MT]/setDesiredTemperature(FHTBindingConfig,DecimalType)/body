@@ -1,0 +1,12 @@
+{
+  double temperature=command.doubleValue();
+  if ((temperature >= 5.5) && (temperature <= 30.5)) {
+    int temp=(int)(temperature * 2.0);
+    FHTDesiredTemperatureCommand commandItem=new FHTDesiredTemperatureCommand(config.getFullAddress(),"41" + Integer.toHexString(temp));
+    logger.debug("Queuing new desired temperature");
+    temperatureCommandQueue.put(config.getFullAddress(),commandItem);
+  }
+ else {
+    logger.error("The desired temperature is outside of the valid range");
+  }
+}

@@ -1,0 +1,13 @@
+{
+  StringBuffer sendBuffer=new StringBuffer(8);
+  sendBuffer.append('F');
+  sendBuffer.append(device);
+  sendBuffer.append(register);
+  sendBuffer.append(value);
+  try {
+    cul.send(sendBuffer.toString());
+  }
+ catch (  CULCommunicationException e) {
+    logger.error("Error while writing register " + register + " on device "+ device);
+  }
+}

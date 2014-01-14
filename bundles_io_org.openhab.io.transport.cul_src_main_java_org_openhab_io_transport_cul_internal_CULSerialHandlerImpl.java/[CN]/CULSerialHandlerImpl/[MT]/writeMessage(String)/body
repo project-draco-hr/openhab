@@ -1,0 +1,15 @@
+{
+  log.debug("Sending raw message to CUL: " + message);
+  if (bw == null) {
+    log.error("Can't write message, BufferedWriter is NULL");
+  }
+synchronized (bw) {
+    try {
+      bw.write(message);
+      bw.flush();
+    }
+ catch (    IOException e) {
+      log.error("Can't write to CUL",e);
+    }
+  }
+}
