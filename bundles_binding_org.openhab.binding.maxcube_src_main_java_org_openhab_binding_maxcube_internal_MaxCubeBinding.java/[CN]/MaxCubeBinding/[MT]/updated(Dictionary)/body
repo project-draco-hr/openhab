@@ -2,7 +2,9 @@
   if (config != null) {
     ip=(String)config.get("ip");
     if (StringUtils.isBlank(ip)) {
-      throw new ConfigurationException("maxcube:ip","IP address for MAX!Cube must be set");
+      ip=MaxCubeDiscover.DiscoverIP();
+      if (ip == null)       throw new ConfigurationException("maxcube:ip","IP address for MAX!Cube must be set");
+ else       logger.info("Discovered MAX!Cube lan gateway at '{}'",ip);
     }
     String portString=(String)config.get("port");
     if (portString != null && !portString.isEmpty()) {
