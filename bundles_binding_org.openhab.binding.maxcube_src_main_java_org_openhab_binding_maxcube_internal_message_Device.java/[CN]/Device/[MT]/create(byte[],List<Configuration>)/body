@@ -4,6 +4,9 @@
   }
   String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
   Device device=Device.create(rfAddress,configurations);
+  if (device == null) {
+    logger.warn("Can't create device from received message, returning NULL.");
+  }
   boolean[] bits1=Utils.getBits(Utils.fromByte(raw[4]));
   boolean[] bits2=Utils.getBits(Utils.fromByte(raw[5]));
   device.setInitialized(bits1[1]);
@@ -18,6 +21,7 @@
 switch (device.getType()) {
 case WallMountedThermostat:
 case HeatingThermostat:
+case HeatingThermostatPlus:
     HeatingThermostat heatingThermostat=(HeatingThermostat)device;
   if (bits2[0] == false && bits2[0] == false) {
     heatingThermostat.setMode(ThermostatModeType.AUTOMATIC);
@@ -53,6 +57,7 @@ shutterContact.setShutterState(OpenClosedType.CLOSED);
 }
 break;
 default :
+break;
 }
 return device;
 }

@@ -1,5 +1,5 @@
 {
-  String commandString=baseString + rfAddress + "01"+ Utils.toHex(bits);
-  byte[] encodedString=Base64.encodeBase64(commandString.getBytes());
-  return "s:" + encodedString + "\r\n";
+  String commandString=baseString + rfAddress + Utils.toHex(roomId)+ Utils.toHex(bits);
+  String encodedString=Base64.encodeBase64String(Utils.hexStringToByteArray(commandString));
+  return "s:" + encodedString;
 }
