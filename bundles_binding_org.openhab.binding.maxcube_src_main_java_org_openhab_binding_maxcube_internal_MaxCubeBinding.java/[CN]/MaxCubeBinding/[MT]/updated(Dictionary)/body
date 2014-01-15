@@ -2,9 +2,7 @@
   if (config != null) {
     ip=(String)config.get("ip");
     if (StringUtils.isBlank(ip)) {
-      ip=MaxCubeDiscover.DiscoverIP();
-      if (ip == null)       throw new ConfigurationException("maxcube:ip","IP address for MAX!Cube must be set");
- else       logger.info("Discovered MAX!Cube lan gateway at '{}'",ip);
+      ip=discoveryGatewayIP();
     }
     String portString=(String)config.get("port");
     if (portString != null && !portString.isEmpty()) {
@@ -16,5 +14,8 @@
     if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
+  }
+ else {
+    ip=discoveryGatewayIP();
   }
 }
