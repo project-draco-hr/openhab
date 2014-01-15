@@ -1,6 +1,4 @@
 {
-  configurations=new ArrayList<Configuration>();
-  devices=new ArrayList<Device>();
   Socket socket=null;
   BufferedReader reader=null;
   try {
@@ -19,12 +17,52 @@
         message=processRawMessage(raw);
         message.debug(logger);
         if (message != null) {
-          if (message.getType() == MessageType.C) {
-            configurations.add(Configuration.create(message));
+          if (message.getType() == MessageType.M) {
+            M_Message msg=(M_Message)message;
+            for (            DeviceInformation di : msg.devices) {
+              Configuration c=null;
+              for (              Configuration conf : configurations) {
+                if (conf.getSerialNumber().equalsIgnoreCase(di.getSerialNumber())) {
+                  c=conf;
+                  break;
+                }
+              }
+              if (c != null) {
+                configurations.remove(c);
+              }
+              c=Configuration.create(di);
+              configurations.add(c);
+              c.setRoomId(di.getRoomId());
+            }
+          }
+ else           if (message.getType() == MessageType.C) {
+            Configuration c=null;
+            for (            Configuration conf : configurations) {
+              if (conf.getSerialNumber().equalsIgnoreCase(((C_Message)message).getSerialNumber())) {
+                c=conf;
+                break;
+              }
+            }
+            if (c == null) {
+              configurations.add(Configuration.create(message));
+            }
+ else {
+              c.setValues((C_Message)message);
+            }
           }
  else           if (message.getType() == MessageType.L) {
-            devices.addAll(((L_Message)message).getDevices(configurations));
-            logger.info(devices.size() + " devices found.");
+            Collection<? extends Device> tempDevices=((L_Message)message).getDevices(configurations);
+            for (            Device d : tempDevices) {
+              Device existingDevice=findDevice(d.getSerialNumber(),devices);
+              if (existingDevice == null) {
+                devices.add(d);
+              }
+ else {
+                devices.remove(existingDevice);
+                devices.add(d);
+              }
+            }
+            logger.debug("{} devices found.",devices.size());
             cont=false;
           }
         }
@@ -53,6 +91,7 @@
           continue;
         }
 switch (device.getType()) {
+case HeatingThermostatPlus:
 case HeatingThermostat:
           if (provider.getBindingType(itemName) == BindingType.VALVE) {
             eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());

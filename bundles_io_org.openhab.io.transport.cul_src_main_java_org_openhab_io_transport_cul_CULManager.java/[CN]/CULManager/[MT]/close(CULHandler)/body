@@ -1,0 +1,20 @@
+{
+synchronized (openDevices) {
+    if (handler instanceof CULHandlerInternal) {
+      CULHandlerInternal internalHandler=(CULHandlerInternal)handler;
+      if (!internalHandler.hasListeners()) {
+        openDevices.remove(handler);
+        try {
+          handler.send("X00");
+        }
+ catch (        CULCommunicationException e) {
+          logger.warn("Couldn't reset rf mode to X00");
+        }
+        internalHandler.close();
+      }
+ else {
+        logger.warn("Can't close device because it still has listeners");
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  S300THBindingConfig config=new S300THBindingConfig();
+  String[] parts=bindingConfig.split(";");
+  for (  String part : parts) {
+    String[] keyValue=part.split("=");
+    keyValue[0]=keyValue[0].trim();
+    keyValue[1]=keyValue[1].trim();
+    if (keyValue[0].equals("address")) {
+      config.address=keyValue[1];
+    }
+    if (keyValue[0].equals("datapoint")) {
+      config.datapoint=Datapoint.valueOf(keyValue[1]);
+    }
+  }
+  config.item=item;
+  addBindingConfig(item,config);
+}

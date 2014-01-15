@@ -1,0 +1,74 @@
+{
+  logger.debug("Received FHT message");
+  if (data.length() >= 13) {
+    logger.debug("Received FHT report");
+    String device=data.substring(1,5);
+    String command=data.substring(5,7);
+    FHTCommand cde=FHTCommand.getEventById(Integer.parseInt(command,16));
+    String origin=data.substring(7,9);
+    String argument=data.substring(9,11);
+    if (cde != null) {
+switch (cde) {
+case FHT_DESIRED_TEMP:
+        double desiredTemperature=((double)Integer.parseInt(argument,16)) / 2.0;
+      receivedNewDesiredTemperature(device,desiredTemperature);
+    break;
+case FHT_MEASURED_TEMP_LOW:
+  valueCache.put(device + "lowtemp",new Integer(Integer.parseInt(argument,16)));
+break;
+case FHT_MEASURED_TEMP_HIGH:
+Integer lowtemp=valueCache.get(device + "lowtemp");
+if (lowtemp != null) {
+double temperature=(double)lowtemp + ((double)Integer.parseInt(argument,16)) * 256.0;
+temperature/=10.0;
+receivedNewMeasuredTemperature(device,temperature);
+}
+break;
+case FHT_STATE:
+receivedFHTState(device,argument);
+break;
+case FHT_ACTUATOR_0:
+case FHT_ACTUATOR_1:
+case FHT_ACTUATOR_2:
+case FHT_ACTUATOR_3:
+case FHT_ACTUATOR_4:
+case FHT_ACTUATOR_5:
+case FHT_ACTUATOR_6:
+case FHT_ACTUATOR_7:
+case FHT_ACTUATOR_8:
+double valve=(((double)Integer.parseInt(argument,16)) / 255.0) * 100.0;
+receivedNewValveOpening(device,cde.getId(),valve);
+break;
+default :
+logger.warn("Unknown message: FHT " + device + ": "+ command+ "="+ argument+ "\r\n");
+}
+}
+ else {
+logger.warn("Received unkown FHT command: ",command);
+}
+}
+ else if (data.length() == 11) {
+logger.debug("We received probably a FHT 8b frame");
+String device=data.substring(1,7);
+String argument=data.substring(7,9);
+FHTState state=null;
+if ((argument.startsWith("1")) || (argument.startsWith("9"))) {
+state=FHTState.BATTERY_LOW;
+}
+if (argument.substring(1).equals("1")) {
+state=FHTState.WINDOW_OPEN;
+}
+if (argument.substring(1).equals("2")) {
+state=FHTState.WINDOW_CLOSED;
+}
+if (state != null) {
+receivedNewFHT8bState(device,state);
+}
+ else {
+logger.warn("Received unknown state (" + argument + ") from device "+ device);
+}
+}
+ else {
+logger.warn("Received unparseable message");
+}
+}

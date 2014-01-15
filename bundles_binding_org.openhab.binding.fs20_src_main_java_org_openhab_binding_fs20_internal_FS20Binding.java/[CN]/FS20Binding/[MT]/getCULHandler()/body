@@ -1,0 +1,11 @@
+{
+  try {
+    logger.debug("Opening CUL device on " + deviceName);
+    cul=CULManager.getOpenCULHandler(deviceName,CULMode.SLOW_RF);
+    cul.registerListener(this);
+  }
+ catch (  CULDeviceException e) {
+    logger.error("Can't open cul device",e);
+    cul=null;
+  }
+}

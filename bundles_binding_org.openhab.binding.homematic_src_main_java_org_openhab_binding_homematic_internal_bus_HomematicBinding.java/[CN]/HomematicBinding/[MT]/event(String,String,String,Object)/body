@@ -11,10 +11,12 @@
     }
     State value=converter.convertTo(valueObject);
     logger.debug("Received new value {} for item {}",value,itemName);
-    postUpdate(itemName,value);
-    if (parameterKey.equals(ParameterKey.WORKING.name())) {
-      if (!(Boolean)valueObject) {
-      }
+    if (ParameterKey.PRESS_SHORT.name().equals(parameterAddress.getParameterId())) {
+      postUpdate(itemName,OnOffType.ON);
+      postUpdate(itemName,OnOffType.OFF);
+    }
+ else {
+      postUpdate(itemName,value);
     }
   }
   return null;

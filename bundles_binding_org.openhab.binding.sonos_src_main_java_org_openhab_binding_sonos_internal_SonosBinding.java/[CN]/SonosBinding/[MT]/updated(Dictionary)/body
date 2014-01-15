@@ -19,18 +19,14 @@
       matcher.reset();
       matcher.find();
       String sonosID=matcher.group(1);
-      SonosZonePlayer sonosConfig=sonosZonePlayerCache.get(sonosID);
+      SonosZonePlayer sonosConfig=sonosZonePlayerCache.getById(sonosID);
       if (sonosConfig == null) {
-        sonosConfig=new SonosZonePlayer(self);
-        sonosZonePlayerCache.put(sonosID,sonosConfig);
+        sonosConfig=new SonosZonePlayer(sonosID,self);
+        sonosZonePlayerCache.add(sonosConfig);
       }
       String configKey=matcher.group(2);
       String value=(String)config.get(key);
       if ("udn".equals(configKey)) {
-        if (sonosPlayersFromCfg == null) {
-          sonosPlayersFromCfg=new ArrayList<String>();
-        }
-        sonosPlayersFromCfg.add(value);
         sonosConfig.setUdn(new UDN(value));
         logger.debug("Add predefined Sonos device with UDN {}",sonosConfig.getUdn());
       }
@@ -38,6 +34,6 @@
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }
     }
-    start();
   }
+  setProperlyConfigured(true);
 }

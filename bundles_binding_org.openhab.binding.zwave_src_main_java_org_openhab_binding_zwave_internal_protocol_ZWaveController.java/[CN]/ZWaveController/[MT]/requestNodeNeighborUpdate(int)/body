@@ -1,0 +1,7 @@
+{
+  logger.debug("Request neighbor update for node {}",nodeId);
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.RequestNodeNeighborUpdate,SerialMessageType.Request,SerialMessageClass.RequestNodeNeighborUpdate,SerialMessagePriority.High);
+  byte[] newPayload={(byte)nodeId};
+  newMessage.setMessagePayload(newPayload);
+  this.enqueue(newMessage);
+}
