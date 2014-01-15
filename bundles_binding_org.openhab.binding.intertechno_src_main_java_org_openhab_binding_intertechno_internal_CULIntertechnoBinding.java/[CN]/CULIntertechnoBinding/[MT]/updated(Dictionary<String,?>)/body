@@ -1,0 +1,25 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    Integer repititions=parseOptionalNumericParameter(KEY_REPITIONS,config);
+    if (repititions != null) {
+      this.repititions=repititions.intValue();
+    }
+    Integer wavelength=parseOptionalNumericParameter(KEY_WAVE_LENGTH,config);
+    if (wavelength != null) {
+      this.wavelength=wavelength.intValue();
+    }
+    String deviceName=(String)config.get(KEY_DEVICE_NAME);
+    if (StringUtils.isEmpty(deviceName)) {
+      setProperlyConfigured(false);
+      throw new ConfigurationException(KEY_DEVICE_NAME,"The device mustn't be empty");
+    }
+ else {
+      setNewDeviceName(deviceName);
+    }
+    setProperlyConfigured(true);
+  }
+}

@@ -1,0 +1,6 @@
+{
+  Date date=new Date();
+  String[] rawDateValues=configDateFormat.format(date).split(":");
+  String device=config.getFullAddress();
+  writeRegisters(device,new WriteRegisterCommand("64",Utils.convertDecimalStringToHexString(rawDateValues[0])),new WriteRegisterCommand("63",Utils.convertDecimalStringToHexString(rawDateValues[1])),new WriteRegisterCommand("62",Utils.convertDecimalStringToHexString(rawDateValues[2])),new WriteRegisterCommand("61",Utils.convertDecimalStringToHexString(rawDateValues[3])),new WriteRegisterCommand("60",Utils.convertDecimalStringToHexString(rawDateValues[4])));
+}

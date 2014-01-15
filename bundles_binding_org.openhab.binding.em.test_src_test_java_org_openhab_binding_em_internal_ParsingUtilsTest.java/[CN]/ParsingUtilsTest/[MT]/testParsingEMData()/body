@@ -1,0 +1,14 @@
+{
+  String address=ParsingUtils.parseAddress(EM_DATA[0]);
+  Assert.assertEquals("05",address);
+  EMType type=ParsingUtils.parseType(EM_DATA[0]);
+  Assert.assertEquals(EMType.EM100EM,type);
+  int cumulatedValue=ParsingUtils.parseCumulatedValue(EM_DATA[0]);
+  Assert.assertEquals(1227,cumulatedValue);
+  int oldCumulatedValue=0;
+  for (  String data : EM_DATA) {
+    int cumValue=ParsingUtils.parseCumulatedValue(data);
+    Assert.assertTrue(cumValue > oldCumulatedValue);
+    oldCumulatedValue=cumValue;
+  }
+}
