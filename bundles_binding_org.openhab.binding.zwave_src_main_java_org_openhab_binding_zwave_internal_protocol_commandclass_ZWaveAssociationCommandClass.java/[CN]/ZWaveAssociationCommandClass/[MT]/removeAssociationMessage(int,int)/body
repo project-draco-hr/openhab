@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command ASSOCIATIONCMD_REMOVE for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),4,(byte)getCommandClass().getKey(),(byte)ASSOCIATIONCMD_REMOVE,(byte)(group & 0xff),(byte)(node & 0xff)};
+  result.setMessagePayload(newPayload);
+  return result;
+}
