@@ -1,0 +1,28 @@
+{
+  if (productFile != null)   return productFile;
+  if (selProduct == null)   return null;
+  URL entry=FrameworkUtil.getBundle(ZWaveProductDatabase.class).getEntry("database/" + selProduct.ConfigFile);
+  if (entry == null) {
+    database=null;
+    logger.error("Unable to load ZWave product file: '{}'",selProduct.ConfigFile);
+    return null;
+  }
+  XStream xstream=new XStream(new StaxDriver());
+  xstream.alias("Product",ZWaveDbProductFile.class);
+  xstream.alias("Configuration",ZWaveDbProductFile.ZWaveDbConfiguration.class);
+  xstream.alias("Parameter",ZWaveDbConfigurationParameter.class);
+  xstream.alias("Item",ZWaveDbConfigurationListItem.class);
+  xstream.alias("Associations",ZWaveDbProductFile.ZWaveDbAssociation.class);
+  xstream.alias("Group",ZWaveDbAssociationGroup.class);
+  xstream.alias("CommandClass",ZWaveDbProductFile.ZWaveDbCommandClassList.class);
+  xstream.alias("Class",ZWaveDbCommandClass.class);
+  xstream.processAnnotations(ZWaveDbProductFile.class);
+  try {
+    InputStream x=entry.openStream();
+    productFile=(ZWaveDbProductFile)xstream.fromXML(x);
+  }
+ catch (  IOException e) {
+    logger.error("Unable to load ZWave product file '{}' : {}",selProduct.ConfigFile,e.toString());
+  }
+  return productFile;
+}
