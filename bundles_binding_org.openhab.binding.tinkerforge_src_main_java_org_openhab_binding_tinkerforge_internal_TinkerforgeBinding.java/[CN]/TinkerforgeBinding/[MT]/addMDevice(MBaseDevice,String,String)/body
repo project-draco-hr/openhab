@@ -16,11 +16,11 @@
         device.getEnabledA().compareAndSet(true,false);
       }
  else {
-        TFConfig deviceTfConfig=deviceConfig.getTfConfig();
+        TFConfig deviceTfConfig=EcoreUtil.copy(deviceConfig.getTfConfig());
         logger.debug("{} setting tfConfig for {}",LoggerConstants.TFINIT,logId);
         ((MTFConfigConsumer<EObject>)device).setTfConfig(deviceTfConfig);
         device.enable();
-        logger.debug("{} adding/enabling device with config: {}",LoggerConstants.TFINIT,logId);
+        logger.debug("{} adding/enabling device {} with config: {}",LoggerConstants.TFINIT,logId,deviceTfConfig);
       }
     }
  else     if (device instanceof IODevice) {
