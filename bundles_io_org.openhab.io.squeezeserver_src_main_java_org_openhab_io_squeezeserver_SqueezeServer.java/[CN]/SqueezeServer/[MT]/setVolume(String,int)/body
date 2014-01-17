@@ -1,0 +1,11 @@
+{
+  SqueezePlayer player=getPlayer(playerId);
+  if (player == null)   return;
+  if (0 > volume) {
+    volume=0;
+  }
+ else   if (volume > 100) {
+    volume=100;
+  }
+  sendCommand(player.getMacAddress() + " mixer volume " + String.valueOf(volume));
+}

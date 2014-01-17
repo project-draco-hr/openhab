@@ -1,0 +1,29 @@
+{
+  HashMap<SwegonVentilationCommandType,Integer> map=new HashMap<SwegonVentilationCommandType,Integer>();
+  int outdoorTemp=(int)data[0];
+  int supplyTemp=(int)data[1];
+  int extractTemp=(int)data[2];
+  int supplyTempHeated=(int)data[3];
+  int exhaustTemp=(int)data[7];
+  map.put(SwegonVentilationCommandType.T1,outdoorTemp);
+  map.put(SwegonVentilationCommandType.OUTDOOR_TEMP,outdoorTemp);
+  map.put(SwegonVentilationCommandType.T2,supplyTemp);
+  map.put(SwegonVentilationCommandType.SUPPLY_TEMP,supplyTemp);
+  map.put(SwegonVentilationCommandType.T3,extractTemp);
+  map.put(SwegonVentilationCommandType.EXTRACT_TEMP,extractTemp);
+  map.put(SwegonVentilationCommandType.T4,(int)supplyTempHeated);
+  map.put(SwegonVentilationCommandType.SUPPLY_TEMP_HEATED,supplyTempHeated);
+  map.put(SwegonVentilationCommandType.T8,exhaustTemp);
+  map.put(SwegonVentilationCommandType.EXHAUST_TEMP,exhaustTemp);
+  map.put(SwegonVentilationCommandType.T5,(int)data[4]);
+  map.put(SwegonVentilationCommandType.T6,(int)data[5]);
+  map.put(SwegonVentilationCommandType.T7,(int)data[6]);
+  map.put(SwegonVentilationCommandType.SUPPLY_AIR_FAN_SPEED,((int)data[10] & 0xFF) * 10);
+  map.put(SwegonVentilationCommandType.EXTRACT_AIR_FAN_SPEED,((int)data[11] & 0xFF) * 10);
+  map.put(SwegonVentilationCommandType.EFFICIENCY,(int)data[12]);
+  int efficiency=(int)(((double)supplyTemp - (double)outdoorTemp) / ((double)extractTemp - (double)outdoorTemp) * 100);
+  map.put(SwegonVentilationCommandType.EFFICIENCY_SUPPLY,efficiency);
+  efficiency=(int)(((double)extractTemp - (double)exhaustTemp) / ((double)extractTemp - (double)outdoorTemp) * 100);
+  map.put(SwegonVentilationCommandType.EFFICIENCY_EXTRACT,efficiency);
+  return map;
+}

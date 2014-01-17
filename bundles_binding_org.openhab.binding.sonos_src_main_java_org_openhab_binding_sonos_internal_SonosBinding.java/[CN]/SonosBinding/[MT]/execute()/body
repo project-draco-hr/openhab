@@ -1,0 +1,90 @@
+{
+  if (isProperlyConfigured()) {
+    if (!bindingStarted) {
+      upnpService=new UpnpServiceImpl(new SonosUpnpServiceConfiguration(),listener);
+      try {
+        Iterator<SonosZonePlayer> it=sonosZonePlayerCache.iterator();
+        while (it.hasNext()) {
+          SonosZonePlayer aPlayer=it.next();
+          if (aPlayer.getDevice() == null) {
+            logger.info("Querying the network for a predefined Sonos device with UDN {}",aPlayer.getUdn());
+            upnpService.getControlPoint().search(new UDNHeader(aPlayer.getUdn()));
+          }
+        }
+        logger.info("Querying the network for any other Sonos device");
+        final UDAServiceType udaType=new UDAServiceType("AVTransport");
+        upnpService.getControlPoint().search(new UDAServiceTypeHeader(udaType));
+      }
+ catch (      Exception e) {
+        logger.warn("An exception occurred while searching the network for Sonos devices: ",e.getMessage());
+      }
+      bindingStarted=true;
+    }
+    Scheduler sched=null;
+    try {
+      sched=StdSchedulerFactory.getDefaultScheduler();
+    }
+ catch (    SchedulerException e) {
+      logger.error("An exception occurred while getting a reference to the Quartz Scheduler");
+    }
+    for (    SonosBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        for (        String sonosID : ((SonosBindingProvider)provider).getSonosID(itemName)) {
+          if (!sonosZonePlayerCache.contains(sonosID)) {
+            Pattern SONOS_UDN_PATTERN=Pattern.compile("RINCON_(\\w{17})");
+            Matcher matcher=SONOS_UDN_PATTERN.matcher(sonosID);
+            if (matcher.matches()) {
+              SonosZonePlayer thePlayer=new SonosZonePlayer(sonosID,self);
+              thePlayer.setUdn(new UDN(sonosID));
+              sonosZonePlayerCache.add(thePlayer);
+              logger.info("Querying the network for a predefined Sonos device with UDN '{}'",thePlayer.getUdn());
+              upnpService.getControlPoint().search(new UDNHeader(thePlayer.getUdn()));
+            }
+          }
+        }
+      }
+    }
+    for (    SonosCommandType sonosCommandType : SonosCommandType.getPolling()) {
+      for (      SonosBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames(sonosCommandType.getSonosCommand())) {
+          for (          Command aCommand : ((SonosBindingProvider)provider).getCommands(itemName,sonosCommandType.getSonosCommand())) {
+            SonosZonePlayer thePlayer=sonosZonePlayerCache.getById(provider.getSonosID(itemName,aCommand));
+            if (thePlayer != null) {
+              RemoteDevice theDevice=thePlayer.getDevice();
+              if (theDevice != null) {
+                if (theDevice.findService(new UDAServiceId(sonosCommandType.getService())) != null) {
+                  boolean jobExists=false;
+                  try {
+                    for (                    String group : sched.getJobGroupNames()) {
+                      for (                      JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                        if (jobKey.getName().equals(provider.getSonosID(itemName,aCommand) + "-" + sonosCommandType.getJobClass().toString())) {
+                          jobExists=true;
+                          break;
+                        }
+                      }
+                    }
+                  }
+ catch (                  SchedulerException e1) {
+                    logger.error("An exception occurred while quering the Quartz Scheduler ({})",e1.getMessage());
+                  }
+                  if (!jobExists) {
+                    JobDataMap map=new JobDataMap();
+                    map.put("Player",thePlayer);
+                    JobDetail job=newJob(sonosCommandType.getJobClass()).withIdentity(provider.getSonosID(itemName,aCommand) + "-" + sonosCommandType.getJobClass().toString(),"Sonos-" + provider.toString()).usingJobData(map).build();
+                    Trigger trigger=newTrigger().withIdentity(provider.getSonosID(itemName,aCommand) + "-" + sonosCommandType.getJobClass().toString(),"Sonos-" + provider.toString()).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInMilliseconds(pollingPeriod)).build();
+                    try {
+                      sched.scheduleJob(job,trigger);
+                    }
+ catch (                    SchedulerException e) {
+                      logger.error("An exception occurred while scheduling a Quartz Job ({})",e.getMessage());
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

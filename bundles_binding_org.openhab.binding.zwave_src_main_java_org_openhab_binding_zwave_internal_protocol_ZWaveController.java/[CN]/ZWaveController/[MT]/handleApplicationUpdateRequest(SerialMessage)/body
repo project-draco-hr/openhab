@@ -18,11 +18,15 @@ logger.debug(String.format("Adding command class 0x%02X to the list of supported
 ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,this);
 if (commandClass != null) node.addCommandClass(commandClass);
 }
-node.advanceNodeStage();
+node.advanceNodeStage(NodeStage.MANSPEC01);
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveEvent(ZWaveEventType.TRANSACTION_COMPLETED_EVENT,this.lastSentMessage.getMessageNode(),1,this.lastSentMessage));
+notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+}
+ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
+if (wakeUp != null) {
+wakeUp.setAwake(true);
 }
 break;
 case NODE_INFO_REQ_FAILED:

@@ -11,7 +11,7 @@
       message.setRetained(retain);
       MqttTopic mqttTopic=client.getTopic(topic);
       MqttDeliveryToken deliveryToken=mqttTopic.publish(message);
-      logger.debug("Publishing message to topic {} ",topic);
+      logger.debug("Publishing message {} to topic {} ",deliveryToken.getMessageId(),topic);
       if (!async) {
         deliveryToken.waitForCompletion(10000);
         if (!deliveryToken.isComplete()) {

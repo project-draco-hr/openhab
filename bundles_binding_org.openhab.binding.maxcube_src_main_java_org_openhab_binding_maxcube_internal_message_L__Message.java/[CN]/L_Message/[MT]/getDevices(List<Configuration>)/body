@@ -1,0 +1,13 @@
+{
+  List<Device> devices=new ArrayList<Device>();
+  byte[] decodedRawMessage=Base64.decodeBase64(getPayload().getBytes());
+  MaxTokenizer tokenizer=new MaxTokenizer(decodedRawMessage);
+  while (tokenizer.hasMoreElements()) {
+    byte[] token=tokenizer.nextElement();
+    Device tempDevice=Device.create(token,configurations);
+    if (tempDevice != null) {
+      devices.add(tempDevice);
+    }
+  }
+  return devices;
+}

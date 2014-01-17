@@ -1,11 +1,16 @@
 {
-  Client client=Client.create();
   WebResource webResource=client.resource(getUrl());
-  ClientResponse response=webResource.accept("application/json").get(ClientResponse.class);
-  String settingsString=response.getEntity(String.class);
-  if (response.getStatus() != 200) {
-    logger.warn("Failed to connect to Hue bridge: HTTP error code: " + response.getStatus());
+  try {
+    ClientResponse response=webResource.accept("application/json").get(ClientResponse.class);
+    String settingsString=response.getEntity(String.class);
+    if (response.getStatus() != 200) {
+      logger.warn("Failed to connect to Hue bridge: HTTP error code: " + response.getStatus());
+      return null;
+    }
+    return settingsString;
+  }
+ catch (  ClientHandlerException e) {
+    logger.warn("Failed to connect to Hue bridge: HTTP request timed out.");
     return null;
   }
-  return settingsString;
 }

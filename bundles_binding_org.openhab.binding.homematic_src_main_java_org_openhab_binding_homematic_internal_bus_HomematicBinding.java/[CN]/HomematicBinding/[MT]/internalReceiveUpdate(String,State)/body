@@ -1,7 +1,8 @@
 {
+  itemStates.put(itemName,newState);
   for (  HomematicBindingProvider provider : providers) {
     logger.debug("Checking provider with names {}",provider.getItemNames());
     HomematicParameterAddress parameterAddress=provider.getParameterAddress(itemName);
-    setStateOnDevice(newState,parameterAddress);
+    setStateOnDevice(newState,parameterAddress,itemName);
   }
 }

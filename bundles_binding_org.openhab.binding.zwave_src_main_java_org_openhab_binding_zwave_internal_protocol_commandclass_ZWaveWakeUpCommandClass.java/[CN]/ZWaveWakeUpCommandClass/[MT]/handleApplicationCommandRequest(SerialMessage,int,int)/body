@@ -1,0 +1,55 @@
+{
+  logger.trace("Handle Message Wake Up Request");
+  logger.debug(String.format("Received Wake Up Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case WAKE_UP_INTERVAL_SET:
+case WAKE_UP_INTERVAL_GET:
+case WAKE_UP_INTERVAL_CAPABILITIES_GET:
+case WAKE_UP_NO_MORE_INFORMATION:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case WAKE_UP_INTERVAL_REPORT:
+logger.trace("Process Wake Up Interval");
+if (serialMessage.getMessagePayload().length < offset + 4) {
+logger.error("Unusual response: WAKE_UP_INTERVAL_REPORT with length = {}. Ignored.",serialMessage.getMessagePayload().length);
+return;
+}
+targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
+int receivedInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 2)) << 8) | (serialMessage.getMessagePayloadByte(offset + 3));
+logger.debug(String.format("Wake up interval report for nodeId = %d, value = %d seconds, targetNodeId = %d",this.getNode().getNodeId(),receivedInterval,targetNodeId));
+if (targetNodeId != this.getController().getOwnNodeId()) return;
+this.interval=receivedInterval;
+logger.debug("Wake up interval set for node {}",this.getNode().getNodeId());
+this.initializationComplete=true;
+this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+break;
+case WAKE_UP_INTERVAL_CAPABILITIES_REPORT:
+logger.trace("Process Wake Up Interval Capabilities");
+this.minInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 2)) << 8) | (serialMessage.getMessagePayloadByte(offset + 3));
+this.maxInterval=((serialMessage.getMessagePayloadByte(offset + 4)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 5)) << 8) | (serialMessage.getMessagePayloadByte(offset + 6));
+this.defaultInterval=((serialMessage.getMessagePayloadByte(offset + 7)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 8)) << 8) | (serialMessage.getMessagePayloadByte(offset + 9));
+this.intervalStep=((serialMessage.getMessagePayloadByte(offset + 10)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 11)) << 8) | (serialMessage.getMessagePayloadByte(offset + 12));
+logger.debug(String.format("Wake up interval capabilities report for nodeId = %d",this.getNode().getNodeId()));
+logger.debug(String.format("Minimum interval = %d",this.minInterval));
+logger.debug(String.format("Maximum interval = %d",this.maxInterval));
+logger.debug(String.format("Default interval = %d",this.defaultInterval));
+logger.debug(String.format("Interval step = %d",this.intervalStep));
+this.initializationComplete=true;
+this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+break;
+case WAKE_UP_NOTIFICATION:
+logger.trace("Process Wake Up Notification");
+logger.debug("Node {} is awake",this.getNode().getNodeId());
+serialMessage.setTransActionCanceled(true);
+if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().getNodeStage() == NodeStage.DEAD)) {
+logger.info("Got Wake Up Notification from node {}, continuing initialization.",this.getNode().getNodeId());
+this.getNode().setNodeStage(NodeStage.WAKEUP);
+this.getNode().advanceNodeStage(NodeStage.DETAILS);
+}
+this.setAwake(true);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

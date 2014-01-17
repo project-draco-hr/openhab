@@ -1,0 +1,61 @@
+{
+  final int dataBufferMaxLen=256;
+  byte[] dataBuffer=new byte[dataBufferMaxLen];
+  int msgLen=0;
+  int index=0;
+  States state=States.SEARCHING;
+  try {
+    byte[] tmpData=new byte[150];
+    int len=-1;
+    while ((len=in.read(tmpData)) > 0) {
+      for (int i=0; i < len; i++) {
+        if (index >= dataBufferMaxLen) {
+          state=States.SEARCHING;
+        }
+        if (state == States.SEARCHING && (int)(tmpData[i] & 0xff) == 0x81) {
+          state=States.LENGTH1;
+          index=0;
+          dataBuffer[index++]=tmpData[i];
+        }
+ else         if (state == States.LENGTH1) {
+          state=States.LENGTH2;
+          msgLen=tmpData[i];
+          dataBuffer[index++]=tmpData[i];
+        }
+ else         if (state == States.LENGTH2) {
+          state=States.RECEIVING;
+          msgLen+=tmpData[i] * 256;
+          dataBuffer[index++]=tmpData[i];
+        }
+ else         if (state == States.RECEIVING) {
+          dataBuffer[index++]=tmpData[i];
+          if (index == msgLen) {
+            byte[] msg=new byte[msgLen];
+            for (int j=0; j < msgLen; j++)             msg[j]=dataBuffer[j];
+            HeatmiserResponseEvent event=new HeatmiserResponseEvent(this);
+            if (connectionStateCount <= 2)             connectionStateCount=0;
+ else             connectionStateCount-=2;
+            try {
+              Iterator<HeatmiserEventListener> iterator=_listeners.iterator();
+              while (iterator.hasNext()) {
+                ((HeatmiserEventListener)iterator.next()).packetReceived(event,msg);
+              }
+            }
+ catch (            Exception e) {
+              logger.error("Event listener error",e);
+            }
+            state=States.SEARCHING;
+          }
+        }
+      }
+    }
+  }
+ catch (  InterruptedIOException e) {
+    Thread.currentThread().interrupt();
+    logger.error("Interrupted via InterruptedIOException");
+  }
+catch (  IOException e) {
+    logger.error("Reading from network failed",e);
+  }
+  logger.debug("Ready reading from network");
+}

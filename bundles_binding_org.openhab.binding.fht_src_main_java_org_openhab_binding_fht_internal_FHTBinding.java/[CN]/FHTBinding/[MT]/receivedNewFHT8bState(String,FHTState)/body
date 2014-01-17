@@ -1,0 +1,31 @@
+{
+  FHTBindingConfig config=null;
+  if (state == FHTState.BATTERY_LOW) {
+    config=getConfig(device,Datapoint.BATTERY);
+  }
+ else {
+    config=getConfig(device,Datapoint.WINDOW);
+  }
+  if (config != null) {
+    logger.debug("Updating item " + config.getItem().getName() + " with new FHT state "+ state.toString());
+    State newState=null;
+    if (state == FHTState.BATTERY_LOW) {
+      newState=OnOffType.ON;
+    }
+ else     if (state == FHTState.WINDOW_OPEN) {
+      newState=OpenClosedType.OPEN;
+    }
+ else     if (state == FHTState.WINDOW_CLOSED) {
+      newState=OpenClosedType.CLOSED;
+    }
+    if (newState != null) {
+      eventPublisher.postUpdate(config.getItem().getName(),newState);
+    }
+ else {
+      logger.warn("Unknown FHT8b state, which is unmapped to openHAB state " + state.toString());
+    }
+  }
+ else {
+    logger.debug("Received FHT8b state for unknown device with address " + device);
+  }
+}

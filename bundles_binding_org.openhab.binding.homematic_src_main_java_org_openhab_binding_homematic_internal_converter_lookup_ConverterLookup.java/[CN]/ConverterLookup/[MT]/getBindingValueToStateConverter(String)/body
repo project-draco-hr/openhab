@@ -1,0 +1,11 @@
+{
+  logger.debug("getBindingValueToStateConverter({})",itemName);
+  ItemConverter itemConverter=itemConverterMap.get(itemName);
+  if (itemConverter == null) {
+    logger.warn("No ItemConverter found for item {}",itemName);
+    return null;
+  }
+  StateConverter<?,?> converter=itemConverter.getBindingValueToStateConverter();
+  logger.debug("getBindingValueToStateConverter({}): {}",itemName,converter);
+  return converter;
+}
