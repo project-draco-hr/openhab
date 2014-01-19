@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    final String refreshIntervalString=(String)config.get(CONFIG_REFRESH);
+    if (isNotBlank(refreshIntervalString)) {
+      this.refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    this.clientId=(String)config.get(CONFIG_CLIENT_ID);
+    if (isBlank(this.clientId)) {
+      throw new ConfigurationException("netatmo:clientid","Parameter 'netatmo:clientid' must be set!");
+    }
+    this.clientSecret=(String)config.get(CONFIG_CLIENT_SECRET);
+    if (isBlank(this.clientSecret)) {
+      throw new ConfigurationException("netatmo:clientsecret","Parameter 'netatmo:clientsecret' must be set!");
+    }
+    this.refreshToken=(String)config.get(CONFIG_REFRESH_TOKEN);
+    if (isBlank(this.refreshToken)) {
+      throw new ConfigurationException("netatmo:refreshToken","Parameter 'netatmo:refreshToken' must be set!");
+    }
+    setProperlyConfigured(true);
+  }
+}
