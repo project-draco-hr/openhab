@@ -1,0 +1,21 @@
+{
+  logger.debug("Processing binding configuration: '{}'",bindingConfig);
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final NetatmoBindingConfig config=new NetatmoBindingConfig();
+  final String[] configParts=bindingConfig.split("#");
+switch (configParts.length) {
+case 2:
+    config.deviceId=configParts[0];
+  config.measure=configParts[1];
+break;
+case 3:
+config.deviceId=configParts[0];
+config.moduleId=configParts[1];
+config.measure=configParts[2];
+break;
+default :
+throw new BindingConfigParseException("A Netatmo binding configuration must consist of two or three parts - please verify your *.items file");
+}
+logger.debug("Adding binding: {}",config);
+addBindingConfig(item,config);
+}

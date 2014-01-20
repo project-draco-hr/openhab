@@ -1,0 +1,9 @@
+{
+  final MeasurementRequestStub request=createRequest("/error-2.json");
+  final MeasurementResponse response=request.execute();
+  assertTrue(response.isError());
+  final NetatmoError error=response.getError();
+  assertNotNull(error);
+  assertEquals(2,error.getCode());
+  assertEquals("Invalid access token",error.getMessage());
+}
