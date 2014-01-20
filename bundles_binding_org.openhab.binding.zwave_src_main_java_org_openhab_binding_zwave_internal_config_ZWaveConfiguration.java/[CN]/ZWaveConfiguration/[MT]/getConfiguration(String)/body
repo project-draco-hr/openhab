@@ -95,6 +95,7 @@ ZWaveProductDatabase database=new ZWaveProductDatabase();
 for (int nodeId=0; nodeId < 256; nodeId++) {
 node=zController.getNode(nodeId);
 if (node == null) continue;
+logger.trace("Config requested for node {}",nodeId);
 if (node.getName() == null || node.getName().isEmpty()) {
 record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
 }
