@@ -2,7 +2,7 @@
   if (config != null) {
     ip=(String)config.get("ip");
     if (StringUtils.isBlank(ip)) {
-      ip=discoveryGatewayIP();
+      ip=discoveryGatewayIp();
     }
     String portString=(String)config.get("port");
     if (portString != null && !portString.isEmpty()) {
@@ -16,8 +16,7 @@
     }
   }
  else {
-    ip=discoveryGatewayIP();
+    ip=discoveryGatewayIp();
   }
-  if (ip != null)   setProperlyConfigured(true);
- else   setProperlyConfigured(false);
+  setProperlyConfigured(ip != null);
 }
