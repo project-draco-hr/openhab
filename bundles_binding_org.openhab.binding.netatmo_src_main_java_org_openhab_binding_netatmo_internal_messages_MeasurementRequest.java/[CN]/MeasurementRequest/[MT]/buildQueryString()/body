@@ -1,0 +1,26 @@
+{
+  final StringBuilder urlBuilder=new StringBuilder(RESOURCE_URL);
+  urlBuilder.append("?access_token=");
+  urlBuilder.append(this.accessToken);
+  urlBuilder.append("&scale=max");
+  urlBuilder.append("&date_end=last");
+  urlBuilder.append("&device_id=");
+  urlBuilder.append(this.deviceId);
+  if (this.moduleId != null) {
+    urlBuilder.append("&module_id=");
+    urlBuilder.append(this.moduleId);
+  }
+  urlBuilder.append("&type=");
+  for (final Iterator<String> i=this.measures.iterator(); i.hasNext(); ) {
+    urlBuilder.append(i.next());
+    if (i.hasNext()) {
+      urlBuilder.append(",");
+    }
+  }
+  try {
+    return URIUtil.encodeQuery(urlBuilder.toString());
+  }
+ catch (  final URIException e) {
+    throw new NetatmoException(e);
+  }
+}
