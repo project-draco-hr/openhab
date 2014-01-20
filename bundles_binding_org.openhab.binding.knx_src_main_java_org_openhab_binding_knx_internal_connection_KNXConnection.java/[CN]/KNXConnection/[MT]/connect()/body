@@ -13,7 +13,7 @@
     }
     NetworkLinkListener linkListener=new NetworkLinkListener(){
       public void linkClosed(      CloseEvent e){
-        if (!e.isUserRequest() && !shutdown) {
+        if (!(CloseEvent.USER_REQUEST == e.getInitiator()) && !shutdown) {
           logger.warn("KNX link has been lost (reason: {} on object {}) - reconnecting...",e.getReason(),e.getSource().toString());
           connect();
         }
@@ -62,7 +62,7 @@
     }
     if (logger.isInfoEnabled()) {
       if (link instanceof KNXNetworkLinkIP) {
-        String ipConnectionTypeString=KNXConnection.ipConnectionType == KNXNetworkLinkIP.ROUTER ? "ROUTER" : "TUNNEL";
+        String ipConnectionTypeString=KNXConnection.ipConnectionType == KNXNetworkLinkIP.ROUTING ? "ROUTER" : "TUNNEL";
         logger.info("Established connection to KNX bus on {} in mode {}.",ip + ":" + port,ipConnectionTypeString);
       }
  else {
@@ -74,6 +74,9 @@
     logger.error("Error connecting to KNX bus: {}",e.getMessage());
   }
 catch (  UnknownHostException e) {
+    logger.error("Error connecting to KNX bus: {}",e.getMessage());
+  }
+catch (  InterruptedException e) {
     logger.error("Error connecting to KNX bus: {}",e.getMessage());
   }
 }
