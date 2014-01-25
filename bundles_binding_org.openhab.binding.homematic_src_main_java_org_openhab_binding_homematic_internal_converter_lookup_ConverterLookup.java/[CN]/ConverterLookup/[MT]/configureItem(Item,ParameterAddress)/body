@@ -1,0 +1,10 @@
+{
+  logger.debug("Configuring item {} on address {}",item.getName(),parameterAddress);
+  if (!itemConverterMap.containsKey(item.getName())) {
+    itemConverterMap.put(item.getName(),new ItemConverter());
+  }
+  ItemConverter itemConverter=itemConverterMap.get(item.getName());
+  setBindingValueToStateConverter(item,parameterAddress,itemConverter);
+  setStateToBindingValueConverter(item,parameterAddress,itemConverter);
+  setCommandToBindingValueConverter(item,parameterAddress,itemConverter);
+}

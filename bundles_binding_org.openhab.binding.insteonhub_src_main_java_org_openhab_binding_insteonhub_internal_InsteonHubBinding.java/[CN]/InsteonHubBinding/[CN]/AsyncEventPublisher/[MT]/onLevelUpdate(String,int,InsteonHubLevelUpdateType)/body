@@ -1,0 +1,32 @@
+{
+  Collection<InsteonHubBindingConfig> configs=InsteonHubBindingConfigUtil.getConfigsForDevice(providers,hubId,device);
+  for (  InsteonHubBindingConfig config : configs) {
+    BindingType type=config.getBindingType();
+    if (type == BindingType.SWITCH && updateType == InsteonHubLevelUpdateType.STATUS_CHANGE) {
+      State update=level == 0 ? OnOffType.OFF : OnOffType.ON;
+      sendUpdate(config,update);
+    }
+ else     if (type == BindingType.DIMMER && updateType == InsteonHubLevelUpdateType.STATUS_CHANGE) {
+      State update=new PercentType(levelToPercent(level));
+      sendUpdate(config,update);
+    }
+ else     if (type == BindingType.INPUT_ON_OFF && updateType == InsteonHubLevelUpdateType.STATUS_CHANGE) {
+      Integer onValue=config.getOnValue();
+      Integer offValue=config.getOffValue();
+      State update=parseDigitalUpdate(level,onValue,offValue,OnOffType.ON,OnOffType.OFF);
+      sendUpdate(config,update);
+    }
+ else     if (type == BindingType.INPUT_OPEN_CLOSED && updateType == InsteonHubLevelUpdateType.STATUS_CHANGE) {
+      Integer openValue=config.getOpenValue();
+      Integer closedValue=config.getClosedValue();
+      State update=parseDigitalUpdate(level,openValue,closedValue,OpenClosedType.OPEN,OpenClosedType.CLOSED);
+      sendUpdate(config,update);
+    }
+ else     if (type == BindingType.INPUT_UBYTE) {
+      sendUpdate(config,new DecimalType(level));
+    }
+ else     if (type == BindingType.INPUT_PERCENT) {
+      sendUpdate(config,new PercentType(levelToPercent(level)));
+    }
+  }
+}

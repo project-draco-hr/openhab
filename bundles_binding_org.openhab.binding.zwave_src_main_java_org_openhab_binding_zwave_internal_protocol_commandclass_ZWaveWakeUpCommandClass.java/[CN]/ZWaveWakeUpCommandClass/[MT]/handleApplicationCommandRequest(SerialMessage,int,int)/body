@@ -15,7 +15,7 @@ if (serialMessage.getMessagePayload().length < offset + 4) {
 logger.error("Unusual response: WAKE_UP_INTERVAL_REPORT with length = {}. Ignored.",serialMessage.getMessagePayload().length);
 return;
 }
-int targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
+targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
 int receivedInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 2)) << 8) | (serialMessage.getMessagePayloadByte(offset + 3));
 logger.debug(String.format("Wake up interval report for nodeId = %d, value = %d seconds, targetNodeId = %d",this.getNode().getNodeId(),receivedInterval,targetNodeId));
 if (targetNodeId != this.getController().getOwnNodeId()) return;
@@ -41,21 +41,13 @@ break;
 case WAKE_UP_NOTIFICATION:
 logger.trace("Process Wake Up Notification");
 logger.debug("Node {} is awake",this.getNode().getNodeId());
-this.setAwake(true);
 serialMessage.setTransActionCanceled(true);
 if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().getNodeStage() == NodeStage.DEAD)) {
 logger.info("Got Wake Up Notification from node {}, continuing initialization.",this.getNode().getNodeId());
 this.getNode().setNodeStage(NodeStage.WAKEUP);
 this.getNode().advanceNodeStage(NodeStage.DETAILS);
-return;
 }
-logger.debug("Sending {} messages from the wake-up queue of node {}",this.wakeUpQueue.size(),this.getNode().getNodeId());
-while (!this.wakeUpQueue.isEmpty()) {
-serialMessage=this.wakeUpQueue.poll();
-this.getController().sendData(serialMessage);
-}
-logger.trace("No more messages, go back to sleep node {}",this.getNode().getNodeId());
-this.getController().sendData(this.getNoMoreInformationMessage());
+this.setAwake(true);
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));

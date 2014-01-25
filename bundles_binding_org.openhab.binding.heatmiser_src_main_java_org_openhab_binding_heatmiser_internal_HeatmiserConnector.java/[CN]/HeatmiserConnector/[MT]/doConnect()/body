@@ -1,0 +1,17 @@
+{
+  try {
+    socket=new Socket(ipAddress,ipPort);
+    in=socket.getInputStream();
+    out=socket.getOutputStream();
+  }
+ catch (  UnknownHostException e) {
+    logger.error("Can't find host: {}:{}.",ipAddress,ipPort);
+  }
+catch (  IOException e) {
+    logger.error("Couldn't get I/O for the connection to: {}:{}.",ipAddress,ipPort);
+    return;
+  }
+  inputThread=new InputReader(in);
+  inputThread.start();
+  connectionStateCount=0;
+}

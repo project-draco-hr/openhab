@@ -1,0 +1,16 @@
+{
+  final Map<String,MeasurementRequest> requests=new HashMap<String,MeasurementRequest>();
+  for (  final NetatmoBindingProvider provider : this.providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      final String deviceId=provider.getDeviceId(itemName);
+      final String moduleId=provider.getModuleId(itemName);
+      final String measure=provider.getMeasure(itemName);
+      final String requestKey=createKey(deviceId,moduleId);
+      if (!requests.containsKey(requestKey)) {
+        requests.put(requestKey,new MeasurementRequest(this.accessToken,deviceId,moduleId));
+      }
+      requests.get(requestKey).addMeasure(measure);
+    }
+  }
+  return requests.values();
+}

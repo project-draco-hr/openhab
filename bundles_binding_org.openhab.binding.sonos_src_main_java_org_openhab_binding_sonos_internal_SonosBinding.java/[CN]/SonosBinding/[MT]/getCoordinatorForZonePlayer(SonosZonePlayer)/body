@@ -5,11 +5,7 @@
   for (  SonosZoneGroup zg : getSonosZoneGroups()) {
     if (zg.getMembers().contains(zonePlayer.getUdn().getIdentifierString())) {
       String coordinator=zg.getCoordinator();
-      for (      String player : sonosZonePlayerCache.keySet()) {
-        if (sonosZonePlayerCache.get(player).getUdn().getIdentifierString().equals(coordinator)) {
-          return sonosZonePlayerCache.get(player);
-        }
-      }
+      return sonosZonePlayerCache.getByUDN(coordinator);
     }
   }
   return zonePlayer;

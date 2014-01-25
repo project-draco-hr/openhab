@@ -1,0 +1,22 @@
+{
+  String address=ParsingUtils.parseAddress(data);
+  if (!checkNewMessage(address,ParsingUtils.parseCounter(data))) {
+    logger.warn("Received message from " + address + " more than once");
+    return;
+  }
+  EMType type=ParsingUtils.parseType(data);
+  EMBindingConfig emConfig=findConfig(type,address,Datapoint.CUMULATED_VALUE);
+  if (emConfig != null) {
+    updateItem(emConfig,ParsingUtils.parseCumulatedValue(data));
+  }
+  if (data.length() > 10) {
+    emConfig=findConfig(type,address,Datapoint.LAST_VALUE);
+    if (emConfig != null) {
+      updateItem(emConfig,ParsingUtils.parseCurrentValue(data));
+    }
+    emConfig=findConfig(type,address,Datapoint.TOP_VALUE);
+    if (emConfig != null) {
+      updateItem(emConfig,ParsingUtils.parsePeakValue(data));
+    }
+  }
+}

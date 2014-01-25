@@ -1,0 +1,22 @@
+{
+  if (transformationType != null && transformationFunction != null) {
+    String transformedResponse=null;
+    try {
+      TransformationService transformationService=TransformationHelper.getTransformationService(OpenEnergyMonitorActivator.getContext(),transformationType);
+      if (transformationService != null) {
+        transformedResponse=transformationService.transform(transformationFunction,String.valueOf(data));
+      }
+ else {
+        logger.warn("couldn't transform response because transformationService of type '{}' is unavailable",transformationType);
+      }
+    }
+ catch (    TransformationException te) {
+      logger.error("transformation throws exception [transformation type=" + transformationType + ", transformation function="+ transformationFunction+ ", response="+ data+ "]",te);
+    }
+    logger.debug("transformed response is '{}'",transformedResponse);
+    if (transformedResponse != null) {
+      return new DecimalType(transformedResponse);
+    }
+  }
+  return data;
+}

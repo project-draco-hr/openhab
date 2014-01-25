@@ -1,0 +1,21 @@
+{
+  String houseCode=(message.substring(1,5));
+  String address=(message.substring(5,7));
+  String command=message.substring(7,9);
+  String fullAddress=houseCode + address;
+  FS20BindingConfig config=null;
+  for (  FS20BindingProvider provider : providers) {
+    config=provider.getConfigForAddress(fullAddress);
+    if (config != null) {
+      break;
+    }
+  }
+  if (config != null) {
+    FS20Command fs20Command=FS20Command.getFromHexValue(command);
+    logger.debug("Received command " + fs20Command.toString() + " for device "+ config.getAddress());
+    eventPublisher.postUpdate(config.getItem().getName(),FS20CommandHelper.getStateFromFS20Command(fs20Command));
+  }
+ else {
+    logger.debug("Received message for unknown device " + fullAddress);
+  }
+}

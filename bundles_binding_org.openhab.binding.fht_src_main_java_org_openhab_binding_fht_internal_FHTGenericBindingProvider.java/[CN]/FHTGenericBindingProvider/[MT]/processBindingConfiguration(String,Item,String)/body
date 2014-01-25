@@ -1,0 +1,30 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] configParts=bindingConfig.split(";");
+  String housecode=null;
+  String address=null;
+  Datapoint datapoint=null;
+  for (  String s : configParts) {
+    String[] entryParts=s.split("=");
+    if ("housecode".equals(entryParts[0])) {
+      housecode=entryParts[1];
+    }
+ else     if ("address".equals(entryParts[0])) {
+      address=entryParts[1];
+    }
+ else     if ("datapoint".equals(entryParts[0])) {
+      datapoint=Datapoint.valueOf(entryParts[1]);
+    }
+  }
+  if (housecode == null) {
+    throw new BindingConfigParseException("housecode mustn't be null");
+  }
+  if (datapoint == null) {
+    throw new BindingConfigParseException("datapoint must be one of MEASURED_TEMP, DESIRED_TEMP, BATTERY, WINDOW or VALVE");
+  }
+  if ((datapoint == Datapoint.WINDOW || datapoint == Datapoint.VALVE) && address == null) {
+    throw new BindingConfigParseException("Address of window contact needed");
+  }
+  FHTBindingConfig config=new FHTBindingConfig(item,housecode,address,datapoint);
+  addBindingConfig(item,config);
+}

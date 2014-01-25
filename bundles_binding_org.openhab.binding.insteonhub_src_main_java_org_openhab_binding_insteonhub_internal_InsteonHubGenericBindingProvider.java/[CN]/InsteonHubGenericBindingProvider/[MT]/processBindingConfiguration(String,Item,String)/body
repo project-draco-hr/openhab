@@ -1,0 +1,9 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    InsteonHubBindingConfig config=InsteonHubBindingConfig.parse(item.getName(),bindingConfig);
+    addBindingConfig(item,config);
+    Set<String> deviceItems=getOrCreateDeviceItems(config.getDeviceInfo());
+    deviceItems.add(config.getItemName());
+  }
+}

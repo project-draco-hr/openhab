@@ -20,7 +20,7 @@ catch (  NotConnectedException e) {
   tinkerforgeDevice.addIlluminanceListener(new BrickletAmbientLight.IlluminanceListener(){
     @Override public void illuminance(    int newIlluminance){
       if (newIlluminance > (illuminance + threshold) || newIlluminance < (illuminance - threshold)) {
-        setSensorValue(newIlluminance / 10.0);
+        setSensorValue(new DecimalValue(newIlluminance / 10.0));
         setIlluminance(newIlluminance);
       }
  else {
@@ -29,4 +29,5 @@ catch (  NotConnectedException e) {
     }
   }
 );
+  setSensorValue(fetchSensorValue());
 }

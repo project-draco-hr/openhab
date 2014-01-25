@@ -1,0 +1,21 @@
+{
+  try {
+    while (sender == this) {
+      byte[] msg=null;
+      try {
+        msg=commandQueue.poll(5,TimeUnit.SECONDS);
+      }
+ catch (      InterruptedException e) {
+      }
+      if (msg != null) {
+        outputStream.write(msg);
+        outputStream.flush();
+      }
+    }
+  }
+ catch (  Throwable t) {
+    t.printStackTrace();
+    InsteonHubBindingLogUtil.logCommunicationFailure(logger,proxy,t);
+    proxy.reconnect();
+  }
+}

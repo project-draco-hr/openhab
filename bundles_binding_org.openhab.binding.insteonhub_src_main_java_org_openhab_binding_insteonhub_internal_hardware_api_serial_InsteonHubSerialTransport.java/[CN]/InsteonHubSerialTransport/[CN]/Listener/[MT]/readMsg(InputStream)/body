@@ -1,0 +1,32 @@
+{
+  byte b;
+  while ((b=InsteonHubByteUtil.readByte(in)) != InsteonHubMsgConst.STX) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Ignoring non STX byte: " + b);
+    }
+  }
+  byte cmd=InsteonHubByteUtil.readByte(in);
+  Integer msgSize=InsteonHubMsgConst.REC_MSG_SIZES.get(cmd);
+  if (msgSize == null) {
+    logger.debug("Received unknown command type '" + cmd + "' - If you see this frequently, "+ "please save debug logs and report this as a bug.");
+    return null;
+  }
+  byte[] msg=new byte[msgSize];
+  msg[0]=InsteonHubMsgConst.STX;
+  msg[1]=cmd;
+  InsteonHubByteUtil.fillBuffer(in,msg,2);
+  if (cmd == InsteonHubMsgConst.SND_CODE_SEND_INSTEON_STD_OR_EXT_MSG) {
+    if (new InsteonHubStdMsgFlags(msg[5]).isExtended()) {
+      byte[] extendedBytes=new byte[14];
+      InsteonHubByteUtil.fillBuffer(in,extendedBytes,0);
+      byte[] extMsg=new byte[msg.length + extendedBytes.length];
+      System.arraycopy(msg,0,extMsg,0,msg.length);
+      System.arraycopy(extendedBytes,0,extMsg,msg.length,extendedBytes.length);
+      msg=extMsg;
+    }
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("Received Message from INSTEON Hub: " + Hex.encodeHexString(msg));
+  }
+  return msg;
+}

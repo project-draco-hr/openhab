@@ -1,0 +1,22 @@
+{
+  URL entry=FrameworkUtil.getBundle(ZWaveProductDatabase.class).getEntry("database/products.xml");
+  if (entry == null) {
+    database=null;
+    logger.error("Unable to load ZWave product database!");
+    return;
+  }
+  XStream xstream=new XStream(new StaxDriver());
+  xstream.alias("Manufacturers",ZWaveDbRoot.class);
+  xstream.alias("Manufacturer",ZWaveDbManufacturer.class);
+  xstream.alias("Product",ZWaveDbProduct.class);
+  xstream.alias("Reference",ZWaveDbProductReference.class);
+  xstream.processAnnotations(ZWaveDbRoot.class);
+  try {
+    InputStream x=entry.openStream();
+    database=(ZWaveDbRoot)xstream.fromXML(x);
+    if (database == null)     return;
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}

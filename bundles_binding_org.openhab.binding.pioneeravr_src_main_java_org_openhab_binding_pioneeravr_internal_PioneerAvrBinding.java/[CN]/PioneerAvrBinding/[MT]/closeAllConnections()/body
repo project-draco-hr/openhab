@@ -1,0 +1,12 @@
+{
+  if (deviceConfigCache != null) {
+    for (    String device : deviceConfigCache.keySet()) {
+      PioneerAvrConnection connection=deviceConfigCache.get(device).getConnection();
+      if (connection != null) {
+        connection.closeConnection();
+        connection.removeEventListener(this);
+      }
+    }
+    deviceConfigCache=null;
+  }
+}

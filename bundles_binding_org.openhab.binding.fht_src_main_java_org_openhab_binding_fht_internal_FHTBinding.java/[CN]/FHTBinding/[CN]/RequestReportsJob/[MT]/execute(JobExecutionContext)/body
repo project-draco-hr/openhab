@@ -1,0 +1,15 @@
+{
+  List<FHTBindingConfig> configs=new ArrayList<FHTBindingConfig>();
+  for (  FHTBindingProvider provider : providers) {
+    configs.addAll(provider.getAllFHT80bBindingConfigs());
+  }
+  for (  FHTBindingConfig config : configs) {
+    requestReport(config);
+    try {
+      Thread.sleep(requestInterval);
+    }
+ catch (    InterruptedException e) {
+      logger.error("Error while waiting between report requests",e);
+    }
+  }
+}
