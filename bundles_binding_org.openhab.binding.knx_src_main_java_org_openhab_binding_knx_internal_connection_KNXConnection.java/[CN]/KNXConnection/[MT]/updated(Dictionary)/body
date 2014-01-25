@@ -4,10 +4,10 @@
     String connectionTypeString=(String)config.get("type");
     if (StringUtils.isNotBlank(connectionTypeString)) {
       if ("TUNNEL".equals(connectionTypeString)) {
-        ipConnectionType=KNXNetworkLinkIP.TUNNEL;
+        ipConnectionType=KNXNetworkLinkIP.TUNNELING;
       }
  else       if ("ROUTER".equals(connectionTypeString)) {
-        ipConnectionType=KNXNetworkLinkIP.ROUTER;
+        ipConnectionType=KNXNetworkLinkIP.ROUTING;
         if (StringUtils.isBlank(ip)) {
           ip=DEFAULT_MULTICAST_IP;
         }
@@ -17,14 +17,14 @@
       }
     }
  else {
-      ipConnectionType=KNXNetworkLinkIP.TUNNEL;
+      ipConnectionType=KNXNetworkLinkIP.TUNNELING;
     }
     String portConfig=(String)config.get("port");
     if (StringUtils.isNotBlank(portConfig)) {
       port=Integer.parseInt(portConfig);
     }
  else {
-      port=KNXnetIPConnection.IP_PORT;
+      port=KNXnetIPConnection.DEFAULT_PORT;
     }
     localIp=(String)config.get("localIp");
     serialPort=(String)config.get("serialPort");
