@@ -1,0 +1,13 @@
+{
+  if (command != OnOffType.ON) {
+    return;
+  }
+  for (  KoubachiBindingProvider provider : this.providers) {
+    if (provider.isCareAction(itemName)) {
+      final String plantId=provider.getResourceId(itemName);
+      final String actionType=provider.getActionType(itemName);
+      performCareAction(plantId,actionType);
+    }
+  }
+  this.eventPublisher.postUpdate(itemName,OnOffType.OFF);
+}
