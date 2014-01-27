@@ -1,0 +1,10 @@
+{
+  final String url=String.format(apiTasksUrl,credentials,appKey,plantId);
+  final Properties headers=new Properties();
+  headers.put("Accept","application/json");
+  final String contentString=String.format(TASKS_BODY,actionType);
+  final InputStream contentStream=new ByteArrayInputStream(contentString.getBytes(Charset.forName("UTF-8")));
+  logger.debug("Performing care action '{}' for plant '{}'.",actionType,plantId);
+  final String response=HttpUtil.executeUrl("PUT",url,headers,contentStream,"application/json",HTTP_REQUEST_TIMEOUT);
+  logger.debug("Response: {}",response);
+}
