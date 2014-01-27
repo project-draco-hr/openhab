@@ -21,7 +21,6 @@
     }
   }
 );
-  broadcaster.getBroadcasterConfig().addFilter(new PollingDelayFilter());
   broadcaster.getBroadcasterConfig().addFilter(new DuplicateBroadcastProtectionFilter());
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
@@ -36,9 +35,7 @@
       }
     }
     public void stateChanged(    final Item item,    State oldState,    State newState){
-      if (!broadcaster.getAtmosphereResources().isEmpty()) {
-        broadcaster.broadcast(item);
-      }
+      broadcaster.broadcast(item);
     }
   }
 ;
