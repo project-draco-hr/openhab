@@ -1,0 +1,25 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      Matcher matcher=EXTRACT_HDANYWHERE_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given hdanywhere-config-key '" + key + "' does not follow the expected pattern '<host_IP_Address>.ports'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String hostIP=matcher.group(1);
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("ports".equals(configKey)) {
+        matrixCache.put(hostIP,Integer.valueOf(value));
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    setProperlyConfigured(true);
+  }
+}
