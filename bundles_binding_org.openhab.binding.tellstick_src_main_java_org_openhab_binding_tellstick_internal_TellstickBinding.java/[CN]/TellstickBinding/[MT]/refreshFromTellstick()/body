@@ -1,0 +1,13 @@
+{
+  logger.info("Update with telldus state");
+  for (  TellstickBindingProvider prov : providers) {
+    for (    String name : prov.getItemNames()) {
+      TellstickDevice dev=prov.getDevice(name);
+      if (dev != null) {
+        Method method=Method.getMethodById(dev.getStatus());
+        sendToOpenHab(name,resolveCommand(method,dev.getData()));
+      }
+    }
+  }
+  lastRefresh=System.currentTimeMillis();
+}

@@ -1,0 +1,13 @@
+{
+  TellstickDevice device=event.getDevice();
+  controller.setLastSend(System.currentTimeMillis());
+  logger.debug("Got deviceEvent for " + device + " name:"+ device+ " method"+ event.getMethod());
+  State cmd=resolveCommand(event.getMethod(),event.getData());
+  TellstickBindingConfig conf=findTellstickBindingConfig(device.getId(),null);
+  if (conf != null) {
+    sendToOpenHab(conf.getItemName(),cmd);
+  }
+ else {
+    logger.info("Could not find config for " + device);
+  }
+}

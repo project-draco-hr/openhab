@@ -1,0 +1,32 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  TellstickBindingConfig config=new TellstickBindingConfig();
+  config.setItemName(item.getName());
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length < 1) {
+    throw new BindingConfigParseException("Tellstick binding must contain two parts separated by ':'");
+  }
+  TellstickDevice device;
+  try {
+    device=findDevice(configParts[0].trim());
+  }
+ catch (  SupportedMethodsException e) {
+    throw new BindingConfigParseException(e.getMessage());
+  }
+  if (device == null) {
+    config.setId(Integer.valueOf(configParts[0].trim()));
+  }
+ else {
+    config.setId(device.getId());
+  }
+  config.setInBinding(true);
+  config.setValueSelector(TellstickValueSelector.getValueSelector(configParts[1].trim()));
+  if (configParts.length > 2 && configParts[2].trim().length() > 0) {
+    config.setUsageSelector(TellstickValueSelector.getValueSelector(configParts[2].trim()));
+  }
+  if (configParts.length > 3) {
+    config.setResend(Integer.parseInt(configParts[3]));
+  }
+  logger.debug("Context:" + context + " Item "+ item+ " Conf:"+ config);
+  addBindingConfig(item,config);
+}

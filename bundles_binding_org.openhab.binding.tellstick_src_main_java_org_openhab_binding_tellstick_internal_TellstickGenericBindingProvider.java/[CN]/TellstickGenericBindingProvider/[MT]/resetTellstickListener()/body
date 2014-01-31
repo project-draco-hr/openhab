@@ -1,0 +1,12 @@
+{
+  try {
+    listener.remove();
+  }
+ catch (  Exception e) {
+    logger.error("Failed to remove telldus core listeners",e);
+  }
+  JNA.CLibrary.INSTANCE.tdClose();
+  JNA.CLibrary.INSTANCE.tdInit();
+  updateDevices();
+  listener.setupListeners();
+}

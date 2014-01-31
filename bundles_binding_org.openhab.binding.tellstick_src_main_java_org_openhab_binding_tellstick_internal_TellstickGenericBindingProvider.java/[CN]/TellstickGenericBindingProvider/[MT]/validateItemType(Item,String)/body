@@ -1,0 +1,20 @@
+{
+  logger.debug("Validate " + item + " bind:"+ bindingConfig);
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length < 1) {
+    throw new BindingConfigParseException("Tellstick binding must contain two parts separated by ':'");
+  }
+  TellstickDevice device;
+  try {
+    device=findDevice(configParts[0].trim());
+  }
+ catch (  SupportedMethodsException e) {
+    throw new BindingConfigParseException(e.getMessage());
+  }
+  if (device == null && !StringUtils.isNumeric(configParts[0].trim())) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' telldus device "+ configParts[0].trim()+ " not found");
+  }
+  if (configParts.length > 3 && !StringUtils.isNumeric(configParts[3].trim())) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' resend config wrong"+ configParts[3].trim()+ " not a number");
+  }
+}
