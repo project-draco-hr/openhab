@@ -60,7 +60,13 @@
   JobDataMap map=new JobDataMap();
   map.put("Stick",this);
   JobDetail job=newJob(SendJob.class).withIdentity("Send","Plugwise").usingJobData(map).build();
-  Trigger trigger=newTrigger().withIdentity("Send","Plugwise").startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInMilliseconds(50)).build();
+  Trigger trigger=newTrigger().withIdentity("Send","Plugwise").startNow().build();
+  try {
+    sched.getListenerManager().addJobListener(new SendJobListener("JobListener-" + job.getKey().toString()),KeyMatcher.keyEquals(job.getKey()));
+  }
+ catch (  SchedulerException e1) {
+    logger.error("An exception occured while attaching a Quartz Send Job Listener");
+  }
   try {
     sched.scheduleJob(job,trigger);
   }
