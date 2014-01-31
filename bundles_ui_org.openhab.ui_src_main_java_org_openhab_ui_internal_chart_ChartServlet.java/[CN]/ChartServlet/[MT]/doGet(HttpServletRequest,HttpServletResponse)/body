@@ -1,14 +1,22 @@
 {
   logger.debug("Received incoming chart request: ",req);
-  int width=480;
+  int width=defaultWidth;
   try {
-    width=Integer.parseInt(req.getParameter("w"));
+    String w=req.getParameter("w");
+    if (w != null) {
+      Double d=Double.parseDouble(w) * scale;
+      width=d.intValue();
+    }
   }
  catch (  Exception e) {
   }
-  int height=240;
+  int height=defaultHeight;
   try {
-    height=Integer.parseInt(req.getParameter("h"));
+    String h=req.getParameter("h");
+    if (h != null) {
+      Double d=Double.parseDouble(h) * scale;
+      height=d.intValue();
+    }
   }
  catch (  Exception e) {
   }
