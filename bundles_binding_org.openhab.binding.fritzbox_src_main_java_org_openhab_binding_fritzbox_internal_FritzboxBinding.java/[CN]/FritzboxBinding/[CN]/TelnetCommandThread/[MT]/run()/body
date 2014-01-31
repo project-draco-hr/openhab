@@ -1,0 +1,35 @@
+{
+  try {
+    TelnetClient client=new TelnetClient();
+    client.connect(ip);
+    int state=0;
+    if (command == OnOffType.ON)     state=1;
+    String cmdString=null;
+    if (commandMap.containsKey(type)) {
+      cmdString=commandMap.get(type) + " " + state;
+    }
+ else     if (type.startsWith("tam")) {
+      cmdString="ctlmgr_ctl w tam settings/" + type.toUpperCase() + "/Active "+ state;
+    }
+ else     if (type.startsWith("cmd")) {
+      int on=type.indexOf("ON=");
+      int off=type.indexOf("OFF=");
+      if (state == 0) {
+        cmdString=type.substring(off + 4,on < off ? type.length() : on);
+      }
+ else {
+        cmdString=type.substring(on + 3,off < on ? type.length() : off);
+      }
+      cmdString=cmdString.trim();
+    }
+    receive(client);
+    sendLine(client,password);
+    receive(client);
+    sendLine(client,cmdString);
+    Thread.sleep(1000L);
+    client.disconnect();
+  }
+ catch (  Exception e) {
+    logger.warn("Could not send command",e.toString());
+  }
+}

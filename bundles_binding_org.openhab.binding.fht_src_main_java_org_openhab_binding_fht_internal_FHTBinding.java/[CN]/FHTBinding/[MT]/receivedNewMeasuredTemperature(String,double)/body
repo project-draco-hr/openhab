@@ -1,0 +1,11 @@
+{
+  FHTBindingConfig config=getConfig(deviceAddress,Datapoint.MEASURED_TEMP);
+  if (config != null) {
+    logger.debug("Updating item " + config.getItem().getName() + " with new measured temperature "+ temperature);
+    DecimalType state=new DecimalType(temperature);
+    eventPublisher.postUpdate(config.getItem().getName(),state);
+  }
+ else {
+    logger.debug("Received new measured temp for unkown device with address " + deviceAddress);
+  }
+}

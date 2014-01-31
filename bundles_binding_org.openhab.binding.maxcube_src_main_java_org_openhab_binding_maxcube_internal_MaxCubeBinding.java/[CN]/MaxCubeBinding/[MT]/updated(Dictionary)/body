@@ -2,7 +2,7 @@
   if (config != null) {
     ip=(String)config.get("ip");
     if (StringUtils.isBlank(ip)) {
-      throw new ConfigurationException("maxcube:ip","IP address for MAX!Cube must be set");
+      ip=discoveryGatewayIp();
     }
     String portString=(String)config.get("port");
     if (portString != null && !portString.isEmpty()) {
@@ -15,4 +15,8 @@
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
   }
+ else {
+    ip=discoveryGatewayIp();
+  }
+  setProperlyConfigured(ip != null);
 }

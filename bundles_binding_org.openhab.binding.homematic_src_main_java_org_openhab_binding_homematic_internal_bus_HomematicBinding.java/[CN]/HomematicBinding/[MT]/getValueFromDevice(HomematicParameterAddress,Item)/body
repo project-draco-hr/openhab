@@ -15,7 +15,7 @@
     return null;
   }
   Object valueObject=values.getValue(parameterAddress.getParameterId());
-  StateConverter<?,?> converter=converterFactory.getToStateConverter(parameterAddress,item);
+  StateConverter<?,?> converter=converterLookup.getBindingValueToStateConverter(item.getName());
   if (converter == null) {
     logger.warn("No converter found for " + parameterAddress + " - doing nothing.");
     return null;

@@ -1,8 +1,0 @@
-{
-  ConverterFactory factory=new ConverterFactory(ccu);
-  ccu.getPhysicalDevice(PARAMETER_KEY).getDeviceDescription().setType("HM-LC-Bl1-FM");
-  List<ConfiguredDevice> configuredDevices=new DeviceConfigLocator("example_device_config.xml").findAll();
-  factory.addConfiguredDevices(configuredDevices);
-  StateConverter<?,?> toStateConverter=factory.getToStateConverter(new HomematicParameterAddress("TEST",null,"LEVEL"),new RollershutterItem("TEST"));
-  assertEquals(InvertedDoublePercentageConverter.class,toStateConverter.getClass());
-}

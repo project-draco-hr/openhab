@@ -1,0 +1,18 @@
+{
+  if (!checkCULDevice()) {
+    return;
+  }
+  logger.debug("Processing " + temperatureCommandQueue.size() + " waiting FHT temperature commands");
+  Map<String,FHTDesiredTemperatureCommand> copyMap=new HashMap<String,FHTDesiredTemperatureCommand>(temperatureCommandQueue);
+  for (  Entry<String,FHTDesiredTemperatureCommand> entry : copyMap.entrySet()) {
+    FHTDesiredTemperatureCommand waitingCommand=entry.getValue();
+    String commandString="T" + waitingCommand.getAddress() + waitingCommand.getCommand();
+    try {
+      cul.send(commandString);
+      temperatureCommandQueue.remove(entry.getKey());
+    }
+ catch (    CULCommunicationException e) {
+      logger.error("Can't send desired temperature via CUL",e);
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  final RefreshTokenRequestStub request=createRequest("/error-2.json");
+  final RefreshTokenResponse response=request.execute();
+  assertTrue(response.isError());
+  final NetatmoError error=response.getError();
+  assertNotNull(error);
+  assertEquals(2,error.getCode());
+  assertEquals("Invalid access token",error.getMessage());
+}

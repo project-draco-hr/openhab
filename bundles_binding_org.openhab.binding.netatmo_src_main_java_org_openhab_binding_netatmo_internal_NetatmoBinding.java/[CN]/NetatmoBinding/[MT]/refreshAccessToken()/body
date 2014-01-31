@@ -1,0 +1,8 @@
+{
+  logger.debug("Refreshing access token.");
+  final RefreshTokenRequest request=new RefreshTokenRequest(this.clientId,this.clientSecret,this.refreshToken);
+  logger.debug("Request: {}",request);
+  final RefreshTokenResponse response=request.execute();
+  logger.debug("Response: {}",response);
+  this.accessToken=response.getAccessToken();
+}

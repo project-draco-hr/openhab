@@ -1,0 +1,11 @@
+{
+  String group=addressParts[0];
+  int subAddress=0;
+  try {
+    subAddress=Integer.parseInt(addressParts[1]);
+  }
+ catch (  NumberFormatException e) {
+    throw new BindingConfigParseException("Sub address is not a number. Configured subaddress: " + addressParts[1]);
+  }
+  return getGroupAddress(group) + getSubAddress(subAddress) + "00";
+}

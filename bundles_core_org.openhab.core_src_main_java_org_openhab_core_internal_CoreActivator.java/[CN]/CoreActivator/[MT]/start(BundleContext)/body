@@ -1,10 +1,9 @@
 {
-  String uuidString=createUUIDFile();
+  createUUIDFile();
   String versionString=context.getBundle().getVersion().toString();
   if (StringUtils.countMatches(versionString,".") == 3) {
     versionString=StringUtils.substringBeforeLast(versionString,".");
   }
-  checkVersion(uuidString,versionString);
   createVersionFile(versionString);
   logger.info("openHAB runtime has been started (v{}).",versionString);
   java.util.logging.Logger rootLogger=java.util.logging.LogManager.getLogManager().getLogger("");
