@@ -1,0 +1,27 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  Stick theStick=(Stick)dataMap.get("Stick");
+  Scheduler sched=null;
+  try {
+    sched=StdSchedulerFactory.getDefaultScheduler();
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error getting a reference to the Quartz Scheduler");
+  }
+  JobDataMap map=new JobDataMap();
+  map.put("Stick",theStick);
+  JobDetail job=newJob(SendJob.class).withIdentity("Send","Plugwise").usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity("Send","Plugwise").startNow().build();
+  try {
+    sched.getListenerManager().addJobListener(new SendJobListener("JobListener-" + job.getKey().toString()),KeyMatcher.keyEquals(job.getKey()));
+  }
+ catch (  SchedulerException e1) {
+    logger.error("An exception occured while attaching a Quartz Send Job Listener");
+  }
+  try {
+    sched.scheduleJob(job,trigger);
+  }
+ catch (  SchedulerException e) {
+    logger.error("Error scheduling a job with the Quartz Scheduler");
+  }
+}
