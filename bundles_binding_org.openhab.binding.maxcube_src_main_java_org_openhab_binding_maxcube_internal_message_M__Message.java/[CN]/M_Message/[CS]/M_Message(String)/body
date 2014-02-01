@@ -1,7 +1,7 @@
 {
   super(raw);
-  try {
-    String[] tokens=this.getPayload().split(Message.DELIMETER);
+  String[] tokens=this.getPayload().split(Message.DELIMETER);
+  if (tokens.length > 1)   try {
     byte[] bytes=Base64.decodeBase64(tokens[2].getBytes());
     rooms=new ArrayList<RoomInformation>();
     devices=new ArrayList<DeviceInformation>();
@@ -37,10 +37,12 @@
     }
   }
  catch (  Exception e) {
-    Logger logger=LoggerFactory.getLogger(M_Message.class);
     logger.info("Unknown error parsing the M Message");
     logger.info(e.getMessage());
     logger.debug(Utils.getStackTrace(e));
     logger.debug("\tRAW : {}",this.getPayload());
+  }
+ else {
+    logger.info("No rooms defined. Configure your Max!Cube");
   }
 }
