@@ -22,6 +22,8 @@
   createEOperation(mBrickdEClass,MBRICKD___DISCONNECT);
   createEOperation(mBrickdEClass,MBRICKD___INIT);
   createEOperation(mBrickdEClass,MBRICKD___GET_DEVICE__STRING);
+  subDeviceAdminEClass=createEClass(SUB_DEVICE_ADMIN);
+  createEOperation(subDeviceAdminEClass,SUB_DEVICE_ADMIN___ADD_SUB_DEVICE__STRING_STRING);
   mtfConfigConsumerEClass=createEClass(MTF_CONFIG_CONSUMER);
   createEReference(mtfConfigConsumerEClass,MTF_CONFIG_CONSUMER__TF_CONFIG);
   mBaseDeviceEClass=createEClass(MBASE_DEVICE);
@@ -113,6 +115,13 @@
   createEAttribute(digitalSensorEClass,DIGITAL_SENSOR__PIN);
   mDualRelayEClass=createEClass(MDUAL_RELAY);
   createEAttribute(mDualRelayEClass,MDUAL_RELAY__DEVICE_TYPE);
+  mBrickletRemoteSwitchEClass=createEClass(MBRICKLET_REMOTE_SWITCH);
+  createEAttribute(mBrickletRemoteSwitchEClass,MBRICKLET_REMOTE_SWITCH__DEVICE_TYPE);
+  remoteSwitchEClass=createEClass(REMOTE_SWITCH);
+  createEAttribute(remoteSwitchEClass,REMOTE_SWITCH__DEVICE_TYPE);
+  remoteSwitchAEClass=createEClass(REMOTE_SWITCH_A);
+  remoteSwitchBEClass=createEClass(REMOTE_SWITCH_B);
+  remoteSwitchCEClass=createEClass(REMOTE_SWITCH_C);
   mBrickletHumidityEClass=createEClass(MBRICKLET_HUMIDITY);
   createEAttribute(mBrickletHumidityEClass,MBRICKLET_HUMIDITY__DEVICE_TYPE);
   createEAttribute(mBrickletHumidityEClass,MBRICKLET_HUMIDITY__HUMIDITIY);
@@ -192,6 +201,9 @@
   createEAttribute(tfServoConfigurationEClass,TF_SERVO_CONFIGURATION__PULSE_WIDTH_MAX);
   createEAttribute(tfServoConfigurationEClass,TF_SERVO_CONFIGURATION__PERIOD);
   createEAttribute(tfServoConfigurationEClass,TF_SERVO_CONFIGURATION__OUTPUT_VOLTAGE);
+  remoteSwitchAConfigurationEClass=createEClass(REMOTE_SWITCH_ACONFIGURATION);
+  remoteSwitchBConfigurationEClass=createEClass(REMOTE_SWITCH_BCONFIGURATION);
+  remoteSwitchCConfigurationEClass=createEClass(REMOTE_SWITCH_CCONFIGURATION);
   dcDriveModeEEnum=createEEnum(DC_DRIVE_MODE);
   noSubIdsEEnum=createEEnum(NO_SUB_IDS);
   industrialDigitalInSubIDsEEnum=createEEnum(INDUSTRIAL_DIGITAL_IN_SUB_IDS);
@@ -223,5 +235,6 @@
   mTinkerBrickletBarometerEDataType=createEDataType(MTINKER_BRICKLET_BAROMETER);
   mTinkerBrickletAmbientLightEDataType=createEDataType(MTINKER_BRICKLET_AMBIENT_LIGHT);
   mTinkerBrickletLCD20x4EDataType=createEDataType(MTINKER_BRICKLET_LCD2_0X4);
+  tinkerBrickletRemoteSwitchEDataType=createEDataType(TINKER_BRICKLET_REMOTE_SWITCH);
   enumEDataType=createEDataType(ENUM);
 }
