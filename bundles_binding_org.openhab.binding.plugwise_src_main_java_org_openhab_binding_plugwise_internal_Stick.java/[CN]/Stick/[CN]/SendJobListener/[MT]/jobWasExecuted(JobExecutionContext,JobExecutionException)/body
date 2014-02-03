@@ -10,8 +10,9 @@
   }
   JobDataMap map=new JobDataMap();
   map.put("Stick",theStick);
-  JobDetail job=newJob(SendJob.class).withIdentity("Send","Plugwise").usingJobData(map).build();
-  Trigger trigger=newTrigger().withIdentity("Send","Plugwise").startNow().build();
+  Stick.counter++;
+  JobDetail job=newJob(SendJob.class).withIdentity("Send-" + Stick.counter,"Plugwise").usingJobData(map).build();
+  Trigger trigger=newTrigger().withIdentity("Send-" + Stick.counter,"Plugwise").startNow().build();
   try {
     sched.getListenerManager().addJobListener(new SendJobListener("JobListener-" + job.getKey().toString()),KeyMatcher.keyEquals(job.getKey()));
   }
@@ -22,6 +23,6 @@
     sched.scheduleJob(job,trigger);
   }
  catch (  SchedulerException e) {
-    logger.error("Error scheduling a job with the Quartz Scheduler");
+    logger.error("Error scheduling a job with the Quartz Scheduler : {}",e.getMessage());
   }
 }
