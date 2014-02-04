@@ -1,3 +1,27 @@
 {
-  throw new UnsupportedOperationException();
+  logger.debug("{} enable called on RemoteSwitchB",LoggerConstants.TFINIT);
+  boolean addressFound=false;
+  boolean unitFound=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("address"))) {
+      setAddress(tfConfig.getAddress());
+      addressFound=true;
+    }
+ else {
+      logger.error("{} address not configured for subid {}",LoggerConstants.TFINITSUB,getSubId());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("unit"))) {
+      setUnit(tfConfig.getUnit());
+      unitFound=true;
+    }
+ else {
+      logger.error("{} unit not configured for subid {}",LoggerConstants.TFINITSUB,getSubId());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("repeats"))) {
+      setRepeats(tfConfig.getRepeats());
+    }
+  }
+  if (tfConfig == null || !addressFound || !unitFound) {
+    logger.error("{} missing configuration for subid {} device will not work",LoggerConstants.TFINITSUB,getSubId());
+  }
 }

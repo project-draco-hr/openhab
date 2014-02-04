@@ -1,3 +1,27 @@
 {
-  throw new UnsupportedOperationException();
+  logger.debug("{} enable called on RemoteSwitchC",LoggerConstants.TFINIT);
+  boolean systemCodeFound=false;
+  boolean deviceCodeFound=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("systemCode"))) {
+      setSystemCode(tfConfig.getSystemCode());
+      systemCodeFound=true;
+    }
+ else {
+      logger.error("{} systemCode not configured for subid {}",LoggerConstants.TFINITSUB,getSubId());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("deviceCode"))) {
+      setDeviceCode(tfConfig.getDeviceCode());
+      deviceCodeFound=true;
+    }
+ else {
+      logger.error("{} deviceCode not configured for subid {}",LoggerConstants.TFINITSUB,getSubId());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("repeats"))) {
+      setRepeats(tfConfig.getRepeats());
+    }
+  }
+  if (tfConfig == null || !systemCodeFound || !deviceCodeFound) {
+    logger.error("{} missing configuration for subid {} device will not work",LoggerConstants.TFINITSUB,getSubId());
+  }
 }
