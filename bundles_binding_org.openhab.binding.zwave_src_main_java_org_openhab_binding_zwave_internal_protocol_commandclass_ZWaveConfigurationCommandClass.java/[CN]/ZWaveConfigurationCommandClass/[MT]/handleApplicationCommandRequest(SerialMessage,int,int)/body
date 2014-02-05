@@ -1,19 +1,19 @@
 {
-  logger.debug(String.format("Received Configuration Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug(String.format("NODE %d: Received Configuration Request",this.getNode().getNodeId()));
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case CONFIGURATIONCMD_SET:
-    logger.debug("Process Configuration Set");
+    logger.trace("NODE {}: Process Configuration Set",this.getNode().getNodeId());
   processConfigurationReport(serialMessage,offset);
 break;
 case CONFIGURATIONCMD_GET:
-logger.warn(String.format("Command 0x%02X not implemented.",command));
+logger.warn(String.format("NODE %d: Command 0x%02X not implemented.",this.getNode().getNodeId(),command));
 return;
 case CONFIGURATIONCMD_REPORT:
-logger.debug("Process Configuration Report");
+logger.trace("NODE {}: Process Configuration Report",this.getNode().getNodeId());
 processConfigurationReport(serialMessage,offset);
 break;
 default :
-logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+logger.warn(String.format("NODE %d: Unsupported Command 0x%02X for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
 }
 }
