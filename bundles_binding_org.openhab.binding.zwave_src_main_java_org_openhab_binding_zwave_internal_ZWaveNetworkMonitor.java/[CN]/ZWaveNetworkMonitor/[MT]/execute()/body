@@ -12,11 +12,13 @@
     networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
   }
   if (networkHealNightlyTime > System.currentTimeMillis())   return;
+  networkHealNightlyTime=System.currentTimeMillis() + HEAL_CYCLE_PERIOD;
   boolean nodeDone=false;
 switch (networkHealState) {
 case WAITING:
-    networkHealState=HealState.UPDATENEIGHBORS;
-  break;
+    networkHealDeadCheckNext=Long.MAX_VALUE;
+  networkHealState=HealState.UPDATENEIGHBORS;
+break;
 case UPDATENEIGHBORS:
 networkHealNightlyNode=0;
 networkHealState=HealState.UPDATENEIGHBORSNEXT;
@@ -28,7 +30,6 @@ logger.debug("NODE {}: Heal is updating node neighbors.");
 zController.requestNodeNeighborUpdate(node.getNodeId());
 break;
 }
-networkHealNightlyTime=System.currentTimeMillis() + HEAL_CYCLE_PERIOD;
 if (nodeDone == false) {
 networkHealState=HealState.UPDATEROUTES;
 break;
@@ -62,14 +63,18 @@ zController.requestNodeRoutingInfo(node.getNodeId());
 break;
 }
 if (nodeDone == false) {
-networkHealState=HealState.WAITING;
-Calendar next=Calendar.getInstance();
-next.set(Calendar.HOUR_OF_DAY,networkHealNightlyHour);
-next.set(Calendar.MINUTE,0);
-next.set(Calendar.SECOND,0);
-networkHealNightlyTime=next.getTimeInMillis() + 86400000;
-break;
+networkHealState=HealState.COMPLETE;
 }
 break;
+case COMPLETE:
+for (networkHealNightlyNode=0; networkHealNightlyNode <= 232; ++networkHealNightlyNode) {
+ZWaveNode node=zController.getNode(networkHealNightlyNode);
+if (node == null) continue;
+ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+nodeSerializer.SerializeNode(node);
+}
+networkHealState=HealState.WAITING;
+networkHealNightlyTime=calculateNextHeal();
+networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
 }
 }
