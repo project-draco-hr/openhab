@@ -1,0 +1,10 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("Got AssignSucReturnRoute response (Node {}).",nodeId);
+  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
+    logger.debug("AssignSucReturnRoute command in progress for node {}.",nodeId);
+  }
+ else {
+    logger.error("AssignSucReturnRoute command failed for node {}.",nodeId);
+  }
+}
