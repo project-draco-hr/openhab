@@ -3,6 +3,7 @@
   int maxAssociations=serialMessage.getMessagePayloadByte(offset + 2);
   int following=serialMessage.getMessagePayloadByte(offset + 3);
   if (maxAssociations == 0) {
+    if (updateAssociationsNode == group)     updateAssociationsNode=0;
     return;
   }
   logger.debug("NODE {}: association group {} has max associations " + maxAssociations,this.getNode().getNodeId(),group);
@@ -22,7 +23,10 @@
     }
   }
   configAssociations.put(group,association);
-  if (following == 0) {
+  if (following == 0 && group == updateAssociationsNode) {
+    updateAssociationsNode++;
+    SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
+    if (outputMessage != null)     this.getController().sendData(outputMessage);
   }
   this.getController().notifyEventListeners(zEvent);
 }
