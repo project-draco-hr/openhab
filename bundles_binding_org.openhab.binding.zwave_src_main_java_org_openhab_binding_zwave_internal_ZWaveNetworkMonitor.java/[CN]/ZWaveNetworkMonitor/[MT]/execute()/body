@@ -33,6 +33,26 @@ zController.requestNodeNeighborUpdate(node.getNodeId());
 break;
 }
 if (nodeDone == false) {
+networkHealState=HealState.GETASSOCIATIONS;
+break;
+}
+break;
+case GETASSOCIATIONS:
+networkHealNightlyNode=1;
+networkHealState=HealState.GETASSOCIATIONSNEXT;
+case GETASSOCIATIONSNEXT:
+while (networkHealNightlyNode <= 232) {
+ZWaveNode node=zController.getNode(networkHealNightlyNode);
+networkHealNightlyNode++;
+if (node == null) continue;
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+if (associationCommandClass == null) continue;
+nodeDone=true;
+logger.debug("NODE {}: Heal is requesting device associations.",node.getNodeId());
+associationCommandClass.getAllAssociations();
+break;
+}
+if (nodeDone == false) {
 networkHealState=HealState.UPDATEROUTES;
 break;
 }
