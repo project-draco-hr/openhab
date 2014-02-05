@@ -1,0 +1,38 @@
+{
+  logger.debug("Update return routes for node {}",nodeId);
+  ZWaveNode node=this.getNode(nodeId);
+  if (node == null) {
+    logger.error("Node not found!");
+    return;
+  }
+  if (node.isRouting() == false) {
+    logger.debug("Node is not a routing node. No routes can be set.");
+    return;
+  }
+  ArrayList<Integer> routedNodes=new ArrayList<Integer>();
+  ZWaveAssociationCommandClass associationCmdClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+  int groups=associationCmdClass.getGroupCount();
+  if (groups != 0) {
+    for (int group=1; group <= groups; group++) {
+      for (      Integer associationNodeId : associationCmdClass.getGroupMembers(group)) {
+        routedNodes.add(associationNodeId);
+      }
+    }
+  }
+  ZWaveWakeUpCommandClass wakeupCmdClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+  if (wakeupCmdClass != null) {
+    Integer wakeupNodeId=wakeupCmdClass.getTargetNodeId();
+    if (this.getNode(wakeupNodeId) != null) {
+      routedNodes.add(wakeupNodeId);
+    }
+  }
+  if (routedNodes.size() == 0) {
+    logger.debug("No return routes required for node {}.",nodeId);
+    return;
+  }
+  requestDeleteAllReturnRoutes(nodeId);
+  logger.debug("Adding {} return routes for node {}.",nodeId);
+  for (  Integer destNodeId : routedNodes) {
+    requestAssignReturnRoute(nodeId,destNodeId);
+  }
+}

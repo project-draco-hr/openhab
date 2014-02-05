@@ -1,0 +1,7 @@
+{
+  logger.debug("Deleting return route from node {}",nodeId);
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.DeleteReturnRoute,SerialMessageType.Request,SerialMessageClass.DeleteReturnRoute,SerialMessagePriority.High);
+  byte[] newPayload={(byte)nodeId};
+  newMessage.setMessagePayload(newPayload);
+  this.enqueue(newMessage);
+}
