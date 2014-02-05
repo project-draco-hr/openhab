@@ -2,14 +2,14 @@
 synchronized (stream) {
     File file=new File(this.versionedFolderName,String.format("node%d.xml",node.getNodeId()));
     BufferedWriter writer=null;
-    logger.debug("Serializing node {} to file {}",node.getNodeId(),file.getPath());
+    logger.debug("NODE {}: Serializing to file {}",node.getNodeId(),file.getPath());
     try {
       writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),"UTF-8"));
       stream.marshal(node,new PrettyPrintWriter(writer));
       writer.flush();
     }
  catch (    IOException e) {
-      logger.error("There was an error writing the node config to a file: {}",e.getMessage());
+      logger.error("NODE {}: There was an error writing the node config to a file: {}",node.getNodeId(),e.getMessage());
     }
  finally {
       if (writer != null)       try {

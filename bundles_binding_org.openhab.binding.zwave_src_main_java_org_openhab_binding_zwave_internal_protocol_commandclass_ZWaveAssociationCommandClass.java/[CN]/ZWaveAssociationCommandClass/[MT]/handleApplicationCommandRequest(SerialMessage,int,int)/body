@@ -1,5 +1,5 @@
 {
-  logger.debug(String.format("Received Association Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug("NODE {}: Received Association Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case ASSOCIATIONCMD_SET:
@@ -23,6 +23,6 @@ case ASSOCIATIONCMD_GROUPINGSREPORT:
 logger.trace("Process Association GroupingsReport - number of groups " + serialMessage.getMessagePayloadByte(offset + 1));
 return;
 default :
-logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+logger.warn(String.format("NODE %d: Unsupported Command 0x%02X for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
 }
 }
