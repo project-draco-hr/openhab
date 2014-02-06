@@ -1,18 +1,30 @@
 {
-  if (StringUtils.isBlank(username) || StringUtils.isBlank(password) || StringUtils.isBlank(url)) {
-    logger.warn("username, password and url must not be blank -> gcal calendar login aborted");
+  if (StringUtils.isBlank(url)) {
+    logger.warn("Login aborted no url");
+    return null;
+  }
+  if (StringUtils.isBlank(username) && StringUtils.isBlank(password)) {
+    logger.info("gcal without username and password (make sure url is accessable without those)");
+  }
+ else {
+    logger.warn("Login aborted none of the 2 cased are fulfilled 1)url, username, password 2) url ");
     return null;
   }
   try {
     URL feedUrl=new URL(url);
     CalendarService myService=new CalendarService("openHAB");
-    myService.setUserCredentials(username,password);
+    if (!StringUtils.isBlank(username) && !StringUtils.isBlank(password)) {
+      myService.setUserCredentials(username,password);
+    }
     CalendarQuery myQuery=new CalendarQuery(feedUrl);
-    myQuery.setMinimumStartTime(DateTime.now());
-    myQuery.setMaximumStartTime(new DateTime(DateTime.now().getValue() + (2 * refreshInterval)));
+    DateTime start=DateTime.now();
+    DateTime end=new DateTime(DateTime.now().getValue() + (2 * refreshInterval));
+    myQuery.setMinimumStartTime(start);
+    myQuery.setMaximumStartTime(end);
     if (StringUtils.isNotBlank(filter)) {
       myQuery.setFullTextQuery(filter);
     }
+    logger.debug("Downloading calendar feed for time interval: {} to  {} ",start,end);
     CalendarEventFeed feed=myService.getFeed(myQuery,CalendarEventFeed.class);
     if (feed != null) {
       checkIfFullCalendarFeed(feed.getEntries());
