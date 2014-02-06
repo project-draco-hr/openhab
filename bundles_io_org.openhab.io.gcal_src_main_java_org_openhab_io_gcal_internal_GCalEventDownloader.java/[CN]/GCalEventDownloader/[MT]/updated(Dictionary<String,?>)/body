@@ -2,8 +2,14 @@
   if (config != null) {
     String usernameString=(String)config.get("username");
     username=usernameString;
+    if (StringUtils.isBlank(username)) {
+      throw new ConfigurationException("gcal:username","username must not be blank - please configure an aproppriate username in openhab.cfg");
+    }
     String passwordString=(String)config.get("password");
     password=passwordString;
+    if (StringUtils.isBlank(password)) {
+      throw new ConfigurationException("gcal:password","password must not be blank - please configure an aproppriate password in openhab.cfg");
+    }
     String urlString=(String)config.get("url");
     url=urlString;
     if (StringUtils.isBlank(url)) {
