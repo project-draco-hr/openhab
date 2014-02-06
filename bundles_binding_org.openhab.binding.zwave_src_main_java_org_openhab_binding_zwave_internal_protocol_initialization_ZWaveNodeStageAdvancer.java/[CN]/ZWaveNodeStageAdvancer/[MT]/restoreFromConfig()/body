@@ -2,7 +2,7 @@
   ZWaveNode restoredNode=nodeSerializer.DeserializeNode(this.node.getNodeId());
   if (restoredNode == null)   return false;
   if (restoredNode.getVersion() != this.node.getVersion() || restoredNode.isListening() != this.node.isListening() || restoredNode.isFrequentlyListening() != this.node.isFrequentlyListening() || restoredNode.isRouting() != this.node.isRouting() || !restoredNode.getDeviceClass().equals(this.node.getDeviceClass())) {
-    logger.warn("Config file differs from controler information for node {}, ignoring config.",this.node.getNodeId());
+    logger.warn("NODE {}: Config file differs from controler information, ignoring config.",this.node.getNodeId());
     return false;
   }
   this.node.setDeviceId(restoredNode.getDeviceId());
@@ -22,7 +22,7 @@
     }
     this.node.addCommandClass(commandClass);
   }
-  logger.debug("Restored node {} from config.",this.node.getNodeId());
+  logger.debug("NODE {}: Restored from config.",this.node.getNodeId());
   restoredFromConfigfile=true;
   return true;
 }

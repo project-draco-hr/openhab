@@ -1,4 +1,5 @@
 {
+  int interval=150;
   if (config != null) {
     Enumeration keys=config.keys();
     while (keys.hasMoreElements()) {
@@ -8,7 +9,7 @@
       }
       Matcher matcher=EXTRACT_PLUGWISE_CONFIG_PATTERN.matcher(key);
       if (!matcher.matches()) {
-        logger.error("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port>'");
+        logger.error("given plugwise-config-key '" + key + "' does not follow the expected pattern '<PlugwiseId>.<mac|port|interval>'");
         continue;
       }
       matcher.reset();
@@ -21,6 +22,8 @@
           if ("port".equals(configKey)) {
             stick=new Stick(value,this);
             logger.info("Plugwise added Stick connected to serial port {}",value);
+          }
+ else           if ("interval".equals(configKey)) {
           }
  else {
             throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
@@ -43,6 +46,19 @@
         matcher.reset();
         matcher.find();
         String plugwiseID=matcher.group(1);
+        if (plugwiseID.equals("stick")) {
+          String configKey=matcher.group(2);
+          String value=(String)config.get(key);
+          if ("interval".equals(configKey)) {
+            stick.setInterval(Integer.valueOf(value));
+            logger.info("Plugwise set the interval to send ZigBee PDUs to {} ms",value);
+          }
+ else           if ("port".equals(configKey)) {
+          }
+ else {
+            throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+          }
+        }
         PlugwiseDevice device=stick.getDeviceByName(plugwiseID);
         if (device == null && !plugwiseID.equals("stick")) {
           String configKey=matcher.group(2);

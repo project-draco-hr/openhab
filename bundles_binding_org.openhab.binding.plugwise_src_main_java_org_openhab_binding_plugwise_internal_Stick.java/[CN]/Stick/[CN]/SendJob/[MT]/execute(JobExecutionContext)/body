@@ -5,6 +5,12 @@
     Message message=theStick.sendQueue.poll();
     while (message != null) {
       sendMessage(message);
+      try {
+        Thread.sleep(theStick.interval);
+      }
+ catch (      InterruptedException e) {
+        logger.debug("An exception occurred while putting the Plugwise SendJob thread to sleep : {}",e.getMessage());
+      }
       message=theStick.sendQueue.poll();
     }
   }
