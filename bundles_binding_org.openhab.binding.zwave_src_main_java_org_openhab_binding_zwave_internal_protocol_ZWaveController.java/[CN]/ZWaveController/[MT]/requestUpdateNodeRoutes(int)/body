@@ -1,12 +1,12 @@
 {
-  logger.debug("Update return routes for node {}",nodeId);
+  logger.debug("NODE {}: Update return routes",nodeId);
   ZWaveNode node=this.getNode(nodeId);
   if (node == null) {
-    logger.error("Node not found!");
+    logger.error("NODE {}: Node not found!",nodeId);
     return;
   }
   if (node.isRouting() == false) {
-    logger.debug("Node is not a routing node. No routes can be set.");
+    logger.debug("NODE {}: Node is not a routing node. No routes can be set.",nodeId);
     return;
   }
   ArrayList<Integer> routedNodes=new ArrayList<Integer>();
@@ -27,7 +27,7 @@
     }
   }
   if (routedNodes.size() == 0) {
-    logger.debug("No return routes required for node {}.",nodeId);
+    logger.debug("NODE {}: No return routes required.",nodeId);
     return;
   }
   requestDeleteAllReturnRoutes(nodeId);
