@@ -5,7 +5,14 @@
     logger.error("Error malformed domain in doAction '{}'",domain);
     return;
   }
-  if (splitDomain[0].equals("nodes")) {
+  if (splitDomain[0].equals("binding")) {
+    if (splitDomain[1].equals("network")) {
+      if (action.equals("Heal")) {
+        if (networkMonitor != null)         networkMonitor.startHeal();
+      }
+    }
+  }
+ else   if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null) {
