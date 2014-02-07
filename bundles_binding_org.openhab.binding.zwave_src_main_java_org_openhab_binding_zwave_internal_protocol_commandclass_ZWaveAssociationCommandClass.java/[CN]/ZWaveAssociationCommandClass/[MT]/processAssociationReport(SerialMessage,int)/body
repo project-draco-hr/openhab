@@ -6,6 +6,7 @@
     if (updateAssociationsNode == group) {
       logger.debug("NODE {}: All association groups acquired.",this.getNode().getNodeId());
       updateAssociationsNode=0;
+      this.getController().notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssociationUpdate,this.getNode().getNodeId(),ZWaveNetworkEvent.State.Success));
     }
     return;
   }
