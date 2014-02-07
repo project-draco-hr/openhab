@@ -16,10 +16,12 @@
   boolean nodeDone=false;
 switch (networkHealState) {
 case WAITING:
-    networkHealDeadCheckNext=Long.MAX_VALUE;
-  networkHealState=HealState.UPDATENEIGHBORS;
+    logger.debug("************** NETWORK HEAL - STARTING");
+  networkHealDeadCheckNext=Long.MAX_VALUE;
+networkHealState=HealState.UPDATENEIGHBORS;
 break;
 case UPDATENEIGHBORS:
+logger.debug("************** NETWORK HEAL - UPDATE NEIGHBORS");
 networkHealNightlyNode=1;
 networkHealState=HealState.UPDATENEIGHBORSNEXT;
 case UPDATENEIGHBORSNEXT:
@@ -38,6 +40,7 @@ break;
 }
 break;
 case GETASSOCIATIONS:
+logger.debug("************** NETWORK HEAL - GET ASSOCIATIONS");
 networkHealNightlyNode=1;
 networkHealState=HealState.GETASSOCIATIONSNEXT;
 case GETASSOCIATIONSNEXT:
@@ -58,6 +61,7 @@ break;
 }
 break;
 case UPDATEROUTES:
+logger.debug("************** NETWORK HEAL - UPDATE ROUTES");
 networkHealNightlyNode=1;
 networkHealState=HealState.UPDATEROUTESNEXT;
 case UPDATEROUTESNEXT:
@@ -76,6 +80,7 @@ break;
 }
 break;
 case GETNEIGHBORS:
+logger.debug("************** NETWORK HEAL - GET NEIGHBORS");
 networkHealNightlyNode=0;
 networkHealState=HealState.GETNEIGHBORSNEXT;
 case GETNEIGHBORSNEXT:
@@ -93,6 +98,7 @@ networkHealState=HealState.COMPLETE;
 }
 break;
 case COMPLETE:
+logger.debug("************** NETWORK HEAL - DONE");
 for (networkHealNightlyNode=0; networkHealNightlyNode <= 232; ++networkHealNightlyNode) {
 ZWaveNode node=zController.getNode(networkHealNightlyNode);
 if (node == null) continue;
