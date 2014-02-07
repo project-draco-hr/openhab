@@ -11,10 +11,12 @@ case REQUEST_NEIGHBOR_UPDATE_STARTED:
 break;
 case REQUEST_NEIGHBOR_UPDATE_DONE:
 logger.debug("NODE {}: NodeNeighborUpdate DONE",nodeId);
+notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.NodeNeighborUpdate,nodeId,ZWaveNetworkEvent.State.Success));
 break;
 case REQUEST_NEIGHBOR_UPDATE_FAILED:
 logger.error("NODE {}: NodeNeighborUpdate FAILED",nodeId);
 transactionCompleted.release();
+notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.NodeNeighborUpdate,nodeId,ZWaveNetworkEvent.State.Failure));
 break;
 }
 }
