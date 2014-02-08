@@ -14,8 +14,7 @@
   }
   if (!node.isListening() && !node.isFrequentlyListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-    if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
-      wakeUpCommandClass.putInWakeUpQueue(serialMessage);
+    if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
       return;
     }
   }

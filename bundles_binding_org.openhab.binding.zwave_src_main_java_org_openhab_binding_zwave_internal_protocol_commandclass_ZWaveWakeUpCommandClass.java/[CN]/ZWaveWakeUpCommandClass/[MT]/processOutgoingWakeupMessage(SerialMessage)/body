@@ -1,0 +1,20 @@
+{
+  if (isAwake) {
+    if (serialMessage.getMessagePayload().length >= 2 && serialMessage.getMessagePayload()[2] != (byte)WAKE_UP_NO_MORE_INFORMATION) {
+      logger.debug("NODE {}: NOT last MSG - restarting timer.",this.getNode().getNodeId());
+      setSleepTimer();
+    }
+    return true;
+  }
+  if (serialMessage.getMessagePayload().length >= 2 && serialMessage.getMessagePayload()[2] == (byte)WAKE_UP_NO_MORE_INFORMATION) {
+    logger.debug("NODE {}: Last MSG not queuing.",this.getNode().getNodeId());
+    return false;
+  }
+  if (this.wakeUpQueue.contains(serialMessage)) {
+    logger.debug("NODE {}: Message already on the wake-up queue. Discarding.",this.getNode().getNodeId());
+    return false;
+  }
+  logger.debug("NODE {}: Putting message in wakeup queue.",this.getNode().getNodeId());
+  this.wakeUpQueue.add(serialMessage);
+  return false;
+}

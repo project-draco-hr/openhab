@@ -13,8 +13,7 @@
       ZWaveNode node=getNode(lastSentMessage.getMessageNode());
       if (node != null && !node.isListening() && !node.isFrequentlyListening() && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
         ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-        if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
-          wakeUpCommandClass.putInWakeUpQueue(lastSentMessage);
+        if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(lastSentMessage)) {
           continue;
         }
       }
