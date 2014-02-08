@@ -1,0 +1,53 @@
+{
+switch (healing.state) {
+case WAITING:
+    logger.debug("NODE {}: ************** NETWORK HEAL - STARTING",healing.nodeId);
+  networkHealDeadCheckNext=Long.MAX_VALUE;
+networkHealNightlyTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD;
+healing.state=HealState.UPDATENEIGHBORS;
+case UPDATENEIGHBORS:
+logger.debug("NODE {}: Heal is updating node neighbors.",healing.nodeId);
+healing.event=ZWaveNetworkEvent.Type.NodeNeighborUpdate;
+healing.stateNext=HealState.GETASSOCIATIONS;
+zController.requestNodeNeighborUpdate(healing.nodeId);
+break;
+case GETASSOCIATIONS:
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)healing.node.getCommandClass(CommandClass.ASSOCIATION);
+if (associationCommandClass != null) {
+logger.debug("NODE {}: Heal is requesting device associations.",healing.nodeId);
+healing.stateNext=HealState.UPDATEROUTES;
+healing.event=ZWaveNetworkEvent.Type.AssociationUpdate;
+associationCommandClass.getAllAssociations();
+break;
+}
+case UPDATEROUTES:
+healing.routeList=healing.node.getRoutingList();
+if (healing.routeList != null && healing.routeList.size() != 0) {
+logger.debug("NODE {}: Heal is deleting routes.",healing.nodeId);
+healing.event=ZWaveNetworkEvent.Type.DeleteReturnRoute;
+healing.stateNext=HealState.UPDATEROUTESNEXT;
+zController.requestDeleteAllReturnRoutes(healing.nodeId);
+break;
+}
+case UPDATEROUTESNEXT:
+if (healing.routeList != null && healing.routeList.size() != 0) {
+logger.debug("NODE {}: Adding return route to {}",healing.nodeId,healing.routeList.get(0));
+healing.stateNext=HealState.GETNEIGHBORS;
+healing.event=ZWaveNetworkEvent.Type.AssignReturnRoute;
+zController.requestAssignReturnRoute(healing.nodeId,healing.routeList.get(0));
+break;
+}
+case GETNEIGHBORS:
+healing.event=ZWaveNetworkEvent.Type.NodeRoutingInfo;
+healing.stateNext=HealState.COMPLETE;
+logger.debug("NODE {}: Heal is requesting node neighbor info.",healing.nodeId);
+zController.requestNodeRoutingInfo(healing.nodeId);
+break;
+case COMPLETE:
+logger.debug("NODE {}: Heal is complete - saving XML.",healing.nodeId);
+ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+nodeSerializer.SerializeNode(healing.node);
+healNodes.remove(healing.nodeId);
+break;
+}
+}

@@ -5,108 +5,25 @@
       if (node == null)       continue;
       if (node.isDead()) {
         logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
-        zController.requestUpdateNodeRoutes(node.getNodeId());
+        zController.requestAssignSucReturnRoute(node.getNodeId());
       }
       node.resetResendCount();
     }
     networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
   }
-  if (networkHealNightlyTime > System.currentTimeMillis())   return;
-  networkHealNightlyTime=System.currentTimeMillis() + HEAL_CYCLE_PERIOD;
-  boolean nodeDone=false;
-switch (networkHealState) {
-case WAITING:
-    logger.debug("************** NETWORK HEAL - STARTING");
-  networkHealDeadCheckNext=Long.MAX_VALUE;
-networkHealState=HealState.UPDATENEIGHBORS;
-break;
-case UPDATENEIGHBORS:
-logger.debug("************** NETWORK HEAL - UPDATE NEIGHBORS");
-networkHealNightlyNode=1;
-networkHealState=HealState.UPDATENEIGHBORSNEXT;
-case UPDATENEIGHBORSNEXT:
-while (networkHealNightlyNode <= 232) {
-ZWaveNode node=zController.getNode(networkHealNightlyNode);
-networkHealNightlyNode++;
-if (node == null) continue;
-nodeDone=true;
-logger.debug("NODE {}: Heal is updating node neighbors.",node.getNodeId());
-zController.requestNodeNeighborUpdate(node.getNodeId());
-break;
-}
-if (nodeDone == false) {
-networkHealState=HealState.GETASSOCIATIONS;
-break;
-}
-break;
-case GETASSOCIATIONS:
-logger.debug("************** NETWORK HEAL - GET ASSOCIATIONS");
-networkHealNightlyNode=1;
-networkHealState=HealState.GETASSOCIATIONSNEXT;
-case GETASSOCIATIONSNEXT:
-while (networkHealNightlyNode <= 232) {
-ZWaveNode node=zController.getNode(networkHealNightlyNode);
-networkHealNightlyNode++;
-if (node == null) continue;
-ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
-if (associationCommandClass == null) continue;
-nodeDone=true;
-logger.debug("NODE {}: Heal is requesting device associations.",node.getNodeId());
-associationCommandClass.getAllAssociations();
-break;
-}
-if (nodeDone == false) {
-networkHealState=HealState.UPDATEROUTES;
-break;
-}
-break;
-case UPDATEROUTES:
-logger.debug("************** NETWORK HEAL - UPDATE ROUTES");
-networkHealNightlyNode=1;
-networkHealState=HealState.UPDATEROUTESNEXT;
-case UPDATEROUTESNEXT:
-while (networkHealNightlyNode <= 232) {
-ZWaveNode node=zController.getNode(networkHealNightlyNode);
-networkHealNightlyNode++;
-if (node == null) continue;
-nodeDone=true;
-logger.debug("NODE {}: Heal is updating node routes.",node.getNodeId());
-zController.requestUpdateNodeRoutes(node.getNodeId());
-break;
-}
-if (nodeDone == false) {
-networkHealState=HealState.GETNEIGHBORS;
-break;
-}
-break;
-case GETNEIGHBORS:
-logger.debug("************** NETWORK HEAL - GET NEIGHBORS");
-networkHealNightlyNode=0;
-networkHealState=HealState.GETNEIGHBORSNEXT;
-case GETNEIGHBORSNEXT:
-while (networkHealNightlyNode <= 232) {
-networkHealNightlyNode++;
-ZWaveNode node=zController.getNode(networkHealNightlyNode);
-if (node == null) continue;
-nodeDone=true;
-logger.debug("NODE {}: Heal is requesting node neighbor info.",node.getNodeId());
-zController.requestNodeRoutingInfo(node.getNodeId());
-break;
-}
-if (nodeDone == false) {
-networkHealState=HealState.COMPLETE;
-}
-break;
-case COMPLETE:
-logger.debug("************** NETWORK HEAL - DONE");
-for (networkHealNightlyNode=0; networkHealNightlyNode <= 232; ++networkHealNightlyNode) {
-ZWaveNode node=zController.getNode(networkHealNightlyNode);
-if (node == null) continue;
-ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
-nodeSerializer.SerializeNode(node);
-}
-networkHealState=HealState.WAITING;
-networkHealNightlyTime=calculateNextHeal();
-networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
-}
+  if (healNodes != null) {
+    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+      HealNode node=entry.getValue();
+      if (node.state != HealState.WAITING) {
+        return;
+      }
+    }
+    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+      HealNode node=entry.getValue();
+      if (node.battery == false) {
+        nextHealStage(node);
+        break;
+      }
+    }
+  }
 }
