@@ -1,10 +1,7 @@
 {
-  logger.debug("NODE {}: setSleepTimer *******************",this.getNode().getNodeId());
-  if (timer != null) {
-    logger.debug("NODE {}: Retrigger sleep timer",this.getNode().getNodeId());
-    timer.cancel();
+  if (timerTask != null) {
+    timerTask.cancel();
   }
-  TimerTask timerTask=new WakeupTimerTask(this);
-  timer=new Timer();
-  timer.schedule(timerTask,1500);
+  timerTask=new WakeupTimerTask(this);
+  timer.schedule(timerTask,2000);
 }

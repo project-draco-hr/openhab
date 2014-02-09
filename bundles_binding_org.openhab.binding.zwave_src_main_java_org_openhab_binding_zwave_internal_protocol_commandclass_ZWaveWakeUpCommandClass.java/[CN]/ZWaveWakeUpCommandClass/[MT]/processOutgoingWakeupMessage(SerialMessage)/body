@@ -1,9 +1,5 @@
 {
   if (isAwake) {
-    if (serialMessage.getMessagePayload().length >= 2 && serialMessage.getMessagePayload()[2] != (byte)WAKE_UP_NO_MORE_INFORMATION) {
-      logger.debug("NODE {}: NOT last MSG - restarting timer.",this.getNode().getNodeId());
-      setSleepTimer();
-    }
     return true;
   }
   if (serialMessage.getMessagePayload().length >= 2 && serialMessage.getMessagePayload()[2] == (byte)WAKE_UP_NO_MORE_INFORMATION) {
