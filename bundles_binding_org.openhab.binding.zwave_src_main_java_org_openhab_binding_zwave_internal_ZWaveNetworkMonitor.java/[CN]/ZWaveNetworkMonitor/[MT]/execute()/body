@@ -22,7 +22,15 @@
       HealNode node=entry.getValue();
       if (node.battery == false) {
         nextHealStage(node);
-        break;
+        return;
+      }
+    }
+    if (networkHealNightlyTime < System.currentTimeMillis())     return;
+    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+      HealNode node=entry.getValue();
+      if (node.state != HealState.WAITING) {
+        nextHealStage(node);
+        return;
       }
     }
   }
