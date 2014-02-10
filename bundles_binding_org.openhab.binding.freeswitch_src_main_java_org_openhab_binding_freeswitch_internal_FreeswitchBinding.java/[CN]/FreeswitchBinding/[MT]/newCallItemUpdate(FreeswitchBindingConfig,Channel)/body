@@ -1,0 +1,14 @@
+{
+  if (config.getItemType().isAssignableFrom(SwitchItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),OnOffType.ON);
+  }
+ else   if (config.getItemType().isAssignableFrom(CallItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),channel.getCall());
+  }
+ else   if (config.getItemType().isAssignableFrom(StringItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),new StringType(String.format("%s : %s",channel.getEventHeader(FS_CID_NAME),channel.getEventHeader(FS_CID_NUMBER))));
+  }
+ else {
+    logger.warn("handleHangupCall - postUpdate for itemType '{}' is undefined",config.getItemName());
+  }
+}

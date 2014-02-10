@@ -1,0 +1,10 @@
+{
+  disconnect();
+  logger.debug(String.format("Connecting to %s on port %d with pass %s",host,port,password));
+  inboudClient=new Client();
+  inboudClient.connect(host,port,password,10);
+  inboudClient.addEventListener(this);
+  inboudClient.setEventSubscriptions("plain",String.format("%s %s %s",CH_CREATE,CH_DESTROY,MESSAGE_WAITING));
+  logger.debug(String.format("Connected"));
+  initMessageItems();
+}

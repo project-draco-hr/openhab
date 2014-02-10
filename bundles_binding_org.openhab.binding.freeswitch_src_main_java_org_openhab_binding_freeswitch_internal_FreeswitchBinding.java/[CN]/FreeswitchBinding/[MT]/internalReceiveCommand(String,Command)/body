@@ -1,0 +1,21 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  for (  FreeswitchBindingProvider provider : providers) {
+    FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
+switch (config.getType()) {
+case CMD_API:
+{
+        if (!(command instanceof StringType)) {
+          logger.error("API commands must be a StringType");
+          return;
+        }
+        String str=((StringType)command).toString().toLowerCase();
+        String response=executeApiCommand(str);
+        eventPublisher.postUpdate(itemName,new StringType(response));
+      }
+    break;
+default :
+  break;
+}
+}
+}

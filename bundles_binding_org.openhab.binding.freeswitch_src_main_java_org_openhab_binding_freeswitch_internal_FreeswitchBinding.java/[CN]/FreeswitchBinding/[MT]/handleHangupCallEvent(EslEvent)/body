@@ -1,0 +1,11 @@
+{
+  logger.debug("Removing Call");
+  logger.debug(event.toString());
+  eventCache.remove(getHeader(event,FS_UUID));
+  LinkedList<FreeswitchBindingConfig> configs=itemMap.remove(getHeader(event,FS_UUID));
+  if (configs != null) {
+    for (    FreeswitchBindingConfig config : configs) {
+      endCallItemUpdate(config);
+    }
+  }
+}
