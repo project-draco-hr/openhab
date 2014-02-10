@@ -1,0 +1,143 @@
+{
+  if (refreshMap.size() == 0)   return;
+  Map<String,OmniLinkBindingConfig> itemMap=new HashMap<String,OmniLinkBindingConfig>(refreshMap);
+  for (  String itemName : itemMap.keySet()) {
+    OmniLinkBindingConfig config=itemMap.get(itemName);
+    refreshMap.remove(itemName);
+    if (config != null) {
+      Integer number=new Integer(config.getNumber());
+      for (      OmniLinkBindingProvider provider : providers) {
+switch (config.getObjectType()) {
+case UNIT:
+{
+            UnitProperties p=readUnitProperties(config.getNumber());
+            Unit unit=unitMap.get(number);
+            if (unit == null) {
+              unit=new Unit(p);
+              unitMap.put(number,unit);
+            }
+            config.setDevice(unit);
+            unit.setProperties(p);
+            unit.updateItem(provider.getItem(itemName),config,eventPublisher);
+          }
+        break;
+case THERMO_COOL_POINT:
+case THERMO_FAN_MODE:
+case THERMO_HEAT_POINT:
+case THERMO_HOLD_MODE:
+case THERMO_SYSTEM_MODE:
+case THERMO_TEMP:
+{
+        ThermostatProperties p=readThermoProperties(config.getNumber());
+        Thermostat thermo=thermostatMap.get(number);
+        if (thermo == null) {
+          thermo=new Thermostat(p,celius);
+          thermostatMap.put(number,thermo);
+        }
+        config.setDevice(thermo);
+        thermo.setProperties(p);
+        thermo.updateItem(provider.getItem(itemName),config,eventPublisher);
+      }
+    break;
+case AUDIOZONE_MUTE:
+case AUDIOZONE_POWER:
+case AUDIOZONE_SOURCE:
+case AUDIOZONE_KEY:
+case AUDIOZONE_TEXT:
+case AUDIOZONE_TEXT_FIELD1:
+case AUDIOZONE_TEXT_FIELD2:
+case AUDIOZONE_TEXT_FIELD3:
+case AUDIOZONE_VOLUME:
+{
+    AudioZoneProperties p=readAudioZoneProperties(config.getNumber());
+    AudioZone audioZone=audioZoneMap.get(number);
+    if (audioZone == null) {
+      audioZone=new AudioZone(p);
+      audioZone.setAudioSource(audioSourceMap);
+      audioZoneMap.put(number,audioZone);
+    }
+    config.setDevice(audioZone);
+    audioZone.setProperties(p);
+    audioZone.updateItem(provider.getItem(itemName),config,eventPublisher);
+  }
+break;
+case AUDIOSOURCE_TEXT:
+case AUDIOSOURCE_TEXT_FIELD1:
+case AUDIOSOURCE_TEXT_FIELD2:
+case AUDIOSOURCE_TEXT_FIELD3:
+{
+AudioSource as=audioSourceMap.get(number);
+if (as != null) {
+  config.setDevice(as);
+  as.updateItem(provider.getItem(itemName),config,eventPublisher);
+}
+}
+break;
+case AREA_ENTRY_TIMER:
+case AREA_EXIT_TIMER:
+case AREA_STATUS_ALARM:
+case AREA_STATUS_ENTRY_DELAY:
+case AREA_STATUS_EXIT_DELAY:
+case AREA_STATUS_MODE:
+{
+AreaProperties p=readAreaProperties(config.getNumber());
+Area area=areaMap.get(number);
+if (area == null) {
+area=new Area(p,omni);
+areaMap.put(number,area);
+}
+config.setDevice(area);
+area.setProperties(p);
+area.updateItem(provider.getItem(itemName),config,eventPublisher);
+}
+break;
+case AUX_CURRENT:
+case AUX_HIGH:
+case AUX_LOW:
+case AUX_STATUS:
+{
+AuxSensorProperties p=readAuxProperties(config.getNumber());
+Aux aux=auxMap.get(number);
+if (aux == null) {
+aux=new Aux(p,celius);
+auxMap.put(number,aux);
+}
+config.setDevice(aux);
+aux.setProperties(p);
+aux.updateItem(provider.getItem(itemName),config,eventPublisher);
+}
+break;
+case ZONE_STATUS_ARMING:
+case ZONE_STATUS_CURRENT:
+case ZONE_STATUS_LATCHED:
+case ZONE_STATUS_ALL:
+{
+ZoneProperties p=readZoneProperties(config.getNumber());
+Zone zone=zoneMap.get(number);
+if (zone == null) {
+zone=new Zone(p);
+zoneMap.put(number,zone);
+}
+config.setDevice(zone);
+zone.setProperties(p);
+zone.updateItem(provider.getItem(itemName),config,eventPublisher);
+}
+break;
+case BUTTON:
+{
+ButtonProperties p=readButtonProperties(config.getNumber());
+Button button=buttonMap.get(number);
+if (button == null) {
+button=new Button(p);
+buttonMap.put(number,button);
+}
+config.setDevice(button);
+}
+break;
+default :
+break;
+}
+}
+}
+}
+}

@@ -1,0 +1,21 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\"}\n";
+  String groupName="Areas";
+  groups.append(String.format(groupString,groupName,"Areas","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_AREA,objnum,1,ObjectProperties.FILTER_1_NAMED_UNAMED,ObjectProperties.FILTER_2_NONE,ObjectProperties.FILTER_3_NONE)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    AreaProperties o=((AreaProperties)m);
+    objnum=o.getNumber();
+    String group=addUniqueGroup(groupName + "_" + cleanString(o.getName()));
+    groups.append(String.format(groupString,group,o.getName(),groupName));
+    areas.add(new SiteItem(group,o.getName(),o.getName()));
+    items.append(String.format(itemString,"Number",group + "_ExitDelay","Exit Delay: [%d]",group,"area_status_exit_delay",objnum));
+    items.append(String.format(itemString,"Number",group + "_EntryDelay","Entry Delay: [%d]",group,"area_status_entry_delay",objnum));
+    items.append(String.format(itemString,"Number",group + "_ExitTimer","Exit Timer: [%d]",group,"area_status_exit_timer",objnum));
+    items.append(String.format(itemString,"Number",group + "_EntryTimer","Entry Timer: [%d]",group,"area_status_entry_timer",objnum));
+    items.append(String.format(itemString,"String",group + "_Mode","Mode: [%s]",group,"area_status_mode",objnum));
+    items.append(String.format(itemString,"String",group + "_Alarm","Alarm: [%s]",group,"area_status_alarm",objnum));
+  }
+}

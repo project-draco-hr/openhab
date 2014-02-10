@@ -1,0 +1,19 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\"}\n";
+  String groupName="AudioSources";
+  groups.append(String.format(groupString,groupName,"Audio Sources","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_AUDIO_SOURCE,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_NONE,ObjectProperties.FILTER_3_NONE)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    AudioSourceProperties o=((AudioSourceProperties)m);
+    objnum=o.getNumber();
+    String group=addUniqueGroup(groupName + "_" + cleanString(o.getName()));
+    groups.append(String.format(groupString,group,o.getName(),"OmniAudioSources"));
+    audioSources.add(new SiteItem(group,o.getName(),o.getName()));
+    items.append(String.format(itemString,"String",group + "_Text","Now Playeing: [%s]",group,"audiosource_text",objnum));
+    items.append(String.format(itemString,"String",group + "_Field1","Field 1 [%s]",group,"audiosource_field1",objnum));
+    items.append(String.format(itemString,"String",group + "_Field2","Field 2 [%s]",group,"audiosource_field2",objnum));
+    items.append(String.format(itemString,"String",group + "_Field3","Field 3 [%s]",group,"audiosource_field3",objnum));
+  }
+}

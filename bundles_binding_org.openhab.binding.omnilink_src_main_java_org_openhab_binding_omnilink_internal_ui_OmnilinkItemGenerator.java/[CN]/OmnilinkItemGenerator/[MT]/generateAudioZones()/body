@@ -1,0 +1,25 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\"}\n";
+  String itemStringKey="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\",autoupdate=\"false\"}\n";
+  String groupName="AudioZones";
+  groups.append(String.format(groupString,groupName,"Audio Zones","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_AUDIO_ZONE,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_NONE,ObjectProperties.FILTER_3_NONE)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    AudioZoneProperties o=((AudioZoneProperties)m);
+    objnum=o.getNumber();
+    String group=addUniqueGroup(groupName + "_" + cleanString(o.getName()));
+    groups.append(String.format(groupString,group,o.getName(),groupName));
+    audioZones.add(new SiteItem(group,o.getName(),o.getName()));
+    items.append(String.format(itemString,"Switch",group + "_Power","Power",group,"audiozone_power",objnum));
+    items.append(String.format(itemString,"Switch",group + "_Mute","Mute",group,"audiozone_mute",objnum));
+    items.append(String.format(itemString,"Number",group + "_Source","Source: [%d]",group,"audiozone_source",objnum));
+    items.append(String.format(itemString,"Dimmer",group + "_Volume","Voulme: [%d %%]",group,"audiozone_volume",objnum));
+    items.append(String.format(itemString,"String",group + "_Text","Now Playing: [%s]",group,"audiozone_text",objnum));
+    items.append(String.format(itemString,"String",group + "_Field1","Field 1 [%s]",group,"audiozone_field1",objnum));
+    items.append(String.format(itemString,"String",group + "_Field2","Field 2 [%s]",group,"audiozone_field2",objnum));
+    items.append(String.format(itemString,"String",group + "_Field3","Field 3 [%s]",group,"audiozone_field3",objnum));
+    items.append(String.format(itemStringKey,"Number",group + "_Key","Key [%d]",group,"audiozone_key",objnum));
+  }
+}
