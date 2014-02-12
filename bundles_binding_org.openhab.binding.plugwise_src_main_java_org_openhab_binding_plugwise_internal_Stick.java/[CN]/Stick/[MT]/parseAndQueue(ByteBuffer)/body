@@ -13,7 +13,7 @@
       if (protocolHeader.equals(PROTOCOL_HEADER)) {
         String calculatedCRC=getCRCFromString(command + sequence + payload);
         if (calculatedCRC.equals(CRC)) {
-          logger.debug("Parsing Plugwise protocol data unit: command:{} sequence:{} payload:{}",new String[]{MessageType.forValue(Integer.parseInt(command,16)).toString(),Integer.toString(Integer.parseInt(sequence,16)),payload});
+          logger.debug("parseAndQueue: Parsing Plugwise protocol data unit: command:{} sequence:{} payload:{}",new String[]{MessageType.forValue(Integer.parseInt(command,16)).toString(),Integer.toString(Integer.parseInt(sequence,16)),payload});
           Message theMessage=null;
 switch (MessageType.forValue(Integer.parseInt(command,16))) {
 case ACKNOWLEDGEMENT:
@@ -47,13 +47,14 @@ case POWER_INFORMATION_RESPONSE:
 theMessage=new PowerInformationResponseMessage(Integer.parseInt(sequence,16),payload);
 break;
 default :
-logger.debug("Received unrecognized Plugwise protocol data unit: command:{} sequence:{} payload:{}",new String[]{command,Integer.toString(Integer.parseInt(sequence,16)),payload});
+logger.debug("parseAndQueue: Received unrecognized Plugwise protocol data unit: command:{} sequence:{} payload:{}",new String[]{command,Integer.toString(Integer.parseInt(sequence,16)),payload});
 break;
 }
 ;
 if (theMessage != null) {
 try {
 receiveLock.lock();
+logger.debug("parseAndQueue: {} messages before the message ({}) put in the receiveQ",receivedQueue.size(),theMessage.toString());
 receivedQueue.put(theMessage);
 receiveLock.unlock();
 }
@@ -67,7 +68,7 @@ logger.error("Plugwise protocol CRC error: {} does not match {} in message",new 
 }
 }
  else {
-logger.debug("Plugwise protocol header error: {} in message {}",new String[]{protocolHeader,response});
+logger.debug("parseAndQueue: Plugwise protocol header error: {} in message {}",new String[]{protocolHeader,response});
 }
 }
  else {
