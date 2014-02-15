@@ -1,6 +1,6 @@
 {
-  networkHealNightlyTime=System.currentTimeMillis();
-  healNodes=new HashMap<Integer,HealNode>();
+  networkHealNextTime=System.currentTimeMillis();
+  if (healNodes == null)   healNodes=new HashMap<Integer,HealNode>();
   for (int cnt=1; cnt <= 232; cnt++) {
     ZWaveNode node=zController.getNode(cnt);
     if (node == null)     continue;
@@ -10,13 +10,14 @@
     heal.retriesCnt=0;
     heal.routeList=null;
     heal.state=HealState.WAITING;
-    if (node.getCommandClass(CommandClass.BATTERY) != null)     heal.battery=true;
+    if (node.isListening())     heal.listening=true;
+ else     heal.listening=false;
     healNodes.put(cnt,heal);
   }
   if (healNodes.size() == 0)   return false;
   for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
     HealNode node=entry.getValue();
-    if (node.battery == false) {
+    if (node.listening == true) {
       nextHealStage(node);
       break;
     }

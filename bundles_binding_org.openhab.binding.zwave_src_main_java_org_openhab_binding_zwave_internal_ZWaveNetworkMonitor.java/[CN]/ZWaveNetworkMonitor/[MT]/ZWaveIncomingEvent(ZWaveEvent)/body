@@ -33,8 +33,12 @@ if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMess
 byte[] payload=serialMessage.getMessagePayload();
 HealNode node=healNodes.get(payload[0] & 0xFF);
 if (node == null) return;
-if (node.state != HealState.PING) return;
-if (payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
+if (node.listening == false && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.WAKE_UP.getKey()) {
+logger.debug("NODE {}: HEAL WAKEUP EVENT",node.nodeId);
+nextHealStage(node);
+return;
+}
+if (node.state == HealState.PING && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
 node.state=node.stateNext;
 node.retriesCnt=0;
 }

@@ -1,0 +1,13 @@
+{
+  if (healNodes == null)   healNodes=new HashMap<Integer,HealNode>();
+  ZWaveNode node=zController.getNode(nodeId);
+  if (node == null)   return false;
+  HealNode heal=new HealNode();
+  heal.node=node;
+  heal.nodeId=nodeId;
+  heal.retriesCnt=0;
+  heal.routeList=null;
+  heal.state=HealState.WAITING;
+  healNodes.put(nodeId,heal);
+  return true;
+}

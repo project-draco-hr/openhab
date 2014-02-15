@@ -1,5 +1,9 @@
 {
-  if (networkHealNightlyTime > System.currentTimeMillis())   return;
+  if (networkHealNightlyTime < System.currentTimeMillis()) {
+    rescheduleHeal();
+    networkHealNightlyTime=calculateNextHeal();
+  }
+  if (networkHealNextTime > System.currentTimeMillis())   return;
   if (healNodes != null) {
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
@@ -10,7 +14,7 @@
     }
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
-      if (node.battery == false) {
+      if (node.listening == false) {
         nextHealStage(node);
         return;
       }
