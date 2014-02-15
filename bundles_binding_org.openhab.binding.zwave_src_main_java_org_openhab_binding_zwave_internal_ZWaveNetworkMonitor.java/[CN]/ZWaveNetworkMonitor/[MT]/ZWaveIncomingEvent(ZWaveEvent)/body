@@ -2,6 +2,7 @@
   if (!(event instanceof ZWaveNetworkEvent))   return;
   if (healNodes == null)   return;
   ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
+  logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
   HealNode node=healNodes.get(nwEvent.getNodeId());
   if (node == null)   return;
   if (nwEvent.getEvent() != node.event)   return;
