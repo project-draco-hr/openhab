@@ -1,16 +1,16 @@
 {
-  if (!(event instanceof ZWaveNetworkEvent))   return;
   if (healNodes == null)   return;
-  ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
-  logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
-  HealNode node=healNodes.get(nwEvent.getNodeId());
-  if (node == null)   return;
-  if (nwEvent.getEvent() != node.event)   return;
+  if (event instanceof ZWaveNetworkEvent) {
+    ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
+    logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
+    HealNode node=healNodes.get(nwEvent.getNodeId());
+    if (node == null)     return;
+    if (nwEvent.getEvent() != node.event)     return;
 switch (nwEvent.getState()) {
 case Success:
-    node.retriesCnt=0;
-  node.state=node.stateNext;
-break;
+      node.retriesCnt=0;
+    node.state=node.stateNext;
+  break;
 case Failure:
 logger.debug("NODE {}: Network heal received FAILURE event",node.nodeId);
 if (node.retriesCnt >= HEAL_MAX_RETRIES) {
@@ -26,4 +26,18 @@ break;
 }
 if (node.retriesCnt == 0 && node.routeList != null && node.routeList.size() > 0) node.routeList.remove(0);
 nextHealStage(node);
+}
+ else if (event instanceof ZWaveTransactionCompletedEvent) {
+SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
+if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Response) return;
+byte[] payload=serialMessage.getMessagePayload();
+HealNode node=healNodes.get(payload[0] & 0xFF);
+if (node == null) return;
+if (node.state != HealState.PING) return;
+if (payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
+node.state=node.stateNext;
+node.retriesCnt=0;
+}
+nextHealStage(node);
+}
 }

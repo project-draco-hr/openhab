@@ -1,14 +1,7 @@
 {
   ZWaveNode node=zController.getNode(nodeId);
   if (node == null)   return;
-  int endpointId=1;
-  ZWaveEndpoint endpoint=new ZWaveEndpoint(endpointId);
-  ZWaveBasicCommandClass commandClass=new ZWaveBasicCommandClass(node,zController,endpoint);
-  logger.debug("Generating poll message for {} for node {} endpoint {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
-  SerialMessage serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,1);
-  if (serialMessage == null) {
-    logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
-    return;
-  }
-  zController.sendData(serialMessage);
+  ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)node.getCommandClass(CommandClass.NO_OPERATION);
+  if (zwaveCommandClass == null)   return;
+  zController.sendData(zwaveCommandClass.getNoOperationMessage());
 }
