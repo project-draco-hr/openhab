@@ -3,37 +3,38 @@
     messageMap=new HashMap<SerialMessage.SerialMessageClass,Class<? extends ZWaveCommandProcessor>>();
     messageMap.put(SerialMessage.SerialMessageClass.ApplicationCommandHandler,ApplicationCommandMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.ApplicationUpdate,ApplicationUpdateMessageClass.class);
-    messageMap.put(SerialMessage.SerialMessageClass.GetRoutingInfo,RoutingInfoMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.AssignReturnRoute,AssignReturnRouteMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.AssignSucReturnRoute,AssignSucReturnRouteMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.DeleteReturnRoute,DeleteReturnRouteMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.GetRoutingInfo,GetRoutingInfoMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.GetVersion,GetVersionMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.IdentifyNode,IdentifyNodeMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.MemoryGetId,MemoryGetIdMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.RemoveFailedNodeID,RemoveFailedNodeMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.RequestNodeInfo,RequestNodeInfoMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.RequestNodeNeighborUpdate,RequestNodeNeighborUpdateMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.SendData,SendDataMessageClass.class);
-    messageMap.put(SerialMessage.SerialMessageClass.SerialApiGetInitData,SerialApiGetInitDataMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.SerialApiGetCapabilities,SerialApiGetCapabilitiesMessageClass.class);
-    messageMap.put(SerialMessage.SerialMessageClass.RequestNodeNeighborUpdate,NodeNeighborMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.SerialApiGetInitData,SerialApiGetInitDataMessageClass.class);
   }
   Constructor<? extends ZWaveCommandProcessor> constructor;
   try {
-    try {
-      try {
-        constructor=messageMap.get(serialMessage).getConstructor();
-        return constructor.newInstance();
-      }
- catch (      NoSuchMethodException e1) {
-        e1.printStackTrace();
-      }
-catch (      InvocationTargetException e) {
-        e.printStackTrace();
-      }
-    }
- catch (    InstantiationException e) {
-      e.printStackTrace();
-    }
-catch (    IllegalAccessException e) {
-      e.printStackTrace();
-    }
+    constructor=messageMap.get(serialMessage).getConstructor();
+    return constructor.newInstance();
   }
- catch (  SecurityException e1) {
+ catch (  NoSuchMethodException e1) {
+    e1.printStackTrace();
+  }
+catch (  InvocationTargetException e) {
+    e.printStackTrace();
+  }
+catch (  InstantiationException e) {
+    e.printStackTrace();
+  }
+catch (  IllegalAccessException e) {
+    e.printStackTrace();
+  }
+catch (  SecurityException e1) {
     e1.printStackTrace();
   }
 catch (  IllegalArgumentException e) {
