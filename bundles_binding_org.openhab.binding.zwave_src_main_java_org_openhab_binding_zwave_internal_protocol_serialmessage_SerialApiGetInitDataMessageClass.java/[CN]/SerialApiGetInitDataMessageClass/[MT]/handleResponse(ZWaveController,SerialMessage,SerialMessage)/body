@@ -1,0 +1,26 @@
+{
+  logger.debug(String.format("Got MessageSerialApiGetInitData response."));
+  int nodeBytes=incomingMessage.getMessagePayloadByte(2);
+  if (nodeBytes != NODE_BYTES) {
+    logger.error("Invalid number of node bytes = {}",nodeBytes);
+    return false;
+  }
+  int nodeId=1;
+  for (int i=3; i < 3 + nodeBytes; i++) {
+    int incomingByte=incomingMessage.getMessagePayloadByte(i);
+    for (int j=0; j < 8; j++) {
+      int b1=incomingByte & (int)Math.pow(2.0D,j);
+      int b2=(int)Math.pow(2.0D,j);
+      if (b1 == b2) {
+        logger.info("NODE {}: Node found",nodeId);
+        zwaveNodes.add(nodeId);
+      }
+      nodeId++;
+    }
+  }
+  logger.info("------------Number of Nodes Found Registered to ZWave Controller------------");
+  logger.info(String.format("# Nodes = %d",zwaveNodes.size()));
+  logger.info("----------------------------------------------------------------------------");
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return true;
+}

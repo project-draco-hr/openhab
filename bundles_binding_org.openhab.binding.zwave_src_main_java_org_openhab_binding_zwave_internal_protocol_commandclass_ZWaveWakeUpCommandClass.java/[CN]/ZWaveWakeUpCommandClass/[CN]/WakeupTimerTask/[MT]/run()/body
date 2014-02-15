@@ -1,0 +1,8 @@
+{
+  if (!wakeup.isAwake()) {
+    logger.debug("NODE {}: Already asleep",wakeup.getNode().getNodeId());
+    return;
+  }
+  logger.debug("NODE {}: No more messages, go back to sleep",wakeup.getNode().getNodeId());
+  wakeup.getController().sendData(wakeup.getNoMoreInformationMessage());
+}

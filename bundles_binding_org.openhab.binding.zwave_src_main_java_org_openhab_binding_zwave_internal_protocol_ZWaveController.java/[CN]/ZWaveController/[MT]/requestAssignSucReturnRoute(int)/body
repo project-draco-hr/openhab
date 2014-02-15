@@ -1,7 +1,3 @@
 {
-  logger.debug("NODE {}: Assigning SUC return route",nodeId);
-  SerialMessage newMessage=new SerialMessage(SerialMessageClass.AssignSucReturnRoute,SerialMessageType.Request,SerialMessageClass.AssignSucReturnRoute,SerialMessagePriority.High);
-  byte[] newPayload={(byte)nodeId};
-  newMessage.setMessagePayload(newPayload);
-  this.enqueue(newMessage);
+  this.enqueue(new AssignSucReturnRouteMessageClass().doRequest(nodeId));
 }

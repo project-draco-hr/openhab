@@ -1,0 +1,21 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("NODE {}: Got NodeNeighborUpdate request.",nodeId);
+switch (incomingMessage.getMessagePayloadByte(1)) {
+case REQUEST_NEIGHBOR_UPDATE_STARTED:
+    logger.debug("NODE {}: NodeNeighborUpdate STARTED",nodeId);
+  transactionComplete=true;
+break;
+case REQUEST_NEIGHBOR_UPDATE_DONE:
+logger.debug("NODE {}: NodeNeighborUpdate DONE",nodeId);
+zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.NodeNeighborUpdate,nodeId,ZWaveNetworkEvent.State.Success));
+transactionComplete=true;
+break;
+case REQUEST_NEIGHBOR_UPDATE_FAILED:
+logger.error("NODE {}: NodeNeighborUpdate FAILED",nodeId);
+transactionComplete=true;
+zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.NodeNeighborUpdate,nodeId,ZWaveNetworkEvent.State.Failure));
+break;
+}
+return false;
+}

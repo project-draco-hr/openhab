@@ -1,0 +1,27 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("NODE {}: Got NodeRoutingInfo request.",nodeId);
+  ZWaveNode node=zController.getNode(nodeId);
+  if (node == null) {
+    logger.error("NODE {}: Routing information for unknown node",nodeId);
+    transactionComplete=true;
+    return true;
+  }
+  node.clearNeighbors();
+  boolean hasNeighbors=false;
+  for (int by=0; by < NODE_BYTES; by++) {
+    for (int bi=0; bi < 8; bi++) {
+      if ((incomingMessage.getMessagePayloadByte(by) & (0x01 << bi)) != 0) {
+        logger.debug("Node {}",(by << 3) + bi + 1);
+        hasNeighbors=true;
+        node.addNeighbor((by << 3) + bi + 1);
+      }
+    }
+  }
+  if (!hasNeighbors) {
+    logger.debug("NODE {}: No neighbors reported",nodeId);
+  }
+  transactionComplete=true;
+  zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.NodeRoutingInfo,nodeId,ZWaveNetworkEvent.State.Success));
+  return false;
+}

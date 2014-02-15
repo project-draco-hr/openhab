@@ -1,0 +1,48 @@
+{
+  logger.trace("Handle Message Application Update Request");
+  int nodeId=incomingMessage.getMessagePayloadByte(1);
+  logger.trace("NODE {}: Application Update Request from Node ",nodeId);
+  UpdateState updateState=UpdateState.getUpdateState(incomingMessage.getMessagePayloadByte(0));
+switch (updateState) {
+case NODE_INFO_RECEIVED:
+    logger.debug("NODE {}: Application update request, node information received.",nodeId);
+  int length=incomingMessage.getMessagePayloadByte(2);
+ZWaveNode node=zController.getNode(nodeId);
+node.resetResendCount();
+for (int i=6; i < length + 3; i++) {
+int data=incomingMessage.getMessagePayloadByte(i);
+if (data == 0xef) {
+break;
+}
+logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",nodeId,data));
+ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,zController);
+if (commandClass != null) node.addCommandClass(commandClass);
+}
+node.advanceNodeStage(NodeStage.MANSPEC01);
+checkTransactionComplete(lastSentMessage,incomingMessage);
+ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
+if (wakeUp != null) {
+wakeUp.setAwake(true);
+}
+break;
+case NODE_INFO_REQ_FAILED:
+logger.debug("NODE {}: Application update request, Node Info Request Failed, re-request node info.",nodeId);
+SerialMessage requestInfoMessage=lastSentMessage;
+if (requestInfoMessage.getMessageClass() != SerialMessageClass.RequestNodeInfo) {
+logger.warn("NODE {}: Got application update request without node info request, ignoring.",nodeId);
+return false;
+}
+if (--requestInfoMessage.attempts >= 0) {
+logger.error("NODE {}: Got Node Info Request Failed while sending this serial message. Requeueing",nodeId);
+zController.enqueue(requestInfoMessage);
+}
+ else {
+logger.warn("NODE {}: Node Info Request Failed 3x. Discarding message: {}",nodeId,lastSentMessage.toString());
+}
+transactionComplete=true;
+break;
+default :
+logger.warn(String.format("TODO: Implement Application Update Request Handling of %s (0x%02X).",updateState.getLabel(),updateState.getKey()));
+}
+return false;
+}
