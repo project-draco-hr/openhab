@@ -1,5 +1,4 @@
 {
-  networkHealNextTime=System.currentTimeMillis();
   if (healNodes == null)   healNodes=new HashMap<Integer,HealNode>();
   for (int cnt=1; cnt <= 232; cnt++) {
     ZWaveNode node=zController.getNode(cnt);
@@ -10,6 +9,7 @@
     heal.retriesCnt=0;
     heal.routeList=null;
     heal.state=HealState.WAITING;
+    heal.lastChange=Calendar.getInstance().getTime();
     if (node.isListening())     heal.listening=true;
  else     heal.listening=false;
     healNodes.put(cnt,heal);

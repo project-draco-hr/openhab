@@ -1,0 +1,16 @@
+{
+  String status=HealState.WAITING.toString();
+  if (healNodes != null) {
+    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+      HealNode node=entry.getValue();
+      if (node.nodeId == nodeId) {
+        if (node.state != HealState.WAITING) {
+          if (node.retriesCnt != 0)           status=node.state + "(" + node.retriesCnt+ ") @ "+ node.lastChange.toString();
+ else           status=node.state + " @ " + node.lastChange.toString();
+        }
+        break;
+      }
+    }
+  }
+  return status;
+}

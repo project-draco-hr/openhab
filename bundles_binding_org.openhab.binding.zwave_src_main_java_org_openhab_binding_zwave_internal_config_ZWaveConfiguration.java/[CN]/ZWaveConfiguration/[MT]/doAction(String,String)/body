@@ -22,7 +22,8 @@
     if (splitDomain.length == 2) {
       if (action.equals("Save")) {
         logger.debug("Saving node '{}'",nodeId);
-        if (networkMonitor != null)         networkMonitor.healNode(nodeId);
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.SerializeNode(node);
       }
       if (action.equals("Delete")) {
         logger.debug("Delete node '{}'",nodeId);

@@ -209,6 +209,11 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"LastUpdated","Last Updated",true);
 record.value=node.getLastUpdated().toString();
 records.add(record);
+if (networkMonitor != null) {
+record=new OpenHABConfigurationRecord(domain,"LastHeal","Heal Status",true);
+record.value=networkMonitor.getNodeState(nodeId);
+records.add(record);
+}
 record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
 record.value=node.getNodeStage().getLabel() + " @ " + node.getQueryStageTimeStamp().toString();
 records.add(record);
