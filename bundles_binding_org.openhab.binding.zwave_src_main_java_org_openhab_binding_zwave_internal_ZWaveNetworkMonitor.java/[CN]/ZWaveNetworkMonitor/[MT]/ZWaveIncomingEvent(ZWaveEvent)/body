@@ -29,19 +29,21 @@ nextHealStage(node);
 }
  else if (event instanceof ZWaveTransactionCompletedEvent) {
 SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
-if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Response) return;
+if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request) return;
 byte[] payload=serialMessage.getMessagePayload();
 HealNode node=healNodes.get(payload[0] & 0xFF);
 if (node == null) return;
-if (node.listening == false && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.WAKE_UP.getKey()) {
-logger.debug("NODE {}: HEAL WAKEUP EVENT",node.nodeId);
+if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
+node.state=node.stateNext;
+node.retriesCnt=0;
 nextHealStage(node);
 return;
 }
-if (node.state == HealState.PING && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
-node.state=node.stateNext;
-node.retriesCnt=0;
 }
+ else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+HealNode node=healNodes.get(event.getNodeId());
+if (node == null) return;
+logger.debug("NODE {}: HEAL WAKEUP EVENT",node.nodeId);
 nextHealStage(node);
 }
 }

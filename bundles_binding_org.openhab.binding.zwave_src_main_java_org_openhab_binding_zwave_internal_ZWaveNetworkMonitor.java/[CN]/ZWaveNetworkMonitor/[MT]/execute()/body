@@ -7,14 +7,14 @@
   if (healNodes != null) {
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
-      if (node.state != HealState.WAITING) {
+      if (node.state != HealState.WAITING && node.listening == true) {
         nextHealStage(node);
         return;
       }
     }
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
-      if (node.listening == false) {
+      if (node.listening == true) {
         nextHealStage(node);
         return;
       }
