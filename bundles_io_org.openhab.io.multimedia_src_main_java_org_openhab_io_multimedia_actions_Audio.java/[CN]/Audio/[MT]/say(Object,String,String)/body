@@ -1,6 +1,9 @@
 {
   if (StringUtils.isNotBlank(text.toString())) {
-    TTSService ttsService=getTTSService(MultimediaActivator.getContext(),System.getProperty("osgi.os"));
+    TTSService ttsService=null;
+    if (Audio.useOSTTS) {
+      ttsService=getTTSService(MultimediaActivator.getContext(),System.getProperty("osgi.os"));
+    }
     if (ttsService == null) {
       ttsService=getTTSService(MultimediaActivator.getContext(),"any");
     }
