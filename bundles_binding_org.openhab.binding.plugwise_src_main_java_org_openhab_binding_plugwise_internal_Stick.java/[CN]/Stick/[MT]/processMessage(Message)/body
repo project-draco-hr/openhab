@@ -19,24 +19,19 @@ if (circlePlus11 != null) {
 }
 break;
 case TIMEOUT:
-logger.error("Timeout sending Plugwise message with sequence number: {}",((AcknowledgeMessage)message).getSequenceNumber());
+logger.error("Timeout sending Plugwise message : {}",((AcknowledgeMessage)message).toString());
 Iterator<Message> messageIterator=sentQueue.iterator();
 Message aMessage=null;
 while (messageIterator.hasNext()) {
 aMessage=messageIterator.next();
 if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
+logger.debug("processMessage: timeout : removing a msg from the senTq: {}",aMessage.toString());
 sentQueue.remove(aMessage);
 break;
 }
 }
 if (aMessage != null) {
 aMessage.setSequenceNumber(0);
-try {
-Thread.sleep(3000);
-}
- catch (InterruptedException e) {
-logger.error("Error putting plugwise thread to sleep");
-}
 sendMessage(aMessage);
 }
 return false;
