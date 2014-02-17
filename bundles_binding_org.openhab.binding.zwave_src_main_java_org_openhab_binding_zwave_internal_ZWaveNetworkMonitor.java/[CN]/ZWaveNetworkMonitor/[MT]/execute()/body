@@ -1,20 +1,37 @@
 {
+  if (networkHealDeadCheckNext < System.currentTimeMillis()) {
+    for (int nodeId=1; nodeId <= 232; nodeId++) {
+      ZWaveNode node=zController.getNode(nodeId);
+      if (node == null)       continue;
+      if (node.isDead()) {
+        if (isNodeHealing(node.getNodeId())) {
+          logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
+          healNode(node.getNodeId());
+          node.resetResendCount();
+        }
+      }
+    }
+    networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
+  }
   if (networkHealNightlyTime < System.currentTimeMillis()) {
     rescheduleHeal();
     networkHealNightlyTime=calculateNextHeal();
   }
-  if (networkHealNextTime > System.currentTimeMillis())   return;
+  if (networkHealNextTime > System.currentTimeMillis()) {
+    return;
+  }
   if (healNodes != null) {
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
-      if (node.state != HealState.WAITING && node.state != HealState.DONE && node.listening == true) {
+      if (node.state != HealState.WAITING && node.state != HealState.FAILED && node.state != HealState.DONE && node.listening == true) {
         nextHealStage(node);
         return;
       }
     }
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
-      if (node.state != HealState.DONE && node.listening == true) {
+      logger.debug("HEAL -2- NODE {} - {}",node.nodeId,node.state);
+      if (node.state == HealState.WAITING && node.listening == true) {
         nextHealStage(node);
         return;
       }

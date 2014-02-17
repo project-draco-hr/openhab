@@ -1,26 +1,11 @@
 {
-  if (healNodes == null)   healNodes=new HashMap<Integer,HealNode>();
   for (int cnt=1; cnt <= 232; cnt++) {
     ZWaveNode node=zController.getNode(cnt);
     if (node == null)     continue;
-    HealNode heal=new HealNode();
-    heal.node=node;
-    heal.nodeId=cnt;
-    heal.retriesCnt=0;
-    heal.routeList=null;
-    heal.state=HealState.WAITING;
-    heal.lastChange=Calendar.getInstance().getTime();
-    if (node.isListening())     heal.listening=true;
- else     heal.listening=false;
-    healNodes.put(cnt,heal);
+    if (node.getNodeStage() != NodeStage.DONE)     continue;
+    healNode(node.getNodeId());
   }
   if (healNodes.size() == 0)   return false;
-  for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
-    HealNode node=entry.getValue();
-    if (node.listening == true) {
-      nextHealStage(node);
-      break;
-    }
-  }
+  networkHealNextTime=0;
   return true;
 }

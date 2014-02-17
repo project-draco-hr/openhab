@@ -4,13 +4,20 @@
     for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
       HealNode node=entry.getValue();
       if (node.nodeId == nodeId) {
-        if (node.state != HealState.WAITING) {
-          if (node.retriesCnt != 0)           status=node.state + "(" + node.retriesCnt+ ") @ "+ node.lastChange.toString();
- else           status=node.state + " @ " + node.lastChange.toString();
-        }
-        break;
-      }
-    }
-  }
-  return status;
+switch (node.state) {
+case WAITING:
+          break;
+case FAILED:
+        status="Failed during " + node.failState + " @ "+ node.lastChange.toString();
+      break;
+default :
+    if (node.retryCnt > 1)     status=node.state + "(" + node.retryCnt+ ") @ "+ node.lastChange.toString();
+ else     status=node.state + " @ " + node.lastChange.toString();
+  break;
+}
+break;
+}
+}
+}
+return status;
 }

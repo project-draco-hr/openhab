@@ -8,23 +8,14 @@
     if (nwEvent.getEvent() != node.event)     return;
 switch (nwEvent.getState()) {
 case Success:
-      node.retriesCnt=0;
+      node.retryCnt=0;
     node.state=node.stateNext;
   break;
 case Failure:
 logger.debug("NODE {}: Network heal received FAILURE event",node.nodeId);
-if (node.retriesCnt >= HEAL_MAX_RETRIES) {
-logger.debug("NODE {}: Network heal has exceeded maximum retries",node.nodeId);
-node.state=node.stateNext;
-node.retriesCnt=0;
-}
- else {
-logger.debug("NODE {}: Network heal will retry last request",node.nodeId);
-node.retriesCnt++;
-}
 break;
 }
-if (node.retriesCnt == 0 && node.routeList != null && node.routeList.size() > 0) node.routeList.remove(0);
+if (node.retryCnt == 0 && node.routeList != null && node.routeList.size() > 0) node.routeList.remove(0);
 nextHealStage(node);
 }
  else if (event instanceof ZWaveTransactionCompletedEvent) {
@@ -35,7 +26,7 @@ HealNode node=healNodes.get(payload[0] & 0xFF);
 if (node == null) return;
 if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
 node.state=node.stateNext;
-node.retriesCnt=0;
+node.retryCnt=0;
 nextHealStage(node);
 return;
 }
@@ -43,6 +34,7 @@ return;
  else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
 HealNode node=healNodes.get(event.getNodeId());
 if (node == null) return;
+if (!node.state.isActive()) return;
 logger.debug("NODE {}: HEAL WAKEUP EVENT",node.nodeId);
 nextHealStage(node);
 }
