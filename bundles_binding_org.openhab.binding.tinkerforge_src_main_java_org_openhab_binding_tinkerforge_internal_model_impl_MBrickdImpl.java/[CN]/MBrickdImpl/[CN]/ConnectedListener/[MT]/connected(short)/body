@@ -1,6 +1,9 @@
 {
   logger.debug("{} Connected listener was called.",LoggerConstants.TFINIT);
   setIsConnected(true);
+  if (connectReason == IPConnection.CONNECT_REASON_AUTO_RECONNECT) {
+    setReconnected(true);
+  }
   try {
     ipcon.enumerate();
   }
