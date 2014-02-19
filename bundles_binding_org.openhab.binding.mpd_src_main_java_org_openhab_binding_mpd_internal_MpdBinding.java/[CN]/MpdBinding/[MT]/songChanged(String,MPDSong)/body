@@ -1,0 +1,11 @@
+{
+  logger.debug("Current song {}: {}",playerId,newSong.getTitle().toString());
+  String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.TRACKINFO);
+  for (  String itemName : itemNames) {
+    logger.debug("ItemName: {}",itemName);
+    if (StringUtils.isNotBlank(itemName)) {
+      eventPublisher.postUpdate(itemName,new StringType(newSong.getTitle().toString()));
+      logger.debug("Updated: {}",itemName);
+    }
+  }
+}
