@@ -1,6 +1,6 @@
 {
   String playerId=findPlayerId(pbce.getSource());
-  if (PlayerChangeEvent.PLAYER_STARTED == pbce.getId()) {
+  if (PlayerChangeEvent.PLAYER_STARTED == pbce.getId() || PlayerChangeEvent.PLAYER_UNPAUSED == pbce.getId()) {
     String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.PLAY);
     for (    String itemName : itemNames) {
       if (StringUtils.isNotBlank(itemName)) {
@@ -16,4 +16,5 @@
       }
     }
   }
+  determineSongChange(playerId);
 }

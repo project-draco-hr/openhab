@@ -1,35 +1,4 @@
 {
   String playerId=findPlayerId(tpce.getSource());
-  MPD daemon=findMPDInstance(playerId);
-  if (daemon == null) {
-    reconnect(playerId);
-  }
-  if (daemon != null) {
-    try {
-      MPDPlayer player=daemon.getMPDPlayer();
-      MPDSong curSong=player.getCurrentSong();
-      MPDSong curSongCache=songInfoCache.get(playerId);
-      if (curSongCache != null) {
-        if (curSong.getId() != curSongCache.getId()) {
-          songInfoCache.put(playerId,curSong);
-          songChanged(playerId,curSong);
-        }
- else {
-        }
-      }
- else {
-        songInfoCache.put(playerId,curSong);
-        songChanged(playerId,curSong);
-      }
-    }
- catch (    MPDPlayerException pe) {
-      logger.error("error while updating player status: {}" + pe.getMessage(),playerId);
-    }
-catch (    Exception e) {
-      logger.warn("Failed to communicate with '{}'",playerId);
-    }
-  }
- else {
-    logger.warn("didn't find player configuration instance for playerId '{}'",playerId);
-  }
+  determineSongChange(playerId);
 }
