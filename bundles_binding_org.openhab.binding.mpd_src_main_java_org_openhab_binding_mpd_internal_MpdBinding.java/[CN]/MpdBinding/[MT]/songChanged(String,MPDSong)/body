@@ -5,7 +5,15 @@
     logger.debug("ItemName: {}",itemName);
     if (StringUtils.isNotBlank(itemName)) {
       eventPublisher.postUpdate(itemName,new StringType(newSong.getTitle().toString()));
-      logger.debug("Updated: {}",itemName);
+      logger.debug("Updated title: {} {}",itemName,newSong.getTitle().toString());
+    }
+  }
+  itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.TRACKARTIST);
+  for (  String itemName : itemNames) {
+    logger.debug("ItemName: {}",itemName);
+    if (StringUtils.isNotBlank(itemName)) {
+      eventPublisher.postUpdate(itemName,new StringType(newSong.getArtist().toString()));
+      logger.debug("Updated artist: {}, {}",itemName,newSong.getArtist().toString());
     }
   }
 }
