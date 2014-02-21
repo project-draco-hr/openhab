@@ -7,7 +7,13 @@
   }
   boolean defaultState=isDefaultState();
   try {
-    getMbrick().getTinkerforgeDevice().setPortConfiguration(getPort(),(short)mask,BrickletIO16.DIRECTION_OUT,defaultState);
+    if (!getMbrick().getBrickd().isReconnected()) {
+      logger.debug("{} set new port configuration for {}",LoggerConstants.TFINIT,getSubId());
+      getMbrick().getTinkerforgeDevice().setPortConfiguration(getPort(),(short)mask,BrickletIO16.DIRECTION_OUT,defaultState);
+    }
+ else {
+      logger.debug("{} reconnected: no new port configuration set for {}",LoggerConstants.TFINIT,getSubId());
+    }
     setDigitalState(fetchDigitalValue());
   }
  catch (  TimeoutException e) {
