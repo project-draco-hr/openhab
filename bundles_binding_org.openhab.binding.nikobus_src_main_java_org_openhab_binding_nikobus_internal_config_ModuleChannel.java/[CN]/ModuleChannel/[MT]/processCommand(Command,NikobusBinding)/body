@@ -5,5 +5,16 @@
   if (command instanceof OnOffType) {
     this.state=(OnOffType)command;
   }
+  if (command instanceof UpDownType) {
+    this.state=(UpDownType)command;
+  }
+  if (command instanceof StopMoveType) {
+    if (command.equals(StopMoveType.STOP)) {
+      this.state=UpDownType.DOWN;
+    }
+ else {
+      this.state=UpDownType.UP;
+    }
+  }
   channelGroup.publishStateToNikobus(this,binding);
 }
