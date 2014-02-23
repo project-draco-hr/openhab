@@ -10,15 +10,20 @@
       continue;
     }
     State channelState=channels[i].getState();
-    if (channelState == null || channelState.equals(OnOffType.OFF) || channelState.equals(PercentType.ZERO)) {
+    if (channelState == null || channelState.equals(OnOffType.OFF) || channelState.equals(PercentType.ZERO) || channelState.equals(UpDownType.DOWN) || channelState.equals(StopMoveType.STOP)) {
       command.append(LOW_BYTE);
+    }
+ else     if (channelState instanceof PercentType) {
+      PercentType currentState=(PercentType)channelState;
+      int value=BigDecimal.valueOf(255).multiply(currentState.toBigDecimal()).divide(BigDecimal.valueOf(100),0,BigDecimal.ROUND_UP).intValue();
+      command.append(StringUtils.leftPad(Integer.toHexString(value),2,"0").toUpperCase());
     }
  else {
       command.append(HIGH_BYTE);
     }
   }
   command.append(HIGH_BYTE);
-  NikobusCommand cmd=addChecksumToCommand(new NikobusCommand(STATUS_CHANGE_CMD + CRCUtil.appendCRC(command.toString())),binding);
+  NikobusCommand cmd=new NikobusCommand(CRCUtil.appendCRC2(STATUS_CHANGE_CMD + CRCUtil.appendCRC(command.toString())));
   try {
     binding.sendCommand(cmd);
   }
