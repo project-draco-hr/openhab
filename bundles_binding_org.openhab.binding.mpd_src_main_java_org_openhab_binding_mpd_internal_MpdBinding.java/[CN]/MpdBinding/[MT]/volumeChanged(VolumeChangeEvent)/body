@@ -1,12 +1,9 @@
 {
-  logger.debug("Volume changed to {}",vce.getVolume());
   String playerId=findPlayerId(vce.getSource());
   String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.VOLUME);
   for (  String itemName : itemNames) {
-    logger.debug("ItemName tested: {}",itemName);
     if (StringUtils.isNotBlank(itemName)) {
       eventPublisher.postUpdate(itemName,new PercentType(vce.getVolume()));
-      logger.debug("Caught {} {}",playerId,vce.getVolume());
     }
   }
 }
