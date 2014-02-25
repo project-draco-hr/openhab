@@ -1,0 +1,44 @@
+{
+  MPD daemon=findMPDInstance(playerId);
+  if (daemon == null) {
+    reconnect(playerId);
+  }
+  if (daemon != null) {
+    try {
+      MPDPlayer player=daemon.getMPDPlayer();
+      PlayerStatus ps=player.getStatus();
+      PlayerStatus curPs=playerStatusCache.get(playerId);
+      if (curPs != null) {
+        if (ps != curPs) {
+          logger.warn("Play state changed '{}'",playerId);
+          playerStatusCache.put(playerId,ps);
+          PlayerCommandTypeMapping reportTo;
+          OnOffType reportStatus;
+          if (ps.equals(PlayerStatus.STATUS_PAUSED) || ps.equals(PlayerStatus.STATUS_STOPPED)) {
+            reportTo=PlayerCommandTypeMapping.STOP;
+            reportStatus=OnOffType.OFF;
+          }
+ else {
+            reportTo=PlayerCommandTypeMapping.PLAY;
+            reportStatus=OnOffType.ON;
+          }
+          broadcastPlayerStateChange(playerId,reportTo,reportStatus);
+        }
+ else {
+        }
+      }
+ else {
+        playerStatusCache.put(playerId,ps);
+      }
+    }
+ catch (    MPDPlayerException pe) {
+      logger.error("error while updating player status: {}" + pe.getMessage(),playerId);
+    }
+catch (    Exception e) {
+      logger.warn("Failed to communicate with '{}'",playerId);
+    }
+  }
+ else {
+    logger.warn("didn't find player configuration instance for playerId '{}'",playerId);
+  }
+}
