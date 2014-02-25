@@ -1,12 +1,12 @@
 {
-  logger.debug("Closing connection to {}",name);
+  logger.debug("Closing connection to broker '{}'",name);
   try {
     if (started) {
       client.disconnect();
     }
   }
  catch (  MqttException e) {
-    logger.error("Error closing connection to {}.",name,e);
+    logger.error(String.format("Error closing connection to broker '{}'",name),e);
   }
   started=false;
 }

@@ -4,15 +4,15 @@
       return;
     }
     if (StringUtils.isBlank(url)) {
-      throw new Exception("Missing url.");
+      throw new Exception("Missing url");
     }
     if (client == null) {
       if (StringUtils.isBlank(clientId) || clientId.length() > 23) {
         clientId=MqttClient.generateClientId();
       }
-      String tmpDir=System.getProperty("java.io.tmpdir");
-      MqttDefaultFilePersistence dataStore=new MqttDefaultFilePersistence(tmpDir + "/" + name);
-      logger.debug("Creating new client for '{}' using id '{}' and file store '{}'",new Object[]{url,clientId,tmpDir + "/" + name});
+      String tmpDir=System.getProperty("java.io.tmpdir") + "/" + name;
+      MqttDefaultFilePersistence dataStore=new MqttDefaultFilePersistence(tmpDir);
+      logger.debug("Creating new client for '{}' using id '{}' and file store '{}'",url,clientId,tmpDir);
       client=new MqttClient(url,clientId,dataStore);
       client.setCallback(this);
     }
@@ -51,7 +51,7 @@
     client.connect(options);
   }
  catch (  MqttException e) {
-    logger.error("Error connecting to broker '{}' : {} : ReasonCode {} : Cause : {}",new Object[]{name,e.getMessage(),e.getReasonCode(),e.getCause().getMessage()});
+    logger.error(String.format("Error connecting to broker '{}'",name),e);
     throw e;
   }
 }

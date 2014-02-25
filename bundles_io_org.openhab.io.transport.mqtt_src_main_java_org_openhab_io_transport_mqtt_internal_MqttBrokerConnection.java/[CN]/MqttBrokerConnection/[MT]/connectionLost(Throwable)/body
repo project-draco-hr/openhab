@@ -1,11 +1,5 @@
 {
-  if (t instanceof MqttException) {
-    MqttException e=(MqttException)t;
-    logger.error("MQTT connection to '{}' was lost: {} : ReasonCode {} : Cause : {}",new Object[]{name,e.getMessage(),e.getReasonCode(),e.getCause().getMessage()});
-  }
- else {
-    logger.error("MQTT connection to '{}' was lost: {}",name,t.getMessage());
-  }
+  logger.error(String.format("MQTT connection to broker '{}' was lost",name),t);
   started=false;
   logger.info("Starting connection helper to periodically try restore connection to broker '{}'",name);
   MqttBrokerConnectionHelper helper=new MqttBrokerConnectionHelper(this);

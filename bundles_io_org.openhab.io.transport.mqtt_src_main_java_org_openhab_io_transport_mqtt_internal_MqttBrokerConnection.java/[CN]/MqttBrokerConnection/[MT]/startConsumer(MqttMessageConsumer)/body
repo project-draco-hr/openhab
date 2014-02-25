@@ -1,10 +1,10 @@
 {
   String topic=subscriber.getTopic();
-  logger.debug("Starting message consumer for broker {} on topic {}",name,topic);
+  logger.debug("Starting message consumer for broker '{}' on topic '{}'",name,topic);
   try {
     client.subscribe(topic,qos);
   }
  catch (  Exception e) {
-    logger.error("Error starting consumer : ",e);
+    logger.error(String.format("Error starting consumer for broker '{}' on topic '{}'",name,topic),e);
   }
 }

@@ -1,5 +1,5 @@
 {
-  logger.trace("Starting message producer for broker {}",name);
+  logger.trace("Starting message producer for broker '{}'",name);
   publisher.setSenderChannel(new MqttSenderChannel(){
     @Override public void publish(    String topic,    byte[] payload) throws Exception {
       if (!started) {
@@ -11,11 +11,11 @@
       message.setRetained(retain);
       MqttTopic mqttTopic=client.getTopic(topic);
       MqttDeliveryToken deliveryToken=mqttTopic.publish(message);
-      logger.debug("Publishing message {} to topic {} ",deliveryToken.getMessageId(),topic);
+      logger.debug("Publishing message {} to topic '{}'",deliveryToken.getMessageId(),topic);
       if (!async) {
         deliveryToken.waitForCompletion(10000);
         if (!deliveryToken.isComplete()) {
-          logger.error("Did not receive completion message within timeout limit whilst publishing to topic {} ",topic);
+          logger.error("Did not receive completion message within timeout limit whilst publishing to topic '{}'",topic);
         }
       }
     }
