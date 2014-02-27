@@ -1,9 +1,11 @@
 {
-  Iterator<SonosZonePlayer> it=this.iterator();
-  while (it.hasNext()) {
-    SonosZonePlayer aPlayer=it.next();
-    if (aPlayer.getDevice().equals(device)) {
-      return aPlayer;
+  if (device != null) {
+    Iterator<SonosZonePlayer> it=this.iterator();
+    while (it.hasNext()) {
+      SonosZonePlayer aPlayer=it.next();
+      if (aPlayer.getDevice() != null && aPlayer.getDevice().equals(device)) {
+        return aPlayer;
+      }
     }
   }
   return null;
