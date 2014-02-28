@@ -23,6 +23,8 @@ if (this.node.getNodeId() != this.controller.getOwnNodeId()) {
   this.controller.sendData(zwaveCommandClass.getNoOperationMessage());
 }
  else {
+  logger.debug("NODE {}: Initialisation complete.",this.node.getNodeId());
+  initializationComplete=true;
   this.node.setNodeStage(NodeStage.DONE);
 }
 break;
@@ -165,6 +167,7 @@ logger.trace("NODE {}: Done getting dynamic values, proceeding to done node stag
 queriesPending=-1;
 this.node.setNodeStage(NodeStage.DONE);
 nodeSerializer.SerializeNode(this.node);
+logger.debug("NODE {}: Initialisation complete.",this.node.getNodeId());
 initializationComplete=true;
 break;
 case DONE:
