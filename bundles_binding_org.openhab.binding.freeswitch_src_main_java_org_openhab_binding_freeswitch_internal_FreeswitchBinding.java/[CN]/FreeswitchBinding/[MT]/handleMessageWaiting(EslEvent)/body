@@ -1,4 +1,8 @@
 {
+  logger.debug(String.format("MWI event\\n %s",event.toString()));
+  for (  String key : event.getEventHeaders().keySet()) {
+    logger.debug(String.format("MWI Message header %s : %s",key,event.getEventHeaders().get(key)));
+  }
   String account=null;
   try {
     account=URLDecoder.decode(getHeader(event,FS_MWI_ACCOUNT),"UTF-8");
@@ -8,7 +12,6 @@
     return;
   }
   boolean waiting="yes".equalsIgnoreCase(getHeader(event,FS_MWI_WAITING));
-  logger.debug(String.format("MWI event\\n %s",event.toString()));
   String messagesString=getHeader(event,FS_MWI_MESSAGE);
   logger.debug(String.format("Message header: %s",messagesString));
   if (StringUtils.isBlank(messagesString)) {

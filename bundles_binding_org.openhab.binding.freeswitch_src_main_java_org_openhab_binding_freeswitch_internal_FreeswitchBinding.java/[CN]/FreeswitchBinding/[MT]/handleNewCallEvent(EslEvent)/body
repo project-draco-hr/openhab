@@ -1,11 +1,11 @@
 {
   String uuid=getHeader(event,FS_UUID);
+  logger.debug("Adding Call with uuid " + uuid);
   Channel channel=new Channel(event);
   eventCache.put(uuid,channel);
   itemMap.put(uuid,new LinkedList<FreeswitchBindingConfig>());
   CallType call=channel.getCall();
-  logger.debug(String.format("Adding new call to : %s from:%s",call.getDestNum(),call.getOrigNum()));
-  logger.debug(event.getEventHeaders().toString());
+  logger.debug(String.format("new call to : %s from : %s",call.getDestNum(),call.getOrigNum()));
   for (  FreeswitchBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
