@@ -2,6 +2,7 @@
   String uuid=getHeader(event,FS_UUID);
   logger.debug("Adding Call with uuid " + uuid);
   Channel channel=new Channel(event);
+  if (eventCache.containsKey(uuid))   return;
   eventCache.put(uuid,channel);
   itemMap.put(uuid,new LinkedList<FreeswitchBindingConfig>());
   CallType call=channel.getCall();
