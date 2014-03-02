@@ -5,8 +5,14 @@
  catch (  Exception e) {
     logger.error("Failed to remove telldus core listeners",e);
   }
-  JNA.CLibrary.INSTANCE.tdClose();
-  JNA.CLibrary.INSTANCE.tdInit();
-  updateDevices();
-  listener.setupListeners();
+  try {
+    JNA.CLibrary.INSTANCE.tdClose();
+    JNA.CLibrary.INSTANCE.tdInit();
+    updateDevices();
+    listener.setupListeners();
+  }
+ catch (  Exception e) {
+    logger.error("Failed to close and init listener");
+    throw new RuntimeException("Could not reset tellstick",e);
+  }
 }
