@@ -9,13 +9,12 @@
   }
   ZWaveNode node=this.getNode(serialMessage.getMessageNode());
   if (node.getNodeStage() == NodeStage.DEAD) {
-    logger.debug("Node {} is dead, not sending message.",node.getNodeId());
+    logger.debug("NODE {}: Is dead, not sending message.",node.getNodeId());
     return;
   }
   if (!node.isListening() && !node.isFrequentlyListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-    if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
-      wakeUpCommandClass.putInWakeUpQueue(serialMessage);
+    if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
       return;
     }
   }

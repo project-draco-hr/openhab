@@ -1,0 +1,18 @@
+{
+  String host=null;
+  int port=0;
+  int interval=60;
+  if (bindingConfig != null) {
+    Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
+    if (!statusMatcher.matches()) {
+      throw new BindingConfigParseException("HDanywhere binding configuration must consist of either three [config=" + statusMatcher + "] parts");
+    }
+ else {
+      host=statusMatcher.group(1);
+      port=Integer.valueOf(statusMatcher.group(2));
+      interval=Integer.valueOf(statusMatcher.group(3));
+      HDanywhereBindingConfigElement newElement=new HDanywhereBindingConfigElement(host,port,interval);
+      config.add(newElement);
+    }
+  }
+}

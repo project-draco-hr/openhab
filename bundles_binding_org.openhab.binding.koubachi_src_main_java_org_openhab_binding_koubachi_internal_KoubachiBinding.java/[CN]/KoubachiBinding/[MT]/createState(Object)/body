@@ -1,0 +1,25 @@
+{
+  if (propertyValue == null) {
+    return UnDefType.NULL;
+  }
+  Class<?> dataType=propertyValue.getClass();
+  if (Date.class.isAssignableFrom(dataType)) {
+    Calendar calendar=Calendar.getInstance();
+    calendar.setTime((Date)propertyValue);
+    return new DateTimeType(calendar);
+  }
+ else   if (BigDecimal.class.isAssignableFrom(dataType)) {
+    return new DecimalType((BigDecimal)propertyValue);
+  }
+ else   if (Boolean.class.isAssignableFrom(dataType)) {
+    if ((Boolean)propertyValue) {
+      return OnOffType.ON;
+    }
+ else {
+      return OnOffType.OFF;
+    }
+  }
+ else {
+    return new StringType(propertyValue.toString());
+  }
+}

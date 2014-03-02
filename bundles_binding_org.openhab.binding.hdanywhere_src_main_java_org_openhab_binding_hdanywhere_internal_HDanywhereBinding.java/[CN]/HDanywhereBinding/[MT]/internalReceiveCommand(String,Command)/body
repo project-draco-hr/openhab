@@ -1,0 +1,50 @@
+{
+  HDanywhereBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  if (provider == null) {
+    logger.trace("doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+    return;
+  }
+  List<String> hosts=provider.getHosts(itemName);
+  int sourcePort=Integer.valueOf(command.toString());
+  for (  String aHost : hosts) {
+    Integer numberOfPorts=matrixCache.get(aHost);
+    if (numberOfPorts == null) {
+      numberOfPorts=4;
+    }
+    if (sourcePort > numberOfPorts) {
+      logger.warn("{} goes beyond the physical number of {} ports available on the matrix {}",new Object[]{sourcePort,numberOfPorts,aHost});
+    }
+ else {
+      List<Integer> ports=provider.getPorts(aHost,itemName);
+      String httpMethod="GET";
+      String url="http://" + aHost + "/switch.cgi?command=3&data0=";
+      for (      Integer aPort : ports) {
+        url=url + aPort.toString() + "&data1=";
+        url=url + command.toString() + "&checksum=";
+        int checksum=3 + aPort + sourcePort;
+        url=url + String.valueOf(checksum);
+        if (isNotBlank(httpMethod) && isNotBlank(url)) {
+          String response=HttpUtil.executeUrl(httpMethod,url,null,null,null,timeout);
+          Pattern p=Pattern.compile("The output " + aPort + " select input (.*).");
+          Matcher m=p.matcher(response);
+          while (m.find()) {
+            List<Class<? extends State>> stateTypeList=new ArrayList<Class<? extends State>>();
+            stateTypeList.add(DecimalType.class);
+            State state=TypeParser.parseState(stateTypeList,m.group(1));
+            if (!portMappingCache.containsKey(aHost + ":" + aPort)) {
+              portMappingCache.put(aHost + ":" + aPort,Integer.valueOf(m.group(1)));
+              eventPublisher.postUpdate(itemName,(State)state);
+            }
+ else {
+              int cachedValue=portMappingCache.get(aHost + ":" + aPort);
+              if (cachedValue != Integer.valueOf(m.group(1))) {
+                portMappingCache.put(aHost + ":" + aPort,Integer.valueOf(m.group(1)));
+                eventPublisher.postUpdate(itemName,(State)state);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
