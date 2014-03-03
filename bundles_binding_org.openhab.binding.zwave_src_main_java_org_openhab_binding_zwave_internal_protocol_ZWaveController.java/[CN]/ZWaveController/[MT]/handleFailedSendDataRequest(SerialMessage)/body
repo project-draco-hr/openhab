@@ -5,7 +5,7 @@
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
     if (wakeUpCommandClass != null) {
       wakeUpCommandClass.setAwake(false);
-      wakeUpCommandClass.putInWakeUpQueue(originalMessage);
+      wakeUpCommandClass.processOutgoingWakeupMessage(originalMessage);
       return;
     }
   }

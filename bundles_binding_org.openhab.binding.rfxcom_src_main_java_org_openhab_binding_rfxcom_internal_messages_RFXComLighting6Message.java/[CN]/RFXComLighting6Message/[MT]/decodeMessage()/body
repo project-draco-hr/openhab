@@ -1,0 +1,16 @@
+{
+  byte[] data=new byte[12];
+  data[0]=0x0B;
+  data[1]=RFXComBaseMessage.PacketType.LIGHTING6.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId >> 8) & 0xFF);
+  data[5]=(byte)(sensorId & 0xFF);
+  data[6]=(byte)groupCode;
+  data[7]=unitcode;
+  data[8]=command.toByte();
+  data[9]=0x00;
+  data[10]=0x00;
+  data[11]=(byte)((signalLevel & 0x0F) << 4);
+  return data;
+}

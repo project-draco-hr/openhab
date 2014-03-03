@@ -1,0 +1,19 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF) << 0;
+  groupCode=(char)data[6];
+  unitcode=data[7];
+  try {
+    command=Commands.values()[data[8]];
+  }
+ catch (  Exception e) {
+    command=Commands.UNKNOWN;
+  }
+  signalLevel=(byte)((data[11] & 0xF0) >> 4);
+}
