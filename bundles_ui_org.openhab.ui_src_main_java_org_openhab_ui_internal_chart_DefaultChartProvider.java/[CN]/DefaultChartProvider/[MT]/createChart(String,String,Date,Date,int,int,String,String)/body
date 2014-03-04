@@ -31,7 +31,8 @@
     persistenceService=getPersistenceServices().get(service);
   }
  else {
-    persistenceService=getPersistenceServices().entrySet().iterator().next().getValue();
+    Set<Entry<String,QueryablePersistenceService>> serviceEntry=getPersistenceServices().entrySet();
+    if (serviceEntry != null && serviceEntry.size() != 0)     persistenceService=serviceEntry.iterator().next().getValue();
   }
   if (persistenceService == null) {
     throw new IllegalArgumentException("Persistence service not found '" + service + "'.");
