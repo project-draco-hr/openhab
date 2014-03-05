@@ -1,5 +1,6 @@
 {
   if (networkHealDeadCheckNext < System.currentTimeMillis()) {
+    logger.debug("Heal: DEAD node check.");
     for (int nodeId=1; nodeId <= 232; nodeId++) {
       ZWaveNode node=zController.getNode(nodeId);
       if (node == null)       continue;
@@ -37,4 +38,6 @@
       }
     }
   }
+  networkHealNextTime=networkHealNightlyTime;
+  networkHealDeadCheckNext=System.currentTimeMillis() + 150000;
 }
