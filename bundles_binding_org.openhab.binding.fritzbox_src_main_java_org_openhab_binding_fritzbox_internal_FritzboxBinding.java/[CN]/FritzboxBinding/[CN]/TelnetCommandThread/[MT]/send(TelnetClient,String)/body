@@ -1,10 +1,11 @@
 {
+  logger.trace("Sending data ({})...",data);
   try {
     data+="\r\n";
     client.getOutputStream().write(data.getBytes());
     client.getOutputStream().flush();
   }
  catch (  IOException e) {
-    logger.warn("Could not send data",e);
+    logger.warn("Error sending data",e);
   }
 }
