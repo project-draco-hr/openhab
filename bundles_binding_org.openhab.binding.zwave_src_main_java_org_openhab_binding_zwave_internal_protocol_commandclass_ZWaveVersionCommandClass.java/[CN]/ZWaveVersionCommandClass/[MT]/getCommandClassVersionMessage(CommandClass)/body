@@ -1,5 +1,5 @@
 {
-  logger.debug("Creating new message for application command VERSION_COMMAND_CLASS_GET for node {} and command class {}",this.getNode().getNodeId(),commandClass.getLabel());
+  logger.debug("NODE {}: Creating new message for application command VERSION_COMMAND_CLASS_GET command class {}",this.getNode().getNodeId(),commandClass.getLabel());
   SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
   byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)VERSION_COMMAND_CLASS_GET,(byte)commandClass.getKey()};
   result.setMessagePayload(newPayload);
