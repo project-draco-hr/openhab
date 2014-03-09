@@ -3,7 +3,9 @@
   String serialNumber=null;
   for (  MaxCubeBindingProvider provider : providers) {
     serialNumber=provider.getSerialNumber(itemName);
-    if (serialNumber.equals(null))     continue;
+    if (serialNumber.equals(null)) {
+      continue;
+    }
     Device device=findDevice(serialNumber,devices);
     if (device == null) {
       logger.debug("Cannot send command to device with serial number {}, device not listed.",serialNumber);
