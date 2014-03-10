@@ -1,5 +1,10 @@
 {
   if (device != null && values != null) {
+    SonosZonePlayer associatedPlayer=sonosZonePlayerCache.getByDevice(device);
+    if (associatedPlayer == null) {
+      logger.debug("There is no Sonos Player defined matching the device {}",device);
+      return;
+    }
     for (    String stateVariable : values.keySet()) {
       List<SonosCommandType> supportedCommands=SonosCommandType.getCommandByVariable(stateVariable);
       StateVariableValue status=values.get(stateVariable);

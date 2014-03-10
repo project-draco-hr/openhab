@@ -3,7 +3,7 @@
     TelnetClient client=new TelnetClient();
     client.connect(ip);
     receive(client);
-    sendLine(client,password);
+    send(client,password);
     receive(client);
     for (    FritzboxBindingProvider provider : providers) {
       for (      String item : provider.getItemNames()) {
@@ -19,7 +19,7 @@
           query=type.substring(type.indexOf(":") + 1).trim();
         }
  else         continue;
-        sendLine(client,query);
+        send(client,query);
         String answer=receive(client);
         String[] lines=answer.split("\r\n");
         if (lines.length >= 2) {
@@ -43,6 +43,6 @@
     client.disconnect();
   }
  catch (  Exception e) {
-    logger.warn("Could not get item state",e.toString());
+    logger.warn("Could not get item state",e);
   }
 }
