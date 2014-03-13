@@ -27,5 +27,14 @@ catch (          Throwable e) {
         itemNames.add(itemName);
       }
     }
+    for (    String serialPort : serialDevices.keySet()) {
+      SerialDevice serialDevice=serialDevices.get(serialPort);
+      Set<String> itemNames=contextMap.get(serialPort);
+      if (itemNames == null || itemNames.size() == 0) {
+        contextMap.remove(serialPort);
+        serialDevice.close();
+        serialDevices.remove(serialPort);
+      }
+    }
   }
 }
