@@ -1,0 +1,26 @@
+{
+  logger.debug("internalReceiveCommand() is called! itemName {}, command {}",itemName,command);
+  for (  NeoHubBindingProvider provider : providers) {
+    if (!provider.providesBindingFor(itemName)) {
+      continue;
+    }
+    String device=provider.getNeoStatDevice(itemName);
+    NeoStatProperty property=provider.getNeoStatProperty(itemName);
+    final NeoHubProtocol protocol=new NeoHubProtocol(new NeoHubConnector(hostname,port));
+switch (property) {
+case Away:
+      if (command instanceof OnOffType) {
+        OnOffType onOffType=(OnOffType)command;
+        protocol.setAway(OnOffType.ON == onOffType,device);
+      }
+    break;
+case Standby:
+  if (command instanceof OnOffType) {
+    OnOffType onOffType=(OnOffType)command;
+    protocol.setStandby(OnOffType.ON == onOffType,device);
+  }
+default :
+break;
+}
+}
+}

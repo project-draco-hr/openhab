@@ -1,0 +1,43 @@
+{
+  logger.debug("execute() method is called!");
+  final NeoHubProtocol protocol=new NeoHubProtocol(new NeoHubConnector(hostname,port));
+  try {
+    final InfoResponse response=protocol.info();
+    for (    NeoHubBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String device=provider.getNeoStatDevice(itemName);
+        State result=null;
+switch (provider.getNeoStatProperty(itemName)) {
+case CurrentTemperature:
+          result=new DecimalType(response.getCurrentTemperature(device));
+        break;
+case CurrentFloorTemperature:
+      result=new DecimalType(response.getCurrentFloorTemperature(device));
+    break;
+case CurrentSetTemperature:
+  result=new DecimalType(response.getCurrentSetTemperature(device));
+break;
+case DeviceName:
+result=new StringType(response.getDeviceName(device));
+break;
+case Away:
+result=response.isAway(device) ? OnOffType.ON : OnOffType.OFF;
+break;
+case Standby:
+result=response.isStandby(device) ? OnOffType.ON : OnOffType.OFF;
+break;
+case Heating:
+result=response.isHeating(device) ? OnOffType.ON : OnOffType.OFF;
+break;
+}
+if (eventPublisher != null && result != null) {
+eventPublisher.postUpdate(itemName,result);
+}
+}
+}
+}
+ catch (final JSONException e) {
+logger.error("Failed to parse response or fetch expected result from it. Please check your configuration. Does device with index exist?",e);
+return;
+}
+}
