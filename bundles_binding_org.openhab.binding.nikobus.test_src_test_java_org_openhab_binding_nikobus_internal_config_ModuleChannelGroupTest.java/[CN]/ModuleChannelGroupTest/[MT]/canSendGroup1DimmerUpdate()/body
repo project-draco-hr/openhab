@@ -1,8 +1,8 @@
 {
   ModuleChannel item=group1.addChannel("test4",4,new ArrayList<Class<? extends Command>>());
-  item.setState(OnOffType.ON);
+  item.setState(new PercentType(25));
   group1.publishStateToNikobus(item,binding);
   Mockito.verify(binding,Mockito.times(1)).sendCommand(command.capture());
   NikobusCommand cmd=command.getAllValues().get(0);
-  assertEquals("$1E156C94000000FF0000FF60E149",cmd.getCommand());
+  assertEquals("$1E156C94000000400000FF45DE7B",cmd.getCommand());
 }
