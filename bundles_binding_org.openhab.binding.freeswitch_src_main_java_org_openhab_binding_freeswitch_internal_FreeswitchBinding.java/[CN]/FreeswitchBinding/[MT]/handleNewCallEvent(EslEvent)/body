@@ -11,41 +11,9 @@
     for (    String itemName : provider.getItemNames()) {
       FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
       if (config.getType() == FreeswitchBindingType.ACTIVE) {
-        if (config.filtered()) {
-          logger.debug("Trying to match filter string {}",config.getArgument());
-          String[] filters=config.getArgument().split(",");
-          boolean matched=true;
-          for (          String filterString : filters) {
-            String[] args=filterString.split(":");
-            if (args.length == 2 && StringUtils.isNotBlank(args[0]) && StringUtils.isNotBlank(args[1])) {
-              String value=channel.getEventHeader(args[0]);
-              try {
-                if (StringUtils.isBlank(value) || !args[1].equals(URLDecoder.decode(value,"UTF-8"))) {
-                  matched=false;
-                }
-              }
- catch (              UnsupportedEncodingException e) {
-                logger.warn("Could not decode header",e);
-                matched=false;
-              }
-            }
- else {
-              logger.warn("The filter string does not look valid, not updating item");
-              matched=false;
-            }
-            if (!matched)             break;
-          }
-          if (matched) {
-            itemMap.get(uuid).add(config);
-            newCallItemUpdate(config,channel);
-          }
-        }
- else {
-          String direction=channel.getEventHeader("Call-Direction");
-          if (StringUtils.isNotBlank(direction) && "inbound".equals(direction)) {
-            itemMap.get(uuid).add(config);
-            newCallItemUpdate(config,channel);
-          }
+        if ((config.filtered() && matchCall(channel,config.getArgument())) || (!config.filtered() && isInboundCall(channel))) {
+          itemMap.get(uuid).add(config);
+          newCallItemUpdate(config,channel);
         }
       }
     }
