@@ -1,21 +1,21 @@
 {
-  logger.debug(String.format("MWI event\\n %s",event.toString()));
+  logger.debug("MWI event\\n {}",event.toString());
   for (  String key : event.getEventHeaders().keySet()) {
-    logger.debug(String.format("MWI Message header %s : %s",key,event.getEventHeaders().get(key)));
+    logger.debug("MWI Message header {} : {}",key,event.getEventHeaders().get(key));
   }
   String account=null;
   try {
-    account=URLDecoder.decode(getHeader(event,FS_MWI_ACCOUNT),"UTF-8");
+    account=URLDecoder.decode(getHeader(event,FreeswitchMessageHeader.MWI_ACCOUNT),"UTF-8");
   }
  catch (  UnsupportedEncodingException e) {
     logger.error("Could not decode account",e);
     return;
   }
-  boolean waiting="yes".equalsIgnoreCase(getHeader(event,FS_MWI_WAITING));
-  String messagesString=getHeader(event,FS_MWI_MESSAGE);
-  logger.debug(String.format("Message header: %s",messagesString));
+  boolean waiting="yes".equalsIgnoreCase(getHeader(event,FreeswitchMessageHeader.MWI_WAITING));
+  String messagesString=getHeader(event,FreeswitchMessageHeader.MWI_MESSAGE);
+  logger.debug("Message header: {}",messagesString);
   if (StringUtils.isBlank(messagesString)) {
-    logger.warn("Invalid message string, aborting");
+    logger.warn("message string is missing, aborting");
     return;
   }
   Pattern pattern=Pattern.compile("([0-9]+)/([0-9]+)\\s\\([0-9]+\\/[0-9]+\\)");
@@ -27,10 +27,10 @@
       messages=Integer.parseInt(matcher.group(1));
     }
  catch (    Exception e) {
-      logger.warn("Could not parse message number",e);
+      logger.warn("Could not parse message number from message {} : {}",messagesString,e);
     }
   }
-  logger.debug(String.format("Updating MWI to %d VMs",messages));
+  logger.debug("Updating MWI to {} VMs",messages);
   mwiCache.put(account,new MWIModel(waiting,messages));
   updateMessageWaitingItems();
 }

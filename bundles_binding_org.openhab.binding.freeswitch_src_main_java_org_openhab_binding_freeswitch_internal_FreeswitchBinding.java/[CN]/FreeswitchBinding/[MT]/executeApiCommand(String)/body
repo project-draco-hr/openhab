@@ -1,12 +1,12 @@
 {
-  logger.debug(String.format("Trying to execute API command %s",command));
+  logger.debug("Trying to execute API command {}",command);
   if (!clientValid() && StringUtils.isBlank(command)) {
-    logger.error(String.format("Bad command %s",command));
+    logger.error("Bad command {}",command);
     return null;
   }
   String[] args=command.split(" ",1);
   if (args.length == 0) {
-    logger.error(String.format("Command did not contain a valid command string %s",command));
+    logger.error("Command did not contain a valid command string {}");
     return null;
   }
   EslMessage msg=inboudClient.sendSyncApiCommand(args[0],args.length > 1 ? args[1] : "");

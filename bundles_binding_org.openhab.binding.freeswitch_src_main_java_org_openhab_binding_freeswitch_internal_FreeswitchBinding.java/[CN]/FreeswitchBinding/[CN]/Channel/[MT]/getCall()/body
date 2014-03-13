@@ -1,7 +1,7 @@
 {
-  String dest=getEventHeader(FS_DEST_NUMBER);
-  String orig=getEventHeader(FS_ORIG_NUMBER);
+  String dest=getEventHeader(FreeswitchMessageHeader.DEST_NUMBER);
+  String orig=getEventHeader(FreeswitchMessageHeader.ORIG_NUMBER);
   if (StringUtils.isBlank(dest))   dest="unknown";
   if (StringUtils.isBlank(orig))   orig="unknown";
-  return new CallType(getEventHeader(FS_ORIG_NUMBER),getEventHeader(FS_DEST_NUMBER));
+  return new CallType(orig,dest);
 }

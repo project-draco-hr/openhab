@@ -1,8 +1,8 @@
 {
-  String uuid=getHeader(event,FS_UUID);
+  String uuid=getHeader(event,FreeswitchMessageHeader.UUID);
   logger.debug("Removing Call with uuid " + uuid);
   eventCache.remove(uuid);
-  LinkedList<FreeswitchBindingConfig> configs=itemMap.remove(getHeader(event,FS_UUID));
+  LinkedList<FreeswitchBindingConfig> configs=itemMap.remove(getHeader(event,FreeswitchMessageHeader.UUID));
   if (configs != null) {
     for (    FreeswitchBindingConfig config : configs) {
       endCallItemUpdate(config);

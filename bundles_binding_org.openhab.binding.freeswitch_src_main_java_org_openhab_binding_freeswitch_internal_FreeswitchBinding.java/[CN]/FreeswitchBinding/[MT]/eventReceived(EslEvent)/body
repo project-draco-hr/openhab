@@ -1,13 +1,13 @@
 {
-  logger.debug(String.format("Recieved ESLEvent %s",event.getEventName()));
+  logger.debug("Recieved ESLEvent {}",event.getEventName());
   logger.trace(printEvent(event));
-  if (event.getEventName().equals(CH_CREATE)) {
+  if (event.getEventName().equals(FreeswitchMessageHeader.CHANNEl_CREATE)) {
     handleNewCallEvent(event);
   }
- else   if (event.getEventName().equals(CH_DESTROY)) {
+ else   if (event.getEventName().equals(FreeswitchMessageHeader.CHANNEL_DESTROY)) {
     handleHangupCallEvent(event);
   }
- else   if (event.getEventName().equals(MESSAGE_WAITING)) {
+ else   if (event.getEventName().equals(FreeswitchMessageHeader.MESSAGE_WAITING)) {
     handleMessageWaiting(event);
   }
 }
