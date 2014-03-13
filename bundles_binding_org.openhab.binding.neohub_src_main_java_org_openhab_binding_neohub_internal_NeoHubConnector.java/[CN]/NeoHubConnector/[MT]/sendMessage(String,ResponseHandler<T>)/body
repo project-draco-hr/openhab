@@ -1,6 +1,7 @@
 {
   final StringBuilder response=new StringBuilder();
-  try (final Socket socket=new Socket()){
+  final Socket socket=new Socket();
+  try {
     socket.connect(new InetSocketAddress(hostname,port),timeout);
     final InputStreamReader in=new InputStreamReader(socket.getInputStream(),US_ASCII);
     final OutputStreamWriter out=new OutputStreamWriter(socket.getOutputStream(),US_ASCII);
@@ -17,6 +18,13 @@
     logger.error("Failed to connect to neohub [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
     logger.debug("Failed to connect to neohub.",e);
     return null;
+  }
+ finally {
+    try {
+      socket.close();
+    }
+ catch (    IOException e) {
+    }
   }
   final String responseStr=response.toString();
   logger.debug("<< {}",responseStr);
