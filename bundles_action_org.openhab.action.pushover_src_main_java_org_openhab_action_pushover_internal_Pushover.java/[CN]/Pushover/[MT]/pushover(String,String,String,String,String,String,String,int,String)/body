@@ -16,11 +16,11 @@
       return false;
     }
     if (!StringUtils.isEmpty(message)) {
-      if ((message.length() + title.length()) <= 512) {
+      if ((message.length() + title.length()) <= API_MAX_MESSAGE_LENGTH) {
         addEncodedParameter(data,MESSAGE_KEY_MESSAGE,message);
       }
  else {
-        logger.error("Together, the event message and title total more than 512 characters.");
+        logger.error("Together, the event message and title total more than " + API_MAX_MESSAGE_LENGTH + " characters.");
         return false;
       }
     }
@@ -31,43 +31,44 @@
     if (!StringUtils.isEmpty(device)) {
       addEncodedParameter(data,MESSAGE_KEY_DEVICE,device);
     }
-    addEncodedParameter(data,MESSAGE_KEY_TITLE,title);
+    if (!StringUtils.isEmpty(title)) {
+      addEncodedParameter(data,MESSAGE_KEY_TITLE,title);
+    }
     if (!StringUtils.isEmpty(url)) {
-      if (url.length() <= 512) {
+      if (url.length() <= API_MAX_URL_LENGTH) {
         addEncodedParameter(data,MESSAGE_KEY_URL,url);
       }
  else {
-        logger.error("The url is greater than 512 characters.");
+        logger.error("The url is greater than " + API_MAX_URL_LENGTH + " characters.");
         return false;
       }
     }
     if (!StringUtils.isEmpty(urlTitle)) {
-      if (urlTitle.length() <= 100) {
+      if (urlTitle.length() <= API_MAX_URL_TITLE_LENGTH) {
         addEncodedParameter(data,MESSAGE_KEY_URL_TITLE,urlTitle);
       }
  else {
-        logger.error("The url title is greater than 100 characters.");
+        logger.error("The url title is greater than " + API_MAX_URL_TITLE_LENGTH + " characters.");
         return false;
       }
     }
     try {
-      if (priority >= -1 || priority <= 2) {
+      if (Arrays.asList(API_VALID_PRIORITY_LIST).contains(priority)) {
         addEncodedParameter(data,MESSAGE_KEY_PRIORITY,String.valueOf(priority));
       }
  else {
-        logger.warn("Invalid priority. Expected: -1, 0, 1, 2. Got: " + priority + ".");
+        logger.warn("Invalid priority, skipping. Expected: " + API_VALID_PRIORITY_LIST.toString() + ". Got: "+ priority+ ".");
       }
     }
  catch (    Exception exp) {
-      logger.warn("Can't parse the priority value, falling back to default value");
-      addEncodedParameter(data,MESSAGE_KEY_PRIORITY,"0");
+      logger.warn("Can't parse the priority value, skipping.");
     }
     if (!StringUtils.isEmpty(sound)) {
       addEncodedParameter(data,MESSAGE_KEY_SOUND,sound);
     }
     String content=data.toString();
     logger.debug("Executing post to " + API_URL + " with the following content: "+ content);
-    String response="";
+    String response=HttpUtil.executeUrl("POST",API_URL,IOUtils.toInputStream(content),CONTENT_TYPE,timeout);
     logger.debug("Raw response: " + response);
     try {
       String responseMessage=parseResponse(response);

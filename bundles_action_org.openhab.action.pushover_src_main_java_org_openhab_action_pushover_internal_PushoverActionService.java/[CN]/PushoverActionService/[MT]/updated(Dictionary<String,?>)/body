@@ -1,7 +1,7 @@
 {
-  logger.debug("Updating config");
+  logger.debug("Configuration file is being parsed.");
   if (config != null) {
-    logger.debug("Received new config");
+    logger.debug("Configuration data exists. Parsing the paramaters.");
     String apiKey=(String)config.get(PARAM_KEY_API_KEY);
     if (!StringUtils.isEmpty(apiKey)) {
       Pushover.defaultApiKey=apiKey;
@@ -28,7 +28,7 @@
         Pushover.defaultPriority=Integer.parseInt((String)config.get(PARAM_KEY_DEFAULT_PRIORITY));
       }
  catch (      NumberFormatException e) {
-        logger.warn("Can't parse the default priority value, falling back to default value");
+        logger.warn("Can't parse the default priority value, falling back to default value.");
       }
     }
     String timeOut=(String)config.get(PARAM_KEY_TIMEOUT);
@@ -42,7 +42,7 @@
     }
   }
  else {
-    logger.debug("Dictionary was NULL, didn't read any configuration");
+    logger.debug("The configurations information was empty. No defaults for Pushover loaded.");
   }
   isProperlyConfigured=true;
 }

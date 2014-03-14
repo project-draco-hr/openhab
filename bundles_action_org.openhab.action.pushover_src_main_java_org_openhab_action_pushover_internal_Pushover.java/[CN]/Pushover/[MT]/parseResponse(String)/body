@@ -5,15 +5,15 @@
   inStream.setCharacterStream(new StringReader(response));
   Document doc=db.parse(inStream);
   Element root=doc.getDocumentElement();
-  if (root.getTagName().equals("hash")) {
-    NodeList statusList=root.getElementsByTagName("status");
+  if (API_RETURN_ROOT_TAG.equals(root.getTagName())) {
+    NodeList statusList=root.getElementsByTagName(API_RETURN_STATUS_TAG);
     for (int i=0; i < statusList.getLength(); i++) {
       Element value=(Element)statusList.item(i);
-      if ("1".equals(value.getFirstChild().getNodeValue())) {
+      if (API_RETURN_STATUS_SUCCESS.equals(value.getFirstChild().getNodeValue())) {
         return null;
       }
     }
-    NodeList errorList=root.getElementsByTagName("error");
+    NodeList errorList=root.getElementsByTagName(API_RETURN_ERROR_TAG);
     Element value=(Element)errorList.item(0);
     return value.getFirstChild().getNodeValue();
   }
