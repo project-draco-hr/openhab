@@ -1,10 +1,10 @@
 {
   try {
     errCnt=0;
-    logger.debug("mySQL: Attempting to connect to database " + url);
+    logger.debug("mySQL: Attempting to connect to database {}",url);
     Class.forName(driverClass).newInstance();
     connection=DriverManager.getConnection(url,user,password);
-    logger.debug("mySQL: Connected to database " + url);
+    logger.debug("mySQL: Connected to database {}",url);
     Statement st=connection.createStatement();
     int result=st.executeUpdate("SHOW TABLES LIKE 'Items'");
     st.close();
