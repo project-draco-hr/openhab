@@ -1,0 +1,48 @@
+{
+  logger.debug("Updating config");
+  if (config != null) {
+    logger.debug("Received new config");
+    String apiKey=(String)config.get(PARAM_KEY_API_KEY);
+    if (!StringUtils.isEmpty(apiKey)) {
+      Pushover.defaultApiKey=apiKey;
+    }
+    String user=(String)config.get(PARAM_KEY_USER);
+    if (!StringUtils.isEmpty(user)) {
+      Pushover.defaultUser=user;
+    }
+    String title=(String)config.get(PARAM_KEY_TITLE);
+    if (!StringUtils.isEmpty(title)) {
+      Pushover.defaultTitle=title;
+    }
+    String url=(String)config.get(PARAM_KEY_DEFAULT_URL);
+    if (!StringUtils.isEmpty(url)) {
+      Pushover.defaultUrl=url;
+    }
+    String urlTitle=(String)config.get(PARAM_KEY_DEFAULT_URL_TITLE);
+    if (!StringUtils.isEmpty(urlTitle)) {
+      Pushover.defaultUrlTitle=urlTitle;
+    }
+    String defaultPriority=(String)config.get(PARAM_KEY_DEFAULT_PRIORITY);
+    if (!StringUtils.isEmpty(defaultPriority)) {
+      try {
+        Pushover.defaultPriority=Integer.parseInt((String)config.get(PARAM_KEY_DEFAULT_PRIORITY));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the default priority value, falling back to default value");
+      }
+    }
+    String timeOut=(String)config.get(PARAM_KEY_TIMEOUT);
+    if (!StringUtils.isEmpty(timeOut)) {
+      try {
+        Pushover.timeout=Integer.parseInt((String)config.get(PARAM_KEY_TIMEOUT));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the timeout value, falling back to default value");
+      }
+    }
+  }
+ else {
+    logger.debug("Dictionary was NULL, didn't read any configuration");
+  }
+  isProperlyConfigured=true;
+}

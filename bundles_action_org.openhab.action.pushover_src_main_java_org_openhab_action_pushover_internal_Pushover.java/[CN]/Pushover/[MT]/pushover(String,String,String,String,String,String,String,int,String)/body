@@ -1,0 +1,91 @@
+{
+  StringBuilder data=new StringBuilder();
+  try {
+    if (!StringUtils.isEmpty(apiKey)) {
+      addEncodedParameter(data,MESSAGE_KEY_API_KEY,apiKey);
+    }
+ else {
+      logger.error("Application API token not specified.");
+      return false;
+    }
+    if (!StringUtils.isEmpty(user)) {
+      addEncodedParameter(data,MESSAGE_KEY_USER,user);
+    }
+ else {
+      logger.error("The user/group key was not specified.");
+      return false;
+    }
+    if (!StringUtils.isEmpty(message)) {
+      if ((message.length() + title.length()) <= 512) {
+        addEncodedParameter(data,MESSAGE_KEY_MESSAGE,message);
+      }
+ else {
+        logger.error("Together, the event message and title total more than 512 characters.");
+        return false;
+      }
+    }
+ else {
+      logger.error("The event message is missing.");
+      return false;
+    }
+    if (!StringUtils.isEmpty(device)) {
+      addEncodedParameter(data,MESSAGE_KEY_DEVICE,device);
+    }
+    addEncodedParameter(data,MESSAGE_KEY_TITLE,title);
+    if (!StringUtils.isEmpty(url)) {
+      if (url.length() <= 512) {
+        addEncodedParameter(data,MESSAGE_KEY_URL,url);
+      }
+ else {
+        logger.error("The url is greater than 512 characters.");
+        return false;
+      }
+    }
+    if (!StringUtils.isEmpty(urlTitle)) {
+      if (urlTitle.length() <= 100) {
+        addEncodedParameter(data,MESSAGE_KEY_URL_TITLE,urlTitle);
+      }
+ else {
+        logger.error("The url title is greater than 100 characters.");
+        return false;
+      }
+    }
+    try {
+      if (priority >= -1 || priority <= 2) {
+        addEncodedParameter(data,MESSAGE_KEY_PRIORITY,String.valueOf(priority));
+      }
+ else {
+        logger.warn("Invalid priority. Expected: -1, 0, 1, 2. Got: " + priority + ".");
+      }
+    }
+ catch (    Exception exp) {
+      logger.warn("Can't parse the priority value, falling back to default value");
+      addEncodedParameter(data,MESSAGE_KEY_PRIORITY,"0");
+    }
+    if (!StringUtils.isEmpty(sound)) {
+      addEncodedParameter(data,MESSAGE_KEY_SOUND,sound);
+    }
+    String content=data.toString();
+    logger.debug("Executing post to " + API_URL + " with the following content: "+ content);
+    String response="";
+    logger.debug("Raw response: " + response);
+    try {
+      String responseMessage=parseResponse(response);
+      if (StringUtils.isEmpty(responseMessage)) {
+        return true;
+      }
+ else {
+        logger.error("Received error message from Pushover: " + responseMessage);
+        return false;
+      }
+    }
+ catch (    Exception e) {
+      logger.warn("Can't parse response from Pushover: " + response,e);
+      return false;
+    }
+  }
+ catch (  Exception e) {
+    logger.error("An error occured while notifying your mobile device.",e);
+    return false;
+  }
+}
