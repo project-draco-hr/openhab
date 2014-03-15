@@ -5,14 +5,14 @@
   }
   String account=null;
   try {
-    account=URLDecoder.decode(getHeader(event,FreeswitchMessageHeader.MWI_ACCOUNT),"UTF-8");
+    account=URLDecoder.decode(getHeader(event,MWI_ACCOUNT),"UTF-8");
   }
  catch (  UnsupportedEncodingException e) {
     logger.error("Could not decode account",e);
     return;
   }
-  boolean waiting="yes".equalsIgnoreCase(getHeader(event,FreeswitchMessageHeader.MWI_WAITING));
-  String messagesString=getHeader(event,FreeswitchMessageHeader.MWI_MESSAGE);
+  boolean waiting="yes".equalsIgnoreCase(getHeader(event,MWI_WAITING));
+  String messagesString=getHeader(event,MWI_MESSAGE);
   logger.debug("Message header: {}",messagesString);
   if (StringUtils.isBlank(messagesString)) {
     logger.warn("message string is missing, aborting");
