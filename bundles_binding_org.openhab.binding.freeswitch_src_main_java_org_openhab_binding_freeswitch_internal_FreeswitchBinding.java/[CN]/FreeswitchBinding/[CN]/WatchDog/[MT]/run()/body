@@ -1,0 +1,21 @@
+{
+  Thread.currentThread().setName("Freeswitch WatchDog");
+  while (running) {
+    if (!clientValid()) {
+      try {
+        logger.warn("Client is not connected, reconnecting");
+        connect();
+      }
+ catch (      InboundConnectionFailure e) {
+        logger.error("Could not connect to freeswitch server: {}",e.getMessage());
+      }
+    }
+synchronized (lock) {
+      try {
+        lock.wait(WATCHDOG_INTERVAL);
+      }
+ catch (      InterruptedException ignored) {
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 {
   logger.trace("updated() is called!");
   if (config != null) {
+    startWatchdog();
     port=DEFAULT_PORT;
     host=(String)config.get("host");
     password=(String)config.get("password");
@@ -14,6 +15,11 @@
     }
  catch (    InboundConnectionFailure e) {
       logger.error("Could not connect to freeswitch server",e);
+      disconnect();
     }
+  }
+ else {
+    stopWatchdog();
+    disconnect();
   }
 }
