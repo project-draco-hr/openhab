@@ -13,7 +13,7 @@
     config.device=obj.getString(NeoHubBindingConfig.ParameterDevice);
     config.property=NeoStatProperty.fromBinding(obj.getString(NeoHubBindingConfig.ParameterProperty));
     if (config.property == null) {
-      throw new BindingConfigParseException("item '" + item.getName() + "' has to define an property (TODO: values here) value. unkown value: "+ obj.getString("property")+ " - please check your *.items configuration");
+      throw new BindingConfigParseException("item '" + item.getName() + "' has to define an property ("+ StringUtils.join(bindings,", ")+ ") value. unkown value: "+ obj.getString("property")+ " - please check your *.items configuration");
     }
     addBindingConfig(item,config);
   }
