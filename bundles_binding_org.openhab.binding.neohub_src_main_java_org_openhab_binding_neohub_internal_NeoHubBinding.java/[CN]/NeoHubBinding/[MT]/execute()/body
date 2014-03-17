@@ -1,11 +1,10 @@
 {
   logger.debug("execute() method is called!");
-  final NeoHubProtocol protocol=new NeoHubProtocol(new NeoHubConnector(hostname,port));
   try {
-    final InfoResponse response=protocol.info();
+    final InfoResponse response=createProtocol().info();
     for (    NeoHubBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
-        String device=provider.getNeoStatDevice(itemName);
+        final String device=provider.getNeoStatDevice(itemName);
         State result=null;
 switch (provider.getNeoStatProperty(itemName)) {
 case CurrentTemperature:
@@ -37,7 +36,7 @@ eventPublisher.postUpdate(itemName,result);
 }
 }
  catch (final RuntimeException e) {
-logger.error("Failed to parse response or fetch expected result from it. Please check your configuration. Does device with index exist?",e);
+logger.error("Failed to parse response or fetch expected result from it. Please check your configuration.",e);
 return;
 }
 }

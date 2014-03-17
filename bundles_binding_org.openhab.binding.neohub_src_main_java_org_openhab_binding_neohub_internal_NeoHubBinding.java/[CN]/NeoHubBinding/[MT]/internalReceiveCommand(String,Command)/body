@@ -4,20 +4,18 @@
     if (!provider.providesBindingFor(itemName)) {
       continue;
     }
-    String device=provider.getNeoStatDevice(itemName);
-    NeoStatProperty property=provider.getNeoStatProperty(itemName);
-    final NeoHubProtocol protocol=new NeoHubProtocol(new NeoHubConnector(hostname,port));
-switch (property) {
+    final String device=provider.getNeoStatDevice(itemName);
+switch (provider.getNeoStatProperty(itemName)) {
 case Away:
       if (command instanceof OnOffType) {
         OnOffType onOffType=(OnOffType)command;
-        protocol.setAway(OnOffType.ON == onOffType,device);
+        createProtocol().setAway(OnOffType.ON == onOffType,device);
       }
     break;
 case Standby:
   if (command instanceof OnOffType) {
     OnOffType onOffType=(OnOffType)command;
-    protocol.setStandby(OnOffType.ON == onOffType,device);
+    createProtocol().setStandby(OnOffType.ON == onOffType,device);
   }
 default :
 break;

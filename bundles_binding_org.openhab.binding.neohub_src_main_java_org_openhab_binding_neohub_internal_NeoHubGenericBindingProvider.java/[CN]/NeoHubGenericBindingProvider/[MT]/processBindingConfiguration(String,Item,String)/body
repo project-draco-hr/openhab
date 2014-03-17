@@ -1,11 +1,11 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  String[] configParts=bindingConfig.trim().split(":");
+  final String[] configParts=bindingConfig.trim().split(":");
   if (configParts.length != 2) {
     throw new BindingConfigParseException("neohub binding configuration must contain exactly two parts seperated by a colon. Device:Property.");
   }
-  String device=configParts[0];
-  String property=configParts[1];
+  final String device=configParts[0];
+  final String property=configParts[1];
   if (StringUtils.isEmpty(device)) {
     throw new BindingConfigParseException("item '" + item.getName() + "' has to define a device name - please check your *.items configuration");
   }
