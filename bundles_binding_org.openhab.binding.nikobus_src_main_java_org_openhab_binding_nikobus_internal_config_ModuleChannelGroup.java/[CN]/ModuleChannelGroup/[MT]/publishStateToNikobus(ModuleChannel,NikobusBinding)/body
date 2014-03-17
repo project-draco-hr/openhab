@@ -13,12 +13,23 @@
     if (channelState == null || channelState.equals(OnOffType.OFF) || channelState.equals(PercentType.ZERO)) {
       command.append(LOW_BYTE);
     }
+ else     if (channelState.equals(UpDownType.UP)) {
+      command.append(UP_BYTE);
+    }
+ else     if (channelState.equals(UpDownType.DOWN)) {
+      command.append(DOWN_BYTE);
+    }
+ else     if (channelState instanceof PercentType) {
+      PercentType currentState=(PercentType)channelState;
+      int value=BigDecimal.valueOf(255).multiply(currentState.toBigDecimal()).divide(BigDecimal.valueOf(100),0,BigDecimal.ROUND_UP).intValue();
+      command.append(StringUtils.leftPad(Integer.toHexString(value),2,"0").toUpperCase());
+    }
  else {
       command.append(HIGH_BYTE);
     }
   }
   command.append(HIGH_BYTE);
-  NikobusCommand cmd=addChecksumToCommand(new NikobusCommand(STATUS_CHANGE_CMD + CRCUtil.appendCRC(command.toString())),binding);
+  NikobusCommand cmd=new NikobusCommand(CRCUtil.appendCRC2(STATUS_CHANGE_CMD + CRCUtil.appendCRC(command.toString())));
   try {
     binding.sendCommand(cmd);
   }
