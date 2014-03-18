@@ -1,7 +1,7 @@
 {
   for (  xPLBindingProvider provider : providers) {
-    String itemName=provider.hasMessage(theMessage);
-    if (itemName != null) {
+    List<String> matchingItems=provider.hasMessage(theMessage);
+    for (    String itemName : matchingItems) {
       xPLBindingConfig config=provider.getConfig(itemName);
       if (config == null)       continue;
       String current=theMessage.getNamedValue(config.NamedParameter);
