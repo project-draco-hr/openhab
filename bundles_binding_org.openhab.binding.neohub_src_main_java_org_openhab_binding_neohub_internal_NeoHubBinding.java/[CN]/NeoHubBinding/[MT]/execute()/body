@@ -1,0 +1,18 @@
+{
+  try {
+    final InfoResponse response=createProtocol().info();
+    for (    NeoHubBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        final String device=provider.getNeoStatDevice(itemName);
+        final NeoStatProperty property=provider.getNeoStatProperty(itemName);
+        final State result=mapResponseToState(response,device,property);
+        if (eventPublisher != null) {
+          eventPublisher.postUpdate(itemName,result);
+        }
+      }
+    }
+  }
+ catch (  final RuntimeException e) {
+    logger.warn("Failed to fetch info from neo hub.",e);
+  }
+}

@@ -1,0 +1,23 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length != 2) {
+    throw new BindingConfigParseException("neohub binding configuration must contain exactly two parts seperated by a colon. Device:Property.");
+  }
+  final String device=configParts[0];
+  final String property=configParts[1];
+  if (StringUtils.isEmpty(device)) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' has to define a device name - please check your *.items configuration");
+  }
+  final List<String> bindings=NeoStatProperty.getBindings();
+  if (StringUtils.isEmpty(property)) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' has to define a property ("+ StringUtils.join(bindings,", ")+ ") value - please check your *.items configuration");
+  }
+  final NeoHubBindingConfig config=new NeoHubBindingConfig();
+  config.device=device;
+  config.property=NeoStatProperty.fromBinding(property);
+  if (config.property == null) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' has to define an property ("+ StringUtils.join(bindings,", ")+ ") value. unkown value: "+ property+ " - please check your *.items configuration");
+  }
+  addBindingConfig(item,config);
+}
