@@ -1,0 +1,21 @@
+{
+  final Device deviceInfo=infoResponse.getDevice(deviceName);
+switch (property) {
+case CurrentTemperature:
+    return new DecimalType(deviceInfo.getCurrentTemperature());
+case CurrentFloorTemperature:
+  return new DecimalType(deviceInfo.getCurrentFloorTemperature());
+case CurrentSetTemperature:
+return new DecimalType(deviceInfo.getCurrentSetTemperature());
+case DeviceName:
+return new StringType(deviceInfo.getDeviceName());
+case Away:
+return deviceInfo.isAway() ? OnOffType.ON : OnOffType.OFF;
+case Standby:
+return deviceInfo.isStandby() ? OnOffType.ON : OnOffType.OFF;
+case Heating:
+return deviceInfo.isHeating() ? OnOffType.ON : OnOffType.OFF;
+default :
+throw new IllegalStateException(String.format("No result mapping configured for this neo stat property: %s",property));
+}
+}

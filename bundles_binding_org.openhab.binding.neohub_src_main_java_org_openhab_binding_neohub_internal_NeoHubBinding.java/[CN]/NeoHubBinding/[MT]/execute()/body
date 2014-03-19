@@ -1,42 +1,18 @@
 {
-  logger.debug("execute() method is called!");
   try {
     final InfoResponse response=createProtocol().info();
     for (    NeoHubBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         final String device=provider.getNeoStatDevice(itemName);
-        State result=null;
-switch (provider.getNeoStatProperty(itemName)) {
-case CurrentTemperature:
-          result=new DecimalType(response.getDevice(device).getCurrentTemperature());
-        break;
-case CurrentFloorTemperature:
-      result=new DecimalType(response.getDevice(device).getCurrentFloorTemperature());
-    break;
-case CurrentSetTemperature:
-  result=new DecimalType(response.getDevice(device).getCurrentSetTemperature());
-break;
-case DeviceName:
-result=new StringType(response.getDevice(device).getDeviceName());
-break;
-case Away:
-result=response.getDevice(device).isAway() ? OnOffType.ON : OnOffType.OFF;
-break;
-case Standby:
-result=response.getDevice(device).isStandby() ? OnOffType.ON : OnOffType.OFF;
-break;
-case Heating:
-result=response.getDevice(device).isHeating() ? OnOffType.ON : OnOffType.OFF;
-break;
-}
-if (eventPublisher != null && result != null) {
-eventPublisher.postUpdate(itemName,result);
-}
-}
-}
-}
- catch (final RuntimeException e) {
-logger.error("Failed to parse response or fetch expected result from it. Please check your configuration.",e);
-return;
-}
+        final NeoStatProperty property=provider.getNeoStatProperty(itemName);
+        final State result=mapResponseToState(response,device,property);
+        if (eventPublisher != null) {
+          eventPublisher.postUpdate(itemName,result);
+        }
+      }
+    }
+  }
+ catch (  final RuntimeException e) {
+    logger.warn("Failed to fetch info from neo hub.",e);
+  }
 }

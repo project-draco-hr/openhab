@@ -2,15 +2,28 @@
   if (config != null) {
     final String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
-      refreshInterval=Long.parseLong(refreshIntervalString);
+      try {
+        refreshInterval=Long.parseLong(refreshIntervalString);
+      }
+ catch (      NumberFormatException e) {
+        throw new ConfigurationException("refresh",String.format("Provided value (%s) cannot be parsed to an long integer.",port));
+      }
     }
     final String host=(String)config.get("hostname");
     if (StringUtils.isNotBlank(host)) {
       this.hostname=host;
     }
+ else {
+      throw new ConfigurationException("hostname","Required configuration parameter is not set.");
+    }
     final String port=(String)config.get("port");
     if (StringUtils.isNotBlank(port)) {
-      this.port=Integer.parseInt(port);
+      try {
+        this.port=Integer.parseInt(port);
+      }
+ catch (      NumberFormatException e) {
+        throw new ConfigurationException("port",String.format("Provided value (%s) cannot be parsed to an integer.",port));
+      }
     }
     setProperlyConfigured(true);
   }

@@ -20,11 +20,7 @@
     return null;
   }
  finally {
-    try {
-      socket.close();
-    }
- catch (    IOException e) {
-    }
+    IOUtils.closeQuietly(socket);
   }
   final String responseStr=response.toString();
   logger.debug("<< {}",responseStr);
