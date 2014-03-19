@@ -1,0 +1,53 @@
+{
+  String[] commandParts=playerCommandLine.split(":");
+  String playerId=commandParts[0];
+  String playerCommand=commandParts[1];
+  MPD daemon=findMPDInstance(playerId);
+  if (daemon == null) {
+    reconnect(playerId);
+  }
+  if (daemon != null) {
+    PlayerCommandTypeMapping pCommand=null;
+    try {
+      pCommand=PlayerCommandTypeMapping.fromString(playerCommand);
+      MPDPlayer player=daemon.getMPDPlayer();
+switch (pCommand) {
+case PAUSE:
+        player.pause();
+      break;
+case PLAY:
+    player.play();
+  break;
+case STOP:
+player.stop();
+break;
+case VOLUME_INCREASE:
+player.setVolume(player.getVolume() + VOLUME_CHANGE_SIZE);
+break;
+case VOLUME_DECREASE:
+player.setVolume(player.getVolume() - VOLUME_CHANGE_SIZE);
+break;
+case NEXT:
+player.playNext();
+break;
+case PREV:
+player.playPrev();
+break;
+case VOLUME:
+logger.debug("Volume adjustment received: '{}' '{}'",pCommand,commandParams);
+player.setVolume(((PercentType)commandParams).intValue());
+break;
+}
+}
+ catch (MPDPlayerException pe) {
+logger.error("error while executing {} command: " + pe.getMessage(),pCommand);
+}
+catch (Exception e) {
+logger.warn("unknow playerCommand '{}'",playerCommand);
+}
+}
+ else {
+logger.warn("didn't find player configuration instance for playerId '{}'",playerId);
+}
+logger.info("executed commandLine '{}' for player '{}'",playerCommand,playerId);
+}

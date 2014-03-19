@@ -1,11 +1,21 @@
 {
-  MpdBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  MpdBindingProvider provider;
+  String matchingPlayerCommand;
+  Object params=new Object();
+  if (command instanceof PercentType) {
+    matchingPlayerCommand="PERCENT";
+    params=command;
+  }
+ else {
+    matchingPlayerCommand=command.toString();
+  }
+  provider=findFirstMatchingBindingProvider(itemName,matchingPlayerCommand);
   if (provider == null) {
     logger.warn("cannot find matching binding provider [itemName={}, command={}]",itemName,command);
     return;
   }
-  String playerCommand=provider.getPlayerCommand(itemName,command.toString());
+  String playerCommand=provider.getPlayerCommand(itemName,matchingPlayerCommand);
   if (StringUtils.isNotBlank(playerCommand)) {
-    executePlayerCommand(playerCommand);
+    executePlayerCommand(playerCommand,params);
   }
 }

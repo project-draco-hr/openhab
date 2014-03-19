@@ -1,0 +1,13 @@
+{
+  logger.debug("Recieved ESLEvent {}",event.getEventName());
+  logger.trace(printEvent(event));
+  if (CHANNEl_CREATE.matches(event.getEventName())) {
+    handleNewCallEvent(event);
+  }
+ else   if (CHANNEL_DESTROY.matches(event.getEventName())) {
+    handleHangupCallEvent(event);
+  }
+ else   if (MESSAGE_WAITING.matches(event.getEventName())) {
+    handleMessageWaiting(event);
+  }
+}
