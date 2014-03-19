@@ -17,10 +17,10 @@
       throw new SQLException("mySQL: Creating table for item '" + itemName + "' failed.");
     }
     tableName=new String("Item" + rowId);
-    logger.debug("mySQL: new item " + itemName + " is Item"+ rowId);
+    logger.debug("mySQL: new item {} is Item{}",itemName,rowId);
   }
  catch (  SQLException e) {
-    logger.error("mySQL: Could not create table for item '" + itemName + "': "+ e.getMessage());
+    logger.error("mySQL: Could not create table for item '{}': ",itemName,e.getMessage());
   }
  finally {
     if (statement != null) {
@@ -62,9 +62,9 @@
     }
   }
   if (sqlTables.get(itemName) == null) {
-    logger.error("mySQL: Item '" + itemName + "' was not added to the table - removing index");
+    logger.error("mySQL: Item '{}' was not added to the table - removing index",itemName);
     sqlCmd=new String("DELETE FROM Items WHERE ItemName='" + itemName + "'");
-    logger.debug("SQL: " + sqlCmd);
+    logger.debug("SQL: {}",sqlCmd);
     try {
       statement=connection.createStatement();
       statement.executeUpdate(sqlCmd);
