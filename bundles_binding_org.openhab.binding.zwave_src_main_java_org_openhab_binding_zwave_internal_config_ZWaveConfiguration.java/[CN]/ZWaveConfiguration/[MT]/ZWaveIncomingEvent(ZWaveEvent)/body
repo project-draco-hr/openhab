@@ -1,2 +1,12 @@
 {
+  if (event instanceof ZWaveConfigurationParameterEvent) {
+    PendingCfg.Remove(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey(),event.getNodeId(),((ZWaveConfigurationParameterEvent)event).getParameter().getIndex());
+    return;
+  }
+  if (event instanceof ZWaveAssociationEvent) {
+    for (int x=1; x < 232; x++) {
+      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),x);
+    }
+    return;
+  }
 }
