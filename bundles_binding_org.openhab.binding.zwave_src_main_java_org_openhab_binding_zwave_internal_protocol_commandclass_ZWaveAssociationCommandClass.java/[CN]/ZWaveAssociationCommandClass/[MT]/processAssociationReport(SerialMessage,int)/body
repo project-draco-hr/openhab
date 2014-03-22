@@ -15,14 +15,12 @@
   if (association == null) {
     association=new AssociationGroup(group);
   }
-  ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
   if (serialMessage.getMessagePayload().length > (offset + 4)) {
     logger.debug("NODE {}: association group {} includes the following nodes:",this.getNode().getNodeId(),group);
     int numAssociations=serialMessage.getMessagePayload().length - (offset + 4);
     for (int cnt=0; cnt < numAssociations; cnt++) {
       int node=serialMessage.getMessagePayloadByte(offset + 4 + cnt);
       logger.debug("Node {}",node);
-      zEvent.addMember(node);
       association.addNode(node);
     }
   }
@@ -32,5 +30,14 @@
     SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
     if (outputMessage != null)     this.getController().sendData(outputMessage);
   }
-  this.getController().notifyEventListeners(zEvent);
+  if (following == 0) {
+    ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
+    List<Integer> members=getGroupMembers(group);
+    if (members != null) {
+      for (      int node : members) {
+        zEvent.addMember(node);
+      }
+    }
+    this.getController().notifyEventListeners(zEvent);
+  }
 }
