@@ -1,0 +1,15 @@
+{
+  logger.debug("Checking for broken connections...");
+  for (  Map.Entry<String,XbmcConnector> entry : connectors.entrySet()) {
+    XbmcConnector connector=entry.getValue();
+    if (!connector.isOpen()) {
+      logger.debug("Broken connection found for '{}', attempting to reconnect...",entry.getKey());
+      try {
+        connector.open();
+      }
+ catch (      Exception e) {
+        logger.error("Connection failed",e);
+      }
+    }
+  }
+}

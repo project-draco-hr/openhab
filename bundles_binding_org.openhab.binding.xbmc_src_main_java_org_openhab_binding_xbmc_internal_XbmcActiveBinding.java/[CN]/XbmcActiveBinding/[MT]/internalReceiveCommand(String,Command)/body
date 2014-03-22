@@ -1,0 +1,15 @@
+{
+  if (isInBound(itemName)) {
+    logger.warn("Received command ({}) for item {} which is configured as 'in-bound', ignoring",command.toString(),itemName);
+    return;
+  }
+  String xbmcInstance=getXbmcInstance(itemName);
+  String property=getProperty(itemName);
+  XbmcConnector connector=getXbmcConnector(xbmcInstance);
+  if (connector == null) {
+    logger.warn("Received command ({}) for item {} but no XBMC connector found, ignoring",command.toString(),itemName);
+    return;
+  }
+  if (property.equals("Player.PlayPause"))   connector.playerPlayPause();
+  if (property.equals("Player.Stop"))   connector.playerStop();
+}

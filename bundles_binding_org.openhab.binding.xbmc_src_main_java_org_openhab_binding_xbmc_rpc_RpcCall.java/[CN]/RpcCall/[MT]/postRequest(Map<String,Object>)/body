@@ -1,0 +1,19 @@
+{
+  try {
+    String body=writeJson(request);
+    Response response=client.preparePost(uri).setBody(body).setHeader("content-type","application/json").setHeader("accept","application/json").execute().get();
+    return readJson(response.getResponseBody());
+  }
+ catch (  IllegalArgumentException e) {
+    throw new RpcException(e);
+  }
+catch (  InterruptedException e) {
+    throw new RpcException(e);
+  }
+catch (  ExecutionException e) {
+    throw new RpcException(e);
+  }
+catch (  IOException e) {
+    throw new RpcException(e);
+  }
+}

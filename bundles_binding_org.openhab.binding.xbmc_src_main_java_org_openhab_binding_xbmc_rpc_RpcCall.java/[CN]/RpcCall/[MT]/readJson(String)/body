@@ -1,0 +1,15 @@
+{
+  if (json == null)   return new HashMap<String,Object>();
+  try {
+    return mapper.readValue(json,Map.class);
+  }
+ catch (  JsonParseException e) {
+    throw new RpcException(e);
+  }
+catch (  JsonMappingException e) {
+    throw new RpcException(e);
+  }
+catch (  IOException e) {
+    throw new RpcException(e);
+  }
+}

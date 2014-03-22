@@ -1,0 +1,10 @@
+{
+  String xbmcInstance=getXbmcInstance(itemName);
+  String property=getProperty(itemName);
+  XbmcConnector connector=getXbmcConnector(xbmcInstance);
+  if (connector == null) {
+    logger.warn("Received update ({}) for item {} but no XBMC connector found, ignoring",newState.toString(),itemName);
+    return;
+  }
+  if (property.equals("GUI.ShowNotification"))   connector.showNotification("openHAB",newState.toString());
+}

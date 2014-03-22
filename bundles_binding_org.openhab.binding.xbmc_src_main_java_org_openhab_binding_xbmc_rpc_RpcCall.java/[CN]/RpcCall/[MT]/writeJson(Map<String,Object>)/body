@@ -1,0 +1,14 @@
+{
+  try {
+    return mapper.writeValueAsString(json);
+  }
+ catch (  JsonParseException e) {
+    throw new RpcException(e);
+  }
+catch (  JsonMappingException e) {
+    throw new RpcException(e);
+  }
+catch (  IOException e) {
+    throw new RpcException(e);
+  }
+}
