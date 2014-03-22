@@ -275,6 +275,11 @@ if (groupList != null) {
 for (ZWaveDbAssociationGroup group : groupList) {
 record=new OpenHABConfigurationRecord(domain,"association" + group.Index + "/",database.getLabel(group.Label),group.SetToController);
 record.description=database.getLabel(group.Help);
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+int memberCnt=0;
+List<Integer> members=associationCommandClass.getGroupMembers(group.Index);
+if (members != null) memberCnt=members.size();
+record.value=memberCnt + " of " + group.Maximum+ " group members";
 record.addAction("Refresh","Refresh");
 records.add(record);
 }
