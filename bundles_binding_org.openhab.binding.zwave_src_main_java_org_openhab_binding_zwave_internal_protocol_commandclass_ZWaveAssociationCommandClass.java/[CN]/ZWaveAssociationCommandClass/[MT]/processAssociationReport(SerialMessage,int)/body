@@ -11,9 +11,8 @@
     return;
   }
   logger.debug("NODE {}: association group {} has max associations " + maxAssociations,this.getNode().getNodeId(),group);
-  AssociationGroup association=configAssociations.get(group);
-  if (association == null) {
-    association=new AssociationGroup(group);
+  if (pendingAssociation == null) {
+    pendingAssociation=new AssociationGroup(group);
   }
   if (serialMessage.getMessagePayload().length > (offset + 4)) {
     logger.debug("NODE {}: association group {} includes the following nodes:",this.getNode().getNodeId(),group);
@@ -21,16 +20,13 @@
     for (int cnt=0; cnt < numAssociations; cnt++) {
       int node=serialMessage.getMessagePayloadByte(offset + 4 + cnt);
       logger.debug("Node {}",node);
-      association.addNode(node);
+      pendingAssociation.addNode(node);
     }
   }
-  configAssociations.put(group,association);
-  if (following == 0 && group == updateAssociationsNode) {
-    updateAssociationsNode++;
-    SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
-    if (outputMessage != null)     this.getController().sendData(outputMessage);
-  }
   if (following == 0) {
+    configAssociations.remove(group);
+    configAssociations.put(group,pendingAssociation);
+    pendingAssociation=null;
     ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
     List<Integer> members=getGroupMembers(group);
     if (members != null) {
@@ -39,5 +35,10 @@
       }
     }
     this.getController().notifyEventListeners(zEvent);
+  }
+  if (following == 0 && group == updateAssociationsNode) {
+    updateAssociationsNode++;
+    SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
+    if (outputMessage != null)     this.getController().sendData(outputMessage);
   }
 }
