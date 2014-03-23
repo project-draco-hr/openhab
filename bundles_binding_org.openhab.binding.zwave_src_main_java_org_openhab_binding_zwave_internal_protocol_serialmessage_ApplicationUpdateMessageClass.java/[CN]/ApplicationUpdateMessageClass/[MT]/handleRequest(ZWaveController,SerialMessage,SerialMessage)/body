@@ -9,16 +9,24 @@ case NODE_INFO_RECEIVED:
   int length=incomingMessage.getMessagePayloadByte(2);
 ZWaveNode node=zController.getNode(nodeId);
 node.resetResendCount();
+if (node.getNodeStage() == NodeStage.DONE) {
+if (node.getCommandClass(CommandClass.ASSOCIATION) == null) {
+logger.debug("NODE {}: Application update request, requesting node state.",nodeId);
+pollNode(zController,node);
+}
+}
+ else {
 for (int i=6; i < length + 3; i++) {
 int data=incomingMessage.getMessagePayloadByte(i);
 if (data == 0xef) {
-break;
+  break;
 }
 logger.trace(String.format("NODE %d: Command class 0x%02X is supported.",nodeId,data));
 ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,zController);
 if (commandClass != null) node.addCommandClass(commandClass);
 }
 node.advanceNodeStage(NodeStage.MANSPEC01);
+}
 checkTransactionComplete(lastSentMessage,incomingMessage);
 ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
 if (wakeUp != null) {
