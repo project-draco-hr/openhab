@@ -340,6 +340,11 @@ record=new OpenHABConfigurationRecord(domain,"Interval","Wakeup Interval",false)
 record.minimum=wakeupCommandClass.getMinInterval();
 record.maximum=wakeupCommandClass.getMaxInterval();
 record.value=Integer.toString(wakeupCommandClass.getInterval());
+Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),nodeId);
+if (pendingValue != null) {
+record.value=Integer.toString(pendingValue);
+record.state=OpenHABConfigurationRecord.STATE.PENDING;
+}
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Minimum","Minimum Interval",true);
 record.value=Integer.toString(wakeupCommandClass.getMinInterval());

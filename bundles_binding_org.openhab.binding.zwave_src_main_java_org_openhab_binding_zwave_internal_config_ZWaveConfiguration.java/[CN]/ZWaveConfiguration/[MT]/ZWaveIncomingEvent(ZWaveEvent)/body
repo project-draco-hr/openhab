@@ -4,9 +4,14 @@
     return;
   }
   if (event instanceof ZWaveAssociationEvent) {
-    for (int x=1; x < 232; x++) {
-      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),x);
+    for (int node=1; node < 232; node++) {
+      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),node);
     }
+    return;
+  }
+  if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+    if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_INTERVAL_REPORT)     return;
+    PendingCfg.Remove(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),event.getNodeId());
     return;
   }
 }

@@ -50,7 +50,9 @@
           return;
         }
         logger.debug("Set wakeup interval to '{}'",value);
+        PendingCfg.Add(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),node.getNodeId(),Integer.parseInt(value));
         this.zController.sendData(wakeupCommandClass.setInterval(Integer.parseInt(value)));
+        this.zController.sendData(wakeupCommandClass.getIntervalMessage());
       }
     }
  else     if (splitDomain.length == 5) {
