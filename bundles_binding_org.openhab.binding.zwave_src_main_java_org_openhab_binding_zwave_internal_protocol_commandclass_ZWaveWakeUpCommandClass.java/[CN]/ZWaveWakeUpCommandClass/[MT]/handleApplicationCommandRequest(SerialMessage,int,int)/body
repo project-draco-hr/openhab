@@ -22,6 +22,8 @@ if (targetNodeId != this.getController().getOwnNodeId()) return;
 this.interval=receivedInterval;
 logger.debug("NODE {}: Wake up interval set",this.getNode().getNodeId());
 this.initializationComplete=true;
+ZWaveWakeUpEvent event=new ZWaveWakeUpEvent(getNode().getNodeId(),WAKE_UP_INTERVAL_REPORT);
+this.getController().notifyEventListeners(event);
 this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;
 case WAKE_UP_INTERVAL_CAPABILITIES_REPORT:
