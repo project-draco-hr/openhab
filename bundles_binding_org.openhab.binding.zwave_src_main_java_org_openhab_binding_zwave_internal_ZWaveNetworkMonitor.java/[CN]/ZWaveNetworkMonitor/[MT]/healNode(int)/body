@@ -2,6 +2,7 @@
   if (healNodes == null)   healNodes=new HashMap<Integer,HealNode>();
   ZWaveNode node=zController.getNode(nodeId);
   if (node == null) {
+    logger.error("NODE {}: DEAD node - can't be found.",nodeId);
     return false;
   }
   HealNode heal=new HealNode();
@@ -14,5 +15,6 @@
   if (node.isListening())   heal.listening=true;
  else   heal.listening=false;
   healNodes.put(nodeId,heal);
+  networkHealNextTime=0;
   return true;
 }
