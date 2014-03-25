@@ -3,14 +3,23 @@
     logger.warn("Received command ({}) for item {} which is configured as 'in-bound', ignoring",command.toString(),itemName);
     return;
   }
-  String xbmcInstance=getXbmcInstance(itemName);
-  String property=getProperty(itemName);
-  XbmcConnector connector=getXbmcConnector(xbmcInstance);
-  if (connector == null) {
-    logger.warn("Received command ({}) for item {} but no XBMC connector found, ignoring",command.toString(),itemName);
-    return;
+  try {
+    String xbmcInstance=getXbmcInstance(itemName);
+    String property=getProperty(itemName);
+    XbmcConnector connector=getXbmcConnector(xbmcInstance);
+    if (connector == null) {
+      logger.warn("Received command ({}) for item {} but no XBMC connector found for {}, ignoring",command.toString(),itemName,xbmcInstance);
+      return;
+    }
+    if (!connector.isOpen()) {
+      logger.warn("Received command ({}) for item {} but the connection to the XBMC instance {} is down, ignoring",command.toString(),itemName,xbmcInstance);
+      return;
+    }
+    if (property.equals("Player.PlayPause"))     connector.playerPlayPause();
+    if (property.equals("Player.Stop"))     connector.playerStop();
+    if (property.equals("GUI.ShowNotification"))     connector.showNotification("openHAB",command.toString());
   }
-  if (property.equals("Player.PlayPause"))   connector.playerPlayPause();
-  if (property.equals("Player.Stop"))   connector.playerStop();
-  if (property.equals("GUI.ShowNotification"))   connector.showNotification("openHAB",command.toString());
+ catch (  Exception e) {
+    logger.error("Error handling command",e);
+  }
 }

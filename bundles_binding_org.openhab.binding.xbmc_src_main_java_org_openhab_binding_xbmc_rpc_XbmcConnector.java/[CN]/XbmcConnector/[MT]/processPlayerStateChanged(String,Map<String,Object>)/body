@@ -1,0 +1,19 @@
+{
+  if ("Player.OnPlay".equals(method)) {
+    updateWatch("Player.State","Play");
+    Map<String,Object> params=RpcCall.getMap(json,"params");
+    Map<String,Object> data=RpcCall.getMap(params,"data");
+    Map<String,Object> player=RpcCall.getMap(data,"player");
+    Integer playerId=(Integer)player.get("playerid");
+    requestPlayerUpdate(playerId);
+  }
+  if ("Player.OnPause".equals(method)) {
+    updateWatch("Player.State","Pause");
+  }
+  if ("Player.OnStop".equals(method)) {
+    updateWatch("Player.State","Stop");
+    updateWatch("Player.Title","");
+    updateWatch("Player.ShowTitle","");
+    updateWatch("Player.Fanart","");
+  }
+}

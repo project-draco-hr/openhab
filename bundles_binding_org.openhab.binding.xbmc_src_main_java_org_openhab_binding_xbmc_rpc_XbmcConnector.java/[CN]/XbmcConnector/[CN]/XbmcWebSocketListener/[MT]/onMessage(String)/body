@@ -1,5 +1,5 @@
 {
-  Map<String,String> json;
+  Map<String,Object> json;
   try {
     json=mapper.readValue(message,Map.class);
   }
@@ -15,10 +15,15 @@ catch (  IOException e) {
     logger.error("An I/O error occured while decoding JSON:\n" + message);
     return;
   }
-  if (json.containsKey("method")) {
-    String method=json.get("method");
-    if (method.startsWith("Player.On")) {
-      processPlayerStateChanged(method);
+  try {
+    if (json.containsKey("method")) {
+      String method=(String)json.get("method");
+      if (method.startsWith("Player.On")) {
+        processPlayerStateChanged(method,json);
+      }
     }
+  }
+ catch (  Exception e) {
+    logger.error("Error handling player state change message",e);
   }
 }

@@ -6,7 +6,7 @@
   if (xbmcInstance.startsWith("#")) {
     String instance=xbmcInstance.substring(1);
     if (nameHostMapper == null) {
-      logger.debug("Attempting to access the named instance '{}' before the binding config has been loaded",instance);
+      logger.trace("Attempting to access the named instance '{}' before the binding config has been loaded",instance);
       return null;
     }
     if (!nameHostMapper.containsKey(instance)) {
@@ -21,13 +21,12 @@
   }
   logger.debug("Creating new XbmcConnector for '{}'",xbmcInstance);
   connector=new XbmcConnector(xbmcHost,eventPublisher);
+  connectors.put(xbmcInstance,connector);
   try {
     connector.open();
   }
  catch (  Exception e) {
-    logger.error("Connection failed",e);
-    return null;
+    logger.error("Connection failed for '{}'",xbmcInstance);
   }
-  connectors.put(xbmcInstance,connector);
   return connector;
 }

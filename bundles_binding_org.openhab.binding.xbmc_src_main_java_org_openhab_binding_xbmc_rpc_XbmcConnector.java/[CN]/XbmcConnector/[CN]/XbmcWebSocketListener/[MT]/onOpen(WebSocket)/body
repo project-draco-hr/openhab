@@ -1,4 +1,9 @@
 {
-  logger.debug("Websocket opened");
-  requestPlayerStatusUpdate();
+  logger.debug("Websocket opened on {}:{}",xbmc.getHostname(),xbmc.getWSPort());
+  try {
+    requestPlayerStatusUpdate();
+  }
+ catch (  Exception e) {
+    logger.error("Error requesting player status update",e);
+  }
 }

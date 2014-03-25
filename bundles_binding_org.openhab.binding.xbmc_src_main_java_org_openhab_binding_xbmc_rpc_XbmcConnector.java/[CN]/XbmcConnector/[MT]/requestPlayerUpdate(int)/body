@@ -1,0 +1,13 @@
+{
+  PlayerGetItem item=new PlayerGetItem(client,rsUri);
+  item.setPlayerId(playerId);
+  item.execute();
+  updateWatch("Player.Title",item.getTitle());
+  updateWatch("Player.ShowTitle",item.getShowtitle());
+  if (!StringUtils.isEmpty(item.getFanart())) {
+    FilesPrepareDownload fanart=new FilesPrepareDownload(client,rsUri);
+    fanart.setImagePath(item.getFanart());
+    fanart.execute();
+    updateWatch("Player.Fanart",String.format("http://%s:%d/%s",xbmc.getHostname(),xbmc.getPort(),fanart.getPath()));
+  }
+}

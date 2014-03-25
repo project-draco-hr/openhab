@@ -1,3 +1,8 @@
 {
-  logger.error("Error on websocket",e);
+  if (e instanceof ConnectException) {
+    logger.debug("Websocket error during connection attempt");
+  }
+ else {
+    logger.error("Websocket error",e);
+  }
 }
