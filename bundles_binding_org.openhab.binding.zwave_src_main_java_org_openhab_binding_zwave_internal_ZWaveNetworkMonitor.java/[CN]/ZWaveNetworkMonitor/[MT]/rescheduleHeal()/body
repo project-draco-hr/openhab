@@ -1,7 +1,5 @@
 {
-  for (int cnt=1; cnt <= 232; cnt++) {
-    ZWaveNode node=zController.getNode(cnt);
-    if (node == null)     continue;
+  for (  ZWaveNode node : zController.getNodes()) {
     if (node.isInitializationComplete() == false && node.isDead() == false) {
       logger.debug("NODE {}: Initialisation NOT yet complete. Skipping heal.",node.getNodeId());
       continue;

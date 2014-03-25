@@ -8,8 +8,8 @@
   if (event instanceof ZWaveAssociationEvent) {
     ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
     nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
-    for (int node=1; node <= 232; node++) {
-      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),node);
+    for (    ZWaveNode node : zController.getNodes()) {
+      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),node.getNodeId());
     }
     return;
   }

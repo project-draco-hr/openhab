@@ -5,7 +5,6 @@
   }
   List<OpenHABConfigurationRecord> records=new ArrayList<OpenHABConfigurationRecord>();
   OpenHABConfigurationRecord record;
-  ZWaveNode node;
   if (domain.equals("status/")) {
     return null;
   }
@@ -93,14 +92,12 @@ return null;
 }
 if (domain.equals("nodes/")) {
 ZWaveProductDatabase database=new ZWaveProductDatabase();
-for (int nodeId=0; nodeId <= 232; nodeId++) {
-node=zController.getNode(nodeId);
-if (node == null) continue;
+for (ZWaveNode node : zController.getNodes()) {
 if (node.getName() == null || node.getName().isEmpty()) {
-record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/","Node " + nodeId);
+record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/","Node " + node.getNodeId());
 }
  else {
-record=new OpenHABConfigurationRecord("nodes/" + "node" + nodeId + "/",node.getName());
+record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/",node.getName());
 }
 if (node.getManufacturer() == 0) {
 }
@@ -111,7 +108,7 @@ record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexSt
  else {
 record.value=database.getManufacturerName() + " [ID:" + Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
 }
-logger.debug("No database entry node {}: {}",nodeId,record.value);
+logger.debug("No database entry node {}: {}",node.getNodeId(),record.value);
 }
  else {
 if (node.getLocation() == null || node.getLocation().isEmpty()) record.value=database.getProductName();
@@ -148,7 +145,7 @@ arg=nodeNumber.substring(next + 1);
 nodeNumber=nodeNumber.substring(0,next);
 }
 int nodeId=Integer.parseInt(nodeNumber);
-node=zController.getNode(nodeId);
+ZWaveNode node=zController.getNode(nodeId);
 if (node == null) return null;
 ZWaveProductDatabase database=new ZWaveProductDatabase();
 if (arg.equals("")) {
@@ -306,21 +303,19 @@ break;
 if (group == null) return null;
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 List<Integer> members=associationCommandClass.getGroupMembers(groupId);
-for (int id=0; id <= 232; id++) {
-ZWaveNode nodeList=zController.getNode(id);
-if (nodeList == null) continue;
-if (nodeList.getName() == null || nodeList.getName().isEmpty()) record=new OpenHABConfigurationRecord(domain,"node" + id,"Node " + id,false);
- else record=new OpenHABConfigurationRecord(domain,"node" + id,nodeList.getName(),false);
+for (ZWaveNode nodeList : zController.getNodes()) {
+if (nodeList.getName() == null || nodeList.getName().isEmpty()) record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),"Node " + nodeList.getNodeId(),false);
+ else record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),nodeList.getName(),false);
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
 record.addValue("true","Member");
 record.addValue("false","Non-Member");
-if (members != null && members.contains(id)) {
+if (members != null && members.contains(nodeList.getNodeId())) {
 record.value="true";
 }
  else {
 record.value="false";
 }
-Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,groupId,id);
+Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,groupId,nodeList.getNodeId());
 if (pendingValue != null) {
 if (pendingValue == 1) record.value="true";
  else record.value="false";

@@ -1,12 +1,7 @@
 {
   if (networkHealDeadCheckNext < System.currentTimeMillis()) {
     logger.debug("Heal: DEAD node check.");
-    for (int nodeId=1; nodeId <= 232; nodeId++) {
-      ZWaveNode node=zController.getNode(nodeId);
-      if (node == null) {
-        logger.error("NODE {}: DEAD node - can't be found.",nodeId);
-        continue;
-      }
+    for (    ZWaveNode node : zController.getNodes()) {
       if (node.isDead()) {
         logger.debug("NODE {}: DEAD node.",node.getNodeId());
         if (isNodeHealing(node.getNodeId())) {
