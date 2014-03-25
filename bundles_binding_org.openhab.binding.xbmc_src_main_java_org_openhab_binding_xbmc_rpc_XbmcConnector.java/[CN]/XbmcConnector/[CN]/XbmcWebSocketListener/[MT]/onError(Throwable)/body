@@ -1,6 +1,9 @@
 {
   if (e instanceof ConnectException) {
-    logger.debug("Websocket error during connection attempt");
+    logger.debug("Websocket connection error");
+  }
+ else   if (e instanceof TimeoutException) {
+    logger.debug("Websocket timeout error");
   }
  else {
     logger.error("Websocket error",e);
