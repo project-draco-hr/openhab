@@ -39,4 +39,14 @@ if (!node.state.isActive()) return;
 logger.debug("NODE {}: HEAL WAKEUP EVENT {}",node.nodeId,node.state);
 nextHealStage(node);
 }
+ else if (event instanceof ZWaveNodeStatusEvent) {
+ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
+logger.debug("NODE {}: Dead node event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+switch (statusEvent.getState()) {
+case Dead:
+break;
+case Alive:
+break;
+}
+}
 }
