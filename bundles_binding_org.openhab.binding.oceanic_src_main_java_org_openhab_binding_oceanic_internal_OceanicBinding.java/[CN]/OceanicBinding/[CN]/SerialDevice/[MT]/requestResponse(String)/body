@@ -1,0 +1,18 @@
+{
+synchronized (this) {
+    writeString(msg + "\r");
+    String response="";
+    while (response.equals("")) {
+      response=getResponse();
+      try {
+        Thread.sleep(5);
+      }
+ catch (      InterruptedException e) {
+        logger.debug("An exception occurred while putting the thread to sleep: {}",e.getMessage());
+        e.printStackTrace();
+      }
+    }
+    clearResponse();
+    return response;
+  }
+}
