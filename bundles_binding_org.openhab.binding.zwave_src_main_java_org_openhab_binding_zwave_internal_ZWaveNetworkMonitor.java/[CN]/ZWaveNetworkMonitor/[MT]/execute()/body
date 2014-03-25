@@ -4,7 +4,7 @@
     for (    ZWaveNode node : zController.getNodes()) {
       if (node.isDead()) {
         logger.debug("NODE {}: DEAD node.",node.getNodeId());
-        if (isNodeHealing(node.getNodeId())) {
+        if (!isNodeHealing(node.getNodeId())) {
           logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
           healNode(node.getNodeId());
           node.setNodeStage(NodeStage.PING);
