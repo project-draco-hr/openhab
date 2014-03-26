@@ -36,12 +36,12 @@ if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpC
 HealNode node=healNodes.get(event.getNodeId());
 if (node == null) return;
 if (!node.state.isActive()) return;
-logger.debug("NODE {}: HEAL WAKEUP EVENT {}",node.nodeId,node.state);
+logger.debug("NODE {}: Heal WakeUp EVENT {}",node.nodeId,node.state);
 nextHealStage(node);
 }
  else if (event instanceof ZWaveNodeStatusEvent) {
 ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
-logger.debug("NODE {}: Dead node event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+logger.debug("NODE {}: Node Status event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
 switch (statusEvent.getState()) {
 case Dead:
 ZWaveNode node=zController.getNode(statusEvent.getNodeId());
@@ -62,5 +62,12 @@ break;
 case Alive:
 break;
 }
+}
+ else if (event instanceof ZWaveInitializationCompletedEvent) {
+logger.debug("Network initialised - starting network monitor.");
+initialised=true;
+networkHealNightlyTime=calculateNextHeal();
+networkHealNextTime=networkHealNightlyTime;
+pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
 }
 }
