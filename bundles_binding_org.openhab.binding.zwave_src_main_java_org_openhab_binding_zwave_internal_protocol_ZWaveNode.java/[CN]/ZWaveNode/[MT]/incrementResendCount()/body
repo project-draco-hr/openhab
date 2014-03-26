@@ -1,6 +1,7 @@
 {
   if (++resendCount >= 3) {
     this.nodeStage=NodeStage.DEAD;
+    this.deadCount++;
     this.queryStageTimeStamp=Calendar.getInstance().getTime();
     logger.debug("NODE {}: Retry count exceeded. Node is DEAD.",this.nodeId);
     ZWaveEvent zEvent=new ZWaveNodeStatusEvent(this.getNodeId(),ZWaveNodeStatusEvent.State.Dead);
