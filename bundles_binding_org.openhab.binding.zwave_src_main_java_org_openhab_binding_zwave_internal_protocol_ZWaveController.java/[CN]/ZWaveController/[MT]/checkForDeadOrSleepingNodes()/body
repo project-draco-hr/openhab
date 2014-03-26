@@ -18,7 +18,8 @@
     entry.getValue().setNodeStage(NodeStage.DEAD);
     completeCount++;
   }
-  if (this.zwaveNodes.size() == completeCount) {
+  if (this.zwaveNodes.size() == completeCount && initializationComplete == false) {
+    initializationComplete=true;
     ZWaveEvent zEvent=new ZWaveInitializationCompletedEvent(this.ownNodeId);
     this.notifyEventListeners(zEvent);
     for (    ZWaveNode node : this.getNodes()) {
