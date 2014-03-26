@@ -3,7 +3,7 @@
     pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
     ZWaveNode oldestNode=null;
     for (    ZWaveNode node : zController.getNodes()) {
-      if (node.getNodeId() == zController.getOwnNodeId() || node.isFrequentlyListening() == false)       continue;
+      if (node.getNodeId() == zController.getOwnNodeId() || node.isListening() == false)       continue;
       if (oldestNode == null) {
         oldestNode=node;
       }
@@ -25,20 +25,18 @@
   if (networkHealNextTime > System.currentTimeMillis()) {
     return;
   }
-  if (healNodes != null) {
-    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
-      HealNode node=entry.getValue();
-      if (node.state != HealState.WAITING && node.state != HealState.FAILED && node.state != HealState.DONE && node.listening == true) {
-        nextHealStage(node);
-        return;
-      }
+  for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+    HealNode node=entry.getValue();
+    if (node.state != HealState.WAITING && node.state != HealState.FAILED && node.state != HealState.DONE && node.listening == true) {
+      nextHealStage(node);
+      return;
     }
-    for (    Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
-      HealNode node=entry.getValue();
-      if (node.state == HealState.WAITING && node.listening == true) {
-        nextHealStage(node);
-        return;
-      }
+  }
+  for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+    HealNode node=entry.getValue();
+    if (node.state == HealState.WAITING && node.listening == true) {
+      nextHealStage(node);
+      return;
     }
   }
   networkHealNextTime=networkHealNightlyTime;

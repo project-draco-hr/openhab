@@ -1,5 +1,4 @@
 {
-  if (healNodes == null)   return;
   if (event instanceof ZWaveNetworkEvent) {
     ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
     logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
@@ -22,6 +21,7 @@ nextHealStage(node);
 SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
 if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request) return;
 byte[] payload=serialMessage.getMessagePayload();
+if (payload.length < 3) return;
 HealNode node=healNodes.get(payload[0] & 0xFF);
 if (node == null) return;
 if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
