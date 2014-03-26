@@ -1,22 +1,4 @@
 {
-  if (networkHealDeadCheckNext < System.currentTimeMillis()) {
-    logger.debug("Heal: DEAD node check.");
-    for (    ZWaveNode node : zController.getNodes()) {
-      if (node.isDead()) {
-        logger.debug("NODE {}: DEAD node.",node.getNodeId());
-        if (!isNodeHealing(node.getNodeId())) {
-          logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
-          healNode(node.getNodeId());
-          node.setNodeStage(NodeStage.PING);
-          node.resetResendCount();
-        }
- else {
-          logger.debug("NODE {}: DEAD node - already healing.",node.getNodeId());
-        }
-      }
-    }
-    networkHealDeadCheckNext=System.currentTimeMillis() + networkHealDeadCheckPeriod;
-  }
   if (networkHealNightlyTime < System.currentTimeMillis()) {
     rescheduleHeal();
     networkHealNightlyTime=calculateNextHeal();
@@ -42,5 +24,4 @@
     }
   }
   networkHealNextTime=networkHealNightlyTime;
-  networkHealDeadCheckNext=System.currentTimeMillis() + 150000;
 }

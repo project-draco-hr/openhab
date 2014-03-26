@@ -3,6 +3,8 @@
     this.nodeStage=NodeStage.DEAD;
     this.queryStageTimeStamp=Calendar.getInstance().getTime();
     logger.debug("NODE {}: Retry count exceeded. Node is DEAD.",this.nodeId);
+    ZWaveEvent zEvent=new ZWaveNodeStatusEvent(this.getNodeId(),ZWaveNodeStatusEvent.State.Dead);
+    controller.notifyEventListeners(zEvent);
   }
   this.lastUpdated=Calendar.getInstance().getTime();
 }

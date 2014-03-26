@@ -21,5 +21,12 @@
   if (this.zwaveNodes.size() == completeCount) {
     ZWaveEvent zEvent=new ZWaveInitializationCompletedEvent(this.ownNodeId);
     this.notifyEventListeners(zEvent);
+    for (    ZWaveNode node : this.getNodes()) {
+      if (node.isDead()) {
+        logger.debug("NODE {}: DEAD node.",node.getNodeId());
+        zEvent=new ZWaveNodeStatusEvent(node.getNodeId(),ZWaveNodeStatusEvent.State.Dead);
+        this.notifyEventListeners(zEvent);
+      }
+    }
   }
 }

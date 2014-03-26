@@ -44,6 +44,20 @@ ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
 logger.debug("NODE {}: Dead node event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
 switch (statusEvent.getState()) {
 case Dead:
+ZWaveNode node=zController.getNode(statusEvent.getNodeId());
+if (node == null) {
+logger.error("NODE {}: Status event received, but node not found.",statusEvent.getNodeId());
+return;
+}
+if (!isNodeHealing(node.getNodeId())) {
+logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
+healNode(node.getNodeId());
+node.setNodeStage(NodeStage.PING);
+node.resetResendCount();
+}
+ else {
+logger.debug("NODE {}: DEAD node - already healing.",node.getNodeId());
+}
 break;
 case Alive:
 break;

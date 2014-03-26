@@ -13,19 +13,18 @@
 switch (healing.state) {
 case WAITING:
     logger.debug("NODE {}: ************** NETWORK HEAL - STARTING",healing.nodeId);
-  networkHealDeadCheckNext=Long.MAX_VALUE;
-if (healing.node.isDead()) {
-  healing.node.setAlive();
-  logger.debug("NODE {}: Was dead, setting alive",healing.nodeId);
-}
+  if (healing.node.isDead()) {
+    healing.node.setAlive();
+    logger.debug("NODE {}: Was dead, setting alive",healing.nodeId);
+  }
 case PING:
 if (healing.nodeId != zController.getOwnNodeId()) {
-healing.state=HealState.PING;
-ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
-if (zwaveCommandClass == null) break;
-zController.sendData(zwaveCommandClass.getNoOperationMessage());
-healing.stateNext=HealState.UPDATENEIGHBORS;
-break;
+  healing.state=HealState.PING;
+  ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
+  if (zwaveCommandClass == null)   break;
+  zController.sendData(zwaveCommandClass.getNoOperationMessage());
+  healing.stateNext=HealState.UPDATENEIGHBORS;
+  break;
 }
 healing.state=HealState.UPDATENEIGHBORS;
 case UPDATENEIGHBORS:
