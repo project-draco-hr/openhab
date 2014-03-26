@@ -2,14 +2,10 @@
   PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,rsUri);
   activePlayers.execute();
   if (activePlayers.isPlaying()) {
-    updateWatch("Player.State","Play");
+    updateState(State.Play);
     requestPlayerUpdate(activePlayers.getPlayerId());
   }
  else {
-    updateWatch("Player.State","Stop");
-    updateWatch("Player.Type",null);
-    updateWatch("Player.Title",null);
-    updateWatch("Player.ShowTitle",null);
-    updateWatch("Player.Fanart",null);
+    updateState(State.Stop);
   }
 }

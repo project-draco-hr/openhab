@@ -4,17 +4,13 @@
     Map<String,Object> data=RpcCall.getMap(params,"data");
     Map<String,Object> player=RpcCall.getMap(data,"player");
     Integer playerId=(Integer)player.get("playerid");
-    updateWatch("Player.State","Play");
+    updateState(State.Play);
     requestPlayerUpdate(playerId);
   }
   if ("Player.OnPause".equals(method)) {
-    updateWatch("Player.State","Pause");
+    updateState(State.Pause);
   }
   if ("Player.OnStop".equals(method)) {
-    updateWatch("Player.State","Stop");
-    updateWatch("Player.Type",null);
-    updateWatch("Player.Title",null);
-    updateWatch("Player.ShowTitle",null);
-    updateWatch("Player.Fanart",null);
+    updateState(State.Stop);
   }
 }
