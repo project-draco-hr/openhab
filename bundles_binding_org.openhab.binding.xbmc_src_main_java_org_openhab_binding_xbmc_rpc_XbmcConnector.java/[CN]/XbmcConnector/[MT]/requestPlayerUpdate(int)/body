@@ -6,13 +6,15 @@
   PlayerGetItem item=new PlayerGetItem(client,rsUri);
   item.setPlayerId(playerId);
   item.execute();
-  updateWatch("Player.Type",item.getType());
-  updateWatch("Player.Title",item.getTitle());
-  updateWatch("Player.ShowTitle",item.getShowtitle());
-  if (!StringUtils.isEmpty(item.getFanart())) {
-    FilesPrepareDownload fanart=new FilesPrepareDownload(client,rsUri);
-    fanart.setImagePath(item.getFanart());
-    fanart.execute();
-    updateWatch("Player.Fanart",String.format("http://%s:%d/%s",xbmc.getHostname(),xbmc.getPort(),fanart.getPath()));
+  for (  String property : getProperties()) {
+    if (!property.startsWith("Player.") || property.equals("Player.State"))     continue;
+    String field=property.substring(7).toLowerCase();
+    String value=item.getItemField(field);
+    if (property.equals("Player.Fanart")) {
+      updateProperty(property,getFanartUrl(value));
+    }
+ else {
+      updateProperty(property,value);
+    }
   }
 }

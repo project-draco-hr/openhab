@@ -1,11 +1,11 @@
 {
   if (currentState.equals(State.Stop) && state.equals(State.Pause))   return;
-  updateWatch("Player.State",state.toString());
+  updateProperty("Player.State",state.toString());
   if (state == State.Stop) {
-    updateWatch("Player.Type",null);
-    updateWatch("Player.Title",null);
-    updateWatch("Player.ShowTitle",null);
-    updateWatch("Player.Fanart",null);
+    for (    String property : getProperties()) {
+      if (!property.startsWith("Player.") || property.equals("Player.State"))       continue;
+      updateProperty(property,null);
+    }
   }
   currentState=state;
 }
