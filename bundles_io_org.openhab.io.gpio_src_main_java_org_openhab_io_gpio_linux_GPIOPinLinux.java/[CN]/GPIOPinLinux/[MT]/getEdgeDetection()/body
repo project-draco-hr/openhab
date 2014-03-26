@@ -1,0 +1,43 @@
+{
+  String edgeDetection;
+  try {
+    if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        if (edgePath == null) {
+          throw new IOException("The pin doesn't support 'get edge detection' operation");
+        }
+        edgeDetection=Files.readAllLines(edgePath,DEFAULT_ENCODING).get(0);
+      }
+  finally {
+        pinLock.readLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+  }
+  if (edgeDetection.compareToIgnoreCase("none") == 0) {
+    return GPIOPin.EDGEDETECTION_NONE;
+  }
+ else {
+    if (edgeDetection.compareToIgnoreCase("rising") == 0) {
+      return GPIOPin.EDGEDETECTION_RISING;
+    }
+ else {
+      if (edgeDetection.compareToIgnoreCase("falling") == 0) {
+        return GPIOPin.EDGEDETECTION_FALLING;
+      }
+ else {
+        if (edgeDetection.compareToIgnoreCase("both") == 0) {
+          return GPIOPin.EDGEDETECTION_BOTH;
+        }
+ else {
+          throw new IOException("Unsupported 'edge detection' value (" + edgeDetection + ")");
+        }
+      }
+    }
+  }
+}

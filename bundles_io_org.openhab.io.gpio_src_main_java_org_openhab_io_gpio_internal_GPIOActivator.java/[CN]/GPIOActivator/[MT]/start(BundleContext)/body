@@ -1,0 +1,12 @@
+{
+  if (System.getProperty("os.name").toLowerCase().startsWith("linux")) {
+    GPIOLinux gpioLinux=new GPIOLinux();
+    Dictionary<String,String> properties=new Hashtable<String,String>();
+    properties.put("service.pid","org.openhab.gpio");
+    context.registerService(GPIO.class,gpioLinux,null);
+    context.registerService(ManagedService.class,gpioLinux,properties);
+  }
+ else {
+    logger.error("No supported operating system was found, GPIO service won't be available");
+  }
+}

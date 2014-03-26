@@ -1,0 +1,24 @@
+{
+  try {
+    if (gpioLock.writeLock().tryLock(GPIOLOCK_TIMEOUT,GPIOLOCK_TIMEOUT_UNITS)) {
+      try {
+        final String SYSFS_CLASS_GPIO=sysFS + "/class/gpio/";
+        Integer pinNumber=gpioRegistry.remove(pin);
+        if (pinNumber == null) {
+          throw new IllegalArgumentException("The pin object isn't registered");
+        }
+        ((GPIOPinLinux)pin).stopEventProcessing();
+        Files.write(Paths.get(SYSFS_CLASS_GPIO + "unexport"),pinNumber.toString().getBytes());
+      }
+  finally {
+        gpioLock.writeLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Write GPIO lock can't be aquired for " + GPIOLOCK_TIMEOUT + " "+ GPIOLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for write GPIO lock");
+  }
+}
