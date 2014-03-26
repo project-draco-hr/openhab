@@ -1,9 +1,8 @@
 {
+  StringType stringType=new StringType(value == null ? "" : value);
   for (  Entry<String,String> e : watches.entrySet()) {
-    String item=e.getKey();
-    String elem=e.getValue();
-    if (watch.equals(elem)) {
-      eventPublisher.postUpdate(item,new StringType(value));
+    if (watch.equals(e.getValue())) {
+      eventPublisher.postUpdate(e.getKey(),stringType);
     }
   }
 }

@@ -1,7 +1,12 @@
 {
+  if (playerId < 0 || playerId > 2) {
+    logger.debug("[{}]: Invalid playerId ({}) in requestPlayerUpdate() - must be between 0 and 2 (inclusive)",xbmc.getHostname(),playerId);
+    return;
+  }
   PlayerGetItem item=new PlayerGetItem(client,rsUri);
   item.setPlayerId(playerId);
   item.execute();
+  updateWatch("Player.Type",item.getType());
   updateWatch("Player.Title",item.getTitle());
   updateWatch("Player.ShowTitle",item.getShowtitle());
   if (!StringUtils.isEmpty(item.getFanart())) {

@@ -1,18 +1,19 @@
 {
+  logger.debug("[{}]: Message received: {}",xbmc.getHostname(),message);
   Map<String,Object> json;
   try {
     json=mapper.readValue(message,Map.class);
   }
  catch (  JsonParseException e) {
-    logger.error("Error parsing JSON:\n" + message);
+    logger.error("Error parsing JSON",e);
     return;
   }
 catch (  JsonMappingException e) {
-    logger.error("Error mapping JSON:\n" + message);
+    logger.error("Error mapping JSON",e);
     return;
   }
 catch (  IOException e) {
-    logger.error("An I/O error occured while decoding JSON:\n" + message);
+    logger.error("An I/O error occured while decoding JSON",e);
     return;
   }
   try {
