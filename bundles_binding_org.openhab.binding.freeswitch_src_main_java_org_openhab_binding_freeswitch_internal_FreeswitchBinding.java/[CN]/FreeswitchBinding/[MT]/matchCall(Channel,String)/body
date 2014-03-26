@@ -1,0 +1,26 @@
+{
+  logger.debug("Trying to match filter string {}",filterString);
+  String[] filters=filterString.split(",");
+  boolean matched=true;
+  for (  String filter : filters) {
+    String[] args=filter.split(":");
+    if (args.length == 2 && StringUtils.isNotBlank(args[0]) && StringUtils.isNotBlank(args[1])) {
+      String eventHeader=channel.getEventHeader(args[0]);
+      try {
+        if (StringUtils.isBlank(eventHeader) || !args[1].equals(URLDecoder.decode(eventHeader,"UTF-8"))) {
+          matched=false;
+        }
+      }
+ catch (      UnsupportedEncodingException e) {
+        logger.warn("Could not decode event header {}",eventHeader);
+        matched=false;
+      }
+    }
+ else {
+      logger.warn("The filter string {} does not look valid, not updating item",filter);
+      matched=false;
+    }
+    if (!matched)     break;
+  }
+  return matched;
+}

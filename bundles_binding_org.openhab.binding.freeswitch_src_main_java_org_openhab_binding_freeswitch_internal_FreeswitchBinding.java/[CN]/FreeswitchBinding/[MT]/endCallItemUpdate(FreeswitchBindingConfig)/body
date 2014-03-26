@@ -1,0 +1,34 @@
+{
+  OnOffType activeState=OnOffType.OFF;
+  ;
+  CallType callType=(CallType)CallType.EMPTY;
+  StringType callerId=StringType.EMPTY;
+  ListIterator<String> it=new ArrayList<String>(itemMap.keySet()).listIterator(itemMap.size());
+  boolean match=false;
+  while (it.hasPrevious()) {
+    String uuid=it.previous();
+    for (    FreeswitchBindingConfig c : itemMap.get(uuid)) {
+      if (c.getItemName().equals(config.getItemName())) {
+        Channel channel=eventCache.get(uuid);
+        activeState=OnOffType.ON;
+        callType=channel.getCall();
+        callerId=new StringType(String.format("%s : %s",channel.getEventHeader(CID_NAME),channel.getEventHeader(CID_NUMBER)));
+        match=true;
+        break;
+      }
+    }
+    if (match)     break;
+  }
+  if (config.getItemType().isAssignableFrom(SwitchItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),activeState);
+  }
+ else   if (config.getItemType().isAssignableFrom(CallItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),callType);
+  }
+ else   if (config.getItemType().isAssignableFrom(StringItem.class)) {
+    eventPublisher.postUpdate(config.getItemName(),callerId);
+  }
+ else {
+    logger.warn("handleHangupCall - postUpdate for itemType '{}' is undefined",config.getItemName());
+  }
+}

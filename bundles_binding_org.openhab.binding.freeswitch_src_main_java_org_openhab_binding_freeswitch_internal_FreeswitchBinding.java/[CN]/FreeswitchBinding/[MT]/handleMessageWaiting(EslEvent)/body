@@ -1,0 +1,36 @@
+{
+  logger.debug("MWI event\\n {}",event.toString());
+  for (  String key : event.getEventHeaders().keySet()) {
+    logger.debug("MWI Message header {} : {}",key,event.getEventHeaders().get(key));
+  }
+  String account=null;
+  try {
+    account=URLDecoder.decode(getHeader(event,MWI_ACCOUNT),"UTF-8");
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("Could not decode account for event {} : {}",event,e);
+    return;
+  }
+  boolean waiting="yes".equalsIgnoreCase(getHeader(event,MWI_WAITING));
+  String messagesString=getHeader(event,MWI_MESSAGE);
+  logger.debug("Message header: {}",messagesString);
+  if (StringUtils.isBlank(messagesString)) {
+    logger.debug("message is not for us.");
+    return;
+  }
+  Pattern pattern=Pattern.compile("([0-9]+)/([0-9]+)\\s\\([0-9]+\\/[0-9]+\\)");
+  Matcher matcher=pattern.matcher(messagesString);
+  int messages=0;
+  if (matcher.matches()) {
+    logger.debug("trying to parse message number {} ",matcher.group(1));
+    try {
+      messages=Integer.parseInt(matcher.group(1));
+    }
+ catch (    Exception e) {
+      logger.warn("Could not parse message number from message {} : {}",messagesString,e);
+    }
+  }
+  logger.debug("Updating MWI to {} VMs",messages);
+  mwiCache.put(account,new MWIModel(waiting,messages));
+  updateMessageWaitingItems();
+}

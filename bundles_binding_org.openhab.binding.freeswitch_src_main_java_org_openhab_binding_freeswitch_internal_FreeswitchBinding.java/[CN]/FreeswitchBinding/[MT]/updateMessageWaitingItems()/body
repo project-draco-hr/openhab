@@ -1,0 +1,10 @@
+{
+  for (  FreeswitchBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
+      if (config.getType() == FreeswitchBindingType.MESSAGE_WAITING) {
+        updateMessageWaitingItem(config);
+      }
+    }
+  }
+}
