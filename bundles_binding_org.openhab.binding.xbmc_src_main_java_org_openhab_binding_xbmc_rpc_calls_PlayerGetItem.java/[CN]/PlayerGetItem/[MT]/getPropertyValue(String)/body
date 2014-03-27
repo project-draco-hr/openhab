@@ -1,0 +1,22 @@
+{
+  executedOrException();
+  String paramProperty=getParamProperty(property);
+  if (!item.containsKey(paramProperty))   return null;
+  Object value=item.get(paramProperty);
+  if (value instanceof List<?>) {
+    String paramPropertyIndex=getPropertyValue(paramProperty + "id");
+    if (StringUtils.isEmpty(paramPropertyIndex))     return null;
+    int propertyIndex;
+    try {
+      propertyIndex=Integer.parseInt(paramPropertyIndex);
+    }
+ catch (    NumberFormatException e) {
+      return null;
+    }
+    List<?> values=(List<?>)value;
+    if (propertyIndex < 0 || propertyIndex > values.size())     return null;
+    value=values.get(propertyIndex);
+  }
+  if (value == null)   return null;
+  return value.toString();
+}

@@ -2,8 +2,7 @@
   if (currentState.equals(State.Stop) && state.equals(State.Pause))   return;
   updateProperty("Player.State",state.toString());
   if (state == State.Stop) {
-    for (    String property : getProperties()) {
-      if (!property.startsWith("Player.") || property.equals("Player.State"))       continue;
+    for (    String property : getPlayerProperties()) {
       updateProperty(property,null);
     }
   }

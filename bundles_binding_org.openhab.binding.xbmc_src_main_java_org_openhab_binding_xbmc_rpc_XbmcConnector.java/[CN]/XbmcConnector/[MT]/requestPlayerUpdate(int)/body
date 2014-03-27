@@ -5,11 +5,10 @@
   }
   PlayerGetItem item=new PlayerGetItem(client,rsUri);
   item.setPlayerId(playerId);
+  item.setProperties(getPlayerProperties());
   item.execute();
-  for (  String property : getProperties()) {
-    if (!property.startsWith("Player.") || property.equals("Player.State"))     continue;
-    String field=property.substring(7).toLowerCase();
-    String value=item.getItemField(field);
+  for (  String property : getPlayerProperties()) {
+    String value=item.getPropertyValue(property);
     if (property.equals("Player.Fanart")) {
       updateProperty(property,getFanartUrl(value));
     }
