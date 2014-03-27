@@ -1,0 +1,14 @@
+{
+  List<InetSocketAddress> theList=new ArrayList<InetSocketAddress>();
+  for (  Command command : getAllCommands(itemName)) {
+    InetSocketAddress anAddress=null;
+    try {
+      anAddress=new InetSocketAddress(InetAddress.getByName(getHost(itemName,command)),getPort(itemName,command));
+    }
+ catch (    UnknownHostException e) {
+      e.printStackTrace();
+    }
+    theList.add(anAddress);
+  }
+  return theList;
+}
