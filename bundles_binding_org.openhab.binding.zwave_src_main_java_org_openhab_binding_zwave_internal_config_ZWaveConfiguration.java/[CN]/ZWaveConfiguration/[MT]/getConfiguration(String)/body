@@ -49,12 +49,16 @@ List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParamete
 for (ZWaveDbConfigurationParameter parameter : configList) {
 record=new OpenHABConfigurationRecord(domain,"configuration" + parameter.Index,database.getLabel(parameter.Label),true);
 if (parameter != null) record.value=parameter.Default;
-if (parameter.Type.equalsIgnoreCase("list")) {
-record.type=OpenHABConfigurationRecord.TYPE.LIST;
+try {
+record.type=OpenHABConfigurationRecord.TYPE.valueOf(parameter.Type.toUpperCase());
+}
+ catch (IllegalArgumentException e) {
+logger.error("Error with parameter type for {} - Set {} - assuming LONG",parameter.Label.toString(),parameter.Type);
+record.type=OpenHABConfigurationRecord.TYPE.LONG;
+}
+if (parameter.Item != null) {
 for (ZWaveDbConfigurationListItem item : parameter.Item) record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
 }
- else if (parameter.Type.equalsIgnoreCase("byte")) record.type=OpenHABConfigurationRecord.TYPE.BYTE;
- else record.type=OpenHABConfigurationRecord.TYPE.SHORT;
 record.description=database.getLabel(parameter.Help);
 records.add(record);
 }
@@ -260,16 +264,18 @@ if (pendingValue != null) {
 record.value=Integer.toString(pendingValue);
 record.state=OpenHABConfigurationRecord.STATE.PENDING;
 }
-if (parameter.Type.equalsIgnoreCase("list")) {
-record.type=OpenHABConfigurationRecord.TYPE.LIST;
+try {
+record.type=OpenHABConfigurationRecord.TYPE.valueOf(parameter.Type.toUpperCase());
+}
+ catch (IllegalArgumentException e) {
+logger.error("Error with parameter type for {} - Set {} - assuming LONG",parameter.Label.toString(),parameter.Type);
+record.type=OpenHABConfigurationRecord.TYPE.LONG;
+}
+if (parameter.Item != null) {
 for (ZWaveDbConfigurationListItem item : parameter.Item) record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
 }
- else if (parameter.Type.equalsIgnoreCase("byte")) record.type=OpenHABConfigurationRecord.TYPE.BYTE;
- else record.type=OpenHABConfigurationRecord.TYPE.SHORT;
-if (record.type == OpenHABConfigurationRecord.TYPE.LIST) {
 record.minimum=parameter.Minimum;
 record.maximum=parameter.Maximum;
-}
 record.description=database.getLabel(parameter.Help);
 records.add(record);
 }
