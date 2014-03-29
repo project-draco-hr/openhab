@@ -1,0 +1,26 @@
+{
+  if (m_productKey == null)   return;
+  logger.debug("calling instantiate features {} ",m_productKey);
+  for (  DeviceDescriptor desc : m_descriptors) {
+    HashMap<String,String> features=desc.getSubCat().getProductKeys().get(m_productKey);
+    if (features == null)     continue;
+    for (    Entry<String,String> fe : features.entrySet()) {
+      logger.debug("instantiating feature {} {}",fe.getKey(),fe.getValue());
+      DeviceFeature f=DeviceFeature.s_makeDeviceFeature(fe.getValue());
+      if (f == null) {
+        logger.error("error in categories.xml: unimplemented feature {}",fe.getValue());
+      }
+ else {
+        addFeature(fe.getKey(),f);
+      }
+    }
+  }
+  if (m_features.isEmpty() && !m_descriptors.isEmpty()) {
+    logger.warn("dev {} does not match product key {} ",m_address,m_productKey);
+    for (    DeviceDescriptor desc : m_descriptors) {
+      for (      String pk : desc.getSubCat().getProductKeys().keySet()) {
+        logger.warn("   cat {} subcat {} has product key {}",desc.getDevCat(),desc.getSubCat(),pk);
+      }
+    }
+  }
+}
