@@ -1,0 +1,30 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String value=(String)config.get(key);
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      if (key.equals(CONFIG_KEY_REFRESH)) {
+        refreshInterval=Long.parseLong(value);
+        continue;
+      }
+      String[] keyParts=key.split("\\.");
+      String hostId=keyParts[0];
+      String configKey=keyParts[1];
+      if (!hosts.containsKey(hostId)) {
+        hosts.put(hostId,new DaikinHost(hostId));
+      }
+      DaikinHost host=hosts.get(hostId);
+      if (configKey.equals(CONFIG_KEY_HOST)) {
+        host.setHost(value);
+      }
+ else {
+        throw new ConfigurationException(key,"Unrecognised configuration parameter: " + configKey);
+      }
+    }
+    setProperlyConfigured(true);
+  }
+}

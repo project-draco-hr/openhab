@@ -1,0 +1,23 @@
+{
+  String url=String.format("http://%s",host.getHost());
+  CloseableHttpClient httpClient=HttpClients.custom().build();
+  boolean success=false;
+  try {
+    HttpPost httpPost=new HttpPost(url);
+    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    CloseableHttpResponse httpResponse=httpClient.execute(httpPost);
+    try {
+      success=httpResponse.getStatusLine().getStatusCode() == 200;
+    }
+  finally {
+      httpResponse.close();
+    }
+  }
+ catch (  ClientProtocolException e) {
+    logger.error("Client protocol error attempting to send command",e);
+  }
+catch (  IOException e) {
+    logger.error("IO error attempting to send command",e);
+  }
+  return success;
+}
