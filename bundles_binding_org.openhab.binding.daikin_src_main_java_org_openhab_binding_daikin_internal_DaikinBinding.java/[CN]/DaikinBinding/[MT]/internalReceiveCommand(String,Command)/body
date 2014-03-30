@@ -1,2 +1,15 @@
 {
+  for (  DaikinBindingProvider provider : providers) {
+    if (!provider.providesBindingFor(itemName))     continue;
+    DaikinBindingConfig bindingConfig=provider.getBindingConfig(itemName);
+    if (!hosts.containsKey(bindingConfig.getId()))     continue;
+    DaikinHost host=hosts.get(bindingConfig.getId());
+    DaikinCommandType commandType=bindingConfig.getCommandType();
+    if (!commandType.isExecutable()) {
+      logger.warn("Attempting to send a command to '{}' which is not executable ({}). Ignoring.",itemName,commandType);
+      continue;
+    }
+    host.setState(commandType,command);
+    updateState(host);
+  }
 }

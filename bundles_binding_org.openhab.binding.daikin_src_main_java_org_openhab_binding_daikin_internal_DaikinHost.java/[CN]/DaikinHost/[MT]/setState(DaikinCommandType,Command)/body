@@ -1,0 +1,33 @@
+{
+switch (commandType) {
+case POWER:
+    setPower(value.equals(OnOffType.ON));
+  break;
+case MODE:
+setMode(value.toString());
+break;
+case TEMP:
+setTemp(new BigDecimal(((DecimalType)value).doubleValue()));
+break;
+case FAN:
+setFan(value.toString());
+break;
+case SWING:
+setSwing(value.toString());
+break;
+case TEMPIN:
+setTempIn(new BigDecimal(((DecimalType)value).doubleValue()));
+break;
+case TIMER:
+setTimer(value.toString());
+break;
+case TEMPOUT:
+setTempOut(new BigDecimal(((DecimalType)value).doubleValue()));
+break;
+case HUMIDITYIN:
+setHumidityIn(new BigDecimal(((DecimalType)value).doubleValue()));
+break;
+default :
+throw new RuntimeException("Unsupported command type: " + commandType);
+}
+}
