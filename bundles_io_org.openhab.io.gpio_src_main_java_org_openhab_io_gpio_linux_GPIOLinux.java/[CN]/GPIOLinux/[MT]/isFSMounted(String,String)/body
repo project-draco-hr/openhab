@@ -1,0 +1,10 @@
+{
+  List<String> mtabLines=Files.readAllLines(Paths.get(MTAB_PATH),DEFAULT_ENCODING);
+  for (  String mtabRecord : mtabLines) {
+    String[] mtabRecordFields=mtabRecord.split(MTAB_FIELD_SEPARATOR);
+    if ((mtabRecordFields[2].compareToIgnoreCase(vfsType) == 0) && (mtabRecordFields[1].compareToIgnoreCase(mountPoint) == 0)) {
+      return true;
+    }
+  }
+  return false;
+}
