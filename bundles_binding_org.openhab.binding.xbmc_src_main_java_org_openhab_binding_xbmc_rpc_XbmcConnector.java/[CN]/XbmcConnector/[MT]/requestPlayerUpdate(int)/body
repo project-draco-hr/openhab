@@ -3,17 +3,22 @@
     logger.debug("[{}]: Invalid playerId ({}) in requestPlayerUpdate() - must be between 0 and 2 (inclusive)",xbmc.getHostname(),playerId);
     return;
   }
-  PlayerGetItem item=new PlayerGetItem(client,rsUri);
+  final List<String> properties=getPlayerProperties();
+  final PlayerGetItem item=new PlayerGetItem(client,rsUri);
   item.setPlayerId(playerId);
-  item.setProperties(getPlayerProperties());
-  item.execute();
-  for (  String property : getPlayerProperties()) {
-    String value=item.getPropertyValue(property);
-    if (property.equals("Player.Fanart")) {
-      updateProperty(property,getFanartUrl(value));
-    }
+  item.setProperties(properties);
+  item.execute(new Runnable(){
+    public void run(){
+      for (      String property : properties) {
+        String value=item.getPropertyValue(property);
+        if (property.equals("Player.Fanart")) {
+          updateFanartUrl(property,value);
+        }
  else {
-      updateProperty(property,value);
+          updateProperty(property,value);
+        }
+      }
     }
   }
+);
 }

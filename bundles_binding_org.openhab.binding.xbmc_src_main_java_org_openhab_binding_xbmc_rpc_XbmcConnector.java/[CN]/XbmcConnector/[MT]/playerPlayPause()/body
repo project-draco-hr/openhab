@@ -1,7 +1,11 @@
 {
-  PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,rsUri);
-  activePlayers.execute();
-  PlayerPlayPause playPause=new PlayerPlayPause(client,rsUri);
-  playPause.setPlayerId(activePlayers.getPlayerId());
-  playPause.execute();
+  final PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,rsUri);
+  activePlayers.execute(new Runnable(){
+    public void run(){
+      PlayerPlayPause playPause=new PlayerPlayPause(client,rsUri);
+      playPause.setPlayerId(activePlayers.getPlayerId());
+      playPause.execute();
+    }
+  }
+);
 }
