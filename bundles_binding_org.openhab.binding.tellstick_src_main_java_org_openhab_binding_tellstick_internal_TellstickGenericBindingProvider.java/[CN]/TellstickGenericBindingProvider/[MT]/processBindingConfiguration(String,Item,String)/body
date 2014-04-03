@@ -13,13 +13,13 @@
  catch (  SupportedMethodsException e) {
     throw new BindingConfigParseException(e.getMessage());
   }
+  validateBinding(item,configParts,device);
   if (device == null) {
     config.setId(Integer.valueOf(configParts[0].trim()));
   }
  else {
     config.setId(device.getId());
   }
-  config.setInBinding(true);
   config.setValueSelector(TellstickValueSelector.getValueSelector(configParts[1].trim()));
   if (configParts.length > 2 && configParts[2].trim().length() > 0) {
     config.setUsageSelector(TellstickValueSelector.getValueSelector(configParts[2].trim()));
