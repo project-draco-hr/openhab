@@ -4,12 +4,12 @@
     return mapper.readValue(json,Map.class);
   }
  catch (  JsonParseException e) {
-    throw new RpcException(e);
+    throw new RpcException("Failed to parse JSON",e);
   }
 catch (  JsonMappingException e) {
-    throw new RpcException(e);
+    throw new RpcException("Failed to map JSON",e);
   }
 catch (  IOException e) {
-    throw new RpcException(e);
+    throw new RpcException("Failed to read JSON",e);
   }
 }
