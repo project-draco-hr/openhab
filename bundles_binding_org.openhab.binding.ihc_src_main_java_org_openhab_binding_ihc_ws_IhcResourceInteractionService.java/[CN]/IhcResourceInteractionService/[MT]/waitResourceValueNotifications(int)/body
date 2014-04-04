@@ -1,0 +1,32 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:utcs=\"utcs\">" + "<soapenv:Header/>"+ "<soapenv:Body>"+ " <utcs:waitForResourceValueChanges1>%s</utcs:waitForResourceValueChanges1>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
+  String query=String.format(soapQuery,timeoutInSeconds);
+  openConnection(url);
+  super.setCookies(cookies);
+  setTimeout(getTimeout() + timeoutInSeconds * 1000);
+  String response=sendQuery(query);
+  closeConnection();
+  List<WSResourceValue> resourceValueList=new ArrayList<WSResourceValue>();
+  NodeList nodeList;
+  try {
+    nodeList=parseList(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:waitForResourceValueChanges2/ns1:arrayItem");
+    if (nodeList.getLength() == 1) {
+      String resourceId=getValue(nodeList.item(0),"ns1:resourceID");
+      if (resourceId == null || resourceId == "") {
+        throw new SocketTimeoutException();
+      }
+    }
+    for (int i=0; i < nodeList.getLength(); i++) {
+      int index=i + 2;
+      WSResourceValue newVal=parseResourceValue(nodeList.item(i),index);
+      resourceValueList.add(newVal);
+    }
+    return resourceValueList;
+  }
+ catch (  XPathExpressionException e) {
+    throw new IhcExecption(e);
+  }
+catch (  UnsupportedEncodingException e) {
+    throw new IhcExecption(e);
+  }
+}

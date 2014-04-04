@@ -1,0 +1,21 @@
+{
+  if (StringUtils.isNotBlank(projectFile)) {
+    logger.debug("Loading IHC /ELKO LS project file from path {}...",projectFile);
+    try {
+      enumDictionary=IhcProjectFile.parseProject(projectFile,dumpResourcesToFile);
+    }
+ catch (    IhcExecption e) {
+      logger.error("Project file loading error",e);
+    }
+  }
+ else {
+    logger.debug("Loading IHC /ELKO LS project file from controller...");
+    try {
+      Document doc=LoadProjectFileFromController();
+      IhcProjectFile.parseProject(doc,dumpResourcesToFile);
+    }
+ catch (    IhcExecption e) {
+      throw new IhcExecption("Project file loading error",e);
+    }
+  }
+}
