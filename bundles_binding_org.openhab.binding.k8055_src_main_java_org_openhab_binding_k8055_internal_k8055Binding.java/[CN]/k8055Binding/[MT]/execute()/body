@@ -2,12 +2,12 @@
   logger.debug("execute() method is called!");
   try {
     if (!connect()) {
-      logger.error("driver.K8055.accessHardware():  Unable to access hardware.");
+      logger.error("Not connected to hardware. Skipping attempt to read inputs.");
       return;
     }
     long inputs=sysLibrary.ReadAllDigital();
     if (inputs < 0) {
-      throw new Exception("Connection failure");
+      throw new Exception("Failed to read digital inputs from hardware");
     }
     for (    k8055BindingProvider provider : this.providers) {
       for (      String itemName : provider.getItemNames()) {
@@ -26,6 +26,9 @@
         }
  else         if (IOType.ANALOG_IN.equals(config.ioType)) {
           int state=sysLibrary.ReadAnalogChannel(config.ioNumber);
+          if (inputs < 0) {
+            throw new Exception("Failed to read analog channel " + config.ioNumber + " from hardware");
+          }
           eventPublisher.postUpdate(itemName,new DecimalType(state));
         }
       }
@@ -33,7 +36,7 @@
     lastDigitalInputs=inputs;
   }
  catch (  Exception e) {
-    logger.error("K8055 Connection failure");
+    logger.error("Failed to read from hardware ",e);
     connected=false;
     sysLibrary.CloseDevice();
   }

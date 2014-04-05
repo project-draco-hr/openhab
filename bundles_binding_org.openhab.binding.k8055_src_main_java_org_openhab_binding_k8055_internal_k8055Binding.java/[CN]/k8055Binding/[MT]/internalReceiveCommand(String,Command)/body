@@ -1,46 +1,70 @@
 {
   logger.debug("Received command for: " + itemName + " - "+ command);
   k8055BindingConfig itemConfig=getConfigForItemName(itemName);
-  if (itemConfig.ioType == IOType.DIGITAL_OUT) {
-    logger.debug("Updating hardware Digital output: " + itemConfig.ioNumber);
-    if (connect()) {
-      if (OnOffType.ON.equals(command)) {
-        sysLibrary.SetDigitalChannel(itemConfig.ioNumber);
-      }
- else       if (OnOffType.OFF.equals(command)) {
-        sysLibrary.ClearDigitalChannel(itemConfig.ioNumber);
+  try {
+    if (itemConfig.ioType == IOType.DIGITAL_OUT) {
+      logger.debug("Updating hardware Digital output: " + itemConfig.ioNumber);
+      if (connect()) {
+        if (OnOffType.ON.equals(command)) {
+          if (sysLibrary.SetDigitalChannel(itemConfig.ioNumber) < 0) {
+            throw new Exception("Failed to set digital channel: " + itemConfig.ioNumber);
+          }
+        }
+ else         if (OnOffType.OFF.equals(command)) {
+          if (sysLibrary.ClearDigitalChannel(itemConfig.ioNumber) < 0) {
+            throw new Exception("Failed to set digital channel: " + itemConfig.ioNumber);
+          }
+          ;
+        }
+ else {
+          logger.error("Received unknown command: " + command + " for item: "+ itemName);
+        }
       }
  else {
-        logger.error("Received unknown command: " + command + " for item: "+ itemName);
+        logger.error("Not connected to hardware.  Command: " + command + " for item: "+ itemName+ " ignored");
       }
     }
+ else     if (itemConfig.ioType == IOType.ANALOG_OUT) {
+      logger.debug("Updating hardware Analog output: " + itemConfig.ioNumber);
+      if (connect()) {
+        if (OnOffType.ON.equals(command)) {
+          if (sysLibrary.SetAnalogChannel(itemConfig.ioNumber) < 0) {
+            throw new Exception("Failed to set analog channel: " + itemConfig.ioNumber);
+          }
+          ;
+        }
+ else         if (OnOffType.OFF.equals(command)) {
+          if (sysLibrary.ClearAnalogChannel(itemConfig.ioNumber) < 0) {
+            throw new Exception("Failed to clear analog channel: " + itemConfig.ioNumber);
+          }
+          ;
+        }
+ else         if (command instanceof PercentType) {
+          int value=Math.round((((PercentType)command).shortValue() * 255) / 100);
+          if (sysLibrary.OutputAnalogChannel(itemConfig.ioNumber,value) < 0) {
+            throw new Exception("Failed to output analog channel: " + itemConfig.ioNumber);
+          }
+          ;
+        }
+ else         if (command instanceof DecimalType) {
+          if (sysLibrary.OutputAnalogChannel(itemConfig.ioNumber,Math.min(Math.max(((DecimalType)command).intValue(),0),255)) < 0) {
+            throw new Exception("Failed to output analog channel: " + itemConfig.ioNumber);
+          }
+          ;
+        }
  else {
-      logger.error("Not connected to hardware.  Command: " + command + " for item: "+ itemName+ " ignored");
+          logger.error("Received unknown command: " + command + " for item: "+ itemName);
+        }
+      }
+ else {
+        logger.error("Not connected to hardware.  Command: " + command + " for item: "+ itemName+ " ignored");
+      }
     }
   }
- else   if (itemConfig.ioType == IOType.ANALOG_OUT) {
-    logger.debug("Updating hardware Analog output: " + itemConfig.ioNumber);
-    if (connect()) {
-      if (OnOffType.ON.equals(command)) {
-        sysLibrary.SetAnalogChannel(itemConfig.ioNumber);
-      }
- else       if (OnOffType.OFF.equals(command)) {
-        sysLibrary.ClearAnalogChannel(itemConfig.ioNumber);
-      }
- else       if (command instanceof PercentType) {
-        int value=Math.round((((PercentType)command).shortValue() * 255) / 100);
-        sysLibrary.OutputAnalogChannel(itemConfig.ioNumber,value);
-      }
- else       if (command instanceof DecimalType) {
-        sysLibrary.OutputAnalogChannel(itemConfig.ioNumber,Math.min(Math.max(((DecimalType)command).intValue(),0),255));
-      }
- else {
-        logger.error("Received unknown command: " + command + " for item: "+ itemName);
-      }
-    }
- else {
-      logger.error("Not connected to hardware.  Command: " + command + " for item: "+ itemName+ " ignored");
-    }
+ catch (  Exception e) {
+    logger.error("Failed to read from hardware ",e);
+    connected=false;
+    sysLibrary.CloseDevice();
   }
   logger.debug("internalReceiveCommand() is called!");
 }
