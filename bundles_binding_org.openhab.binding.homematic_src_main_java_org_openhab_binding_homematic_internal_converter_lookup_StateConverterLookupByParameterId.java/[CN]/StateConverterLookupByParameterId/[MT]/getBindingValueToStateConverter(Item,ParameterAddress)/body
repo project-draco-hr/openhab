@@ -1,0 +1,10 @@
+{
+  List<Class<? extends State>> acceptedTypes=new ArrayList<Class<? extends State>>(item.getAcceptedDataTypes());
+  acceptedTypes.addAll(getCommandStates(item));
+  StateConverterMap stateConverterMap=get(parameterAddress.getParameterId());
+  if (stateConverterMap == null) {
+    return null;
+  }
+  StateConverter<?,?> toStateConverter=matchItemTypesAndConverters(acceptedTypes,stateConverterMap);
+  return toStateConverter;
+}

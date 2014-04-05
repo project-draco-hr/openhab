@@ -1,0 +1,21 @@
+{
+  if ((activeLow != GPIOPin.ACTIVELOW_DISABLED) && (activeLow != GPIOPin.ACTIVELOW_ENABLED)) {
+    throw new IllegalArgumentException("Unsupported argument for 'activeLow' parameter (" + activeLow + ")");
+  }
+  try {
+    if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        Files.write(activelowPath,activeLow.toString().getBytes());
+      }
+  finally {
+        pinLock.readLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+  }
+}

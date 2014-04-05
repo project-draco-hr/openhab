@@ -1,0 +1,19 @@
+{
+  logger.debug("Disconnecting");
+  try {
+    logger.debug("Close serial streams");
+    if (in != null) {
+      in.close();
+    }
+    in=null;
+    if (serialPort != null) {
+      logger.debug("Close serial port");
+      serialPort.close();
+      serialPort=null;
+    }
+  }
+ catch (  IOException e) {
+    throw new OpenEnergyMonitorException(e);
+  }
+  logger.debug("Closed");
+}

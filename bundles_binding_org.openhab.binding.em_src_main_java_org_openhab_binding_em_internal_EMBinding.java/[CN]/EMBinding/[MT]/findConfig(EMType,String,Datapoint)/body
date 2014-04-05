@@ -1,0 +1,10 @@
+{
+  EMBindingConfig emConfig=null;
+  for (  EMBindingProvider provider : this.providers) {
+    emConfig=provider.getConfigByTypeAndAddressAndDatapoint(type,address,Datapoint.CUMULATED_VALUE);
+    if (emConfig != null) {
+      return emConfig;
+    }
+  }
+  return null;
+}

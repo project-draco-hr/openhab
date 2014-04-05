@@ -12,11 +12,23 @@
         try {
           if (owc.exists("/" + sensorId)) {
             int attempt=1;
+            Item item=provider.getItem(itemName);
             while (value == UnDefType.UNDEF && attempt <= retry) {
               String valueString=owc.read(sensorId + "/" + unitId);
               logger.debug("{}: Read value '{}' from {}/{}, attempt={}",new Object[]{itemName,valueString,sensorId,unitId,attempt});
               if (valueString != null) {
-                value=new DecimalType(Double.valueOf(valueString));
+                if (item instanceof ContactItem) {
+                  value=valueString.trim().equals("1") ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+                }
+ else                 if (item instanceof SwitchItem) {
+                  value=valueString.trim().equals("1") ? OnOffType.ON : OnOffType.OFF;
+                }
+ else                 if (item instanceof NumberItem) {
+                  value=new DecimalType(Double.valueOf(valueString));
+                }
+ else {
+                  throw new IllegalStateException("The item with name " + itemName + " is not a valid type.");
+                }
               }
               attempt++;
             }

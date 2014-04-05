@@ -1,0 +1,68 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  GPIOPinBindingConfig config=new GPIOPinBindingConfig();
+  String[] properties=bindingConfig.split(" ");
+  if (properties.length > 3) {
+    logger.error("Wrong number of agruments (" + properties.length + ") in configuration string '"+ bindingConfig+ "'");
+    throw new BindingConfigParseException("Wrong number of agruments (" + properties.length + ") in configuration string '"+ bindingConfig+ "'");
+  }
+  for (  String property : properties) {
+    String[] keyValueStructure=property.split(":");
+    if (keyValueStructure.length != 2) {
+      logger.error("Incorrect key:value structure (" + property + ") in configuration string '"+ bindingConfig+ "'");
+      throw new BindingConfigParseException("Incorrect key:value structure (" + property + ") in configuration string '"+ bindingConfig+ "'");
+    }
+    String key=keyValueStructure[0];
+    String value=keyValueStructure[1];
+    if (key.compareToIgnoreCase("pin") == 0) {
+      try {
+        config.pinNumber=Integer.parseInt(value);
+        if (config.pinNumber < 0) {
+          logger.error("Unsupported, negative value for pin number (" + value + ") in configuration string '"+ bindingConfig+ "'");
+          throw new BindingConfigParseException("Unsupported, negative value for pin number (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        }
+      }
+ catch (      NumberFormatException e) {
+        logger.error("Unsupported, not numeric value for pin number (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        throw new BindingConfigParseException("Unsupported, not numeric value for pin number (" + value + ") in configuration string '"+ bindingConfig+ "'");
+      }
+    }
+ else     if (key.compareToIgnoreCase("debounce") == 0) {
+      try {
+        config.debounceInterval=Long.parseLong(value);
+        if (config.debounceInterval < 0) {
+          logger.error("Unsupported, negative value for debounce (" + value + ") in configuration string '"+ bindingConfig+ "'");
+          throw new BindingConfigParseException("Unsupported, negative value for debounce (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        }
+      }
+ catch (      NumberFormatException e) {
+        logger.error("Unsupported, not numeric value for debounce (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        throw new BindingConfigParseException("Unsupported, not numeric value for debounce (" + value + ") in configuration string '"+ bindingConfig+ "'");
+      }
+    }
+ else     if (key.compareToIgnoreCase("activelow") == 0) {
+      if (value.compareToIgnoreCase("yes") == 0) {
+        config.activeLow=GPIOPin.ACTIVELOW_ENABLED;
+      }
+ else       if (value.compareToIgnoreCase("no") != 0) {
+        logger.error("Unsupported value for activelow (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        throw new BindingConfigParseException("Unsupported value for activelow (" + value + ") in configuration string '"+ bindingConfig+ "'");
+      }
+    }
+ else {
+      logger.error("Unsupported key (" + key + ") in configuration string '"+ bindingConfig+ "'");
+      throw new BindingConfigParseException("Unsupported key (" + key + ") in configuration string '"+ bindingConfig+ "'");
+    }
+  }
+  if (config.pinNumber == GPIOBindingProvider.PINNUMBER_UNDEFINED) {
+    logger.error("Mandatory paratemer (pin) is missing in configuration string '" + bindingConfig + "'");
+    throw new BindingConfigParseException("Mandatory paratemer (pin) is missing in configuration string '" + bindingConfig + "'");
+  }
+  if (item instanceof ContactItem) {
+    config.direction=GPIOPin.DIRECTION_IN;
+  }
+ else {
+    config.direction=GPIOPin.DIRECTION_OUT;
+  }
+  addBindingConfig(item,config);
+}

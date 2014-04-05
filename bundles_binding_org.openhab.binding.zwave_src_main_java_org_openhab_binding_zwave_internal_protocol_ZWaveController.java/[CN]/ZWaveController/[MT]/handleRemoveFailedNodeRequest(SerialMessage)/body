@@ -1,0 +1,7 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("NODE {}: Got RemoveFailedNode request.",nodeId);
+  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
+    logger.error("NODE {}: Remove failed node failed with error 0x{}.",nodeId,Integer.toHexString(incomingMessage.getMessagePayloadByte(0)));
+  }
+}

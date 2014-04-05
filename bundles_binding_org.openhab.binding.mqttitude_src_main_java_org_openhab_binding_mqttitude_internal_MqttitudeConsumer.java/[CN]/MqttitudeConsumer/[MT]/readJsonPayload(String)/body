@@ -1,0 +1,18 @@
+{
+  ObjectMapper jsonReader=new ObjectMapper();
+  try {
+    return jsonReader.readValue(payload,Map.class);
+  }
+ catch (  JsonParseException e) {
+    logger.error("Error parsing JSON:\n" + payload);
+    return null;
+  }
+catch (  JsonMappingException e) {
+    logger.error("Error mapping JSON:\n" + payload);
+    return null;
+  }
+catch (  IOException e) {
+    logger.error("An I/O error occured while decoding JSON:\n" + payload);
+    return null;
+  }
+}

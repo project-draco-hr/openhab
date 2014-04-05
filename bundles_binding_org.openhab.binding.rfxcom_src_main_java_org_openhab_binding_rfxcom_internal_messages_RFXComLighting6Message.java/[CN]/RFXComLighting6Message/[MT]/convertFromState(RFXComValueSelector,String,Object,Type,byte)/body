@@ -1,0 +1,20 @@
+{
+  this.subType=((SubType)subType);
+  seqNbr=seqNumber;
+  String[] ids=id.split("\\.");
+  sensorId=Integer.parseInt(ids[0]);
+  groupCode=ids[1].charAt(0);
+  unitcode=Byte.parseByte(ids[2]);
+switch (valueSelector) {
+case COMMAND:
+    if (type instanceof OnOffType) {
+      command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
+    }
+ else {
+      throw new RFXComException("Can't convert " + type + " to Command");
+    }
+  break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
+}

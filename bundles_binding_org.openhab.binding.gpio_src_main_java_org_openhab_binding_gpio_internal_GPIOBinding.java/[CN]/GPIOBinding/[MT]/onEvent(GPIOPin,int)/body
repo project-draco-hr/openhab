@@ -1,0 +1,26 @@
+{
+  try {
+    if (registryLock.readLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+      try {
+        String itemName=(String)registry.getKey(pin);
+        if (itemName != null) {
+          if (value == GPIOPin.VALUE_HIGH) {
+            eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+          }
+ else {
+            eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+          }
+        }
+      }
+  finally {
+        registryLock.readLock().unlock();
+      }
+    }
+ else {
+      logger.error("Item state hasn't been changed, timeout expired while waiting for registry lock");
+    }
+  }
+ catch (  InterruptedException e) {
+    logger.error("Item state hasn't been changed, thread was interrupted while waiting for registry lock");
+  }
+}

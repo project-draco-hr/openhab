@@ -1,30 +1,60 @@
 {
-  logger.debug("Received command from " + itemName);
+  logger.debug("Received command from {}",itemName);
   String serialNumber=null;
   for (  MaxCubeBindingProvider provider : providers) {
     serialNumber=provider.getSerialNumber(itemName);
-    if (serialNumber != null)     break;
-  }
-  if (serialNumber == null)   return;
-  Device device=findDevice(serialNumber,devices);
-  if (device == null)   return;
-  String rfAddress=device.getRFAddress();
-  if (command instanceof DecimalType) {
-    DecimalType decimalType=(DecimalType)command;
-    S_Command scmd=new S_Command(rfAddress,decimalType.doubleValue());
-    String commandString=scmd.getCommandString();
-    Socket socket=null;
-    try {
-      socket=new Socket(ip,port);
-      PrintWriter out=new PrintWriter(socket.getOutputStream(),true);
-      out.print(commandString);
-      socket.close();
+    if (serialNumber.equals(null)) {
+      continue;
     }
- catch (    UnknownHostException e) {
-      logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);
+    Device device=findDevice(serialNumber,devices);
+    if (device == null) {
+      logger.debug("Cannot send command to device with serial number {}, device not listed.",serialNumber);
+      continue;
     }
-catch (    IOException e) {
-      logger.warn("Cannot write data from MAX!cube lan gateway while connecting to '{}'",ip);
+    String rfAddress=device.getRFAddress();
+    String commandString=null;
+    if (command instanceof DecimalType) {
+      DecimalType decimalType=(DecimalType)command;
+      S_Command cmd=new S_Command(rfAddress,device.getRoomId(),decimalType.doubleValue());
+      commandString=cmd.getCommandString();
+    }
+ else     if (command instanceof StringType) {
+      String commandContent=command.toString().trim().toUpperCase();
+      ThermostatModeType commandThermoType=null;
+      if (commandContent.contentEquals(ThermostatModeType.AUTOMATIC.toString())) {
+        commandThermoType=ThermostatModeType.AUTOMATIC;
+      }
+ else       if (commandContent.contentEquals(ThermostatModeType.BOOST.toString())) {
+        commandThermoType=ThermostatModeType.BOOST;
+      }
+ else {
+        logger.debug("Only updates to AUTOMATIC & BOOST supported, received value ;'{}'",commandContent);
+        continue;
+      }
+      S_Command cmd=new S_Command(rfAddress,device.getRoomId(),commandThermoType);
+      commandString=cmd.getCommandString();
+    }
+    if (commandString != null) {
+      Socket socket=null;
+      try {
+        socket=new Socket(ip,port);
+        DataOutputStream stream=new DataOutputStream(socket.getOutputStream());
+        byte[] b=commandString.getBytes();
+        stream.write(b);
+        socket.close();
+      }
+ catch (      UnknownHostException e) {
+        logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);
+        logger.debug(Utils.getStackTrace(e));
+      }
+catch (      IOException e) {
+        logger.warn("Cannot write data from MAX!Cube lan gateway while connecting to '{}'",ip);
+        logger.debug(Utils.getStackTrace(e));
+      }
+      logger.debug("Command Sent to {}",ip);
+    }
+ else {
+      logger.debug("Null Command not sent to {}",ip);
     }
   }
 }

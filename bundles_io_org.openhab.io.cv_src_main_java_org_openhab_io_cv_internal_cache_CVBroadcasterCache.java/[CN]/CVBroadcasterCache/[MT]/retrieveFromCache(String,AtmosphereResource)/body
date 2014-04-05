@@ -4,14 +4,36 @@
   for (  Object cacheMessage : super.retrieveFromCache(broadcasterId,r)) {
     if (cacheMessage instanceof ItemStateListBean) {
       ItemStateListBean cachedStateList=(ItemStateListBean)cacheMessage;
-      response.stateList.entries.addAll(cachedStateList.stateList.entries);
+      for (      JAXBElement elem : cachedStateList.stateList.entries) {
+        boolean exists=false;
+        for (        JAXBElement responseElem : response.stateList.entries) {
+          if (responseElem.getName().equals(elem.getName())) {
+            responseElem.setValue(elem.getValue());
+            exists=true;
+            break;
+          }
+        }
+        if (!exists) {
+          response.stateList.entries.add(elem);
+        }
+      }
       if (response.index < cachedStateList.index) {
         response.index=cachedStateList.index;
       }
     }
  else     if (cacheMessage instanceof Item) {
       Item item=(Item)cacheMessage;
-      response.stateList.entries.add(new JAXBElement(new QName(item.getName()),String.class,item.getState().toString()));
+      boolean exists=false;
+      for (      JAXBElement responseElem : response.stateList.entries) {
+        if (responseElem.getName().getLocalPart().equals(item.getName())) {
+          responseElem.setValue(item.getState().toString());
+          exists=true;
+          break;
+        }
+      }
+      if (!exists) {
+        response.stateList.entries.add(new JAXBElement(new QName(item.getName()),String.class,item.getState().toString()));
+      }
     }
   }
   if (response.stateList.entries.size() > 0) {
@@ -21,7 +43,7 @@
     result.add(response);
   }
   if (logger.isTraceEnabled()) {
-    logger.trace("Retrieved for AtmosphereResource {} cached messages {}",r.uuid(),result);
+    logger.trace("Retrieved for AtmosphereResource {} cached messages {}",r.uuid(),response.stateList.entries);
   }
   return result;
 }

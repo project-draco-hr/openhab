@@ -1,0 +1,66 @@
+{
+  IRtransBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  String remoteName=null;
+  String irCommandName=null;
+  if (command != null && provider != null) {
+    if (command instanceof DecimalType) {
+      remoteName=StringUtils.substringBefore(commandAsString,",");
+      irCommandName=StringUtils.substringAfter(commandAsString,",");
+      IrCommand firstCommand=new IrCommand();
+      firstCommand.remote=remoteName;
+      firstCommand.command=irCommandName;
+      IrCommand secondCommand=new IrCommand();
+      secondCommand.remote=provider.getRemote(itemName,command);
+      secondCommand.command=provider.getIrCommand(itemName,command);
+      if (!firstCommand.matches(secondCommand)) {
+        remoteName=null;
+        irCommandName=null;
+      }
+    }
+ else {
+      remoteName=provider.getRemote(itemName,command);
+      irCommandName=provider.getIrCommand(itemName,command);
+    }
+  }
+  if (remoteName != null && irCommandName != null) {
+    Leds led=provider.getLed(itemName,command);
+    IrCommand theCommand=new IrCommand();
+    theCommand.remote=remoteName;
+    theCommand.command=irCommandName;
+    String output=packIRDBCommand(led,theCommand);
+    ByteBuffer outputBuffer=ByteBuffer.allocate(output.getBytes().length);
+    ByteBuffer response=null;
+    try {
+      outputBuffer.put(output.getBytes("ASCII"));
+      response=writeBuffer(outputBuffer,sChannel,true,timeOut);
+    }
+ catch (    UnsupportedEncodingException e) {
+      logger.error("An exception occurred while encoding an infrared command: {}",e.getMessage());
+    }
+    if (response != null) {
+      String message=stripByteCount(response);
+      if (message != null) {
+        if (message.contains("RESULT OK")) {
+          List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,command);
+          State newState=createStateFromString(stateTypeList,commandAsString);
+          if (newState != null) {
+            eventPublisher.postUpdate(itemName,newState);
+          }
+ else {
+            logger.warn("Can not parse " + commandAsString + " to match command {} on item {}  ",command,itemName);
+          }
+        }
+ else {
+          logger.warn("Received an unexecpted response {}",StringUtils.substringAfter(message,"RESULT "));
+        }
+      }
+    }
+ else {
+      logger.warn("Did not receive an answer from the IRtrans device - Parsing is skipped");
+    }
+  }
+ else {
+    logger.warn("Invalid command {} for Item {} - Transmission is skipped",commandAsString,itemName);
+  }
+  return false;
+}

@@ -26,9 +26,13 @@
     if (StringUtils.isBlank(password)) {
       throw new ConfigurationException("mysql:password","The SQL password is missing. Attempting to connect without password. To specify a password configure the sql:password parameter in openhab.cfg.");
     }
-    String errorThresholdString=(String)config.get("reconnectCnt");
-    if (StringUtils.isNotBlank(errorThresholdString)) {
-      errReconnectThreshold=Integer.parseInt(errorThresholdString);
+    String tmpString=(String)config.get("reconnectCnt");
+    if (StringUtils.isNotBlank(tmpString)) {
+      errReconnectThreshold=Integer.parseInt(tmpString);
+    }
+    tmpString=(String)config.get("waitTimeout");
+    if (StringUtils.isNotBlank(tmpString)) {
+      waitTimeout=Integer.parseInt(tmpString);
     }
     disconnectFromDatabase();
     connectToDatabase();

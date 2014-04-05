@@ -1,0 +1,58 @@
+{
+  ByteBuffer byteBuffer=ByteBuffer.allocate(44 + 210 + 1);
+  byteBuffer.position(1);
+  byteBuffer.put((byte)0);
+  byteBuffer.put((byte)0);
+  byteBuffer.put((byte)0);
+  byteBuffer.putShort((short)0);
+  try {
+    byte[] byteSequence=sequence.getBytes("ASCII");
+    byteBuffer.put((byte)(byteSequence.length));
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.debug("An exception occurred while encoding a bytebuffer");
+  }
+  byteBuffer.put((byte)frequency);
+  byte modeFlags=0;
+  if (startBit)   modeFlags=(byte)(modeFlags | 1);
+  if (repeatStartBit)   modeFlags=(byte)(modeFlags | 2);
+  if (rc5)   modeFlags=(byte)(modeFlags | 4);
+  if (rc6)   modeFlags=(byte)(modeFlags | 8);
+  byteBuffer.put(modeFlags);
+  for (int i=0; i < pulsePairs.size(); i++) {
+    byteBuffer.putShort((short)Math.round(pulsePairs.get(i).Pause / 8));
+  }
+  for (int i=pulsePairs.size(); i <= 7; i++) {
+    byteBuffer.putShort((short)0);
+  }
+  for (int i=0; i < pulsePairs.size(); i++) {
+    byteBuffer.putShort((short)Math.round(pulsePairs.get(i).Pulse / 8));
+  }
+  for (int i=pulsePairs.size(); i <= 7; i++) {
+    byteBuffer.putShort((short)0);
+  }
+  byteBuffer.put((byte)pulsePairs.size());
+  byte repeat=(byte)0;
+  repeat=(byte)numberOfRepeats;
+  if (frameLength > 0) {
+    repeat=(byte)(repeat | 128);
+  }
+  byteBuffer.put(repeat);
+  if ((repeat & 128) == 128) {
+    byteBuffer.put((byte)frameLength);
+  }
+ else {
+    byteBuffer.put((byte)pause);
+  }
+  try {
+    byteBuffer.put(sequence.getBytes("ASCII"));
+  }
+ catch (  UnsupportedEncodingException e) {
+  }
+  byteBuffer.put((byte)((char)13));
+  byteBuffer.flip();
+  byteBuffer.position(0);
+  byteBuffer.put((byte)(byteBuffer.limit() - 1));
+  byteBuffer.position(0);
+  return byteBuffer;
+}

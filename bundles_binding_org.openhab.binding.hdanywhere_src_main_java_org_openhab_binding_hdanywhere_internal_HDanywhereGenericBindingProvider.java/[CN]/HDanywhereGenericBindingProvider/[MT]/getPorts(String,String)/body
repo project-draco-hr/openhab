@@ -1,0 +1,14 @@
+{
+  List<Integer> ports=new ArrayList<Integer>();
+  HDanywhereBindingConfig aConfig=(HDanywhereBindingConfig)bindingConfigs.get(itemName);
+  Iterator<HDanywhereBindingConfigElement> iterator=aConfig.iterator();
+  while (iterator.hasNext()) {
+    HDanywhereBindingConfigElement anElement=iterator.next();
+    if (anElement.getHost().equals(host)) {
+      if (!ports.contains(anElement.getPort())) {
+        ports.add(anElement.getPort());
+      }
+    }
+  }
+  return ports;
+}

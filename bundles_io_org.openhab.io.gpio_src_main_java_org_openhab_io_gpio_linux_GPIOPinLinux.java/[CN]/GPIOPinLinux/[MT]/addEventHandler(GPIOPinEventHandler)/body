@@ -1,0 +1,31 @@
+{
+  if (eventHandler == null) {
+    throw new IllegalArgumentException("Unsupported argument for 'eventHandler' parameter (null)");
+  }
+  try {
+    if (pinLock.writeLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        if (edgePath == null) {
+          throw new IOException("Interrupts aren't supported for this pin");
+        }
+        if (!eventHandlers.add(eventHandler)) {
+          throw new IllegalArgumentException("The event handler is already registered");
+        }
+        if (eventListenerThread == null) {
+          eventListenerThread=new EventListener(this);
+          eventListenerThread.setName("openHAB GPIO event listener (pin " + pinNumber + ")");
+          eventListenerThread.start();
+        }
+      }
+  finally {
+        pinLock.writeLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Write GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for write GPIO pin lock");
+  }
+}

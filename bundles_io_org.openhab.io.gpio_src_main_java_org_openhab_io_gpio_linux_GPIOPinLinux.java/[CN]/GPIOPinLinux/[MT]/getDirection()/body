@@ -1,0 +1,43 @@
+{
+  String direction;
+  try {
+    if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        if (directionPath == null) {
+          throw new IOException("The pin doesn't support 'get direction' operation");
+        }
+        direction=Files.readAllLines(directionPath,DEFAULT_ENCODING).get(0);
+      }
+  finally {
+        pinLock.readLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+  }
+  if (direction.compareToIgnoreCase("in") == 0) {
+    return GPIOPin.DIRECTION_IN;
+  }
+ else {
+    if (direction.compareToIgnoreCase("out") == 0) {
+      return GPIOPin.DIRECTION_OUT;
+    }
+ else {
+      if (direction.compareToIgnoreCase("high") == 0) {
+        return GPIOPin.DIRECTION_OUT_HIGH;
+      }
+ else {
+        if (direction.compareToIgnoreCase("low") == 0) {
+          return GPIOPin.DIRECTION_OUT_LOW;
+        }
+ else {
+          throw new IOException("Unsupported 'direction' value (" + direction + ")");
+        }
+      }
+    }
+  }
+}

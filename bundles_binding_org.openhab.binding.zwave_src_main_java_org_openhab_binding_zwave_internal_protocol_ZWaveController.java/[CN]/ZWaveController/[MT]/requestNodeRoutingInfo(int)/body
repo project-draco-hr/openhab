@@ -1,0 +1,7 @@
+{
+  logger.debug("NODE {}: Request routing info",nodeId);
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.GetRoutingInfo,SerialMessageType.Request,SerialMessageClass.GetRoutingInfo,SerialMessagePriority.High);
+  byte[] newPayload={(byte)nodeId,(byte)0,(byte)0,(byte)3};
+  newMessage.setMessagePayload(newPayload);
+  this.enqueue(newMessage);
+}

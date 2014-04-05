@@ -1,38 +1,38 @@
 {
   logger.trace("Handle Message Get Node ProtocolInfo Response");
   int nodeId=lastSentMessage.getMessagePayloadByte(0);
-  logger.debug("ProtocolInfo for Node = " + nodeId);
+  logger.debug("NODE {}: ProtocolInfo",nodeId);
   ZWaveNode node=this.zwaveNodes.get(nodeId);
   boolean listening=(incomingMessage.getMessagePayloadByte(0) & 0x80) != 0 ? true : false;
   boolean routing=(incomingMessage.getMessagePayloadByte(0) & 0x40) != 0 ? true : false;
   int version=(incomingMessage.getMessagePayloadByte(0) & 0x07) + 1;
   boolean frequentlyListening=(incomingMessage.getMessagePayloadByte(1) & 0x60) != 0 ? true : false;
-  logger.debug("Listening = " + listening);
-  logger.debug("Routing = " + routing);
-  logger.debug("Version = " + version);
-  logger.debug("fLIRS = " + frequentlyListening);
+  logger.debug("NODE {}: Listening = {}",nodeId,listening);
+  logger.debug("NODE {}: Routing = {}",nodeId,routing);
+  logger.debug("NODE {}: Version = {}",nodeId,version);
+  logger.debug("NODE {}: fLIRS = {}",nodeId,frequentlyListening);
   node.setListening(listening);
   node.setRouting(routing);
   node.setVersion(version);
   node.setFrequentlyListening(frequentlyListening);
   Basic basic=Basic.getBasic(incomingMessage.getMessagePayloadByte(3));
   if (basic == null) {
-    logger.error(String.format("Basic device class 0x%02x not found",incomingMessage.getMessagePayloadByte(3)));
+    logger.error(String.format("NODE %d: Basic device class 0x%02x not found",nodeId,incomingMessage.getMessagePayloadByte(3)));
     return;
   }
-  logger.debug(String.format("Basic = %s 0x%02x",basic.getLabel(),basic.getKey()));
+  logger.debug(String.format("NODE %d: Basic = %s 0x%02x",nodeId,basic.getLabel(),basic.getKey()));
   Generic generic=Generic.getGeneric(incomingMessage.getMessagePayloadByte(4));
   if (generic == null) {
-    logger.error(String.format("Generic device class 0x%02x not found",incomingMessage.getMessagePayloadByte(4)));
+    logger.error(String.format("NODE %d: Generic device class 0x%02x not found",nodeId,incomingMessage.getMessagePayloadByte(4)));
     return;
   }
-  logger.debug(String.format("Generic = %s 0x%02x",generic.getLabel(),generic.getKey()));
+  logger.debug(String.format("NODE %d: Generic = %s 0x%02x",nodeId,generic.getLabel(),generic.getKey()));
   Specific specific=Specific.getSpecific(generic,incomingMessage.getMessagePayloadByte(5));
   if (specific == null) {
-    logger.error(String.format("Specific device class 0x%02x not found",incomingMessage.getMessagePayloadByte(5)));
+    logger.error(String.format("NODE %d: Specific device class 0x%02x not found",nodeId,incomingMessage.getMessagePayloadByte(5)));
     return;
   }
-  logger.debug(String.format("Specific = %s 0x%02x",specific.getLabel(),specific.getKey()));
+  logger.debug(String.format("NODE %d: Specific = %s 0x%02x",nodeId,specific.getLabel(),specific.getKey()));
   ZWaveDeviceClass deviceClass=node.getDeviceClass();
   deviceClass.setBasicDeviceClass(basic);
   deviceClass.setGenericDeviceClass(generic);

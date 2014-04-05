@@ -1,0 +1,15 @@
+{
+  String valueString=(String)config.get(key);
+  int value=0;
+  if (!StringUtils.isEmpty(valueString)) {
+    try {
+      value=Integer.parseInt(valueString);
+      return value;
+    }
+ catch (    NumberFormatException e) {
+      setProperlyConfigured(false);
+      throw new ConfigurationException(key,"Can't parse number");
+    }
+  }
+  return null;
+}

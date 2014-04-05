@@ -1,0 +1,15 @@
+{
+  final DeviceListRequestStub request=createRequest("/devicelist.json");
+  final DeviceListResponse response=request.execute();
+  assertFalse(response.isError());
+  assertEquals("http://api.netatmo.net/api/devicelist?access_token=" + ACCESS_TOKEN,request.getQuery());
+  assertEquals("ok",response.getStatus());
+  final List<Device> devices=response.getDevices();
+  final List<Module> modules=response.getModules();
+  assertEquals(1,devices.size());
+  assertEquals(1,modules.size());
+  final Device device=devices.get(0);
+  final Module module=modules.get(0);
+  assertTrue(device.isPublicData());
+  assertTrue(module.isPublicData());
+}

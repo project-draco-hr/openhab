@@ -2,9 +2,9 @@
 synchronized (stream) {
     File file=new File(this.versionedFolderName,String.format("node%d.xml",nodeId));
     BufferedReader reader=null;
-    logger.debug("Deserializing node {} from file {}",nodeId,file.getPath());
+    logger.debug("NODE {}: Deserializing from file {}",nodeId,file.getPath());
     if (!file.exists()) {
-      logger.debug("Deserializing from file {} failed, file does not exist.",file.getPath());
+      logger.debug("NODE {}: Deserializing from file {} failed, file does not exist.",nodeId,file.getPath());
       return null;
     }
     try {
@@ -12,7 +12,7 @@ synchronized (stream) {
       return (ZWaveNode)stream.fromXML(reader);
     }
  catch (    IOException e) {
-      logger.error("There was an error reading the node config from a file: {}",e.getMessage());
+      logger.error("NODE {}: There was an error reading the node config from a file: {}",nodeId,e.getMessage());
     }
  finally {
       if (reader != null)       try {

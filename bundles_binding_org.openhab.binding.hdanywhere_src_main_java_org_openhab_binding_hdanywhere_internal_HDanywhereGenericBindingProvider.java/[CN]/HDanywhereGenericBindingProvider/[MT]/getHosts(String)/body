@@ -1,0 +1,14 @@
+{
+  List<String> hosts=new ArrayList<String>();
+  for (  String anItem : bindingConfigs.keySet()) {
+    HDanywhereBindingConfig aConfig=(HDanywhereBindingConfig)bindingConfigs.get(anItem);
+    Iterator<HDanywhereBindingConfigElement> iterator=aConfig.iterator();
+    while (iterator.hasNext()) {
+      HDanywhereBindingConfigElement anElement=iterator.next();
+      if (!hosts.contains(anElement.getHost())) {
+        hosts.add(anElement.getHost());
+      }
+    }
+  }
+  return hosts;
+}

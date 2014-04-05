@@ -10,7 +10,13 @@
     }
     if (theEntry != null) {
       SonosZonePlayer coordinator=sonosBinding.getCoordinatorForZonePlayer(this);
-      coordinator.setCurrentURI(theEntry);
+      coordinator.addURIToQueue(theEntry);
+      if (stateMap != null && isConfigured()) {
+        StateVariableValue firstTrackNumberEnqueued=stateMap.get("FirstTrackNumberEnqueued");
+        if (firstTrackNumberEnqueued != null) {
+          coordinator.seek("TRACK_NR",firstTrackNumberEnqueued.getValue().toString());
+        }
+      }
       coordinator.play();
       return true;
     }

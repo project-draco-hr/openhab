@@ -1,43 +1,54 @@
 {
   logger.trace("Handle Message Application Update Request");
   int nodeId=incomingMessage.getMessagePayloadByte(1);
-  logger.trace("Application Update Request from Node " + nodeId);
+  logger.trace("NODE {}: Application Update Request from Node ",nodeId);
   UpdateState updateState=UpdateState.getUpdateState(incomingMessage.getMessagePayloadByte(0));
 switch (updateState) {
 case NODE_INFO_RECEIVED:
-    logger.debug("Application update request, node information received.");
-  int length=incomingMessage.getMessagePayloadByte(2);
-ZWaveNode node=getNode(nodeId);
-node.resetResendCount();
-for (int i=6; i < length + 3; i++) {
-int data=incomingMessage.getMessagePayloadByte(i);
-if (data == 0xef) {
-break;
-}
-logger.debug(String.format("Adding command class 0x%02X to the list of supported command classes.",data));
-ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,this);
-if (commandClass != null) node.addCommandClass(commandClass);
-}
-node.advanceNodeStage(NodeStage.MANSPEC01);
+    ZWaveNode node=getNode(nodeId);
+  if (node.getNodeStage() == NodeStage.DONE) {
+    logger.debug("NODE {}: Application update request, requesting node state.",nodeId);
+    node.setNodeStage(NodeStage.DYNAMIC);
+    node.advanceNodeStage(NodeStage.DONE);
+  }
+ else {
+    logger.debug("NODE {}: Application update request, node information received.",nodeId);
+    int length=incomingMessage.getMessagePayloadByte(2);
+    node.resetResendCount();
+    for (int i=6; i < length + 3; i++) {
+      int data=incomingMessage.getMessagePayloadByte(i);
+      if (data == 0xef) {
+        break;
+      }
+      logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",nodeId,data));
+      ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,this);
+      if (commandClass != null)       node.addCommandClass(commandClass);
+    }
+    node.advanceNodeStage(NodeStage.MANSPEC01);
+  }
 if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+  notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
+  transactionCompleted.release();
+  logger.trace("NODE {}: Released. Transaction completed permit count -> {}",nodeId,transactionCompleted.availablePermits());
+}
+ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
+if (wakeUp != null) {
+wakeUp.setAwake(true);
 }
 break;
 case NODE_INFO_REQ_FAILED:
-logger.debug("Application update request, Node Info Request Failed, re-request node info.");
+logger.debug("NODE {}: Application update request, Node Info Request Failed, re-request node info.",nodeId);
 SerialMessage requestInfoMessage=this.lastSentMessage;
 if (requestInfoMessage.getMessageClass() != SerialMessageClass.RequestNodeInfo) {
-logger.warn("Got application update request without node info request, ignoring.");
+logger.warn("NODE {}: Got application update request without node info request, ignoring.",nodeId);
 return;
 }
 if (--requestInfoMessage.attempts >= 0) {
-logger.error("Got Node Info Request Failed while sending this serial message. Requeueing");
+logger.error("NODE {}: Got Node Info Request Failed while sending this serial message. Requeueing",nodeId);
 this.enqueue(requestInfoMessage);
 }
  else {
-logger.warn("Node Info Request Failed 3x. Discarding message: {}",lastSentMessage.toString());
+logger.warn("NODE {}: Node Info Request Failed 3x. Discarding message: {}",nodeId,lastSentMessage.toString());
 }
 transactionCompleted.release();
 break;

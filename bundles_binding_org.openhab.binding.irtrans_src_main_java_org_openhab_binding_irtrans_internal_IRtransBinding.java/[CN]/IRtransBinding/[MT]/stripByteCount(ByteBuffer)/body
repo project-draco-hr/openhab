@@ -1,0 +1,13 @@
+{
+  Pattern RESPONSE_PATTERN=Pattern.compile("..(\\d{5}) (.*)");
+  String message=null;
+  String response=new String(byteBuffer.array(),0,byteBuffer.limit());
+  response=StringUtils.chomp(response);
+  Matcher matcher=RESPONSE_PATTERN.matcher(response);
+  if (matcher.matches()) {
+    String byteCountAsString=matcher.group(1);
+    int byteCount=Integer.parseInt(byteCountAsString);
+    message=matcher.group(2);
+  }
+  return message;
+}

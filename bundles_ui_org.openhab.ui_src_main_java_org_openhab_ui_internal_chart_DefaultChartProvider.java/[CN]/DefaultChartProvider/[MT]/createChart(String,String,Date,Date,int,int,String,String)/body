@@ -19,8 +19,11 @@
   chart.getStyleManager().setDatePattern(pattern);
   chart.getStyleManager().setAxisTickLabelsFont(new Font("SansSerif",Font.PLAIN,11));
   chart.getStyleManager().setChartPadding(5);
-  chart.getStyleManager().setLegendBackgroundColor(Color.LIGHT_GRAY);
-  chart.getStyleManager().setChartBackgroundColor(Color.LIGHT_GRAY);
+  chart.getStyleManager().setPlotBackgroundColor(new Color(254,254,254));
+  chart.getStyleManager().setLegendBackgroundColor(new Color(224,224,224,160));
+  chart.getStyleManager().setChartBackgroundColor(new Color(224,224,224,224));
+  chart.getStyleManager().setLegendFont(new Font("SansSerif",Font.PLAIN,10));
+  chart.getStyleManager().setLegendSeriesLineLength(10);
   chart.getStyleManager().setXAxisMin(startTime.getTime());
   chart.getStyleManager().setXAxisMax(endTime.getTime());
   persistenceService=null;
@@ -28,7 +31,8 @@
     persistenceService=getPersistenceServices().get(service);
   }
  else {
-    persistenceService=getPersistenceServices().entrySet().iterator().next().getValue();
+    Set<Entry<String,QueryablePersistenceService>> serviceEntry=getPersistenceServices().entrySet();
+    if (serviceEntry != null && serviceEntry.size() != 0)     persistenceService=serviceEntry.iterator().next().getValue();
   }
   if (persistenceService == null) {
     throw new IllegalArgumentException("Persistence service not found '" + service + "'.");
