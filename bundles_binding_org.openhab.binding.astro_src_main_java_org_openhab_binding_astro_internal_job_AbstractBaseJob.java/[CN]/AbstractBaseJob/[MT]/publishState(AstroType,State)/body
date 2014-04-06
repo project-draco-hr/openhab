@@ -1,0 +1,14 @@
+{
+  AstroContext context=AstroContext.getInstance();
+  for (  AstroBindingProvider provider : context.getProviders()) {
+    for (    String itemName : provider.getItemNames()) {
+      AstroBindingConfig config=provider.getBindingFor(itemName);
+      if (config != null && config.getType() == publishType) {
+        context.getEventPublisher().postUpdate(itemName,state);
+        if (state.getClass() == OnOffType.class) {
+          context.getEventPublisher().postUpdate(itemName,OnOffType.OFF);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  AstroConfig config=AstroContext.getInstance().getConfig();
+  AstroCalculator calc=new AstroCalculator();
+  SunPosition sunPosition=calc.getSunPosition(Calendar.getInstance(),config.getLatitude(),config.getLongitude());
+  publishState(AstroType.AZIMUTH,createDecimalType(sunPosition.getAzimuth()));
+  publishState(AstroType.ELEVATION,createDecimalType(sunPosition.getElevation()));
+}

@@ -1,0 +1,11 @@
+{
+  String jobName=job.getSimpleName();
+  if (System.currentTimeMillis() < calendar.getTimeInMillis()) {
+    Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startAt(calendar.getTime()).build();
+    schedule(jobName,job,trigger);
+    logger.debug("Scheduled {} for {}",jobName,sdf.format(calendar.getTime()));
+  }
+ else {
+    logger.debug("Skipping {} for today, starttime is in the past",jobName);
+  }
+}
