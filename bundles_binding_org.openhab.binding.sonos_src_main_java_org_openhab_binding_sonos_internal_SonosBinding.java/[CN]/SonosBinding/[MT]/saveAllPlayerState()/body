@@ -1,0 +1,15 @@
+{
+synchronized (this) {
+    sonosSavedGroupState=new ArrayList<SonosZoneGroup>();
+    for (    SonosZoneGroup group : getSonosZoneGroups()) {
+      sonosSavedGroupState.add((SonosZoneGroup)group.clone());
+    }
+    for (    SonosZoneGroup group : sonosSavedGroupState) {
+      for (      String playerName : group.getMembers()) {
+        SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
+        player.saveState();
+      }
+    }
+    return true;
+  }
+}
