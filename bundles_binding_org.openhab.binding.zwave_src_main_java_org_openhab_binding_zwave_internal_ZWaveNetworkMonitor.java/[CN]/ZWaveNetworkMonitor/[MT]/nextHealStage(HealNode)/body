@@ -1,6 +1,7 @@
 {
   if (healing.state == HealState.FAILED)   return;
   healing.lastChange=Calendar.getInstance().getTime();
+  pingNodeTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD + 20000;
   healing.retryCnt++;
   if (healing.retryCnt >= HEAL_MAX_RETRIES) {
     logger.debug("NODE {}: Network heal has exceeded maximum retries",healing.nodeId);
