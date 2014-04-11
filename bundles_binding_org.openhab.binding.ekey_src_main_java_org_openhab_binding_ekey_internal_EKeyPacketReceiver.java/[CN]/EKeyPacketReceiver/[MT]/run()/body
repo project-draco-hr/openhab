@@ -1,0 +1,38 @@
+{
+  running=true;
+  if (socket == null)   throw new IllegalStateException("Cannot access socket. You must call" + " call initializeListener(..) first!");
+  byte[] lastpacket=null;
+  DatagramPacket packet=new DatagramPacket(new byte[buffersize],buffersize);
+  while (running) {
+    ekeypacket=null;
+    packet.setData(new byte[buffersize]);
+    try {
+      socket.receive(packet);
+    }
+ catch (    IOException e1) {
+      e1.printStackTrace();
+    }
+    if (destIp == null || packet.getAddress().equals(destIp)) {
+      lastpacket=packet.getData();
+      try {
+switch (mode) {
+case UniformPacket.tHOME:
+          ekeypacket=new HomePacket(deliminator,lastpacket);
+        break;
+case UniformPacket.tMULTI:
+      ekeypacket=new MultiPacket(deliminator,lastpacket);
+    break;
+default :
+  ekeypacket=new RarePacket(lastpacket);
+break;
+}
+}
+ catch (IllegalArgumentException e) {
+log.error("Error parsing packet",e);
+}
+}
+if (ekeypacket != null) listener.publishUpdate(ekeypacket);
+ else log.debug("Received a packet that does not match the mode\n" + "you specified in the 'openhab.cfg'!");
+}
+log.debug("eKey Listener stopped!");
+}

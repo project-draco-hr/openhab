@@ -1,0 +1,18 @@
+{
+  for (  EKeyBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      Object value=EKeyBindingConfig.getValueOfInterest(ekeyRecord,provider.getItemInterest(itemName));
+      if (value == null)       logger.error("The interest '" + provider.getItemInterest(itemName).toString() + "' that you specified for the item '"+ itemName+ "' is not provided by the packet mode "+ "which is defined in the openhab.cfg.\nPlease change the mode on your eKey controller"+ "and your config file or avoid using this type of interest");
+      Class<? extends Item> itemType=provider.getItemType(itemName);
+      if (itemType.isAssignableFrom(NumberItem.class)) {
+        if (value instanceof Integer)         eventPublisher.postUpdate(itemName,DecimalType.valueOf(value.toString()));
+ else         logger.error("Your NumberItem cannot take values of type String!");
+      }
+ else       if (itemType.isAssignableFrom(StringItem.class)) {
+        if (value instanceof String)         eventPublisher.postUpdate(itemName,StringType.valueOf((String)value));
+ else         if (value instanceof Integer)         eventPublisher.postUpdate(itemName,StringType.valueOf(value.toString()));
+      }
+    }
+  }
+  if (ekeyRecord != null)   logger.info("new packet arrived: " + ekeyRecord.toString());
+}
