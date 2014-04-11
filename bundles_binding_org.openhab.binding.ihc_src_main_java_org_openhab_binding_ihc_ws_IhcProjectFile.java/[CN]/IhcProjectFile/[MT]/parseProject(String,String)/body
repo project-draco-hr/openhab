@@ -1,0 +1,17 @@
+{
+  try {
+    DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    Document doc=db.parse(new File(filePath));
+    return parseProject(doc,dumpResourcesToFile);
+  }
+ catch (  ParserConfigurationException e) {
+    throw new IhcExecption(e);
+  }
+catch (  SAXException e) {
+    throw new IhcExecption(e);
+  }
+catch (  IOException e) {
+    throw new IhcExecption(e);
+  }
+}

@@ -1,0 +1,88 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (itemType == NumberItem.class) {
+    if (value.getClass() == WSFloatingPointValue.class) {
+      double d=((WSFloatingPointValue)value).getFloatingPointValue();
+      BigDecimal bd=new BigDecimal(d).setScale(2,RoundingMode.HALF_EVEN);
+      state=new DecimalType(bd);
+    }
+ else     if (value.getClass() == WSBooleanValue.class) {
+      state=new DecimalType(((WSBooleanValue)value).isValue() ? 1 : 0);
+    }
+ else     if (value.getClass() == WSIntegerValue.class) {
+      state=new DecimalType(((WSIntegerValue)value).getInteger());
+    }
+ else     if (value.getClass() == WSTimerValue.class) {
+      state=new DecimalType(((WSTimerValue)value).getMilliseconds());
+    }
+ else     if (value.getClass() == WSEnumValue.class) {
+      state=new DecimalType(((WSEnumValue)value).getEnumValueID());
+    }
+ else     if (value.getClass() == WSWeekdayValue.class) {
+      state=new DecimalType(((WSWeekdayValue)value).getWeekdayNumber());
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+    }
+  }
+ else   if (itemType == DimmerItem.class) {
+    if (value.getClass() == WSIntegerValue.class) {
+      state=new PercentType(((WSIntegerValue)value).getInteger());
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+    }
+  }
+ else   if (itemType == SwitchItem.class) {
+    if (value.getClass() == WSBooleanValue.class) {
+      if (((WSBooleanValue)value).isValue()) {
+        state=OnOffType.ON;
+      }
+ else {
+        state=OnOffType.OFF;
+      }
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to SwitchItem");
+    }
+  }
+ else   if (itemType == ContactItem.class) {
+    if (value.getClass() == WSBooleanValue.class) {
+      if (((WSBooleanValue)value).isValue()) {
+        state=OpenClosedType.OPEN;
+      }
+ else {
+        state=OpenClosedType.CLOSED;
+      }
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to ContactItem");
+    }
+  }
+ else   if (itemType == DateTimeItem.class) {
+    if (value.getClass() == WSDateValue.class) {
+      Calendar cal=WSDateTimeToCalendar((WSDateValue)value,null);
+      state=new DateTimeType(cal);
+    }
+ else     if (value.getClass() == WSTimeValue.class) {
+      Calendar cal=WSDateTimeToCalendar(null,(WSTimeValue)value);
+      state=new DateTimeType(cal);
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to DateTimeItem");
+    }
+  }
+ else   if (itemType == StringItem.class) {
+    if (value.getClass() == WSEnumValue.class) {
+      state=new StringType(((WSEnumValue)value).getEnumName());
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to StringItem");
+    }
+  }
+ else   if (itemType == RollershutterItem.class) {
+    if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
+ else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+  }
+  return state;
+}

@@ -1,0 +1,67 @@
+{
+  if (provider.isItemConfigured(itemName)) {
+    try {
+      if (registryLock.writeLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+        try {
+          GPIOPin gpioPin=(GPIOPin)registry.get(itemName);
+          if (gpioPin != null) {
+            if (gpioPin.getPinNumber() != provider.getPinNumber(itemName)) {
+              deleteItem(itemName);
+              newItem(provider,itemName);
+            }
+ else {
+              int newActiveLow=provider.getActiveLow(itemName);
+              int currentDirection=gpioPin.getDirection();
+              int newDirection=provider.getDirection(itemName);
+              if (newActiveLow != gpioPin.getActiveLow()) {
+                gpioPin.setActiveLow(newActiveLow);
+              }
+              if (newDirection != currentDirection) {
+                if (currentDirection == GPIOPin.DIRECTION_IN) {
+                  gpioPin.removeEventHandler(this);
+                }
+                gpioPin.setDirection(newDirection);
+                if (newDirection == GPIOPin.DIRECTION_IN) {
+                  gpioPin.addEventHandler(this);
+                }
+              }
+              if (newDirection == GPIOPin.DIRECTION_IN) {
+                long currentDebounceInterval=gpioPin.getDebounceInterval();
+                long defaultDebounceInterval=gpio.getDefaultDebounceInterval();
+                long newDebounceInterval=provider.getDebounceInterval(itemName);
+                if (newDebounceInterval != GPIOBindingProvider.DEBOUNCEINTERVAL_UNDEFINED) {
+                  if (newDebounceInterval != currentDebounceInterval) {
+                    gpioPin.setDebounceInterval(newDebounceInterval);
+                  }
+                }
+ else {
+                  if (currentDebounceInterval != defaultDebounceInterval) {
+                    gpioPin.setDebounceInterval(defaultDebounceInterval);
+                  }
+                }
+              }
+            }
+          }
+ else {
+            newItem(provider,itemName);
+          }
+        }
+ catch (        Exception e) {
+          logger.error("Error occured while changing backend object for item " + itemName + ", exception: "+ e.getMessage());
+        }
+ finally {
+          registryLock.writeLock().unlock();
+        }
+      }
+ else {
+        logger.error("Item " + itemName + " hasn't been changed, timeout expired while waiting for registry lock");
+      }
+    }
+ catch (    InterruptedException e) {
+      logger.error("Item " + itemName + " hasn't been changed, thread was interrupted while waiting for registry lock");
+    }
+  }
+ else {
+    deleteItem(itemName);
+  }
+}

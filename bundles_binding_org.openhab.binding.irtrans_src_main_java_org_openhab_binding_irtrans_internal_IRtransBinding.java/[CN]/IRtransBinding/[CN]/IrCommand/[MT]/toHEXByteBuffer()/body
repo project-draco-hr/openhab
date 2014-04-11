@@ -1,0 +1,15 @@
+{
+  byte hexDigit[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+  ByteBuffer byteBuffer=toByteBuffer();
+  byte[] toConvert=new byte[byteBuffer.limit()];
+  byteBuffer.get(toConvert,0,byteBuffer.limit());
+  byte[] converted=new byte[toConvert.length * 2];
+  for (int k=0; k < toConvert.length - 1; k++) {
+    converted[2 * k]=hexDigit[(toConvert[k] >> 4) & 0x0f];
+    converted[2 * k + 1]=hexDigit[toConvert[k] & 0x0f];
+  }
+  ByteBuffer convertedBuffer=ByteBuffer.allocate(converted.length);
+  convertedBuffer.put(converted);
+  convertedBuffer.flip();
+  return convertedBuffer;
+}

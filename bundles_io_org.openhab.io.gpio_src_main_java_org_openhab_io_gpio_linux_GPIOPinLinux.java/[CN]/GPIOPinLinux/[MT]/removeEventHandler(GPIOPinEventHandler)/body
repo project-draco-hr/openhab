@@ -1,0 +1,27 @@
+{
+  if (eventHandler == null) {
+    throw new IllegalArgumentException("Unsupported argument for 'eventHandler' parameter (null)");
+  }
+  try {
+    if (pinLock.writeLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        if (!eventHandlers.remove(eventHandler)) {
+          throw new IllegalArgumentException("The event handler isn't registered");
+        }
+        if (eventHandlers.isEmpty()) {
+          eventListenerThread.interrupt();
+          eventListenerThread=null;
+        }
+      }
+  finally {
+        pinLock.writeLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Write GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for write GPIO pin lock");
+  }
+}

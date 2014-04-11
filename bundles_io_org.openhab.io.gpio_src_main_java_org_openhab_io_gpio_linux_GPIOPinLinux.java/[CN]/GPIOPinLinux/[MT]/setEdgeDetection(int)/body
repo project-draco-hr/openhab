@@ -1,0 +1,38 @@
+{
+  String newEdgeDetection;
+switch (edgeDetection) {
+case GPIOPin.EDGEDETECTION_NONE:
+    newEdgeDetection="none";
+  break;
+case GPIOPin.EDGEDETECTION_RISING:
+newEdgeDetection="rising";
+break;
+case GPIOPin.EDGEDETECTION_FALLING:
+newEdgeDetection="falling";
+break;
+case GPIOPin.EDGEDETECTION_BOTH:
+newEdgeDetection="both";
+break;
+default :
+throw new IllegalArgumentException("Unsupported argument for 'edge detection' parameter (" + edgeDetection + ")");
+}
+try {
+if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+try {
+if (edgePath == null) {
+throw new IOException("The pin doesn't support 'set edge detection' operation");
+}
+Files.write(edgePath,newEdgeDetection.getBytes());
+}
+  finally {
+pinLock.readLock().unlock();
+}
+}
+ else {
+throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+}
+}
+ catch (InterruptedException e) {
+throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+}
+}

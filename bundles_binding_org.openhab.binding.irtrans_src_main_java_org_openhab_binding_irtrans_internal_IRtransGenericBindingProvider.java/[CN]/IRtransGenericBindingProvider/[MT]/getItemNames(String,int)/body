@@ -1,0 +1,15 @@
+{
+  List<String> items=new ArrayList<String>();
+  for (  String itemName : bindingConfigs.keySet()) {
+    IRtransBindingConfig aConfig=(IRtransBindingConfig)bindingConfigs.get(itemName);
+    for (    Command aCommand : aConfig.keySet()) {
+      IRtransBindingConfigElement anElement=(IRtransBindingConfigElement)aConfig.get(aCommand);
+      if (anElement.getHost().equals(host) && anElement.getPort() == Integer.toString(port)) {
+        if (!items.contains(itemName)) {
+          items.add(itemName);
+        }
+      }
+    }
+  }
+  return items;
+}

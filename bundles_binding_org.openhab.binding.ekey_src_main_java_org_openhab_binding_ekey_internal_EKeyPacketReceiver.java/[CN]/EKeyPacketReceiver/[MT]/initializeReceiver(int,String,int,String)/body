@@ -1,0 +1,18 @@
+{
+  this.mode=mode;
+  if (senderAddress != "")   try {
+    destIp=InetAddress.getByName(senderAddress);
+  }
+ catch (  UnknownHostException e1) {
+    e1.printStackTrace();
+  }
+ else   destIp=null;
+  if (deliminator != null)   this.deliminator=deliminator;
+  if (socket != null)   socket.disconnect();
+  try {
+    socket=new DatagramSocket(port);
+  }
+ catch (  SocketException e) {
+    e.printStackTrace();
+  }
+}

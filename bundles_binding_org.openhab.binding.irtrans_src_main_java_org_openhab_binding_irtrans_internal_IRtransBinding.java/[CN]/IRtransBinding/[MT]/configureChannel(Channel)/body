@@ -1,0 +1,35 @@
+{
+  String putInASCIImode="ASCI";
+  ByteBuffer byteBuffer=ByteBuffer.allocate(4);
+  try {
+    byteBuffer.put(putInASCIImode.getBytes("ASCII"));
+    writeBuffer(byteBuffer,channel,false,timeOut);
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("An exception occurred while configurting the IRtrans device: {}",e.getMessage());
+  }
+  String getFirmwareVersion="Aver" + (char)13;
+  ByteBuffer response=null;
+  byteBuffer=ByteBuffer.allocate(5);
+  try {
+    byteBuffer.put(getFirmwareVersion.getBytes("ASCII"));
+    response=writeBuffer(byteBuffer,channel,true,timeOut);
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("An exception occurred while configurting the IRtrans device: {}",e.getMessage());
+  }
+  if (response != null) {
+    String message=stripByteCount(response);
+    if (message != null) {
+      if (message.contains("VERSION")) {
+        logger.info("Found an IRtrans device with firmware {}",message);
+      }
+ else {
+        logger.warn("Received some non-compliant garbage ({})",message);
+      }
+    }
+  }
+ else {
+    logger.warn("Did not receive an answer from the IRtrans device - Parsing is skipped");
+  }
+}

@@ -1,0 +1,9 @@
+{
+  openConnection(url);
+  super.setCookies(cookies);
+  setRequestProperty("SOAPAction","getState");
+  String response=sendQuery(emptyQuery);
+  WSControllerState controllerState=new WSControllerState();
+  controllerState.encodeData(response);
+  return controllerState;
+}
