@@ -1,0 +1,11 @@
+{
+  Map<String,WithingsBindingConfig> bindings=new HashMap<>();
+  for (  WithingsBindingProvider provider : this.providers) {
+    Collection<String> itemNames=provider.getItemNames();
+    for (    String itemName : itemNames) {
+      WithingsBindingConfig config=provider.getItemConfig(itemName);
+      bindings.put(itemName,config);
+    }
+  }
+  return bindings;
+}

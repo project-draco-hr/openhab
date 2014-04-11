@@ -1,0 +1,14 @@
+{
+  HttpURLConnection httpURLConnection;
+  httpURLConnection=(HttpURLConnection)new URL(signedUrl).openConnection();
+  httpURLConnection.connect();
+  int responseCode=httpURLConnection.getResponseCode();
+  if (responseCode != HttpURLConnection.HTTP_OK) {
+    throw new WithingsConnectionException("Illegal response code: " + responseCode);
+  }
+  InputStream inputStream=httpURLConnection.getInputStream();
+  Reader reader=new InputStreamReader(inputStream,"UTF-8");
+  JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
+  reader.close();
+  return jsonObject;
+}

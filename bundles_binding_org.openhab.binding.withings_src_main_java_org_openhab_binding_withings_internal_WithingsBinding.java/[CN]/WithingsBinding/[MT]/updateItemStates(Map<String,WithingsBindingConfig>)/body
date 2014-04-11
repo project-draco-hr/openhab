@@ -1,0 +1,18 @@
+{
+  try {
+    WithingsApiClient client=this.withingsAuthenticator.getClient();
+    List<MeasureGroup> measures=client.getMeasures();
+    if (measures == null || measures.isEmpty()) {
+      logger.info("No new measures found since the last update.");
+      return;
+    }
+    for (    Entry<String,WithingsBindingConfig> withingBinding : withingsBindings.entrySet()) {
+      WithingsBindingConfig withingsBindingConfig=withingBinding.getValue();
+      String itemName=withingBinding.getKey();
+      updateItemState(itemName,withingsBindingConfig,measures);
+    }
+  }
+ catch (  OAuthException|WithingsConnectionException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+}

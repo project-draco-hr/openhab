@@ -1,15 +1,12 @@
 {
-  try {
-    sendRequest();
-    for (    WithingsBindingProvider provider : this.providers) {
-      Collection<String> itemNames=provider.getItemNames();
-      for (      String itemName : itemNames) {
-        WithingsBindingConfig config=provider.getItemConfig(itemName);
-        logger.info(config.toString());
-      }
-    }
+  Map<String,WithingsBindingConfig> withingsBindings=getWithingsBindings();
+  if (withingsBindings.isEmpty()) {
+    logger.info("No item -> withings binding found. Skipping data refresh.");
+    return;
   }
- catch (  OAuthMessageSignerException|OAuthExpectationFailedException|OAuthCommunicationException|IOException ex) {
-    ex.printStackTrace();
+  if (!this.withingsAuthenticator.isAuthenticated()) {
+    logger.info("Withings binding is not authenticated. Skipping data refresh.");
+    return;
   }
+  updateItemStates(withingsBindings);
 }
