@@ -1,0 +1,31 @@
+{
+  final StringBuilder response=new StringBuilder();
+  final Socket socket=new Socket();
+  try {
+    socket.connect(new InetSocketAddress(hostname,port),timeout);
+    final InputStreamReader in=new InputStreamReader(socket.getInputStream(),US_ASCII);
+    final OutputStreamWriter out=new OutputStreamWriter(socket.getOutputStream(),US_ASCII);
+    logger.debug(">> {}",msg);
+    out.write(msg);
+    out.write(0);
+    out.flush();
+    int l;
+    while ((l=in.read()) > 0) {
+      response.append((char)l);
+    }
+  }
+ catch (  final IOException e) {
+    logger.error("Failed to connect to neohub [host '{}' port '{}' timeout '{}']",new Object[]{hostname,port,timeout});
+    logger.debug("Failed to connect to neohub.",e);
+    return null;
+  }
+ finally {
+    IOUtils.closeQuietly(socket);
+  }
+  final String responseStr=response.toString();
+  logger.debug("<< {}",responseStr);
+  if (handler != null) {
+    return handler.onResponse(responseStr);
+  }
+ else   return null;
+}

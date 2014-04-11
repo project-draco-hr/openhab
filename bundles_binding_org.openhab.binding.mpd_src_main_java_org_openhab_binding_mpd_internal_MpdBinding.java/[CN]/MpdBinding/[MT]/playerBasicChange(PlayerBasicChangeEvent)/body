@@ -1,19 +1,5 @@
 {
   String playerId=findPlayerId(pbce.getSource());
-  if (PlayerChangeEvent.PLAYER_STARTED == pbce.getId()) {
-    String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.PLAY);
-    for (    String itemName : itemNames) {
-      if (StringUtils.isNotBlank(itemName)) {
-        eventPublisher.postUpdate(itemName,OnOffType.ON);
-      }
-    }
-  }
- else   if (PlayerChangeEvent.PLAYER_PAUSED == pbce.getId() || PlayerChangeEvent.PLAYER_STOPPED == pbce.getId()) {
-    String[] itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.STOP);
-    for (    String itemName : itemNames) {
-      if (StringUtils.isNotBlank(itemName)) {
-        eventPublisher.postUpdate(itemName,OnOffType.OFF);
-      }
-    }
-  }
+  determineSongChange(playerId);
+  determinePlayStateChange(playerId);
 }

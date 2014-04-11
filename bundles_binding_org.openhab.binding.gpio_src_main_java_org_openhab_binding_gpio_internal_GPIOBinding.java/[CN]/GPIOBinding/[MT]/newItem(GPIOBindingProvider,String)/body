@@ -1,0 +1,56 @@
+{
+  try {
+    int direction;
+    GPIOPin gpioPin=gpio.reservePin(provider.getPinNumber(itemName));
+    gpioPin.setActiveLow(provider.getActiveLow(itemName));
+    direction=provider.getDirection(itemName);
+    gpioPin.setDirection(direction);
+    gpioPin.setEdgeDetection(GPIOPin.EDGEDETECTION_BOTH);
+    if (direction == GPIOPin.DIRECTION_IN) {
+      long debounceInterval=provider.getDebounceInterval(itemName);
+      if (debounceInterval != GPIOBindingProvider.DEBOUNCEINTERVAL_UNDEFINED) {
+        gpioPin.setDebounceInterval(debounceInterval);
+      }
+    }
+    try {
+      if (registryLock.writeLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+        try {
+          registry.put(itemName,gpioPin);
+        }
+  finally {
+          registryLock.writeLock().unlock();
+        }
+      }
+ else {
+        logger.error("Item " + itemName + " hasn't been inserted into the registry, timeout expired while waiting for registry lock");
+        return;
+      }
+    }
+ catch (    InterruptedException e) {
+      logger.error("Item " + itemName + " hasn't been inserted into the registry, thread was interrupted while waiting for registry lock");
+      return;
+    }
+    if (direction == GPIOPin.DIRECTION_IN) {
+      if (gpioPin.getValue() == GPIOPin.VALUE_HIGH) {
+        eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+      }
+ else {
+        eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+      }
+    }
+ else {
+      if (gpioPin.getValue() == GPIOPin.VALUE_HIGH) {
+        eventPublisher.postUpdate(itemName,OnOffType.ON);
+      }
+ else {
+        eventPublisher.postUpdate(itemName,OnOffType.OFF);
+      }
+    }
+    if (direction == GPIOPin.DIRECTION_IN) {
+      gpioPin.addEventHandler(this);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error occured while creating backend object for item " + itemName + ", exception: "+ e.getMessage());
+  }
+}

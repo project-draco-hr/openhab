@@ -1,0 +1,24 @@
+{
+  mwiCache.clear();
+  for (  FreeswitchBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
+      if (config.getType() == FreeswitchBindingType.MESSAGE_WAITING) {
+        String account=config.getArgument();
+        if (!mwiCache.containsKey(account) && clientValid()) {
+          EslMessage msg=inboudClient.sendSyncApiCommand("vm_boxcount",account);
+          if (msg.getBodyLines().size() == 1) {
+            try {
+              int messages=Integer.parseInt(msg.getBodyLines().get(0));
+              mwiCache.put(account,new MWIModel(messages > 0,messages));
+              updateMessageWaitingItem(config);
+            }
+ catch (            Exception e) {
+              logger.error("Could not parse messages",e);
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  String uuid=getHeader(event,UUID);
+  logger.debug("Adding Call with uuid " + uuid);
+  Channel channel=new Channel(event);
+  if (eventCache.containsKey(uuid))   return;
+  eventCache.put(uuid,channel);
+  itemMap.put(uuid,new LinkedList<FreeswitchBindingConfig>());
+  CallType call=channel.getCall();
+  logger.debug("new call to : {} from : {}",call.getDestNum(),call.getOrigNum());
+  for (  FreeswitchBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
+      if (config.getType() == FreeswitchBindingType.ACTIVE) {
+        if ((config.filtered() && matchCall(channel,config.getArgument())) || (!config.filtered() && isInboundCall(channel))) {
+          itemMap.get(uuid).add(config);
+          newCallItemUpdate(config,channel);
+        }
+      }
+    }
+  }
+}

@@ -23,13 +23,13 @@
       cmdString=cmdString.trim();
     }
     receive(client);
-    sendLine(client,password);
+    send(client,password);
     receive(client);
-    sendLine(client,cmdString);
+    send(client,cmdString);
     Thread.sleep(1000L);
     client.disconnect();
   }
  catch (  Exception e) {
-    logger.warn("Could not send command",e.toString());
+    logger.warn("Error processing command",e);
   }
 }

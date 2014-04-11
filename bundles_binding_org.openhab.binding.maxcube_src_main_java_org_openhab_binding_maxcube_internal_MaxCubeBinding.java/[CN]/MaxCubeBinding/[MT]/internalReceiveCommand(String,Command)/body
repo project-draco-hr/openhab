@@ -3,17 +3,38 @@
   String serialNumber=null;
   for (  MaxCubeBindingProvider provider : providers) {
     serialNumber=provider.getSerialNumber(itemName);
-    if (serialNumber.equals(null))     continue;
+    if (serialNumber.equals(null)) {
+      continue;
+    }
     Device device=findDevice(serialNumber,devices);
     if (device == null) {
       logger.debug("Cannot send command to device with serial number {}, device not listed.",serialNumber);
       continue;
     }
     String rfAddress=device.getRFAddress();
+    String commandString=null;
     if (command instanceof DecimalType) {
       DecimalType decimalType=(DecimalType)command;
       S_Command cmd=new S_Command(rfAddress,device.getRoomId(),decimalType.doubleValue());
-      String commandString=cmd.getCommandString();
+      commandString=cmd.getCommandString();
+    }
+ else     if (command instanceof StringType) {
+      String commandContent=command.toString().trim().toUpperCase();
+      ThermostatModeType commandThermoType=null;
+      if (commandContent.contentEquals(ThermostatModeType.AUTOMATIC.toString())) {
+        commandThermoType=ThermostatModeType.AUTOMATIC;
+      }
+ else       if (commandContent.contentEquals(ThermostatModeType.BOOST.toString())) {
+        commandThermoType=ThermostatModeType.BOOST;
+      }
+ else {
+        logger.debug("Only updates to AUTOMATIC & BOOST supported, received value ;'{}'",commandContent);
+        continue;
+      }
+      S_Command cmd=new S_Command(rfAddress,device.getRoomId(),commandThermoType);
+      commandString=cmd.getCommandString();
+    }
+    if (commandString != null) {
       Socket socket=null;
       try {
         socket=new Socket(ip,port);
@@ -31,6 +52,9 @@ catch (      IOException e) {
         logger.debug(Utils.getStackTrace(e));
       }
       logger.debug("Command Sent to {}",ip);
+    }
+ else {
+      logger.debug("Null Command not sent to {}",ip);
     }
   }
 }

@@ -1,0 +1,38 @@
+{
+  String newDirection;
+switch (direction) {
+case GPIOPin.DIRECTION_IN:
+    newDirection="in";
+  break;
+case GPIOPin.DIRECTION_OUT:
+newDirection="out";
+break;
+case GPIOPin.DIRECTION_OUT_HIGH:
+newDirection="high";
+break;
+case GPIOPin.DIRECTION_OUT_LOW:
+newDirection="low";
+break;
+default :
+throw new IllegalArgumentException("Unsupported argument for 'direction' parameter (" + direction + ")");
+}
+try {
+if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+try {
+if (directionPath == null) {
+throw new IOException("The pin doesn't support 'set direction' operation");
+}
+Files.write(directionPath,newDirection.getBytes());
+}
+  finally {
+pinLock.readLock().unlock();
+}
+}
+ else {
+throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+}
+}
+ catch (InterruptedException e) {
+throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+}
+}

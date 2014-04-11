@@ -1,0 +1,21 @@
+{
+  if ((value != GPIOPin.VALUE_LOW) && (value != GPIOPin.VALUE_HIGH)) {
+    throw new IllegalArgumentException("Unsupported argument for 'value' parameter (" + value + ")");
+  }
+  try {
+    if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+      try {
+        Files.write(valuePath,value.toString().getBytes());
+      }
+  finally {
+        pinLock.readLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+  }
+}

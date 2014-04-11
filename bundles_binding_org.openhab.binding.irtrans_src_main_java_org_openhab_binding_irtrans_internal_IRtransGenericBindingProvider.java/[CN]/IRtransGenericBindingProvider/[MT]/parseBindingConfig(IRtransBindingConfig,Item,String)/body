@@ -1,0 +1,53 @@
+{
+  String commandAsString=null;
+  String host=null;
+  String port=null;
+  String led=null;
+  String remote=null;
+  String irCommand=null;
+  Leds ledType=Leds.DEFAULT;
+  if (bindingConfig != null) {
+    Matcher actionMatcher=ACTION_CONFIG_PATTERN.matcher(bindingConfig);
+    Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
+    if ((!actionMatcher.matches() && !statusMatcher.matches())) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of five [config=" + statusMatcher.pattern()+ "] or six parts [config="+ actionMatcher.pattern()+ "]");
+    }
+ else {
+      if (actionMatcher.matches()) {
+        commandAsString=actionMatcher.group(1);
+        host=actionMatcher.group(2);
+        port=actionMatcher.group(3);
+        led=actionMatcher.group(4);
+        remote=actionMatcher.group(5);
+        irCommand=actionMatcher.group(6);
+      }
+ else       if (statusMatcher.matches()) {
+        host=statusMatcher.group(1);
+        port=statusMatcher.group(2);
+        led=statusMatcher.group(3);
+        remote=statusMatcher.group(4);
+        irCommand=statusMatcher.group(5);
+      }
+      if (led.equals("*")) {
+        ledType=Leds.ALL;
+      }
+ else {
+        ledType=Leds.valueOf(led);
+      }
+      IRtransBindingConfigElement newElement=new IRtransBindingConfigElement(host,port,ledType,remote,irCommand,item.getAcceptedDataTypes());
+      Command command=null;
+      if (commandAsString == null) {
+        NumberItem dummy=new NumberItem(Integer.toString(counter));
+        command=createCommandFromString(dummy,Integer.toString(counter));
+        counter++;
+        config.put(command,newElement);
+      }
+ else {
+        command=createCommandFromString(item,commandAsString);
+        config.put(command,newElement);
+      }
+      config.put(command,newElement);
+    }
+  }
+ else   return;
+}

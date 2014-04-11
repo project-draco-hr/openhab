@@ -1,0 +1,25 @@
+{
+  logger.trace("updated() is called!");
+  if (config != null) {
+    startWatchdog();
+    port=DEFAULT_PORT;
+    host=(String)config.get("host");
+    password=(String)config.get("password");
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString))     port=Integer.parseInt(portString);
+    eventCache=new LinkedHashMap<String,Channel>();
+    mwiCache=new HashMap<String,FreeswitchBinding.MWIModel>();
+    itemMap=new LinkedHashMap<String,LinkedList<FreeswitchBindingConfig>>();
+    try {
+      connect();
+    }
+ catch (    InboundConnectionFailure e) {
+      logger.error("Could not connect to freeswitch server",e);
+      disconnect();
+    }
+  }
+ else {
+    stopWatchdog();
+    disconnect();
+  }
+}
