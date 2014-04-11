@@ -6,11 +6,12 @@
       return;
     }
     logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
-    String tmp=provider.getTVCommand(itemName,command.toString());
-    if (tmp == null) {
-      if (command instanceof HSBType) {
-        tmp=provider.getTVCommand(itemName,"HSB");
-      }
+    String tmp=null;
+    if (command instanceof HSBType) {
+      tmp=provider.getTVCommand(itemName,"HSB");
+    }
+ else {
+      tmp=provider.getTVCommand(itemName,command.toString());
     }
     if (tmp == null) {
       logger.warn("Unrecognized command \"" + command.toString() + "\"");
@@ -23,10 +24,38 @@
         return;
       }
       String key=commandlist[1];
-      sendTVCommand(key,"192.168.0.100:1925");
+      sendTVCommand(key,ip + ":" + port);
     }
  else     if (tmp.contains("ambilight")) {
-      setAmbilightColor("192.168.0.100:1925",command,null);
+      String[] commandlist=tmp.split("\\.");
+      String[] layer=command2LayerString(tmp);
+      if (commandlist.length < 2) {
+        logger.warn("wrong number of arguments for ambilight command \"" + tmp + "\". Should be at least ambilight.color, ambilight.mode.X, etc...");
+        return;
+      }
+      if (commandlist[1].contains("color")) {
+        setAmbilightColor(ip + ":" + port,command,layer);
+      }
+ else       if (commandlist[1].contains("mode")) {
+        if (commandlist.length != 3) {
+          logger.warn("wrong number of arguments for ambilight.mode command \"" + tmp + "\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert");
+          return;
+        }
+        setAmbilightMode(commandlist[2],ip + ":" + port);
+      }
+    }
+ else     if (tmp.contains("volume")) {
+      String[] commandlist=tmp.split("\\.");
+      if (commandlist.length < 2) {
+        logger.warn("wrong number of arguments for volume command \"" + tmp + "\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert");
+        return;
+      }
+      if (commandlist[1].contains("increase")) {
+        addtoTVVolume(1,ip + ":" + port);
+      }
+ else       if (commandlist[1].contains("decrease")) {
+        addtoTVVolume(-1,ip + ":" + port);
+      }
     }
  else {
       logger.warn("Unrecognized tv command \"" + tmp + "\". Only key.X or ambilight[].X is supported");

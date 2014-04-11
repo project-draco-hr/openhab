@@ -1,0 +1,10 @@
+{
+  volumeConfig conf=getTVVolume(host);
+  String url="http://" + host + "/1/audio/volume";
+  StringBuilder content=new StringBuilder();
+  int newvalue=conf.volume + inc;
+  newvalue=Math.min(newvalue,conf.max);
+  newvalue=Math.max(newvalue,conf.min);
+  content.append("{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}");
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+}

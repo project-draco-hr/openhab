@@ -2,14 +2,16 @@
   String bindingConfig=StringUtils.substringBefore(bindingConfigs,",");
   String bindingConfigTail=StringUtils.substringAfter(bindingConfigs,",");
   String[] configParts=bindingConfig.trim().split(":");
-  if (configParts.length != 3) {
-    throw new BindingConfigParseException("JointSpace binding must contain two parts separated by ':', e.g. <type>:<command>:<button>");
+  if (configParts.length != 2) {
+    throw new BindingConfigParseException("JointSpace binding must contain two parts separated by ':', e.g. <command>:<tvcommand>");
   }
   String command=StringUtils.trim(configParts[0]);
-  String device_id=StringUtils.trim(configParts[1]);
-  String tvCommand=StringUtils.trim(configParts[2]);
+  String tvCommand=StringUtils.trim(configParts[1]);
   if (StringUtils.isNotBlank(bindingConfigTail)) {
     parseBindingConfig(bindingConfigTail,config);
   }
   config.put(command,tvCommand);
+  if (command.contains("POLL")) {
+    pollItemsConfig.put(command,tvCommand);
+  }
 }

@@ -1,3 +1,11 @@
 {
   logger.debug("execute() method is called!");
+  for (  JointSpaceBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String tvcommand=provider.getTVCommand(itemName,"POLL");
+      if (tvcommand != null) {
+        updateItemState(itemName,tvcommand);
+      }
+    }
+  }
 }

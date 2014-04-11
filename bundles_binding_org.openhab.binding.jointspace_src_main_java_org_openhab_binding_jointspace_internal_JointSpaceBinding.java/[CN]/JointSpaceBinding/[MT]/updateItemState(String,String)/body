@@ -1,0 +1,19 @@
+{
+  if (tvCommand.contains("ambilight")) {
+    String[] layer=command2LayerString(tvCommand);
+    HSBType state=new HSBType(getAmbilightColor(ip + ":" + port,layer));
+    eventPublisher.postUpdate(itemName,state);
+  }
+ else   if (tvCommand.contains("volume")) {
+    if (tvCommand.contains("mute")) {
+      eventPublisher.postUpdate(itemName,getTVVolume(ip + ":" + port).mute ? OnOffType.ON : OnOffType.OFF);
+    }
+ else {
+      eventPublisher.postUpdate(itemName,new DecimalType(getTVVolume(ip + ":" + port).volume));
+    }
+  }
+ else {
+    logger.error("Could not parse item state\"" + tvCommand + "\" for polling");
+    return;
+  }
+}

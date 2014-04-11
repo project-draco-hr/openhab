@@ -1,8 +1,16 @@
 {
   if (config != null) {
-    String refreshIntervalString=(String)config.get("refresh");
+    String refreshIntervalString=(String)config.get("refreshinterval");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String ipString=(String)config.get("ip");
+    if (StringUtils.isNotBlank(ipString)) {
+      ip=ipString;
+    }
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString)) {
+      port=portString;
     }
     setProperlyConfigured(true);
   }
