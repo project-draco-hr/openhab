@@ -1,0 +1,15 @@
+{
+  try {
+    sendRequest();
+    for (    WithingsBindingProvider provider : this.providers) {
+      Collection<String> itemNames=provider.getItemNames();
+      for (      String itemName : itemNames) {
+        WithingsBindingConfig config=provider.getItemConfig(itemName);
+        logger.info(config.toString());
+      }
+    }
+  }
+ catch (  OAuthMessageSignerException|OAuthExpectationFailedException|OAuthCommunicationException|IOException ex) {
+    ex.printStackTrace();
+  }
+}

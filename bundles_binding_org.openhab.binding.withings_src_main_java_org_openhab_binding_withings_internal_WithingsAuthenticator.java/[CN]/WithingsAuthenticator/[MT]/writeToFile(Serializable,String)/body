@@ -1,0 +1,17 @@
+{
+  File file=new File(this.contentDir + File.separator + fileName);
+  try {
+    file.getParentFile().mkdirs();
+    file.createNewFile();
+  }
+ catch (  IOException ex) {
+    logger.error("Could not file: " + ex.getMessage(),ex);
+  }
+  logger.debug("Storing object to file " + file.getAbsolutePath());
+  try (OutputStream out=new FileOutputStream(file);OutputStream buffer=new BufferedOutputStream(out);ObjectOutput output=new ObjectOutputStream(buffer)){
+    output.writeObject(object);
+  }
+ catch (  IOException ex) {
+    logger.error("Could not store file: " + ex.getMessage(),ex);
+  }
+}

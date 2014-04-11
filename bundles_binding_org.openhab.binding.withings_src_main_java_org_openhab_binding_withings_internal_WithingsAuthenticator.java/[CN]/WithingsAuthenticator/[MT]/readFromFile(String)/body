@@ -1,0 +1,17 @@
+{
+  File file=new File(contentDir + File.separator + fileName);
+  if (file.exists()) {
+    logger.debug("Loading object from file " + file.getAbsolutePath());
+    try (InputStream fis=new FileInputStream(file);InputStream buffer=new BufferedInputStream(fis);ObjectInput input=new ObjectInputStream(buffer)){
+      return input.readObject();
+    }
+ catch (    ClassNotFoundException|ClassCastException|IOException ex) {
+      logger.error("Could not load object from file: " + ex.getMessage(),ex);
+      return null;
+    }
+  }
+ else {
+    logger.debug("File does not exists.");
+    return null;
+  }
+}
