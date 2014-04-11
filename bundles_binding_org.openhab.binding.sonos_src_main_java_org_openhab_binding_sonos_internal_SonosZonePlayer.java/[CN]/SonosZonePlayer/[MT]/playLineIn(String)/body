@@ -1,0 +1,10 @@
+{
+  if (!isConfigured) {
+    return false;
+  }
+  SonosZonePlayer coordinator=sonosBinding.getCoordinatorForZonePlayer(this);
+  coordinator.stop();
+  coordinator.setCurrentURI("x-rincon-stream:" + remoteUDN,"");
+  coordinator.setMute("OFF");
+  return coordinator.play();
+}
