@@ -1,0 +1,17 @@
+{
+  String message=stripByteCount(byteBuffer);
+  if (message != null) {
+    if (message.contains("RESULT OK")) {
+      parseOKMessage(itemName,message);
+    }
+    if (message.contains("RCV_HEX")) {
+      parseHexMessage(itemName,message);
+    }
+    if (message.contains("RCV_COM")) {
+      parseIRDBMessage(itemName,message);
+    }
+  }
+ else {
+    logger.warn("Received some non-compliant garbage ({})- Parsing is skipped",byteBuffer.toString());
+  }
+}

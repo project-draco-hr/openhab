@@ -2,8 +2,11 @@
   JobDataMap dataMap=context.getJobDetail().getJobDataMap();
   theStick=(Stick)dataMap.get("Stick");
   if (theStick.isInitialised()) {
+    logger.debug("ProcessMessageJob: Locking the queues");
     theStick.queueLock.lock();
+    logger.debug("ProcessMessageJob: there are {} msg in the receivedQ",theStick.receivedQueue.size());
     Message message=theStick.receivedQueue.poll();
+    logger.debug("ProcessMessageJob: Unlocking the queues");
     theStick.queueLock.unlock();
     if (message != null) {
       PlugwiseDevice target=theStick.getDeviceByMAC(message.getMAC());
@@ -19,6 +22,7 @@
         while (messageIterator.hasNext()) {
           Message aMessage=messageIterator.next();
           if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
+            logger.debug("execute: removing a msg from the senTq: {}",aMessage.toString());
             theStick.sentQueue.remove(aMessage);
             break;
           }

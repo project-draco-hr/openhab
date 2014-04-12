@@ -1,0 +1,25 @@
+{
+  try {
+    conn=(HttpsURLConnection)new URL(url).openConnection();
+  }
+ catch (  MalformedURLException e) {
+    throw new IhcExecption(e);
+  }
+catch (  IOException e) {
+    throw new IhcExecption(e);
+  }
+  conn.setHostnameVerifier(new HostnameVerifier(){
+    @Override public boolean verify(    String arg0,    SSLSession arg1){
+      logger.trace("HostnameVerifier: arg0 = " + arg0);
+      logger.trace("HostnameVerifier: arg1 = " + arg1);
+      return true;
+    }
+  }
+);
+  conn.setUseCaches(false);
+  conn.setDoInput(true);
+  conn.setDoOutput(true);
+  conn.setRequestProperty("accept-charset","UTF-8");
+  conn.setRequestProperty("content-type","text/xml");
+  conn.setConnectTimeout(timeout);
+}

@@ -1,0 +1,37 @@
+{
+  if (properties != null) {
+    String propSysFS=(String)properties.get(SYSFS_VFSTYPE);
+    if (propSysFS != null) {
+      try {
+        if (isFSMounted(SYSFS_VFSTYPE,propSysFS)) {
+          sysFS=propSysFS;
+        }
+ else {
+          logger.error("Configured mount point is invalid, '" + SYSFS_VFSTYPE + "' isn't mounted at '"+ propSysFS+ "'");
+          throw new ConfigurationException(SYSFS_VFSTYPE,"Configured mount point is invalid, '" + SYSFS_VFSTYPE + "' isn't mounted at '"+ propSysFS+ "'");
+        }
+      }
+ catch (      IOException e) {
+        logger.error("Checking whether pseudo file system '" + SYSFS_VFSTYPE + "' is mounted or not failed. "+ "If 'procfs' isn't mounted this error can be omitted. Error: "+ e.getMessage());
+        sysFS=propSysFS;
+      }
+    }
+    String propDebounceInterval=(String)properties.get(PROP_DEBOUNCE_INTERVAL);
+    if (propDebounceInterval != null) {
+      try {
+        long debounceInterval=Long.parseLong(propDebounceInterval);
+        if (debounceInterval >= 0) {
+          defaultDebounceInterval=debounceInterval;
+        }
+ else {
+          logger.error("Configured " + PROP_DEBOUNCE_INTERVAL + " is invalid, must not be negative value");
+          throw new ConfigurationException(PROP_DEBOUNCE_INTERVAL,"Configured " + PROP_DEBOUNCE_INTERVAL + " is invalid, must not be negative value");
+        }
+      }
+ catch (      NumberFormatException e) {
+        logger.error("Configured " + PROP_DEBOUNCE_INTERVAL + " is invalid, must be numeric value");
+        throw new ConfigurationException(PROP_DEBOUNCE_INTERVAL,"Configured " + PROP_DEBOUNCE_INTERVAL + " is invalid, must be numeric value");
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  RemoteSwitch subDevice=null;
+  if (subDeviceType.equals("A")) {
+    logger.debug("{} addSubDevice A for subId {}",LoggerConstants.TFINITSUB,subId);
+    subDevice=factory.createRemoteSwitchA();
+  }
+ else   if (subDeviceType.equals("B")) {
+    logger.debug("{} addSubDevice B for subId {}",LoggerConstants.TFINITSUB,subId);
+    subDevice=factory.createRemoteSwitchB();
+  }
+ else   if (subDeviceType.equals("C")) {
+    logger.debug("{} addSubDevice C for subId {}",LoggerConstants.TFINITSUB,subId);
+    subDevice=factory.createRemoteSwitchC();
+  }
+ else {
+    logger.error("{} unknown sub device type {} for {}",LoggerConstants.TFINITSUB,subDeviceType,subId);
+  }
+  if (subDevice != null) {
+    logger.debug("{} add sub device subId {} for uid {}",LoggerConstants.TFINITSUB,subId,getUid());
+    subDevice.setUid(getUid());
+    subDevice.setSubId(subId);
+    subDevice.init();
+    subDevice.setMbrick(this);
+  }
+}

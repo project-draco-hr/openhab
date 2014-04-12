@@ -1,0 +1,35 @@
+{
+  if (gpio != null) {
+    try {
+      if (registryLock.readLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+        try {
+          GPIOPin gpioPin=(GPIOPin)registry.get(itemName);
+          if (gpioPin != null) {
+            if (command == OnOffType.ON) {
+              gpioPin.setValue(GPIOPin.VALUE_HIGH);
+            }
+ else {
+              gpioPin.setValue(GPIOPin.VALUE_LOW);
+            }
+          }
+        }
+ catch (        IOException e) {
+          logger.error("Error occured while changing pin state for item " + itemName + ", exception: "+ e.getMessage());
+          return;
+        }
+ finally {
+          registryLock.readLock().unlock();
+        }
+      }
+ else {
+        logger.error("Pin state for item " + itemName + " hasn't been changed, timeout expired while waiting for registry lock");
+        return;
+      }
+    }
+ catch (    InterruptedException e) {
+      logger.error("Pin state for item " + itemName + " hasn't been changed, thread was interrupted while waiting for registry lock");
+      return;
+    }
+  }
+  super.internalReceiveCommand(itemName,command);
+}

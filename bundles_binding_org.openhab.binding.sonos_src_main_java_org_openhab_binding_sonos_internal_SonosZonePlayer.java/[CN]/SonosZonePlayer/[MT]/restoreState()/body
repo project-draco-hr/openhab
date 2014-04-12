@@ -1,0 +1,31 @@
+{
+synchronized (this) {
+    if (savedState != null) {
+      setVolume(savedState.volume);
+      if (isCoordinator()) {
+        if (savedState.entry != null) {
+          if (savedState.entry.getUpnpClass().contains("object.container.playlistContainer")) {
+            addURIToQueue(savedState.entry.getRes(),SonosXMLParser.compileMetadataString(savedState.entry),0,true);
+            SonosEntry entry=new SonosEntry("","","","","","","","x-rincon-queue:" + getUdn().getIdentifierString() + "#0");
+            setCurrentURI(entry);
+            setPositionTrack(savedState.track);
+          }
+ else {
+            setCurrentURI(savedState.entry);
+            setPosition(savedState.relTime);
+          }
+          if (savedState.transportState.equals("PLAYING")) {
+            play();
+          }
+ else           if (savedState.transportState.equals("STOPPED")) {
+            stop();
+          }
+ else           if (savedState.transportState.equals("PAUSED_PLAYBACK")) {
+            pause();
+          }
+        }
+      }
+    }
+    return true;
+  }
+}

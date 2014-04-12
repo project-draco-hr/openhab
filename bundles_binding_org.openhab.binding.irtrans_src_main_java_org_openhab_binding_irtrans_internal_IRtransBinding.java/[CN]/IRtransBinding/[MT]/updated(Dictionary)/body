@@ -1,0 +1,18 @@
+{
+  super.updated(config);
+  if (config != null) {
+    String timeOutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(timeOutString)) {
+      timeOut=Integer.parseInt((timeOutString));
+    }
+ else {
+      logger.info("The maximum time out for blocking write operations will be set to the default vaulue of {}",timeOut);
+    }
+  }
+  useAddressMask=false;
+  itemShareChannels=true;
+  bindingShareChannels=true;
+  directionsShareChannels=false;
+  maximumBufferSize=1024;
+  setProperlyConfigured(true);
+}
