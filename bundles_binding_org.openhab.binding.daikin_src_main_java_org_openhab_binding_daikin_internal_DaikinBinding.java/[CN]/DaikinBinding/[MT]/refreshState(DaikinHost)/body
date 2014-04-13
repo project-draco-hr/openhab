@@ -34,7 +34,7 @@ catch (  IOException e) {
     host.setMode(parseMode(results.get(2)));
     host.setFan(parseFan(results.get(4)));
     BigDecimal temp=parseDecimal(results.get(3));
-    if (!host.getMode().equals("Dry") || temp.compareTo(new BigDecimal(32)) <= 0)     host.setTemp(temp);
+    if (!host.getMode().equals(DaikinMode.Dry) || temp.compareTo(new BigDecimal(32)) <= 0)     host.setTemp(temp);
   }
   host.setSwing(parseSwing(results.get(5)));
   host.setTempIn(parseDecimal(results.get(6)));

@@ -1,10 +1,10 @@
 {
   List<NameValuePair> nameValuePairs=new ArrayList<NameValuePair>();
   nameValuePairs.add(new BasicNameValuePair("wON",host.getPower() ? "On" : "Off"));
-  nameValuePairs.add(new BasicNameValuePair("wMODE",host.getMode()));
+  nameValuePairs.add(new BasicNameValuePair("wMODE",host.getMode().getCommand()));
   nameValuePairs.add(new BasicNameValuePair("wTEMP",host.getTemp().setScale(0).toPlainString() + "C"));
-  nameValuePairs.add(new BasicNameValuePair("wFUN",host.getFan()));
-  nameValuePairs.add(new BasicNameValuePair("wSWNG",host.getSwing()));
+  nameValuePairs.add(new BasicNameValuePair("wFUN",host.getFan().getCommand()));
+  nameValuePairs.add(new BasicNameValuePair("wSWNG",host.getSwing().getCommand()));
   nameValuePairs.add(new BasicNameValuePair("wSETd1","Set"));
   String url=String.format("http://%s",host.getHost());
   CloseableHttpClient httpClient=HttpClients.custom().build();
