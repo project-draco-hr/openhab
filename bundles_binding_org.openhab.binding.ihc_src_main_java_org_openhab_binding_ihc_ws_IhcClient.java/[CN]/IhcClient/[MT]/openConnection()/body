@@ -1,0 +1,29 @@
+{
+  logger.debug("Open connection");
+  setConnectionState(ConnectionState.CONNECTING);
+  authenticationService=new IhcAuthenticationService(ip,timeout);
+  WSLoginResult loginResult=authenticationService.authenticate(username,password,"treeview");
+  if (!loginResult.isLoginWasSuccessful()) {
+    setConnectionState(ConnectionState.DISCONNECTED);
+    if (loginResult.isLoginFailedDueToAccountInvalid()) {
+      throw new IhcExecption("login failed because of invalid account");
+    }
+    if (loginResult.isLoginFailedDueToConnectionRestrictions()) {
+      throw new IhcExecption("login failed because of connection restrictions");
+    }
+    if (loginResult.isLoginFailedDueToInsufficientUserRights()) {
+      throw new IhcExecption("login failed because of insufficient user rights");
+    }
+    throw new IhcExecption("login failed because of unknown reason");
+  }
+  logger.debug("Connection successfully opened");
+  cookies=authenticationService.getCookies();
+  resourceInteractionService=new IhcResourceInteractionService(ip);
+  resourceInteractionService.setCookies(cookies);
+  controllerService=new IhcControllerService(ip);
+  controllerService.setCookies(cookies);
+  controllerState=controllerService.getControllerState();
+  loadProject();
+  startIhcListener();
+  setConnectionState(ConnectionState.CONNECTED);
+}

@@ -1,0 +1,31 @@
+{
+  logger.debug("Subscripe resource runtime value notifications");
+  if (ihc != null) {
+    if (ihc.getConnectionState() != ConnectionState.CONNECTED) {
+      logger.debug("Controller is connecting, abort subscripe");
+      return;
+    }
+    List<Integer> resourceIdList=new ArrayList<Integer>();
+    for (    IhcBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        resourceIdList.add(provider.getResourceId(itemName));
+      }
+    }
+    if (resourceIdList.size() > 0) {
+      logger.debug("Enable runtime notfications for {} resources",resourceIdList.size());
+      try {
+        ihc.enableRuntimeValueNotifications(resourceIdList);
+      }
+ catch (      IhcExecption e) {
+        logger.debug("Reconnection request");
+        setReconnectRequest(true);
+      }
+    }
+  }
+ else {
+    logger.warn("Controller is not initialized!");
+    logger.debug("Reconnection request");
+    setReconnectRequest(true);
+  }
+  setValueNotificationRequest(false);
+}
