@@ -1,7 +1,7 @@
 {
   File file=new File(contentDir + File.separator + fileName);
   if (file.exists()) {
-    logger.debug("Loading object from file " + file.getAbsolutePath());
+    logger.debug("Loading object from file '{}'",file.getAbsolutePath());
     try (InputStream fis=new FileInputStream(file);InputStream buffer=new BufferedInputStream(fis);ObjectInput input=new ObjectInputStream(buffer)){
       return input.readObject();
     }
@@ -11,7 +11,7 @@
     }
   }
  else {
-    logger.debug("File does not exists.");
+    logger.debug("File '{}' does not exists.",fileName);
     return null;
   }
 }

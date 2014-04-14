@@ -1,7 +1,7 @@
 {
   try {
     WithingsApiClient client=this.withingsAuthenticator.getClient();
-    List<MeasureGroup> measures=client.getMeasures();
+    List<MeasureGroup> measures=client.getMeasures(lastUpdate);
     if (measures == null || measures.isEmpty()) {
       logger.info("No new measures found since the last update.");
       return;
@@ -11,8 +11,9 @@
       String itemName=withingBinding.getKey();
       updateItemState(itemName,withingsBindingConfig,measures);
     }
+    lastUpdate=now();
   }
  catch (  OAuthException|WithingsConnectionException ex) {
-    logger.error(ex.getMessage(),ex);
+    logger.error("Cannot get Withings measure data: " + ex.getMessage(),ex);
   }
 }

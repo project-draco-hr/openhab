@@ -1,15 +1,15 @@
 {
-  OAuthTokens oAuthTokens=(OAuthTokens)readFromFile(OAUTH_TOKEN_FILE_NAME);
-  String userId=(String)readFromFile(USER_ID_FILE_NAME);
+  OAuthTokens oAuthTokens=(OAuthTokens)readFromFile(FILE_NAME_OAUTH_TOKEN);
+  String userId=(String)readFromFile(FILE_NAME_USER_ID);
   if (oAuthTokens != null) {
     this.consumer=createConsumer();
     this.consumer.setTokenWithSecret(oAuthTokens.token,oAuthTokens.tokenSecret);
     this.consumer.setAdditionalParameters(new HttpParameters());
     this.client=new WithingsApiClient(consumer,userId);
     logger.info("Withings OAuth tokens successfully restored.");
+    logger.info("Withings Binding is ready to work.");
   }
  else {
-    logger.info("Withings binding needs authentication.");
-    logger.info("Execute 'startAuthentication' on OSGi console.");
+    printAuthenticationInfo();
   }
 }

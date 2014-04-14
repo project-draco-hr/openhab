@@ -1,17 +1,3 @@
 {
-  String url=getServiceUrl(MEASURE_ENDPOINT,GET_MEASURES_METHOD);
-  try {
-    JsonObject jsonObject=call(consumer.sign(url));
-    int status=jsonObject.get("status").getAsInt();
-    if (status == 0) {
-      JsonElement body=jsonObject.get("body");
-      return gson.fromJson(body.getAsJsonObject(),MeasureResult.class).measureGroups;
-    }
- else {
-      throw new WithingsConnectionException("Withings API call failed: " + status);
-    }
-  }
- catch (  Exception ex) {
-    throw new WithingsConnectionException("Could not connect to URL: " + ex.getMessage(),ex);
-  }
+  return getMeasures(0);
 }
