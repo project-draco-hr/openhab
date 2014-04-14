@@ -1,5 +1,6 @@
 {
   if (pingNodeTime < System.currentTimeMillis()) {
+    if (zController.getSendQueueLength() > 1)     return;
     pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
     ZWaveNode oldestNode=null;
     for (    ZWaveNode node : zController.getNodes()) {
@@ -32,6 +33,7 @@
       return;
     }
   }
+  if (zController.getSendQueueLength() > 1)   return;
   for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
     HealNode node=entry.getValue();
     if (node.state == HealState.WAITING && node.listening == true) {

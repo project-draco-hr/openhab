@@ -5,7 +5,7 @@
   byte[] payload=serialMessage.getMessagePayload();
   if (payload.length == 0 || (payload[0] & 0xFF) != this.getNode().getNodeId())   return;
   if (payload.length >= 4 && (payload[2] & 0xFF) == this.getCommandClass().getKey() && (payload[3] & 0xFF) == WAKE_UP_NO_MORE_INFORMATION) {
-    logger.debug("Node {} went to sleep",this.getNode().getNodeId());
+    logger.debug("NODE {}: Went to sleep",this.getNode().getNodeId());
     this.setAwake(false);
     return;
   }
