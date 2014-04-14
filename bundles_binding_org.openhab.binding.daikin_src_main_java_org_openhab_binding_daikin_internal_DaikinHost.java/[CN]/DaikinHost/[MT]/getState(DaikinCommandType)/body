@@ -1,0 +1,24 @@
+{
+switch (commandType) {
+case POWER:
+    return getPower() ? OnOffType.ON : OnOffType.OFF;
+case MODE:
+  return new StringType(getMode().getCommand());
+case TEMP:
+return new DecimalType(getTemp());
+case FAN:
+return new StringType(getFan().getCommand());
+case SWING:
+return new StringType(getSwing().getCommand());
+case TEMPIN:
+return new DecimalType(getTempIn());
+case TIMER:
+return new StringType(getTimer().getCommand());
+case TEMPOUT:
+return new DecimalType(getTempOut());
+case HUMIDITYIN:
+return new DecimalType(getHumidityIn());
+default :
+throw new RuntimeException("Unsupported command type: " + commandType);
+}
+}
