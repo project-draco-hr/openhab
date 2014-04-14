@@ -1,0 +1,21 @@
+{
+  String val="";
+  for (int i=0; i < nodes.getLength(); i++) {
+    Element element=(Element)nodes.item(i);
+    Element parent=(Element)nodes.item(i).getParentNode();
+    Element parentParent=(Element)nodes.item(i).getParentNode().getParentNode();
+    String parentName=parent.getAttribute("name");
+    String parentPosition=parent.getAttribute("position");
+    String parentParentName=parentParent.getAttribute("name");
+    String resourceName=element.getAttribute("name");
+    String resourceId=element.getAttribute("id").replace("_","");
+    val+=resourceId;
+    val+=" = " + header;
+    val+=" -> " + parentParentName;
+    val+=" -> " + parentPosition;
+    val+=" -> " + parentName;
+    val+=" -> " + resourceName;
+    val+="\n";
+  }
+  return val;
+}

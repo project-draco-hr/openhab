@@ -1,0 +1,27 @@
+{
+  try {
+    if (registryLock.writeLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+      try {
+        GPIOPin gpioPin=(GPIOPin)registry.remove(itemName);
+        if (gpioPin != null) {
+          try {
+            gpio.releasePin(gpioPin);
+          }
+ catch (          Exception e) {
+            logger.error("Error occured while deleting backend object for item " + itemName + ", exception: "+ e.getMessage());
+          }
+        }
+        eventPublisher.postUpdate(itemName,UnDefType.UNDEF);
+      }
+  finally {
+        registryLock.writeLock().unlock();
+      }
+    }
+ else {
+      logger.error("Item " + itemName + " hasn't been deleted, timeout expired while waiting for registry lock");
+    }
+  }
+ catch (  InterruptedException e) {
+    logger.error("Item " + itemName + " hasn't been deleted, thread was interrupted while waiting for registry lock");
+  }
+}

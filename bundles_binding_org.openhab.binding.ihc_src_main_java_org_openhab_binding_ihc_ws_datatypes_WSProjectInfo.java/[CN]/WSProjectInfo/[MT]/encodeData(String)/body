@@ -1,0 +1,30 @@
+{
+  String value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:visualMinorVersion");
+  setVisualMinorVersion(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:visualMajorVersion");
+  setVisualMajorVersion(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:projectMajorRevision");
+  setProjectMajorRevision(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:projectMinorRevision");
+  setProjectMinorRevision(Integer.parseInt(value));
+  WSDate lastmodified=new WSDate();
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:day");
+  lastmodified.setDay(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:monthWithJanuaryAsOne");
+  lastmodified.setMonthWithJanuaryAsOne(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:hours");
+  lastmodified.setHours(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:minutes");
+  lastmodified.setMinutes(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:seconds");
+  lastmodified.setSeconds(Integer.parseInt(value));
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:lastmodified/ns1:year");
+  lastmodified.setYear(Integer.parseInt(value));
+  setLastmodified(lastmodified);
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:projectNumber");
+  setProjectNumber(value);
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:customerName");
+  setCustomerName(value);
+  value=parseValue(data,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getProjectInfo1/ns1:installerName");
+  setInstallerName(value);
+}

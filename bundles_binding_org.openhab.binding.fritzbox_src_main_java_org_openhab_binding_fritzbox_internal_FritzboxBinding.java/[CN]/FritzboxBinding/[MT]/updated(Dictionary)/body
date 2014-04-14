@@ -7,10 +7,18 @@
         conditionalDeActivate();
         try {
           Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
-          JobDetail job=newJob(ReconnectJob.class).withIdentity("Reconnect","FritzBox").build();
-          CronTrigger trigger=newTrigger().withIdentity("Reconnect","FritzBox").withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
-          sched.scheduleJob(job,trigger);
-          logger.debug("Scheduled a daily reconnection to FritzBox on {}:{}",ip,MONITOR_PORT);
+          JobKey jobKey=jobKey("Reconnect","FritzBox");
+          TriggerKey triggerKey=triggerKey("Reconnect","FritzBox");
+          if (sched.checkExists(jobKey)) {
+            logger.debug("Daily reconnection job already exists");
+          }
+ else {
+            CronScheduleBuilder scheduleBuilder=CronScheduleBuilder.cronSchedule(cronSchedule);
+            JobDetail job=newJob(ReconnectJob.class).withIdentity(jobKey).build();
+            CronTrigger trigger=newTrigger().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
+            sched.scheduleJob(job,trigger);
+            logger.debug("Scheduled a daily reconnection to FritzBox on {}:{}",ip,MONITOR_PORT);
+          }
         }
  catch (        SchedulerException e) {
           logger.warn("Could not create daily reconnection job",e);

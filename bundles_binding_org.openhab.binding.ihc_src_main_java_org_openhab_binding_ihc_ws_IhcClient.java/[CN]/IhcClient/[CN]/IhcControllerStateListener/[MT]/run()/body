@@ -1,0 +1,33 @@
+{
+  logger.debug("IHC controller state listener started");
+  WSControllerState oldState=null;
+  while (!interrupted) {
+    try {
+      if (oldState == null) {
+        oldState=getControllerState();
+        logger.debug("Controller initial state {}",oldState.getState());
+      }
+      logger.trace("Wait new state change notification from controller");
+      WSControllerState currentState=waitStateChangeNotifications(oldState,10);
+      logger.trace("Controller state {}",currentState.getState());
+      if (oldState.getState().equals(currentState.getState()) == false) {
+        logger.info("Controller state change detected ({} -> {})",oldState.getState(),currentState.getState());
+        try {
+          Iterator<IhcEventListener> iterator=eventListeners.iterator();
+          IhcStatusUpdateEvent event=new IhcStatusUpdateEvent(this);
+          while (iterator.hasNext()) {
+            ((IhcEventListener)iterator.next()).statusUpdateReceived(event,currentState);
+          }
+        }
+ catch (        Exception e) {
+          logger.error("Event listener invoking error",e);
+        }
+        oldState.setState(currentState.getState());
+      }
+    }
+ catch (    IhcExecption e) {
+      logger.error("New controller state change notification wait failed...",e);
+      mysleep(1000L);
+    }
+  }
+}

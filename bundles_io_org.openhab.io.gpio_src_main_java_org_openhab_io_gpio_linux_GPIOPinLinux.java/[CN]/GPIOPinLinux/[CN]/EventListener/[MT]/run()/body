@@ -1,0 +1,85 @@
+{
+  int fd=-1;
+  ExecutorService executorService=Executors.newCachedThreadPool();
+  try {
+    int rc;
+    pollfd[] pollfdset={new pollfd()};
+    ByteByReference value=new ByteByReference();
+    NativeLong zero=new NativeLong(0);
+    long lastInterruptTime=0;
+    fd=LibC.INSTANCE.open(pin.valuePath.toString(),LibC.O_RDONLY | LibC.O_NONBLOCK);
+    pollfdset[0].fd=fd;
+    pollfdset[0].events=LibC.POLLPRI;
+    try {
+      LibC.INSTANCE.read(pollfdset[0].fd,value.getPointer(),1);
+    }
+ catch (    LastErrorException e) {
+    }
+    while (!interrupted()) {
+      rc=LibC.INSTANCE.poll(pollfdset,1,POLL_TIMEOUT);
+switch (rc) {
+case 0:
+        continue;
+case 1:
+      if ((pollfdset[0].revents & LibC.POLLPRI) > 0) {
+        long interruptTime=System.currentTimeMillis();
+        long timeDifference=interruptTime - lastInterruptTime;
+        LibC.INSTANCE.lseek(fd,zero,LibC.SEEK_SET);
+        rc=LibC.INSTANCE.read(pollfdset[0].fd,value.getPointer(),1);
+        if (rc == 1) {
+          try {
+            if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+              try {
+                if ((timeDifference > pin.debounceInterval) || (timeDifference < 0)) {
+                  for (                  GPIOPinEventHandler eventHandler : pin.eventHandlers) {
+                    EventHandlerExecutor eventHandlerExecutor=new EventHandlerExecutor(pin,eventHandler,Character.getNumericValue(value.getValue()));
+                    executorService.execute(eventHandlerExecutor);
+                  }
+                  lastInterruptTime=interruptTime;
+                }
+              }
+  finally {
+                pin.pinLock.readLock().unlock();
+              }
+            }
+ else {
+              throw new IOException("Read GPIO pin lock can't be aquired for " + PINLOCK_TIMEOUT + " "+ PINLOCK_TIMEOUT_UNITS.toString());
+            }
+          }
+ catch (          InterruptedException e) {
+            throw new IOException("The thread was interrupted while waiting for read GPIO pin lock");
+          }
+          continue;
+        }
+ else {
+          throw new IOException("Unsupported return value from native 'read' function (" + rc + ")");
+        }
+      }
+    break;
+default :
+  throw new IOException("Unsupported return value from native 'poll' function (" + rc + ")");
+}
+}
+}
+ catch (Exception e) {
+try {
+if (pinLock.readLock().tryLock(PINLOCK_TIMEOUT,PINLOCK_TIMEOUT_UNITS)) {
+try {
+  for (  GPIOPinEventHandler eventHandler : pin.eventHandlers) {
+    EventHandlerExecutor eventHandlerExecutor=new EventHandlerExecutor(pin,eventHandler,e);
+    executorService.execute(eventHandlerExecutor);
+  }
+}
+  finally {
+  pin.pinLock.readLock().unlock();
+}
+}
+}
+ catch (InterruptedException ex) {
+}
+}
+ finally {
+LibC.INSTANCE.close(fd);
+executorService.shutdown();
+}
+}

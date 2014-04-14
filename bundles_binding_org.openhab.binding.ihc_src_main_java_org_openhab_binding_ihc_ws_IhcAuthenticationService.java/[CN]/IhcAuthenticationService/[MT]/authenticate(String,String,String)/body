@@ -1,0 +1,10 @@
+{
+  logger.debug("Open connection");
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + "<soapenv:Body>"+ " <authenticate1 xmlns=\"utcs\">"+ "  <password>%s</password>"+ "  <username>%s</username>"+ "  <application>%s</application>"+ " </authenticate1>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
+  String query=String.format(soapQuery,password,username,application);
+  openConnection(url);
+  String response=sendQuery(query);
+  WSLoginResult loginResult=new WSLoginResult();
+  loginResult.encodeData(response);
+  return loginResult;
+}

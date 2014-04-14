@@ -1,0 +1,5 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soap:Body>"+ " <setResourceValue1 xmlns=\"utcs\">"+ "  <value xmlns:q1=\"utcs.values\" xsi:type=\"q1:WSDateValue\">"+ "   <q1:month>%s</q1:month>"+ "   <q1:year>%s</q1:year>"+ "   <q1:day>%s</q1:day>"+ "  </value>"+ "  <resourceID>%s</resourceID>"+ "  <isValueRuntime>true</isValueRuntime>"+ " </setResourceValue1>"+ "</soap:Body>"+ "</soap:Envelope>";
+  String query=String.format(soapQuery,value.getMonth(),value.getYear(),value.getDay(),value.getResourceID());
+  return doResourceUpdate(query);
+}

@@ -1,0 +1,5 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soap:Body>"+ " <setResourceValue1 xmlns=\"utcs\">"+ "  <value xmlns:q1=\"utcs.values\" xsi:type=\"q1:WSFloatingPointValue\">"+ "   <q1:maximumValue>%s</q1:maximumValue>"+ "   <q1:minimumValue>%s</q1:minimumValue>"+ "   <q1:floatingPointValue>%s</q1:floatingPointValue>"+ "  </value>"+ "  <resourceID>%s</resourceID>"+ "  <isValueRuntime>true</isValueRuntime>"+ " </setResourceValue1>"+ "</soap:Body>"+ "</soap:Envelope>";
+  String query=String.format(soapQuery,value.getMaximumValue(),value.getMinimumValue(),value.getFloatingPointValue(),value.getResourceID());
+  return doResourceUpdate(query);
+}

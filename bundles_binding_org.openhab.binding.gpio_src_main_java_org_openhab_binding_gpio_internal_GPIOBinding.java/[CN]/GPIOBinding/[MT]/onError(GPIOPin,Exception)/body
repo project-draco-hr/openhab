@@ -1,0 +1,23 @@
+{
+  String itemName=null;
+  logger.error("Error occured in pin event processing, exception: " + exception.getMessage());
+  try {
+    if (registryLock.readLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+      try {
+        itemName=(String)registry.getKey(pin);
+      }
+  finally {
+        registryLock.readLock().unlock();
+      }
+    }
+ else {
+      logger.error("Item name can't be determined, timeout expired while waiting for registry lock");
+    }
+  }
+ catch (  InterruptedException e) {
+    logger.error("Item name can't be determined, thread was interrupted while waiting for registry lock");
+  }
+  if (itemName != null) {
+    deleteItem(itemName);
+  }
+}

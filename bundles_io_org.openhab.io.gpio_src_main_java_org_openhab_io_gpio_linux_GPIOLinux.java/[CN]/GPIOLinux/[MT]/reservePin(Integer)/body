@@ -1,0 +1,32 @@
+{
+  final String SYSFS_CLASS_GPIO=sysFS + "/class/gpio/";
+  GPIOPinLinux pin=null;
+  if (sysFS == null) {
+    throw new IOException("Mount point for '" + SYSFS_VFSTYPE + "' isn't configured and can't be determined");
+  }
+  if (pinNumber < 0) {
+    throw new IllegalArgumentException("Unsupported argument for 'pinNumber' parameter (" + pinNumber + ")");
+  }
+  try {
+    if (gpioLock.writeLock().tryLock(GPIOLOCK_TIMEOUT,GPIOLOCK_TIMEOUT_UNITS)) {
+      try {
+        if (gpioRegistry.containsValue(pinNumber)) {
+          throw new IllegalArgumentException("The pin with number '" + pinNumber + "' is already registered");
+        }
+        Files.write(Paths.get(SYSFS_CLASS_GPIO + "export"),pinNumber.toString().getBytes());
+        pin=new GPIOPinLinux(pinNumber,SYSFS_CLASS_GPIO + "gpio" + pinNumber,defaultDebounceInterval);
+        gpioRegistry.put(pin,pinNumber);
+      }
+  finally {
+        gpioLock.writeLock().unlock();
+      }
+    }
+ else {
+      throw new IOException("Write GPIO lock can't be aquired for " + GPIOLOCK_TIMEOUT + " "+ GPIOLOCK_TIMEOUT_UNITS.toString());
+    }
+  }
+ catch (  InterruptedException e) {
+    throw new IOException("The thread was interrupted while waiting for write GPIO lock");
+  }
+  return pin;
+}
