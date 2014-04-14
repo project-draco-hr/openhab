@@ -1,0 +1,10 @@
+{
+  if (value.equals("NONE"))   return BigDecimal.ZERO;
+  try {
+    return new BigDecimal(numberFormat.parse(value).doubleValue());
+  }
+ catch (  java.text.ParseException e) {
+    logger.error("Failed to parse number: {}",value);
+    return BigDecimal.ZERO;
+  }
+}
