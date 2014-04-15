@@ -1,0 +1,44 @@
+{
+  String url=String.format("http://%s/param.csv",host.getHost());
+  CloseableHttpClient httpClient=HttpClients.custom().build();
+  List<String> results=new ArrayList<String>();
+  try {
+    HttpGet httpGet=new HttpGet(url);
+    CloseableHttpResponse httpResponse=httpClient.execute(httpGet);
+    try {
+      InputStream content=httpResponse.getEntity().getContent();
+      BufferedReader reader=new BufferedReader(new InputStreamReader(content));
+      String line;
+      while ((line=reader.readLine()) != null) {
+        if (line != null && line.length() > 0)         results.add(line.substring(0,line.length() - 1));
+      }
+    }
+  finally {
+      httpResponse.close();
+    }
+  }
+ catch (  ClientProtocolException e) {
+    logger.error("Client protocol error attempting to request current state",e);
+    return;
+  }
+catch (  IOException e) {
+    logger.error("IO error attempting to request current state",e);
+    return;
+  }
+  if (!results.get(0).equals("OK")) {
+    logger.error("Bad connection state received: {}",results.get(0));
+    return;
+  }
+  host.setPower(results.get(1).equals("ON"));
+  if (host.getPower()) {
+    host.setMode(parseMode(results.get(2)));
+    host.setFan(parseFan(results.get(4)));
+    BigDecimal temp=parseDecimal(results.get(3));
+    if (!host.getMode().equals(DaikinMode.Dry) || temp.compareTo(new BigDecimal(32)) <= 0)     host.setTemp(temp);
+  }
+  host.setSwing(parseSwing(results.get(5)));
+  host.setTempIn(parseDecimal(results.get(6)));
+  host.setTimer(parseTimer(results.get(7)));
+  host.setTempOut(parseDecimal(results.get(14)));
+  host.setHumidityIn(parseDecimal(results.get(15)));
+}
