@@ -1,0 +1,11 @@
+{
+  byte echoBuf[]=new byte[len];
+  setReceiveThreshold(len);
+  int echoLen=m_CommPort.getInputStream().read(echoBuf,0,len);
+  if (Modbus.debug)   System.out.println("Echo: " + ModbusUtil.toHex(echoBuf,0,echoLen));
+  m_CommPort.disableReceiveThreshold();
+  if (echoLen != len) {
+    if (Modbus.debug)     System.err.println("Error: Transmit echo not received.");
+    throw new IOException("Echo not received.");
+  }
+}

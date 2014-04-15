@@ -1,0 +1,48 @@
+{
+  assertExecutable();
+  try {
+    m_TransactionLock.acquire();
+    if (!m_Connection.isConnected()) {
+      try {
+        m_Connection.connect();
+        m_IO=m_Connection.getModbusTransport();
+      }
+ catch (      Exception ex) {
+        throw new ModbusIOException("Connecting failed.");
+      }
+    }
+    int retryCounter=0;
+    while (retryCounter <= m_Retries) {
+      try {
+        m_Request.setTransactionID(c_TransactionID.increment());
+        m_IO.writeMessage(m_Request);
+        m_Response=m_IO.readResponse();
+        break;
+      }
+ catch (      ModbusIOException ex) {
+        if (retryCounter == m_Retries) {
+          throw new ModbusIOException("Executing transaction failed (tried " + m_Retries + " times)");
+        }
+ else {
+          retryCounter++;
+          continue;
+        }
+      }
+    }
+    if (m_Response instanceof ExceptionResponse) {
+      throw new ModbusSlaveException(((ExceptionResponse)m_Response).getExceptionCode());
+    }
+    if (isReconnecting()) {
+      m_Connection.close();
+    }
+    if (isCheckingValidity()) {
+      checkValidity();
+    }
+  }
+ catch (  InterruptedException ex) {
+    throw new ModbusIOException("Thread acquiring lock was interrupted.");
+  }
+ finally {
+    m_TransactionLock.release();
+  }
+}

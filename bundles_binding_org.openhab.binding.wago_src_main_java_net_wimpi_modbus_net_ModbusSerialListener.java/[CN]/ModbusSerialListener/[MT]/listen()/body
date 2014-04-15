@@ -1,0 +1,33 @@
+{
+  try {
+    m_Listening=true;
+    m_SerialCon.open();
+    ModbusTransport transport=m_SerialCon.getModbusTransport();
+    do {
+      if (m_Listening) {
+        try {
+          ModbusRequest request=transport.readRequest();
+          ModbusResponse response=null;
+          if (ModbusCoupler.getReference().getProcessImage() == null) {
+            response=request.createExceptionResponse(Modbus.ILLEGAL_FUNCTION_EXCEPTION);
+          }
+ else {
+            response=request.createResponse();
+          }
+          if (Modbus.debug)           System.out.println("Request:" + request.getHexMessage());
+          if (Modbus.debug)           System.out.println("Response:" + response.getHexMessage());
+          transport.writeMessage(response);
+          count();
+        }
+ catch (        ModbusIOException ex) {
+          ex.printStackTrace();
+          continue;
+        }
+      }
+    }
+ while (true);
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}

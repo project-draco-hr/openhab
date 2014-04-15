@@ -1,0 +1,68 @@
+{
+  InetAddress addr=null;
+  TCPMasterConnection con=null;
+  ModbusRequest ai_req=null;
+  WriteSingleRegisterRequest ao_req=null;
+  ModbusTransaction ai_trans=null;
+  ModbusTransaction ao_trans=null;
+  int ai_ref=0;
+  int ao_ref=0;
+  int port=Modbus.DEFAULT_PORT;
+  try {
+    if (args.length < 3) {
+      printUsage();
+      System.exit(1);
+    }
+ else {
+      try {
+        String astr=args[0];
+        int idx=astr.indexOf(':');
+        if (idx > 0) {
+          port=Integer.parseInt(astr.substring(idx + 1));
+          astr=astr.substring(0,idx);
+        }
+        addr=InetAddress.getByName(astr);
+        ai_ref=Integer.parseInt(args[1]);
+        ao_ref=Integer.parseInt(args[2]);
+      }
+ catch (      Exception ex) {
+        ex.printStackTrace();
+        printUsage();
+        System.exit(1);
+      }
+    }
+    con=new TCPMasterConnection(addr);
+    con.setPort(port);
+    con.connect();
+    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    ai_req=new ReadInputRegistersRequest(ai_ref,1);
+    ao_req=new WriteSingleRegisterRequest();
+    ao_req.setReference(ao_ref);
+    ai_req.setUnitID(0);
+    ao_req.setUnitID(0);
+    ai_trans=new ModbusTCPTransaction(con);
+    ai_trans.setRequest(ai_req);
+    ao_trans=new ModbusTCPTransaction(con);
+    ao_trans.setRequest(ao_req);
+    SimpleRegister new_out=new SimpleRegister(0);
+    ao_req.setRegister(new_out);
+    int last_out=Integer.MIN_VALUE;
+    do {
+      ai_trans.execute();
+      int new_in=((ReadInputRegistersResponse)ai_trans.getResponse()).getRegister(0).getValue();
+      if (new_in != last_out) {
+        new_out.setValue(new_in);
+        ao_trans.execute();
+        last_out=new_in;
+        if (Modbus.debug)         System.out.println("Updated Register with value from Input Register.");
+      }
+    }
+ while (true);
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+ finally {
+    con.close();
+  }
+}

@@ -1,0 +1,10 @@
+{
+  setByteCount(din.readUnsignedByte());
+  InputRegister[] registers=new InputRegister[getWordCount()];
+  ProcessImageFactory pimf=ModbusCoupler.getReference().getProcessImageFactory();
+  for (int k=0; k < getWordCount(); k++) {
+    registers[k]=pimf.createInputRegister(din.readByte(),din.readByte());
+  }
+  m_Registers=registers;
+  setDataLength(getByteCount() + 1);
+}

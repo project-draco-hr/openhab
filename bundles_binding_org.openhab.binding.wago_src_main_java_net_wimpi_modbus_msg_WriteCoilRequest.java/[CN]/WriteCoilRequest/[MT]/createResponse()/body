@@ -1,0 +1,23 @@
+{
+  WriteCoilResponse response=null;
+  DigitalOut dout=null;
+  ProcessImage procimg=ModbusCoupler.getReference().getProcessImage();
+  try {
+    dout=procimg.getDigitalOut(this.getReference());
+    dout.set(this.getCoil());
+  }
+ catch (  IllegalAddressException iaex) {
+    return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
+  }
+  response=new WriteCoilResponse(this.getReference(),dout.isSet());
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+  }
+ else {
+    response.setHeadless();
+  }
+  response.setUnitID(this.getUnitID());
+  response.setFunctionCode(this.getFunctionCode());
+  return response;
+}

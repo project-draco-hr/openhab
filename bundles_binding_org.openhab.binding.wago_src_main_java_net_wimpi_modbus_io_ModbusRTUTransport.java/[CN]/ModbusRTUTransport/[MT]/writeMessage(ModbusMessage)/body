@@ -1,0 +1,28 @@
+{
+  try {
+    int len;
+synchronized (m_ByteOut) {
+      clearInput();
+      m_ByteOut.reset();
+      msg.setHeadless();
+      msg.writeTo(m_ByteOut);
+      len=m_ByteOut.size();
+      int[] crc=ModbusUtil.calculateCRC(m_ByteOut.getBuffer(),0,len);
+      m_ByteOut.writeByte(crc[0]);
+      m_ByteOut.writeByte(crc[1]);
+      len=m_ByteOut.size();
+      byte buf[]=m_ByteOut.getBuffer();
+      m_OutputStream.write(buf,0,len);
+      m_OutputStream.flush();
+      if (Modbus.debug)       System.out.println("Sent: " + ModbusUtil.toHex(buf,0,len));
+      if (m_Echo) {
+        readEcho(len);
+      }
+      lastRequest=new byte[len];
+      System.arraycopy(buf,0,lastRequest,0,len);
+    }
+  }
+ catch (  Exception ex) {
+    throw new ModbusIOException("I/O failed to write");
+  }
+}

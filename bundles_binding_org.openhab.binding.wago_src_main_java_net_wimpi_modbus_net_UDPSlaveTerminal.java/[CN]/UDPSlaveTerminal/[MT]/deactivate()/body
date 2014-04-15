@@ -1,0 +1,16 @@
+{
+  try {
+    if (m_Active) {
+      m_PacketReceiver.stop();
+      m_Receiver.join();
+      m_PacketSender.stop();
+      m_Sender.join();
+      m_Socket.close();
+      m_ModbusTransport=null;
+      m_Active=false;
+    }
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+}

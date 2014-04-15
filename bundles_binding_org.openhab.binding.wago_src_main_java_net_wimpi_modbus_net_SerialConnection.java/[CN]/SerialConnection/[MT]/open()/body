@@ -1,0 +1,54 @@
+{
+  try {
+    m_PortIdentifyer=CommPortIdentifier.getPortIdentifier(m_Parameters.getPortName());
+  }
+ catch (  NoSuchPortException e) {
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception(e.getMessage());
+  }
+  try {
+    m_SerialPort=(SerialPort)m_PortIdentifyer.open("Modbus Serial Master",30000);
+  }
+ catch (  PortInUseException e) {
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception(e.getMessage());
+  }
+  try {
+    setConnectionParameters();
+  }
+ catch (  Exception e) {
+    m_SerialPort.close();
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw e;
+  }
+  if (Modbus.SERIAL_ENCODING_ASCII.equals(m_Parameters.getEncoding())) {
+    m_Transport=new ModbusASCIITransport();
+  }
+ else   if (Modbus.SERIAL_ENCODING_RTU.equals(m_Parameters.getEncoding())) {
+    m_Transport=new ModbusRTUTransport();
+    setReceiveTimeout(m_Parameters.getReceiveTimeout());
+  }
+ else   if (Modbus.SERIAL_ENCODING_BIN.equals(m_Parameters.getEncoding())) {
+    m_Transport=new ModbusBINTransport();
+  }
+  m_Transport.setEcho(m_Parameters.isEcho());
+  try {
+    m_SerialIn=m_SerialPort.getInputStream();
+    m_Transport.setCommPort(m_SerialPort);
+  }
+ catch (  IOException e) {
+    m_SerialPort.close();
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception("Error opening i/o streams");
+  }
+  try {
+    m_SerialPort.addEventListener(this);
+  }
+ catch (  TooManyListenersException e) {
+    m_SerialPort.close();
+    if (Modbus.debug)     System.out.println(e.getMessage());
+    throw new Exception("too many listeners added");
+  }
+  m_SerialPort.notifyOnBreakInterrupt(true);
+  m_Open=true;
+}

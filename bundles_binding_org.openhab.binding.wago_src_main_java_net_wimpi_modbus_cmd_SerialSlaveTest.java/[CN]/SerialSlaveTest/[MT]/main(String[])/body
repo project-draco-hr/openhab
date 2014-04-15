@@ -1,0 +1,34 @@
+{
+  ModbusSerialListener listener=null;
+  SimpleProcessImage spi=new SimpleProcessImage();
+  String portname=args[0];
+  if (Modbus.debug)   System.out.println("jModbus ModbusSerial Slave");
+  try {
+    spi=new SimpleProcessImage();
+    spi.addDigitalOut(new SimpleDigitalOut(true));
+    spi.addDigitalOut(new SimpleDigitalOut(false));
+    spi.addDigitalIn(new SimpleDigitalIn(false));
+    spi.addDigitalIn(new SimpleDigitalIn(true));
+    spi.addDigitalIn(new SimpleDigitalIn(false));
+    spi.addDigitalIn(new SimpleDigitalIn(true));
+    spi.addRegister(new SimpleRegister(251));
+    spi.addInputRegister(new SimpleInputRegister(45));
+    ModbusCoupler.getReference().setProcessImage(spi);
+    ModbusCoupler.getReference().setMaster(false);
+    ModbusCoupler.getReference().setUnitID(2);
+    SerialParameters params=new SerialParameters();
+    params.setPortName(portname);
+    params.setBaudRate(9600);
+    params.setDatabits(8);
+    params.setParity("None");
+    params.setStopbits(1);
+    params.setEncoding("ascii");
+    params.setEcho(false);
+    if (Modbus.debug)     System.out.println("Encoding [" + params.getEncoding() + "]");
+    listener=new ModbusSerialListener(params);
+    listener.setListening(true);
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+}

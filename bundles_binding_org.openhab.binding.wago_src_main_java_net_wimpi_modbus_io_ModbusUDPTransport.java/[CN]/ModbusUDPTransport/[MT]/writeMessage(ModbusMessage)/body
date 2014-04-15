@@ -1,0 +1,12 @@
+{
+  try {
+synchronized (m_ByteOut) {
+      m_ByteOut.reset();
+      msg.writeTo((DataOutput)m_ByteOut);
+      m_Terminal.sendMessage(m_ByteOut.toByteArray());
+    }
+  }
+ catch (  Exception ex) {
+    throw new ModbusIOException("I/O exception - failed to write.");
+  }
+}

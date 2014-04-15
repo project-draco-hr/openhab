@@ -1,0 +1,12 @@
+{
+  int[] crc={0xFF,0xFF};
+  int nextByte=0;
+  int uIndex;
+  for (int i=offset; i < len && i < data.length; i++) {
+    nextByte=0xFF & ((int)data[i]);
+    uIndex=crc[0] ^ nextByte;
+    crc[0]=crc[1] ^ auchCRCHi[uIndex];
+    crc[1]=auchCRCLo[uIndex];
+  }
+  return crc;
+}

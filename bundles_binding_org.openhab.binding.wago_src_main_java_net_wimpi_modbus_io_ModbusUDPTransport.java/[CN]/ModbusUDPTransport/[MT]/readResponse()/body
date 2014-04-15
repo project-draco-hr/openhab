@@ -1,0 +1,21 @@
+{
+  try {
+    ModbusResponse res=null;
+synchronized (m_ByteIn) {
+      m_ByteIn.reset(m_Terminal.receiveMessage());
+      m_ByteIn.skip(7);
+      int functionCode=m_ByteIn.readUnsignedByte();
+      m_ByteIn.reset();
+      res=ModbusResponse.createModbusResponse(functionCode);
+      res.readFrom(m_ByteIn);
+    }
+    return res;
+  }
+ catch (  InterruptedIOException ioex) {
+    throw new ModbusIOException("Socket timed out.");
+  }
+catch (  Exception ex) {
+    ex.printStackTrace();
+    throw new ModbusIOException("I/O exception - failed to read.");
+  }
+}

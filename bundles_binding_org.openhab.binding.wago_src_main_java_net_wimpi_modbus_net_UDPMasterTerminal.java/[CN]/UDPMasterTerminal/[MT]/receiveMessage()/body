@@ -1,0 +1,9 @@
+{
+  byte[] buffer=new byte[256];
+  DatagramPacket packet=new DatagramPacket(buffer,buffer.length);
+synchronized (m_Socket) {
+    m_Socket.setSoTimeout(m_Timeout);
+    m_Socket.receive(packet);
+  }
+  return buffer;
+}

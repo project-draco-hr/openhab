@@ -1,0 +1,59 @@
+{
+  UDPMasterConnection conn=null;
+  ModbusUDPTransaction trans=null;
+  ReadInputDiscretesRequest req=null;
+  ReadInputDiscretesResponse res=null;
+  InetAddress addr=null;
+  int ref=0;
+  int count=0;
+  int repeat=1;
+  int port=Modbus.DEFAULT_PORT;
+  try {
+    if (args.length < 3) {
+      printUsage();
+      System.exit(1);
+    }
+ else {
+      try {
+        String astr=args[0];
+        int idx=astr.indexOf(':');
+        if (idx > 0) {
+          port=Integer.parseInt(astr.substring(idx + 1));
+          astr=astr.substring(0,idx);
+        }
+        addr=InetAddress.getByName(astr);
+        ref=Integer.parseInt(args[1]);
+        count=Integer.parseInt(args[2]);
+        if (args.length == 4) {
+          repeat=Integer.parseInt(args[3]);
+        }
+      }
+ catch (      Exception ex) {
+        ex.printStackTrace();
+        printUsage();
+        System.exit(1);
+      }
+    }
+    conn=new UDPMasterConnection(addr);
+    conn.setPort(port);
+    conn.connect();
+    req=new ReadInputDiscretesRequest(ref,count);
+    req.setUnitID(0);
+    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    trans=new ModbusUDPTransaction(conn);
+    trans.setRequest(req);
+    int k=0;
+    do {
+      trans.execute();
+      res=(ReadInputDiscretesResponse)trans.getResponse();
+      if (Modbus.debug)       System.out.println("Response: " + res.getHexMessage());
+      System.out.println("Digital Inputs Status=" + res.getDiscretes().toString());
+      k++;
+    }
+ while (k < repeat);
+    conn.close();
+  }
+ catch (  Exception ex) {
+    ex.printStackTrace();
+  }
+}

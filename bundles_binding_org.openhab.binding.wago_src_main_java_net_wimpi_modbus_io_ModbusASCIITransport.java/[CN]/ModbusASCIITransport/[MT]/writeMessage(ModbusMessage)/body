@@ -1,0 +1,23 @@
+{
+  try {
+synchronized (m_ByteOut) {
+      msg.setHeadless();
+      msg.writeTo(m_ByteOut);
+      byte[] buf=m_ByteOut.getBuffer();
+      int len=m_ByteOut.size();
+      m_OutputStream.write(FRAME_START);
+      m_OutputStream.write(buf,0,len);
+      if (Modbus.debug)       System.out.println("Writing: " + ModbusUtil.toHex(buf,0,len));
+      m_OutputStream.write(ModbusUtil.calculateLRC(buf,0,len));
+      m_OutputStream.write(FRAME_END);
+      m_OutputStream.flush();
+      m_ByteOut.reset();
+      if (m_Echo) {
+        readEcho(len + 3);
+      }
+    }
+  }
+ catch (  Exception ex) {
+    throw new ModbusIOException("I/O failed to write" + ex);
+  }
+}

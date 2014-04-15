@@ -1,0 +1,10 @@
+{
+  m_ReadCoilsRequest.setUnitID(unitid);
+  m_ReadCoilsRequest.setReference(ref);
+  m_ReadCoilsRequest.setBitCount(count);
+  m_Transaction.setRequest(m_ReadCoilsRequest);
+  m_Transaction.execute();
+  BitVector bv=((ReadCoilsResponse)m_Transaction.getResponse()).getCoils();
+  bv.forceSize(count);
+  return bv;
+}

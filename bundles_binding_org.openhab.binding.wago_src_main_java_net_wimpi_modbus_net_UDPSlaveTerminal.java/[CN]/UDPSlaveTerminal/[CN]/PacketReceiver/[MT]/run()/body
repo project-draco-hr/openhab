@@ -1,0 +1,17 @@
+{
+  do {
+    try {
+      byte[] buffer=new byte[256];
+      DatagramPacket packet=new DatagramPacket(buffer,buffer.length);
+      m_Socket.receive(packet);
+      Integer tid=new Integer(ModbusUtil.registersToInt(buffer));
+      m_Requests.put(tid,packet);
+      m_ReceiveQueue.put(buffer);
+      if (Modbus.debug)       System.out.println("Received package to queue.");
+    }
+ catch (    Exception ex) {
+      DEBUG:       ex.printStackTrace();
+    }
+  }
+ while (m_Continue);
+}

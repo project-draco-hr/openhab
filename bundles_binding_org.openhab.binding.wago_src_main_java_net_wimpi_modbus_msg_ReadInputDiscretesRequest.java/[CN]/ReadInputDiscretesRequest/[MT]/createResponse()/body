@@ -1,0 +1,25 @@
+{
+  ReadInputDiscretesResponse response=null;
+  DigitalIn[] dins=null;
+  ProcessImage procimg=ModbusCoupler.getReference().getProcessImage();
+  try {
+    dins=procimg.getDigitalInRange(this.getReference(),this.getBitCount());
+  }
+ catch (  IllegalAddressException iaex) {
+    return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
+  }
+  response=new ReadInputDiscretesResponse(dins.length);
+  if (!isHeadless()) {
+    response.setTransactionID(this.getTransactionID());
+    response.setProtocolID(this.getProtocolID());
+  }
+ else {
+    response.setHeadless();
+  }
+  response.setUnitID(this.getUnitID());
+  response.setFunctionCode(this.getFunctionCode());
+  for (int i=0; i < dins.length; i++) {
+    response.setDiscreteStatus(i,dins[i].isSet());
+  }
+  return response;
+}

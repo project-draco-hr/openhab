@@ -1,0 +1,15 @@
+{
+  do {
+    try {
+      byte[] message=(byte[])m_SendQueue.take();
+      DatagramPacket req=(DatagramPacket)m_Requests.remove(new Integer(ModbusUtil.registersToInt(message)));
+      DatagramPacket res=new DatagramPacket(message,message.length,req.getAddress(),req.getPort());
+      m_Socket.send(res);
+      if (Modbus.debug)       System.out.println("Sent package from queue.");
+    }
+ catch (    Exception ex) {
+      DEBUG:       ex.printStackTrace();
+    }
+  }
+ while (m_Continue || !m_SendQueue.isEmpty());
+}

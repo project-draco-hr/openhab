@@ -1,0 +1,11 @@
+{
+  m_Reference=din.readUnsignedShort();
+  int bitcount=din.readUnsignedShort();
+  int count=din.readUnsignedByte();
+  byte[] data=new byte[count];
+  for (int k=0; k < count; k++) {
+    data[k]=din.readByte();
+  }
+  m_Coils=BitVector.createBitVector(data,bitcount);
+  setDataLength(count + 5);
+}

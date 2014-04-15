@@ -1,0 +1,26 @@
+{
+  if (!connect()) {
+    logger.warn("coupler not connected.");
+    return;
+  }
+  ModbusRequest request=new ReadMultipleRegistersRequest(offset,4);
+  transaction.setRequest(request);
+  try {
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("update of channels failed: " + e.getMessage());
+    return;
+  }
+  ReadMultipleRegistersResponse response=(ReadMultipleRegistersResponse)transaction.getResponse();
+  if ((response.getTransactionID() != transaction.getTransactionID()) && !response.isHeadless()) {
+    logger.debug("update of channels failed: invalid response.");
+    return;
+  }
+  values[0]=response.getRegister(1).getValue() >> 4;
+  values[1]=response.getRegister(3).getValue() >> 4;
+  Collection<String> itemNames=binding.getItemNames();
+  for (  String itemName : itemNames) {
+    binding.updateItemPWM(itemName,couplerName,module,values);
+  }
+}

@@ -1,0 +1,9 @@
+{
+  m_ReadInputDiscretesRequest.setReference(ref);
+  m_ReadInputDiscretesRequest.setBitCount(count);
+  m_Transaction.setRequest(m_ReadInputDiscretesRequest);
+  m_Transaction.execute();
+  BitVector bv=((ReadInputDiscretesResponse)m_Transaction.getResponse()).getDiscretes();
+  bv.forceSize(count);
+  return bv;
+}

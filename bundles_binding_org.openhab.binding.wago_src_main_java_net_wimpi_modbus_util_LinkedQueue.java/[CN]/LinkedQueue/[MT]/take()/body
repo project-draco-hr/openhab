@@ -1,0 +1,26 @@
+{
+  Object x=extract();
+  if (x != null)   return x;
+ else {
+synchronized (m_PutLock) {
+      try {
+        ++m_WaitingForTake;
+        for (; ; ) {
+          x=extract();
+          if (x != null) {
+            --m_WaitingForTake;
+            return x;
+          }
+ else {
+            m_PutLock.wait();
+          }
+        }
+      }
+ catch (      InterruptedException ex) {
+        --m_WaitingForTake;
+        m_PutLock.notify();
+        throw ex;
+      }
+    }
+  }
+}
