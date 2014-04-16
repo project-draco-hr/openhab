@@ -5,7 +5,7 @@
     String url=provider.retrieveRequestToken(consumer,OAUTH_REDIRECT_URL);
     printSetupInstructions(url);
   }
- catch (  OAuthMessageSignerException|OAuthNotAuthorizedException|OAuthExpectationFailedException|OAuthCommunicationException ex) {
+ catch (  OAuthException ex) {
     logger.error(ex.getMessage(),ex);
     printAuthenticationFailed(ex);
   }
