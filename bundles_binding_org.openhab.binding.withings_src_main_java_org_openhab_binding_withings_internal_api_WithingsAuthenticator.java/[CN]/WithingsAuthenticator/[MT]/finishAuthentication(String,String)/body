@@ -1,0 +1,18 @@
+{
+  if (provider == null || consumer == null) {
+    logger.warn("Could not finish authentication. Please execute 'startAuthentication' first.");
+    return;
+  }
+  try {
+    provider.retrieveAccessToken(consumer,verificationCode);
+  }
+ catch (  OAuthException ex) {
+    logger.error(ex.getMessage(),ex);
+    printAuthenticationFailed(ex);
+  }
+  OAuthTokens oAuthTokens=new OAuthTokens(consumer.getToken(),consumer.getTokenSecret());
+  writeToFile(oAuthTokens,FILE_NAME_OAUTH_TOKEN);
+  writeToFile(userId,FILE_NAME_USER_ID);
+  this.client=new WithingsApiClient(consumer,userId);
+  printAuthenticationSuccessful();
+}

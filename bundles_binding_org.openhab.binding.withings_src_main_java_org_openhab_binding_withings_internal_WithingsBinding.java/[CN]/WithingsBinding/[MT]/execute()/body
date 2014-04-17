@@ -1,0 +1,12 @@
+{
+  Map<String,WithingsBindingConfig> withingsBindings=getWithingsBindings();
+  if (withingsBindings.isEmpty()) {
+    logger.info("No item -> withings binding found. Skipping data refresh.");
+    return;
+  }
+  if (!this.withingsAuthenticator.isAuthenticated()) {
+    logger.info("Withings binding is not authenticated. Skipping data refresh.");
+    return;
+  }
+  updateItemStates(withingsBindings);
+}
