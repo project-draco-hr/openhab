@@ -1,6 +1,10 @@
 {
   logger.debug("doSet domain '{}' to '{}'",domain,value);
   String[] splitDomain=domain.split("/");
+  if (zController.isConnected() == false) {
+    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
+    return;
+  }
   if (splitDomain.length < 2) {
     logger.error("Error malformed domain in doSet '{}'",domain);
     return;

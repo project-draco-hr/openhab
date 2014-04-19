@@ -1,5 +1,9 @@
 {
   logger.trace("doAction domain '{}' to '{}'",domain,action);
+  if (zController.isConnected() == false) {
+    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
+    return;
+  }
   String[] splitDomain=domain.split("/");
   if (splitDomain.length < 2) {
     logger.error("Error malformed domain in doAction '{}'",domain);
