@@ -1,0 +1,22 @@
+{
+  try {
+    ListenableFuture<Response> future=client.preparePost(uri).setBody(writeJson(request)).setHeader("content-type","application/json").setHeader("accept","application/json").execute(new AsyncCompletionHandler<Response>(){
+      @Override public Response onCompleted(      Response response) throws Exception {
+        Map<String,Object> json=readJson(response.getResponseBody());
+        if (json.containsKey("error"))         throw new RpcException(json.get("error").toString());
+        processResponse(json);
+        return response;
+      }
+      @Override public void onThrowable(      Throwable t){
+        logger.error("Error handling POST response from XBMC",t);
+      }
+    }
+);
+    if (completeHandler != null) {
+      future.addListener(completeHandler,client.getConfig().executorService());
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Failed sending POST request to XBMC",e);
+  }
+}

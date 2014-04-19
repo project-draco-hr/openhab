@@ -1,0 +1,11 @@
+{
+  final PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,rsUri);
+  activePlayers.execute(new Runnable(){
+    public void run(){
+      PlayerStop stop=new PlayerStop(client,rsUri);
+      stop.setPlayerId(activePlayers.getPlayerId());
+      stop.execute();
+    }
+  }
+);
+}
