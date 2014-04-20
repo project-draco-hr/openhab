@@ -1,6 +1,9 @@
 {
+  if (zController.getSendQueueLength() > 1) {
+    logger.debug("Queue length is {} - deferring HEAL.");
+    return;
+  }
   if (pingNodeTime < System.currentTimeMillis()) {
-    if (zController.getSendQueueLength() > 1)     return;
     pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
     ZWaveNode oldestNode=null;
     for (    ZWaveNode node : zController.getNodes()) {
@@ -14,6 +17,7 @@
     }
     if (oldestNode != null) {
       logger.debug("NODE {}: Sending periodic PING.",oldestNode.getNodeId());
+      oldestNode.resetResendCount();
       ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)oldestNode.getCommandClass(CommandClass.NO_OPERATION);
       if (zwaveCommandClass != null)       zController.sendData(zwaveCommandClass.getNoOperationMessage());
     }
@@ -33,7 +37,6 @@
       return;
     }
   }
-  if (zController.getSendQueueLength() > 1)   return;
   for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
     HealNode node=entry.getValue();
     if (node.state == HealState.WAITING && node.listening == true) {
