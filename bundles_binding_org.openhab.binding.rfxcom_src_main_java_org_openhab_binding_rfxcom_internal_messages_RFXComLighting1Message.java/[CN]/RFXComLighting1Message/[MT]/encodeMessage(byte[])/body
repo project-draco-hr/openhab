@@ -7,12 +7,17 @@
     subType=SubType.UNKNOWN;
   }
   sensorId=(char)data[4];
-  unitcode=data[5];
   try {
     command=Commands.values()[data[6]];
   }
  catch (  Exception e) {
     command=Commands.UNKNOWN;
+  }
+  if ((command == Commands.GROUP_ON) || (command == Commands.GROUP_OFF)) {
+    unitcode=0;
+  }
+ else {
+    unitcode=data[5];
   }
   signalLevel=(byte)((data[7] & 0xF0) >> 4);
 }
