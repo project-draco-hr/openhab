@@ -38,8 +38,10 @@
           }
         }
         logger.debug("Set parameter index '{}' to '{}'",paramIndex,value);
+        PendingCfg.Add(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey(),nodeId,paramIndex,Integer.valueOf(value));
         ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,Integer.valueOf(value),size);
         this.zController.sendData(configurationCommandClass.setConfigMessage(configurationParameter));
+        this.zController.sendData(configurationCommandClass.getConfigMessage(paramIndex));
       }
       if (splitDomain[2].equals("wakeup")) {
         ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
@@ -48,7 +50,9 @@
           return;
         }
         logger.debug("Set wakeup interval to '{}'",value);
+        PendingCfg.Add(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),node.getNodeId(),Integer.parseInt(value));
         this.zController.sendData(wakeupCommandClass.setInterval(Integer.parseInt(value)));
+        this.zController.sendData(wakeupCommandClass.getIntervalMessage());
       }
     }
  else     if (splitDomain.length == 5) {
@@ -61,13 +65,17 @@
         int assocId=Integer.parseInt(splitDomain[3].substring(11));
         int assocArg=Integer.parseInt(splitDomain[4].substring(4));
         if (value.equalsIgnoreCase("true")) {
+          PendingCfg.Add(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,assocId,assocArg,1);
           logger.debug("Add association index '{}' to '{}'",assocId,assocArg);
           this.zController.sendData(associationCommandClass.setAssociationMessage(assocId,assocArg));
         }
  else {
+          PendingCfg.Add(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,assocId,assocArg,0);
           logger.debug("Remove association index '{}' to '{}'",assocId,assocArg);
           this.zController.sendData(associationCommandClass.removeAssociationMessage(assocId,assocArg));
         }
+        this.zController.sendData(associationCommandClass.getAssociationMessage(assocId));
+        if (networkMonitor != null)         networkMonitor.healNode(nodeId);
       }
     }
   }

@@ -1,0 +1,73 @@
+{
+  if (event instanceof ZWaveNetworkEvent) {
+    ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
+    logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
+    HealNode node=healNodes.get(nwEvent.getNodeId());
+    if (node == null)     return;
+    if (nwEvent.getEvent() != node.event)     return;
+switch (nwEvent.getState()) {
+case Success:
+      node.retryCnt=0;
+    node.state=node.stateNext;
+  break;
+case Failure:
+logger.debug("NODE {}: Network heal received FAILURE event",node.nodeId);
+break;
+}
+if (node.retryCnt == 0 && node.routeList != null && node.routeList.size() > 0) node.routeList.remove(0);
+nextHealStage(node);
+}
+ else if (event instanceof ZWaveTransactionCompletedEvent) {
+SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
+if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request) return;
+byte[] payload=serialMessage.getMessagePayload();
+if (payload.length < 3) return;
+HealNode node=healNodes.get(payload[0] & 0xFF);
+if (node == null) return;
+if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
+node.state=node.stateNext;
+node.retryCnt=0;
+nextHealStage(node);
+return;
+}
+}
+ else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_NOTIFICATION) return;
+HealNode node=healNodes.get(event.getNodeId());
+if (node == null) return;
+if (!node.state.isActive()) return;
+logger.debug("NODE {}: Heal WakeUp EVENT {}",node.nodeId,node.state);
+nextHealStage(node);
+}
+ else if (event instanceof ZWaveNodeStatusEvent) {
+ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
+logger.debug("NODE {}: Node Status event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+switch (statusEvent.getState()) {
+case Dead:
+ZWaveNode node=zController.getNode(statusEvent.getNodeId());
+if (node == null) {
+logger.error("NODE {}: Status event received, but node not found.",statusEvent.getNodeId());
+return;
+}
+if (!isNodeHealing(node.getNodeId())) {
+logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
+healNode(node.getNodeId());
+node.setNodeStage(NodeStage.PING);
+node.resetResendCount();
+}
+ else {
+logger.debug("NODE {}: DEAD node - already healing.",node.getNodeId());
+}
+break;
+case Alive:
+break;
+}
+}
+ else if (event instanceof ZWaveInitializationCompletedEvent) {
+logger.debug("Network initialised - starting network monitor.");
+initialised=true;
+networkHealNightlyTime=calculateNextHeal();
+networkHealNextTime=networkHealNightlyTime;
+pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
+}
+}
