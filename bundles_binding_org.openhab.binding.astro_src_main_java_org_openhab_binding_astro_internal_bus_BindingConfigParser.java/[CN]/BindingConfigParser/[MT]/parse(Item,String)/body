@@ -1,0 +1,27 @@
+{
+  bindingConfig=StringUtils.trimToEmpty(bindingConfig);
+  bindingConfig=StringUtils.removeStart(bindingConfig,"{");
+  bindingConfig=StringUtils.removeEnd(bindingConfig,"}");
+  String[] entryParts=StringUtils.trimToEmpty(bindingConfig).split("[=]");
+  if (entryParts.length != 2) {
+    throw new BindingConfigParseException("A bindingConfig must have a key and a value");
+  }
+  String key=StringUtils.trim(entryParts[0]);
+  if (!"type".equalsIgnoreCase(key)) {
+    throw new BindingConfigParseException("Unknown key " + key);
+  }
+  String value=StringUtils.trim(entryParts[1]);
+  value=StringUtils.removeStart(value,"\"");
+  value=StringUtils.removeEnd(value,"\"");
+  AstroType type=null;
+  try {
+    type=AstroType.valueOf(StringUtils.upperCase(value));
+  }
+ catch (  Exception ex) {
+    throw new BindingConfigParseException("Invalid binding: " + bindingConfig);
+  }
+  if (!item.getAcceptedDataTypes().contains(type.getAcceptedDataType())) {
+    throw new BindingConfigParseException("Item " + item.getName() + " must support "+ type.getAcceptedDataType().getSimpleName()+ " for binding "+ value);
+  }
+  return new AstroBindingConfig(type);
+}
