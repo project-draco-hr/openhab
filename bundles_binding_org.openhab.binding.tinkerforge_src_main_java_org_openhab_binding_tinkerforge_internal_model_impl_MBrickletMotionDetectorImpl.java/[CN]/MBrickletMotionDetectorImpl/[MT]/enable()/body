@@ -1,0 +1,19 @@
+{
+  tinkerforgeDevice=new BrickletMotionDetector(getUid(),getIpConnection());
+  motionDetectedListener=new BrickletMotionDetector.MotionDetectedListener(){
+    @Override public void motionDetected(){
+      logger.debug("{} motion detected: {}",LoggerConstants.TFMODELUPDATE,getUid());
+      setSensorValue(HighLowValue.HIGH);
+    }
+  }
+;
+  tinkerforgeDevice.addMotionDetectedListener(motionDetectedListener);
+  detectionCycleEndedListener=new BrickletMotionDetector.DetectionCycleEndedListener(){
+    @Override public void detectionCycleEnded(){
+      logger.debug("{} motion end: {}",LoggerConstants.TFMODELUPDATE,getUid());
+      setSensorValue(HighLowValue.LOW);
+    }
+  }
+;
+  tinkerforgeDevice.addDetectionCycleEndedListener(detectionCycleEndedListener);
+}
