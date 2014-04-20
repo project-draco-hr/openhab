@@ -1,0 +1,54 @@
+{
+  if (m_running) {
+    logger.debug("port {} already running, not started again",m_logName);
+  }
+  try {
+    System.setProperty("gnu.io.rxtx.SerialPorts",m_devName);
+    CommPortIdentifier ci=CommPortIdentifier.getPortIdentifier(m_devName);
+    CommPort cp=ci.open(m_appName,1000);
+    if (cp instanceof SerialPort) {
+      m_port=(SerialPort)cp;
+    }
+ else {
+      throw new IllegalStateException("unknown port type");
+    }
+    m_port.setSerialPortParams(m_speed,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    m_port.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+    logger.debug("setting port speed to {}",m_speed);
+    m_port.disableReceiveFraming();
+    m_port.disableReceiveThreshold();
+    m_in=m_port.getInputStream();
+    m_out=m_port.getOutputStream();
+    m_readThread=new Thread(m_reader);
+    m_writeThread=new Thread(m_writer);
+    m_readThread.start();
+    m_writeThread.start();
+    m_modem.initialize();
+    DeviceListBuilder dlb=new DeviceListBuilder(this);
+    dlb.start();
+    m_running=true;
+  }
+ catch (  IOException e) {
+    logger.error("cannot open port: {}, got IOException ",m_logName,e);
+  }
+catch (  PortInUseException e) {
+    logger.error("cannot open port: {}, it is in use!",m_logName);
+  }
+catch (  UnsupportedCommOperationException e) {
+    logger.error("got unsupported operation {} on port {}",e.getMessage(),m_logName);
+  }
+catch (  NoSuchPortException e) {
+    logger.error("got no such port for {}",m_logName);
+  }
+catch (  IllegalStateException e) {
+    logger.error("got unknown port type for {}",m_logName);
+  }
+ finally {
+    if (!m_running) {
+      logger.error("failed to open port {}",m_logName);
+    }
+ else {
+      logger.info("successfully opened port {}",m_logName);
+    }
+  }
+}

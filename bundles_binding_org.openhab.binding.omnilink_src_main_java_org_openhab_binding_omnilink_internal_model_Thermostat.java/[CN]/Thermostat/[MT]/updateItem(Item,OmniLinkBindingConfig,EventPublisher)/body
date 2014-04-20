@@ -1,0 +1,37 @@
+{
+  int setting=0;
+  String mode=null;
+switch (config.getObjectType()) {
+case THERMO_COOL_POINT:
+    setting=celsius ? MessageUtils.omniToC(properties.getCoolSetpoint()) : MessageUtils.omniToF(properties.getCoolSetpoint());
+  break;
+case THERMO_TEMP:
+setting=celsius ? MessageUtils.omniToC(properties.getTemperature()) : MessageUtils.omniToF(properties.getTemperature());
+break;
+case THERMO_HEAT_POINT:
+setting=celsius ? MessageUtils.omniToC(properties.getHeatSetpoint()) : MessageUtils.omniToF(properties.getHeatSetpoint());
+break;
+case THERMO_FAN_MODE:
+setting=properties.isFan() ? 1 : 0;
+break;
+case THERMO_HOLD_MODE:
+setting=properties.isHold() ? 1 : 0;
+break;
+case THERMO_SYSTEM_MODE:
+setting=properties.getMode();
+if (setting < MODES.length) mode=MODES[setting];
+break;
+default :
+return;
+}
+logger.debug("updating item {} for type {} to  {}",item.getName(),config.getObjectType(),setting);
+if (item instanceof NumberItem) {
+publisher.postUpdate(item.getName(),new DecimalType(setting));
+}
+ else if (item instanceof SwitchItem) {
+publisher.postUpdate(item.getName(),setting > 0 ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (item instanceof StringItem && mode != null) {
+publisher.postUpdate(item.getName(),new StringType(mode));
+}
+}

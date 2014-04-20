@@ -1,0 +1,32 @@
+{
+  logger.debug("internalReceiveCommand() is called!!! {} {} ",itemName,command);
+  if (omniWorker != null && omniWorker.isConnected()) {
+    for (    OmniLinkBindingProvider provider : providers) {
+      OmniLinkBindingConfig config=provider.getOmniLinkBindingConfig(itemName);
+      Item item=provider.getItem(itemName);
+      List<OmniLinkControllerCommand> commands=OmniLinkCommandMapper.getCommand(item,config,command);
+      for (      OmniLinkControllerCommand cmd : commands) {
+        try {
+          logger.debug("Sending command {}/{}/{}",new Object[]{cmd.getCommand(),cmd.getParameter1(),cmd.getParameter2()});
+          omniWorker.getOmniConnection().controllerCommand(cmd.getCommand(),cmd.getParameter1(),cmd.getParameter2());
+          if (config.getObjectType() == OmniLinkItemType.AUDIOZONE_KEY)           audioUpdateLock.notifyAll();
+        }
+ catch (        IOException e) {
+          logger.error("Could not send command",e);
+        }
+catch (        OmniNotConnectedException e) {
+          logger.error("Could not send command",e);
+        }
+catch (        OmniInvalidResponseException e) {
+          logger.error("Could not send command",e);
+        }
+catch (        OmniUnknownMessageTypeException e) {
+          logger.error("Could not send command",e);
+        }
+      }
+    }
+  }
+ else {
+    logger.debug("Could not send message, conncetion not established {}",omniWorker == null);
+  }
+}

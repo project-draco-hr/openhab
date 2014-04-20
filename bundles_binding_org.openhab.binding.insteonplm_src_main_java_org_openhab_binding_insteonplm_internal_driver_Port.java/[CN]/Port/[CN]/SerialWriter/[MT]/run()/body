@@ -1,0 +1,38 @@
+{
+  logger.debug("Starting writer...");
+  while (true) {
+    try {
+      logger.trace("writer checking message queue");
+      Msg msg=m_writeQueue.take();
+      if (msg.getData() == null) {
+        logger.error("found null message in write queue!");
+      }
+ else {
+        logger.debug("writing ({}): {}",msg.getQuietTime(),msg);
+        m_out.write(msg.getData());
+        while (m_reader.waitForReply()) {
+          Thread.sleep(WAIT_TIME);
+          logger.trace("retransmitting msg: {}",msg);
+          m_out.write(msg.getData());
+        }
+        if (msg.getQuietTime() > 0) {
+          Thread.sleep(msg.getQuietTime());
+        }
+      }
+    }
+ catch (    InterruptedException e) {
+      logger.error("got interrupted exception in write thread:",e);
+    }
+catch (    IOException e) {
+      logger.error("got i/o exception in write thread:",e);
+      try {
+        Thread.sleep(30000);
+      }
+ catch (      InterruptedException ie) {
+      }
+    }
+catch (    Exception e) {
+      logger.error("got exception in write thread:",e);
+    }
+  }
+}

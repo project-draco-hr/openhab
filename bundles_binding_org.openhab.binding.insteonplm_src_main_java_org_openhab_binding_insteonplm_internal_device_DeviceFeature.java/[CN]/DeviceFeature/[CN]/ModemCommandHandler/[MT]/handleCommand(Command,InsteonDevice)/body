@@ -1,0 +1,15 @@
+{
+  if (!(cmd instanceof DecimalType))   return;
+  DecimalType d=(DecimalType)cmd;
+  int num=d.intValue();
+  if (num != 1)   return;
+  Driver dr=m_feature.getDevice().getDriver();
+  HashMap<InsteonAddress,InsteonDevice> devs=dr.getDeviceList();
+  for (  InsteonDevice dev : devs.values()) {
+    if (!dev.isReferenced() && dev.hasLinkRecords()) {
+      logger.info("ModemCommandHandler: erasing {} from modem link database",dev.getAddress());
+      dev.eraseFromModem();
+      break;
+    }
+  }
+}
