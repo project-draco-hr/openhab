@@ -1,0 +1,19 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\"}\n";
+  String groupName="Zones";
+  groups.append(String.format(groupString,groupName,"Zones","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_ZONE,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_AREA_ALL,ObjectProperties.FILTER_3_ANY_LOAD)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    ZoneProperties o=((ZoneProperties)m);
+    objnum=o.getNumber();
+    String group=addUniqueGroup(groupName + "_" + cleanString(o.getName()));
+    groups.append(String.format(groupString,group,o.getName(),groupName));
+    zones.add(new SiteItem(group,o.getName(),o.getName()));
+    items.append(String.format(itemString,"Contact",group + "_Current","Current: [%s]",group,"zone_status_current",objnum));
+    items.append(String.format(itemString,"String",group + "_Latched","Latched [%s]",group,"zone_status_latched",objnum));
+    items.append(String.format(itemString,"String",group + "_Arming","Arming [%s]",group,"zone_status_arming",objnum));
+    items.append(String.format(itemString,"String",group + "_All","Status  [%s]",group,"zone_status_all",objnum));
+  }
+}

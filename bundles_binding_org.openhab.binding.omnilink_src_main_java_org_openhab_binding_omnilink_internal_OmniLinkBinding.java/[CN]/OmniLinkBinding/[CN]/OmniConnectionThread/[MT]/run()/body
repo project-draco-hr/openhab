@@ -1,0 +1,76 @@
+{
+  running=true;
+  logger.debug("OmniConnectionThread running");
+  while (running) {
+    connected=false;
+    logger.debug("OmniConnectionThread trying to connect");
+    try {
+      c=new Connection(host,port,key);
+      connected=true;
+      logger.debug("OmniConnectionThread connected");
+    }
+ catch (    Exception e) {
+      logger.error("Could not connect",e);
+    }
+    if (!connected) {
+      try {
+        Thread.currentThread();
+        Thread.sleep(10 * 1000);
+      }
+ catch (      InterruptedException ignored) {
+      }
+    }
+ else {
+      c.addDisconnectListener(new DisconnectListener(){
+        @Override public void notConnectedEvent(        Exception e){
+          logger.error("OmniConnectionThread was disconnected, will try again",e);
+          connected=false;
+        }
+      }
+);
+      c.addNotificationListener(listener);
+      try {
+        SystemStatus sysstatus=c.reqSystemStatus();
+        logger.info("System: " + sysstatus.toString());
+        omni=c.reqSystemInformation().getModel() < 36;
+        c.enableNotifications();
+        if (generateItems) {
+          OmnilinkItemGenerator gen=new OmnilinkItemGenerator(c);
+          logger.info(gen.generateItemsAndGroups());
+        }
+        populateRefreshMapFromAllProviders();
+        readAllAudioSources();
+        while (running && c.connected()) {
+          updateRefreshItems();
+          updateAudioSourceTexts();
+          try {
+synchronized (audioUpdateLock) {
+              audioUpdateLock.wait(5000);
+            }
+          }
+ catch (          InterruptedException ignored) {
+          }
+        }
+      }
+ catch (      IOException ex) {
+        logger.error("Could not connect to system",ex);
+      }
+catch (      OmniNotConnectedException ex) {
+        logger.error("Could not connect to system",ex.getNotConnectedReason());
+      }
+catch (      OmniInvalidResponseException ex) {
+        logger.error("Could not connect to system",ex);
+      }
+catch (      OmniUnknownMessageTypeException ex) {
+        logger.error("Could not connect to system",ex);
+      }
+catch (      Exception ex) {
+        logger.error("Could not connect to system",ex);
+      }
+ finally {
+        c.disconnect();
+        c=null;
+      }
+    }
+  }
+}

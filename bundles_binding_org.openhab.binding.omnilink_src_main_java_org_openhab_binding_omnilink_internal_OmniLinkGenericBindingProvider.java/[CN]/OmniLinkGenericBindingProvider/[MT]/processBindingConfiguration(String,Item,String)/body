@@ -1,0 +1,18 @@
+{
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length != 2) {
+    throw new BindingConfigParseException("Omnilink configuration must contain of two parts separated by a ':'");
+  }
+  OmniLinkItemType type=OmniLinkItemType.getOmniLinkItemType(configParts[0]);
+  if (type == null)   throw new BindingConfigParseException("Unknown item type " + configParts[0]);
+  int number=Integer.parseInt(configParts[1]);
+  OmniLinkBindingConfig config=new OmniLinkBindingConfig(type,number);
+  logger.debug(" Adding item {} {}",new Object[]{config.getObjectType(),config.getNumber()});
+  addBindingConfig(item,config);
+  Set<Item> items=contextMap.get(context);
+  if (items == null) {
+    items=new HashSet<Item>();
+    contextMap.put(context,items);
+  }
+  items.add(item);
+}

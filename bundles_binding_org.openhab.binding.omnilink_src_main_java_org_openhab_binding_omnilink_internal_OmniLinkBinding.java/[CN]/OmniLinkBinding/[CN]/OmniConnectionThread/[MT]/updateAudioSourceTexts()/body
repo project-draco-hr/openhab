@@ -1,0 +1,31 @@
+{
+  Iterator<Integer> it=audioSourceMap.keySet().iterator();
+  while (it.hasNext()) {
+    Integer source=it.next();
+    int pos=0;
+    Message m;
+    boolean updated=false;
+    Vector<String> text=new Vector<String>();
+    while ((m=c.reqAudioSourceStatus(source.intValue(),pos)).getMessageType() == Message.MESG_TYPE_AUDIO_SOURCE_STATUS) {
+      AudioSourceStatus a=(AudioSourceStatus)m;
+      text.add(a.getSourceData());
+      pos=a.getPosition();
+    }
+    AudioSource as=audioSourceMap.get(source);
+    String text2[]=as.getAudioText();
+    if (text.size() == text2.length) {
+      for (int i=0; i < text.size(); i++) {
+        if (!text2[i].equals(text.get(i))) {
+          updated=true;
+        }
+      }
+    }
+ else {
+      updated=true;
+    }
+    if (updated) {
+      as.setAudioText(text.toArray(new String[0]));
+      updateAudioZoneText(as);
+    }
+  }
+}
