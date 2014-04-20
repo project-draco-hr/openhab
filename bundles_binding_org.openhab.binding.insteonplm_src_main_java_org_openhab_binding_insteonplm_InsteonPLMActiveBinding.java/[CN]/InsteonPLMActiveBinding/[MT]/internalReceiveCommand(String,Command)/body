@@ -1,0 +1,22 @@
+{
+  logger.info("Item: {} got command {}",itemName,command);
+  if (!(this.isProperlyConfigured() && m_isActive)) {
+    logger.debug("not ready to handle commands yet, returning.");
+    return;
+  }
+  boolean commandHandled=false;
+  for (  InsteonPLMBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      commandHandled=true;
+      InsteonAddress ia=provider.getAddress(itemName);
+      String feature=provider.getFeature(itemName);
+      if (ia == null || feature == null) {
+        logger.warn("could not find config for item {}",itemName);
+      }
+ else {
+        sendCommand(ia,feature,command);
+      }
+    }
+  }
+  if (!commandHandled)   logger.warn("No converter found for item = {}, command = {}, ignoring.",itemName,command.toString());
+}

@@ -1,0 +1,22 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] parts=parseConfigString(bindingConfig);
+  if (parts.length != 3)   throw new BindingConfigParseException("item config must have addr:prodKey#feature format");
+  InsteonAddress addr=new InsteonAddress(parts[0]);
+  String[] params=parts[2].split(",");
+  String feature=params[0];
+  HashMap<String,String> args=new HashMap<String,String>();
+  for (int i=1; i < params.length; i++) {
+    String[] kv=params[i].split("=");
+    if (kv.length == 2) {
+      args.put(kv[0],kv[1]);
+    }
+ else {
+      logger.error("parameter {} does not have format a=b",params[i]);
+    }
+  }
+  InsteonPLMBindingConfig config=new InsteonPLMBindingConfig(addr,feature,parts[1],args);
+  addBindingConfig(item,config);
+  logger.trace("processing item \"{}\" read from .items file with cfg string {}",item.getName(),bindingConfig);
+  items.put(item.getName(),item);
+}
