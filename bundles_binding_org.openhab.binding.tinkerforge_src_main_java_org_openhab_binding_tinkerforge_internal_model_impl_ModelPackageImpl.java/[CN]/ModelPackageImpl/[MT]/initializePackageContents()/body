@@ -151,6 +151,24 @@
   g1.getETypeArguments().add(g2);
   digitalSensorEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMDevice());
+  g2=createEGenericType(this.getTinkerBrickletMultiTouch());
+  g1.getETypeArguments().add(g2);
+  mBrickletMultiTouchEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMSubDeviceHolder());
+  g2=createEGenericType(this.getMultiTouchDevice());
+  g1.getETypeArguments().add(g2);
+  mBrickletMultiTouchEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMSubDevice());
+  g2=createEGenericType(this.getMBrickletMultiTouch());
+  g1.getETypeArguments().add(g2);
+  multiTouchDeviceEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMSensor());
+  g2=createEGenericType(this.getDigitalValue());
+  g1.getETypeArguments().add(g2);
+  multiTouchDeviceEClass.getEGenericSuperTypes().add(g1);
+  electrodeEClass.getESuperTypes().add(this.getMultiTouchDevice());
+  proximityEClass.getESuperTypes().add(this.getMultiTouchDevice());
+  g1=createEGenericType(this.getMDevice());
   g2=createEGenericType(this.getTinkerBrickletMotionDetector());
   g1.getETypeArguments().add(g2);
   mBrickletMotionDetectorEClass.getEGenericSuperTypes().add(g1);
@@ -454,6 +472,14 @@
   initEAttribute(getDigitalSensor_PullUpResistorEnabled(),theEcorePackage.getEBoolean(),"pullUpResistorEnabled",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getDigitalSensor_Port(),theEcorePackage.getEChar(),"port",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getDigitalSensor_Pin(),theEcorePackage.getEInt(),"pin",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(mBrickletMultiTouchEClass,MBrickletMultiTouch.class,"MBrickletMultiTouch",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getMBrickletMultiTouch_DeviceType(),theEcorePackage.getEString(),"deviceType","bricklet_multitouch",0,1,MBrickletMultiTouch.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(multiTouchDeviceEClass,MultiTouchDevice.class,"MultiTouchDevice",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getMultiTouchDevice_Pin(),theEcorePackage.getEInt(),"pin",null,0,1,MultiTouchDevice.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(electrodeEClass,Electrode.class,"Electrode",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getElectrode_DeviceType(),theEcorePackage.getEString(),"deviceType","electrode",0,1,Electrode.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(proximityEClass,Proximity.class,"Proximity",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getProximity_DeviceType(),theEcorePackage.getEString(),"deviceType","proximity",0,1,Proximity.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEClass(mBrickletMotionDetectorEClass,MBrickletMotionDetector.class,"MBrickletMotionDetector",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMBrickletMotionDetector_DeviceType(),theEcorePackage.getEString(),"deviceType","motion_detector",0,1,MBrickletMotionDetector.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEOperation(getMBrickletMotionDetector__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
@@ -692,6 +718,7 @@
   initEDataType(mTinkerBrickletLCD20x4EDataType,BrickletLCD20x4.class,"MTinkerBrickletLCD20x4",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(tinkerBrickletRemoteSwitchEDataType,BrickletRemoteSwitch.class,"TinkerBrickletRemoteSwitch",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(tinkerBrickletMotionDetectorEDataType,BrickletMotionDetector.class,"TinkerBrickletMotionDetector",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
+  initEDataType(tinkerBrickletMultiTouchEDataType,BrickletMultiTouch.class,"TinkerBrickletMultiTouch",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(enumEDataType,Enum.class,"Enum",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   createResource(eNS_URI);
 }

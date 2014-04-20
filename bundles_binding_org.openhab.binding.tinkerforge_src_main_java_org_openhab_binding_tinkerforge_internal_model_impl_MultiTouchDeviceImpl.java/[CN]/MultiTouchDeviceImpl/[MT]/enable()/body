@@ -1,0 +1,13 @@
+{
+  setSensorValue(HighLowValue.UNDEF);
+  MBrickletMultiTouch bricklet=getMbrick();
+  if (bricklet == null) {
+    logger.error("{} No bricklet found for MultiTouchDevice: {}:{} ",LoggerConstants.TFINIT,getUid(),subId);
+  }
+ else {
+    BrickletMultiTouch brickletMultiTouch=bricklet.getTinkerforgeDevice();
+    touchListener=new TouchListener();
+    brickletMultiTouch.addTouchStateListener(touchListener);
+    setSensorValue(fetchSensorValue());
+  }
+}
