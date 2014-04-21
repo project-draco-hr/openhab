@@ -1,0 +1,13 @@
+{
+  ArrayList<TellstickDevice> newList=new ArrayList<TellstickDevice>();
+  for (  TellstickDevice dev : allDevices) {
+    boolean added=false;
+    for (    Class<? extends TellstickDevice> t : types) {
+      if (!added && t.isInstance(dev)) {
+        newList.add(dev);
+        added=true;
+      }
+    }
+  }
+  return newList;
+}

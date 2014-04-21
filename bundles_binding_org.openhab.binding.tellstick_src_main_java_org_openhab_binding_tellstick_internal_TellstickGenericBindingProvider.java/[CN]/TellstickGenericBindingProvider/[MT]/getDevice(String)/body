@@ -1,0 +1,16 @@
+{
+  TellstickDevice res=null;
+  TellstickBindingConfig conf=getTellstickBindingConfig(itemName);
+  if (conf != null) {
+    for (    TellstickDevice device : getAllDevices()) {
+      if (device.getId() == conf.getId()) {
+        res=device;
+        break;
+      }
+    }
+  }
+ else {
+    logger.warn("Could not find conf for " + itemName);
+  }
+  return res;
+}

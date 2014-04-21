@@ -1,0 +1,16 @@
+{
+  controller.setLastSend(System.currentTimeMillis());
+  String thisMsg=sensorEvent.getProtocol() + sensorEvent.getModel() + sensorEvent.getSensorId()+ sensorEvent.getData();
+  String prevMessage=prevMessages.get(sensorEvent.getDataType());
+  if (!thisMsg.equals(prevMessage)) {
+    prevMessages.put(sensorEvent.getDataType(),thisMsg);
+    TellstickBindingConfig device=findTellstickBindingConfig(sensorEvent.getSensorId(),getSensorBindingType(sensorEvent.getDataType()));
+    logger.debug("Got sensorEvent for " + sensorEvent.getSensorId() + " name:"+ device+ " value:"+ sensorEvent.getData());
+    if (device != null) {
+      handleSensorEvent(sensorEvent,device);
+    }
+  }
+ else {
+    logger.debug("Ignored message for " + sensorEvent.getSensorId() + " value:"+ sensorEvent.getData());
+  }
+}

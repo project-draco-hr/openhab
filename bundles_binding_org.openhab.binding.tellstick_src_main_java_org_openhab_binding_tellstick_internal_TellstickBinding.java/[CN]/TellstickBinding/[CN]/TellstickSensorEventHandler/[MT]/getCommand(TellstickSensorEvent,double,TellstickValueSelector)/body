@@ -1,0 +1,24 @@
+{
+  State cmd=null;
+  if (event.getDataType() == DataType.TEMPERATURE) {
+switch (selector) {
+case MOTION:
+      cmd=OnOffType.ON;
+    break;
+default :
+  cmd=new DecimalType(dValue);
+}
+}
+ else if (event.getDataType() == DataType.HUMIDITY) {
+switch (selector) {
+case BATTERY_LEVEL:
+cmd=new DecimalType(dValue);
+break;
+case HUMIDITY:
+default :
+double val=Math.min(100,dValue);
+cmd=new PercentType((int)val);
+}
+}
+return cmd;
+}
