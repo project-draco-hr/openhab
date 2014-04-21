@@ -97,14 +97,14 @@ case AUX_LOW:
 case AUX_STATUS:
 {
 AuxSensorProperties p=readAuxProperties(config.getNumber());
-Aux aux=auxMap.get(number);
-if (aux == null) {
-aux=new Aux(p,celius);
-auxMap.put(number,aux);
+Auxiliary auxiliary=auxMap.get(number);
+if (auxiliary == null) {
+auxiliary=new Auxiliary(p,celius);
+auxMap.put(number,auxiliary);
 }
-config.setDevice(aux);
-aux.setProperties(p);
-aux.updateItem(provider.getItem(itemName),config,eventPublisher);
+config.setDevice(auxiliary);
+auxiliary.setProperties(p);
+auxiliary.updateItem(provider.getItem(itemName),config,eventPublisher);
 }
 break;
 case ZONE_STATUS_ARMING:
