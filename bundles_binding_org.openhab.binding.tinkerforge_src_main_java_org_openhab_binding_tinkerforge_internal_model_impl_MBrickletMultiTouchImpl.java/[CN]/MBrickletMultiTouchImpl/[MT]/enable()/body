@@ -1,3 +1,28 @@
 {
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("sensitivity"))) {
+      setSensitivity(tfConfig.getSensitivity());
+      logger.debug("{} MultiTouchDevice uid {} setSensitivity {}",LoggerConstants.TFINIT,getUid(),getSensitivity());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("recalibrate"))) {
+      setRecalibrate(tfConfig.getRecalibrate());
+      logger.debug("{} MultiTouchDevice uid {} setRecalibrate {}",LoggerConstants.TFINIT,getUid(),getRecalibrate());
+    }
+  }
   tinkerforgeDevice=new BrickletMultiTouch(getUid(),getIpConnection());
+  try {
+    if (getSensitivity() != null) {
+      tinkerforgeDevice.setElectrodeSensitivity(getSensitivity());
+    }
+    if (getRecalibrate() != null && getRecalibrate()) {
+      tinkerforgeDevice.recalibrate();
+    }
+    tinkerforgeDevice.setElectrodeConfig(8191);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
 }
