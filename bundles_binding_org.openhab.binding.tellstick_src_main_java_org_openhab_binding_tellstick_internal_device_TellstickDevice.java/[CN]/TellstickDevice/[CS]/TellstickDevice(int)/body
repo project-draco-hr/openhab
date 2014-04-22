@@ -1,0 +1,12 @@
+{
+  supportedMethodsCheck();
+  this.deviceId=deviceId;
+  this.name=JNA.getPointerValue(JNA.CLibrary.INSTANCE.tdGetName(deviceId));
+  this.model=JNA.getPointerValue(JNA.CLibrary.INSTANCE.tdGetModel(deviceId));
+  this.protocol=JNA.getPointerValue(JNA.CLibrary.INSTANCE.tdGetProtocol(deviceId));
+  this.status=JNA.CLibrary.INSTANCE.tdLastSentCommand(deviceId,getSupportedMethods());
+  if (this.status == JNA.CLibrary.TELLSTICK_DIM) {
+    this.data=JNA.getPointerValue(JNA.CLibrary.INSTANCE.tdLastSentValue(deviceId));
+  }
+  this.deviceType=JNA.CLibrary.INSTANCE.tdGetDeviceType(deviceId);
+}

@@ -1,0 +1,14 @@
+{
+  super.activate();
+  try {
+    theManager=xPL_Manager.getManager();
+    theManager.createAndStartNetworkHandler();
+    loggerDevice=theManager.getDeviceManager().createDevice(vendor,device,getInstance());
+    loggerDevice.setEnabled(true);
+    theManager.addMessageListener(this);
+    logger.info("xPL Binding manager started");
+  }
+ catch (  xPL_MediaHandlerException startError) {
+    logger.error("xPL Binding : Unable to start xPL Manager" + startError.getMessage());
+  }
+}

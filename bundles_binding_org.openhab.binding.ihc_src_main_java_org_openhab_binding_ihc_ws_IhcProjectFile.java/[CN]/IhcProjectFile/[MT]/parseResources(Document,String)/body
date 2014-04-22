@@ -1,0 +1,30 @@
+{
+  logger.debug("Parsing resources from project file...");
+  String val="";
+  val+=nodeListToString(doc.getElementsByTagName("dataline_input"),"dataline_input");
+  val+=nodeListToString(doc.getElementsByTagName("dataline_output"),"dataline_output");
+  val+=nodeListToString(doc.getElementsByTagName("airlink_input"),"airlink_input");
+  val+=nodeListToString(doc.getElementsByTagName("airlink_output"),"airlink_output");
+  val+=nodeListToString(doc.getElementsByTagName("airlink_dimming"),"airlink_dimming");
+  val+=nodeListToString(doc.getElementsByTagName("resource_temperature"),"resource_temperature");
+  val+=nodeListToString(doc.getElementsByTagName("resource_flag"),"resource_flag");
+  val+=nodeListToString(doc.getElementsByTagName("resource_timer"),"resource_timer");
+  val+=nodeListToString(doc.getElementsByTagName("resource_counter"),"resource_counter");
+  val+=nodeListToString(doc.getElementsByTagName("resource_weekday"),"resource_weekday");
+  val+=nodeListToString(doc.getElementsByTagName("resource_light_level"),"resource_light_level");
+  val+=nodeListToString(doc.getElementsByTagName("resource_integer"),"resource_integer");
+  val+=nodeListToString(doc.getElementsByTagName("resource_time"),"resource_time");
+  val+=nodeListToString(doc.getElementsByTagName("resource_date"),"resource_date");
+  val+=nodeListToString(doc.getElementsByTagName("resource_scene"),"resource_scene");
+  val+=nodeListToString(doc.getElementsByTagName("resource_enum"),"resource_enum");
+  try {
+    File file=new File(fileName);
+    logger.info("Saving IHC resource info to file '{}'",file.getAbsolutePath());
+    PrintWriter out=new PrintWriter(file);
+    out.println(val);
+    out.close();
+  }
+ catch (  FileNotFoundException e) {
+    logger.warn("Unable to write IHC resources to file",e);
+  }
+}

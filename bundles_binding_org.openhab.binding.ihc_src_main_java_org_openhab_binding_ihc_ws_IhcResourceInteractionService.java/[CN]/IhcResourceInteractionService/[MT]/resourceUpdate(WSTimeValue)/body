@@ -1,0 +1,5 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soap:Body>"+ " <setResourceValue1 xmlns=\"utcs\">"+ "  <value xmlns:q1=\"utcs.values\" xsi:type=\"q1:WSTimeValue\">"+ "   <q1:hours>%s</q1:hours>"+ "   <q1:minutes>%s</q1:minutes>"+ "   <q1:seconds>%s</q1:seconds>"+ "  </value>"+ "  <resourceID>%s</resourceID>"+ "  <isValueRuntime>true</isValueRuntime>"+ " </setResourceValue1>"+ "</soap:Body>"+ "</soap:Envelope>";
+  String query=String.format(soapQuery,value.getHours(),value.getMinutes(),value.getSeconds(),value.getResourceID());
+  return doResourceUpdate(query);
+}

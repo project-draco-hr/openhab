@@ -1,0 +1,10 @@
+{
+  long lastSend=controller.getLastSend();
+  logger.trace("Check thread current idle ms " + (System.currentTimeMillis() - lastSend));
+  if ((System.currentTimeMillis() - lastSend) > restartTimeout) {
+    resetTellstick();
+  }
+  if ((System.currentTimeMillis() - lastRefresh) > updateFromTellstickInterval) {
+    refreshFromTellstick();
+  }
+}

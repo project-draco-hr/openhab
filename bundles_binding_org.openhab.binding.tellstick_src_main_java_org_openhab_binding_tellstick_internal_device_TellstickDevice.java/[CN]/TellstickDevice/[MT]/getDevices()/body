@@ -1,0 +1,13 @@
+{
+  int nbrDevices=JNA.CLibrary.INSTANCE.tdGetNumberOfDevices();
+  ArrayList<TellstickDevice> devices=new ArrayList<TellstickDevice>();
+  for (int i=0; i < nbrDevices; i++) {
+    try {
+      TellstickDevice dev=TellstickDevice.getDevice(JNA.CLibrary.INSTANCE.tdGetDeviceId(i));
+      devices.add(dev);
+    }
+ catch (    DeviceNotSupportedException e) {
+    }
+  }
+  return devices;
+}

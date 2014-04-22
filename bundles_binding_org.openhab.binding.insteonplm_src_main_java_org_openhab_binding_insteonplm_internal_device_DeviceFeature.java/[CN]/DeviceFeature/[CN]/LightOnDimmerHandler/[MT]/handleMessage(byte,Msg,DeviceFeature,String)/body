@@ -1,0 +1,29 @@
+{
+  try {
+    InsteonAddress a=f.getDevice().getAddress();
+    if (msg.isAckOfDirect()) {
+      int cmd2=(int)(msg.getByte("command2") & 0xff);
+      if (cmd2 > 0) {
+        if (cmd2 == 0xff) {
+          logger.info("LightOnDimmerHandler: device {} was turned fully on",a);
+          m_pub.publish(OnOffType.ON);
+        }
+ else {
+          int level=Math.max(1,(cmd2 * 100) / 255);
+          logger.info("LightOnDimmerHandler: device {} was set to level {}",a,level);
+          m_pub.publish(new PercentType(level));
+        }
+      }
+ else {
+        logger.info("LightOnDimmerHandler: device {} was turned fully off",a);
+        m_pub.publish(OnOffType.OFF);
+      }
+    }
+ else {
+      m_pub.publish(OnOffType.ON);
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("error parsing {}: ",msg,e);
+  }
+}

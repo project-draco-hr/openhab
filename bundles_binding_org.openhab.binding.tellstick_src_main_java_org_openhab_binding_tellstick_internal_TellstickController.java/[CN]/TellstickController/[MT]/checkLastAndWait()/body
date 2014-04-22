@@ -1,0 +1,12 @@
+{
+  while ((System.currentTimeMillis() - lastSend) < INTERVAL_BETWEEN_SEND) {
+    logger.info("Wait for " + INTERVAL_BETWEEN_SEND + " millisec");
+    try {
+      Thread.sleep(INTERVAL_BETWEEN_SEND);
+    }
+ catch (    InterruptedException e) {
+      logger.error("Failed to sleep",e);
+    }
+  }
+  lastSend=System.currentTimeMillis();
+}

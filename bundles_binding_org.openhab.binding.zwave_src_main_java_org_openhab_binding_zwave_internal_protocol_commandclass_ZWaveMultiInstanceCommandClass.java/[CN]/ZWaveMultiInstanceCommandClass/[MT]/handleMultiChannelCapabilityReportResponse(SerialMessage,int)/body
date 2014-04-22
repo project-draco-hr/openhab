@@ -1,10 +1,10 @@
 {
-  logger.debug("Process Multi-channel capability Report");
+  logger.debug("NODE {}: Process Multi-channel capability Report",this.getNode().getNodeId());
   int receivedEndpointId=serialMessage.getMessagePayloadByte(offset) & 0x7F;
   boolean dynamic=((serialMessage.getMessagePayloadByte(offset) & 0x80) != 0);
   int genericDeviceClass=serialMessage.getMessagePayloadByte(offset + 1);
   int specificDeviceClass=serialMessage.getMessagePayloadByte(offset + 2);
-  logger.debug("Endpoints are the same device class = {}",endpointsAreTheSameDeviceClass ? "true" : false);
+  logger.debug("NODE {}: Endpoints are the same device class = {}",this.getNode().getNodeId(),endpointsAreTheSameDeviceClass ? "true" : false);
   int startId=this.endpointsAreTheSameDeviceClass ? 1 : receivedEndpointId;
   int endId=this.endpointsAreTheSameDeviceClass ? this.endpoints.size() : receivedEndpointId;
   boolean supportsBasicCommandClass=this.getNode().supportsCommandClass(CommandClass.BASIC);
@@ -17,19 +17,19 @@
     Basic basic=this.getNode().getDeviceClass().getBasicDeviceClass();
     Generic generic=Generic.getGeneric(genericDeviceClass);
     if (generic == null) {
-      logger.error(String.format("Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",endpoint,genericDeviceClass,specificDeviceClass));
+      logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
       continue;
     }
     Specific specific=Specific.getSpecific(generic,specificDeviceClass);
     if (specific == null) {
-      logger.error(String.format("Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",endpoint,genericDeviceClass,specificDeviceClass));
+      logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
       continue;
     }
-    logger.debug("Endpoint Id = {}",endpointId);
-    logger.debug("Endpoints is dynamic = {}",dynamic ? "true" : false);
-    logger.debug(String.format("Basic = %s 0x%02x",basic.getLabel(),basic.getKey()));
-    logger.debug(String.format("Generic = %s 0x%02x",generic.getLabel(),generic.getKey()));
-    logger.debug(String.format("Specific = %s 0x%02x",specific.getLabel(),specific.getKey()));
+    logger.debug("NODE {}: Endpoint Id = {}",this.getNode().getNodeId(),endpointId);
+    logger.debug("NODE {}: Endpoints is dynamic = {}",this.getNode().getNodeId(),dynamic ? "true" : false);
+    logger.debug(String.format("NODE %d: Basic = %s 0x%02x",this.getNode().getNodeId(),basic.getLabel(),basic.getKey()));
+    logger.debug(String.format("NODE %d: Generic = %s 0x%02x",this.getNode().getNodeId(),generic.getLabel(),generic.getKey()));
+    logger.debug(String.format("NODE %d: Specific = %s 0x%02x",this.getNode().getNodeId(),specific.getLabel(),specific.getKey()));
     ZWaveDeviceClass deviceClass=endpoint.getDeviceClass();
     deviceClass.setBasicDeviceClass(basic);
     deviceClass.setGenericDeviceClass(generic);
@@ -43,7 +43,7 @@
       if (data == 0xef) {
         break;
       }
-      logger.debug(String.format("Adding command class 0x%02X to the list of supported command classes.",data));
+      logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",this.getNode().getNodeId(),data));
       ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
       if (commandClass == null)       continue;
       endpoint.addCommandClass(commandClass);

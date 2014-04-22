@@ -1,0 +1,9 @@
+{
+  double dValue=Double.valueOf(event.getData());
+  TellstickValueSelector selector=device.getUsageSelector();
+  if (selector == null) {
+    selector=device.getValueSelector();
+  }
+  State cmd=getCommand(event,dValue,selector);
+  sendToOpenHab(device.getItemName(),cmd);
+}

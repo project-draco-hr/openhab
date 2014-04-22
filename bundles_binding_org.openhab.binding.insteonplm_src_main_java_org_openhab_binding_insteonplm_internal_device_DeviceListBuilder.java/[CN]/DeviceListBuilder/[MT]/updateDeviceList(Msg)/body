@@ -1,0 +1,26 @@
+{
+  try {
+    InsteonAddress linkAddr=m.getAddress("LinkAddr");
+    int devCat=m.getByte("LinkData1") & 0xff;
+    int subCat=m.getByte("LinkData2") & 0xff;
+    int vers=m.getByte("LinkData3") & 0xff;
+    HashMap<InsteonAddress,InsteonDevice> devices=m_port.getDeviceList();
+synchronized (devices) {
+      InsteonDevice dev=devices.get(linkAddr);
+      if (dev == null) {
+        dev=InsteonDevice.s_makeDevice(linkAddr,m_port.getDriver());
+        dev.setInitStatus(InitStatus.INITIALIZED);
+        devices.put(linkAddr,dev);
+      }
+      dev.addPort(m_port.getDeviceName());
+      dev.addLinkRecord(m);
+      DeviceDescriptor desc=DeviceDescriptor.s_getDeviceDescriptor(devCat,subCat,0x00);
+      desc.setVersion(vers);
+      dev.addDescriptor(desc);
+      dev.instantiateFeatures();
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("cannot access field:",e);
+  }
+}

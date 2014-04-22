@@ -1,0 +1,22 @@
+{
+  String str=" ";
+switch (config.getObjectType()) {
+case AUDIOSOURCE_TEXT:
+    str=formatAudioText();
+  break;
+case AUDIOSOURCE_TEXT_FIELD1:
+str=getAudioText(0);
+break;
+case AUDIOSOURCE_TEXT_FIELD2:
+str=getAudioText(1);
+break;
+case AUDIOSOURCE_TEXT_FIELD3:
+str=getAudioText(2);
+break;
+default :
+return;
+}
+if (item instanceof StringItem) {
+publisher.postUpdate(item.getName(),new StringType(str));
+}
+}

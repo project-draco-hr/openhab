@@ -1,0 +1,23 @@
+{
+  DeviceCategory category=new DeviceCategory();
+  NodeList nodes=e.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      Element subElement=(Element)node;
+      if (subElement.getNodeName().equals("name")) {
+        category.setName(subElement.getTextContent());
+      }
+ else       if (subElement.getNodeName().equals("description") || subElement.getNodeName().equals("desc")) {
+        category.setDesc(subElement.getTextContent());
+      }
+ else       if (subElement.getNodeName().equals("devCat")) {
+        category.setDevCat(parseHex(subElement.getTextContent()));
+      }
+ else       if (subElement.getNodeName().equals("subcategory")) {
+        processSubcategory(subElement,category);
+      }
+    }
+  }
+  DeviceCategory.addCategory(category);
+}

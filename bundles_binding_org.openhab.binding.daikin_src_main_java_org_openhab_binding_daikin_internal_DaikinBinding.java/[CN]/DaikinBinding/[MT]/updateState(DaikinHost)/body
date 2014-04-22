@@ -1,0 +1,33 @@
+{
+  List<NameValuePair> nameValuePairs=new ArrayList<NameValuePair>();
+  nameValuePairs.add(new BasicNameValuePair("wON",host.getPower() ? "On" : "Off"));
+  nameValuePairs.add(new BasicNameValuePair("wMODE",host.getMode().getCommand()));
+  nameValuePairs.add(new BasicNameValuePair("wTEMP",host.getTemp().setScale(0).toPlainString() + "C"));
+  nameValuePairs.add(new BasicNameValuePair("wFUN",host.getFan().getCommand()));
+  nameValuePairs.add(new BasicNameValuePair("wSWNG",host.getSwing().getCommand()));
+  nameValuePairs.add(new BasicNameValuePair("wSETd1","Set"));
+  String url=String.format("http://%s",host.getHost());
+  CloseableHttpClient httpClient=HttpClients.custom().build();
+  try {
+    HttpPost httpPost=new HttpPost(url);
+    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+    CloseableHttpResponse httpResponse=httpClient.execute(httpPost);
+    try {
+      if (httpResponse.getStatusLine().getStatusCode() != 200) {
+        logger.warn("Invalid response received from Daikin controller '{}': {}:{}",host.getHost(),httpResponse.getStatusLine().getStatusCode(),httpResponse.getStatusLine().getReasonPhrase());
+        return;
+      }
+    }
+  finally {
+      httpResponse.close();
+    }
+  }
+ catch (  ClientProtocolException e) {
+    logger.error("Client protocol error attempting to send command",e);
+    return;
+  }
+catch (  IOException e) {
+    logger.error("IO error attempting to send command",e);
+    return;
+  }
+}

@@ -1,0 +1,9 @@
+{
+  Msg msg=new Msg(headerLength,new byte[length],length,dir);
+  for (  Entry<Field,Object> e : values.entrySet()) {
+    Field f=e.getKey();
+    f.set(msg.getData(),e.getValue());
+    if (f.getName() != null && !f.getName().equals(""))     msg.addField(f);
+  }
+  return msg;
+}
