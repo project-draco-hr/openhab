@@ -22,6 +22,8 @@ if (targetNodeId != this.getController().getOwnNodeId()) return;
 this.interval=receivedInterval;
 logger.debug("NODE {}: Wake up interval set",this.getNode().getNodeId());
 this.initializationComplete=true;
+ZWaveWakeUpEvent event=new ZWaveWakeUpEvent(getNode().getNodeId(),WAKE_UP_INTERVAL_REPORT);
+this.getController().notifyEventListeners(event);
 this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;
 case WAKE_UP_INTERVAL_CAPABILITIES_REPORT:
@@ -30,11 +32,11 @@ this.minInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((s
 this.maxInterval=((serialMessage.getMessagePayloadByte(offset + 4)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 5)) << 8) | (serialMessage.getMessagePayloadByte(offset + 6));
 this.defaultInterval=((serialMessage.getMessagePayloadByte(offset + 7)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 8)) << 8) | (serialMessage.getMessagePayloadByte(offset + 9));
 this.intervalStep=((serialMessage.getMessagePayloadByte(offset + 10)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 11)) << 8) | (serialMessage.getMessagePayloadByte(offset + 12));
-logger.debug("NODE {}: Wake up interval capabilities report for nodeId = %d",this.getNode().getNodeId());
-logger.debug("NODE {}: Minimum interval = %d",this.getNode().getNodeId(),this.minInterval);
-logger.debug("NODE {}: Maximum interval = %d",this.getNode().getNodeId(),this.maxInterval);
-logger.debug("NODE {}: Default interval = %d",this.getNode().getNodeId(),this.defaultInterval);
-logger.debug("NODE {}: Interval step = %d",this.getNode().getNodeId(),this.intervalStep);
+logger.debug("NODE {}: Wake up interval capabilities report",this.getNode().getNodeId());
+logger.debug("NODE {}: Minimum interval = {}",this.getNode().getNodeId(),this.minInterval);
+logger.debug("NODE {}: Maximum interval = {}",this.getNode().getNodeId(),this.maxInterval);
+logger.debug("NODE {}: Default interval = {}",this.getNode().getNodeId(),this.defaultInterval);
+logger.debug("NODE {}: Interval step = {}",this.getNode().getNodeId(),this.intervalStep);
 this.initializationComplete=true;
 this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;

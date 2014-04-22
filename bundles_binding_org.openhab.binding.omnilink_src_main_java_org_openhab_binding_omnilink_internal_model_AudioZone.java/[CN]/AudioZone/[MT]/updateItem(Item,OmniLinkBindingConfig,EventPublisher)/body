@@ -1,0 +1,52 @@
+{
+  int num=0;
+  String str="";
+  int source=new Integer(properties.getSource());
+switch (config.getObjectType()) {
+case AUDIOZONE_MUTE:
+    num=properties.isMute() ? 1 : 0;
+  break;
+case AUDIOZONE_POWER:
+num=properties.isOn() ? 1 : 0;
+break;
+case AUDIOZONE_SOURCE:
+num=properties.getSource();
+break;
+case AUDIOZONE_VOLUME:
+num=properties.getVolume();
+break;
+case AUDIOZONE_TEXT:
+if (sourceValid(source)) str=audioSources.get(source).formatAudioText();
+break;
+case AUDIOZONE_TEXT_FIELD1:
+if (sourceValid(source)) str=audioSources.get(source).getAudioText(0);
+break;
+case AUDIOZONE_TEXT_FIELD2:
+if (sourceValid(source)) str=audioSources.get(source).getAudioText(1);
+break;
+case AUDIOZONE_TEXT_FIELD3:
+if (sourceValid(source)) str=audioSources.get(source).getAudioText(2);
+break;
+case AUDIOZONE_KEY:
+num=-1;
+break;
+default :
+return;
+}
+if (item instanceof DimmerItem) {
+logger.debug("updating percent type {}",num);
+publisher.postUpdate(item.getName(),new PercentType(num));
+}
+ else if (item instanceof NumberItem) {
+logger.debug("updating number type {}",num);
+publisher.postUpdate(item.getName(),new DecimalType(num));
+}
+ else if (item instanceof SwitchItem) {
+logger.debug("updating switch type {}",num > 0 ? OnOffType.ON : OnOffType.OFF);
+publisher.postUpdate(item.getName(),num > 0 ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (item instanceof StringItem) {
+logger.debug("updating string type {}",str);
+publisher.postUpdate(item.getName(),new StringType(str));
+}
+}

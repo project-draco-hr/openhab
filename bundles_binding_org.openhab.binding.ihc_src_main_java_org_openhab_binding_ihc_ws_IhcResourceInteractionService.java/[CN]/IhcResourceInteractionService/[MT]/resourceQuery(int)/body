@@ -1,0 +1,30 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soapenv:Body>"+ " <ns1:getRuntimeValue1 xmlns:ns1=\"utcs\">%s</ns1:getRuntimeValue1>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
+  String query=String.format(soapQuery,String.valueOf(resoureId));
+  openConnection(url);
+  super.setCookies(cookies);
+  String response=sendQuery(query);
+  closeConnection();
+  NodeList nodeList;
+  try {
+    nodeList=parseList(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getRuntimeValue2");
+    if (nodeList.getLength() == 1) {
+      WSResourceValue val=parseResourceValue(nodeList.item(0),2);
+      if (val.getResourceID() == resoureId) {
+        return val;
+      }
+ else {
+        throw new IhcExecption("No resource id found");
+      }
+    }
+ else {
+      throw new IhcExecption("No resource value found");
+    }
+  }
+ catch (  XPathExpressionException e) {
+    throw new IhcExecption(e);
+  }
+catch (  UnsupportedEncodingException e) {
+    throw new IhcExecption(e);
+  }
+}

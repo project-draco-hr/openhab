@@ -1,0 +1,27 @@
+{
+  HashMap<String,Msg> messageMap=new HashMap<String,Msg>();
+  try {
+    DocumentBuilderFactory dbFactory=DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder=dbFactory.newDocumentBuilder();
+    Document doc=dBuilder.parse(input);
+    doc.getDocumentElement().normalize();
+    Node root=doc.getDocumentElement();
+    NodeList nodes=root.getChildNodes();
+    for (int i=0; i < nodes.getLength(); i++) {
+      Node node=nodes.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        if (node.getNodeName().equals("msg")) {
+          Pair<String,Msg> msgDef=s_readMessageDefinition((Element)node);
+          messageMap.put(msgDef.getKey(),msgDef.getValue());
+        }
+      }
+    }
+  }
+ catch (  SAXException e) {
+    throw new ParsingException("Failed to parse XML!",e);
+  }
+catch (  ParserConfigurationException e) {
+    throw new ParsingException("Got parser config exception! ",e);
+  }
+  return messageMap;
+}

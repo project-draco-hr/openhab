@@ -1,5 +1,8 @@
 {
-  touchLastConfigurationChangeTime();
-  super.bindingChanged(provider,itemName);
-  startIhcListener();
+  logger.trace("bindingChanged {}",itemName);
+  if (reminder != null) {
+    reminder.cancel();
+    reminder=null;
+  }
+  reminder=new NotificationsRequestReminder(NOTIFICATIONS_REORDER_WAIT_TIME);
 }

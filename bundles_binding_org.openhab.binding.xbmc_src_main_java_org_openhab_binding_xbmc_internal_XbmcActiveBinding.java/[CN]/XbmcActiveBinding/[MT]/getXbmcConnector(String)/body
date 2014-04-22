@@ -1,0 +1,32 @@
+{
+  if (xbmcInstance == null)   return null;
+  XbmcConnector connector=connectors.get(xbmcInstance);
+  if (connector != null)   return connector;
+  XbmcHost xbmcHost;
+  if (xbmcInstance.startsWith("#")) {
+    String instance=xbmcInstance.substring(1);
+    if (nameHostMapper == null) {
+      logger.trace("Attempting to access the named instance '{}' before the binding config has been loaded",instance);
+      return null;
+    }
+    if (!nameHostMapper.containsKey(instance)) {
+      logger.error("Named instance '{}' does not exist in the binding config",instance);
+      return null;
+    }
+    xbmcHost=nameHostMapper.get(instance);
+  }
+ else {
+    xbmcHost=new XbmcHost();
+    xbmcHost.setHostname(xbmcInstance);
+  }
+  logger.debug("Creating new XbmcConnector for '{}' on {}",xbmcInstance,xbmcHost.getHostname());
+  connector=new XbmcConnector(xbmcHost,eventPublisher);
+  connectors.put(xbmcInstance,connector);
+  try {
+    connector.open();
+  }
+ catch (  Exception e) {
+    logger.error("Connection failed for '{}' on {}",xbmcInstance,xbmcHost.getHostname());
+  }
+  return connector;
+}

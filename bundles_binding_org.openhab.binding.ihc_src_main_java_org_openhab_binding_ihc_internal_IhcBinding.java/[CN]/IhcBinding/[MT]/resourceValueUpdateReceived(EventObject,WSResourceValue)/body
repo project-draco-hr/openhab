@@ -1,0 +1,18 @@
+{
+  for (  IhcBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      int resourceId=provider.getResourceId(itemName);
+      if (value.getResourceID() == resourceId) {
+        if (provider.isOutBindingOnly(itemName)) {
+          logger.trace("{} is out binding only...skip update to OpenHAB bus",itemName);
+        }
+ else {
+          Class<? extends Item> itemType=provider.getItemType(itemName);
+          State state=IhcDataConverter.convertResourceValueToState(itemType,value);
+          logger.trace("Received resource value update (item='{}', state='{}')",new Object[]{itemName,state});
+          eventPublisher.postUpdate(itemName,state);
+        }
+      }
+    }
+  }
+}

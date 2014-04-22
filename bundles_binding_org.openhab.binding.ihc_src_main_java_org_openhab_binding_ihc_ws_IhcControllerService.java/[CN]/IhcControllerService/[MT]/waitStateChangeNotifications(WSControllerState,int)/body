@@ -1,0 +1,13 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soapenv:Header/>"+ "<soapenv:Body>"+ " <ns1:waitForControllerStateChange1 xmlns:ns1=\"utcs\" xsi:type=\"ns1:WSControllerState\">"+ "  <ns1:state xsi:type=\"xsd:string\">%s</ns1:state>"+ " </ns1:waitForControllerStateChange1>"+ " <ns2:waitForControllerStateChange2 xmlns:ns2=\"utcs\" xsi:type=\"xsd:int\">%s</ns2:waitForControllerStateChange2>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
+  String query=String.format(soapQuery,previousState.getState(),timeoutInSeconds);
+  openConnection(url);
+  super.setCookies(cookies);
+  setRequestProperty("SOAPAction","waitForControllerStateChange");
+  setTimeout(getTimeout() + timeoutInSeconds * 1000);
+  String response=sendQuery(query);
+  closeConnection();
+  WSControllerState controllerState=new WSControllerState();
+  controllerState.encodeData(response);
+  return controllerState;
+}

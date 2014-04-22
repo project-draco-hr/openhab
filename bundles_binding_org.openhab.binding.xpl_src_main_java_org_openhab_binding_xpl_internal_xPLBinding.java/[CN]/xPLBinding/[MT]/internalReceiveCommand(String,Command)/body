@@ -1,0 +1,9 @@
+{
+  for (  xPLBindingProvider provider : providers) {
+    xPLBindingConfig config=provider.getConfig(itemName);
+    if ((config == null) || (config.NamedParameter == null))     continue;
+    if (config.Message.getSource() == null)     config.Message.setSource(sourceIdentifier);
+    config.Message.setNamedValue(config.NamedParameter,command.toString().toLowerCase());
+    theManager.sendMessage(config.Message);
+  }
+}

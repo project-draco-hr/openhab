@@ -1,0 +1,9 @@
+{
+  IhcResourceInteractionService service=new IhcResourceInteractionService(ip);
+  service.setCookies(cookies);
+  List<? extends WSResourceValue> list=service.waitResourceValueNotifications(timeoutInSeconds);
+  for (  WSResourceValue val : list) {
+    resourceValues.put(val.getResourceID(),val);
+  }
+  return list;
+}

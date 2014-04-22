@@ -1,0 +1,10 @@
+{
+  openConnection(url);
+  super.setCookies(cookies);
+  setRequestProperty("SOAPAction","getProjectInfo");
+  String response=sendQuery(emptyQuery);
+  closeConnection();
+  WSProjectInfo projectInfo=new WSProjectInfo();
+  projectInfo.encodeData(response);
+  return projectInfo;
+}

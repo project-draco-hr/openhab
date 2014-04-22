@@ -1,0 +1,19 @@
+{
+  ArrayList<QEntry> l=new ArrayList<QEntry>();
+synchronized (m_features) {
+    for (    DeviceFeature i : m_features.values()) {
+      if (i.hasListeners()) {
+        Msg m=i.makePollMsg();
+        if (m != null)         l.add(new QEntry(i,m));
+      }
+    }
+  }
+  for (  QEntry e : l) {
+    m_requestQueue.addLast(e);
+  }
+  if (!l.isEmpty()) {
+synchronized (m_lastTimePolled) {
+      m_lastTimePolled=System.currentTimeMillis();
+    }
+  }
+}

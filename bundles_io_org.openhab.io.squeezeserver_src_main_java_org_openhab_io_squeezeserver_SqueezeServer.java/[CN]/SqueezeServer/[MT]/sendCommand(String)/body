@@ -1,4 +1,12 @@
 {
+  if (!isConnected()) {
+    logger.debug("No connection to SqueezeServer, will attempt to reconnect now...");
+    connect();
+    if (!isConnected()) {
+      logger.error("Failed to re-connect to SqueezeServer, unable to send command {}",command);
+      return;
+    }
+  }
   logger.debug("Sending command: {}",command);
   try {
     BufferedWriter writer=new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));

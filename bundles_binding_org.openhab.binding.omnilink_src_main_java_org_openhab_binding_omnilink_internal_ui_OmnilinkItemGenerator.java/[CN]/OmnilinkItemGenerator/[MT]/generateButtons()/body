@@ -1,0 +1,15 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\",autoupdate=\"false\"}\n";
+  String groupName="Buttons";
+  groups.append(String.format(groupString,groupName,"Buttons","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_BUTTON,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_AREA_ALL,ObjectProperties.FILTER_3_NONE)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    ButtonProperties o=((ButtonProperties)m);
+    objnum=o.getNumber();
+    String name=groupName + "_" + cleanString(o.getName());
+    buttons.add(new SiteItem(name,o.getName(),o.getName()));
+    items.append(String.format(itemString,"String",name,o.getName(),groupName,"button",objnum));
+  }
+}

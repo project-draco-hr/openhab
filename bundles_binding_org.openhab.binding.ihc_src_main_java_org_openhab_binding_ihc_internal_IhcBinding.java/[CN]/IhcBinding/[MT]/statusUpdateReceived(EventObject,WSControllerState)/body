@@ -1,0 +1,11 @@
+{
+  logger.trace("Controller state {}",state.getState());
+  if (controllerState.getState().equals(state.getState()) == false) {
+    logger.info("Controller state change detected ({} -> {})",controllerState.getState(),state.getState());
+    if (controllerState.getState().equals(IhcClient.CONTROLLER_STATE_INITIALIZE) || state.getState().equals(IhcClient.CONTROLLER_STATE_READY)) {
+      logger.debug("Reconnection request");
+      setReconnectRequest(true);
+    }
+    controllerState.setState(state.getState());
+  }
+}

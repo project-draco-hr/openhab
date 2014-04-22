@@ -150,6 +150,14 @@
   g2=createEGenericType(this.getTFIOSensorConfiguration());
   g1.getETypeArguments().add(g2);
   digitalSensorEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMDevice());
+  g2=createEGenericType(this.getTinkerBrickletMotionDetector());
+  g1.getETypeArguments().add(g2);
+  mBrickletMotionDetectorEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMSensor());
+  g2=createEGenericType(this.getDigitalValue());
+  g1.getETypeArguments().add(g2);
+  mBrickletMotionDetectorEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMInSwitchActor());
   mDualRelayEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMSubDevice());
@@ -446,6 +454,9 @@
   initEAttribute(getDigitalSensor_PullUpResistorEnabled(),theEcorePackage.getEBoolean(),"pullUpResistorEnabled",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getDigitalSensor_Port(),theEcorePackage.getEChar(),"port",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getDigitalSensor_Pin(),theEcorePackage.getEInt(),"pin",null,0,1,DigitalSensor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(mBrickletMotionDetectorEClass,MBrickletMotionDetector.class,"MBrickletMotionDetector",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getMBrickletMotionDetector_DeviceType(),theEcorePackage.getEString(),"deviceType","motion_detector",0,1,MBrickletMotionDetector.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEOperation(getMBrickletMotionDetector__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mDualRelayEClass,MDualRelay.class,"MDualRelay",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMDualRelay_DeviceType(),theEcorePackage.getEString(),"deviceType","dual_relay",0,1,MDualRelay.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEClass(mBrickletRemoteSwitchEClass,MBrickletRemoteSwitch.class,"MBrickletRemoteSwitch",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
@@ -680,6 +691,7 @@
   initEDataType(mTinkerBrickletAmbientLightEDataType,BrickletAmbientLight.class,"MTinkerBrickletAmbientLight",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mTinkerBrickletLCD20x4EDataType,BrickletLCD20x4.class,"MTinkerBrickletLCD20x4",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(tinkerBrickletRemoteSwitchEDataType,BrickletRemoteSwitch.class,"TinkerBrickletRemoteSwitch",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
+  initEDataType(tinkerBrickletMotionDetectorEDataType,BrickletMotionDetector.class,"TinkerBrickletMotionDetector",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(enumEDataType,Enum.class,"Enum",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   createResource(eNS_URI);
 }

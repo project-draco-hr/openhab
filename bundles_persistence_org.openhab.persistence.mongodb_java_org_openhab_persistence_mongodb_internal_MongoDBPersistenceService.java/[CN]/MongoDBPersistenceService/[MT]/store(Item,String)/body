@@ -1,0 +1,27 @@
+{
+  if (item.getState() instanceof UnDefType) {
+    return;
+  }
+  if (initialized == false) {
+    logger.warn("MongoDB not initialized");
+    return;
+  }
+  if (!isConnected()) {
+    connectToDatabase();
+  }
+  if (!isConnected()) {
+    logger.warn("mongodb: No connection to database. Can not persist item '{}'! Will retry connecting to database next time.",item);
+    return;
+  }
+  String realName=item.getName();
+  String name=(alias != null) ? alias : realName;
+  Object value=this.convertValue(item.getState());
+  DBObject obj=new BasicDBObject();
+  obj.put(FIELD_ID,new ObjectId());
+  obj.put(FIELD_ITEM,name);
+  obj.put(FIELD_REALNAME,realName);
+  obj.put(FIELD_TIMESTAMP,new Date());
+  obj.put(FIELD_VALUE,value);
+  this.mongoCollection.save(obj);
+  logger.debug("MongoDB save {}={}",name,value);
+}
