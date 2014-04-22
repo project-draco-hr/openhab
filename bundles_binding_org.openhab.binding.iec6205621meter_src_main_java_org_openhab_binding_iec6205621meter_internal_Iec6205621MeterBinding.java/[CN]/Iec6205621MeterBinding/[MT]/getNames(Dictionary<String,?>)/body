@@ -1,0 +1,19 @@
+{
+  Set<String> set=new HashSet<String>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=(String)keys.nextElement();
+    if ("service.pid".equals(key) || "refresh".equals(key)) {
+      continue;
+    }
+    Matcher meterMatcher=METER_CONFIG_PATTERN.matcher(key);
+    if (!meterMatcher.matches()) {
+      logger.debug("given config key '" + key + "' does not follow the expected pattern '<meterName>.<serialPort|baudRateChangeDelay|echoHandling>'");
+      continue;
+    }
+    meterMatcher.reset();
+    meterMatcher.find();
+    set.add(meterMatcher.group(1));
+  }
+  return set;
+}

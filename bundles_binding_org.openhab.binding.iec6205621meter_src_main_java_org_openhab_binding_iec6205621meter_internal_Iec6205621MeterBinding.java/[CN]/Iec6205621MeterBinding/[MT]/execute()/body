@@ -1,0 +1,23 @@
+{
+  for (  Entry<String,MeterReader> entry : meterDevices.entrySet()) {
+    MeterReader reader=entry.getValue();
+    Map<String,DataSet> dataSets=reader.read();
+    for (    Iec6205621MeterBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String obis=provider.getObis(itemName);
+        if (obis != null && dataSets.containsKey(obis)) {
+          DataSet dataSet=dataSets.get(obis);
+          Class<? extends Item> itemType=provider.getItemType(itemName);
+          if (itemType.isAssignableFrom(NumberItem.class)) {
+            double value=Double.parseDouble(dataSet.getValue());
+            eventPublisher.postUpdate(itemName,new DecimalType(value));
+          }
+          if (itemType.isAssignableFrom(StringItem.class)) {
+            String value=dataSet.getValue();
+            eventPublisher.postUpdate(itemName,new StringType(value));
+          }
+        }
+      }
+    }
+  }
+}
