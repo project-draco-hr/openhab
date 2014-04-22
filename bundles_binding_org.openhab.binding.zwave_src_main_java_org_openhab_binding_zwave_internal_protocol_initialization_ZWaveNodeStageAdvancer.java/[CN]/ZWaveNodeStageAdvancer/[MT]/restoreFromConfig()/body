@@ -1,7 +1,7 @@
 {
   ZWaveNode restoredNode=nodeSerializer.DeserializeNode(this.node.getNodeId());
   if (restoredNode == null)   return false;
-  if (restoredNode.getVersion() != this.node.getVersion() || restoredNode.isListening() != this.node.isListening() || restoredNode.isFrequentlyListening() != this.node.isFrequentlyListening() || restoredNode.isRouting() != this.node.isRouting() || !restoredNode.getDeviceClass().equals(this.node.getDeviceClass())) {
+  if (restoredNode.getVersion() != this.node.getVersion() || restoredNode.getManufacturer() == 0 || restoredNode.isListening() != this.node.isListening() || restoredNode.isFrequentlyListening() != this.node.isFrequentlyListening() || restoredNode.isRouting() != this.node.isRouting() || !restoredNode.getDeviceClass().equals(this.node.getDeviceClass())) {
     logger.warn("NODE {}: Config file differs from controler information, ignoring config.",this.node.getNodeId());
     return false;
   }

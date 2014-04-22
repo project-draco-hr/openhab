@@ -1,0 +1,14 @@
+{
+  logger.warn("Will do a reinit of listeners, no message received for " + restartTimeout / 1000 + " seconds");
+  try {
+    deRegisterListeners();
+    logger.info("Listeners removed");
+    resetTelldusProvider();
+    logger.info("Telldus reset");
+    registerListeners();
+    logger.info("Listeners restarted");
+  }
+ catch (  Exception e) {
+    logger.error("Failed to reset listener",e);
+  }
+}

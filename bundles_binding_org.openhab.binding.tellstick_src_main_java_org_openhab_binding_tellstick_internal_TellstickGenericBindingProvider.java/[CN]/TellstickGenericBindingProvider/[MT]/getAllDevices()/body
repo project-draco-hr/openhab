@@ -1,0 +1,12 @@
+{
+  if (allDevices == null || allDevices.isEmpty()) {
+    try {
+      updateDevices();
+    }
+ catch (    SupportedMethodsException e) {
+      logger.error("Failed to get devices",e);
+      throw new RuntimeException("Failed to list devices",e);
+    }
+  }
+  return allDevices;
+}

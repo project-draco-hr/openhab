@@ -1,0 +1,14 @@
+{
+  String productKey=e.getAttribute("name");
+  subCat.addProductKey(productKey);
+  NodeList nodes=e.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      Element subElement=(Element)node;
+      if (subElement.getNodeName().equals("feature")) {
+        processFeature(productKey,subElement,subCat);
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  int length=0;
+  int hlength=0;
+  LinkedHashMap<Field,Object> fieldMap=new LinkedHashMap<Field,Object>();
+  String dir=msg.getAttribute("direction");
+  String name=msg.getAttribute("name");
+  Msg.Direction direction=Msg.Direction.s_getDirectionFromString(dir);
+  if (msg.hasAttribute("length"))   length=Integer.parseInt(msg.getAttribute("length"));
+  NodeList nodes=msg.getChildNodes();
+  int offset=0;
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      if (node.getNodeName().equals("header")) {
+        int o=s_readHeaderElement((Element)node,fieldMap);
+        hlength=o;
+        offset+=o;
+      }
+ else {
+        Pair<Field,Object> field=s_readField((Element)node,offset);
+        fieldMap.put(field.getKey(),field.getValue());
+        offset+=field.getKey().getType().getSize();
+      }
+    }
+  }
+  if (offset != length) {
+    throw new ParsingException("Actual msg length " + offset + " differs from given msg length "+ length+ "!");
+  }
+  if (length == 0)   length=offset;
+  return new Pair<String,Msg>(name,s_createMsg(fieldMap,length,hlength,direction));
+}

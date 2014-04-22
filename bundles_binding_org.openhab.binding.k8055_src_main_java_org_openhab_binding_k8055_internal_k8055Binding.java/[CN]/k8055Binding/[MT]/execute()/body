@@ -1,0 +1,43 @@
+{
+  logger.debug("execute() method is called!");
+  try {
+    if (!connect()) {
+      logger.error("Not connected to hardware. Skipping attempt to read inputs.");
+      return;
+    }
+    long inputs=sysLibrary.ReadAllDigital();
+    if (inputs < 0) {
+      throw new Exception("Failed to read digital inputs from hardware");
+    }
+    for (    k8055BindingProvider provider : this.providers) {
+      for (      String itemName : provider.getItemNames()) {
+        k8055BindingConfig config=provider.getItemConfig(itemName);
+        if (IOType.DIGITAL_IN.equals(config.ioType)) {
+          boolean newstate=(inputs & (1 << (config.ioNumber - 1))) != 0;
+          boolean oldstate=(lastDigitalInputs & (1 << (config.ioNumber - 1))) != 0;
+          if (lastDigitalInputs < 0 || newstate != oldstate) {
+            if (newstate) {
+              eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+            }
+ else {
+              eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+            }
+          }
+        }
+ else         if (IOType.ANALOG_IN.equals(config.ioType)) {
+          int state=sysLibrary.ReadAnalogChannel(config.ioNumber);
+          if (inputs < 0) {
+            throw new Exception("Failed to read analog channel " + config.ioNumber + " from hardware");
+          }
+          eventPublisher.postUpdate(itemName,new DecimalType(state));
+        }
+      }
+    }
+    lastDigitalInputs=inputs;
+  }
+ catch (  Exception e) {
+    logger.error("Failed to read from hardware ",e);
+    connected=false;
+    sysLibrary.CloseDevice();
+  }
+}

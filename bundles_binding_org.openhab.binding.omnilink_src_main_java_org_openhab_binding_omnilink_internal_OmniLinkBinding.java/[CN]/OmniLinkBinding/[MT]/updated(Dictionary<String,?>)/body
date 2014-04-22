@@ -1,0 +1,14 @@
+{
+  if (omniWorker != null)   omniWorker.setRunning(false);
+  if (config != null) {
+    String host=(String)config.get("host");
+    int port=Integer.parseInt((String)config.get("port"));
+    String key1=(String)config.get("key1");
+    String key2=(String)config.get("key2");
+    boolean generateItems=Boolean.parseBoolean((String)config.get("generateItems"));
+    if (StringUtils.isEmpty(host) || StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2))     throw new ConfigurationException("omnilink","host, key1 or key2 was not found");
+    logger.debug("Starting update");
+    omniWorker=new OmniConnectionThread(host,port,key1 + ":" + key2,generateItems,this);
+    omniWorker.start();
+  }
+}
