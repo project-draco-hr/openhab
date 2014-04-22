@@ -21,6 +21,7 @@
     transactionCompleted.drainPermits();
     byte[] buffer=lastSentMessage.getMessageBuffer();
     logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+    lastMessageStartTime=System.currentTimeMillis();
     try {
 synchronized (serialPort.getOutputStream()) {
         serialPort.getOutputStream().write(buffer);
@@ -58,6 +59,9 @@ synchronized (serialPort.getOutputStream()) {
         }
         continue;
       }
+      long responseTime=System.currentTimeMillis() - lastMessageStartTime;
+      if (responseTime > longestResponseTime)       longestResponseTime=responseTime;
+      logger.debug("Response processed after {}ms/{}ms.",responseTime,longestResponseTime);
       logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
     }
  catch (    InterruptedException e) {

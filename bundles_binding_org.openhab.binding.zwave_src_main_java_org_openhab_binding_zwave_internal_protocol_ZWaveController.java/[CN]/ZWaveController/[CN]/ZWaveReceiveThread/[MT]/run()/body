@@ -3,7 +3,8 @@
   sendResponse(NAK);
   try {
 synchronized (serialPort.getOutputStream()) {
-      byte[] buffer=new SerialMessage(SerialMessageClass.SerialApiSoftReset,SerialMessageType.Request,SerialMessageClass.SerialApiSoftReset,SerialMessagePriority.High).getMessageBuffer();
+      SerialMessage resetMsg=new SerialApiSoftResetMessageClass().doRequest();
+      byte[] buffer=resetMsg.getMessageBuffer();
       serialPort.getOutputStream().write(buffer);
       serialPort.getOutputStream().flush();
     }
