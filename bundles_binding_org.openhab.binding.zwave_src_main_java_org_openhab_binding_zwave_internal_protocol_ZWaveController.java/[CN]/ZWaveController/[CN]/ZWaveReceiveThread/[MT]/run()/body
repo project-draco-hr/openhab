@@ -1,6 +1,16 @@
 {
   logger.debug("Starting Z-Wave receive thread");
   sendResponse(NAK);
+  try {
+synchronized (serialPort.getOutputStream()) {
+      byte[] buffer=new SerialMessage(SerialMessageClass.SerialApiSoftReset,SerialMessageType.Request,SerialMessageClass.SerialApiSoftReset,SerialMessagePriority.High).getMessageBuffer();
+      serialPort.getOutputStream().write(buffer);
+      serialPort.getOutputStream().flush();
+    }
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
   while (!interrupted()) {
     int nextByte;
     try {
