@@ -1,5 +1,9 @@
 {
   logger.info("Starting Z-Wave controller");
+  if (timeout != null && timeout >= 1500 && timeout <= 10000) {
+    zWaveResponseTimeout=timeout;
+  }
+  logger.info("Z-Wave timeout is set to {}ms.",zWaveResponseTimeout);
   connect(serialPortName);
   this.watchdog=new Timer(true);
   this.watchdog.schedule(new WatchDogTimerTask(serialPortName),WATCHDOG_TIMER_PERIOD,WATCHDOG_TIMER_PERIOD);
