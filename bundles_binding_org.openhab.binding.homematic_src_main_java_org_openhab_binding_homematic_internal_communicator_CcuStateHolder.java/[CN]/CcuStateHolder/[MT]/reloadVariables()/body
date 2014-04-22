@@ -1,0 +1,23 @@
+{
+  reloadExecutorPool.execute(new Runnable(){
+    @Override public void run(){
+      logger.debug("Reloading CCU variables");
+      try {
+        tclRegaScriptClient.iterateAllVariables(new TclIteratorCallback(){
+          @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem variable){
+            if (hasChanged(bindingConfig,ccuVariables.get(bindingConfig),variable)) {
+              ccuVariables.put(bindingConfig,variable);
+              publish(bindingConfig,variable);
+            }
+          }
+        }
+);
+        logger.debug("Finished reloading {} CCU variables",ccuVariables.size());
+      }
+ catch (      CcuClientException ex) {
+        logger.error(ex.getMessage(),ex);
+      }
+    }
+  }
+);
+}

@@ -1,0 +1,25 @@
+{
+  if (command.getClass() == IncreaseDecreaseType.class) {
+    PercentType type=convertFromBinding(hmValueItem);
+    int percent=type.intValue();
+    percent+=command.equals(IncreaseDecreaseType.INCREASE) ? 10 : -10;
+    percent=(percent / 10) * 10;
+    percent=Math.min(100,percent);
+    percent=Math.max(0,percent);
+    return convertToBinding(new PercentType(percent),hmValueItem);
+  }
+ else   if (command.getClass() == OnOffType.class) {
+    PercentType type=new PercentType(command.equals(OnOffType.ON) ? 100 : 0);
+    return convertToBinding(type,hmValueItem);
+  }
+ else   if (command.getClass() == UpDownType.class) {
+    int result=command.equals(UpDownType.UP) ? 100 : 0;
+    if (isRollerShutterLevelDatapoint(hmValueItem)) {
+      result=command.equals(UpDownType.UP) ? 0 : 100;
+    }
+    return convertToBinding(new PercentType(result),hmValueItem);
+  }
+ else {
+    return super.commandToBinding(command,hmValueItem);
+  }
+}

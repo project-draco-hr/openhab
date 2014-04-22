@@ -1,0 +1,16 @@
+{
+  new ProviderItemIterator().iterate(event.getBindingConfig(),new ProviderItemIteratorCallback(){
+    @Override public void next(    HomematicBindingConfig providerBindingConfig,    Item item,    Converter<?> converter){
+      if (!item.getName().equals(event.getItem().getName())) {
+        if (event.isCommand()) {
+          context.getEventPublisher().postCommand(item.getName(),(Command)event.getType());
+        }
+ else {
+          State state=converter.convertFromBinding(event.getHmValueItem());
+          context.getEventPublisher().postUpdate(item.getName(),state);
+        }
+      }
+    }
+  }
+);
+}

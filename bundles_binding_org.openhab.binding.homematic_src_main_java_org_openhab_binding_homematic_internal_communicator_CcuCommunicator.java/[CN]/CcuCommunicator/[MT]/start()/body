@@ -1,0 +1,25 @@
+{
+  if (ccuCallbackServer == null) {
+    logger.info("Starting CCU communicator");
+    try {
+      boolean isBinRpc=context.getConfig().isBinRpc();
+      ccuCallbackServer=isBinRpc ? new BinRpcCallbackServer(this) : new XmlRpcCallbackServer(this);
+      tclRegaScriptClient=new TclRegaScriptClient();
+      stateHolder=new CcuStateHolder(tclRegaScriptClient);
+      stateHolder.loadDatapoints();
+      stateHolder.loadVariables();
+      itemDisabler=new ItemDisabler(stateHolder);
+      itemDisabler.start();
+      newDevicesCounter=0;
+      ccuCallbackServer.start();
+      ccuClient=isBinRpc ? new BinRpcClient() : new XmlRpcClient();
+      ccuClient.init(HmInterface.RF);
+      ccuClient.init(HmInterface.WIRED);
+      scheduleFirstRefresh();
+    }
+ catch (    Exception e) {
+      logger.error("Could not start CCU communicator: " + e.getMessage(),e);
+      stop();
+    }
+  }
+}

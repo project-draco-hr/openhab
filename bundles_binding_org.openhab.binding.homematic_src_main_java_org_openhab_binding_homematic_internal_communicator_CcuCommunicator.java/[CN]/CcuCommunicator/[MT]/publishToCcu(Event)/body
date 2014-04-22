@@ -1,0 +1,20 @@
+{
+  if (event.isPressValueItem()) {
+    logger.debug("PRESS_* items are not published to the CCU: {}",event.getBindingConfig());
+  }
+ else   if (!event.getHmValueItem().isWriteable()) {
+    logger.warn("Datapoint/Variable is not writeable, item is not published to the CCU: {}",event.getBindingConfig());
+  }
+ else   if (event.isNewValueEqual()) {
+    logger.debug("Value '{}' equals cached CCU value '{}' and forceUpdate is false, ignoring {}",event.getHmValueItem().getValue(),event.getNewValue(),event.getBindingConfig());
+  }
+ else {
+    if (event.isVariable()) {
+      tclRegaScriptClient.setVariable(event.getHmValueItem(),event.getNewValue());
+    }
+ else {
+      ccuClient.setDatapointValue((HmDatapoint)event.getHmValueItem(),event.getHmValueItem().getName(),event.getNewValue());
+    }
+    event.getHmValueItem().setValue(event.getNewValue());
+  }
+}

@@ -1,0 +1,7 @@
+{
+  List<HmVariable> variables=sendScriptByName("getAllVariables",HmVariableList.class).getVariables();
+  for (  HmVariable variable : variables) {
+    VariableConfig bindingConfig=new VariableConfig(variable.getName());
+    callback.iterate(bindingConfig,variable);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  if (action == null) {
+    return null;
+  }
+  BindingAction bindingAction=BindingAction.parse(action);
+  if (bindingAction == null) {
+    logger.warn("Can't parse action {}, only {} and {} allowed. Ignoring action parameter in item {}!",action,BindingAction.RELOAD_VARIABLES,BindingAction.RELOAD_DATAPOINTS,item.getName());
+  }
+ else   if (!acceptsOnOffType(item)) {
+    logger.warn("Actions can only be attached to items which accepts OnOffType commands, ignoring action attribute in item {}!",action,item.getName());
+    bindingAction=null;
+  }
+  return bindingAction;
+}

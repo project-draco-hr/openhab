@@ -1,0 +1,7 @@
+{
+  double number=((Number)hmValueItem.getValue()).doubleValue();
+  if (isRollerShutterLevelDatapoint(hmValueItem) && this instanceof OnOffTypeConverter) {
+    return createEnumType(hmValueItem,number == hmValueItem.getMaxValue().doubleValue());
+  }
+  return createEnumType(hmValueItem,number == hmValueItem.getMinValue().doubleValue());
+}

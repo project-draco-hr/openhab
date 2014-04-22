@@ -1,0 +1,7 @@
+{
+  logger.debug("Sending {} with value '{}' to CCU",hmValueItem.getName(),value);
+  HmResult result=sendScriptByName("setVariable",HmResult.class,new String[]{"variable_name","variable_state"},new String[]{hmValueItem.getName(),ObjectUtils.toString(value)});
+  if (!result.isValid()) {
+    throw new CcuClientException("Unable to set CCU variable " + hmValueItem.getName());
+  }
+}

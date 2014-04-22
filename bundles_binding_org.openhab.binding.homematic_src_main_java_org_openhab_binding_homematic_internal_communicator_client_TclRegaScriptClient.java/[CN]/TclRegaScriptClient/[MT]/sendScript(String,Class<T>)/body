@@ -1,0 +1,32 @@
+{
+  PostMethod post=null;
+  try {
+    script=StringUtils.trim(script);
+    if (StringUtils.isEmpty(script)) {
+      throw new RuntimeException("Homematic TclRegaScript is empty!");
+    }
+    if (TRACE_ENABLED) {
+      logger.trace("TclRegaScript: {}",script);
+    }
+    post=new PostMethod(config.getTclRegaUrl());
+    RequestEntity re=new ByteArrayRequestEntity(script.getBytes("ISO-8859-1"));
+    post.setRequestEntity(re);
+    httpClient.executeMethod(post);
+    String result=post.getResponseBodyAsString();
+    result=StringUtils.substringBeforeLast(result,"<xml><exec>");
+    if (TRACE_ENABLED) {
+      logger.trace("Result TclRegaScript: {}",result);
+    }
+    Unmarshaller um=JAXBContext.newInstance(clazz).createUnmarshaller();
+    um.setListener(new CommonUnmarshallerListener());
+    return (T)um.unmarshal(new StringReader(result));
+  }
+ catch (  Exception ex) {
+    throw new CcuClientException(ex.getMessage(),ex);
+  }
+ finally {
+    if (post != null) {
+      post.releaseConnection();
+    }
+  }
+}

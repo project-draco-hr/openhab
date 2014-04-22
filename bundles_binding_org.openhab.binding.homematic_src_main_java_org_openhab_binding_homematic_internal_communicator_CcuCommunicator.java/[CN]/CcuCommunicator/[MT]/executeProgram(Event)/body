@@ -1,0 +1,11 @@
+{
+  try {
+    tclRegaScriptClient.executeProgram(((ProgramConfig)event.getBindingConfig()).getName());
+  }
+ catch (  CcuClientException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+ finally {
+    itemDisabler.add(event.getBindingConfig());
+  }
+}

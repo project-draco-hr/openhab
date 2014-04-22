@@ -1,0 +1,20 @@
+{
+  if (value == null || "".equals(value)) {
+    return null;
+  }
+  if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on")) {
+    return (Boolean.TRUE);
+  }
+ else   if (value.equalsIgnoreCase("false") || value.equalsIgnoreCase("off")) {
+    return (Boolean.FALSE);
+  }
+ else   if (value.matches("(-|\\+)?[0-9]+")) {
+    return (Integer.valueOf(value));
+  }
+ else   if (value.matches("(-|\\+)?[0-9]+\\.[0-9]+")) {
+    return (Double.valueOf(value));
+  }
+ else {
+    return value;
+  }
+}

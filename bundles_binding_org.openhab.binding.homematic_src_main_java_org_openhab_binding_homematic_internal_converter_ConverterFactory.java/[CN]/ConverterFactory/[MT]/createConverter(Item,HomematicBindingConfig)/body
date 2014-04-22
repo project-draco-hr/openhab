@@ -1,0 +1,25 @@
+{
+  if (bindingConfig != null && bindingConfig instanceof ValueBindingConfig && ((ValueBindingConfig)bindingConfig).getConverter() != null) {
+    logger.debug("Using custom converter for {}",bindingConfig);
+    return ((ValueBindingConfig)bindingConfig).getConverter();
+  }
+  List<Class<? extends State>> acceptedTypes=item.getAcceptedDataTypes();
+  Collections.sort(acceptedTypes,typeComparator);
+  for (  Class<? extends State> clazz : acceptedTypes) {
+    String converterName=clazz.getSimpleName() + "Converter";
+    Converter<?> converter=converterCache.get(converterName);
+    if (converter == null) {
+      try {
+        converter=(Converter<?>)Class.forName(CONVERTER_PACKAGE + converterName).newInstance();
+        converterCache.put(converterName,converter);
+      }
+ catch (      Exception e) {
+      }
+    }
+    if (converter != null) {
+      return converter;
+    }
+  }
+  logger.warn("Can't find converter for {}, value is not published!",bindingConfig);
+  return null;
+}

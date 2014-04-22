@@ -1,0 +1,14 @@
+{
+  if (logger.isDebugEnabled()) {
+    logger.debug("Converting ({}) value '{}' with {} for {}",hmValueItem.getValue().getClass().getSimpleName(),hmValueItem.getValue(),this.getClass().getSimpleName(),hmValueItem.toString());
+  }
+  if (hmValueItem.isBooleanValue()) {
+    return fromBoolean(hmValueItem);
+  }
+ else   if (hmValueItem.isNumberValue()) {
+    return fromNumber(hmValueItem);
+  }
+ else {
+    return fromString(hmValueItem);
+  }
+}

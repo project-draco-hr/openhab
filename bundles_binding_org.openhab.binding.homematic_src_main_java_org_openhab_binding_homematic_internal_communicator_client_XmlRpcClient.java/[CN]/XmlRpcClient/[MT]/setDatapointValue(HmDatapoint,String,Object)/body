@@ -1,0 +1,13 @@
+{
+  HmInterface hmInterface=dp.getChannel().getDevice().getHmInterface();
+  String address=dp.getChannel().getAddress();
+  if (dp.isIntegerValue() && value instanceof Double) {
+    value=((Number)value).intValue();
+  }
+  try {
+    xmlRpcConnections.get(hmInterface).setValue(address,datapointName,value);
+  }
+ catch (  Exception ex) {
+    throw new CcuClientException(ex.getMessage(),ex);
+  }
+}

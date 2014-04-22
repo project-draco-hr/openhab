@@ -1,0 +1,25 @@
+{
+  Iterator<Map.Entry<HomematicBindingConfig,Long>> iterator=itemsToDisable.entrySet().iterator();
+  while (iterator.hasNext()) {
+    Map.Entry<HomematicBindingConfig,Long> entry=iterator.next();
+    long diff=System.currentTimeMillis() - entry.getValue();
+    if (diff > MIN_AGE) {
+      new ProviderItemIterator().iterate(entry.getKey(),new ProviderItemIteratorCallback(){
+        @Override public void next(        HomematicBindingConfig providerBindingConfig,        Item item,        Converter<?> converter){
+          HmValueItem hmValueItem=stateHolder.getState(providerBindingConfig);
+          if (providerBindingConfig instanceof ProgramConfig) {
+            context.getEventPublisher().postUpdate(item.getName(),OnOffType.OFF);
+          }
+ else {
+            hmValueItem.setValue(converter.convertToBinding(OnOffType.OFF,hmValueItem));
+            State state=converter.convertFromBinding(hmValueItem);
+            context.getEventPublisher().postUpdate(item.getName(),state);
+          }
+          logger.debug("Disabled Item {} with binding {}",item.getName(),providerBindingConfig);
+        }
+      }
+);
+      iterator.remove();
+    }
+  }
+}

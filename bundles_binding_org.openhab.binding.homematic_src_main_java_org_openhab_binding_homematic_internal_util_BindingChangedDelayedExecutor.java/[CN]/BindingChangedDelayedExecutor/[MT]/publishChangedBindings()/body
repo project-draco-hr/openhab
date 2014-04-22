@@ -1,0 +1,8 @@
+{
+  Iterator<Map.Entry<Item,HomematicBindingConfig>> iterator=bindingConfigs.entrySet().iterator();
+  while (iterator.hasNext()) {
+    Map.Entry<Item,HomematicBindingConfig> entry=iterator.next();
+    communicator.publishChangedItemToOpenhab(entry.getKey(),entry.getValue());
+    iterator.remove();
+  }
+}
