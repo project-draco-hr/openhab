@@ -1,0 +1,11 @@
+{
+  logger.debug("NODE {}: SetSucNodeID node as {}",nodeId,type.toString());
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.SetSucNodeID,SerialMessageType.Request,SerialMessageClass.SetSucNodeID,SerialMessagePriority.High);
+  byte[] newPayload=new byte[5];
+  newPayload[0]=(byte)nodeId;
+  newPayload[1]=newPayload[2]=1;
+  newPayload[3]=1;
+  newPayload[4]=1;
+  newMessage.setMessagePayload(newPayload);
+  return newMessage;
+}

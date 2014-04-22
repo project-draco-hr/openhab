@@ -1,0 +1,22 @@
+{
+  logger.debug("Assigning Controller SUC functionality to {}",type.toString());
+  SerialMessage newMessage=new SerialMessage(SerialMessageClass.EnableSuc,SerialMessageType.Request,SerialMessageClass.EnableSuc,SerialMessagePriority.High);
+  byte[] newPayload=new byte[2];
+switch (type) {
+case NONE:
+    newPayload[0]=0;
+  newPayload[1]=0;
+break;
+case BASIC:
+newPayload[0]=1;
+newPayload[1]=0;
+break;
+case SERVER:
+newPayload[0]=1;
+newPayload[1]=1;
+break;
+}
+newPayload[0]=1;
+newMessage.setMessagePayload(newPayload);
+return newMessage;
+}
