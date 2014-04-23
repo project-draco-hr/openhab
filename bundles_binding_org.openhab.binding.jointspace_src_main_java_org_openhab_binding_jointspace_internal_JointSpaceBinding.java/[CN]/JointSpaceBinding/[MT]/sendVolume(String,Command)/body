@@ -21,5 +21,6 @@
   newvalue=Math.min(newvalue,conf.max);
   newvalue=Math.max(newvalue,conf.min);
   content.append("{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}");
+  logger.trace(content.toString());
   HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
 }
