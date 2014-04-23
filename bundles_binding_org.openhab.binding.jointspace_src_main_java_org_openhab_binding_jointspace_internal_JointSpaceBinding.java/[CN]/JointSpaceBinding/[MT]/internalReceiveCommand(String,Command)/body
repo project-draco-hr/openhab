@@ -7,14 +7,17 @@
     }
     logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
     String tmp=null;
-    if (command instanceof HSBType) {
-      tmp=provider.getTVCommand(itemName,"HSB");
-    }
- else     if (command instanceof DecimalType) {
-      tmp=provider.getTVCommand(itemName,"DEC");
-    }
+    tmp=provider.getTVCommand(itemName,command.toString());
+    if (tmp == null) {
+      if (command instanceof HSBType) {
+        tmp=provider.getTVCommand(itemName,"HSB");
+      }
+ else       if (command instanceof DecimalType) {
+        tmp=provider.getTVCommand(itemName,"DEC");
+      }
  else {
-      tmp=provider.getTVCommand(itemName,command.toString());
+        tmp=provider.getTVCommand(itemName,"*");
+      }
     }
     if (tmp == null) {
       logger.warn("Unrecognized command \"" + command.toString() + "\"");
@@ -48,17 +51,7 @@
       }
     }
  else     if (tmp.contains("volume")) {
-      String[] commandlist=tmp.split("\\.");
-      if (commandlist.length < 2) {
-        logger.warn("wrong number of arguments for volume command \"" + tmp + "\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert");
-        return;
-      }
-      if (commandlist[1].contains("increase")) {
-        addtoTVVolume(1,ip + ":" + port);
-      }
- else       if (commandlist[1].contains("decrease")) {
-        addtoTVVolume(-1,ip + ":" + port);
-      }
+      sendVolume(ip + ":" + port,command);
     }
  else {
       logger.warn("Unrecognized tv command \"" + tmp + "\". Only key.X or ambilight[].X is supported");

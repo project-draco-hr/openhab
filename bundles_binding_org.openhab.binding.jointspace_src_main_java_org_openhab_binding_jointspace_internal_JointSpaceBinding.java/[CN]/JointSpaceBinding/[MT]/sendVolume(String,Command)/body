@@ -1,0 +1,25 @@
+{
+  volumeConfig conf=getTVVolume(host);
+  String url="http://" + host + "/1/audio/volume";
+  StringBuilder content=new StringBuilder();
+  int newvalue=conf.volume;
+  if (command instanceof DecimalType) {
+    newvalue=((DecimalType)command).intValue();
+  }
+ else   if (command instanceof IncreaseDecreaseType) {
+    if ((IncreaseDecreaseType)command == IncreaseDecreaseType.INCREASE) {
+      newvalue++;
+    }
+ else {
+      newvalue--;
+    }
+  }
+ else {
+    logger.warn("Unitl now only DecimalType and IncreaseDecreaseType commands are supported vor volume command");
+    return;
+  }
+  newvalue=Math.min(newvalue,conf.max);
+  newvalue=Math.max(newvalue,conf.min);
+  content.append("{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}");
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+}
