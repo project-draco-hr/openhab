@@ -255,6 +255,7 @@ records.add(record);
  else if (arg.equals("parameters/")) {
 if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) != false) {
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+if (configList == null) return records;
 ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
 if (configurationCommandClass == null) {
 logger.error("Error getting configurationCommandClass for node '{}'",nodeId);
