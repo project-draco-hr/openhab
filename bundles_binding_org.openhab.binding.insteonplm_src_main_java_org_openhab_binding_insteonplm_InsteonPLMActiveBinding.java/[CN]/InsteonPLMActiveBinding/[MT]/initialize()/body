@@ -1,0 +1,33 @@
+{
+  logger.debug("initializing...");
+  HashSet<String> ports=new HashSet<String>();
+  if (m_config.containsKey("refresh")) {
+    m_refreshInterval=Integer.parseInt(m_config.get("refresh"));
+  }
+  for (  Map.Entry<String,String> e : m_config.entrySet()) {
+    String name=e.getKey();
+    String port=e.getValue();
+    if (ports.contains(port)) {
+      logger.warn("port {} {} already in use, check config!",name,port);
+      continue;
+    }
+    logger.info("config: {} -> {}",name,port);
+    if (name.startsWith("port_")) {
+      m_driver.addPort(name,port);
+      m_driver.addMsgListener(m_portListener,port);
+    }
+  }
+  m_driver.setDriverListener(m_portListener);
+  m_driver.startAllPorts();
+switch (m_driver.getNumberOfPorts()) {
+case 0:
+    logger.error("initialization complete, but found no ports!");
+  break;
+case 1:
+logger.debug("initialization complete, found 1 port!");
+break;
+case 2:
+logger.warn("initialization complete, found {} ports.",m_driver.getNumberOfPorts());
+break;
+}
+}

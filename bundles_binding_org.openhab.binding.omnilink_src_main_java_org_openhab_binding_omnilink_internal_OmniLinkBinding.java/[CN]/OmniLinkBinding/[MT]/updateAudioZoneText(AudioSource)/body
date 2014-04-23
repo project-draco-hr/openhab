@@ -1,0 +1,26 @@
+{
+  for (  OmniLinkBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      OmniLinkBindingConfig config=provider.getOmniLinkBindingConfig(itemName);
+      if (config != null) {
+switch (config.getObjectType()) {
+case AUDIOZONE_TEXT:
+case AUDIOZONE_TEXT_FIELD1:
+case AUDIOZONE_TEXT_FIELD2:
+case AUDIOZONE_TEXT_FIELD3:
+{
+            AudioZone az=(AudioZone)config.getDevice();
+            az.setAudioSource(audioSourceMap);
+            logger.debug("looking if audio zone matches:" + az.getProperties().getSource() + "=="+ as.getProperties().getNumber());
+            if (az.getProperties().getSource() == as.getProperties().getNumber()) {
+              az.updateItem(provider.getItem(itemName),config,eventPublisher);
+            }
+          }
+        break;
+default :
+      break;
+  }
+}
+}
+}
+}

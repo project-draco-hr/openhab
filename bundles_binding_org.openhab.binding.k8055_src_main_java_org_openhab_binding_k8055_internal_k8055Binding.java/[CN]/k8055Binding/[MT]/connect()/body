@@ -1,0 +1,24 @@
+{
+  try {
+    if (sysLibrary == null) {
+      logger.debug("Loading native code library...");
+      sysLibrary=(LibK8055)Native.synchronizedLibrary((Library)Native.loadLibrary("k8055",LibK8055.class));
+      logger.debug("Done loading native code library");
+    }
+    if (!connected) {
+      if (sysLibrary.OpenDevice(boardNo) == boardNo) {
+        connected=true;
+        lastDigitalInputs=-1;
+        logger.info("K8055: Connect to board: " + boardNo + " succeeeded.");
+      }
+ else {
+        logger.error("K8055: Connect to board: " + boardNo + " failed.");
+      }
+    }
+    ;
+  }
+ catch (  Exception e) {
+    logger.error("Failed to load K8055 native library.  Please check the libk8055 and jna native libraries are in the Java library path. ",e);
+  }
+  return connected;
+}

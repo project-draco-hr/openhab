@@ -1,0 +1,22 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"%s:%d\"}\n";
+  String groupName="Thermostats";
+  groups.append(String.format(groupString,groupName,"Thermostats","All"));
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_THERMO,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_AREA_ALL,ObjectProperties.FILTER_3_ANY_LOAD)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    ThermostatProperties o=((ThermostatProperties)m);
+    objnum=o.getNumber();
+    String objName=cleanString(o.getName());
+    String group=addUniqueGroup(groupName + "_" + objName);
+    groups.append(String.format(groupString,group,o.getName(),"OmniThermostat"));
+    thermos.add(new SiteItem(group,o.getName(),o.getName()));
+    items.append(String.format(itemString,"Number",group + "_Temp","Temperature [%d ??F]",group,"thermo_temp",objnum));
+    items.append(String.format(itemString,"Number",group + "_CoolPoint","Cool Point [%d??F]",group,"thermo_cool_point",objnum));
+    items.append(String.format(itemString,"Number",group + "_HeatPoint","Heat Point [%d??F]",group,"thermo_heat_point",objnum));
+    items.append(String.format(itemString,"Number",group + "_System","System Mode [%d]",group,"thermo_system_mode",objnum));
+    items.append(String.format(itemString,"Number",group + "_Fan","System Fan [%d]",group,"thermo_fan_mode",objnum));
+    items.append(String.format(itemString,"Number",group + "_Hold","System Hold [%d]",group,"thermo_hold_mode",objnum));
+  }
+}

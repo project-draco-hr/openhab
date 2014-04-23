@@ -1,0 +1,19 @@
+{
+synchronized (m_lastMsgReceived) {
+    m_lastMsgReceived=System.currentTimeMillis();
+  }
+synchronized (m_features) {
+    for (    DeviceFeature f : m_features.values()) {
+      if (!f.isStatusFeature()) {
+        if (f.handleMessage(msg,fromPort)) {
+          break;
+        }
+      }
+    }
+    for (    DeviceFeature f : m_features.values()) {
+      if (f.isStatusFeature()) {
+        f.handleMessage(msg,fromPort);
+      }
+    }
+  }
+}

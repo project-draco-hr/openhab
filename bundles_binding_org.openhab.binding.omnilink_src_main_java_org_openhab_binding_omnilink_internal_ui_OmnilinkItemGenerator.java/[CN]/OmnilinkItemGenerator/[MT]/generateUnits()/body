@@ -1,0 +1,37 @@
+{
+  String groupString="Group\t%s\t\"%s\"\t(%s)\n";
+  String itemString="%s\t%s\t\"%s\"\t(%s)\t{omnilink=\"unit:%d\"}\n";
+  String groupName="Lights";
+  groups.append(String.format(groupString,groupName,"Lights","All"));
+  int objnum=0;
+  Message m;
+  int currentRoom=0;
+  String currentRoomName=null;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_UNIT,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_AREA_ALL,ObjectProperties.FILTER_3_ANY_LOAD)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    UnitProperties o=((UnitProperties)m);
+    objnum=o.getNumber();
+    boolean isInRoom=false;
+    boolean isRoomController=false;
+    if (o.getUnitType() == UnitProperties.UNIT_TYPE_HLC_ROOM || o.getObjectType() == UnitProperties.UNIT_TYPE_VIZIARF_ROOM) {
+      currentRoom=objnum;
+      currentRoomName=cleanString(groupName + "_" + o.getName());
+      currentRoomName=addUniqueGroup(currentRoomName);
+      groups.append(String.format(groupString,currentRoomName,o.getName(),groupName));
+      rooms.put(currentRoomName,new LinkedList<SiteItem>());
+      isInRoom=true;
+      isRoomController=true;
+    }
+ else     if (objnum < currentRoom + 8) {
+      isInRoom=true;
+    }
+    String objName=cleanString(o.getName());
+    String group=isInRoom ? currentRoomName : groupName;
+    String name=isRoomController ? objName : group + "_" + objName;
+    String label=o.getName() + " [%d%%]";
+    SiteItem light=new SiteItem(name,o.getName(),label);
+    items.append(String.format(itemString,"Dimmer",name + "_Switch",label,group,objnum));
+    if (isRoomController)     items.append(String.format(itemString,"String",name + "_String",o.getName() + " [%s]",group,objnum));
+    if (isInRoom)     rooms.get(currentRoomName).add(light);
+ else     lights.add(light);
+  }
+}

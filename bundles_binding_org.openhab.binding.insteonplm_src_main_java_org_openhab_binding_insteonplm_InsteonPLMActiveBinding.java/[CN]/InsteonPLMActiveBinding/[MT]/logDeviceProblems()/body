@@ -1,0 +1,13 @@
+{
+synchronized (m_devices) {
+    for (    InsteonDevice dev : m_devices.values()) {
+      if (dev.isModem())       continue;
+      if (!dev.isReferenced()) {
+        logger.info("device {} is known to modem, but not in items file!",dev.toString());
+      }
+      if (!dev.isInitialized()) {
+        logger.info("device {} is in items file, but not linked to modem!",dev.toString());
+      }
+    }
+  }
+}

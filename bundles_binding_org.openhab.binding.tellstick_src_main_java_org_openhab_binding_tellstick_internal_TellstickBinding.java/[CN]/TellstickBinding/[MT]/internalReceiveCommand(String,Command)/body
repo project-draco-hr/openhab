@@ -1,0 +1,13 @@
+{
+  logger.debug("internalReceiveCommand() is called! for " + itemName + " with "+ command);
+  TellstickBindingConfig config=findTellstickBindingConfig(itemName);
+  if (config != null) {
+    try {
+      TellstickDevice dev=findDevice(config);
+      controller.handleSendEvent(config,dev,command);
+    }
+ catch (    Exception e) {
+      logger.error("Failed to send msg to " + config,e);
+    }
+  }
+}

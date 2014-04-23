@@ -1,0 +1,27 @@
+{
+  supportedMethodsCheck();
+  int methods=JNA.CLibrary.INSTANCE.tdMethods(deviceId,getSupportedMethods());
+  int type=JNA.CLibrary.INSTANCE.tdGetDeviceType(deviceId);
+  if (type == JNA.CLibrary.TELLSTICK_TYPE_GROUP) {
+    return new GroupDevice(deviceId);
+  }
+  if (type == JNA.CLibrary.TELLSTICK_TYPE_SCENE) {
+    return new SceneDevice(deviceId);
+  }
+ else   if ((methods & JNA.CLibrary.TELLSTICK_BELL) > 0) {
+    return new BellDevice(deviceId);
+  }
+ else   if ((methods & JNA.CLibrary.TELLSTICK_DIM) > 0) {
+    return new DimmableDevice(deviceId);
+  }
+ else   if ((methods & JNA.CLibrary.TELLSTICK_UP) > 0 && (methods & JNA.CLibrary.TELLSTICK_DOWN) > 0 && (methods & JNA.CLibrary.TELLSTICK_STOP) > 0) {
+    return new UpDownDevice(deviceId);
+  }
+ else   if ((methods & JNA.CLibrary.TELLSTICK_TURNON) > 0 && (methods & JNA.CLibrary.TELLSTICK_TURNOFF) > 0) {
+    return new Device(deviceId);
+  }
+ else   if ((methods & JNA.CLibrary.TELLSTICK_EXECUTE) > 0) {
+    return new SceneDevice(deviceId);
+  }
+  throw new DeviceNotSupportedException("The device properties seems not to be supported by this application");
+}
