@@ -1,0 +1,16 @@
+{
+  String filterType=provider.getFilter(itemName);
+  if (filterType == null) {
+    return null;
+  }
+  if (!filterType.equals("tuckey")) {
+    logger.warn("invalid filter type specified: " + filterType);
+    return null;
+  }
+  Filter f=filters.get(itemName);
+  if (f == null) {
+    filters.put(itemName,new Filter());
+    f=filters.get(itemName);
+  }
+  return f;
+}
