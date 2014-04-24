@@ -12,6 +12,9 @@
       eventPublisher.postUpdate(itemName,new DecimalType(getTVVolume(ip + ":" + port).volume));
     }
   }
+ else   if (tvCommand.contains("source")) {
+    eventPublisher.postUpdate(itemName,new StringType(getSource(ip + ":" + port)));
+  }
  else {
     logger.error("Could not parse item state\"" + tvCommand + "\" for polling");
     return;
