@@ -1,0 +1,17 @@
+{
+  valid=false;
+  String cfgLatitude=(String)properties.get(AstroConfig.CONFIG_KEY_LATITUDE);
+  String cfgLongitude=(String)properties.get(AstroConfig.CONFIG_KEY_LONGITUDE);
+  if (StringUtils.isBlank(cfgLatitude) || StringUtils.isBlank(cfgLongitude)) {
+    throw new ConfigurationException("astro","Parameters latitude and longitude are mandatory and must be configured. Please check your openhab.cfg!");
+  }
+  try {
+    latitude=Double.parseDouble(cfgLatitude);
+    longitude=Double.parseDouble(cfgLongitude);
+  }
+ catch (  NumberFormatException ex) {
+    throw new ConfigurationException("astro","Parameters latitude and/or longitude in wrong format. Please check your openhab.cfg!");
+  }
+  interval=parseInt(properties,CONFIG_KEY_INTERVAL,0);
+  valid=true;
+}

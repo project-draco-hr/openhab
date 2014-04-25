@@ -1,0 +1,30 @@
+{
+  if (msg.isEcho() || msg.isPureNack())   return;
+  logger.debug("got msg: {}",msg);
+  InsteonAddress toAddr=msg.getAddr("toAddress");
+  if (!msg.isBroadcast() && !m_driver.isMsgForUs(toAddr)) {
+    return;
+  }
+  InsteonAddress fromAddr=msg.getAddr("fromAddress");
+  if (fromAddr == null) {
+    logger.debug("invalid fromAddress, ignoring msg {}",msg);
+    return;
+  }
+synchronized (m_devices) {
+    InsteonDevice dev=getDevice(fromAddr);
+    if (dev == null) {
+      logger.debug("dropping message from unknown device with address {}",fromAddr);
+      return;
+    }
+    if (!dev.hasValidPorts()) {
+      logger.info("got message from unknown device with addr {}",fromAddr);
+      dev.addPort(fromPort);
+    }
+    if (!dev.isInitialized()) {
+      logger.debug("dropping message for uninitialized device {}",dev);
+    }
+ else {
+      dev.handleMessage(fromPort,msg,eventPublisher);
+    }
+  }
+}

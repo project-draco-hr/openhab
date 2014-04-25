@@ -1,0 +1,15 @@
+{
+  try {
+    logger.debug("Connect MongoDB");
+    this.cl=new MongoClient(new MongoClientURI(this.url));
+    mongoCollection=cl.getDB(this.db).getCollection(this.collection);
+    BasicDBObject idx=new BasicDBObject();
+    idx.append(FIELD_TIMESTAMP,1).append(FIELD_ITEM,1);
+    this.mongoCollection.createIndex(idx);
+    logger.debug("Connect MongoDB ... done");
+  }
+ catch (  Exception e) {
+    logger.error("Failed to connect to database {}",this.url);
+    throw new RuntimeException("Cannot connect to database",e);
+  }
+}

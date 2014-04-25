@@ -1,0 +1,20 @@
+{
+  try {
+    InsteonAddress a=f.getDevice().getAddress();
+    int cmd2=(int)(msg.getByte("command2") & 0xff);
+    if (cmd2 == 0) {
+      logger.info("LightStateSwitchHandler: set device {} to OFF",a);
+      m_pub.publish(OnOffType.OFF);
+    }
+ else     if (cmd2 == 0xff) {
+      logger.info("LightStateSwitchHandler: set device {} to ON",a);
+      m_pub.publish(OnOffType.ON);
+    }
+ else {
+      logger.warn("LightStateSwitchHandler: {} ignoring unexpected" + " cmd2 in msg: {}",a,msg);
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("error parsing {}: ",msg,e);
+  }
+}

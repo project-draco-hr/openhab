@@ -1,0 +1,16 @@
+{
+  if (m_buf == null || m_buf.length < 2) {
+    return null;
+  }
+  Msg template=s_replyMap.get(s_cmdToKey(m_buf[1],isExtended));
+  if (template == null) {
+    return null;
+  }
+  if (msgLen != template.getLength()) {
+    logger.error("expected msg {} len {}, got {}",template.getCommandNumber(),template.getLength(),msgLen);
+    return null;
+  }
+  Msg msg=new Msg(template.getHeaderLength(),m_buf,msgLen,Direction.FROM_MODEM);
+  msg.setDefinition(template.getDefinition());
+  return (msg);
+}
