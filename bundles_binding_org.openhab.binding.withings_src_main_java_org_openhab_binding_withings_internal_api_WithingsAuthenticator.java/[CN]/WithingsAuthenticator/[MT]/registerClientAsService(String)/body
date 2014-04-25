@@ -1,0 +1,8 @@
+{
+  Dictionary<String,Object> serviceProperties=new Hashtable<String,Object>();
+  serviceProperties.put("withings.userid",userId);
+  if (this.clientServiceRegistration != null) {
+    this.clientServiceRegistration.unregister();
+  }
+  this.clientServiceRegistration=this.bundleContext.registerService(WithingsApiClient.class.getName(),new WithingsApiClient(consumer,userId),serviceProperties);
+}
