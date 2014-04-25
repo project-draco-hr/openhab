@@ -1,6 +1,6 @@
 {
   try {
-    WithingsApiClient client=this.withingsAuthenticator.getClient();
+    WithingsApiClient client=this.withingsApiClients.get(0);
     List<MeasureGroup> measures=client.getMeasures(lastUpdate);
     if (measures == null || measures.isEmpty()) {
       logger.info("No new measures found since the last update.");

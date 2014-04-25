@@ -4,8 +4,8 @@
     logger.info("No item -> withings binding found. Skipping data refresh.");
     return;
   }
-  if (!this.withingsAuthenticator.isAuthenticated()) {
-    logger.info("Withings binding is not authenticated. Skipping data refresh.");
+  if (this.withingsApiClients.isEmpty()) {
+    logger.info("No withings client found. Withings binding is probably not authenticated. Skipping data refresh.");
     return;
   }
   updateItemStates(withingsBindings);
