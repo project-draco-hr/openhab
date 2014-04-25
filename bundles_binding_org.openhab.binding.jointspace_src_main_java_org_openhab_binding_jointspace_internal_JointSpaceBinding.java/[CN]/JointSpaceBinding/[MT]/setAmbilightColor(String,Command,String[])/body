@@ -3,6 +3,7 @@
     logger.warn("Until now only HSBType is allowed for ambilight commands");
     return;
   }
+  logger.debug("Setting Ambilight color for host " + host + " and layer "+ layers+ " to "+ command.toString());
   HSBType hsbcommand=(HSBType)command;
   String url="http://" + host + "/1/ambilight/cached";
   StringBuilder content=new StringBuilder();
@@ -23,5 +24,11 @@
   }
   content.append("}");
   logger.trace("Trying to post json for ambilight: " + content.toString());
-  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  if (retval == null) {
+    logger.warn("Sending ambilight color failed");
+  }
+ else {
+    logger.debug("Sending ambilight color successfull");
+  }
 }

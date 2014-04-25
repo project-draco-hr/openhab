@@ -1,16 +1,20 @@
 {
+  logger.debug("Sending volume to host " + host + " for command "+ command.toString());
   volumeConfig conf=getTVVolume(host);
   String url="http://" + host + "/1/audio/volume";
   StringBuilder content=new StringBuilder();
   int newvalue=conf.volume;
   if (command instanceof DecimalType) {
+    logger.debug("Setting volume to decimal type");
     newvalue=((DecimalType)command).intValue();
   }
  else   if (command instanceof IncreaseDecreaseType) {
     if ((IncreaseDecreaseType)command == IncreaseDecreaseType.INCREASE) {
+      logger.debug("Increased volume");
       newvalue++;
     }
  else {
+      logger.debug("Decreased volume");
       newvalue--;
     }
   }
@@ -22,5 +26,11 @@
   newvalue=Math.max(newvalue,conf.min);
   content.append("{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}");
   logger.trace(content.toString());
-  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  if (retval == null) {
+    logger.warn("Sending Volume failed");
+  }
+ else {
+    logger.debug("Sending Volume successfull");
+  }
 }

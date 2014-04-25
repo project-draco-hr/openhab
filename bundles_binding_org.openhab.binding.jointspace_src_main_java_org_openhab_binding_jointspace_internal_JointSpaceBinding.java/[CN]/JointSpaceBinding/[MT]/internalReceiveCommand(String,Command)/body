@@ -24,6 +24,7 @@
       return;
     }
     if (tmp.contains("key")) {
+      logger.debug("Found a Key command: " + tmp);
       String[] commandlist=tmp.split("\\.");
       if (commandlist.length != 2) {
         logger.warn("wrong number of arguments for key command \"" + tmp + "\". Should be key.X");
@@ -33,6 +34,7 @@
       sendTVCommand(key,ip + ":" + port);
     }
  else     if (tmp.contains("ambilight")) {
+      logger.debug("Found an ambilight command: " + tmp);
       String[] commandlist=tmp.split("\\.");
       String[] layer=command2LayerString(tmp);
       if (commandlist.length < 2) {
@@ -51,9 +53,11 @@
       }
     }
  else     if (tmp.contains("volume")) {
+      logger.debug("Found a Volume command: " + tmp);
       sendVolume(ip + ":" + port,command);
     }
  else     if (tmp.contains("source")) {
+      logger.debug("Found a Source command: " + tmp);
       String[] commandlist=tmp.split("\\.");
       if (commandlist.length < 2) {
         logger.warn("wrong number of arguments for source command \"" + tmp + "\". Should be at least mode.X...");

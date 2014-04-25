@@ -1,6 +1,13 @@
 {
+  logger.debug("Sending Key " + key + " to "+ host);
   String url="http://" + host + "/1/input/key";
   StringBuilder content=new StringBuilder();
   content.append("{\"key\":\"" + key + "\"}");
-  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  if (retval == null) {
+    logger.warn("Sending key failed");
+  }
+ else {
+    logger.debug("Sending key successfull");
+  }
 }
