@@ -27,12 +27,17 @@
       }
     }
   }
- catch (  Exception ex) {
+ catch (  ConnectException cex) {
+    logger.info("Can't connect to interface {}",hmInterface);
+  }
+catch (  Exception ex) {
     throw new CcuClientException(ex.getMessage(),ex);
   }
  finally {
     try {
-      socket.close();
+      if (socket != null) {
+        socket.close();
+      }
     }
  catch (    IOException ex) {
     }
