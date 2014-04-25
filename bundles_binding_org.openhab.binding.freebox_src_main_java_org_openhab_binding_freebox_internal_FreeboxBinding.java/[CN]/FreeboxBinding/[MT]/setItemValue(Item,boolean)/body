@@ -1,0 +1,10 @@
+{
+  SwitchItem item=(SwitchItem)genItem;
+  OnOffType status=(value ? OnOffType.ON : OnOffType.OFF);
+  if (!item.getState().equals(status)) {
+synchronized (item) {
+      eventPublisher.postUpdate(item.getName(),status);
+      item.setState(status);
+    }
+  }
+}

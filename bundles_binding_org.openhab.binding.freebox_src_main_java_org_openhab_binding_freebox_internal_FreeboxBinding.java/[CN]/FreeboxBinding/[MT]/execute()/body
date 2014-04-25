@@ -1,0 +1,84 @@
+{
+  if (!loginManager.isConnected())   return;
+  try {
+    sc=fbClient.getSystemManager().getConfiguration();
+    cs=fbClient.getConnectionManager().getStatus();
+    wc=fbClient.getWifiManager().getGlobalConfig();
+    List<CallEntry> appels=fbClient.getCallManager().getCallEntries();
+    for (    FreeboxBindingProvider provider : providers) {
+      Collection<String> items=provider.getItemNames();
+      for (      CallEntry call : appels) {
+        if (call.is_new_()) {
+          for (          String itemName : items) {
+            FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
+switch (bindingConfig.commandType) {
+case CALLSTATUS:
+              setItemValue(bindingConfig.item,call.getType());
+            break;
+case CALLDURATION:
+          setItemValue(bindingConfig.item,call.getDuration());
+        break;
+case CALLNUMBER:
+      setItemValue(bindingConfig.item,call.getNumber());
+    break;
+case CALLTIMESTAMP:
+  setDateTimeValue(bindingConfig.item,call.getDateTime());
+break;
+}
+}
+call.setNew(false);
+fbClient.getCallManager().setCallEntry(call);
+}
+}
+for (String itemName : items) {
+FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
+switch (bindingConfig.commandType) {
+case BYTESDOWN:
+setItemValue(bindingConfig.item,cs.getBytes_down());
+break;
+case BYTESUP:
+setItemValue(bindingConfig.item,cs.getBytes_up());
+break;
+case CPUB:
+setItemValue(bindingConfig.item,sc.getTemp_cpub());
+break;
+case CPUM:
+setItemValue(bindingConfig.item,sc.getTemp_cpum());
+break;
+case FAN:
+setItemValue(bindingConfig.item,sc.getFan_rpm());
+break;
+case FWVERSION:
+setItemValue(bindingConfig.item,sc.getFirmware_version());
+break;
+case IPV4:
+setItemValue(bindingConfig.item,cs.getIpv4());
+break;
+case LINESTATUS:
+setItemValue(bindingConfig.item,cs.getState());
+break;
+case RATEDOWN:
+setItemValue(bindingConfig.item,cs.getRate_down());
+break;
+case RATEUP:
+setItemValue(bindingConfig.item,cs.getRate_up());
+break;
+case SW:
+setItemValue(bindingConfig.item,sc.getTemp_sw());
+break;
+case UPTIME:
+setItemValue(bindingConfig.item,sc.getUptimeVal());
+break;
+case WIFISTATUS:
+setItemValue(bindingConfig.item,wc.getEnabled());
+break;
+default :
+break;
+}
+}
+}
+}
+ catch (FreeboxException e) {
+logger.error(e.getMessage());
+}
+}
