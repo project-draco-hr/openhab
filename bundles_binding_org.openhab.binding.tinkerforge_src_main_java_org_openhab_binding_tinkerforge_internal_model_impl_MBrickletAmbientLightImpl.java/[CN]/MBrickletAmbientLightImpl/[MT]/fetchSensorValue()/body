@@ -1,6 +1,9 @@
 {
   try {
-    return new DecimalValue(tinkerforgeDevice.getIlluminance() / 10);
+    int illuminance=tinkerforgeDevice.getIlluminance();
+    DecimalValue value=Tools.calculate10(illuminance);
+    setSensorValue(value);
+    return value;
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

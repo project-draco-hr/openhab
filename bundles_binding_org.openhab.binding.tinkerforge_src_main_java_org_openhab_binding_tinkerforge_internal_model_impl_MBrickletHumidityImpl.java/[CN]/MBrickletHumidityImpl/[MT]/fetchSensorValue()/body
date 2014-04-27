@@ -1,6 +1,9 @@
 {
   try {
-    return new DecimalValue(tinkerforgeDevice.getHumidity() / 10.0);
+    int humidity=tinkerforgeDevice.getHumidity();
+    DecimalValue value=Tools.calculate10(humidity);
+    setSensorValue(value);
+    return value;
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

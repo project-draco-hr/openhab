@@ -11,6 +11,9 @@
   try {
     tinkerforgeDevice.setResponseExpected(BrickletHumidity.FUNCTION_SET_HUMIDITY_CALLBACK_PERIOD,false);
     tinkerforgeDevice.setHumidityCallbackPeriod(callbackPeriod);
+    listener=new HumidityListener();
+    tinkerforgeDevice.addHumidityListener(listener);
+    setSensorValue(fetchSensorValue());
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
@@ -18,17 +21,4 @@
 catch (  NotConnectedException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
   }
-  tinkerforgeDevice.addHumidityListener(new BrickletHumidity.HumidityListener(){
-    @Override public void humidity(    int newHumidity){
-      if (newHumidity > (humiditiy + threshold) || newHumidity < (humiditiy - threshold)) {
-        setSensorValue(new DecimalValue(newHumidity / 10.0));
-        setHumiditiy(newHumidity);
-      }
- else {
-        logger.trace(String.format("new humidity: %s, old %s",newHumidity,humiditiy));
-      }
-    }
-  }
-);
-  setSensorValue(fetchSensorValue());
 }
