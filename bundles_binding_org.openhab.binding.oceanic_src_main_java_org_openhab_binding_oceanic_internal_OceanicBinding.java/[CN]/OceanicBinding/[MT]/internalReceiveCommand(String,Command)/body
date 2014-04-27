@@ -1,0 +1,23 @@
+{
+  OceanicBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  String serialPort=((OceanicBindingProvider)provider).getSerialPort(itemName);
+  OceanicValueSelector valueSelector=OceanicValueSelector.getValueSelector(((OceanicBindingProvider)provider).getValueSelector(itemName),ValueSelectorType.SET);
+  SerialDevice serialDevice=serialDevices.get(serialPort);
+  if (valueSelector.name().contains("set")) {
+    String commandAsString=command.toString();
+switch (valueSelector) {
+case setSV1:
+      commandAsString=valueSelector.name() + commandAsString;
+default :
+    commandAsString=valueSelector.name();
+  break;
+}
+String response=serialDevice.requestResponse(commandAsString);
+if (response.equals("ERR")) {
+logger.error("An error occurred while setting '{}' to {}",valueSelector.toString(),command.toString());
+}
+}
+ else {
+logger.warn("An error occurred while trying to set the read-only variable '{}' to {}",valueSelector.toString(),command.toString());
+}
+}
