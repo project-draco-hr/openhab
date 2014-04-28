@@ -1,0 +1,70 @@
+{
+  deviceEventHandler=new JNA.CLibrary.TDDeviceEvent(){
+    @Override public void invoke(    int deviceId,    int method,    Pointer data,    int callbackId,    Pointer context) throws SupportedMethodsException {
+      try {
+        TellstickDevice ts=TellstickDevice.getDevice(deviceId);
+        int idx=Collections.binarySearch(list,ts);
+        if (idx > -1) {
+          list.set(idx,ts);
+        }
+        Method m=Method.getMethodById(method);
+        String dataStr=null;
+        if (m == Method.DIM) {
+          dataStr=data.getString(0);
+        }
+        notifyListeners(ts,m,dataStr);
+      }
+ catch (      Exception e) {
+        logger.error("Failed in TDDeviceEvent",e);
+      }
+    }
+  }
+;
+  handleDeviceEvent=JNA.CLibrary.INSTANCE.tdRegisterDeviceEvent(deviceEventHandler,null);
+  deviceChangeHandler=new JNA.CLibrary.TDDeviceChangeEvent(){
+    @Override public void invoke(    int deviceId,    int method,    int changeType,    int callbackId,    Pointer context) throws SupportedMethodsException {
+      try {
+        TellstickDevice ts=null;
+        if (method == JNA.CLibrary.TELLSTICK_DEVICE_CHANGED || method == JNA.CLibrary.TELLSTICK_DEVICE_STATE_CHANGED) {
+          ts=TellstickDevice.getDevice(deviceId);
+          int idx=Collections.binarySearch(list,ts);
+          if (idx > -1) {
+            list.set(idx,ts);
+          }
+        }
+        if (method == JNA.CLibrary.TELLSTICK_DEVICE_ADDED) {
+          ts=TellstickDevice.getDevice(deviceId);
+          list.add(ts);
+        }
+        if (method == JNA.CLibrary.TELLSTICK_DEVICE_ADDED) {
+          for (int i=0; i < list.size(); i++) {
+            if (list.get(i).getId() == deviceId) {
+              ts=list.remove(i);
+              return;
+            }
+          }
+        }
+        Method m=Method.getMethodById(method);
+        notifyListeners(ts,m,null);
+      }
+ catch (      Exception e) {
+        logger.error("Failed in TDDeviceChangeEvent",e);
+      }
+    }
+  }
+;
+  handleDeviceChange=JNA.CLibrary.INSTANCE.tdRegisterDeviceChangeEvent(deviceChangeHandler,null);
+  sensorEventHandler=new JNA.CLibrary.TDSensorEvent(){
+    @Override public void invoke(    String protocol,    String model,    int deviceId,    int dataType,    Pointer value,    int timeStamp,    int callbackId,    Pointer context) throws SupportedMethodsException {
+      try {
+        DataType m=DataType.getDataTypeId(dataType);
+        notifySensorListeners(deviceId,protocol,model,m,value.getString(0));
+      }
+ catch (      Exception e) {
+        logger.error("Failed in TDSensorEvent",e);
+      }
+    }
+  }
+;
+  handleSensor=JNA.CLibrary.INSTANCE.tdRegisterSensorEvent(sensorEventHandler,null);
+}

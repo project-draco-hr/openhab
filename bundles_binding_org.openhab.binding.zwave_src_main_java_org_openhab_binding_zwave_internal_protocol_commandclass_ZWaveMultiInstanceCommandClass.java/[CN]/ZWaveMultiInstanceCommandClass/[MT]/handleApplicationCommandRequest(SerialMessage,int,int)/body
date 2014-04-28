@@ -1,6 +1,6 @@
 {
   logger.trace("Handle Message Multi-instance/Multi-channel Request");
-  logger.debug(String.format("Received Multi-instance/Multi-channel Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug("NODE {}: Received Multi-instance/Multi-channel Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case MULTI_INSTANCE_GET:
@@ -8,7 +8,7 @@ case MULTI_CHANNEL_ENDPOINT_GET:
 case MULTI_CHANNEL_CAPABILITY_GET:
 case MULTI_CHANNEL_ENDPOINT_FIND:
 case MULTI_CHANNEL_ENDPOINT_FIND_REPORT:
-    logger.warn(String.format("Command 0x%02X not implemented.",command));
+    logger.warn(String.format("NODE %d: Command 0x%02X not implemented.",this.getNode().getNodeId(),command));
   return;
 case MULTI_INSTANCE_REPORT:
 handleMultiInstanceReportResponse(serialMessage,offset + 1);
@@ -26,6 +26,6 @@ case MULTI_CHANNEL_ENCAP:
 handleMultiChannelEncapResponse(serialMessage,offset + 1);
 break;
 default :
-logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+logger.warn(String.format("NODE %d: Unsupported Command 0x%02X for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
 }
 }

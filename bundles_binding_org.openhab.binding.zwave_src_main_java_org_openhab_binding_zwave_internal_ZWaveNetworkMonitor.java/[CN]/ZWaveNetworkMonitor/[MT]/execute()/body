@@ -1,0 +1,48 @@
+{
+  if (zController.getSendQueueLength() > 1) {
+    logger.debug("Queue length is {} - deferring HEAL.");
+    return;
+  }
+  if (pingNodeTime < System.currentTimeMillis()) {
+    pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
+    ZWaveNode oldestNode=null;
+    for (    ZWaveNode node : zController.getNodes()) {
+      if (node.getNodeId() == zController.getOwnNodeId() || node.isListening() == false)       continue;
+      if (oldestNode == null) {
+        oldestNode=node;
+      }
+ else       if (node.getLastUpdated().getTime() < oldestNode.getLastUpdated().getTime()) {
+        oldestNode=node;
+      }
+    }
+    if (oldestNode != null) {
+      logger.debug("NODE {}: Sending periodic PING.",oldestNode.getNodeId());
+      oldestNode.resetResendCount();
+      ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)oldestNode.getCommandClass(CommandClass.NO_OPERATION);
+      if (zwaveCommandClass != null)       zController.sendData(zwaveCommandClass.getNoOperationMessage());
+    }
+    return;
+  }
+  if (networkHealNightlyTime < System.currentTimeMillis()) {
+    rescheduleHeal();
+    networkHealNightlyTime=calculateNextHeal();
+  }
+  if (networkHealNextTime > System.currentTimeMillis()) {
+    return;
+  }
+  for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+    HealNode node=entry.getValue();
+    if (node.state != HealState.WAITING && node.state != HealState.FAILED && node.state != HealState.DONE && node.listening == true) {
+      nextHealStage(node);
+      return;
+    }
+  }
+  for (  Map.Entry<Integer,HealNode> entry : healNodes.entrySet()) {
+    HealNode node=entry.getValue();
+    if (node.state == HealState.WAITING && node.listening == true) {
+      nextHealStage(node);
+      return;
+    }
+  }
+  networkHealNextTime=networkHealNightlyTime;
+}

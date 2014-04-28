@@ -1,0 +1,34 @@
+{
+  String s=(m_direction == Direction.TO_MODEM) ? "OUT:" : "IN:";
+  if (m_definition == null || m_data == null)   return toHexString();
+  Comparator<Field> cmp=new Comparator<Field>(){
+    @Override public int compare(    Field f1,    Field f2){
+      return f1.getOffset() - f2.getOffset();
+    }
+  }
+;
+  TreeSet<Field> fields=new TreeSet<Field>(cmp);
+  for (  Field f : m_definition.getFields().values()) {
+    fields.add(f);
+  }
+  for (  Field f : fields) {
+    if (f.getName().equals("messageFlags")) {
+      byte b;
+      try {
+        b=f.getByte(m_data);
+        MsgType t=MsgType.s_fromValue(b);
+        s+=f.toString(m_data) + "=" + t.toString()+ ":"+ (b & 0x03)+ ":"+ ((b & 0x0c) >> 2)+ "|";
+      }
+ catch (      FieldException e) {
+        logger.error("toString error: ",e);
+      }
+catch (      IllegalArgumentException e) {
+        logger.error("toString msg type error: ",e);
+      }
+    }
+ else {
+      s+=f.toString(m_data) + "|";
+    }
+  }
+  return s;
+}

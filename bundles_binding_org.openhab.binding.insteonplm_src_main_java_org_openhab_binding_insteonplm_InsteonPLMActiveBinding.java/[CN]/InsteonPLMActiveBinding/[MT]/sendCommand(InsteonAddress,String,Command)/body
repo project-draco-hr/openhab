@@ -1,0 +1,13 @@
+{
+  InsteonDevice dev=getDevice(a);
+  if (dev == null) {
+    logger.warn("no device found with insteon address {}",a);
+    return;
+  }
+  if (!dev.isInitialized()) {
+    logger.warn("device {} not ready for commands yet!",a);
+  }
+ else {
+    dev.processCommand(m_driver,command);
+  }
+}

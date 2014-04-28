@@ -1,0 +1,9 @@
+{
+  ArrayList<MsgListener> tempList=null;
+synchronized (m_listeners) {
+    tempList=(ArrayList<MsgListener>)m_listeners.clone();
+  }
+  for (  MsgListener l : tempList) {
+    l.msg(msg,m_devName);
+  }
+}

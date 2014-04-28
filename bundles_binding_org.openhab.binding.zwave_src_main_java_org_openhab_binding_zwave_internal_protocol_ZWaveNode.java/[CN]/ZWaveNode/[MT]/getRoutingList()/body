@@ -1,0 +1,31 @@
+{
+  logger.debug("NODE {}: Update return routes",nodeId);
+  ArrayList<Integer> routedNodes=new ArrayList<Integer>();
+  if (isRouting() == false) {
+    logger.debug("NODE {}: Node is not a routing node. No routes can be set.",nodeId);
+    return null;
+  }
+  ZWaveAssociationCommandClass associationCmdClass=(ZWaveAssociationCommandClass)getCommandClass(CommandClass.ASSOCIATION);
+  if (associationCmdClass == null) {
+    logger.debug("NODE {}: Node has no association class. No routes can be set.",nodeId);
+    return null;
+  }
+  int groups=associationCmdClass.getGroupCount();
+  if (groups != 0) {
+    for (int group=1; group <= groups; group++) {
+      for (      Integer associationNodeId : associationCmdClass.getGroupMembers(group)) {
+        routedNodes.add(associationNodeId);
+      }
+    }
+  }
+  ZWaveWakeUpCommandClass wakeupCmdClass=(ZWaveWakeUpCommandClass)getCommandClass(CommandClass.WAKE_UP);
+  if (wakeupCmdClass != null) {
+    Integer wakeupNodeId=wakeupCmdClass.getTargetNodeId();
+    routedNodes.add(wakeupNodeId);
+  }
+  if (routedNodes.size() == 0) {
+    logger.debug("NODE {}: No return routes required.",nodeId);
+    return null;
+  }
+  return routedNodes;
+}

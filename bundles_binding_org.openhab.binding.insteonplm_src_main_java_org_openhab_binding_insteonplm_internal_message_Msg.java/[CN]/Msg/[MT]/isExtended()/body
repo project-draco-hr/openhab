@@ -1,0 +1,14 @@
+{
+  if (m_data == null || getLength() < 2)   return false;
+  if (m_definition == null)   return false;
+  if (!m_definition.containsField("messageFlags")) {
+    return (false);
+  }
+  try {
+    byte flags=getByte("messageFlags");
+    return ((flags & 0x10) == 0x10);
+  }
+ catch (  FieldException e) {
+  }
+  return false;
+}

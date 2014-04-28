@@ -1,0 +1,42 @@
+{
+  HashMap<String,String> newConfig=new HashMap<String,String>();
+  if (config == null) {
+    logger.debug("seems like our configuration has been erased, will reset everything!");
+  }
+ else {
+    for (Enumeration<String> e=config.keys(); e.hasMoreElements(); ) {
+      String key=e.nextElement();
+      String value=config.get(key).toString();
+      newConfig.put(key,value);
+    }
+  }
+  if (newConfig.entrySet().equals(m_config.entrySet())) {
+    logger.debug("config has not changed, done.");
+    return;
+  }
+  m_config=newConfig;
+  if (m_isActive) {
+    if (isProperlyConfigured()) {
+      logger.debug("global binding config has changed, initializing.");
+    }
+ else {
+      logger.debug("global binding config has arrived.");
+    }
+    shutdown();
+    initialize();
+  }
+  if (!m_gotInitialConfig) {
+    applyConfigurationToDevices();
+  }
+  long deadDeviceCount=10;
+  if (m_config.containsKey("device_dead_count")) {
+    deadDeviceCount=s_parseLong(m_config.get("device_dead_count"),2L,100000L);
+  }
+  if (m_config.containsKey("poll_interval")) {
+    m_devicePollInterval=s_parseLong(m_config.get("poll_interval"),5000L,3600000L);
+  }
+  m_deadDeviceTimeout=m_devicePollInterval * deadDeviceCount;
+  logger.debug("configuration update complete!");
+  setProperlyConfigured(true);
+  return;
+}

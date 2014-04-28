@@ -1,0 +1,17 @@
+{
+  if (m_reply == ReplyType.WAITING_FOR_ACK) {
+    if (!msg.isUnsolicited()) {
+      m_reply=(msg.isPureNack() ? ReplyType.GOT_NACK : ReplyType.GOT_ACK);
+      logger.trace("signaling receipt of ack: {}",(m_reply == ReplyType.GOT_ACK));
+      notify();
+    }
+ else     if (msg.isPureNack()) {
+      m_reply=ReplyType.GOT_NACK;
+      logger.trace("signaling receipt of pure nack");
+      notify();
+    }
+ else {
+      logger.trace("got unsolicited message");
+    }
+  }
+}
