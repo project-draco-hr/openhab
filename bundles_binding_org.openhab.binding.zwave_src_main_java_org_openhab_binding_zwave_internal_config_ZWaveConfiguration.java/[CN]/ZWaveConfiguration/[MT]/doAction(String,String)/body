@@ -28,6 +28,10 @@
       return;
     }
     if (splitDomain.length == 2) {
+      if (action.equals("Heal")) {
+        logger.debug("Heal node '{}'",nodeId);
+        if (networkMonitor != null)         networkMonitor.healNode(nodeId);
+      }
       if (action.equals("Save")) {
         logger.debug("Saving node '{}'",nodeId);
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
