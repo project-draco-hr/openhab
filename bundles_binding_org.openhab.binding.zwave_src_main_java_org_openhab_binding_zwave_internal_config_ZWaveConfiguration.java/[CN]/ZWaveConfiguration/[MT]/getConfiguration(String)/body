@@ -112,7 +112,7 @@ record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexSt
  else {
 record.value=database.getManufacturerName() + " [ID:" + Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
 }
-logger.debug("No database entry node {}: {}",node.getNodeId(),record.value);
+logger.debug("NODE {}: No database entry: {}",node.getNodeId(),record.value);
 }
  else {
 if (node.getLocation() == null || node.getLocation().isEmpty()) record.value=database.getProductName();
@@ -261,7 +261,7 @@ List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParamete
 if (configList == null) return records;
 ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
 if (configurationCommandClass == null) {
-logger.error("Error getting configurationCommandClass for node '{}'",nodeId);
+logger.error("NODE {}: Error getting configurationCommandClass",nodeId);
 return null;
 }
 for (ZWaveDbConfigurationParameter parameter : configList) {
@@ -352,7 +352,7 @@ records.add(record);
  else if (arg.equals("wakeup/")) {
 ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
 if (wakeupCommandClass == null) {
-logger.error("Error getting wakeupCommandClass for node '{}'",nodeId);
+logger.error("NODE {}: Error getting wakeupCommandClass",nodeId);
 return null;
 }
 record=new OpenHABConfigurationRecord(domain,"Interval","Wakeup Interval",false);

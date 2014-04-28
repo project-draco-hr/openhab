@@ -18,7 +18,7 @@
     }
     ZWaveProductDatabase database=new ZWaveProductDatabase();
     if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
-      logger.error("Error in doSet for node '{}' - no database found",nodeId);
+      logger.error("NODE {}: Error in doSet - no database found",nodeId);
       return;
     }
     if (splitDomain.length == 3) {
@@ -29,7 +29,7 @@
       if (splitDomain[2].equals("parameters")) {
         ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
         if (configurationCommandClass == null) {
-          logger.error("Error getting configurationCommandClass in doSet for node '{}'",nodeId);
+          logger.error("NODE {}: Error getting configurationCommandClass in doSet",nodeId);
           return;
         }
         int paramIndex=Integer.parseInt(splitDomain[3].substring(13));
@@ -50,10 +50,10 @@
       if (splitDomain[2].equals("wakeup")) {
         ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
         if (wakeupCommandClass == null) {
-          logger.error("Error getting wakeupCommandClass in doSet for node '{}'",nodeId);
+          logger.error("NODE {}: Error getting wakeupCommandClass in doSet",nodeId);
           return;
         }
-        logger.debug("Set wakeup interval to '{}'",value);
+        logger.debug("NODE {}: Set wakeup interval to '{}'",nodeId,value);
         PendingCfg.Add(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),node.getNodeId(),Integer.parseInt(value));
         this.zController.sendData(wakeupCommandClass.setInterval(Integer.parseInt(value)));
         this.zController.sendData(wakeupCommandClass.getIntervalMessage());
@@ -63,7 +63,7 @@
       if (splitDomain[2].equals("associations")) {
         ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
         if (associationCommandClass == null) {
-          logger.error("Error getting associationCommandClass in doSet for node '{}'",nodeId);
+          logger.error("NODE {}: Error getting associationCommandClass in doSet",nodeId);
           return;
         }
         int assocId=Integer.parseInt(splitDomain[3].substring(11));
