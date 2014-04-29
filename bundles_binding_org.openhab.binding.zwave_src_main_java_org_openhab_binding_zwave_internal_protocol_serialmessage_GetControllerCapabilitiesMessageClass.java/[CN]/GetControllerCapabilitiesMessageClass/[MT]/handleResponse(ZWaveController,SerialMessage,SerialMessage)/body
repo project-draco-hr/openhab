@@ -1,0 +1,15 @@
+{
+  logger.trace("Handle Message Get Controller Capabilities - Length {}",incomingMessage.getMessagePayload().length);
+  isSecondary=((incomingMessage.getMessagePayloadByte(0) & CONTROLLER_IS_SECONDARY) != 0) ? true : false;
+  isOnOtherNetwork=((incomingMessage.getMessagePayloadByte(0) & CONTROLLER_ON_OTHER_NETWORK) != 0) ? true : false;
+  isServerPresent=((incomingMessage.getMessagePayloadByte(0) & CONTROLLER_NODEID_SERVER_PRESENT) == 1) ? true : false;
+  isRealPrimary=((incomingMessage.getMessagePayloadByte(0) & CONTROLLER_IS_REAL_PRIMARY) != 0) ? true : false;
+  isSUC=((incomingMessage.getMessagePayloadByte(0) & CONTROLLER_IS_SUC) != 0) ? true : false;
+  logger.debug("Controller is secondary = {}",isSecondary);
+  logger.debug("Controller is on other network = {}",isOnOtherNetwork);
+  logger.debug("Controller is server present = {}",isServerPresent);
+  logger.debug("Controller is real primary = {}",isRealPrimary);
+  logger.debug("Controller is SUC = {}",isSUC);
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return true;
+}

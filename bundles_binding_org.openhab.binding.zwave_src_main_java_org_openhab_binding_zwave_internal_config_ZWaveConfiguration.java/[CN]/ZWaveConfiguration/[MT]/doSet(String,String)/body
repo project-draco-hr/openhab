@@ -58,6 +58,12 @@
         this.zController.sendData(wakeupCommandClass.setInterval(Integer.parseInt(value)));
         this.zController.sendData(wakeupCommandClass.getIntervalMessage());
       }
+      if (splitDomain[2].equals("controller")) {
+        if (splitDomain[3].equals("Type")) {
+          ZWaveDeviceType type=ZWaveDeviceType.fromString(value);
+          logger.error("NODE {}: Setting controller type to {}",nodeId,type.toString());
+        }
+      }
     }
  else     if (splitDomain.length == 5) {
       if (splitDomain[2].equals("associations")) {

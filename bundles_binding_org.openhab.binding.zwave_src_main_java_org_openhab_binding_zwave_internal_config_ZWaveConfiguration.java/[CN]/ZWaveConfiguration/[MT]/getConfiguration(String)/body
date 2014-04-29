@@ -207,6 +207,10 @@ record.addAction("Refresh","Refresh");
 records.add(record);
 }
 }
+if (nodeId == zController.getOwnNodeId()) {
+record=new OpenHABConfigurationRecord(domain + "controller/","Controller");
+records.add(record);
+}
 record=new OpenHABConfigurationRecord(domain + "neighbors/","Neighbors");
 record.addAction("Refresh","Refresh");
 records.add(record);
@@ -388,6 +392,29 @@ record.readonly=true;
 if (nodeNeighbor == null) record.state=OpenHABConfigurationRecord.STATE.ERROR;
 records.add(record);
 }
+}
+ else if (arg.equals("controller/")) {
+record=new OpenHABConfigurationRecord(domain,"Type","Controller Type",true);
+record.addValue(ZWaveDeviceType.PRIMARY.toString(),ZWaveDeviceType.PRIMARY.toString());
+record.addValue(ZWaveDeviceType.SECONDARY.toString(),ZWaveDeviceType.SECONDARY.toString());
+record.addValue(ZWaveDeviceType.SUC.toString(),ZWaveDeviceType.SUC.toString());
+switch (zController.getControllerType()) {
+case SUC:
+case PRIMARY:
+case SECONDARY:
+record.readonly=false;
+break;
+default :
+record.readonly=true;
+break;
+}
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"APIVersion","API Version",true);
+record.value=zController.getSerialAPIVersion();
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"ZWaveVersion","ZWave Version",true);
+record.value=zController.getZWaveVersion();
+records.add(record);
 }
 return records;
 }
