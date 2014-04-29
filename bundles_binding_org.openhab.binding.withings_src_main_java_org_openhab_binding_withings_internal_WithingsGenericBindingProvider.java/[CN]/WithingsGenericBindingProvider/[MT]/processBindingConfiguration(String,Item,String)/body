@@ -1,0 +1,9 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  MeasureType measureType=MeasureType.valueOf(bindingConfig.toUpperCase());
+  if (measureType == null) {
+    throw new BindingConfigParseException("Could not convert string '" + bindingConfig + "' to according measure type.");
+  }
+  WithingsBindingConfig config=new WithingsBindingConfig(measureType);
+  addBindingConfig(item,config);
+}
