@@ -1,23 +1,18 @@
 {
   if (config == null)   return;
   if (StringUtils.isNotBlank((String)config.get("port"))) {
+    port=(String)config.get("port");
+    logger.info("Update config, port = {}",port);
+  }
+  if (StringUtils.isNotBlank((String)config.get("healtime"))) {
     try {
-      port=(String)config.get("port");
-      logger.info("Update config, port = {}",port);
-      this.setProperlyConfigured(true);
-      this.deactivate();
-      this.zController=new ZWaveController(port);
-      this.converterHandler=new ZWaveConverterHandler(this.zController,this.eventPublisher);
-      zController.initialize();
-      zController.addEventListener(this);
-      this.zConfigurationService=new ZWaveConfiguration(this.zController);
-      zController.addEventListener(this.zConfigurationService);
-      return;
+      healtime=Integer.parseInt((String)config.get("healtime"));
+      logger.info("Update config, healtime = {}",healtime);
     }
- catch (    SerialInterfaceException ex) {
-      this.setProperlyConfigured(false);
-      throw new ConfigurationException("port",ex.getLocalizedMessage(),ex);
+ catch (    NumberFormatException e) {
+      healtime=null;
+      logger.error("Error parsing 'healtime'. This must be a single number to set the hour to perform the heal.");
     }
   }
-  this.setProperlyConfigured(false);
+  initialise();
 }

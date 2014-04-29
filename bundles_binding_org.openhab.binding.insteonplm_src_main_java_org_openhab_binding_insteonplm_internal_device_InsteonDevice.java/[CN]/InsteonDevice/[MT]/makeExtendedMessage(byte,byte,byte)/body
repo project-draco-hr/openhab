@@ -1,0 +1,10 @@
+{
+  Msg m=Msg.s_makeMessage("SendExtendedMessage");
+  m.setAddress("toAddress",getAddress());
+  m.setByte("messageFlags",(byte)(((flags & 0xff) | 0x10) & 0xff));
+  m.setByte("command1",cmd1);
+  m.setByte("command2",cmd2);
+  int checksum=(~(cmd1 + cmd2) + 1) & 0xff;
+  m.setByte("userData14",(byte)checksum);
+  return m;
+}

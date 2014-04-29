@@ -1,0 +1,11 @@
+{
+  boolean result=false;
+  try {
+    result=ihc.resourceUpdate(value);
+  }
+ catch (  IhcExecption e) {
+    logger.warn("Value could not be set - retrying one time: {}",e.getMessage());
+    result=ihc.resourceUpdate(value);
+  }
+  return result;
+}

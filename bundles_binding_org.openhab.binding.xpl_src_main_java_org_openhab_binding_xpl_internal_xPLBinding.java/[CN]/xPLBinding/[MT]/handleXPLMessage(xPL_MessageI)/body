@@ -1,0 +1,40 @@
+{
+  for (  xPLBindingProvider provider : providers) {
+    List<String> matchingItems=provider.hasMessage(theMessage);
+    for (    String itemName : matchingItems) {
+      xPLBindingConfig config=provider.getConfig(itemName);
+      if (config == null)       continue;
+      String current=theMessage.getNamedValue(config.NamedParameter);
+      Item item=provider.getItem(itemName);
+      if (item != null) {
+        if (item instanceof SwitchItem) {
+          OnOffType status=(current.equalsIgnoreCase("on") || current.equalsIgnoreCase("true") || current.equalsIgnoreCase("1")|| current.equalsIgnoreCase("open")|| current.equalsIgnoreCase("high")) ? OnOffType.ON : OnOffType.OFF;
+synchronized (item) {
+            if (!item.getState().equals(status)) {
+              eventPublisher.postUpdate(itemName,status);
+              ((SwitchItem)item).setState(status);
+            }
+          }
+        }
+ else         if (item instanceof NumberItem) {
+          DecimalType value=new DecimalType(current);
+synchronized (item) {
+            if (!item.getState().equals(value)) {
+              eventPublisher.postUpdate(itemName,value);
+              ((NumberItem)item).setState(value);
+            }
+          }
+        }
+        if (item instanceof StringItem) {
+          StringType value=new StringType(current);
+synchronized (item) {
+            if (!item.getState().equals(value)) {
+              eventPublisher.postUpdate(itemName,value);
+              ((StringItem)item).setState(value);
+            }
+          }
+        }
+      }
+    }
+  }
+}

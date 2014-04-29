@@ -1,0 +1,33 @@
+{
+  logger.debug("updateDeviceStatus {} {}",status.getNumber(),status.getClass());
+  Integer number=new Integer(status.getNumber());
+  if (status instanceof UnitStatus && unitMap.containsKey(number)) {
+    Unit unit=unitMap.get(number);
+    unit.getProperties().updateUnit((UnitStatus)status);
+    updateItemsForDevice(unit);
+  }
+ else   if (status instanceof ThermostatStatus && thermostatMap.containsKey(number)) {
+    logger.debug("Updating thermo " + number);
+    Thermostat thermo=thermostatMap.get(number);
+    thermo.getProperties().updateThermostat((ThermostatStatus)status);
+    updateItemsForDevice(thermo);
+  }
+ else   if (status instanceof AudioZoneStatus && audioZoneMap.containsKey(number)) {
+    logger.debug("Updating audioZone " + number);
+    AudioZone az=audioZoneMap.get(number);
+    az.getProperties().updateAudioZone((AudioZoneStatus)status);
+    updateItemsForDevice(az);
+  }
+ else   if (status instanceof AreaStatus && areaMap.containsKey(number)) {
+    logger.debug("Updating area " + number);
+    Area area=areaMap.get(number);
+    area.getProperties().updateArea((AreaStatus)status);
+    updateItemsForDevice(area);
+  }
+ else   if (status instanceof ZoneStatus && zoneMap.containsKey(number)) {
+    logger.debug("Updating zone " + number);
+    Zone zone=zoneMap.get(number);
+    zone.getProperties().updateZone((ZoneStatus)status);
+    updateItemsForDevice(zone);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  if (m_pollTimer != null) {
+    m_pollTimer.cancel();
+    logger.debug("cancelled polling for {} ",m_address);
+  }
+  m_pollTimer=new Timer();
+  if (!hasValidPollingInterval())   return;
+  logger.debug("start polling for {} at rate {}",m_address,m_pollInterval);
+  doPoll();
+  m_pollTimer.scheduleAtFixedRate(new TimerTask(){
+    @Override public void run(){
+      doPoll();
+    }
+  }
+,(long)(m_pollInterval * Math.random()),m_pollInterval);
+}

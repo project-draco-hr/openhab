@@ -1,0 +1,7 @@
+{
+  homeId=((incomingMessage.getMessagePayloadByte(0)) << 24) | ((incomingMessage.getMessagePayloadByte(1)) << 16) | ((incomingMessage.getMessagePayloadByte(2)) << 8)| (incomingMessage.getMessagePayloadByte(3));
+  ownNodeId=incomingMessage.getMessagePayloadByte(4);
+  logger.debug(String.format("Got MessageMemoryGetId response. Home id = 0x%08X, Controller Node id = %d",homeId,ownNodeId));
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return true;
+}

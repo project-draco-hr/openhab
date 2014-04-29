@@ -1,0 +1,23 @@
+{
+  int setting=0;
+switch (config.getObjectType()) {
+case AUX_CURRENT:
+    setting=celsius ? MessageUtils.omniToC(properties.getCurrent()) : MessageUtils.omniToF(properties.getCurrent());
+  break;
+case AUX_HIGH:
+setting=celsius ? MessageUtils.omniToC(properties.getHighSetpoint()) : MessageUtils.omniToF(properties.getCurrent());
+break;
+case AUX_LOW:
+setting=celsius ? MessageUtils.omniToC(properties.getLowSetpoint()) : MessageUtils.omniToF(properties.getCurrent());
+break;
+case AUX_STATUS:
+setting=properties.getStatus();
+break;
+default :
+return;
+}
+logger.debug("updating item {} for type {} to  {}",item.getName(),config.getObjectType(),setting);
+if (item instanceof NumberItem) {
+publisher.postUpdate(item.getName(),new DecimalType(setting));
+}
+}

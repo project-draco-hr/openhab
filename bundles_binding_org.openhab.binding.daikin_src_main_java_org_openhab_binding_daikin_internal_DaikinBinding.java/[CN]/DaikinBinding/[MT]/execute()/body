@@ -1,0 +1,13 @@
+{
+  for (  DaikinHost host : hosts.values()) {
+    refreshState(host);
+    for (    DaikinBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        DaikinBindingConfig bindingConfig=provider.getBindingConfig(itemName);
+        if (!bindingConfig.getId().equals(host.getId()))         continue;
+        DaikinCommandType commandType=bindingConfig.getCommandType();
+        eventPublisher.postUpdate(itemName,host.getState(commandType));
+      }
+    }
+  }
+}

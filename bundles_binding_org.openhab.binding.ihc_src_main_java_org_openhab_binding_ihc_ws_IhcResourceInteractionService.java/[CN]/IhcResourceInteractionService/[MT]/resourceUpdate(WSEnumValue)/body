@@ -1,0 +1,5 @@
+{
+  final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "<soap:Body>"+ " <setResourceValue1 xmlns=\"utcs\">"+ "  <value xmlns:q1=\"utcs.values\" xsi:type=\"q1:WSEnumValue\">"+ "   <q1:definitionTypeID>%s</q1:definitionTypeID>"+ "   <q1:enumValueID>%s</q1:enumValueID>"+ "   <q1:enumName>%s</q1:enumName>"+ "  </value>"+ "  <resourceID>%s</resourceID>"+ "  <isValueRuntime>true</isValueRuntime>"+ " </setResourceValue1>"+ "</soap:Body>"+ "</soap:Envelope>";
+  String query=String.format(soapQuery,value.getDefinitionTypeID(),value.getEnumValueID(),value.getEnumName(),value.getResourceID());
+  return doResourceUpdate(query);
+}

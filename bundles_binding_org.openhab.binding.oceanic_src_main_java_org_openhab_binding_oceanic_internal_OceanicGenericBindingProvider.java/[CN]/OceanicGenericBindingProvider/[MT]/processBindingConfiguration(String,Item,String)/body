@@ -1,0 +1,30 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    OceanicBindingConfig config=new OceanicBindingConfig();
+    String valueSelectorString=null;
+    String pollingIntervalString=null;
+    String[] configParts=bindingConfig.trim().split(":");
+    if (configParts.length != 3) {
+      throw new BindingConfigParseException("RME binding must contain three parts separated by ':'");
+    }
+    config.serialPort=configParts[0].trim();
+    valueSelectorString=configParts[1].trim();
+    pollingIntervalString=configParts[2].trim();
+    try {
+      OceanicValueSelector.validateBinding(valueSelectorString,item);
+      config.valueSelector=valueSelectorString;
+      config.pollingInterval=Integer.parseInt(pollingIntervalString);
+      addBindingConfig(item,config);
+    }
+ catch (    IllegalArgumentException e1) {
+      throw new BindingConfigParseException("Invalid value selector '" + valueSelectorString + "'!");
+    }
+catch (    InvalidClassException e1) {
+      throw new BindingConfigParseException("Invalid item type for value selector '" + valueSelectorString + "'!");
+    }
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}

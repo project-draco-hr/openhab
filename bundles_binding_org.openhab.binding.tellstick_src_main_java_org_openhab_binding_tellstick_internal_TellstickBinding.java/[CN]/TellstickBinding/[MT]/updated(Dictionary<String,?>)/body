@@ -1,0 +1,17 @@
+{
+  this.updateFromTellstickInterval=UPDATE_FROM_TELLSTICK_INTERVAL;
+  this.restartTimeout=MAX_IDLE_BEFORE_RESTART;
+  logger.info("Called with config " + config);
+  if (config != null) {
+    String maxIdle=(String)config.get("max_idle");
+    String updateInterval=(String)config.get("update_interval");
+    if (maxIdle != null) {
+      this.restartTimeout=Integer.valueOf(maxIdle);
+    }
+    if (updateInterval != null) {
+      this.updateFromTellstickInterval=Integer.valueOf(updateInterval);
+    }
+  }
+  resetTellstick();
+  setProperlyConfigured(true);
+}

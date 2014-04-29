@@ -24,10 +24,8 @@
   if (result.iterator().hasNext()) {
     HistoricItem historicItem=result.iterator().next();
     state=historicItem.getState();
-    if (state instanceof DecimalType) {
-      xData.add(timeBegin);
-      yData.add((DecimalType)state);
-    }
+    xData.add(timeBegin);
+    yData.add(convertData(state));
   }
   filter.setBeginDate(timeBegin);
   filter.setEndDate(timeEnd);
@@ -37,15 +35,20 @@
   Iterator<HistoricItem> it=result.iterator();
   while (it.hasNext()) {
     HistoricItem historicItem=it.next();
-    state=historicItem.getState();
-    if (state instanceof DecimalType) {
-      xData.add(historicItem.getTimestamp());
-      yData.add((DecimalType)state);
+    if (state instanceof OnOffType || state instanceof OpenClosedType) {
+      Calendar cal=Calendar.getInstance();
+      cal.setTime(historicItem.getTimestamp());
+      cal.add(Calendar.MILLISECOND,-1);
+      xData.add(cal.getTime());
+      yData.add(convertData(state));
     }
+    state=historicItem.getState();
+    xData.add(historicItem.getTimestamp());
+    yData.add(convertData(state));
   }
-  if (state != null && state instanceof DecimalType) {
+  if (state != null) {
     xData.add(timeEnd);
-    yData.add((DecimalType)state);
+    yData.add(convertData(state));
   }
   if (xData.size() == 0) {
     return false;
@@ -54,11 +57,11 @@
     xData.add(xData.iterator().next());
     yData.add(yData.iterator().next());
   }
-  Series series=chart.addDateSeries(label,xData,yData);
+  Series series=chart.addSeries(label,xData,yData);
   series.setLineStyle(new BasicStroke(1.5f));
   series.setMarker(SeriesMarker.NONE);
   series.setLineColor(color);
-  if (yData.iterator().next().floatValue() > ((series.getyMax().floatValue() - series.getyMin().floatValue()) / 2 + series.getyMin().floatValue())) {
+  if (yData.iterator().next().floatValue() > ((series.getYMax() - series.getYMin()) / 2 + series.getYMin())) {
     legendPosition++;
   }
  else {

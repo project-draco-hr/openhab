@@ -1,0 +1,11 @@
+{
+  try {
+    for (    JobKey jobKey : scheduler.getJobKeys(jobGroupEquals(JOB_GROUP))) {
+      logger.info("Deleting astro job: " + jobKey.getName());
+      scheduler.deleteJob(jobKey);
+    }
+  }
+ catch (  SchedulerException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+}

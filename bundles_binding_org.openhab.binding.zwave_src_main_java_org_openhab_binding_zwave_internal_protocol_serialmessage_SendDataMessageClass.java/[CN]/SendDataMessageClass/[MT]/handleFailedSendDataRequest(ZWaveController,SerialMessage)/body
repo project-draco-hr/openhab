@@ -1,0 +1,17 @@
+{
+  ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
+  if (node.getNodeStage() == NodeStage.DEAD)   return false;
+  if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
+    ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+    if (wakeUpCommandClass != null) {
+      wakeUpCommandClass.setAwake(false);
+      wakeUpCommandClass.processOutgoingWakeupMessage(originalMessage);
+      return false;
+    }
+  }
+ else   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() == SerialMessagePriority.Low)   return false;
+  node.incrementResendCount();
+  logger.error("NODE {}: Got an error while sending data. Resending message.",node.getNodeId());
+  zController.sendData(originalMessage);
+  return true;
+}
