@@ -6,10 +6,15 @@
     if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
       setCallbackPeriod(tfConfig.getCallbackPeriod());
     }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("movingAverage"))) {
+      logger.debug("{} setting movingAverage: {}",LoggerConstants.TFINIT,tfConfig.getMovingAverage());
+      setMovingAverage(tfConfig.getMovingAverage());
+    }
   }
   try {
     tinkerforgeDevice=new BrickletMoisture(getUid(),getIpConnection());
     tinkerforgeDevice.setMoistureCallbackPeriod(getCallbackPeriod());
+    tinkerforgeDevice.setMovingAverage(getMovingAverage());
     listener=new MoistureListener();
     tinkerforgeDevice.addMoistureListener(listener);
     fetchSensorValue();
