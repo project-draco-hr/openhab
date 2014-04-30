@@ -125,6 +125,13 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.bricklet_distanceUS.name())) {
+    TFDistanceUSBrickletConfiguration configuration=modelFactory.createTFDistanceUSBrickletConfiguration();
+    OHTFDevice<TFDistanceUSBrickletConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
