@@ -1,0 +1,27 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    RMEBindingConfig config=new RMEBindingConfig();
+    String valueSelectorString=null;
+    String[] configParts=bindingConfig.trim().split(":");
+    if (configParts.length != 2) {
+      throw new BindingConfigParseException("RME binding must contain two parts separated by ':'");
+    }
+    config.serialPort=configParts[0].trim();
+    valueSelectorString=configParts[1].trim();
+    try {
+      RMEValueSelector.validateBinding(valueSelectorString,item);
+      config.valueSelector=RMEValueSelector.getValueSelector(valueSelectorString);
+      addBindingConfig(item,config);
+    }
+ catch (    IllegalArgumentException e1) {
+      throw new BindingConfigParseException("Invalid value selector '" + valueSelectorString + "'!");
+    }
+catch (    InvalidClassException e1) {
+      throw new BindingConfigParseException("Invalid item type for value selector '" + valueSelectorString + "'!");
+    }
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}
