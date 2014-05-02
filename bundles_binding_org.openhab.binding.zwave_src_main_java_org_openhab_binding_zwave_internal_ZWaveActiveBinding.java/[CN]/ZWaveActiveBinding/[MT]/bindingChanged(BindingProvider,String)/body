@@ -1,5 +1,5 @@
 {
-  logger.debug("bindingChanged {}",itemName);
+  logger.trace("bindingChanged {}",itemName);
   ZWaveBindingProvider zProvider=(ZWaveBindingProvider)provider;
   if (zProvider != null) {
     ZWaveBindingConfig bindingConfig=zProvider.getZwaveBindingConfig(itemName);
@@ -7,15 +7,11 @@
       converterHandler.executeRefresh(zProvider,itemName,true);
     }
   }
-  logger.debug("Rebuilding polling table");
   pollingList.clear();
   for (  ZWaveBindingProvider eachProvider : providers) {
-    logger.debug("Rebuilding polling table - provider {}",eachProvider.toString());
     for (    String name : eachProvider.getItemNames()) {
-      logger.debug("Rebuilding polling table - loop {}",name);
       ZWaveBindingConfig bindingConfiguration=eachProvider.getZwaveBindingConfig(name);
       if (bindingConfiguration.getRefreshInterval() != null && bindingConfiguration.getRefreshInterval() != 0) {
-        logger.debug("Rebuilding polling table - adding {}",name);
         ZWavePollItem item=new ZWavePollItem();
         item.item=name;
         item.provider=eachProvider;
