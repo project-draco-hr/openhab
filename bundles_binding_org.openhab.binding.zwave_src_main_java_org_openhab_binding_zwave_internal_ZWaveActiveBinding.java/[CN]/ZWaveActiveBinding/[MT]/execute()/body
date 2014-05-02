@@ -6,33 +6,19 @@
   }
   networkMonitor.execute();
   if (pollingIterator == null) {
-    logger.debug("Rebuilding polling table");
-    pollingList.clear();
-    for (    ZWaveBindingProvider provider : providers) {
-      for (      String itemName : provider.getItemNames()) {
-        ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
-        if (bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval()) {
-          logger.debug("Rebuilding polling table - adding {}",itemName);
-          ZWavePollItem item=new ZWavePollItem();
-          item.item=itemName;
-          item.provider=provider;
-          pollingList.add(item);
-        }
-      }
-    }
+    logger.trace("Polling iterator null");
     pollingIterator=pollingList.iterator();
   }
-  ZWavePollItem poll;
-  while ((poll=pollingIterator.next()) != null) {
-    logger.debug("Polling item {}",poll.item);
-    converterHandler.executeRefresh(poll.provider,poll.item,false);
-    if (zController.getSendQueueLength() > pollingMax) {
-      logger.debug("Polling queue full!");
+  while (pollingIterator.hasNext()) {
+    if (zController.getSendQueueLength() >= pollingQueue) {
+      logger.trace("Polling queue full!");
       break;
     }
+    ZWavePollItem poll=pollingIterator.next();
+    converterHandler.executeRefresh(poll.provider,poll.item,false);
   }
-  if (poll == null) {
-    logger.debug("Polling cycle complete");
+  if (pollingIterator.hasNext() == false) {
+    logger.trace("Polling cycle complete");
     pollingIterator=null;
   }
 }
