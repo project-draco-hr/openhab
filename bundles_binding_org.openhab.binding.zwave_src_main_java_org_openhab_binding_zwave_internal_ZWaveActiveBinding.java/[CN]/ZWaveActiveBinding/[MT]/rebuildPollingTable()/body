@@ -2,9 +2,8 @@
   pollingList.clear();
   for (  ZWaveBindingProvider eachProvider : providers) {
     for (    String name : eachProvider.getItemNames()) {
-      ZWaveBindingConfig bindingConfiguration=eachProvider.getZwaveBindingConfig(name);
-      logger.trace("Polling list: Checking {} == {}",name,bindingConfiguration.getRefreshInterval());
-      if (bindingConfiguration.getRefreshInterval() != null && bindingConfiguration.getRefreshInterval() != 0) {
+      logger.trace("Polling list: Checking {} == {}",name,converterHandler.getRefreshInterval(eachProvider,name));
+      if (converterHandler.getRefreshInterval(eachProvider,name) > 0) {
         ZWavePollItem item=new ZWavePollItem();
         item.item=name;
         item.provider=eachProvider;
