@@ -7,18 +7,6 @@
       converterHandler.executeRefresh(zProvider,itemName,true);
     }
   }
-  pollingList.clear();
-  for (  ZWaveBindingProvider eachProvider : providers) {
-    for (    String name : eachProvider.getItemNames()) {
-      ZWaveBindingConfig bindingConfiguration=eachProvider.getZwaveBindingConfig(name);
-      if (bindingConfiguration.getRefreshInterval() != null && bindingConfiguration.getRefreshInterval() != 0) {
-        ZWavePollItem item=new ZWavePollItem();
-        item.item=name;
-        item.provider=eachProvider;
-        pollingList.add(item);
-      }
-    }
-  }
-  pollingIterator=null;
+  rebuildPollingTable();
   super.bindingChanged(provider,itemName);
 }
