@@ -4,25 +4,24 @@ case ADD_NODE_STATUS_LEARN_READY:
     logger.debug("Learn ready.");
   break;
 case ADD_NODE_STATUS_NODE_FOUND:
-logger.debug("Node found {}.",incomingMessage.getMessagePayloadByte(2));
+logger.debug("New node found.");
 break;
 case ADD_NODE_STATUS_ADDING_SLAVE:
-logger.debug("Adding slave {}.",incomingMessage.getMessagePayloadByte(2));
+logger.debug("NODE {}: Adding slave.",incomingMessage.getMessagePayloadByte(2));
 break;
 case ADD_NODE_STATUS_ADDING_CONTROLLER:
-logger.debug("Adding controller {}.",incomingMessage.getMessagePayloadByte(2));
+logger.debug("NODE {}: Adding controller.",incomingMessage.getMessagePayloadByte(2));
 break;
 case ADD_NODE_STATUS_PROTOCOL_DONE:
 logger.debug("Protocol done.");
-doRequestStop();
 break;
 case ADD_NODE_STATUS_DONE:
 logger.debug("Done.");
-doRequestStop();
+zController.sendData(doRequestStop());
 break;
 case ADD_NODE_STATUS_FAILED:
 logger.debug("Failed.");
-doRequestStop();
+zController.sendData(doRequestStop());
 break;
 default :
 logger.debug("Unknown request ({}).",incomingMessage.getMessagePayloadByte(1));

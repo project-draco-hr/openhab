@@ -4,4 +4,29 @@
     logger.trace("Notifying {}",listener.toString());
     listener.ZWaveIncomingEvent(event);
   }
+  if (event instanceof ZWaveInclusionEvent) {
+    ZWaveInclusionEvent incEvent=(ZWaveInclusionEvent)event;
+switch (incEvent.getEvent()) {
+case IncludeDone:
+      if (getNode(incEvent.getNodeId()) != null) {
+        logger.debug("NODE {}: Newly included node already exists - not initialising.");
+        break;
+      }
+    ZWaveNode node=new ZWaveNode(this.homeId,incEvent.getNodeId(),this);
+  this.zwaveNodes.put(incEvent.getNodeId(),node);
+node.advanceNodeStage(NodeStage.PROTOINFO);
+break;
+case ExcludeDone:
+if (getNode(incEvent.getNodeId()) != null) {
+logger.debug("NODE {}: Excluding node that doesn't exist.");
+break;
+}
+this.zwaveNodes.remove(getNode(incEvent.getNodeId()));
+ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+nodeSerializer.DeleteNode(event.getNodeId());
+break;
+default :
+break;
+}
+}
 }
