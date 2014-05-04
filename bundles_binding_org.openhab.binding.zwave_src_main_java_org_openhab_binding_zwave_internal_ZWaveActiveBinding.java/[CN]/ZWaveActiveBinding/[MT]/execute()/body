@@ -6,8 +6,6 @@
   }
   networkMonitor.execute();
   if (pollingIterator == null) {
-    logger.trace("Polling iterator null");
-    rebuildPollingTable();
     pollingIterator=pollingList.iterator();
   }
   while (pollingIterator.hasNext()) {
@@ -19,7 +17,6 @@
     converterHandler.executeRefresh(poll.provider,poll.item,false);
   }
   if (pollingIterator.hasNext() == false) {
-    logger.trace("Polling cycle complete");
     pollingIterator=null;
   }
 }
