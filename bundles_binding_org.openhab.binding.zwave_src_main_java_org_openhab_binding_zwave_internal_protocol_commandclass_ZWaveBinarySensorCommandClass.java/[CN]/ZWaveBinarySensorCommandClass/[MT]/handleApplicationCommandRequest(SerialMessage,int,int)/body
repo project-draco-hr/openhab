@@ -9,8 +9,11 @@ case SENSOR_BINARY_GET:
 case SENSOR_BINARY_REPORT:
 logger.trace("Process Sensor Binary Report");
 int value=serialMessage.getMessagePayloadByte(offset + 1);
-logger.debug(String.format("NODE %d: Sensor Binary report, value = 0x%02X",this.getNode().getNodeId(),value));
 SensorType sensorType=SensorType.UNKNOWN;
+if (this.getVersion() > 1) {
+sensorType=SensorType.getSensorType(serialMessage.getMessagePayloadByte(offset + 1));
+}
+logger.debug(String.format("NODE %d: Sensor Binary report, type=%s, value=0x%02X",this.getNode().getNodeId(),sensorType.getLabel(),value));
 ZWaveBinarySensorValueEvent zEvent=new ZWaveBinarySensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,value);
 this.getController().notifyEventListeners(zEvent);
 if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
