@@ -3,7 +3,6 @@
   ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
   ZWaveCommandClass commandClass;
   String commandClassName=bindingConfiguration.getArguments().get("command");
-  if (node.getNodeStage() != NodeStage.DONE)   return;
   if (commandClassName != null) {
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
     if (commandClass == null) {
