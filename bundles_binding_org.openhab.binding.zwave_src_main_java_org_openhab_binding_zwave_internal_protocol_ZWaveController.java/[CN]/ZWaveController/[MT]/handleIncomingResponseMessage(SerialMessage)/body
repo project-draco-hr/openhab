@@ -35,7 +35,7 @@ node.advanceNodeStage(NodeStage.PROTOINFO);
 }
 break;
 case GetSucNodeId:
-if (((GetSucNodeIdMessageClass)processor).getSucNodeId() == 0) {
+if (this.setSUC == true && ((GetSucNodeIdMessageClass)processor).getSucNodeId() == 0) {
 this.enqueue(new EnableSucMessageClass().doRequest(EnableSucMessageClass.SUCType.SERVER));
 this.enqueue(new SetSucNodeMessageClass().doRequest(this.ownNodeId,SetSucNodeMessageClass.SUCType.SERVER));
 }
