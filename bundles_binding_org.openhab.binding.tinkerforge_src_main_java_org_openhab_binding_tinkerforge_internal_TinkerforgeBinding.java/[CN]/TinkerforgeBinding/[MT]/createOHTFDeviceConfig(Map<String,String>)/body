@@ -85,6 +85,22 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.bricklet_multitouch.name())) {
+    logger.debug("{} setting BrickletMultiTouchConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
+    BrickletMultiTouchConfiguration configuration=modelFactory.createBrickletMultiTouchConfiguration();
+    OHTFDevice<BrickletMultiTouchConfiguration,MultiTouchSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(MultiTouchSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.electrode.name()) || deviceType.equals(TypeKey.proximity.name())) {
+    logger.debug("{} setting MultiTouchDeviceConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
+    MultiTouchDeviceConfiguration configuration=modelFactory.createMultiTouchDeviceConfiguration();
+    OHTFDevice<MultiTouchDeviceConfiguration,MultiTouchSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(MultiTouchSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);

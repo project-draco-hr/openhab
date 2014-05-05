@@ -4,6 +4,7 @@
       for (      String itemName : provider.getItemNames()) {
         String sensorId=provider.getSensorId(itemName);
         String unitId=provider.getUnitId(itemName);
+        Filter filter=getFilter(provider,itemName);
         if (sensorId == null || unitId == null) {
           logger.warn("sensorId or unitId isn't configured properly " + "for the given itemName [itemName={}, sensorId={}, unitId={}] => querying bus for values aborted!",new Object[]{itemName,sensorId,unitId});
           continue;
@@ -25,6 +26,9 @@
                 }
  else                 if (item instanceof NumberItem) {
                   value=new DecimalType(Double.valueOf(valueString));
+                  if (filter != null) {
+                    value=filter.filter((DecimalType)value);
+                  }
                 }
  else {
                   throw new IllegalStateException("The item with name " + itemName + " is not a valid type.");
