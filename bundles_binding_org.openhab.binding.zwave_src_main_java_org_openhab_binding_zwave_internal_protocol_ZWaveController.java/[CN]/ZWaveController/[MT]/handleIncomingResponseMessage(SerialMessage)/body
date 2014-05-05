@@ -33,7 +33,6 @@ node.setManufacturer(this.getManufactureId());
 this.zwaveNodes.put(nodeId,node);
 node.advanceNodeStage(NodeStage.PROTOINFO);
 }
-this.controllerType=((SerialApiGetInitDataMessageClass)processor).getNodeType();
 break;
 case GetSucNodeId:
 if (((GetSucNodeIdMessageClass)processor).getSucNodeId() == 0) {
@@ -47,6 +46,9 @@ this.manufactureId=((SerialApiGetCapabilitiesMessageClass)processor).getManufact
 this.deviceId=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceId();
 this.deviceType=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceType();
 this.enqueue(new SerialApiGetInitDataMessageClass().doRequest());
+break;
+case GetControllerCapabilities:
+this.controllerType=((GetControllerCapabilitiesMessageClass)processor).getDeviceType();
 break;
 default :
 break;
