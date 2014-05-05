@@ -1,9 +1,9 @@
 {
   if (!isConnected()) {
     logger.debug("No connection to SqueezeServer, will attempt to reconnect now...");
-    connect();
+    reconnect();
     if (!isConnected()) {
-      logger.error("Failed to re-connect to SqueezeServer, unable to send command {}",command);
+      logger.error("Failed to reconnect to SqueezeServer, unable to send command {}",command);
       return;
     }
   }
