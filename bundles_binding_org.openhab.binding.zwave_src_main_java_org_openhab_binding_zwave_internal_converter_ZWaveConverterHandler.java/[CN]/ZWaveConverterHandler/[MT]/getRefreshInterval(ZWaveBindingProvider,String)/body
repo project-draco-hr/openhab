@@ -11,7 +11,7 @@
     }
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
     if (commandClass == null) {
-      logger.warn("No command class found for item = {}, command class name = {}, ignoring execute refresh.",itemName,commandClassName);
+      logger.warn("No command class found for item = {}, command class name = {}, using 0 refresh interval.",itemName,commandClassName);
       return 0;
     }
   }
@@ -19,12 +19,12 @@
     commandClass=resolveConverter(provider.getItem(itemName),node,bindingConfiguration.getEndpoint());
   }
   if (commandClass == null) {
-    logger.warn("No converter found for item = {}, ignoring execute refresh.",itemName);
+    logger.warn("No converter found for item = {}, using 0 refresh interval.",itemName);
     return 0;
   }
   ZWaveCommandClassConverter<ZWaveCommandClass> converter=(ZWaveCommandClassConverter<ZWaveCommandClass>)getConverter(commandClass.getCommandClass());
   if (converter == null) {
-    logger.warn("No converter found for item = {}, ignoring execute refresh.",itemName);
+    logger.warn("No converter found for item = {}, using 0 refresh interval.",itemName);
     return 0;
   }
   if (bindingConfiguration.getRefreshInterval() == null) {
