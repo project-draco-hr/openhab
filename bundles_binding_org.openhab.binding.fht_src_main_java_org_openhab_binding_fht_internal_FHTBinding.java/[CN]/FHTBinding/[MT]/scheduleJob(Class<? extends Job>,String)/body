@@ -2,7 +2,8 @@
   JobKey jobKey=null;
   try {
     Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
-    JobDetail detail=JobBuilder.newJob(jobClass).withIdentity("FHT time update job","cul").build();
+    JobDetail detail=JobBuilder.newJob(jobClass).withIdentity("FHT " + jobClass.getSimpleName(),"cul").build();
+    detail.getJobDataMap().put(FHTBinding.class.getName(),this);
     CronTrigger trigger=TriggerBuilder.newTrigger().forJob(detail).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
     jobKey=detail.getKey();
     sched.scheduleJob(detail,trigger);
