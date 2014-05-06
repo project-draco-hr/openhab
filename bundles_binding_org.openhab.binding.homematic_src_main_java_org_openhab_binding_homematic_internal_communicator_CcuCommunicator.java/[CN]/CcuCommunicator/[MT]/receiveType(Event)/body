@@ -5,7 +5,7 @@
     }
   }
  else {
-    event.setHmValueItem(stateHolder.getState(event.getBindingConfig()));
+    event.setHmValueItem(context.getStateHolder().getState(event.getBindingConfig()));
     if (event.getHmValueItem() == null) {
       logger.warn("Can't find {}, value is not published to CCU!",event.getBindingConfig());
     }
@@ -33,8 +33,8 @@
       }
  catch (      Exception ex) {
         logger.error(ex.getMessage(),ex);
-        stateHolder.reloadDatapoints();
-        stateHolder.reloadVariables();
+        context.getStateHolder().reloadDatapoints();
+        context.getStateHolder().reloadVariables();
       }
     }
   }

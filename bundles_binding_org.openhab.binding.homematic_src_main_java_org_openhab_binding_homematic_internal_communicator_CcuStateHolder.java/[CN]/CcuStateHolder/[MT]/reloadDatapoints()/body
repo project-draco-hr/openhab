@@ -4,7 +4,7 @@
       try {
         logger.debug("Reloading CCU datapoints");
         datapointReloadInProgress=true;
-        tclRegaScriptClient.iterateAllDatapoints(new TclIteratorCallback(){
+        context.getTclRegaScriptClient().iterateAllDatapoints(new TclIteratorCallback(){
           @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem hmValueItem){
             if (!ccuDatapoints.containsKey(bindingConfig)) {
               logger.info("Adding new {}",bindingConfig);

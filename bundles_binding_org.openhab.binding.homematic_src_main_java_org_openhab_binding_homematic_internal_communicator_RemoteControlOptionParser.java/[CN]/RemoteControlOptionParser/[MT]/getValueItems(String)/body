@@ -1,0 +1,13 @@
+{
+  DatapointConfig dpConfig=new DatapointConfig(remoteControlAddress,"18",parameterName);
+  HmValueItem hmValueItem=context.getStateHolder().getState(dpConfig);
+  if (hmValueItem != null) {
+    String[] valueList=(String[])ArrayUtils.remove(hmValueItem.getValueList(),0);
+    int onIdx=ArrayUtils.indexOf(valueList,"ON");
+    if (onIdx != -1) {
+      valueList[onIdx]=parameterName + "_ON";
+    }
+    return valueList;
+  }
+  return new String[0];
+}

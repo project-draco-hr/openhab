@@ -4,11 +4,10 @@
     try {
       boolean isBinRpc=context.getConfig().isBinRpc();
       ccuCallbackServer=isBinRpc ? new BinRpcCallbackServer(this) : new XmlRpcCallbackServer(this);
-      tclRegaScriptClient=new TclRegaScriptClient();
-      stateHolder=new CcuStateHolder(tclRegaScriptClient);
-      stateHolder.loadDatapoints();
-      stateHolder.loadVariables();
-      itemDisabler=new ItemDisabler(stateHolder);
+      context.getTclRegaScriptClient().start();
+      context.getStateHolder().loadDatapoints();
+      context.getStateHolder().loadVariables();
+      itemDisabler=new ItemDisabler();
       itemDisabler.start();
       newDevicesCounter=0;
       ccuCallbackServer.start();

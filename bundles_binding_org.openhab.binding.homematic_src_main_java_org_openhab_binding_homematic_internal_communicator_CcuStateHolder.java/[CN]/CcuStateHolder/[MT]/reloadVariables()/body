@@ -3,7 +3,7 @@
     @Override public void run(){
       logger.debug("Reloading CCU variables");
       try {
-        tclRegaScriptClient.iterateAllVariables(new TclIteratorCallback(){
+        context.getTclRegaScriptClient().iterateAllVariables(new TclIteratorCallback(){
           @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem variable){
             if (hasChanged(bindingConfig,ccuVariables.get(bindingConfig),variable)) {
               ccuVariables.put(bindingConfig,variable);
