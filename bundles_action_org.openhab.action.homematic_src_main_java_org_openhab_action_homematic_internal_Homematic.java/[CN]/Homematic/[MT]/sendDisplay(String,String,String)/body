@@ -1,0 +1,16 @@
+{
+  if (!context.getTclRegaScriptClient().isStarted()) {
+    logger.warn("The Homematic binding (TclRegaScriptClient) is not started, ignoring action sendHomematicDisplay!");
+    return false;
+  }
+ else {
+    try {
+      context.getTclRegaScriptClient().setRemoteControlDisplay(remoteControlAddress,text,options);
+      return true;
+    }
+ catch (    CcuClientException ex) {
+      logger.error(ex.getMessage(),ex);
+      return false;
+    }
+  }
+}
