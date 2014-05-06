@@ -1,0 +1,27 @@
+{
+  if (string == null) {
+    return null;
+  }
+  MqttWillAndTestament result=new MqttWillAndTestament();
+  String[] components=string.split(":");
+  for (int i=0; i < Math.min(components.length,4); i++) {
+    String value=StringUtils.trimToEmpty(components[i]);
+switch (i) {
+case 0:
+      result.setTopic(value);
+    break;
+case 1:
+  result.setPayload(value.getBytes());
+break;
+case 2:
+if (!"".equals(value)) {
+result.setQos(Integer.valueOf(value));
+}
+break;
+case 3:
+result.setRetain(Boolean.valueOf(value));
+break;
+}
+}
+return result;
+}

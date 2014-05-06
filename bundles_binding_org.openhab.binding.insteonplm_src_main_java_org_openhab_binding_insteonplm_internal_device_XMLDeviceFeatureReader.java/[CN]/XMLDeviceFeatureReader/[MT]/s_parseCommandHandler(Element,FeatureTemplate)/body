@@ -1,0 +1,11 @@
+{
+  String handler=e.getTextContent();
+  if (handler == null)   throw new ParsingException("Could not find CommandHandler for: " + e.getTextContent());
+  if (e.getAttribute("default").equals("true")) {
+    f.setDefaultCommandHandler(handler);
+  }
+ else {
+    Class<? extends Command> command=s_parseCommandClass(e.getAttribute("command"));
+    f.addCommandHandler(command,handler);
+  }
+}
