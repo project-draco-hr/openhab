@@ -14,5 +14,15 @@
       logger.error("Error parsing 'healtime'. This must be a single number to set the hour to perform the heal.");
     }
   }
+  if (StringUtils.isNotBlank((String)config.get("timeout"))) {
+    try {
+      timeout=Integer.parseInt((String)config.get("timeout"));
+      logger.info("Update config, timeout = {}",timeout);
+    }
+ catch (    NumberFormatException e) {
+      timeout=null;
+      logger.error("Error parsing 'timeout'. This must be an Integer.");
+    }
+  }
   initialise();
 }

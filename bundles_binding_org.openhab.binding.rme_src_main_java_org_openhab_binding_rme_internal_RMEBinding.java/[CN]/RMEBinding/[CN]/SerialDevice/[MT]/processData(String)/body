@@ -1,0 +1,36 @@
+{
+  if (data != null) {
+    Pattern RESPONSE_PATTERN=Pattern.compile("(.*);(0|1);(0|1);(0|1);(0|1);(0|1);(0|1);(0|1);(0|1);(0|1)");
+    Matcher matcher=RESPONSE_PATTERN.matcher(data);
+    if (matcher.matches()) {
+      for (      RMEBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames()) {
+          String serialPort=provider.getSerialPort(itemName);
+          RMEValueSelector selector=provider.getValueSelector(itemName);
+          if (port.equals(serialPort)) {
+            if (cachedValues.get(selector) == null || !cachedValues.get(selector).equals(matcher.group(selector.getFieldIndex()))) {
+              cachedValues.put(selector,matcher.group(selector.getFieldIndex()));
+              State value;
+              try {
+                if (matcher.group(selector.getFieldIndex()).equals("0")) {
+                  value=createStateForType(selector,"OFF");
+                }
+ else                 if (matcher.group(selector.getFieldIndex()).equals("1")) {
+                  value=createStateForType(selector,"ON");
+                }
+ else {
+                  value=createStateForType(selector,matcher.group(selector.getFieldIndex()));
+                }
+              }
+ catch (              BindingConfigParseException e) {
+                logger.error("An exception occured while converting {} to a valide state : {}",matcher.group(selector.getFieldIndex()),e.getMessage());
+                return;
+              }
+              eventPublisher.postUpdate(itemName,value);
+            }
+          }
+        }
+      }
+    }
+  }
+}
