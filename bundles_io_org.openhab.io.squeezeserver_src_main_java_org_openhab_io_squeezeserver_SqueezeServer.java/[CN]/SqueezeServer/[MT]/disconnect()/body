@@ -1,22 +1,15 @@
 {
-  if (clientSocket == null)   return;
+  if (!isConnected())   return;
   try {
+    listener.setInterrupted(true);
     clientSocket.close();
-    logger.debug("Client socket closed.");
+    logger.info("Squeeze Server connection stopped.");
   }
  catch (  IOException e) {
-    logger.error("Failed to disconnect cleanly from SqueezeServer at " + host + ":"+ cliPort,e);
+    logger.error("Failed to disconnect from Squeeze Server at " + host + ":"+ cliPort,e);
   }
-  if (listener != null) {
-    listener.setInterrupted(true);
-    listener.interrupt();
-    try {
-      listener.join();
-    }
- catch (    InterruptedException e) {
-    }
-    logger.debug("Listener thread stopped.");
+ finally {
+    clientSocket=null;
+    listener=null;
   }
-  clientSocket=null;
-  logger.info("Squeeze Server connection stopped.");
 }
