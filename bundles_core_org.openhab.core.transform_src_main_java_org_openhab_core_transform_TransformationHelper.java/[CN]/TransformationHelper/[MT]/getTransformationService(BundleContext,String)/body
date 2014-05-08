@@ -1,18 +1,10 @@
 {
-  if (StringUtils.isBlank(transformationType)) {
-    return null;
-  }
-  if (cachedServices.containsKey(transformationType)) {
-    return cachedServices.get(transformationType);
-  }
   if (context != null) {
     String filter="(openhab.transform=" + transformationType + ")";
     try {
       Collection<ServiceReference<TransformationService>> refs=context.getServiceReferences(TransformationService.class,filter);
       if (refs != null && refs.size() > 0) {
-        TransformationService service=(TransformationService)context.getService(refs.iterator().next());
-        cachedServices.put(transformationType,service);
-        return service;
+        return (TransformationService)context.getService(refs.iterator().next());
       }
  else {
         logger.warn("Cannot get service reference for transformation service of type " + transformationType);
