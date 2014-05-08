@@ -3,8 +3,9 @@
     return false;
   }
   SonosZonePlayer coordinator=sonosBinding.getCoordinatorForZonePlayer(this);
+  SonosZonePlayer remotePlayer=sonosBinding.getPlayerForID(remotePlayerName);
   coordinator.stop();
-  coordinator.setCurrentURI("x-rincon-stream:" + remoteUDN,"");
+  coordinator.setCurrentURI("x-rincon-stream:" + remotePlayer.getUdn(),"");
   coordinator.setMute("OFF");
   return coordinator.play();
 }

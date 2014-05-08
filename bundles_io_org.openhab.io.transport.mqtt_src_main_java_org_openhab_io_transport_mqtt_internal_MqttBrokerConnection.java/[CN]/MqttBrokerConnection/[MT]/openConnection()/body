@@ -47,5 +47,8 @@
       options.setSocketFactory(socketFactory);
     }
   }
+  if (lastWill != null) {
+    options.setWill(lastWill.getTopic(),lastWill.getPayload(),lastWill.getQos(),lastWill.isRetain());
+  }
   client.connect(options);
 }
