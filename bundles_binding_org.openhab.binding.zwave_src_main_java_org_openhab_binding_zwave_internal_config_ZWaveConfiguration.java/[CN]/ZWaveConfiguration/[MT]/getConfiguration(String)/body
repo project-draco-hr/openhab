@@ -332,6 +332,7 @@ if (group == null) return null;
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 List<Integer> members=associationCommandClass.getGroupMembers(groupId);
 for (ZWaveNode nodeList : zController.getNodes()) {
+if (nodeList.getNodeId() == node.getNodeId()) continue;
 if (nodeList.getName() == null || nodeList.getName().isEmpty()) record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),"Node " + nodeList.getNodeId(),false);
  else record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),nodeList.getName(),false);
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
@@ -407,7 +408,7 @@ switch (zController.getControllerType()) {
 case SUC:
 case PRIMARY:
 case SECONDARY:
-record.readonly=false;
+record.readonly=true;
 break;
 default :
 record.readonly=true;
