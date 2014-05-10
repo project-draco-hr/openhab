@@ -21,7 +21,7 @@ if (healing.nodeId != zController.getOwnNodeId()) {
   ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
   if (zwaveCommandClass == null)   break;
   zController.sendData(zwaveCommandClass.getNoOperationMessage());
-  healing.stateNext=HealState.UPDATENEIGHBORS;
+  healing.stateNext=HealState.SETSUCROUTE;
   break;
 }
 healing.state=HealState.SETSUCROUTE;
@@ -29,7 +29,6 @@ case SETSUCROUTE:
 if (healing.nodeId != zController.getOwnNodeId() && zController.getSucId() != 0) {
 logger.debug("NODE {}: Heal is setting SUC route.",healing.nodeId);
 healing.event=ZWaveNetworkEvent.Type.AssignSucReturnRoute;
-healing.event=ZWaveNetworkEvent.Type.NodeRoutingInfo;
 healing.stateNext=HealState.UPDATENEIGHBORS;
 zController.requestAssignSucReturnRoute(healing.nodeId);
 break;
