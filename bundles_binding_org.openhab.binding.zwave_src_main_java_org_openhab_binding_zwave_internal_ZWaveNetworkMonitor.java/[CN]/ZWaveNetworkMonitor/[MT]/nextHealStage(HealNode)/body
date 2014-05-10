@@ -24,7 +24,16 @@ if (healing.nodeId != zController.getOwnNodeId()) {
   healing.stateNext=HealState.UPDATENEIGHBORS;
   break;
 }
-healing.state=HealState.UPDATENEIGHBORS;
+healing.state=HealState.SETSUCROUTE;
+case SETSUCROUTE:
+if (healing.nodeId != zController.getOwnNodeId() && zController.getSucId() != 0) {
+logger.debug("NODE {}: Heal is setting SUC route.",healing.nodeId);
+healing.event=ZWaveNetworkEvent.Type.AssignSucReturnRoute;
+healing.event=ZWaveNetworkEvent.Type.NodeRoutingInfo;
+healing.stateNext=HealState.UPDATENEIGHBORS;
+zController.requestAssignSucReturnRoute(healing.nodeId);
+break;
+}
 case UPDATENEIGHBORS:
 logger.debug("NODE {}: Heal is updating node neighbors.",healing.nodeId);
 healing.event=ZWaveNetworkEvent.Type.NodeNeighborUpdate;

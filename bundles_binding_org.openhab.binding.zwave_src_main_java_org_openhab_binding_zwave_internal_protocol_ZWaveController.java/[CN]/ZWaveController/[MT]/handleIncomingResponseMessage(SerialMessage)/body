@@ -35,9 +35,14 @@ node.advanceNodeStage(NodeStage.PROTOINFO);
 }
 break;
 case GetSucNodeId:
-if (this.setSUC == true && ((GetSucNodeIdMessageClass)processor).getSucNodeId() == 0) {
+this.sucID=((GetSucNodeIdMessageClass)processor).getSucNodeId();
+if (this.setSUC == true && this.sucID == 0) {
 this.enqueue(new EnableSucMessageClass().doRequest(EnableSucMessageClass.SUCType.SERVER));
 this.enqueue(new SetSucNodeMessageClass().doRequest(this.ownNodeId,SetSucNodeMessageClass.SUCType.SERVER));
+}
+ else if (this.setSUC == false && this.sucID == this.ownNodeId) {
+this.enqueue(new EnableSucMessageClass().doRequest(EnableSucMessageClass.SUCType.NONE));
+this.enqueue(new SetSucNodeMessageClass().doRequest(0,SetSucNodeMessageClass.SUCType.NONE));
 }
 break;
 case SerialApiGetCapabilities:
