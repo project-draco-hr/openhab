@@ -14,9 +14,20 @@
       if (action.equals("Heal")) {
         if (networkMonitor != null)         networkMonitor.rescheduleHeal();
       }
-      if (action.equals("Include")) {
-        zController.requestAddNodesStart();
-        setInclusionTimer();
+      if (inclusion == false && exclusion == false) {
+        if (action.equals("Include")) {
+          inclusion=true;
+          zController.requestAddNodesStart();
+          setInclusionTimer();
+        }
+        if (action.equals("Exclude")) {
+          exclusion=true;
+          zController.requestRemoveNodesStart();
+          setInclusionTimer();
+        }
+      }
+ else {
+        logger.debug("Exclusion/Inclusion already in progress.");
       }
     }
   }
