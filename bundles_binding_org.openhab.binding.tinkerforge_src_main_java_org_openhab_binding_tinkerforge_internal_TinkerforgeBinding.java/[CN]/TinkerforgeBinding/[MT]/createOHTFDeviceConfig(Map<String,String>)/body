@@ -51,6 +51,14 @@
     ohtfDevice.setTfConfig(tfioActorConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.io4_actuator.name())) {
+    logger.debug("{} setting io4_actuator config",LoggerConstants.CONFIG);
+    TFIOActorConfiguration tfioActorConfiguration=modelFactory.createTFIOActorConfiguration();
+    OHTFDevice<TFIOActorConfiguration,IO4SubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IO4SubIds.values()));
+    ohtfDevice.setTfConfig(tfioActorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else   if (deviceType.equals(TypeKey.iosensor.name())) {
     logger.debug("{} setting iosensor config",LoggerConstants.CONFIG);
     TFIOSensorConfiguration tfioSensorConfiguration=modelFactory.createTFIOSensorConfiguration();
@@ -59,7 +67,15 @@
     ohtfDevice.setTfConfig(tfioSensorConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_industrial_digital_4in.name()) || deviceType.equals(TypeKey.bricklet_io16.name())) {
+ else   if (deviceType.equals(TypeKey.io4sensor.name())) {
+    logger.debug("{} setting io4sensor config",LoggerConstants.CONFIG);
+    TFIOSensorConfiguration tfioSensorConfiguration=modelFactory.createTFIOSensorConfiguration();
+    OHTFDevice<TFIOSensorConfiguration,IO4SubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IO4SubIds.values()));
+    ohtfDevice.setTfConfig(tfioSensorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrial_digital_4in.name()) || deviceType.equals(TypeKey.bricklet_io16.name()) || deviceType.equals(TypeKey.bricklet_io4.name())) {
     logger.debug("{} setting TFInterruptListenerConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
     TFInterruptListenerConfiguration tfInterruptListenerConfiguration=modelFactory.createTFInterruptListenerConfiguration();
     OHTFDevice<TFInterruptListenerConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
