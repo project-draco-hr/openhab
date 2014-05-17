@@ -1,6 +1,10 @@
 {
   ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
   ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
+  if (node == null) {
+    logger.error("Item {} has non existant node {}",itemName,bindingConfiguration.getNodeId());
+    return;
+  }
   ZWaveCommandClass commandClass;
   String commandClassName=bindingConfiguration.getArguments().get("command");
   if (commandClassName != null) {
