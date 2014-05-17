@@ -1,0 +1,17 @@
+{
+  if (itemRegistry != null) {
+    try {
+      Item item=itemRegistry.getItem(itemName);
+      if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+        return value.equals("0") ? OnOffType.OFF : OnOffType.ON;
+      }
+ else       if (item instanceof ContactItem) {
+        return value.equals("0") ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.warn("Could not find item '{}' in registry",itemName);
+    }
+  }
+  return new DecimalType(value);
+}

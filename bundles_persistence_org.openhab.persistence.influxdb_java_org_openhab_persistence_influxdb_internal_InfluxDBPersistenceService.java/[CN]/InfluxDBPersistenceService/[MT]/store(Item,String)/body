@@ -1,0 +1,30 @@
+{
+  if (item.getState() instanceof UnDefType) {
+    return;
+  }
+  if (!isProperlyConfigured) {
+    logger.error("Configuration for influxdb is missing or not yet loaded");
+    return;
+  }
+  if (!isConnected()) {
+    connect();
+  }
+  if (!isConnected()) {
+    logger.error("influxdb: No connection to database. Can not persist item '{}'! Will retry connecting to database next time.",item);
+    return;
+  }
+  String name=item.getName();
+  String value=convertState((DecimalType)item.getStateAs(DecimalType.class));
+  if (value != null) {
+    logger.trace("storing {} in influxdb",name);
+    Serie serie=new Serie(name);
+    serie.setColumns(new String[]{VALUE_COLUMN_NAME});
+    Object[] point=new Object[]{value};
+    serie.setPoints(new Object[][]{point});
+    Serie[] series=new Serie[]{serie};
+    influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
+  }
+ else {
+    logger.warn("influxdb got non decimal state from item {}",item.getName());
+  }
+}
