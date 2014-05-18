@@ -28,9 +28,8 @@
     query.append(" where ");
     boolean foundState=false;
     boolean foundBeginDate=false;
-    boolean foundEndDate=false;
     if (filter.getState() != null && filter.getOperator() != null) {
-      String value=convertState(filter.getState());
+      String value=stateToString(filter.getState());
       if (value != null) {
         foundState=true;
         query.append(VALUE_COLUMN_NAME);
@@ -52,7 +51,6 @@
       query.append("'");
     }
     if (filter.getEndDate() != null) {
-      foundEndDate=true;
       if (foundState || foundBeginDate) {
         query.append(" and");
       }
@@ -96,12 +94,12 @@
     Object[][] points=result.getPoints();
     for (int i=0; i < points.length; i++) {
       if (pageSize != null && pageNumber == null && pageSize < i) {
-        logger.debug("returning no more points page size reached {} pageNumber {} i {}",pageSize,pageNumber,i);
+        logger.debug("returning no more points pageSize {} pageNumber {} i {}",pageSize,pageNumber,i);
         break;
       }
       Object[] objects=points[i];
-      logger.debug("adding historic item {}: time {} value {}",historicItemName,(Double)objects[timeColumnNum],(String)objects[valueColumnNum]);
-      historicItems.add(new InfluxdbItem(historicItemName,mapToState((String)objects[valueColumnNum],historicItemName),new Date(((Double)objects[timeColumnNum]).longValue())));
+      logger.debug("adding historic item {}: time {} value {}",historicItemName,(Double)objects[timeColumnNum],String.valueOf(objects[valueColumnNum]));
+      historicItems.add(new InfluxdbItem(historicItemName,stringToState(String.valueOf(objects[valueColumnNum]),historicItemName),new Date(((Double)objects[timeColumnNum]).longValue())));
       ;
     }
   }

@@ -3,10 +3,10 @@
     try {
       Item item=itemRegistry.getItem(itemName);
       if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
-        return value.equals("0") ? OnOffType.OFF : OnOffType.ON;
+        return value.equals(DIGITAL_VALUE_OFF) ? OnOffType.OFF : OnOffType.ON;
       }
  else       if (item instanceof ContactItem) {
-        return value.equals("0") ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+        return value.equals(DIGITAL_VALUE_OFF) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
       }
     }
  catch (    ItemNotFoundException e) {

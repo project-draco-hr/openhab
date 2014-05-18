@@ -14,17 +14,12 @@
     return;
   }
   String name=item.getName();
-  String value=convertState((DecimalType)item.getStateAs(DecimalType.class));
-  if (value != null) {
-    logger.trace("storing {} in influxdb",name);
-    Serie serie=new Serie(name);
-    serie.setColumns(new String[]{VALUE_COLUMN_NAME});
-    Object[] point=new Object[]{value};
-    serie.setPoints(new Object[][]{point});
-    Serie[] series=new Serie[]{serie};
-    influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
-  }
- else {
-    logger.warn("influxdb got non decimal state from item {}",item.getName());
-  }
+  Object value=stateToObject(item.getState());
+  logger.trace("storing {} in influxdb {}",name,value);
+  Serie serie=new Serie(name);
+  serie.setColumns(new String[]{VALUE_COLUMN_NAME});
+  Object[] point=new Object[]{value};
+  serie.setPoints(new Object[][]{point});
+  Serie[] series=new Serie[]{serie};
+  influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
 }
