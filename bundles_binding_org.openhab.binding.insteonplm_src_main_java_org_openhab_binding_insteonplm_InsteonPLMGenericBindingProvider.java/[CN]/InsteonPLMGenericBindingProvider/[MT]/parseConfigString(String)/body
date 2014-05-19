@@ -1,0 +1,15 @@
+{
+  String shouldBe="should be address:prodKey#feature, e.g. 28.c3.91:F00.00.01#switch,param=xxx";
+  String[] segments=bindingConfig.split("#");
+  if (segments.length != 2)   throw new BindingConfigParseException("invalid item format: " + bindingConfig + ", "+ shouldBe);
+  String[] dev=segments[0].split(":");
+  if (dev.length != 2) {
+    throw new BindingConfigParseException("missing colon in item format: " + bindingConfig + ", "+ shouldBe);
+  }
+  String addr=dev[0];
+  String[] retval={addr,dev[1],segments[1]};
+  if (!InsteonAddress.s_isValid(addr)) {
+    throw new BindingConfigParseException("invalid insteon device address: " + addr + " in items file. Must have format AB.CD.EF");
+  }
+  return retval;
+}

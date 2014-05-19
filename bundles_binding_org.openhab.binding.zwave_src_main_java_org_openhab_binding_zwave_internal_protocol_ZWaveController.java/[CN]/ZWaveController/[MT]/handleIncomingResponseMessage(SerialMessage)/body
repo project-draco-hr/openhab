@@ -1,64 +1,48 @@
 {
-  logger.debug("Message type = RESPONSE");
+  logger.trace("Message type = RESPONSE");
+  ZWaveCommandProcessor processor=ZWaveCommandProcessor.getMessageDispatcher(incomingMessage.getMessageClass());
+  if (processor != null) {
+    processor.handleResponse(this,lastSentMessage,incomingMessage);
+    if (processor.isTransactionComplete()) {
+      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
+      transactionCompleted.release();
+      logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+    }
+  }
+ else {
+    logger.warn(String.format("TODO: Implement processing of Response Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
+  }
 switch (incomingMessage.getMessageClass()) {
 case GetVersion:
-    handleGetVersionResponse(incomingMessage);
-  if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-    notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-    transactionCompleted.release();
-    logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-  }
+    this.zWaveVersion=((GetVersionMessageClass)processor).getVersion();
+  this.ZWaveLibraryType=((GetVersionMessageClass)processor).getLibraryType();
 break;
 case MemoryGetId:
-handleMemoryGetId(incomingMessage);
-if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-}
+this.ownNodeId=((MemoryGetIdMessageClass)processor).getNodeId();
+this.homeId=((MemoryGetIdMessageClass)processor).getHomeId();
 break;
 case SerialApiGetInitData:
-handleSerialApiGetInitDataResponse(incomingMessage);
-if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+this.isConnected=true;
+for (Integer nodeId : ((SerialApiGetInitDataMessageClass)processor).getNodes()) {
+ZWaveNode node=new ZWaveNode(this.homeId,nodeId,this);
+if (nodeId == this.ownNodeId) {
+node.setDeviceId(this.getDeviceId());
+node.setDeviceType(this.getDeviceType());
+node.setManufacturer(this.getManufactureId());
 }
-break;
-case IdentifyNode:
-handleIdentifyNodeResponse(incomingMessage);
-if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+this.zwaveNodes.put(nodeId,node);
+node.advanceNodeStage(NodeStage.PROTOINFO);
 }
-break;
-case RequestNodeInfo:
-handleRequestNodeInfoResponse(incomingMessage);
+this.controllerType=((SerialApiGetInitDataMessageClass)processor).getNodeType();
 break;
 case SerialApiGetCapabilities:
-handleSerialAPIGetCapabilitiesResponse(incomingMessage);
-if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-}
-break;
-case SendData:
-handleSendDataResponse(incomingMessage);
-break;
-case RemoveFailedNodeID:
-handleRemoveFailedNodeResponse(incomingMessage);
-if (incomingMessage.getMessageClass() == this.lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
-transactionCompleted.release();
-logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-}
-break;
-case GetRoutingInfo:
-handleNodeRoutingInfoRequest(incomingMessage);
+this.serialAPIVersion=((SerialApiGetCapabilitiesMessageClass)processor).getSerialAPIVersion();
+this.manufactureId=((SerialApiGetCapabilitiesMessageClass)processor).getManufactureId();
+this.deviceId=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceId();
+this.deviceType=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceType();
+this.enqueue(new SerialApiGetInitDataMessageClass().doRequest());
 break;
 default :
-logger.warn(String.format("TODO: Implement processing of Response Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
 break;
 }
 }

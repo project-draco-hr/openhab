@@ -1,0 +1,15 @@
+{
+  final PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,httpUri);
+  activePlayers.execute(new Runnable(){
+    @Override public void run(){
+      if (activePlayers.isPlaying()) {
+        updateState(State.Play);
+        requestPlayerUpdate(activePlayers.getPlayerId());
+      }
+ else {
+        updateState(State.Stop);
+      }
+    }
+  }
+);
+}

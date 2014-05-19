@@ -1,0 +1,21 @@
+{
+  List<String> matching=new ArrayList<String>();
+  if (theMessage.getType() != xPL_MessageI.MessageType.COMMAND) {
+    for (    String key : bindingConfigs.keySet()) {
+      xPLBindingConfig config=(xPLBindingConfig)bindingConfigs.get(key);
+      NamedValuesI theBody=config.Message.getMessageBody();
+      if ((theBody != null) && (!theBody.isEmpty()) && (config.Message.getTarget().isBroadcastIdentifier() || config.Message.getTarget().equals(theMessage.getSource()))&& config.Message.getSchemaClass().equalsIgnoreCase(theMessage.getSchemaClass())&& config.Message.getSchemaType().equalsIgnoreCase(theMessage.getSchemaType())) {
+        boolean bodyMatched=true;
+        for (        NamedValueI theValue : theBody.getAllNamedValues()) {
+          String aKey=theValue.getName();
+          String aValue=theValue.getValue();
+          String bValue=theMessage.getNamedValue(aKey);
+          boolean lineMatched=(bValue != null) && (aKey.equalsIgnoreCase(config.NamedParameter) || aValue.equalsIgnoreCase(bValue));
+          bodyMatched=bodyMatched && lineMatched;
+        }
+        if (bodyMatched)         matching.add(key);
+      }
+    }
+  }
+  return matching;
+}

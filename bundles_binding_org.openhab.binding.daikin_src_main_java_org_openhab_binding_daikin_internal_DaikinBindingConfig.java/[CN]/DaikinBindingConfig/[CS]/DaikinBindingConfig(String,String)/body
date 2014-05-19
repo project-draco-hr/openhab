@@ -1,0 +1,7 @@
+{
+  String[] config=bindingConfig.split(":");
+  if (config.length != 2)   throw new BindingConfigParseException("Invalid Daikin binding configuration '" + bindingConfig + "' for item "+ itemName+ ". Expecting '<id>:<command>'.");
+  this.itemName=itemName;
+  this.id=StringUtils.trim(config[0]);
+  this.commandType=DaikinCommandType.fromString(config[1]);
+}

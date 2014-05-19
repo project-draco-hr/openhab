@@ -1,0 +1,14 @@
+{
+  String value=(String)properties.get(key);
+  if (StringUtils.isNotBlank(value)) {
+    try {
+      return Integer.parseInt(value);
+    }
+ catch (    NumberFormatException ex) {
+      throw new ConfigurationException("astro","Parameter " + key + " in wrong format. Please check your openhab.cfg!");
+    }
+  }
+ else {
+    return defaultValue;
+  }
+}

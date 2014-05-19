@@ -1,0 +1,34 @@
+{
+  ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
+  ZWaveCommandClass commandClass;
+  String commandClassName=bindingConfiguration.getArguments().get("command");
+  if (bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval())   return 0;
+  ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
+  if (node == null)   return 0;
+  if (commandClassName != null) {
+    if (commandClassName.equalsIgnoreCase("info")) {
+      return infoConverter.getRefreshInterval();
+    }
+    commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
+    if (commandClass == null) {
+      logger.warn("No command class found for item = {}, command class name = {}, using 0 refresh interval.",itemName,commandClassName);
+      return 0;
+    }
+  }
+ else {
+    commandClass=resolveConverter(provider.getItem(itemName),node,bindingConfiguration.getEndpoint());
+  }
+  if (commandClass == null) {
+    logger.warn("No converter found for item = {}, using 0 refresh interval.",itemName);
+    return 0;
+  }
+  ZWaveCommandClassConverter<ZWaveCommandClass> converter=(ZWaveCommandClassConverter<ZWaveCommandClass>)getConverter(commandClass.getCommandClass());
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, using 0 refresh interval.",itemName);
+    return 0;
+  }
+  if (bindingConfiguration.getRefreshInterval() == null) {
+    bindingConfiguration.setRefreshInterval(converter.getRefreshInterval());
+  }
+  return bindingConfiguration.getRefreshInterval();
+}

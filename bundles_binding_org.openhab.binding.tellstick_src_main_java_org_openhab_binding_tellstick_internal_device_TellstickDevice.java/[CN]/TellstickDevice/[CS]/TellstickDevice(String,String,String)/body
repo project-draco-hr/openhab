@@ -1,0 +1,20 @@
+{
+  supportedMethodsCheck();
+  int id=JNA.CLibrary.INSTANCE.tdAddDevice();
+  if (id < 0) {
+    throw new Exception("Unknown error creating a new device.");
+  }
+  this.deviceId=id;
+  if (!setName(name)) {
+    remove();
+    throw new Exception("Error creating device, could not set name.");
+  }
+  if (!setProtocol(protocol)) {
+    remove();
+    throw new Exception("Error creating device, could not set protocol.");
+  }
+  if (!setModel(model)) {
+    remove();
+    throw new Exception("Error creating device, could not set protocol.");
+  }
+}

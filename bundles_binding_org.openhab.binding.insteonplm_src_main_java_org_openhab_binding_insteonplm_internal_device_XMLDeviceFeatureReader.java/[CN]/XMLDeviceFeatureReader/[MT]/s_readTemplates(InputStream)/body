@@ -1,0 +1,25 @@
+{
+  ArrayList<FeatureTemplate> features=new ArrayList<FeatureTemplate>();
+  try {
+    DocumentBuilderFactory dbFactory=DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder=dbFactory.newDocumentBuilder();
+    Document doc=dBuilder.parse(input);
+    doc.getDocumentElement().normalize();
+    Element root=doc.getDocumentElement();
+    NodeList nodes=root.getChildNodes();
+    for (int i=0; i < nodes.getLength(); i++) {
+      Node node=nodes.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element e=(Element)node;
+        if (e.getTagName().equals("feature"))         features.add(s_parseFeature(e));
+      }
+    }
+  }
+ catch (  SAXException e) {
+    throw new ParsingException("Failed to parse XML!",e);
+  }
+catch (  ParserConfigurationException e) {
+    throw new ParsingException("Got parser config exception! ",e);
+  }
+  return features;
+}

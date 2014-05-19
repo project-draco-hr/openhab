@@ -4,6 +4,7 @@
     if (event instanceof ZWaveInitializationCompletedEvent) {
       logger.debug("ZWaveIncomingEvent Called, Network Event, Init Done. Setting ZWave Network Ready.");
       isZwaveNetworkReady=true;
+      rebuildPollingTable();
       return;
     }
   }
@@ -13,5 +14,4 @@
     handleZWaveCommandClassValueEvent((ZWaveCommandClassValueEvent)event);
     return;
   }
-  logger.warn("Unknown event type {}",event.getClass().getName());
 }

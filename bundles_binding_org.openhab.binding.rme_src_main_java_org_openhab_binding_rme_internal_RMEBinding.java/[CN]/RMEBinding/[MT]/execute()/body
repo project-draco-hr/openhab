@@ -1,0 +1,40 @@
+{
+  if (isProperlyConfigured()) {
+    for (    RMEBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String serialPort=((RMEBindingProvider)provider).getSerialPort(itemName);
+        SerialDevice serialDevice=serialDevices.get(serialPort);
+        if (serialDevice == null) {
+          serialDevice=new SerialDevice(serialPort);
+          serialDevice.setEventPublisher(eventPublisher);
+          try {
+            serialDevice.initialize();
+          }
+ catch (          InitializationException e) {
+            logger.error("Could not open serial port " + serialPort + ": "+ e.getMessage());
+          }
+catch (          Throwable e) {
+            logger.error("Could not open serial port " + serialPort + ": "+ e.getMessage());
+          }
+          itemMap.put(itemName,serialPort);
+          serialDevices.put(serialPort,serialDevice);
+        }
+        Set<String> itemNames=contextMap.get(serialPort);
+        if (itemNames == null) {
+          itemNames=new HashSet<String>();
+          contextMap.put(serialPort,itemNames);
+        }
+        itemNames.add(itemName);
+      }
+    }
+    for (    String serialPort : serialDevices.keySet()) {
+      SerialDevice serialDevice=serialDevices.get(serialPort);
+      Set<String> itemNames=contextMap.get(serialPort);
+      if (itemNames == null || itemNames.size() == 0) {
+        contextMap.remove(serialPort);
+        serialDevice.close();
+        serialDevices.remove(serialPort);
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  String name=e.getAttribute("name");
+  boolean statusFeature=e.getAttribute("statusFeature").equals("true");
+  FeatureTemplate feature=new FeatureTemplate();
+  feature.setName(name);
+  feature.setStatusFeature(statusFeature);
+  NodeList nodes=e.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      Element child=(Element)node;
+      if (child.getTagName().equals("message-handler")) {
+        s_parseMessageHandler(child,feature);
+      }
+ else       if (child.getTagName().equals("command-handler")) {
+        s_parseCommandHandler(child,feature);
+      }
+ else       if (child.getTagName().equals("message-dispatcher")) {
+        s_parseMessageDispatcher(child,feature);
+      }
+ else       if (child.getTagName().equals("poll-handler")) {
+        s_parsePollHandler(child,feature);
+      }
+    }
+  }
+  return feature;
+}

@@ -18,6 +18,7 @@
     return false;
   }
   int channel=provider.getChannel(itemName);
+  int address=provider.getAddress(itemName);
   if (urtsiDevice != null) {
     if (logger.isDebugEnabled()) {
       logger.debug("Send to URTSI for item: " + itemName + "; Type: "+ type);
@@ -47,7 +48,8 @@ logger.debug("Action key: " + actionKey);
 }
 if (actionKey != null) {
 String channelString=String.format("%02d",channel);
-String command="01" + channelString + actionKey;
+String addressString=String.format("%02d",address);
+String command=addressString + channelString + actionKey;
 boolean executedSuccessfully=urtsiDevice.writeString(command);
 if (!executedSuccessfully) {
 if (logger.isErrorEnabled()) {

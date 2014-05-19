@@ -1,0 +1,15 @@
+{
+  int objnum=0;
+  Message m;
+  while ((m=c.reqObjectProperties(Message.OBJ_TYPE_AUDIO_SOURCE,objnum,1,ObjectProperties.FILTER_1_NAMED,ObjectProperties.FILTER_2_NONE,ObjectProperties.FILTER_3_NONE)).getMessageType() == Message.MESG_TYPE_OBJ_PROP) {
+    AudioSourceProperties o=((AudioSourceProperties)m);
+    objnum=((ObjectProperties)m).getNumber();
+    Integer number=new Integer(o.getNumber());
+    AudioSource as=audioSourceMap.get(number);
+    if (as == null) {
+      as=new AudioSource(o);
+      audioSourceMap.put(number,as);
+    }
+    audioSourceMap.put(new Integer(o.getNumber()),as);
+  }
+}

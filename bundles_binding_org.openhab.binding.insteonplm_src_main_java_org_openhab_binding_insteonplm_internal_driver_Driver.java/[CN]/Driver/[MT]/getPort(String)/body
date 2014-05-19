@@ -1,0 +1,14 @@
+{
+  if (port.equalsIgnoreCase("DEFAULT")) {
+    if (m_ports.isEmpty()) {
+      logger.error("no default port found!");
+      return null;
+    }
+    return m_ports.values().iterator().next();
+  }
+  if (!m_ports.containsKey(port)) {
+    logger.error("no port of name {} found!",port);
+    return null;
+  }
+  return m_ports.get(port);
+}

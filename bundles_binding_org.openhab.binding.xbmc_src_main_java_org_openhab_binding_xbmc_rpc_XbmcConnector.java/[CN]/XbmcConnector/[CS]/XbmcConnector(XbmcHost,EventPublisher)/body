@@ -1,0 +1,8 @@
+{
+  this.xbmc=xbmc;
+  this.eventPublisher=eventPublisher;
+  this.httpUri=String.format("http://%s:%d/jsonrpc",xbmc.getHostname(),xbmc.getPort());
+  this.wsUri=String.format("ws://%s:%d/jsonrpc",xbmc.getHostname(),xbmc.getWSPort());
+  this.client=new AsyncHttpClient(new NettyAsyncHttpProvider(createAsyncHttpClientConfig()));
+  this.handler=createWebSocketHandler();
+}

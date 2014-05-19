@@ -1,23 +1,48 @@
 {
   if (config == null)   return;
   if (StringUtils.isNotBlank((String)config.get("port"))) {
+    port=(String)config.get("port");
+    logger.info("Update config, port = {}",port);
+  }
+  if (StringUtils.isNotBlank((String)config.get("healtime"))) {
     try {
-      port=(String)config.get("port");
-      logger.info("Update config, port = {}",port);
-      this.setProperlyConfigured(true);
-      this.deactivate();
-      this.zController=new ZWaveController(port);
-      this.converterHandler=new ZWaveConverterHandler(this.zController,this.eventPublisher);
-      zController.initialize();
-      zController.addEventListener(this);
-      this.zConfigurationService=new ZWaveConfiguration(this.zController);
-      zController.addEventListener(this.zConfigurationService);
-      return;
+      healtime=Integer.parseInt((String)config.get("healtime"));
+      logger.info("Update config, healtime = {}",healtime);
     }
- catch (    SerialInterfaceException ex) {
-      this.setProperlyConfigured(false);
-      throw new ConfigurationException("port",ex.getLocalizedMessage(),ex);
+ catch (    NumberFormatException e) {
+      healtime=null;
+      logger.error("Error parsing 'healtime'. This must be a single number to set the hour to perform the heal.");
     }
   }
-  this.setProperlyConfigured(false);
+  if (StringUtils.isNotBlank((String)config.get("refreshInterval"))) {
+    try {
+      refreshInterval=Integer.parseInt((String)config.get("refreshInterval"));
+      logger.info("Update config, refreshInterval = {}",refreshInterval);
+    }
+ catch (    NumberFormatException e) {
+      refreshInterval=10000;
+      logger.error("Error parsing 'refreshInterval'. This must be a single number time in milliseconds.");
+    }
+  }
+  if (StringUtils.isNotBlank((String)config.get("pollingQueue"))) {
+    try {
+      pollingQueue=Integer.parseInt((String)config.get("pollingQueue"));
+      logger.info("Update config, pollingQueue = {}",pollingQueue);
+    }
+ catch (    NumberFormatException e) {
+      pollingQueue=2;
+      logger.error("Error parsing 'pollingQueue'. This must be a single number time in milliseconds.");
+    }
+  }
+  if (StringUtils.isNotBlank((String)config.get("timeout"))) {
+    try {
+      timeout=Integer.parseInt((String)config.get("timeout"));
+      logger.info("Update config, timeout = {}",timeout);
+    }
+ catch (    NumberFormatException e) {
+      timeout=null;
+      logger.error("Error parsing 'timeout'. This must be an Integer.");
+    }
+  }
+  initialise();
 }

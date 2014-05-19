@@ -1,0 +1,37 @@
+{
+  int resend=config.getResend();
+  for (int i=0; i < resend; i++) {
+    checkLastAndWait();
+    logger.info("Send " + command + " to "+ dev+ " time="+ i+ " conf "+ config);
+switch (config.getValueSelector()) {
+case COMMAND:
+      if (command == OnOffType.ON) {
+        if (config.getUsageSelector() == TellstickValueSelector.DIMMABLE) {
+          turnOff(dev);
+          checkLastAndWait();
+        }
+        turnOn(config,dev);
+      }
+ else       if (command == OnOffType.OFF) {
+        turnOff(dev);
+      }
+    break;
+case DIMMING_LEVEL:
+  if (command == OnOffType.ON) {
+    turnOn(config,dev);
+  }
+ else   if (command == OnOffType.OFF) {
+    turnOff(dev);
+  }
+ else   if (command instanceof PercentType) {
+    dim(dev,(PercentType)command);
+  }
+ else   if (command instanceof IncreaseDecreaseType) {
+    increaseDecrease(dev,((IncreaseDecreaseType)command));
+  }
+break;
+default :
+break;
+}
+}
+}

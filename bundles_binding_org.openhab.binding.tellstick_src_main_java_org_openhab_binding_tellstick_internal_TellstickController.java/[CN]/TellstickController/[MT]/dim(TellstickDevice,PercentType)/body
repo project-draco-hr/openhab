@@ -1,0 +1,10 @@
+{
+  double value=command.doubleValue();
+  double tdVal=(value / 100) * 255;
+  if (dev instanceof DimmableDeviceIntf) {
+    ((DimmableDeviceIntf)dev).dim((int)tdVal);
+  }
+ else {
+    throw new RuntimeException("Cannot send DIM to " + dev);
+  }
+}

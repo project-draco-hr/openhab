@@ -1,0 +1,21 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=0; i < 12; i++) {
+    Electrode electrode=factory.createElectrode();
+    electrode.setUid(getUid());
+    String subId="electrode" + i;
+    electrode.setSubId(subId);
+    electrode.setPin(i);
+    electrode.init();
+    electrode.setMbrick(this);
+    logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subId);
+  }
+  Proximity proximity=factory.createProximity();
+  proximity.setUid(getUid());
+  String subId="proximity";
+  proximity.setSubId(subId);
+  proximity.setPin(12);
+  proximity.init();
+  proximity.setMbrick(this);
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subId);
+}
