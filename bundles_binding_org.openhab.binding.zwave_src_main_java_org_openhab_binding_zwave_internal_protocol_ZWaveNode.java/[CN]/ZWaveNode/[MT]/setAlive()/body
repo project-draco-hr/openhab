@@ -1,5 +1,8 @@
 {
-  if (this.nodeStageAdvancer.isInitializationComplete())   this.nodeStage=NodeStage.DONE;
+  if (this.nodeStageAdvancer.isInitializationComplete()) {
+    logger.debug("NODE {}: Node is now ALIVE",this.nodeId);
+    this.nodeStage=NodeStage.DONE;
+  }
  else {
     this.nodeStage=NodeStage.DYNAMIC;
     this.nodeStageAdvancer.advanceNodeStage(NodeStage.DONE);
