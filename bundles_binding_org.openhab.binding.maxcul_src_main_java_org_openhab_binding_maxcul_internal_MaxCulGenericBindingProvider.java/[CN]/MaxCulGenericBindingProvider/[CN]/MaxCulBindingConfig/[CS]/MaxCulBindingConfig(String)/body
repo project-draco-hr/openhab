@@ -1,0 +1,68 @@
+{
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length <= 3) {
+    throw new BindingConfigParseException("MaxCul configuration requires a configuration of at least the format <device_type>:<serial_num> for a MAX! device.");
+  }
+switch (configParts[0]) {
+case "RadiatorThermostat":
+    this.deviceType=MaxCulDevice.RADIATOR_THERMOSTAT;
+  break;
+case "RadiatorThermostatPlus":
+this.deviceType=MaxCulDevice.RADIATOR_THERMOSTAT_PLUS;
+break;
+case "WallThermostat":
+this.deviceType=MaxCulDevice.WALL_THERMOSTAT;
+break;
+case "PushButton":
+this.deviceType=MaxCulDevice.PUSH_BUTTON;
+break;
+case "ShutterContact":
+this.deviceType=MaxCulDevice.SHUTTER_CONTACT;
+break;
+default :
+throw new BindingConfigParseException("Invalid device type. Use RadiatorThermostat / RadiatorThermostatPlus / WallThermostat / PushButton / ShutterContact");
+}
+this.serialNumber=configParts[1];
+if (configParts.length > 2) {
+switch (configParts[2]) {
+case "thermostat":
+if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || this.deviceType != MaxCulDevice.WALL_THERMOSTAT) throw new BindingConfigParseException("Invalid device feature. Can only use 'thermostat' on radiator or wall thermostats");
+this.feature=MaxCulFeature.THERMOSTAT;
+break;
+case "temperature":
+if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || this.deviceType != MaxCulDevice.WALL_THERMOSTAT) throw new BindingConfigParseException("Invalid device feature. Can only use 'temperature' on radiator or wall thermostats");
+this.feature=MaxCulFeature.TEMPERATURE;
+break;
+case "battery":
+this.feature=MaxCulFeature.BATTERY;
+break;
+case "mode":
+if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || this.deviceType != MaxCulDevice.WALL_THERMOSTAT) throw new BindingConfigParseException("Invalid device feature. Can only use 'temperature' on radiator or wall thermostats");
+this.feature=MaxCulFeature.MODE;
+break;
+case "switch":
+if (this.deviceType != MaxCulDevice.PUSH_BUTTON || this.deviceType != MaxCulDevice.SHUTTER_CONTACT) throw new BindingConfigParseException("Invalid device feature. Can only use 'switch' on PushButton or ShutterContact");
+this.feature=MaxCulFeature.TEMPERATURE;
+break;
+}
+}
+ else {
+switch (this.deviceType) {
+case PUSH_BUTTON:
+this.feature=MaxCulFeature.SWITCH;
+break;
+case RADIATOR_THERMOSTAT:
+this.feature=MaxCulFeature.THERMOSTAT;
+break;
+case RADIATOR_THERMOSTAT_PLUS:
+this.feature=MaxCulFeature.THERMOSTAT;
+break;
+case SHUTTER_CONTACT:
+this.feature=MaxCulFeature.SWITCH;
+break;
+case WALL_THERMOSTAT:
+this.feature=MaxCulFeature.THERMOSTAT;
+break;
+}
+}
+}

@@ -1,0 +1,18 @@
+{
+  MaxCulBindingConfig config=new MaxCulBindingConfig(bindingConfig);
+switch (config.deviceType) {
+case PUSH_BUTTON:
+case SHUTTER_CONTACT:
+    if (config.feature == MaxCulFeature.BATTERY && !(item instanceof NumberItem))     throw new BindingConfigParseException("Invalid item type. Feature 'battery' can only be a Number");
+  if (config.feature == MaxCulFeature.SWITCH && !(item instanceof SwitchItem))   throw new BindingConfigParseException("Invalid item type. Feature 'switch' can only be a Switch");
+break;
+case RADIATOR_THERMOSTAT:
+case RADIATOR_THERMOSTAT_PLUS:
+case WALL_THERMOSTAT:
+if (config.feature == MaxCulFeature.TEMPERATURE && !(item instanceof NumberItem)) throw new BindingConfigParseException("Invalid item type. Feature 'temperature' can only be a Number");
+if (config.feature == MaxCulFeature.TEMPERATURE && !(item instanceof NumberItem)) throw new BindingConfigParseException("Invalid item type. Feature 'thermostat' can only be a Number");
+if (config.feature == MaxCulFeature.BATTERY && !(item instanceof NumberItem)) throw new BindingConfigParseException("Invalid item type. Feature 'battery' can only be a Number");
+if (config.feature == MaxCulFeature.MODE && !(item instanceof NumberItem)) throw new BindingConfigParseException("Invalid item type. Feature 'mode' can only be a Number");
+break;
+}
+}
