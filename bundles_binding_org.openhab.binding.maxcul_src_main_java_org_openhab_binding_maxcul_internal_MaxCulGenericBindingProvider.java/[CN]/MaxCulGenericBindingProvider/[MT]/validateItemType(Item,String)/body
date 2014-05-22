@@ -1,10 +1,13 @@
 {
   MaxCulBindingConfig config=new MaxCulBindingConfig(bindingConfig);
 switch (config.deviceType) {
+case PAIR_MODE:
+    if (!(item instanceof SwitchItem))     throw new BindingConfigParseException("Invalid item type. PairMode can only be a switch");
+  break;
 case PUSH_BUTTON:
 case SHUTTER_CONTACT:
-    if (config.feature == MaxCulFeature.BATTERY && !(item instanceof NumberItem))     throw new BindingConfigParseException("Invalid item type. Feature 'battery' can only be a Number");
-  if (config.feature == MaxCulFeature.SWITCH && !(item instanceof SwitchItem))   throw new BindingConfigParseException("Invalid item type. Feature 'switch' can only be a Switch");
+if (config.feature == MaxCulFeature.BATTERY && !(item instanceof NumberItem)) throw new BindingConfigParseException("Invalid item type. Feature 'battery' can only be a Number");
+if (config.feature == MaxCulFeature.SWITCH && !(item instanceof SwitchItem)) throw new BindingConfigParseException("Invalid item type. Feature 'switch' can only be a Switch");
 break;
 case RADIATOR_THERMOSTAT:
 case RADIATOR_THERMOSTAT_PLUS:

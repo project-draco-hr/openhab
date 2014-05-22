@@ -1,6 +1,12 @@
 {
   String[] configParts=bindingConfig.trim().split(":");
-  if (configParts.length <= 3) {
+  if (configParts.length == 1) {
+    if (configParts[0] == "PairMode") {
+      this.deviceType=MaxCulDevice.PAIR_MODE;
+      return;
+    }
+  }
+  if (configParts.length < 2) {
     throw new BindingConfigParseException("MaxCul configuration requires a configuration of at least the format <device_type>:<serial_num> for a MAX! device.");
   }
 switch (configParts[0]) {
