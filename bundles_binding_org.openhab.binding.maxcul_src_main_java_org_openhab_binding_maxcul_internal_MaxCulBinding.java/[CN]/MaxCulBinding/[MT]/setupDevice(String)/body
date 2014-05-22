@@ -1,0 +1,16 @@
+{
+  if (cul != null) {
+    CULManager.close(cul);
+  }
+  try {
+    accessDevice=device;
+    logger.debug("Opening CUL device on " + accessDevice);
+    cul=CULManager.getOpenCULHandler(accessDevice,CULMode.MAX);
+    cul.registerListener(this);
+  }
+ catch (  CULDeviceException e) {
+    logger.error("Cannot open CUL device",e);
+    cul=null;
+    accessDevice=null;
+  }
+}
