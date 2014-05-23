@@ -1,47 +1,12 @@
 {
-  int zone=getTimeZone() * -1;
-  int hh=calendar.get(Calendar.HOUR_OF_DAY) - (isDaylightSavingTime() ? 1 : 0);
-  long timenow=hh + calendar.get(Calendar.MINUTE) / 60 / 3600 + zone;
-  double jd=calcJulianDate();
-  double t=calcTimeJulianCent(jd + timenow / 24);
-  double solarDec=calcSunDeclination(t);
-  double eqtime=calcEquationOfTime(t);
-  double solarTimeFix=eqtime - 4 * (longitude) + 60 * zone;
-  double trueSolarTime=hh * 60 + calendar.get(Calendar.MINUTE) + solarTimeFix;
-  while (trueSolarTime > 1440) {
-    trueSolarTime=trueSolarTime - 1440;
+  try {
+    double jd=getJulianDate();
+    ObsInfo oi=new ObsInfo(new Latitude(latitude),new Longitude(longitude));
+    PlanetData pd=new PlanetData();
+    pd.calc(Planets.SUN,jd,oi);
+    return new SunPosition(180 - Math.toDegrees(pd.getAltAzLon()),Math.toDegrees(pd.getAltAzLat()));
   }
-  double hourangle=trueSolarTime / 4 - 180;
-  if (hourangle < -180) {
-    hourangle=hourangle + 360;
+ catch (  NoInitException ex) {
+    throw new RuntimeException("Can't calculate SunPosition: " + ex.getMessage(),ex);
   }
-  double csz=Math.sin(degToRad(latitude)) * Math.sin(degToRad(solarDec)) + Math.cos(degToRad(latitude)) * Math.cos(degToRad(solarDec)) * Math.cos(degToRad(hourangle));
-  if (csz > 1) {
-    csz=1;
-  }
- else   if (csz < -1) {
-    csz=-1;
-  }
-  double zenith=radToDeg(Math.acos(csz));
-  double azDenom=(Math.cos(degToRad(latitude)) * Math.sin(degToRad(zenith)));
-  double azimuth=0;
-  if (Math.abs(azDenom) > 0.001) {
-    double azRad=((Math.sin(degToRad(latitude)) * Math.cos(degToRad(zenith))) - Math.sin(degToRad(solarDec))) / azDenom;
-    if (Math.abs(azRad) > 1) {
-      azRad=azRad < 0 ? -1 : 1;
-    }
-    azimuth=180 - radToDeg(Math.acos(azRad));
-    if (hourangle > 0) {
-      azimuth=-azimuth;
-    }
-  }
- else {
-    if (latitude > 0) {
-      azimuth=180;
-    }
-  }
-  if (azimuth < 0) {
-    azimuth=azimuth + 360;
-  }
-  return new SunPosition(azimuth,90 - zenith);
 }
