@@ -54,6 +54,15 @@
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
         nodeSerializer.DeleteNode(nodeId);
       }
+      if (action.equals("Version")) {
+        logger.debug("NODE {}: Get node version",nodeId);
+        ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
+        if (versionCommandClass == null) {
+          logger.error("NODE {}: Error getting versionCommandClass in doAction",nodeId);
+          return;
+        }
+        this.zController.sendData(versionCommandClass.getVersionMessage());
+      }
       return;
     }
     if (splitDomain[2].equals("parameters")) {
