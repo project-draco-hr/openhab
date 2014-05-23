@@ -56,6 +56,10 @@
             logger.debug("{} found String value",LoggerConstants.CONFIG);
             tfConfig.eSet(feature,deviceConfig.get(property));
           }
+ else           if (className.equals("java.math.BigDecimal")) {
+            logger.debug("{} found BigDecimal value",LoggerConstants.CONFIG);
+            tfConfig.eSet(feature,new BigDecimal(deviceConfig.get(property)));
+          }
  else {
             throw new ConfigurationException(feature.getName(),"unsupported configuration type needed: " + className);
           }

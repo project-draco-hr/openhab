@@ -1,0 +1,25 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("threshold"))) {
+      setThreshold(tfConfig.getThreshold());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
+  }
+  thresholdBigDecimal=new BigDecimal(String.valueOf(getThreshold()));
+  BrickletTemperatureIR tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  tinkerforgeDevice.setResponseExpected(BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD,false);
+  try {
+    tinkerforgeDevice.setAmbientTemperatureCallbackPeriod(getCallbackPeriod());
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  temperatureListener=new AmbientTemperatureListener();
+  tinkerforgeDevice.addAmbientTemperatureListener(temperatureListener);
+  fetchSensorValue();
+}

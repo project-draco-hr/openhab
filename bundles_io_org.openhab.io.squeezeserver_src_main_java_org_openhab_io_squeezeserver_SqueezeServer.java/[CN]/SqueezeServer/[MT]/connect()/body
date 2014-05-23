@@ -1,10 +1,18 @@
 {
   try {
     clientSocket=new Socket(host,cliPort);
-    listener.start();
-    logger.info("Squeeze Server connection established.");
   }
  catch (  IOException e) {
-    logger.error("Failed to connect to SqueezeServer at " + host + ":"+ cliPort,e);
+    logger.error("Failed to connect to the Squeeze Server at " + host + ":"+ cliPort,e);
+    return;
   }
+  try {
+    listener=new SqueezeServerListener();
+    listener.start();
+  }
+ catch (  IllegalThreadStateException e) {
+    logger.error("Failed to start the Squeeze Server listener thread",e);
+    return;
+  }
+  logger.info("Squeeze Server connection started.");
 }

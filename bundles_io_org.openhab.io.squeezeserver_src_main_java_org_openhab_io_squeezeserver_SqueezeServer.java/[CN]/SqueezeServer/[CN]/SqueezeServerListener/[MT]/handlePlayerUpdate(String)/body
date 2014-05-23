@@ -4,7 +4,7 @@
     logger.warn("Invalid message - expecting at least 2 parts. Ignoring.");
     return;
   }
-  SqueezePlayer player=playersByMacAddress.get(decode(messageParts[0]));
+  SqueezePlayer player=getPlayerByMacAddress(decode(messageParts[0]));
   if (player == null) {
     logger.warn("Status message received for MAC address {} which is not configured in openHAB. Ignoring.",messageParts[0]);
     return;
