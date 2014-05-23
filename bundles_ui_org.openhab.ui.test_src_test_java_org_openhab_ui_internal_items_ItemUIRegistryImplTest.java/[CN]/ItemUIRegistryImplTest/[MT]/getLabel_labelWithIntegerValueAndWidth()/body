@@ -1,12 +1,12 @@
 {
-  String testLabel="Label [%.3f]";
+  String testLabel="Label [%3d]";
   Widget w=mock(Widget.class);
   Item item=mock(Item.class);
   when(w.getLabel()).thenReturn(testLabel);
   when(w.getItem()).thenReturn("Item");
   when(registry.getItem("Item")).thenReturn(item);
-  when(item.getState()).thenReturn(new DecimalType(10f / 3f));
-  when(item.getStateAs(DecimalType.class)).thenReturn(new DecimalType(10f / 3f));
+  when(item.getState()).thenReturn(new DecimalType(20));
+  when(item.getStateAs(DecimalType.class)).thenReturn(new DecimalType(20));
   String label=uiRegistry.getLabel(w);
-  assertEquals("Label [3" + sep + "333]",label);
+  assertEquals("Label [ 20]",label);
 }
