@@ -1,0 +1,9 @@
+{
+  int len=Byte.parseByte(rawMsg.substring(1,3),16);
+  if (len != ((rawMsg.length() - 3) / 2)) {
+    logger.error("Unable to process packet " + rawMsg + ". Length is not correct.");
+    return MaxCulMsgType.UNKNOWN;
+  }
+  int startIdx=7;
+  return MaxCulMsgType.fromByte(Byte.parseByte(rawMsg.substring(startIdx,startIdx + 2),16));
+}
