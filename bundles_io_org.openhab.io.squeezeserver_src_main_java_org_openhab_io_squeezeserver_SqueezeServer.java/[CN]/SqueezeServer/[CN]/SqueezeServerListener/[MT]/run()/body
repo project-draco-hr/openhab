@@ -1,12 +1,12 @@
 {
-  setInterrupted(false);
+  logger.debug("Squeeze Server listener started.");
   BufferedReader reader=null;
   try {
     reader=new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     sendCommand("players 0");
     sendCommand("listen 1");
     String message;
-    while (!interrupted && (message=reader.readLine()) != null) {
+    while (!terminate && (message=reader.readLine()) != null) {
       logger.debug("Message received: {}",message);
       if (message.startsWith("listen 1"))       continue;
       if (message.startsWith("players 0")) {
@@ -18,7 +18,7 @@
     }
   }
  catch (  IOException e) {
-    logger.error("Error while reading from Squeeze Server",e);
+    logger.error("Error in Squeeze Server listener",e);
   }
  finally {
     if (reader != null) {
@@ -26,9 +26,9 @@
         reader.close();
       }
  catch (      IOException e) {
-        logger.error("Error trying to close buffered reader, ignoring.");
       }
       reader=null;
     }
   }
+  logger.warn("Squeeze Server listener exiting.");
 }

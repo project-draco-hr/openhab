@@ -1,0 +1,27 @@
+{
+  log.debug("Opening network CUL connection for " + deviceName);
+  try {
+    URI uri=new URI("cul://" + deviceName);
+    String host=uri.getHost();
+    int port=uri.getPort() == -1 ? CUN_DEFAULT_PORT : uri.getPort();
+    if (uri.getHost() == null || uri.getPort() == -1) {
+      throw new CULDeviceException("Could not parse host:port from " + deviceName);
+    }
+    log.debug("Opening network CUL connection to " + host + ":"+ port);
+    socket=new Socket(host,port);
+    log.info("Connected network CUL connection to " + host + ":"+ port);
+    is=socket.getInputStream();
+    os=socket.getOutputStream();
+    br=new BufferedReader(new InputStreamReader(is));
+    bw=new BufferedWriter(new OutputStreamWriter(os));
+    log.debug("Starting network listener Thread");
+    receiveThread=new ReceiveThread();
+    receiveThread.start();
+  }
+ catch (  IOException e) {
+    throw new CULDeviceException(e);
+  }
+catch (  URISyntaxException e) {
+    throw new CULDeviceException("Could not parse host:port from " + deviceName,e);
+  }
+}

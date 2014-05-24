@@ -1,0 +1,11 @@
+{
+  DecimalValue value=Tools.calculate(power);
+  logger.trace("{} got new value {}",LoggerConstants.TFMODELUPDATE,value);
+  if (value.compareTo(getSensorValue(),getThreshold()) != 0) {
+    logger.trace("{} setting new value {}",LoggerConstants.TFMODELUPDATE,value);
+    setSensorValue(value);
+  }
+ else {
+    logger.trace("{} omitting new value {}",LoggerConstants.TFMODELUPDATE,value);
+  }
+}

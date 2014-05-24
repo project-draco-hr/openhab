@@ -16,8 +16,7 @@
       logger.debug("{} reconnected: no new port configuration set for {}",LoggerConstants.TFINIT,getSubId());
     }
  else     if (defaultState == null || defaultState.equals("keep")) {
-      boolean state=(fetchDigitalValue() == HighLowValue.HIGH) ? true : false;
-      logger.debug("{} keep: no new port configuration set for {}",LoggerConstants.TFINIT,state);
+      logger.debug("{} keep: no new port configuration set",LoggerConstants.TFINIT);
     }
  else     if (defaultState.equals("true")) {
       logger.debug("{} setPortconfiguration to state: true",LoggerConstants.TFINIT);
@@ -27,7 +26,7 @@
       logger.debug("{} setPortconfiguration to state: false",LoggerConstants.TFINIT);
       getMbrick().getTinkerforgeDevice().setPortConfiguration(getPort(),(short)mask,BrickletIO16.DIRECTION_OUT,false);
     }
-    setDigitalState(fetchDigitalValue());
+    fetchDigitalValue();
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

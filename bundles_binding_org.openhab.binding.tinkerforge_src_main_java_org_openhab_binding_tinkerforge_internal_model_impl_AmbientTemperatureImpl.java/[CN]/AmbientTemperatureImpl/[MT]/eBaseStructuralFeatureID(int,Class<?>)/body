@@ -1,0 +1,43 @@
+{
+  if (baseClass == MBaseDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.AMBIENT_TEMPERATURE__LOGGER:
+      return ModelPackage.MBASE_DEVICE__LOGGER;
+case ModelPackage.AMBIENT_TEMPERATURE__UID:
+    return ModelPackage.MBASE_DEVICE__UID;
+case ModelPackage.AMBIENT_TEMPERATURE__POLL:
+  return ModelPackage.MBASE_DEVICE__POLL;
+case ModelPackage.AMBIENT_TEMPERATURE__ENABLED_A:
+return ModelPackage.MBASE_DEVICE__ENABLED_A;
+default :
+return -1;
+}
+}
+if (baseClass == MSubDevice.class) {
+switch (derivedFeatureID) {
+case ModelPackage.AMBIENT_TEMPERATURE__SUB_ID:
+return ModelPackage.MSUB_DEVICE__SUB_ID;
+case ModelPackage.AMBIENT_TEMPERATURE__MBRICK:
+return ModelPackage.MSUB_DEVICE__MBRICK;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
+switch (derivedFeatureID) {
+case ModelPackage.AMBIENT_TEMPERATURE__CALLBACK_PERIOD:
+return ModelPackage.CALLBACK_LISTENER__CALLBACK_PERIOD;
+default :
+return -1;
+}
+}
+if (baseClass == MTFConfigConsumer.class) {
+switch (derivedFeatureID) {
+case ModelPackage.AMBIENT_TEMPERATURE__TF_CONFIG:
+return ModelPackage.MTF_CONFIG_CONSUMER__TF_CONFIG;
+default :
+return -1;
+}
+}
+return super.eBaseStructuralFeatureID(derivedFeatureID,baseClass);
+}

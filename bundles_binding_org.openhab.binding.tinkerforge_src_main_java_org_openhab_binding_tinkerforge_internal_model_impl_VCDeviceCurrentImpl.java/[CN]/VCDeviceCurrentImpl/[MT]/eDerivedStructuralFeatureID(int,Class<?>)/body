@@ -1,0 +1,43 @@
+{
+  if (baseClass == MBaseDevice.class) {
+switch (baseFeatureID) {
+case ModelPackage.MBASE_DEVICE__LOGGER:
+      return ModelPackage.VC_DEVICE_CURRENT__LOGGER;
+case ModelPackage.MBASE_DEVICE__UID:
+    return ModelPackage.VC_DEVICE_CURRENT__UID;
+case ModelPackage.MBASE_DEVICE__POLL:
+  return ModelPackage.VC_DEVICE_CURRENT__POLL;
+case ModelPackage.MBASE_DEVICE__ENABLED_A:
+return ModelPackage.VC_DEVICE_CURRENT__ENABLED_A;
+default :
+return -1;
+}
+}
+if (baseClass == MSubDevice.class) {
+switch (baseFeatureID) {
+case ModelPackage.MSUB_DEVICE__SUB_ID:
+return ModelPackage.VC_DEVICE_CURRENT__SUB_ID;
+case ModelPackage.MSUB_DEVICE__MBRICK:
+return ModelPackage.VC_DEVICE_CURRENT__MBRICK;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
+switch (baseFeatureID) {
+case ModelPackage.CALLBACK_LISTENER__CALLBACK_PERIOD:
+return ModelPackage.VC_DEVICE_CURRENT__CALLBACK_PERIOD;
+default :
+return -1;
+}
+}
+if (baseClass == MTFConfigConsumer.class) {
+switch (baseFeatureID) {
+case ModelPackage.MTF_CONFIG_CONSUMER__TF_CONFIG:
+return ModelPackage.VC_DEVICE_CURRENT__TF_CONFIG;
+default :
+return -1;
+}
+}
+return super.eDerivedStructuralFeatureID(baseFeatureID,baseClass);
+}

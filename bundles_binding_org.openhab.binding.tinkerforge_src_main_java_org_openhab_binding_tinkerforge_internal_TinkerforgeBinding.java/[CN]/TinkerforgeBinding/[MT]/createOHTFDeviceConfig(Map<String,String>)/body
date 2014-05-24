@@ -3,15 +3,29 @@
   if (deviceType.equals(TypeKey.servo.name())) {
     logger.debug("{} setting servo config",LoggerConstants.CONFIG);
     TFServoConfiguration servoConfiguration=modelFactory.createTFServoConfiguration();
-    OHTFDevice<TFServoConfiguration,IO16SubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    OHTFDevice<TFServoConfiguration,ServoSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(ServoSubIDs.values()));
     ohtfDevice.setTfConfig(servoConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())) {
+ else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())) {
     logger.debug("{} setting base config",LoggerConstants.CONFIG);
     TFBaseConfiguration tfBaseConfiguration=modelFactory.createTFBaseConfiguration();
     if (deviceType.equals(TypeKey.bricklet_barometer)) {
       OHTFDevice<TFBaseConfiguration,BarometerSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(BarometerSubIDs.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.ambient_temperature.name())) {
+      OHTFDevice<TFBaseConfiguration,TemperatureIRSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(TemperatureIRSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.voltageCurrent_current.name()) || deviceType.equals(TypeKey.voltageCurrent_voltage.name()) || deviceType.equals(TypeKey.voltageCurrent_power.name())) {
+      OHTFDevice<TFBaseConfiguration,VoltageCurrentSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(VoltageCurrentSubIds.values()));
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
@@ -37,6 +51,14 @@
     ohtfDevice.setTfConfig(tfioActorConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.io4_actuator.name())) {
+    logger.debug("{} setting io4_actuator config",LoggerConstants.CONFIG);
+    TFIOActorConfiguration tfioActorConfiguration=modelFactory.createTFIOActorConfiguration();
+    OHTFDevice<TFIOActorConfiguration,IO4SubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IO4SubIds.values()));
+    ohtfDevice.setTfConfig(tfioActorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else   if (deviceType.equals(TypeKey.iosensor.name())) {
     logger.debug("{} setting iosensor config",LoggerConstants.CONFIG);
     TFIOSensorConfiguration tfioSensorConfiguration=modelFactory.createTFIOSensorConfiguration();
@@ -45,7 +67,15 @@
     ohtfDevice.setTfConfig(tfioSensorConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_industrial_digital_4in.name()) || deviceType.equals(TypeKey.bricklet_io16.name())) {
+ else   if (deviceType.equals(TypeKey.io4sensor.name())) {
+    logger.debug("{} setting io4sensor config",LoggerConstants.CONFIG);
+    TFIOSensorConfiguration tfioSensorConfiguration=modelFactory.createTFIOSensorConfiguration();
+    OHTFDevice<TFIOSensorConfiguration,IO4SubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IO4SubIds.values()));
+    ohtfDevice.setTfConfig(tfioSensorConfiguration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrial_digital_4in.name()) || deviceType.equals(TypeKey.bricklet_io16.name()) || deviceType.equals(TypeKey.bricklet_io4.name())) {
     logger.debug("{} setting TFInterruptListenerConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
     TFInterruptListenerConfiguration tfInterruptListenerConfiguration=modelFactory.createTFInterruptListenerConfiguration();
     OHTFDevice<TFInterruptListenerConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
@@ -98,6 +128,35 @@
     MultiTouchDeviceConfiguration configuration=modelFactory.createMultiTouchDeviceConfiguration();
     OHTFDevice<MultiTouchDeviceConfiguration,MultiTouchSubIds> ohtfDevice=modelFactory.createOHTFDevice();
     ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(MultiTouchSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.object_temperature.name())) {
+    logger.debug("{} setting TFObjectTemperatureConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
+    TFObjectTemperatureConfiguration configuration=modelFactory.createTFObjectTemperatureConfiguration();
+    OHTFDevice<TFObjectTemperatureConfiguration,TemperatureIRSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(TemperatureIRSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_moisture.name())) {
+    TFMoistureBrickletConfiguration configuration=modelFactory.createTFMoistureBrickletConfiguration();
+    OHTFDevice<TFMoistureBrickletConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_distanceUS.name())) {
+    TFDistanceUSBrickletConfiguration configuration=modelFactory.createTFDistanceUSBrickletConfiguration();
+    OHTFDevice<TFDistanceUSBrickletConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_voltageCurrent.name())) {
+    TFVoltageCurrentConfiguration configuration=modelFactory.createTFVoltageCurrentConfiguration();
+    OHTFDevice<TFVoltageCurrentConfiguration,VoltageCurrentSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(VoltageCurrentSubIds.values()));
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
