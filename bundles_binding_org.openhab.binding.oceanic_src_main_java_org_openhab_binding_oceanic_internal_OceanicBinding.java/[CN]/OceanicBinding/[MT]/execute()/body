@@ -44,10 +44,12 @@ catch (          Throwable e) {
           boolean jobExists=false;
           try {
             for (            String group : sched.getJobGroupNames()) {
-              for (              JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
-                if (jobKey.getName().equals(itemName + "-" + provider.getValueSelector(itemName).toString())) {
-                  jobExists=true;
-                  break;
+              if (group.equals("Oceanic-" + provider.toString())) {
+                for (                JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                  if (jobKey.getName().equals(itemName + "-" + provider.getValueSelector(itemName).toString())) {
+                    jobExists=true;
+                    break;
+                  }
                 }
               }
             }
@@ -71,9 +73,11 @@ catch (          Throwable e) {
           }
           try {
             for (            String group : sched.getJobGroupNames()) {
-              for (              JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
-                if (findFirstMatchingBindingProvider(jobKey.getName().split("-")[0]) == null) {
-                  sched.deleteJob(jobKey);
+              if (group.equals("Oceanic-" + provider.toString())) {
+                for (                JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                  if (findFirstMatchingBindingProvider(jobKey.getName().split("-")[0]) == null) {
+                    sched.deleteJob(jobKey);
+                  }
                 }
               }
             }
