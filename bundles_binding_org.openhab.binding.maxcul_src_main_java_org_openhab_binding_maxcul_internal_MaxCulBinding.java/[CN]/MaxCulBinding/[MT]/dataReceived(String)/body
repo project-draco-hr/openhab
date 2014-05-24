@@ -1,9 +1,26 @@
 {
   if (data.startsWith("Z")) {
     logger.debug("Received command " + data);
-    MaxPacket pkt=MaxCulCommandHelper.parsePacket(data);
-    if (pkt == null)     return;
-    if (pairMode && pkt.msgType == MaxCulMsgType.PAIR_PING) {
+    MaxCulMsgType msgType=BaseMsg.getMsgType(data);
+    if (pairMode && msgType == MaxCulMsgType.PAIR_PING) {
+      PairPingMsg pkt=new PairPingMsg(data);
+      if (pkt.len > 0 && (pkt.dstAddrStr == this.srcAddr || pkt.dstAddrStr == BROADCAST_ADDRESS)) {
+        Collection<MaxCulBindingConfig> bindingConfigs=null;
+        for (        MaxCulBindingProvider provider : super.providers) {
+          bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
+          if (bindingConfigs != null) {
+            break;
+          }
+        }
+        if (bindingConfigs == null) {
+          logger.error("Unable to find configuration for serial " + pkt.serial + ". Do you have a binding for it?");
+          return;
+        }
+        for (        MaxCulBindingConfig bc : bindingConfigs)         bc.setPairedInfo(pkt.dstAddrStr);
+      }
+ else {
+        logger.debug("Got pairing message for another controller");
+      }
     }
  else {
     }
