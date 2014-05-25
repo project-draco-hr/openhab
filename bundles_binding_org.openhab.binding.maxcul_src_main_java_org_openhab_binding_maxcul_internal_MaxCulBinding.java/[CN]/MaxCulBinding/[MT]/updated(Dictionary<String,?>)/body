@@ -1,4 +1,5 @@
 {
+  logger.debug("MaxCUL Reading config");
   if (config != null) {
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
@@ -6,6 +7,7 @@
     }
     String deviceString=(String)config.get("device");
     if (StringUtils.isNotBlank(deviceString)) {
+      logger.debug("Setting up device " + deviceString);
       setupDevice(deviceString);
       if (cul == null)       throw new ConfigurationException("device","Configuration failed. Unable to access CUL device " + deviceString);
     }
