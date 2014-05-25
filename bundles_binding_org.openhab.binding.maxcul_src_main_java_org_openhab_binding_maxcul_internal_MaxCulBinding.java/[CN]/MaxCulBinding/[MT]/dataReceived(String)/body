@@ -1,10 +1,10 @@
 {
+  logger.debug("Received data from CUL: " + data);
   if (data.startsWith("Z")) {
-    logger.debug("Received command " + data);
     MaxCulMsgType msgType=BaseMsg.getMsgType(data);
     if (pairMode && msgType == MaxCulMsgType.PAIR_PING) {
       PairPingMsg pkt=new PairPingMsg(data);
-      if (pkt.len > 0 && (pkt.dstAddrStr == this.srcAddr || pkt.dstAddrStr == BROADCAST_ADDRESS)) {
+      if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
         Collection<MaxCulBindingConfig> bindingConfigs=null;
         for (        MaxCulBindingProvider provider : super.providers) {
           bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
