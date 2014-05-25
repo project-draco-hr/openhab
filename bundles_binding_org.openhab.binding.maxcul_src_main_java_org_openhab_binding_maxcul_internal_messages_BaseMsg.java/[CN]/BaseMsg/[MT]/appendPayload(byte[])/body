@@ -1,0 +1,12 @@
+{
+  StringBuilder sb=new StringBuilder(this.rawMsg);
+  this.payload=payload;
+  for (int byteIdx=0; byteIdx < payload.length; byteIdx++) {
+    sb.append(String.format("%02x",payload[byteIdx]));
+  }
+  byte len=(byte)((sb.length() / 2) & 0xFF);
+  if ((int)len * 2 != sb.length())   logger.error("Unable to build raw message. Length is not correct");
+  sb.insert(0,String.format("Z%02x",len));
+  this.rawMsg=sb.toString();
+  this.flgReadyToSend=true;
+}

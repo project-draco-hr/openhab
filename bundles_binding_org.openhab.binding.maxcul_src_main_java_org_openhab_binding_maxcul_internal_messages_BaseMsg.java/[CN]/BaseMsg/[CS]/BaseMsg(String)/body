@@ -1,5 +1,6 @@
 {
   BaseMsg pkt=this;
+  this.rawMsg=rawMsg;
   pkt.len=(byte)(Integer.parseInt(rawMsg.substring(1,3),16) & 0xFF);
   if (pkt.len != ((rawMsg.length() - 5) / 2)) {
     logger.error("Unable to process packet " + rawMsg + ". Length is not correct.");

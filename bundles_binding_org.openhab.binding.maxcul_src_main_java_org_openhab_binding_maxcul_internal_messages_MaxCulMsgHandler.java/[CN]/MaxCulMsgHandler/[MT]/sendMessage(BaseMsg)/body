@@ -1,0 +1,34 @@
+{
+  Timer timer=null;
+  if (msg.readyToSend()) {
+    if (enoughCredit(msg.requiredCredit()) && this.sendQueue.isEmpty()) {
+      logger.debug("Sending message immediately. Message is " + msg.msgType + " => "+ msg.rawMsg);
+      transmitMessage(msg.rawMsg);
+    }
+ else {
+      SenderQueueItem qi=new SenderQueueItem();
+      qi.msg=msg;
+      TimerTask task=new TimerTask(){
+        public void run(){
+          SenderQueueItem topItem=sendQueue.remove();
+          logger.debug("Checking credit");
+          if (enoughCredit(topItem.msg.requiredCredit())) {
+            logger.debug("Sending item from queue. Message is " + topItem.msg.msgType + " => "+ topItem.msg.rawMsg);
+            transmitMessage(topItem.msg.rawMsg);
+          }
+ else {
+            logger.error("Not enough credit after waiting. This is bad. Queued command is discarded");
+          }
+        }
+      }
+;
+      timer=new Timer();
+      timers.put(qi,timer);
+      this.endOfQueueTransmit=new Date(this.endOfQueueTransmit.getTime() + ((msg.requiredCredit() + 2) * 10));
+      timer.schedule(task,this.endOfQueueTransmit);
+      this.sendQueue.add(qi);
+      logger.debug("Added message to queue to be TX'd at " + this.endOfQueueTransmit.toString());
+    }
+  }
+ else   logger.debug("Tried to send a message that wasn't ready!");
+}

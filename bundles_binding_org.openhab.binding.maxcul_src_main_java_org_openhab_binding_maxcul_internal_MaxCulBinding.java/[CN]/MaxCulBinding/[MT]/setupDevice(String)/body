@@ -6,7 +6,8 @@
     accessDevice=device;
     logger.debug("Opening CUL device on " + accessDevice);
     cul=CULManager.getOpenCULHandler(accessDevice,CULMode.MAX);
-    cul.registerListener(this);
+    messageHandler=new MaxCulMsgHandler(this.srcAddr,cul);
+    messageHandler.registerMaxCulBindingMessageProcessor(this);
   }
  catch (  CULDeviceException e) {
     logger.error("Cannot open CUL device",e);
