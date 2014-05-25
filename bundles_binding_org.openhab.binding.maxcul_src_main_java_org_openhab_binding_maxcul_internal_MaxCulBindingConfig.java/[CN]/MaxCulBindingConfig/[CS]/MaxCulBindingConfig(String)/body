@@ -26,8 +26,9 @@
  else {
     throw new BindingConfigParseException("Invalid device type. Use RadiatorThermostat / RadiatorThermostatPlus / WallThermostat / PushButton / ShutterContact");
   }
+  logger.debug("Part 1/" + (configParts.length - 1) + " -> "+ configParts[1]);
   this.serialNumber=configParts[1];
-  if (configParts.length >= 2) {
+  if (configParts.length > 2) {
     if (configParts[2].compareTo("thermostat") == 0) {
       if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || this.deviceType != MaxCulDevice.WALL_THERMOSTAT)       throw new BindingConfigParseException("Invalid device feature. Can only use 'thermostat' on radiator or wall thermostats");
       this.feature=MaxCulFeature.THERMOSTAT;

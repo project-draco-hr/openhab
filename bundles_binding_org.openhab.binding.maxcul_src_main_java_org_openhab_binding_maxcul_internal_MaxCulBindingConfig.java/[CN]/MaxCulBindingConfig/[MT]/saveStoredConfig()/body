@@ -1,9 +1,10 @@
 {
   if (this.paired) {
     File cfgFile=new File(generateConfigFilename());
+    File cfgDir=new File(CONFIG_PROPERTIES_BASE);
     if (!cfgFile.exists()) {
       try {
-        cfgFile.mkdirs();
+        if (!cfgDir.exists())         cfgDir.mkdirs();
         cfgFile.createNewFile();
       }
  catch (      IOException e) {
@@ -12,7 +13,7 @@
       }
     }
     Properties propertiesFile=new Properties();
-    propertiesFile.setProperty("dstAddr",this.dstAddr);
+    propertiesFile.setProperty("devAddr",this.devAddr);
     try {
       FileOutputStream foStream=new FileOutputStream(cfgFile);
       Date updateTime=new Date();
@@ -25,6 +26,7 @@
       this.paired=false;
       return;
     }
+    logger.debug("Successfully wrote pairing info for " + this.serialNumber);
   }
  else   logger.error("Tried saving configuration for " + this.serialNumber + " which is not paired.");
 }

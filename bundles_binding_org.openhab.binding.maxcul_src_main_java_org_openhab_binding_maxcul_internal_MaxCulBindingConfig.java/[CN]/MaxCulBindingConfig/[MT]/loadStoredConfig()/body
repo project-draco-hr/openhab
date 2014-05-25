@@ -5,7 +5,7 @@
       FileInputStream fiStream=new FileInputStream(cfgFile);
       Properties propertiesFile=new Properties();
       propertiesFile.load(fiStream);
-      this.dstAddr=propertiesFile.getProperty("dstAddr");
+      this.devAddr=propertiesFile.getProperty("devAddr");
       this.paired=true;
       fiStream.close();
     }
@@ -14,6 +14,7 @@
       this.paired=false;
       return;
     }
+    logger.debug("Successfully loaded pairing info for " + this.serialNumber);
   }
  else {
     logger.warn("Unable to locate information for " + this.deviceType + " "+ this.serialNumber+ " it may not yet be paired");
