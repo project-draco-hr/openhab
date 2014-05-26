@@ -1,6 +1,20 @@
 {
   logger.debug("MaxCulSender Received " + data);
   if (data.startsWith("Z")) {
+    MaxCulMsgType msgType=BaseMsg.getMsgType(data);
+    if (msgType == MaxCulMsgType.ACK) {
+      AckMsg msg=new AckMsg(data);
+      if (pendingAckQueue.containsKey(msg.msgCount)) {
+        SenderQueueItem qi=pendingAckQueue.remove(msg.msgCount);
+        if ((qi.msg.dstAddrStr.compareToIgnoreCase(msg.srcAddrStr) == 0) && (qi.msg.srcAddrStr.compareToIgnoreCase(msg.dstAddrStr) == 0)) {
+          if (msg.getIsNack()) {
+            logger.error("Message was NAK'd, packet lost");
+          }
+ else           logger.debug("Message " + msg.msgCount + " ACK'd ok!");
+        }
+      }
+ else       logger.info("Got ACK for message " + msg.msgCount + " but it wasn't in the queue");
+    }
     this.mcbmp.MaxCulMsgReceived(data);
   }
 }

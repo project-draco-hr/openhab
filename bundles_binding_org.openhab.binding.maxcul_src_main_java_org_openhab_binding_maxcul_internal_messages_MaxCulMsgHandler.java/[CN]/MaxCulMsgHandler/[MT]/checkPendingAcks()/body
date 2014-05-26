@@ -1,0 +1,9 @@
+{
+  Date now=new Date();
+  for (  SenderQueueItem qi : pendingAckQueue.values()) {
+    if (now.after(qi.expiry)) {
+      logger.error("Packet lost - timeout");
+      pendingAckQueue.remove(qi.msg.msgCount);
+    }
+  }
+}
