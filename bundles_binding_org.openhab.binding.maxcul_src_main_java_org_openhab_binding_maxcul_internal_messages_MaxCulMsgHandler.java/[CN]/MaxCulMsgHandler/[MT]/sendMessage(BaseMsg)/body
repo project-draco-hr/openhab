@@ -3,7 +3,7 @@
   if (msg.readyToSend()) {
     if (enoughCredit(msg.requiredCredit()) && this.sendQueue.isEmpty()) {
       logger.debug("Sending message immediately. Message is " + msg.msgType + " => "+ msg.rawMsg);
-      transmitMessage(msg.rawMsg);
+      transmitMessage(msg);
     }
  else {
       SenderQueueItem qi=new SenderQueueItem();
@@ -14,7 +14,7 @@
           logger.debug("Checking credit");
           if (enoughCredit(topItem.msg.requiredCredit())) {
             logger.debug("Sending item from queue. Message is " + topItem.msg.msgType + " => "+ topItem.msg.rawMsg);
-            transmitMessage(topItem.msg.rawMsg);
+            transmitMessage(topItem.msg);
           }
  else {
             logger.error("Not enough credit after waiting. This is bad. Queued command is discarded");

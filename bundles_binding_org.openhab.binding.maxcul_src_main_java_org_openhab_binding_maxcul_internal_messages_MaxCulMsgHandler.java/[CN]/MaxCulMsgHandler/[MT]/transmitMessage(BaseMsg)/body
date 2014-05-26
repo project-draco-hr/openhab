@@ -1,10 +1,11 @@
 {
   try {
-    cul.send(data);
+    cul.send(data.rawMsg.toUpperCase());
   }
  catch (  CULCommunicationException e) {
     logger.error("Unable to send CUL message " + data + " because: "+ e.getMessage());
   }
+  enoughCredit(data.requiredCredit(),true);
   this.lastTransmit=new Date();
   if (this.endOfQueueTransmit.before(this.lastTransmit)) {
     this.endOfQueueTransmit=this.lastTransmit;
