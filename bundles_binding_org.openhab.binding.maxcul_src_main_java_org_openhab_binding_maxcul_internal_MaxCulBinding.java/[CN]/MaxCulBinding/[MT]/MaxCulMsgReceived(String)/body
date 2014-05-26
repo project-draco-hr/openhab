@@ -3,6 +3,7 @@
   if (data.startsWith("Z")) {
     MaxCulMsgType msgType=BaseMsg.getMsgType(data);
     if (pairMode && msgType == MaxCulMsgType.PAIR_PING) {
+      logger.debug("Got PAIR_PING message");
       PairPingMsg pkt=new PairPingMsg(data);
       if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
         Collection<MaxCulBindingConfig> bindingConfigs=null;
