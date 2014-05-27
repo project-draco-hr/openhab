@@ -6,17 +6,17 @@
   Set<String> names=getNames(config);
   for (  String name : names) {
     String value=(String)config.get(name + ".serialPort");
-    String serialPort=value != null ? value : MeterDeviceConfig.DEFAULT_SERIAL_PORT;
+    String serialPort=value != null ? value : MeterConfig.DEFAULT_SERIAL_PORT;
     value=(String)config.get(name + ".baudRateChangeDelay");
-    int baudRateChangeDelay=value != null ? Integer.valueOf(value) : MeterDeviceConfig.DEFAULT_BAUD_RATE_CHANGE_DELAY;
+    int baudRateChangeDelay=value != null ? Integer.valueOf(value) : MeterConfig.DEFAULT_BAUD_RATE_CHANGE_DELAY;
     value=(String)config.get(name + ".echoHandling");
-    boolean echoHandling=value != null ? Boolean.valueOf(value) : MeterDeviceConfig.DEFAULT_ECHO_HANDLING;
-    MeterReader reader=createIec6205621MeterReader(name,new MeterDeviceConfig(serialPort,baudRateChangeDelay,echoHandling));
-    if (meterDevices.put(reader.getName(),reader) != null) {
-      logger.info("Recreated reader {} with  {}!",reader.getName(),reader.getConfig());
+    boolean echoHandling=value != null ? Boolean.valueOf(value) : MeterConfig.DEFAULT_ECHO_HANDLING;
+    Meter meterConfig=createIec6205621MeterConfig(name,new MeterConfig(serialPort,baudRateChangeDelay,echoHandling));
+    if (meterDeviceConfigurtions.put(meterConfig.getName(),meterConfig) != null) {
+      logger.info("Recreated reader {} with  {}!",meterConfig.getName(),meterConfig.getConfig());
     }
  else {
-      logger.info("Created reader {} with  {}!",reader.getName(),reader.getConfig());
+      logger.info("Created reader {} with  {}!",meterConfig.getName(),meterConfig.getConfig());
     }
   }
   if (config != null) {
