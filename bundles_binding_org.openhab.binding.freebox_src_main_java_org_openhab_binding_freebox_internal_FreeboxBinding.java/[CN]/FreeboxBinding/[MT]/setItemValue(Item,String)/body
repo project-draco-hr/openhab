@@ -1,9 +1,3 @@
 {
-  StringType stValue=new StringType(value);
-  if (!item.getState().equals(stValue)) {
-synchronized (item) {
-      eventPublisher.postUpdate(item.getName(),stValue);
-      ((StringItem)item).setState(stValue);
-    }
-  }
+  eventPublisher.postUpdate(item.getName(),new StringType(value));
 }

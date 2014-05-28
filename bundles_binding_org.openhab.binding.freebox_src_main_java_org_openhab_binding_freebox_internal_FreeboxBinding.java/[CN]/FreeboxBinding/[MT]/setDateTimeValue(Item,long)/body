@@ -1,12 +1,5 @@
 {
-  DateTimeItem item=(DateTimeItem)genItem;
   Calendar c=Calendar.getInstance();
   c.setTimeInMillis(value * 1000);
-  DateTimeType dtValue=new DateTimeType(c);
-  if (!item.getState().equals(dtValue)) {
-synchronized (item) {
-      eventPublisher.postUpdate(item.getName(),dtValue);
-      item.setState(dtValue);
-    }
-  }
+  eventPublisher.postUpdate(item.getName(),new DateTimeType(c));
 }

@@ -1,10 +1,3 @@
 {
-  NumberItem item=(NumberItem)genItem;
-  DecimalType dtValue=new DecimalType(value);
-  if (!item.getState().equals(dtValue)) {
-synchronized (item) {
-      eventPublisher.postUpdate(item.getName(),dtValue);
-      item.setState(dtValue);
-    }
-  }
+  eventPublisher.postUpdate(item.getName(),new DecimalType(value));
 }

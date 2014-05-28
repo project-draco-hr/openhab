@@ -1,5 +1,13 @@
 {
-  if (!loginManager.isConnected())   return;
+  if ((loginManager == null) || (!loginManager.isConnected())) {
+    try {
+      authorize();
+    }
+ catch (    FreeboxException e) {
+      logger.error(e.getMessage());
+      setProperlyConfigured(false);
+    }
+  }
   try {
     sc=fbClient.getSystemManager().getConfiguration();
     cs=fbClient.getConnectionManager().getStatus();
@@ -16,7 +24,7 @@ case CALLSTATUS:
               setItemValue(bindingConfig.item,call.getType());
             break;
 case CALLDURATION:
-          setItemValue(bindingConfig.item,call.getDuration());
+          setItemValue(bindingConfig.item,(long)call.getDuration());
         break;
 case CALLNUMBER:
       setItemValue(bindingConfig.item,call.getNumber());
@@ -33,6 +41,9 @@ fbClient.getCallManager().setCallEntry(call);
 for (String itemName : items) {
 FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
 switch (bindingConfig.commandType) {
+case REBOOT:
+setItemValue(bindingConfig.item,false);
+break;
 case BYTESDOWN:
 setItemValue(bindingConfig.item,cs.getBytes_down());
 break;
@@ -40,13 +51,13 @@ case BYTESUP:
 setItemValue(bindingConfig.item,cs.getBytes_up());
 break;
 case CPUB:
-setItemValue(bindingConfig.item,sc.getTemp_cpub());
+setItemValue(bindingConfig.item,(long)sc.getTemp_cpub());
 break;
 case CPUM:
-setItemValue(bindingConfig.item,sc.getTemp_cpum());
+setItemValue(bindingConfig.item,(long)sc.getTemp_cpum());
 break;
 case FAN:
-setItemValue(bindingConfig.item,sc.getFan_rpm());
+setItemValue(bindingConfig.item,(long)sc.getFan_rpm());
 break;
 case FWVERSION:
 setItemValue(bindingConfig.item,sc.getFirmware_version());
@@ -64,7 +75,7 @@ case RATEUP:
 setItemValue(bindingConfig.item,cs.getRate_up());
 break;
 case SW:
-setItemValue(bindingConfig.item,sc.getTemp_sw());
+setItemValue(bindingConfig.item,(long)sc.getTemp_sw());
 break;
 case UPTIME:
 setItemValue(bindingConfig.item,sc.getUptimeVal());
