@@ -3,14 +3,14 @@
   Integer pageNumber=null;
   logger.debug("got a query");
   if (!isProperlyConfigured) {
+    logger.error("Configuration for influxdb not yet loaded or broken.");
     return Collections.emptyList();
   }
   if (!isConnected()) {
-    connect();
-  }
-  if (!isConnected()) {
+    logger.error("InfluxDB is not yet? connected");
     return Collections.emptyList();
   }
+  List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
   StringBuffer query=new StringBuffer();
   query.append("select ");
   query.append(VALUE_COLUMN_NAME);
@@ -73,8 +73,14 @@
     }
   }
   logger.debug("query string: {}",query.toString());
-  List<Serie> results=influxDB.Query(dbName,query.toString(),TimeUnit.MILLISECONDS);
-  List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
+  List<Serie> results=Collections.emptyList();
+  try {
+    results=influxDB.Query(dbName,query.toString(),TimeUnit.MILLISECONDS);
+  }
+ catch (  RuntimeException e) {
+    logger.error("query failed with database error");
+    handleDatabaseException(e);
+  }
   for (  Serie result : results) {
     String historicItemName=result.getName();
     logger.trace("item name ",historicItemName);

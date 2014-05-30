@@ -3,14 +3,11 @@
     return;
   }
   if (!isProperlyConfigured) {
-    logger.error("Configuration for influxdb is missing or not yet loaded");
+    logger.error("Configuration for influxdb not yet loaded or broken.");
     return;
   }
   if (!isConnected()) {
-    connect();
-  }
-  if (!isConnected()) {
-    logger.error("influxdb: No connection to database. Can not persist item '{}'! Will retry connecting to database next time.",item);
+    logger.error("InfluxDB is not yet? connected");
     return;
   }
   String realName=item.getName();
@@ -22,5 +19,11 @@
   Object[] point=new Object[]{value};
   serie.setPoints(new Object[][]{point});
   Serie[] series=new Serie[]{serie};
-  influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
+  try {
+    influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
+  }
+ catch (  RuntimeException e) {
+    logger.error("storing failed with exception for item: {}",name);
+    handleDatabaseException(e);
+  }
 }
