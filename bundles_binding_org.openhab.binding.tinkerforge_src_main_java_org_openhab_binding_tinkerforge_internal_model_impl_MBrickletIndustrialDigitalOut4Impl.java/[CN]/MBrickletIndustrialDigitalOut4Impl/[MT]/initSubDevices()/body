@@ -1,3 +1,14 @@
 {
-  throw new UnsupportedOperationException();
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=0; i < 4; i++) {
+    DigitalActorDigitalOut4 out4=factory.createDigitalActorDigitalOut4();
+    out4.setUid(getUid());
+    String subId="out" + String.valueOf(i);
+    logger.debug("addSubDevice: {}",subId);
+    out4.setSubId(subId);
+    out4.setPin(i);
+    out4.init();
+    out4.setMbrick(this);
+    getMsubdevices().add(out4);
+  }
 }
