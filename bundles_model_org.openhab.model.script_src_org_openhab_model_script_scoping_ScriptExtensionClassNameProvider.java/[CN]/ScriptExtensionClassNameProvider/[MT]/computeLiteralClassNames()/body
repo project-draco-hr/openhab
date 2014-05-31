@@ -1,16 +1,22 @@
 {
-  Collection<String> extensions=super.computeLiteralClassNames();
+  Collection<String> literalClassNames=super.getLiteralClassNames();
+  if (literalClassNames == null) {
+    literalClassNames=super.computeLiteralClassNames();
+  }
+  literalClassNames.clear();
   Object[] services=ScriptActivator.actionServiceTracker.getServices();
   if (services != null) {
     for (    Object service : services) {
       ActionService actionService=(ActionService)service;
-      extensions.add(actionService.getActionClassName());
+      literalClassNames.add(actionService.getActionClassName());
     }
   }
-  extensions.add(BusEvent.class.getCanonicalName());
-  extensions.add(ScriptExecution.class.getCanonicalName());
-  extensions.add(LogAction.class.getCanonicalName());
-  extensions.add(DateTime.class.getCanonicalName());
-  extensions.add(DateMidnight.class.getCanonicalName());
-  return extensions;
+  literalClassNames.add(CollectionLiterals.class.getName());
+  literalClassNames.add(InputOutput.class.getName());
+  literalClassNames.add(BusEvent.class.getCanonicalName());
+  literalClassNames.add(ScriptExecution.class.getCanonicalName());
+  literalClassNames.add(LogAction.class.getCanonicalName());
+  literalClassNames.add(DateTime.class.getCanonicalName());
+  literalClassNames.add(DateMidnight.class.getCanonicalName());
+  return literalClassNames;
 }

@@ -1,0 +1,15 @@
+{
+  delayedExecutor.cancel();
+  delayedExecutor.schedule(new TimerTask(){
+    @Override public void run(){
+      for (      ConfigAdminBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames()) {
+          ConfigAdminBindingConfig bindingConfig=provider.getBindingConfig(itemName);
+          Configuration config=getConfiguration(bindingConfig);
+          postUpdate(config,bindingConfig);
+        }
+      }
+    }
+  }
+,3000);
+}

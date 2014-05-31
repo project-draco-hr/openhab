@@ -14,9 +14,20 @@
       if (action.equals("Heal")) {
         if (networkMonitor != null)         networkMonitor.rescheduleHeal();
       }
-      if (action.equals("Include")) {
-        zController.requestAddNodesStart();
-        setInclusionTimer();
+      if (inclusion == false && exclusion == false) {
+        if (action.equals("Include")) {
+          inclusion=true;
+          zController.requestAddNodesStart();
+          setInclusionTimer();
+        }
+        if (action.equals("Exclude")) {
+          exclusion=true;
+          zController.requestRemoveNodesStart();
+          setInclusionTimer();
+        }
+      }
+ else {
+        logger.debug("Exclusion/Inclusion already in progress.");
       }
     }
   }
@@ -42,6 +53,15 @@
         this.zController.requestRemoveFailedNode(nodeId);
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
         nodeSerializer.DeleteNode(nodeId);
+      }
+      if (action.equals("Version")) {
+        logger.debug("NODE {}: Get node version",nodeId);
+        ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
+        if (versionCommandClass == null) {
+          logger.error("NODE {}: Error getting versionCommandClass in doAction",nodeId);
+          return;
+        }
+        this.zController.sendData(versionCommandClass.getVersionMessage());
       }
       return;
     }

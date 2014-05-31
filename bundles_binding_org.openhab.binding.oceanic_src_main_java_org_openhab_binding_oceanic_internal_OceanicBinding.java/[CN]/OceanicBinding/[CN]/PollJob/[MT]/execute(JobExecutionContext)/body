@@ -3,8 +3,11 @@
   String serialPort=(String)dataMap.get("SerialPort");
   OceanicValueSelector valueSelector=(OceanicValueSelector)dataMap.get("ValueSelector");
   OceanicBinding theBinding=(OceanicBinding)dataMap.get("Binding");
+  theBinding.lockSerialDevices();
   SerialDevice serialDevice=theBinding.serialDevices.get(serialPort);
   String response=serialDevice.requestResponse(valueSelector.name());
+  logger.debug("Requested '{}' from the oceanic unit, got '{}' back",valueSelector.name(),response);
+  theBinding.unlockSerialDevices();
   for (  OceanicBindingProvider provider : theBinding.providers) {
     for (    String itemName : provider.getItemNames()) {
       String itemSerialPort=provider.getSerialPort(itemName);

@@ -1,0 +1,28 @@
+{
+  if (config == null || config.isEmpty()) {
+    logger.warn("Empty or null configuration. Ignoring.");
+    return;
+  }
+  Set<String> names=getNames(config);
+  for (  String name : names) {
+    String value=(String)config.get(name + ".serialPort");
+    String serialPort=value != null ? value : MeterConfig.DEFAULT_SERIAL_PORT;
+    value=(String)config.get(name + ".baudRateChangeDelay");
+    int baudRateChangeDelay=value != null ? Integer.valueOf(value) : MeterConfig.DEFAULT_BAUD_RATE_CHANGE_DELAY;
+    value=(String)config.get(name + ".echoHandling");
+    boolean echoHandling=value != null ? Boolean.valueOf(value) : MeterConfig.DEFAULT_ECHO_HANDLING;
+    Meter meterConfig=createIec6205621MeterConfig(name,new MeterConfig(serialPort,baudRateChangeDelay,echoHandling));
+    if (meterDeviceConfigurtions.put(meterConfig.getName(),meterConfig) != null) {
+      logger.info("Recreated reader {} with  {}!",meterConfig.getName(),meterConfig.getConfig());
+    }
+ else {
+      logger.info("Created reader {} with  {}!",meterConfig.getName(),meterConfig.getConfig());
+    }
+  }
+  if (config != null) {
+    if (StringUtils.isNotBlank((String)config.get("refresh"))) {
+      refreshInterval=Long.parseLong((String)config.get("refresh"));
+    }
+    setProperlyConfigured(true);
+  }
+}
