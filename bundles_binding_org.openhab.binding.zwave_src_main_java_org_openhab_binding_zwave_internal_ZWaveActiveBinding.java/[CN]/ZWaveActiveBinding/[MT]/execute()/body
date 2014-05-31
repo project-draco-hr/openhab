@@ -5,9 +5,18 @@
     return;
   }
   networkMonitor.execute();
-  for (  ZWaveBindingProvider provider : providers) {
-    for (    String itemName : provider.getItemNames()) {
-      converterHandler.executeRefresh(provider,itemName,false);
+  if (pollingIterator == null) {
+    pollingIterator=pollingList.iterator();
+  }
+  while (pollingIterator.hasNext()) {
+    if (zController.getSendQueueLength() >= pollingQueue) {
+      logger.trace("Polling queue full!");
+      break;
     }
+    ZWavePollItem poll=pollingIterator.next();
+    converterHandler.executeRefresh(poll.provider,poll.item,false);
+  }
+  if (pollingIterator.hasNext() == false) {
+    pollingIterator=null;
   }
 }

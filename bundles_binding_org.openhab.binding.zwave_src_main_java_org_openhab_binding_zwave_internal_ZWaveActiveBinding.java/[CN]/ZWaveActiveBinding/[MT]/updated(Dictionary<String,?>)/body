@@ -14,5 +14,45 @@
       logger.error("Error parsing 'healtime'. This must be a single number to set the hour to perform the heal.");
     }
   }
+  if (StringUtils.isNotBlank((String)config.get("refreshInterval"))) {
+    try {
+      refreshInterval=Integer.parseInt((String)config.get("refreshInterval"));
+      logger.info("Update config, refreshInterval = {}",refreshInterval);
+    }
+ catch (    NumberFormatException e) {
+      refreshInterval=10000;
+      logger.error("Error parsing 'refreshInterval'. This must be a single number time in milliseconds.");
+    }
+  }
+  if (StringUtils.isNotBlank((String)config.get("pollingQueue"))) {
+    try {
+      pollingQueue=Integer.parseInt((String)config.get("pollingQueue"));
+      logger.info("Update config, pollingQueue = {}",pollingQueue);
+    }
+ catch (    NumberFormatException e) {
+      pollingQueue=2;
+      logger.error("Error parsing 'pollingQueue'. This must be a single number time in milliseconds.");
+    }
+  }
+  if (StringUtils.isNotBlank((String)config.get("timeout"))) {
+    try {
+      timeout=Integer.parseInt((String)config.get("timeout"));
+      logger.info("Update config, timeout = {}",timeout);
+    }
+ catch (    NumberFormatException e) {
+      timeout=null;
+      logger.error("Error parsing 'timeout'. This must be an Integer.");
+    }
+  }
+  if (StringUtils.isNotBlank((String)config.get("setSUC"))) {
+    try {
+      isSUC=Boolean.parseBoolean((String)config.get("setSUC"));
+      logger.info("Update config, setSUC = {}",isSUC);
+    }
+ catch (    NumberFormatException e) {
+      isSUC=false;
+      logger.error("Error parsing 'setSUC'. This must be boolean.");
+    }
+  }
   initialise();
 }
