@@ -25,7 +25,7 @@
     }
     encodedSentence=encodedSentence.replace("+","%20");
     logger.debug("Encoded sentence " + encodedSentence);
-    String url=GOOGLE_TRANSLATE_URL + encodedSentence;
+    String url=String.format(GOOGLE_TRANSLATE_URL,squeezeServer.language()) + encodedSentence;
     SqueezeboxSentenceListener listener=new SqueezeboxSentenceListener(playerId);
     player.addPlayerEventListener(listener);
     logger.trace("Sending URL '{}' to device to play",url);
