@@ -1,0 +1,35 @@
+{
+  logger.debug("Appname : " + appName);
+  logger.debug("AppVersion : " + appVersion);
+  logger.debug("DeviceName : " + deviceName);
+  logger.debug("AppID :" + appID);
+  fbClient=new FreeboxOsClient(appID,serverAddress);
+  loginManager=fbClient.getLoginManager();
+  TrackAuthorizeStatus authorizeStatus=TrackAuthorizeStatus.UNKNOWN;
+  if (isBlank(appToken)) {
+    Authorize authorize=loginManager.newAuthorize(appName,appVersion,deviceName);
+    appToken=authorize.getAppToken();
+    logger.info("####################################################################");
+    logger.info("# Please accept activation request directly on your freebox        #");
+    logger.info("# Once done, record current Apptoken in your 'openhab.cfg'         #");
+    logger.info("# " + appToken + " #");
+    logger.info("####################################################################");
+    do {
+      try {
+        Thread.sleep(2000);
+        authorizeStatus=loginManager.trackAuthorize();
+      }
+ catch (      InterruptedException e) {
+        logger.error(e.getMessage());
+      }
+    }
+ while (authorizeStatus == TrackAuthorizeStatus.PENDING);
+  }
+ else {
+    authorizeStatus=TrackAuthorizeStatus.GRANTED;
+  }
+  if (authorizeStatus != TrackAuthorizeStatus.GRANTED)   throw new FreeboxException(authorizeStatus.toString());
+  logger.debug("Apptoken valide : [" + appToken + "]");
+  loginManager.setAppToken(appToken);
+  loginManager.openSession();
+}

@@ -1,0 +1,24 @@
+{
+  logger.trace("enabling");
+  setCallbackPeriod(1);
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      logger.trace("got callback period {}",tfConfig.getCallbackPeriod());
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
+  }
+  try {
+    tinkerforgeDevice=new BrickletHallEffect(getUid(),getIpConnection());
+    tinkerforgeDevice.setEdgeCountCallbackPeriod(getCallbackPeriod());
+    listener=new EdgeCountListener();
+    logger.trace("adding listener");
+    tinkerforgeDevice.addEdgeCountListener(listener);
+    fetchSensorValue();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

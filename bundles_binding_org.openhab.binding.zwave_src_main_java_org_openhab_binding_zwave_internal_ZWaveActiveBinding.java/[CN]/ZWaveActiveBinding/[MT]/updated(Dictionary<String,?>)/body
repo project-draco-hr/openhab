@@ -44,5 +44,15 @@
       logger.error("Error parsing 'timeout'. This must be an Integer.");
     }
   }
+  if (StringUtils.isNotBlank((String)config.get("setSUC"))) {
+    try {
+      isSUC=Boolean.parseBoolean((String)config.get("setSUC"));
+      logger.info("Update config, setSUC = {}",isSUC);
+    }
+ catch (    NumberFormatException e) {
+      isSUC=false;
+      logger.error("Error parsing 'setSUC'. This must be boolean.");
+    }
+  }
   initialise();
 }
