@@ -35,6 +35,12 @@
               ((MTextActor)mDevice).setText(command.toString());
             }
           }
+ else           if (command instanceof DecimalType) {
+            logger.debug("{} found number command",LoggerConstants.COMMAND);
+            if (mDevice instanceof NumberActor) {
+              ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
+            }
+          }
  else {
             logger.error("{} got unknown command type: {}",LoggerConstants.COMMAND,command.toString());
           }
