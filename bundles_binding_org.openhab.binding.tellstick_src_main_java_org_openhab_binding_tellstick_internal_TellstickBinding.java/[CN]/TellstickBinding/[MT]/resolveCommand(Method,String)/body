@@ -1,0 +1,14 @@
+{
+  State cmd=null;
+  if (method == Method.TURNON) {
+    cmd=OnOffType.ON;
+  }
+ else   if (method == Method.TURNOFF) {
+    cmd=OnOffType.OFF;
+  }
+ else   if (method == Method.DIM) {
+    double value=((Double.valueOf(data)) / 255);
+    cmd=new PercentType((int)(value * 100));
+  }
+  return cmd;
+}

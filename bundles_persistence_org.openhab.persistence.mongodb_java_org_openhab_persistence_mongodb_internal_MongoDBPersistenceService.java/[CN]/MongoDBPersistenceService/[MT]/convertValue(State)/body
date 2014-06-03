@@ -1,0 +1,16 @@
+{
+  Object value;
+  if (state instanceof PercentType) {
+    value=((PercentType)state).toBigDecimal().doubleValue();
+  }
+ else   if (state instanceof DateTimeType) {
+    value=((DateTimeType)state).getCalendar().getTime();
+  }
+ else   if (state instanceof DecimalType) {
+    value=((DecimalType)state).toBigDecimal().doubleValue();
+  }
+ else {
+    value=state.toString();
+  }
+  return value;
+}

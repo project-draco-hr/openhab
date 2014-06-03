@@ -1,0 +1,117 @@
+{
+  StringBuilder output=new StringBuilder();
+  output.append("sitemap home label=\"Main Menu\"{\n");
+  output.append("Frame {\n\n");
+  output.append("Text label=\"Lights\"icon=\"" + IMG_LIGHT + "\" {\n");
+  output.append("Frame {\n");
+  for (  String room : rooms.keySet()) {
+    LinkedList<SiteItem> units=rooms.get(room);
+    SiteItem fLight=units.removeFirst();
+    output.append(String.format("Text label=\"%s [%%s]\" item=%s_String icon=\"%s\" valuecolor=[==Off=\"white\",!=Off=\"green\"]{\n",fLight.getObjName(),fLight.getName(),IMG_LIGHT));
+    output.append(String.format("Frame item=%s_Switch label=\"%s [%%s%%%%]\"{\n",fLight.getName(),fLight.getObjName()));
+    output.append(String.format("Switch item=%s_Switch label=\"Power\" icon=\"\" mappings=[\"0\"=Off, \"100\"=On]\n",fLight.getName()));
+    output.append(String.format("Slider item=%s_Switch label=\"Dimmer\" icon=\"\"\n",fLight.getName()));
+    output.append(String.format("Switch item=%s_String label=\"Scene\" icon=\"\" mappings=[\"Scene A\"=A, \"Scene B\"=B, \"Scene C\"=C, \"Scene D\"=D]\n",fLight.getName()));
+    output.append("}\nFrame label=\"All Lights\"{\n");
+    for (    SiteItem l : units) {
+      output.append(String.format("Slider item=%s_Switch switchSupport\n",l.getName()));
+    }
+    output.append("}\n}\n");
+  }
+  if (lights.size() > 0) {
+    output.append("Text label=\"Other\" {\n");
+    output.append("Frame{\n");
+    for (    SiteItem l : lights) {
+      output.append(String.format("Slider item=%s_Switch switchSupport\n",l.getName()));
+    }
+    output.append("}\n}\n");
+  }
+  output.append("}\n}\n");
+  if (thermos.size() > 0) {
+    output.append("Text label=\"Thermostats\"icon=\"" + IMG_THERMOS + "\" {\n");
+    output.append("Frame {\n");
+    for (    SiteItem thermo : thermos) {
+      output.append(String.format("Text label=\"%s  [%%d??F]\" item=%s_Temp icon=\"%s\" {\n",thermo.getObjName(),thermo.getName(),IMG_THERMOS));
+      output.append(String.format("Frame item=%s_Temp label=\"%s [%%d??F]\"{\n",thermo.getName(),thermo.getObjName()));
+      output.append(String.format("Setpoint item=%s_CoolPoint minValue=32 maxValue=100 step=1\n icon=\"%s-cool\"",thermo.getName(),IMG_THERMOS));
+      output.append(String.format("Setpoint item=%s_HeatPoint minValue=32 maxValue=100 step=1\n icon=\"%s-heat\"",thermo.getName(),IMG_THERMOS));
+      output.append(String.format("Switch item=%s_System label=\"Mode\" icon=\"%s\" mappings=[\"0\"=Off, \"1\"=Heat, \"2\"=Cool,\"3\"=Auto,\"4\"=Emer]\n",thermo.getName(),IMG_THERMOS));
+      output.append(String.format("Switch item=%s_Fan label=\"Fan\" mappings=[\"0\"=Auto, \"1\"=On]\n",thermo.getName()));
+      output.append(String.format("Switch item=%s_Hold label=\"Hold\" mappings=[\"0\"=Off, \"1\"=On]\n",thermo.getName()));
+      output.append("}\n}\n");
+    }
+    output.append("}\n}\n");
+  }
+  if (audioZones.size() > 0) {
+    output.append("Text label=\"Audio\" icon=\"" + IMG_AUDIO + "\"{\n");
+    output.append("Frame {\n");
+    for (    SiteItem audio : audioZones) {
+      output.append(String.format("Text label=\"%s  [%%s]\" item=%s_Power icon=\"%s\" valuecolor=[==OFF=\"white\",!=OFF=\"green\"]{\n",audio.getObjName(),audio.getName(),IMG_AUDIO));
+      output.append(String.format("Frame item=%s_Volume label=\"%s  [%%s%%%%]\"{\n",audio.getName(),audio.getObjName()));
+      output.append(String.format("Switch item=%s_Power icon=\"\" label=\"Power\"\n",audio.getName()));
+      output.append(String.format("Switch item=%s_Mute  icon=\"\" label=\"Mute\"\n",audio.getName()));
+      output.append(String.format("Switch item=%s_Source icon=\"\" label=\"Source\" mappings=[\"1\"=XM, \"2\"=iPod, \"3\"=Tivo,\"4\"=Sqz1,\"5\"=Air,\"6\"=Sqz2]\n",audio.getName()));
+      output.append(String.format("Slider item=%s_Volume icon=\"\" label=\"Volume\"\n",audio.getName()));
+      int[] features=c.reqSystemFeatures().getFeatures();
+      String[] audioCmd=null;
+      for (int i=0; i < features.length; i++) {
+switch (features[i]) {
+case 1:
+case 2:
+          audioCmd=AUDIOCMD_NUVO;
+        break;
+case 3:
+      audioCmd=AUDIOCMD_NUVOGRAND;
+    break;
+case 4:
+  audioCmd=AUDIOCMD_RUSSOUND;
+break;
+case 5:
+audioCmd=AUDIOCMD_HAIHIFI;
+break;
+case 6:
+audioCmd=AUDIOCMD_XANTECH;
+;
+break;
+case 7:
+audioCmd=AUDIOCMD_SPEAKEERCRAFT;
+break;
+default :
+break;
+}
+if (audioCmd != null) break;
+}
+if (audioCmd.length > 12) output.append(String.format("Switch item=%s_Key label=\"\" mappings=[\"6\"=\">\", \"7\"=\"[ ]\", \"8\"=\"||\",\"9\"=\"-\",\"10\"=\"+\",\"11\"=\"<<\",\"12\"=\">>\"]\n",audio.getName()));
+output.append(String.format("Text item=%s_Text label=\"[%%s]\"\n",audio.getName()));
+output.append(String.format("Text item=%s_Field1 label=\"[%%s]\"\n",audio.getName()));
+output.append(String.format("Text item=%s_Field2 label=\"[%%s]\"\n",audio.getName()));
+output.append(String.format("Text item=%s_Field3 label=\"[%%s]\"\n",audio.getName()));
+output.append("}\n}\n");
+}
+output.append("}\n}\n");
+if (zones.size() > 0) {
+output.append("Text label=\"Zones\" icon=\"" + IMG_SECURITY + "\" {\n");
+output.append("Frame {\n");
+for (SiteItem zone : zones) {
+output.append(String.format("Text label=\"%s\" item=%s_Current{\n",zone.getObjName(),zone.getName()));
+output.append(String.format("Frame label=\"%s\"{\n",zone.getObjName()));
+output.append(String.format("Switch item=%s_Arming label=\"\" icon=\"\" mappings=[\"bypass\"=Bypass, \"restore\"=Restore]\n",zone.getName()));
+output.append(String.format("Text item=%s_Current icon=\"\" label=\"Current: [%%s]\"\n",zone.getName(),zone.getObjName()));
+output.append(String.format("Text item=%s_Latched label=\"Latched: [%%s]\"",zone.getName(),zone.getObjName()));
+output.append(String.format("Text item=%s_Arming label=\"Arming: [%%s]\"\n",zone.getName(),zone.getObjName()));
+output.append("}\n}\n");
+}
+output.append("}\n}\n");
+}
+if (buttons.size() > 0) {
+output.append("Text label=\"Buttons\" icon=\"" + IMG_BUTTON + "\"{\n");
+output.append("Frame {\n");
+for (SiteItem button : buttons) {
+output.append(String.format("Switch item=%s label=\"%s\" icon=\"\" mappings=[\"push\"=\"Push\"]\n",button.getName(),button.getObjName()));
+}
+output.append("}\n}\n");
+}
+}
+output.append("\n\n}\n}\n");
+System.out.println(output.toString());
+}

@@ -1,0 +1,37 @@
+{
+synchronized (this) {
+    if (sonosSavedGroupState != null) {
+      for (      SonosZoneGroup group : sonosSavedGroupState) {
+        for (        String playerName : group.getMembers()) {
+          SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
+          if (player != null) {
+            player.becomeStandAlonePlayer();
+          }
+        }
+      }
+      for (      SonosZoneGroup group : sonosSavedGroupState) {
+        SonosZonePlayer coordinator=sonosZonePlayerCache.getById(group.getCoordinator());
+        if (coordinator != null) {
+          for (          String playerName : group.getMembers()) {
+            SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
+            if (player != null) {
+              coordinator.addMember(player);
+            }
+          }
+        }
+      }
+      for (      SonosZoneGroup group : sonosSavedGroupState) {
+        for (        String playerName : group.getMembers()) {
+          SonosZonePlayer player=sonosZonePlayerCache.getById(playerName);
+          if (player != null) {
+            player.restoreState();
+          }
+        }
+      }
+      return true;
+    }
+ else {
+      return false;
+    }
+  }
+}

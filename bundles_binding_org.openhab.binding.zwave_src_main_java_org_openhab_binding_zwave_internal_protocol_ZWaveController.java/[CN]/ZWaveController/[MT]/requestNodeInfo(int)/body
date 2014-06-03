@@ -1,6 +1,3 @@
 {
-  SerialMessage newMessage=new SerialMessage(nodeId,SerialMessageClass.RequestNodeInfo,SerialMessageType.Request,SerialMessageClass.ApplicationUpdate,SerialMessagePriority.High);
-  byte[] newPayload={(byte)nodeId};
-  newMessage.setMessagePayload(newPayload);
-  this.enqueue(newMessage);
+  this.enqueue(new RequestNodeInfoMessageClass().doRequest(nodeId));
 }

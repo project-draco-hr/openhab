@@ -1,0 +1,28 @@
+{
+  if (playerId == -1) {
+    logger.warn("[{}]: Invalid playerId ({}) - assume this is a PVR recording playback and update playerId -> 1 (video player)",xbmc.getHostname(),playerId);
+    playerId=1;
+  }
+  if (playerId < 0 || playerId > 2) {
+    logger.debug("[{}]: Invalid playerId ({}) - must be between 0 and 2 (inclusive)",xbmc.getHostname(),playerId);
+    return;
+  }
+  final List<String> properties=getPlayerProperties();
+  final PlayerGetItem item=new PlayerGetItem(client,httpUri);
+  item.setPlayerId(playerId);
+  item.setProperties(properties);
+  item.execute(new Runnable(){
+    public void run(){
+      for (      String property : properties) {
+        String value=item.getPropertyValue(property);
+        if (property.equals("Player.Fanart")) {
+          updateFanartUrl(property,value);
+        }
+ else {
+          updateProperty(property,value);
+        }
+      }
+    }
+  }
+);
+}

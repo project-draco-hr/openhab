@@ -1,0 +1,36 @@
+{
+  if (config != null) {
+    ip=(String)config.get("ip");
+    if (!Pattern.compile(IP_PATTERN).matcher(ip).matches()) {
+      logger.warn("eKey:ip No ip specified. It is recommended to specify a static ip");
+      ip=null;
+    }
+    String portstring=(String)config.get("port");
+    if (StringUtils.isNotBlank(portstring)) {
+      port=Integer.parseInt(portstring);
+    }
+ else     throw new ConfigurationException("eKey:port","No port specified." + " Please specify a port as you did during the UDP-Converter configuration");
+    String modestring=(String)config.get("mode");
+    if (StringUtils.isNotBlank(modestring)) {
+      modestring=modestring.toUpperCase().trim();
+      if (modestring.equals(MODES[0]))       mode=UniformPacket.tRARE;
+ else       if (modestring.equals(MODES[1]))       mode=UniformPacket.tHOME;
+ else       if (modestring.equals(MODES[2]))       mode=UniformPacket.tMULTI;
+ else       throw new ConfigurationException("eKey:mode","Unknown mode '" + modestring + "'. Valid values are RARE, MULTI or HOME.");
+    }
+ else {
+      logger.warn("eKey:mode was not declared in the config file. So mode RARE is used as default!");
+      mode=UniformPacket.tRARE;
+    }
+    String delstring=(String)config.get("delimiter");
+    if (StringUtils.isBlank(delstring)) {
+      deliminator=" ";
+    }
+ else {
+      deliminator=delstring;
+    }
+    packetlistener.stopListener();
+    packetlistener.initializeReceiver(mode,ip,port,deliminator);
+    new Thread(packetlistener).start();
+  }
+}

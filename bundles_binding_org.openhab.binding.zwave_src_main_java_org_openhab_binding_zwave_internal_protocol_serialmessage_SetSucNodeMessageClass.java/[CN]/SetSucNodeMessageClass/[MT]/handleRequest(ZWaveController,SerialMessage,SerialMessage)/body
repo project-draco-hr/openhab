@@ -1,0 +1,11 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("NODE {}: SetSucNodeID node request.",nodeId);
+  if (incomingMessage.getMessagePayloadByte(1) != 0x00) {
+    logger.error("NODE {}: SetSucNodeID failed with error 0x{}.",nodeId,Integer.toHexString(incomingMessage.getMessagePayloadByte(1)));
+  }
+ else {
+  }
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return false;
+}

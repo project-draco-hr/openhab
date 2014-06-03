@@ -1,0 +1,26 @@
+{
+  String[] unitParts=unitString.split("\\|");
+  if (unitParts.length > 1) {
+    config.unit=unitParts[0];
+    for (int i=1; i < unitParts.length; i++) {
+      String[] keyValue=unitParts[i].trim().split("=");
+      if (keyValue.length != 2) {
+        throw new BindingConfigParseException("Onewire sensor parameters " + "must be of form parameter=value, you have: " + unitParts[i].trim());
+      }
+      if (keyValue[0].equals("filter")) {
+        if (filterTypes.contains(keyValue[1])) {
+          config.filter=keyValue[1];
+        }
+ else {
+          throw new BindingConfigParseException("Onewire sensor unknown filter type: " + keyValue[1]);
+        }
+      }
+ else {
+        throw new BindingConfigParseException("Onewire sensor unknown parameter: " + keyValue[0]);
+      }
+    }
+  }
+ else {
+    config.unit=unitString;
+  }
+}

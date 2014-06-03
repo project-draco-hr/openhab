@@ -1,0 +1,11 @@
+{
+  if (headerLength <= 2) {
+    return false;
+  }
+  if (len < headerLength) {
+    return false;
+  }
+  byte flags=buf[headerLength - 1];
+  boolean isExtended=(flags & 0x10) == 0x10;
+  return (isExtended);
+}

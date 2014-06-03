@@ -1,0 +1,13 @@
+{
+  m_reply=ReplyType.WAITING_FOR_ACK;
+  while (m_reply == ReplyType.WAITING_FOR_ACK) {
+    try {
+      logger.trace("writer waiting for ack.");
+      wait();
+      logger.trace("writer got ack: {}",(m_reply == ReplyType.GOT_ACK));
+    }
+ catch (    InterruptedException e) {
+    }
+  }
+  return (m_reply == ReplyType.GOT_NACK);
+}

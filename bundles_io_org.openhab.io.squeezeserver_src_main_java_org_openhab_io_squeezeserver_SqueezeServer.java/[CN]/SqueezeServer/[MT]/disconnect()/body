@@ -1,15 +1,16 @@
 {
-  if (isConnected()) {
-    try {
-      listener.setInterrupted(true);
-      clientSocket.close();
-      logger.debug("Squeeze Server connection stopped.");
-    }
- catch (    IOException e) {
-      logger.error("Failed to disconnect from SqueezeServer at " + host + ":"+ cliPort,e);
-    }
- finally {
-      clientSocket=null;
-    }
+  if (!isConnected())   return;
+  try {
+    listener.terminate();
+    clientSocket.close();
   }
+ catch (  IOException e) {
+    logger.error("Error attempting to disconnect from Squeeze Server at " + host + ":"+ cliPort,e);
+    return;
+  }
+ finally {
+    clientSocket=null;
+    listener=null;
+  }
+  logger.info("Squeeze Server connection stopped.");
 }

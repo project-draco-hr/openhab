@@ -1,0 +1,9 @@
+{
+  openConnection(url);
+  super.setCookies(cookies);
+  setRequestProperty("SOAPAction","getIHCProjectNumberOfSegments");
+  String response=sendQuery(emptyQuery);
+  String numberOfSegments=WSBaseDataType.parseValue(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getIHCProjectNumberOfSegments1");
+  closeConnection();
+  return Integer.parseInt(numberOfSegments);
+}

@@ -1,0 +1,20 @@
+{
+  conn.setReadTimeout(timeout);
+  try {
+    OutputStreamWriter writer=new OutputStreamWriter(conn.getOutputStream(),"UTF-8");
+    logger.trace("Send query: {}",query);
+    writer.write(query);
+    writer.flush();
+    writer.close();
+    InputStreamReader reader=new InputStreamReader(conn.getInputStream(),"UTF-8");
+    String response=readInputStreamAsString(reader);
+    logger.trace("Receive response: {}",response);
+    return response;
+  }
+ catch (  UnsupportedEncodingException e) {
+    throw new IhcExecption(e);
+  }
+catch (  IOException e) {
+    throw new IhcExecption(e);
+  }
+}

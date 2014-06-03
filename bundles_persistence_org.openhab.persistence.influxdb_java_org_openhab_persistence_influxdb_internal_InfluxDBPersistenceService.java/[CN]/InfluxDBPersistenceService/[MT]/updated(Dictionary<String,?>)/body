@@ -1,0 +1,30 @@
+{
+  disconnect();
+  if (config == null) {
+    throw new ConfigurationException("influxdb","The configuration for influxdb is missing fix openhab.cfg");
+  }
+  url=(String)config.get("url");
+  if (StringUtils.isBlank(url)) {
+    url=DEFAULT_URL;
+    logger.debug("using default url {}",DEFAULT_URL);
+  }
+  user=(String)config.get("user");
+  if (StringUtils.isBlank(user)) {
+    user=DEFAULT_USER;
+    logger.debug("using default user {}",DEFAULT_USER);
+  }
+  password=(String)config.get("password");
+  if (StringUtils.isBlank(password)) {
+    throw new ConfigurationException("influxdb:password","The password is missing. To specify a password configure the password parameter in openhab.cfg.");
+  }
+  dbName=(String)config.get("db");
+  if (StringUtils.isBlank(dbName)) {
+    dbName=DEFAULT_DB;
+    logger.debug("using default db name {}",DEFAULT_DB);
+  }
+  isProperlyConfigured=true;
+  connect();
+  if (!checkConnection()) {
+    logger.error("database connection does not work for now, will retry to use the database.");
+  }
+}

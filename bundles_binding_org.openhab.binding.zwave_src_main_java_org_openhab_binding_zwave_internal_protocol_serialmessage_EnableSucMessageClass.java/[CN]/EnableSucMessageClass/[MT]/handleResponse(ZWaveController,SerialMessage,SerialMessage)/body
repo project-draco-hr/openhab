@@ -1,0 +1,11 @@
+{
+  logger.debug("Got EnableSUC response.");
+  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
+    logger.debug("EnableSUC was successful");
+  }
+ else {
+    logger.error("Unable to disable a running SUC!");
+  }
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return false;
+}

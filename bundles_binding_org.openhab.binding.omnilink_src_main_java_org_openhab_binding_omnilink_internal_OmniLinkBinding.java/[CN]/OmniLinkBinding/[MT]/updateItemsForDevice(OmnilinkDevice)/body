@@ -1,0 +1,12 @@
+{
+  for (  OmniLinkBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      OmniLinkBindingConfig bindingConfig=provider.getOmniLinkBindingConfig(itemName);
+      OmnilinkDevice itemDevice=bindingConfig.getDevice();
+      Item item=provider.getItem(itemName);
+      if (itemDevice != null && itemDevice == device) {
+        device.updateItem(item,bindingConfig,eventPublisher);
+      }
+    }
+  }
+}

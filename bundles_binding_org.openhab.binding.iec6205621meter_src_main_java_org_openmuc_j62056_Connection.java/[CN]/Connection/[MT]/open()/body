@@ -1,0 +1,33 @@
+{
+  CommPortIdentifier portIdentifier;
+  try {
+    portIdentifier=CommPortIdentifier.getPortIdentifier(serialPortName);
+  }
+ catch (  NoSuchPortException e) {
+    throw new IOException("Serial port with given name does not exist",e);
+  }
+  if (portIdentifier.isCurrentlyOwned()) {
+    throw new IOException("Serial port is currently in use.");
+  }
+  RXTXPort commPort;
+  try {
+    commPort=portIdentifier.open(this.getClass().getName(),2000);
+  }
+ catch (  PortInUseException e) {
+    throw new IOException("Serial port is currently in use.",e);
+  }
+  if (!(commPort instanceof SerialPort)) {
+    commPort.close();
+    throw new IOException("The specified CommPort is not a serial port");
+  }
+  serialPort=(SerialPort)commPort;
+  try {
+    os=new DataOutputStream(serialPort.getOutputStream());
+    is=new DataInputStream(serialPort.getInputStream());
+  }
+ catch (  IOException e) {
+    serialPort.close();
+    serialPort=null;
+    throw new IOException("Error getting input or output or input stream from serial port",e);
+  }
+}

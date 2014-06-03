@@ -1,0 +1,11 @@
+{
+  DecimalValue newValue=calculateTemperature(newTemperature);
+  logger.trace("{} got new temperature {}",LoggerConstants.TFMODELUPDATE,newValue);
+  if (newValue.compareTo(getSensorValue(),thresholdBigDecimal) != 0) {
+    logger.trace("{} setting new temperature {}",LoggerConstants.TFMODELUPDATE,newValue);
+    setSensorValue(newValue);
+  }
+ else {
+    logger.trace("{} omitting new temperature {}",LoggerConstants.TFMODELUPDATE,newValue);
+  }
+}

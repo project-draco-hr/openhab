@@ -1,0 +1,9 @@
+{
+  if (len + m_end > MAX_MSG_LEN) {
+    logger.error("warn: truncating excessively long message!");
+    len=MAX_MSG_LEN - m_end;
+  }
+  System.arraycopy(data,0,m_buf,m_end,len);
+  m_end+=len;
+  logger.trace("read buffer: len {} data: {}",m_end,Utils.getHexString(m_buf,m_end));
+}

@@ -1,0 +1,65 @@
+{
+synchronized (this) {
+    savedState=sonosBinding.new SonosZonePlayerState();
+    String currentURI=getCurrentURI();
+    if (currentURI != null) {
+      if (currentURI.contains("x-sonosapi-stream:")) {
+        SonosMetaData track=getTrackMetadata();
+        SonosMetaData current=getCurrentURIMetadata();
+        if (track != null) {
+          savedState.entry=new SonosEntry("",current.getTitle(),"","",track.getAlbumArtUri(),"",current.getUpnpClass(),currentURI);
+        }
+      }
+ else       if (currentURI.contains("x-rincon:")) {
+        savedState.entry=new SonosEntry("","","","","","","",currentURI);
+      }
+ else       if (currentURI.contains("x-rincon-stream:")) {
+        savedState.entry=new SonosEntry("","","","","","","",currentURI);
+      }
+ else       if (currentURI.contains("x-rincon-queue:")) {
+        SonosMetaData queued=getEnqueuedTransportURIMetaData();
+        if (queued != null) {
+          savedState.track=getCurrenTrackNr();
+          if (queued.getUpnpClass().contains("object.container.playlistContainer")) {
+            List<SonosEntry> playLists=getPlayLists();
+            for (            SonosEntry someList : playLists) {
+              if (someList.getTitle().equals(queued.getTitle())) {
+                savedState.entry=new SonosEntry(someList.getId(),someList.getTitle(),someList.getParentId(),"","","",someList.getUpnpClass(),someList.getRes());
+                break;
+              }
+            }
+          }
+ else           if (queued.getUpnpClass().contains("object.container")) {
+            logger.debug("Save State for a container of type {}",queued.getUpnpClass());
+            String existingList="";
+            List<SonosEntry> playLists=getPlayLists();
+            for (            SonosEntry someList : playLists) {
+              if (someList.getTitle().equals("openHAB-" + getUdn())) {
+                existingList=someList.getId();
+                break;
+              }
+            }
+            saveQueue("openHAB-" + getUdn(),existingList);
+            playLists=getPlayLists();
+            for (            SonosEntry someList : playLists) {
+              if (someList.getTitle().equals("openHAB-" + getUdn())) {
+                savedState.entry=new SonosEntry(someList.getId(),someList.getTitle(),someList.getParentId(),"","","",someList.getUpnpClass(),someList.getRes());
+                break;
+              }
+            }
+          }
+        }
+ else {
+          savedState.entry=new SonosEntry("","","","","","","","x-rincon-queue:" + getUdn().getIdentifierString() + "#0");
+        }
+      }
+      savedState.transportState=getTransportState();
+      savedState.volume=getCurrentVolume();
+      savedState.relTime=getPosition();
+    }
+ else {
+      savedState.entry=null;
+    }
+    return true;
+  }
+}

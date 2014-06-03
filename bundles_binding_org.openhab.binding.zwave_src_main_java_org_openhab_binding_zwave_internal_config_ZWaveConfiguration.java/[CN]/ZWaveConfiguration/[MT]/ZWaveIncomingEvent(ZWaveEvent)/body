@@ -1,2 +1,26 @@
 {
+  if (event instanceof ZWaveConfigurationParameterEvent) {
+    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+    nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
+    PendingCfg.Remove(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey(),event.getNodeId(),((ZWaveConfigurationParameterEvent)event).getParameter().getIndex());
+    return;
+  }
+  if (event instanceof ZWaveAssociationEvent) {
+    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+    nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
+    for (    ZWaveNode node : zController.getNodes()) {
+      PendingCfg.Remove(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),event.getNodeId(),((ZWaveAssociationEvent)event).getGroup(),node.getNodeId());
+    }
+    return;
+  }
+  if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+    if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_INTERVAL_REPORT)     return;
+    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+    nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
+    PendingCfg.Remove(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),event.getNodeId());
+    return;
+  }
+  if (event instanceof ZWaveInclusionEvent) {
+    handleInclusionEvent((ZWaveInclusionEvent)event);
+  }
 }

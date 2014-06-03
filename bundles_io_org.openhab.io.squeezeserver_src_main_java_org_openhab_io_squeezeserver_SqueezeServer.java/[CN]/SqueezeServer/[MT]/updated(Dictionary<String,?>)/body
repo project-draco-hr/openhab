@@ -3,6 +3,7 @@
   host=null;
   cliPort=DEFAULT_CLI_PORT;
   webPort=DEFAULT_WEB_PORT;
+  language=DEFAULT_LANGUAGE;
   playersById.clear();
   playersByMacAddress.clear();
   if (config == null || config.isEmpty()) {
@@ -17,16 +18,17 @@
     }
     Matcher serverMatcher=SERVER_CONFIG_PATTERN.matcher(key);
     Matcher playerMatcher=PLAYER_CONFIG_PATTERN.matcher(key);
+    Matcher languageMatcher=LANGUAGE_CONFIG_PATTERN.matcher(key);
     String value=(String)config.get(key);
     if (serverMatcher.matches()) {
       String serverConfig=serverMatcher.group(2);
-      if (serverConfig.equals("host")) {
+      if (serverConfig.equals("host") && StringUtils.isNotBlank(value)) {
         host=value;
       }
- else       if (serverConfig.equals("cliport")) {
+ else       if (serverConfig.equals("cliport") && StringUtils.isNotBlank(value)) {
         cliPort=Integer.valueOf(value);
       }
- else       if (serverConfig.equals("webport")) {
+ else       if (serverConfig.equals("webport") && StringUtils.isNotBlank(value)) {
         webPort=Integer.valueOf(value);
       }
     }
@@ -36,6 +38,9 @@
       SqueezePlayer player=new SqueezePlayer(playerId,macAddress);
       playersById.put(playerId,player);
       playersByMacAddress.put(macAddress,player);
+    }
+ else     if (languageMatcher.matches() && StringUtils.isNotBlank(value)) {
+      language=value;
     }
  else {
       logger.warn("Unexpected or unsupported configuration: " + key + ". Ignoring.");

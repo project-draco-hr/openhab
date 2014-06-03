@@ -1,0 +1,27 @@
+{
+  while (!isInterrupted()) {
+    try {
+      String data=br.readLine();
+      log.debug("Received raw message from CUL: " + data);
+      if ("EOB".equals(data)) {
+        log.warn("(EOB) End of Buffer. Last message lost. Try sending less messages per time slot to the CUL");
+        return;
+      }
+ else       if ("LOVF".equals(data)) {
+        log.warn("(LOVF) Limit Overflow: Last message lost. You are using more than 1% transmitting time. Reduce the number of rf messages");
+        return;
+      }
+      notifyDataReceived(data);
+    }
+ catch (    IOException e) {
+      log.error("Exception while reading from serial port",e);
+      notifyError(e);
+    }
+    try {
+      Thread.sleep(10);
+    }
+ catch (    InterruptedException e) {
+      logger.debug("Error while sleeping in ReceiveThread",e);
+    }
+  }
+}

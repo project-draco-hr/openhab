@@ -1,0 +1,13 @@
+{
+  double offset=TimeOps.tzOffsetInDays(calendar) + TimeOps.dstOffsetInDays(calendar) + Astro.ROUND_UP;
+  double jd=DateOps.calendarToDay(calendar) - offset;
+  ObsInfo oi=new ObsInfo(new Latitude(latitude),new Longitude(longitude));
+  TimePair timePair=RiseSet.getTimes(RiseSet.SUN,jd,oi,new PlanetData());
+  Calendar start=toCalendar(timePair.a);
+  Calendar end=toCalendar(timePair.b);
+  boolean isNextDay=timePair.a != Astro.INVALID && timePair.b != Astro.INVALID && timePair.a > timePair.b;
+  if (isNextDay) {
+    end.add(Calendar.DAY_OF_MONTH,1);
+  }
+  return new DayInfo(start,end);
+}
