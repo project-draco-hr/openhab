@@ -1,0 +1,20 @@
+{
+  logger.debug("set color called");
+  Color rgbColor=color.toColor();
+  short red=(short)rgbColor.getRed();
+  short green=(short)rgbColor.getGreen();
+  short blue=(short)rgbColor.getBlue();
+  logger.debug("rgb is: {}:{}:{}",red,green,blue);
+  short[] reds={red,red,red,red,red,red,red,red,red,red,red,red,red,red,red,red};
+  short[] greens={green,green,green,green,green,green,green,green,green,green,green,green,green,green,green,green};
+  short[] blues={blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue};
+  try {
+    tinkerforgeDevice.setRGBValues(0,(short)15,reds,blues,greens);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

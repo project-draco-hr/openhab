@@ -1,4 +1,5 @@
 {
+  logger.debug("received command {} for item {}",command,itemName);
   for (  TinkerforgeBindingProvider provider : providers) {
     for (    String itemNameP : provider.getItemNames()) {
       if (itemNameP.equals(itemName)) {
@@ -37,8 +38,16 @@
           }
  else           if (command instanceof DecimalType) {
             logger.debug("{} found number command",LoggerConstants.COMMAND);
-            if (mDevice instanceof NumberActor) {
-              ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
+            if (command instanceof HSBType) {
+              logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
+              if (mDevice instanceof ColorActor) {
+                ((ColorActor)mDevice).setColor((HSBType)command);
+              }
+            }
+ else {
+              if (mDevice instanceof NumberActor) {
+                ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
+              }
             }
           }
  else {
