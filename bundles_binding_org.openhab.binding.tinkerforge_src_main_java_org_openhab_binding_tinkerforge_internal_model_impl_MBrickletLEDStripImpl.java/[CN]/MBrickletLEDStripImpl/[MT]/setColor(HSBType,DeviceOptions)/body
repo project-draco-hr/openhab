@@ -46,11 +46,20 @@
         logger.debug("found startLed {}",startLed);
         short range=(short)(Short.parseShort(matcher.group(2).trim()) - startLed + 1);
         logger.debug("found range {}",range);
+        short maxRange=16;
+        while (range > maxRange) {
+          logger.trace("cutting down range: {}",range);
+          range=(short)(range - maxRange);
+          logger.trace("new startled {} range {}",startLed,range);
+          tinkerforgeDevice.setRGBValues(startLed,maxRange,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
+          startLed=startLed + maxRange;
+        }
+        logger.trace("new startled {} range {}",startLed,range);
         tinkerforgeDevice.setRGBValues(startLed,(short)range,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
       }
  else {
         int led=(int)Integer.parseInt(token.trim());
-        logger.debug("found led {}",led);
+        logger.trace("found led {}",led);
         tinkerforgeDevice.setRGBValues(led,(short)1,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
       }
     }
