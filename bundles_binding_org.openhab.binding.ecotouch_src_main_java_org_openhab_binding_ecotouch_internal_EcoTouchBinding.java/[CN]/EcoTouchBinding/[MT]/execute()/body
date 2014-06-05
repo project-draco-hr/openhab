@@ -1,3 +1,49 @@
 {
   logger.debug("execute() method is called!");
+  if (!bindingsExist()) {
+    logger.debug("There is no existing EcoTouch binding configuration => refresh cycle aborted!");
+    return;
+  }
+  try {
+    Set<String> tags=new HashSet<String>();
+    for (    EcoTouchBindingProvider provider : providers) {
+      for (      String tag : provider.getActiveTags()) {
+        tags.add(tag);
+      }
+    }
+    EcoTouchConnector connector=new EcoTouchConnector(ip,username,password,cookies);
+    HashMap<String,Integer> rawvalues=new HashMap<String,Integer>();
+    for (    String tag : tags) {
+      try {
+        int rawvalue=connector.getValue(tag);
+        rawvalues.put(tag,rawvalue);
+      }
+ catch (      Exception e) {
+        continue;
+      }
+    }
+    for (    EcoTouchBindingProvider provider : providers) {
+      for (      EcoTouchTags item : provider.getActiveItems()) {
+        if (!rawvalues.containsKey(item.getTagName())) {
+          continue;
+        }
+        int heatpumpValue=rawvalues.get(item.getTagName());
+        if (item.getType() == EcoTouchTags.Type.Analog) {
+          BigDecimal decimal=new BigDecimal(heatpumpValue).divide(new BigDecimal(10));
+          handleEventType(new DecimalType(decimal),item);
+        }
+ else         if (item.getType() == EcoTouchTags.Type.Word) {
+          handleEventType(new DecimalType(heatpumpValue),item);
+        }
+ else {
+          heatpumpValue>>=item.getBitNum();
+          heatpumpValue&=1;
+          handleEventType(new DecimalType(heatpumpValue),item);
+        }
+      }
+    }
+    cookies=connector.getCookies();
+  }
+  finally {
+  }
 }

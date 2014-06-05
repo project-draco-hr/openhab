@@ -1,6 +1,11 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  EcoTouchBindingConfig config=new EcoTouchBindingConfig();
   logger.debug("processBindingConfiguration() method is called!");
-  addBindingConfig(item,config);
+  if (bindingConfig != null) {
+    EcoTouchBindingConfig config=parseBindingConfig(item,EcoTouchTags.fromString(bindingConfig));
+    addBindingConfig(item,config);
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+  }
 }

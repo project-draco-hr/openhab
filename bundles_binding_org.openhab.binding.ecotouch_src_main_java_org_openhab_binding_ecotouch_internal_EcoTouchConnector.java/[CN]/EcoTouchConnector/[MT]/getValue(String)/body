@@ -1,0 +1,42 @@
+{
+  String url="http://" + ip + "/cgi/readTags?n=1&t1="+ tag;
+  StringBuilder body=null;
+  int loginAttempt=0;
+  while (loginAttempt < 2) {
+    try {
+      URLConnection connection=new URL(url).openConnection();
+      if (cookies != null) {
+        for (        String cookie : cookies) {
+          connection.addRequestProperty("Cookie",cookie.split(";",2)[0]);
+        }
+      }
+      InputStream response=connection.getInputStream();
+      BufferedReader reader=new BufferedReader(new InputStreamReader(response));
+      body=new StringBuilder();
+      String line;
+      while ((line=reader.readLine()) != null) {
+        body.append(line + "\n");
+      }
+      if (body.toString().contains("#" + tag)) {
+        break;
+      }
+      throw new Exception();
+    }
+ catch (    Exception e) {
+      login();
+      loginAttempt++;
+    }
+  }
+  if (body == null || !body.toString().contains("#" + tag)) {
+    logger.debug("Cannot get value for tag '" + tag + "' from Waterkotte EcoTouch.");
+    throw new Exception();
+  }
+  Pattern p=Pattern.compile("#(.+)\\s+S_OK[^0-9-]+([0-9-]+)\\s+([0-9-]+)");
+  Matcher m=p.matcher(body.toString());
+  boolean b=m.find();
+  if (!b) {
+    logger.debug("ill formatted response: '" + body + "'");
+    throw new Exception();
+  }
+  return Integer.parseInt(m.group(3));
+}
