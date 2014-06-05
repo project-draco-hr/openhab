@@ -1,0 +1,32 @@
+{
+  PercentTypeConverter converter=new PercentTypeConverter();
+  Assert.assertEquals(true,converter.convertToBinding(new PercentType(100),getDatapoint("PRESS_SHORT",true,0,1)));
+  Assert.assertEquals(false,converter.convertToBinding(new PercentType(0),getDatapoint("PRESS_SHORT",false,0,1)));
+  Assert.assertEquals(1,converter.convertToBinding(new PercentType(100),getDatapoint("SENSOR",1,0,1)));
+  Assert.assertEquals(0,converter.convertToBinding(new PercentType(0),getDatapoint("SENSOR",0,0,1)));
+  Assert.assertEquals(0.5,converter.convertToBinding(new PercentType(50),getDatapoint("LEVEL",0.0,0,1)));
+  Assert.assertEquals(0.2,converter.convertToBinding(new PercentType(20),getDatapoint("LEVEL",0.0,0,1)));
+  Assert.assertEquals(50,converter.convertToBinding(new PercentType(20),getDatapoint("LEVEL",0,0,250)));
+  Assert.assertEquals(50,converter.convertToBinding(new PercentType(20),getDatapoint("LEVEL",0,0,250)));
+  Assert.assertEquals("50.0",converter.convertToBinding(new PercentType(20),getDatapoint("LEVEL","text",0,250)));
+  Assert.assertEquals("50.0",converter.convertToBinding(new PercentType(20),getDatapoint("LEVEL","text",0,250)));
+  Assert.assertEquals(0.0,converter.convertToBinding(new PercentType(100),getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(1.0,converter.convertToBinding(new PercentType(0),getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(0.2,converter.convertToBinding(new PercentType(80),getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(0.0,converter.convertToBinding(IncreaseDecreaseType.INCREASE,getRollerShutterDatapoint("LEVEL",0.1)));
+  Assert.assertEquals(0.3,converter.convertToBinding(IncreaseDecreaseType.DECREASE,getRollerShutterDatapoint("LEVEL",0.2)));
+  Assert.assertEquals(20,converter.convertToBinding(IncreaseDecreaseType.INCREASE,getDatapoint("LEVEL",10,0,100)));
+  Assert.assertEquals(40,converter.convertToBinding(IncreaseDecreaseType.DECREASE,getDatapoint("LEVEL",50,0,100)));
+  Assert.assertEquals(100,converter.convertToBinding(IncreaseDecreaseType.INCREASE,getDatapoint("LEVEL",100,0,100)));
+  Assert.assertEquals(0,converter.convertToBinding(IncreaseDecreaseType.DECREASE,getDatapoint("LEVEL",0,0,100)));
+  Assert.assertEquals(100,converter.convertToBinding(OnOffType.ON,getDatapoint("LEVEL",10,0,100)));
+  Assert.assertEquals(90,converter.convertToBinding(OnOffType.ON,getDatapoint("LEVEL",10,0,90)));
+  Assert.assertEquals(0,converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL",10,0,90)));
+  Assert.assertEquals(0.0,converter.convertToBinding(OnOffType.ON,getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(1.0,converter.convertToBinding(OnOffType.OFF,getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(100,converter.convertToBinding(UpDownType.UP,getDatapoint("LEVEL",10,0,100)));
+  Assert.assertEquals(90,converter.convertToBinding(UpDownType.UP,getDatapoint("LEVEL",10,0,90)));
+  Assert.assertEquals(0,converter.convertToBinding(UpDownType.DOWN,getDatapoint("LEVEL",10,0,90)));
+  Assert.assertEquals(0.0,converter.convertToBinding(UpDownType.DOWN,getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(1.0,converter.convertToBinding(UpDownType.UP,getRollerShutterDatapoint("LEVEL",0.0)));
+}

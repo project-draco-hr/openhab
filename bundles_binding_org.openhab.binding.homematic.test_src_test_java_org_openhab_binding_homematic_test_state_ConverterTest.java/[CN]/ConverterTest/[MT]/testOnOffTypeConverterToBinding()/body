@@ -1,0 +1,25 @@
+{
+  OnOffTypeConverter converter=new OnOffTypeConverter();
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.ON,getDatapoint("PRESS_SHORT",true)));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.OFF,getDatapoint("PRESS_SHORT",false)));
+  Assert.assertEquals("ON",converter.convertToBinding(OnOffType.ON,getDatapoint("LEVEL","")));
+  Assert.assertEquals("OFF",converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL","")));
+  Assert.assertEquals(1,converter.convertToBinding(OnOffType.ON,getDatapoint("LEVEL",1,0,1)));
+  Assert.assertEquals(0,converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL",0)));
+  Assert.assertEquals(5,converter.convertToBinding(OnOffType.ON,getDatapoint("LEVEL",5,0,5)));
+  Assert.assertEquals(0,converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL",0)));
+  Assert.assertEquals(0,converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL",1,0,5)));
+  Assert.assertEquals(0,converter.convertToBinding(OnOffType.OFF,getDatapoint("LEVEL",4,0,5)));
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.ON,getDatapoint("STATE",true)));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.OFF,getDatapoint("STATE",false)));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.ON,getDatapoint("SENSOR",true)));
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.OFF,getDatapoint("SENSOR",false)));
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.ON,getDatapoint("STATE",true)));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.OFF,getDatapoint("STATE",false)));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.ON,getDatapoint("STATE",true,0,0,"HM-Sec-SC")));
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.OFF,getDatapoint("STATE",false,0,0,"HM-Sec-SC")));
+  Assert.assertEquals(false,converter.convertToBinding(OnOffType.ON,getDatapoint("STATE",true,0,0,"HM-Sec-SC-2")));
+  Assert.assertEquals(true,converter.convertToBinding(OnOffType.OFF,getDatapoint("STATE",false,0,0,"HM-Sec-SC-2")));
+  Assert.assertEquals(1.0,converter.convertToBinding(OnOffType.ON,getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(0.0,converter.convertToBinding(OnOffType.OFF,getRollerShutterDatapoint("LEVEL",0.0)));
+}

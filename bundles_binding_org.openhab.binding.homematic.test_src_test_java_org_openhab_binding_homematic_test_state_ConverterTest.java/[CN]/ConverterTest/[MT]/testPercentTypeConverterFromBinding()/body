@@ -1,0 +1,21 @@
+{
+  PercentTypeConverter converter=new PercentTypeConverter();
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("PRESS_SHORT",1,0,1)));
+  Assert.assertEquals(new PercentType(0),converter.convertFromBinding(getDatapoint("PRESS_SHORT",0,0,1)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("PRESS_SHORT",true,0,1)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("PRESS_SHORT",true,0,5)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("PRESS_SHORT",true,0.0,5.4)));
+  Assert.assertEquals(new PercentType(0),converter.convertFromBinding(getDatapoint("PRESS_SHORT",false,0,1)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("SENSOR",1,0,1)));
+  Assert.assertEquals(new PercentType(0),converter.convertFromBinding(getDatapoint("SENSOR",0,0,1)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("LEVEL",1.0,0.0,1.0)));
+  Assert.assertEquals(new PercentType(100),converter.convertFromBinding(getDatapoint("LEVEL",3.4,0.0,3.4)));
+  Assert.assertEquals(new PercentType(40),converter.convertFromBinding(getDatapoint("LEVEL",0.4,0.0,1.0)));
+  Assert.assertEquals(new PercentType(80),converter.convertFromBinding(getDatapoint("LEVEL",0.8,0.0,1.0)));
+  Assert.assertEquals(new PercentType(60),converter.convertFromBinding(getRollerShutterDatapoint("LEVEL",0.4)));
+  Assert.assertEquals(new PercentType(20),converter.convertFromBinding(getRollerShutterDatapoint("LEVEL",0.8)));
+  Assert.assertEquals(new PercentType(20),converter.convertFromBinding(getDatapoint("LEVEL",50,0,250)));
+  Assert.assertEquals(new PercentType(20),converter.convertFromBinding(getDatapoint("LEVEL",50.0,0.0,250.0)));
+  Assert.assertEquals(new PercentType(20),converter.convertFromBinding(getDatapoint("LEVEL","50",0,250)));
+  Assert.assertEquals(new PercentType(20),converter.convertFromBinding(getDatapoint("LEVEL","50.0",0.0,250.0)));
+}
