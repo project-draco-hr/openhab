@@ -1,0 +1,64 @@
+{
+  logger.debug("set color called");
+  char[] colorMapping={'r','g','b'};
+  String leds=null;
+  if (opts != null) {
+    if (opts.containsKey(COLOR_MAPPING)) {
+      logger.debug("custom color mapping {} ",opts.getOption(COLOR_MAPPING));
+      colorMapping=opts.getOption(COLOR_MAPPING).toCharArray();
+    }
+    if (opts.containsKey(LEDS)) {
+      leds=opts.getOption(LEDS).trim();
+      logger.debug("leds: {}",leds);
+    }
+ else {
+    }
+  }
+  if (leds == null || leds.length() == 0) {
+    logger.error("\"leds\" option missing or empty, items configuration has to be fixed!");
+    return;
+  }
+  Color rgbColor=color.toColor();
+  short red=(short)rgbColor.getRed();
+  short green=(short)rgbColor.getGreen();
+  short blue=(short)rgbColor.getBlue();
+  logger.debug("rgb is: {}:{}:{}",red,green,blue);
+  HashMap<Character,short[]> colorMap=new HashMap<Character,short[]>(3);
+  short[] reds={red,red,red,red,red,red,red,red,red,red,red,red,red,red,red,red};
+  short[] greens={green,green,green,green,green,green,green,green,green,green,green,green,green,green,green,green};
+  short[] blues={blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue};
+  colorMap.put('r',reds);
+  colorMap.put('g',greens);
+  colorMap.put('b',blues);
+  try {
+    String[] tokens=leds.split("\\|");
+    for (int i=0; i < tokens.length; i++) {
+      String token=tokens[i].trim();
+      logger.trace("led token {}",token);
+      if (token.length() == 0) {
+        logger.trace("ignoring empty token");
+        continue;
+      }
+      Matcher matcher=rangePattern.matcher(token);
+      if (matcher.find()) {
+        logger.trace("found range");
+        int startLed=Integer.parseInt(matcher.group(1).trim());
+        logger.debug("found startLed {}",startLed);
+        short range=(short)(Short.parseShort(matcher.group(2).trim()) - startLed + 1);
+        logger.debug("found range {}",range);
+        tinkerforgeDevice.setRGBValues(startLed,(short)range,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
+      }
+ else {
+        int led=(int)Integer.parseInt(token.trim());
+        logger.debug("found led {}",led);
+        tinkerforgeDevice.setRGBValues(led,(short)1,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
+      }
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}
