@@ -1,4 +1,5 @@
 {
+  logger.trace("bindingChanged {}",itemName);
   ZWaveBindingProvider zProvider=(ZWaveBindingProvider)provider;
   if (zProvider != null) {
     ZWaveBindingConfig bindingConfig=zProvider.getZwaveBindingConfig(itemName);
@@ -6,5 +7,6 @@
       converterHandler.executeRefresh(zProvider,itemName,true);
     }
   }
+  rebuildPollingTable();
   super.bindingChanged(provider,itemName);
 }

@@ -1,0 +1,12 @@
+{
+  int nodeId=lastSentMessage.getMessagePayloadByte(0);
+  logger.debug("NODE {}: SetSucNodeID node response.",nodeId);
+  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
+    logger.debug("NODE {}: SetSucNodeID command OK.",nodeId);
+  }
+ else {
+    logger.error("NODE {}: SetSucNodeID command failed.",nodeId);
+    checkTransactionComplete(lastSentMessage,incomingMessage);
+  }
+  return false;
+}

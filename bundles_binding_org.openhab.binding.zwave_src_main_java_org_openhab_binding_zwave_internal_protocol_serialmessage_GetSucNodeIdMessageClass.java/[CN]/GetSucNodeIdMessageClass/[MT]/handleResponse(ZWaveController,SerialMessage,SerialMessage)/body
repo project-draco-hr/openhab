@@ -1,0 +1,12 @@
+{
+  logger.debug("Got SUC NodeID response.");
+  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
+    logger.debug("NODE {}: Node is SUC.",incomingMessage.getMessagePayloadByte(0));
+    sucNode=incomingMessage.getMessagePayloadByte(0);
+  }
+ else {
+    logger.debug("No SUC Node is set");
+  }
+  checkTransactionComplete(lastSentMessage,incomingMessage);
+  return false;
+}

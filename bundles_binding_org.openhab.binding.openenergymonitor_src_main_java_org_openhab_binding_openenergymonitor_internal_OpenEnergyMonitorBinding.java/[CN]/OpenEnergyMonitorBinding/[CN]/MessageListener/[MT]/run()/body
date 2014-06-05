@@ -9,6 +9,8 @@
   }
  catch (  OpenEnergyMonitorException e) {
     logger.error("Error occured when connecting to Open Energy Monitor device",e);
+    logger.warn("Closing Open Energy Monitor message listener");
+    interrupted=true;
   }
   while (!interrupted) {
     try {

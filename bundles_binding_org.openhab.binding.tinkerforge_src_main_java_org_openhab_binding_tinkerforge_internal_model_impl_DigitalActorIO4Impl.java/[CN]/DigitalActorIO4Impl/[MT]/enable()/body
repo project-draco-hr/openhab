@@ -1,0 +1,37 @@
+{
+  logger.debug("{} enable called on DigitalActorIO4",LoggerConstants.TFINIT);
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("defaultState"))) {
+      logger.debug("{} setDefaultState: {}",LoggerConstants.TFINIT,tfConfig.getDefaultState());
+      setDefaultState(tfConfig.getDefaultState());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("keepOnReconnect"))) {
+      logger.debug("{} keepOnReconnect: {}",LoggerConstants.TFINIT,tfConfig.isKeepOnReconnect());
+      setKeepOnReconnect(tfConfig.isKeepOnReconnect());
+    }
+  }
+  String defaultState=getDefaultState();
+  try {
+    if (getMbrick().getBrickd().isReconnected() && isKeepOnReconnect()) {
+      logger.debug("{} reconnected: no new port configuration set for {}",LoggerConstants.TFINIT,getSubId());
+    }
+ else     if (defaultState == null || defaultState.equals("keep")) {
+      logger.debug("{} keep: no new port configuration set",LoggerConstants.TFINIT);
+    }
+ else     if (defaultState.equals("true")) {
+      logger.debug("{} setPortconfiguration to state: true",LoggerConstants.TFINIT);
+      getMbrick().getTinkerforgeDevice().setConfiguration((short)mask,BrickletIO4.DIRECTION_OUT,true);
+    }
+ else     if (defaultState.equals("false")) {
+      logger.debug("{} setPortconfiguration to state: false",LoggerConstants.TFINIT);
+      getMbrick().getTinkerforgeDevice().setConfiguration((short)mask,BrickletIO4.DIRECTION_OUT,false);
+    }
+    fetchDigitalValue();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

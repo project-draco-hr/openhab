@@ -1,0 +1,11 @@
+{
+  DecimalValue newValue=Tools.calculate(distance);
+  logger.trace("{} got new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+  if (newValue.compareTo(getSensorValue(),getThreshold()) != 0) {
+    logger.trace("{} setting new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+    setSensorValue(newValue);
+  }
+ else {
+    logger.trace("{} omitting new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+  }
+}
