@@ -1,6 +1,6 @@
 {
-  if (itemName != null) {
-    JointSpaceBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  if (itemName != null && !this.providers.isEmpty()) {
+    JointSpaceBindingProvider provider=this.providers.iterator().next();
     if (provider == null) {
       logger.warn("Doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
       return;
