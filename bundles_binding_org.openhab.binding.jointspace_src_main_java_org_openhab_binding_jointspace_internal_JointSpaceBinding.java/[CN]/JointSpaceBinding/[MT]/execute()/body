@@ -9,15 +9,15 @@
     }
  else {
       logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{ip,0,timeout});
+      return;
     }
   }
  catch (  SocketTimeoutException se) {
     logger.debug("timed out while connecting to host '{}' port '{}' timeout '{}'",new Object[]{ip,0,timeout});
+    return;
   }
 catch (  IOException ioe) {
     logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{ip,0,timeout});
-  }
-  if (!success) {
     return;
   }
   for (  JointSpaceBindingProvider provider : providers) {
