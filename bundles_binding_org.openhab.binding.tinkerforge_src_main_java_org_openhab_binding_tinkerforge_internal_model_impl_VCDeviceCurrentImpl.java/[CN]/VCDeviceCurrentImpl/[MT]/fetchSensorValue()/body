@@ -1,0 +1,13 @@
+{
+  try {
+    int current=tinkerforgeDevice.getCurrent();
+    DecimalValue value=Tools.calculate(current);
+    setSensorValue(value);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

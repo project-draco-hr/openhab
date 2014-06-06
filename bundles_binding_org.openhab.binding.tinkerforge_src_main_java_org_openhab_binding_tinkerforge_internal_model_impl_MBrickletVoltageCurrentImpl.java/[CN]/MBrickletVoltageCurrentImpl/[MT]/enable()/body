@@ -1,0 +1,26 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("averaging"))) {
+      setAveraging(tfConfig.getAveraging());
+      logger.debug("{} VoltageCurrent uid {} averaging {}",LoggerConstants.TFINIT,getUid(),getAveraging());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("voltageConversionTime"))) {
+      setVoltageConversionTime(tfConfig.getVoltageConversionTime());
+      logger.debug("{} VoltageCurrent uid {} voltageConversionTime {}",LoggerConstants.TFINIT,getUid(),getVoltageConversionTime());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("currentConversionTime"))) {
+      setVoltageConversionTime(tfConfig.getCurrentConversionTime());
+      logger.debug("{} VoltageCurrent uid {} currentConversionTime {}",LoggerConstants.TFINIT,getUid(),getCurrentConversionTime());
+    }
+  }
+  tinkerforgeDevice=new BrickletVoltageCurrent(getUid(),getIpConnection());
+  try {
+    tinkerforgeDevice.setConfiguration(getAveraging(),getVoltageConversionTime(),getCurrentConversionTime());
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

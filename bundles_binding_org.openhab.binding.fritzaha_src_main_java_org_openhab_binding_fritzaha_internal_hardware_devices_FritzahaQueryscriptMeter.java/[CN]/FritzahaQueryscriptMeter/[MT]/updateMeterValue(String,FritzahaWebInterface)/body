@@ -1,9 +1,24 @@
 {
   if (type == MeterType.ENERGY) {
-    return;
+    if (timedef != null) {
+      logger.debug("Getting meter data for Device ID " + id);
+      String path="net/home_auto_query.lua";
+      String timestr;
+      if (timedef == TimeDef.MINUTES)       timestr="10";
+ else       if (timedef == TimeDef.MONTH)       timestr="month";
+ else       if (timedef == TimeDef.DAY)       timestr="24h";
+ else       timestr="year";
+      String args="xhr=1&command=EnergyStats_" + timestr + "&id="+ id;
+      webIface.asyncGet(path,args,new FritzahaQueryscriptUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+    }
+ else {
+      return;
+    }
   }
-  logger.debug("Getting meter data for Device ID " + id);
-  String path="net/home_auto_query.lua";
-  String args="xhr=1&command=MultiMeterState&id=" + id;
-  webIface.asyncGet(path,args,new FritzahaQueryscriptUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+ else {
+    logger.debug("Getting meter data for Device ID " + id);
+    String path="net/home_auto_query.lua";
+    String args="xhr=1&command=MultiMeterState&id=" + id;
+    webIface.asyncGet(path,args,new FritzahaQueryscriptUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+  }
 }

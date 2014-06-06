@@ -34,12 +34,27 @@ this.zwaveNodes.put(nodeId,node);
 node.advanceNodeStage(NodeStage.PROTOINFO);
 }
 break;
+case GetSucNodeId:
+this.sucID=((GetSucNodeIdMessageClass)processor).getSucNodeId();
+if (this.setSUC == true && this.sucID == 0) {
+this.enqueue(new EnableSucMessageClass().doRequest(EnableSucMessageClass.SUCType.SERVER));
+this.enqueue(new SetSucNodeMessageClass().doRequest(this.ownNodeId,SetSucNodeMessageClass.SUCType.SERVER));
+}
+ else if (this.setSUC == false && this.sucID == this.ownNodeId) {
+this.enqueue(new EnableSucMessageClass().doRequest(EnableSucMessageClass.SUCType.NONE));
+this.enqueue(new SetSucNodeMessageClass().doRequest(this.ownNodeId,SetSucNodeMessageClass.SUCType.NONE));
+}
+this.enqueue(new GetControllerCapabilitiesMessageClass().doRequest());
+break;
 case SerialApiGetCapabilities:
 this.serialAPIVersion=((SerialApiGetCapabilitiesMessageClass)processor).getSerialAPIVersion();
 this.manufactureId=((SerialApiGetCapabilitiesMessageClass)processor).getManufactureId();
 this.deviceId=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceId();
 this.deviceType=((SerialApiGetCapabilitiesMessageClass)processor).getDeviceType();
 this.enqueue(new SerialApiGetInitDataMessageClass().doRequest());
+break;
+case GetControllerCapabilities:
+this.controllerType=((GetControllerCapabilitiesMessageClass)processor).getDeviceType();
 break;
 default :
 break;

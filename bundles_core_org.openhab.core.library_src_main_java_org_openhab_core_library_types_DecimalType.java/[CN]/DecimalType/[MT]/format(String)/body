@@ -1,8 +1,10 @@
 {
-  if (pattern.contains("%d")) {
-    return String.format(pattern,value.toBigInteger());
+  try {
+    return String.format(pattern,value.toBigIntegerExact());
   }
- else {
-    return String.format(pattern,value);
+ catch (  ArithmeticException ae) {
   }
+catch (  IllegalFormatConversionException ifce) {
+  }
+  return String.format(pattern,value);
 }

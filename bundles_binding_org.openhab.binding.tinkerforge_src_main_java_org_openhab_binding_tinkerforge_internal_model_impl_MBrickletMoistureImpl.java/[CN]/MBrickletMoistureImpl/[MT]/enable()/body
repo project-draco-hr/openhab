@@ -1,0 +1,28 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("threshold"))) {
+      setThreshold(tfConfig.getThreshold());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("movingAverage"))) {
+      logger.debug("{} setting movingAverage: {}",LoggerConstants.TFINIT,tfConfig.getMovingAverage());
+      setMovingAverage(tfConfig.getMovingAverage());
+    }
+  }
+  try {
+    tinkerforgeDevice=new BrickletMoisture(getUid(),getIpConnection());
+    tinkerforgeDevice.setMoistureCallbackPeriod(getCallbackPeriod());
+    tinkerforgeDevice.setMovingAverage(getMovingAverage());
+    listener=new MoistureListener();
+    tinkerforgeDevice.addMoistureListener(listener);
+    fetchSensorValue();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

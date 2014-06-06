@@ -1,0 +1,19 @@
+{
+  String value;
+  if (state instanceof PercentType) {
+    value=((PercentType)state).toBigDecimal().toString();
+  }
+ else   if (state instanceof DateTimeType) {
+    value=String.valueOf(((DateTimeType)state).getCalendar().getTime().getTime());
+  }
+ else   if (state instanceof DecimalType) {
+    value=((DecimalType)state).toBigDecimal().toString();
+  }
+ else   if (state instanceof OnOffType) {
+    value=((OnOffType)state) == OnOffType.ON ? DIGITAL_VALUE_ON : DIGITAL_VALUE_OFF;
+  }
+ else {
+    value=state.toString();
+  }
+  return value;
+}

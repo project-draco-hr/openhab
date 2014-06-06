@@ -1,4 +1,5 @@
 {
+  logger.debug("received command {} for item {}",command,itemName);
   for (  TinkerforgeBindingProvider provider : providers) {
     for (    String itemNameP : provider.getItemNames()) {
       if (itemNameP.equals(itemName)) {
@@ -35,11 +36,25 @@
               ((MTextActor)mDevice).setText(command.toString());
             }
           }
+ else           if (command instanceof DecimalType) {
+            logger.debug("{} found number command",LoggerConstants.COMMAND);
+            if (command instanceof HSBType) {
+              logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
+              if (mDevice instanceof ColorActor) {
+                ((ColorActor)mDevice).setColor((HSBType)command,provider.getDeviceOptions(itemName));
+              }
+            }
+ else {
+              if (mDevice instanceof NumberActor) {
+                ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
+              }
+            }
+          }
  else {
             logger.error("{} got unknown command type: {}",LoggerConstants.COMMAND,command.toString());
           }
         }
- else         logger.error("{} no tinkerforge device found for command",LoggerConstants.COMMAND);
+ else         logger.error("{} no tinkerforge device found for command for item uid: {} subId: {}",LoggerConstants.COMMAND,deviceUid,deviceSubId);
       }
     }
   }

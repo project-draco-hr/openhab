@@ -1,0 +1,27 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=0; i < 4; i++) {
+    DigitalSensorIO4 sensor=factory.createDigitalSensorIO4();
+    sensor.setUid(getUid());
+    String genericDeviceId=String.valueOf(i);
+    String subId="in" + genericDeviceId;
+    sensor.setSubId(subId);
+    sensor.setPin(i);
+    sensor.setGenericDeviceId(genericDeviceId);
+    sensor.init();
+    sensor.setMbrick(this);
+    logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subId);
+  }
+  for (int i=0; i < 4; i++) {
+    DigitalActorIO4 actor=factory.createDigitalActorIO4();
+    actor.setUid(getUid());
+    String genericDeviceId=String.valueOf(i);
+    String subId="out" + genericDeviceId;
+    actor.setSubId(subId);
+    actor.setPin(i);
+    actor.setGenericDeviceId(genericDeviceId);
+    actor.init();
+    actor.setMbrick(this);
+    logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subId);
+  }
+}

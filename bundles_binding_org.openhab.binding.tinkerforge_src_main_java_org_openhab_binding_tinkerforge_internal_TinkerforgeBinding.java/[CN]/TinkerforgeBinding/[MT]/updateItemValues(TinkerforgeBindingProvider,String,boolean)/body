@@ -1,0 +1,28 @@
+{
+  String deviceUid=provider.getUid(itemName);
+  Item item=provider.getItem(itemName);
+  String deviceSubId=provider.getSubId(itemName);
+  String deviceName=provider.getName(itemName);
+  if (deviceName != null) {
+    String[] ids=getDeviceIdsForDeviceName(deviceName);
+    deviceUid=ids[0];
+    deviceSubId=ids[1];
+  }
+  MBaseDevice mDevice=tinkerforgeEcosystem.getDevice(deviceUid,deviceSubId);
+  if (mDevice != null && mDevice.getEnabledA().get()) {
+    if (only_poll_enabled && !mDevice.isPoll()) {
+      logger.debug("{} omitting fetch value for no poll{}:{}",LoggerConstants.ITEMUPDATE,deviceUid,deviceSubId);
+    }
+ else {
+      if (mDevice instanceof MSensor) {
+        ((MSensor<?>)mDevice).fetchSensorValue();
+      }
+ else       if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
+        ((MInSwitchActor)mDevice).fetchSwitchState();
+      }
+ else       if (mDevice instanceof DigitalActor) {
+        ((DigitalActor)mDevice).fetchDigitalValue();
+      }
+    }
+  }
+}

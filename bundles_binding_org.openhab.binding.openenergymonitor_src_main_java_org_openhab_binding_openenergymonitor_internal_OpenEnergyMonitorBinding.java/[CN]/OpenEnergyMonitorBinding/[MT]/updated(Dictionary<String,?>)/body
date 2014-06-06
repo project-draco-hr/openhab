@@ -34,6 +34,16 @@
     if (parsingRules != null) {
       dataParser=new OpenEnergyMonitorDataParser(parsingRules);
     }
+    if (messageListener != null) {
+      logger.debug("Close previous message listener");
+      messageListener.setInterrupted(true);
+      try {
+        messageListener.join();
+      }
+ catch (      InterruptedException e) {
+        logger.info("Previous message listener closing interrupted",e);
+      }
+    }
     messageListener=new MessageListener();
     messageListener.start();
   }

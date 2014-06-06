@@ -16,8 +16,6 @@
     }
   }
   serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE | TRANSMIT_OPTION_EXPLORE);
-  if (++sentDataPointer > 0xFF)   sentDataPointer=1;
-  serialMessage.setCallbackId(sentDataPointer);
-  logger.debug("Callback ID = {}",sentDataPointer);
+  serialMessage.setCallbackId(getCallbackId());
   this.enqueue(serialMessage);
 }

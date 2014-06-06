@@ -13,6 +13,13 @@
       processValue((MBaseDevice)switchActor,notification);
     }
   }
+ else   if (notification.getNotifier() instanceof DigitalActor) {
+    DigitalActor actor=(DigitalActor)notification.getNotifier();
+    int featureID=notification.getFeatureID(DigitalActor.class);
+    if (featureID == ModelPackage.DIGITAL_ACTOR__DIGITAL_STATE) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
  else {
     logger.trace("{} ignored notifier {}",LoggerConstants.TFMODELUPDATE,notification.getNotifier());
   }
