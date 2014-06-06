@@ -5,6 +5,7 @@
       boolean isBinRpc=context.getConfig().isBinRpc();
       ccuCallbackServer=isBinRpc ? new BinRpcCallbackServer(this) : new XmlRpcCallbackServer(this);
       context.getTclRegaScriptClient().start();
+      context.getStateHolder().init();
       context.getStateHolder().loadDatapoints();
       context.getStateHolder().loadVariables();
       itemDisabler=new ItemDisabler();
