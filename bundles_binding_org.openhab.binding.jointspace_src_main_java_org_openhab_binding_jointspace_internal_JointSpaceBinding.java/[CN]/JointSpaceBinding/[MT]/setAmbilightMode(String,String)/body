@@ -1,6 +1,6 @@
 {
   String url="http://" + host + "/1/ambilight/mode";
-  StringBuilder content=new StringBuilder();
-  content.append("{\"current\":\"" + mode + "\"}");
-  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  String content="{\"current\":\"" + mode + "\"}";
+  logger.trace(content);
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
 }

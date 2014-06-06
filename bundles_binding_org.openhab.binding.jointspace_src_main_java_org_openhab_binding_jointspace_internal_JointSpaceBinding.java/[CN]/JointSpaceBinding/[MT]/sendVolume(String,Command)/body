@@ -1,8 +1,7 @@
 {
-  logger.debug("Sending volume to host {} for command {}" + host,command.toString());
+  logger.debug("Sending volume to host {} for command {}",host,command.toString());
   volumeConfig conf=getTVVolume(host);
   String url="http://" + host + "/1/audio/volume";
-  StringBuilder content=new StringBuilder();
   int newvalue=conf.volume;
   if (command instanceof DecimalType) {
     logger.debug("Setting volume to decimal type");
@@ -24,9 +23,9 @@
   }
   newvalue=Math.min(newvalue,conf.max);
   newvalue=Math.max(newvalue,conf.min);
-  content.append("{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}");
-  logger.trace(content.toString());
-  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  String content="{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}";
+  logger.trace(content);
+  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
   if (retval == null) {
     logger.warn("Sending Volume failed");
   }

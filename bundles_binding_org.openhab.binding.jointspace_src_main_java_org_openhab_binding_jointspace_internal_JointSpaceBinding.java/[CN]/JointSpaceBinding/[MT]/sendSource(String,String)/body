@@ -1,8 +1,7 @@
 {
   String url="http://" + host + "/1/sources/current";
-  StringBuilder content=new StringBuilder();
-  content.append("{\"id\":\"" + source + "\"}");
-  logger.debug("Switching source of host " + host + " to "+ source);
+  String content="{\"id\":\"" + source + "\"}";
+  logger.debug("Switching source of host {} to {}",host,source);
   logger.trace(content.toString());
-  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
 }
