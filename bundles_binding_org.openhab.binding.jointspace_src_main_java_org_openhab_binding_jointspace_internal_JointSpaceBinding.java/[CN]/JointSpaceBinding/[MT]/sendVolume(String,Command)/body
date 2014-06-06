@@ -25,11 +25,5 @@
   newvalue=Math.max(newvalue,conf.min);
   String content="{\"muted\":\"" + conf.mute + "\", \"current\":\""+ newvalue+ "\"}";
   logger.trace(content);
-  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
-  if (retval == null) {
-    logger.warn("Sending Volume failed");
-  }
- else {
-    logger.debug("Sending Volume successfull");
-  }
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
 }

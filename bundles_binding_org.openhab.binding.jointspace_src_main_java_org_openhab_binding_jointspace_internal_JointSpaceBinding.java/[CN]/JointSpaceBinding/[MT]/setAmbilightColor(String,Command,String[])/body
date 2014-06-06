@@ -24,11 +24,5 @@
   }
   content.append("}");
   logger.trace("Trying to post json for ambilight: {}",content.toString());
-  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
-  if (retval == null) {
-    logger.warn("Sending ambilight color failed");
-  }
- else {
-    logger.debug("Sending ambilight color successfull");
-  }
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content.toString()),CONTENT_TYPE_JSON,1000);
 }

@@ -3,11 +3,5 @@
   String url="http://" + host + "/1/input/key";
   String content="{\"key\":\"" + key + "\"}";
   logger.trace(content);
-  String retval=HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
-  if (retval == null) {
-    logger.warn("Sending key failed");
-  }
- else {
-    logger.debug("Sending key successfull");
-  }
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
 }
