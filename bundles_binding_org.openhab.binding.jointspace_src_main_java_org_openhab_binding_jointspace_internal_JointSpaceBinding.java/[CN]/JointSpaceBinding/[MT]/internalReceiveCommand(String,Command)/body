@@ -20,25 +20,25 @@
       }
     }
     if (tvCommandString == null) {
-      logger.warn("Unrecognized command \"" + command.toString() + "\"");
+      logger.warn("Unrecognized command \"{}\"",command.toString());
       return;
     }
     if (tvCommandString.contains("key")) {
       logger.debug("Found a Key command: " + tvCommandString);
       String[] commandlist=tvCommandString.split("\\.");
       if (commandlist.length != 2) {
-        logger.warn("wrong number of arguments for key command \"" + tvCommandString + "\". Should be key.X");
+        logger.warn("wrong number of arguments for key command \"{}\". Should be key.X",tvCommandString);
         return;
       }
       String key=commandlist[1];
       sendTVCommand(key,ip + ":" + port);
     }
  else     if (tvCommandString.contains("ambilight")) {
-      logger.debug("Found an ambilight command: " + tvCommandString);
+      logger.debug("Found an ambilight command: {}",tvCommandString);
       String[] commandlist=tvCommandString.split("\\.");
       String[] layer=command2LayerString(tvCommandString);
       if (commandlist.length < 2) {
-        logger.warn("wrong number of arguments for ambilight command \"" + tvCommandString + "\". Should be at least ambilight.color, ambilight.mode.X, etc...");
+        logger.warn("wrong number of arguments for ambilight command \"{}\". Should be at least ambilight.color, ambilight.mode.X, etc...",tvCommandString);
         return;
       }
       if (commandlist[1].contains("color")) {
@@ -46,27 +46,27 @@
       }
  else       if (commandlist[1].contains("mode")) {
         if (commandlist.length != 3) {
-          logger.warn("wrong number of arguments for ambilight.mode command \"" + tvCommandString + "\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert");
+          logger.warn("wrong number of arguments for ambilight.mode command \"{}\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert",tvCommandString);
           return;
         }
         setAmbilightMode(commandlist[2],ip + ":" + port);
       }
     }
  else     if (tvCommandString.contains("volume")) {
-      logger.debug("Found a Volume command: " + tvCommandString);
+      logger.debug("Found a Volume command: {}",tvCommandString);
       sendVolume(ip + ":" + port,command);
     }
  else     if (tvCommandString.contains("source")) {
-      logger.debug("Found a Source command: " + tvCommandString);
+      logger.debug("Found a Source command: {}",tvCommandString);
       String[] commandlist=tvCommandString.split("\\.");
       if (commandlist.length < 2) {
-        logger.warn("wrong number of arguments for source command \"" + tvCommandString + "\". Should be at least mode.X...");
+        logger.warn("wrong number of arguments for source command \"{}\". Should be at least mode.X...",tvCommandString);
         return;
       }
       sendSource(ip + ":" + port,commandlist[1]);
     }
  else {
-      logger.warn("Unrecognized tv command \"" + tvCommandString + "\". Only key.X or ambilight[].X is supported");
+      logger.warn("Unrecognized tv command \"{}\". Only key.X or ambilight[].X is supported",tvCommandString);
       return;
     }
   }
