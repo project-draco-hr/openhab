@@ -1,9 +1,15 @@
 {
+  boolean systemMsg=false;
   logger.debug("MaxCulSender Received " + data);
   if (data.startsWith("Z")) {
     MaxCulMsgType msgType=BaseMsg.getMsgType(data);
     if (msgType == MaxCulMsgType.ACK) {
+      systemMsg=true;
       AckMsg msg=new AckMsg(data);
+      if (msg.dstAddrStr.compareToIgnoreCase(this.srcAddr) != 0) {
+        logger.debug("Message not for us");
+        return;
+      }
       if (pendingAckQueue.containsKey(msg.msgCount) && msg.dstAddrStr.compareTo(srcAddr) == 0) {
         SenderQueueItem qi=pendingAckQueue.remove(msg.msgCount);
         if ((qi.msg.dstAddrStr.compareToIgnoreCase(msg.srcAddrStr) == 0) && (qi.msg.srcAddrStr.compareToIgnoreCase(msg.dstAddrStr) == 0)) {
@@ -16,9 +22,14 @@
  else       logger.info("Got ACK for message " + msg.msgCount + " but it wasn't in the queue");
     }
  else     if (msgType == MaxCulMsgType.TIME_INFO) {
+      systemMsg=true;
       TimeInfoMsg msg=new TimeInfoMsg(data);
       if (msg.dstAddrStr.compareTo(srcAddr) == 0)       sendTimeInfo(msg.srcAddrStr);
+ else {
+        logger.debug("Got TimeInfo request not for us");
+        return;
+      }
     }
-    this.mcbmp.MaxCulMsgReceived(data);
+    if (!systemMsg)     this.mcbmp.MaxCulMsgReceived(data);
   }
 }
