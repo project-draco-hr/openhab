@@ -1,12 +1,20 @@
 {
-  broadcaster.getBroadcasterConfig().setBroadcasterCache(new UUIDBroadcasterCache());
   broadcaster.getBroadcasterConfig().addFilter(new PerRequestBroadcastFilter(){
     @Override public BroadcastAction filter(    Object originalMessage,    Object message){
       return new BroadcastAction(ACTION.CONTINUE,message);
     }
     @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
-      HttpServletRequest request=resource.getRequest();
-      return new BroadcastAction(ACTION.CONTINUE,getResponseObject(request));
+      HttpServletRequest request=null;
+      BroadcastAction result=null;
+      try {
+        request=resource.getRequest();
+        Object responce=getResponseObject(request);
+        result=new BroadcastAction(ACTION.CONTINUE,responce);
+      }
+ catch (      Exception e) {
+        result=new BroadcastAction(ACTION.ABORT,getResponseObject(request));
+      }
+      return result;
     }
   }
 );
@@ -14,22 +22,12 @@
   broadcaster.getBroadcasterConfig().addFilter(new SendPageUpdateFilter());
   broadcaster.getBroadcasterConfig().addFilter(new DuplicateBroadcastProtectionFilter());
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
-  broadcaster.getBroadcasterConfig().addFilter(new MessageTypeFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
-      if (item instanceof GroupItem) {
-        GroupItem gItem=(GroupItem)item;
-        if (gItem.getBaseItem() != null) {
-          if (!broadcaster.getAtmosphereResources().isEmpty()) {
-            broadcaster.broadcast(item);
-          }
-        }
-      }
+      broadcaster.broadcast(item);
     }
     public void stateChanged(    final Item item,    State oldState,    State newState){
-      if (!broadcaster.getAtmosphereResources().isEmpty()) {
-        broadcaster.broadcast(item);
-      }
+      broadcaster.broadcast(item);
     }
   }
 ;
