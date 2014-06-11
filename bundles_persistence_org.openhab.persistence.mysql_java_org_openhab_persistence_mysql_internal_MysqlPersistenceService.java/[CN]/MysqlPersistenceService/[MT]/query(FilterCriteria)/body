@@ -15,6 +15,9 @@
     logger.error("Unable to get item type for {}",itemName);
     item=null;
   }
+  if (item instanceof GroupItem) {
+    item=GroupItem.class.cast(item).getBaseItem();
+  }
   String table=sqlTables.get(itemName);
   if (table == null) {
     logger.error("mySQL: Unable to find table for query '" + itemName + "'.");
