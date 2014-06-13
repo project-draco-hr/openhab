@@ -1,0 +1,73 @@
+{
+  if (itemName != null && !this.providers.isEmpty()) {
+    JointSpaceBindingProvider provider=this.providers.iterator().next();
+    if (provider == null) {
+      logger.warn("Doesn't find matching binding provider [itemName={}, command={}]",itemName,command);
+      return;
+    }
+    logger.debug("Received command (item='{}', state='{}', class='{}')",new Object[]{itemName,command.toString(),command.getClass().toString()});
+    String tvCommandString=null;
+    tvCommandString=provider.getTVCommand(itemName,command.toString());
+    if (tvCommandString == null) {
+      if (command instanceof HSBType) {
+        tvCommandString=provider.getTVCommand(itemName,"HSB");
+      }
+ else       if (command instanceof DecimalType) {
+        tvCommandString=provider.getTVCommand(itemName,"DEC");
+      }
+      if (tvCommandString == null) {
+        tvCommandString=provider.getTVCommand(itemName,"*");
+      }
+    }
+    if (tvCommandString == null) {
+      logger.warn("Unrecognized command \"{}\"",command.toString());
+      return;
+    }
+    if (tvCommandString.contains("key")) {
+      logger.debug("Found a Key command: " + tvCommandString);
+      String[] commandlist=tvCommandString.split("\\.");
+      if (commandlist.length != 2) {
+        logger.warn("wrong number of arguments for key command \"{}\". Should be key.X",tvCommandString);
+        return;
+      }
+      String key=commandlist[1];
+      sendTVCommand(key,ip + ":" + port);
+    }
+ else     if (tvCommandString.contains("ambilight")) {
+      logger.debug("Found an ambilight command: {}",tvCommandString);
+      String[] commandlist=tvCommandString.split("\\.");
+      String[] layer=command2LayerString(tvCommandString);
+      if (commandlist.length < 2) {
+        logger.warn("wrong number of arguments for ambilight command \"{}\". Should be at least ambilight.color, ambilight.mode.X, etc...",tvCommandString);
+        return;
+      }
+      if (commandlist[1].contains("color")) {
+        setAmbilightColor(ip + ":" + port,command,layer);
+      }
+ else       if (commandlist[1].contains("mode")) {
+        if (commandlist.length != 3) {
+          logger.warn("wrong number of arguments for ambilight.mode command \"{}\". Should be ambilight.mode.internal, ambilight.mode.manual, ambilight.mode.expert",tvCommandString);
+          return;
+        }
+        setAmbilightMode(commandlist[2],ip + ":" + port);
+      }
+    }
+ else     if (tvCommandString.contains("volume")) {
+      logger.debug("Found a Volume command: {}",tvCommandString);
+      sendVolume(ip + ":" + port,command);
+    }
+ else     if (tvCommandString.contains("source")) {
+      logger.debug("Found a Source command: {}",tvCommandString);
+      String[] commandlist=tvCommandString.split("\\.");
+      if (commandlist.length < 2) {
+        logger.warn("wrong number of arguments for source command \"{}\". Should be at least mode.X...",tvCommandString);
+        return;
+      }
+      sendSource(ip + ":" + port,commandlist[1]);
+    }
+ else {
+      logger.warn("Unrecognized tv command \"{}\". Only key.X or ambilight[].X is supported",tvCommandString);
+      return;
+    }
+  }
+}

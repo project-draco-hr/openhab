@@ -1,0 +1,20 @@
+{
+  String url="http://" + host + "/1/sources/current";
+  String source_json=HttpUtil.executeUrl("GET",url,IOUtils.toInputStream(""),CONTENT_TYPE_JSON,1000);
+  logger.debug("Getting source for host {}",host);
+  if (source_json != null) {
+    logger.trace("TV returned for source request: {}",source_json);
+    try {
+      Object obj=JSONValue.parse(source_json);
+      JSONObject array=(JSONObject)obj;
+      return array.get("id").toString();
+    }
+ catch (    Throwable t) {
+      logger.warn("Could not parse JSON String for source. Error: {}",t.toString());
+    }
+  }
+ else {
+    logger.debug("Could not get source from JointSpace Server \"{}\"",host);
+  }
+  return null;
+}
