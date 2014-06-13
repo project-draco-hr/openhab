@@ -5,25 +5,30 @@
   OceanicBinding theBinding=(OceanicBinding)dataMap.get("Binding");
   theBinding.lockSerialDevices();
   SerialDevice serialDevice=theBinding.serialDevices.get(serialPort);
-  String response=serialDevice.requestResponse(valueSelector.name());
-  logger.debug("Requested '{}' from the oceanic unit, got '{}' back",valueSelector.name(),response);
+  String response=null;
+  if (serialDevice != null) {
+    response=serialDevice.requestResponse(valueSelector.name());
+    logger.debug("Requested '{}' from the oceanic unit, got '{}' back",valueSelector.name(),response);
+  }
   theBinding.unlockSerialDevices();
-  for (  OceanicBindingProvider provider : theBinding.providers) {
-    for (    String itemName : provider.getItemNames()) {
-      String itemSerialPort=provider.getSerialPort(itemName);
-      OceanicValueSelector itemSelector=OceanicValueSelector.getValueSelector(provider.getValueSelector(itemName),ValueSelectorType.GET);
-      if (itemSerialPort.equals(serialPort) && itemSelector.equals(valueSelector)) {
-        if (serialDevice.cachedValues.get(valueSelector) == null || !serialDevice.cachedValues.get(valueSelector).equals(response)) {
-          serialDevice.cachedValues.put(valueSelector,response);
-          State value;
-          try {
-            value=createStateForType(valueSelector,response);
+  if (response != null) {
+    for (    OceanicBindingProvider provider : theBinding.providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String itemSerialPort=provider.getSerialPort(itemName);
+        OceanicValueSelector itemSelector=OceanicValueSelector.getValueSelector(provider.getValueSelector(itemName),ValueSelectorType.GET);
+        if (itemSerialPort.equals(serialPort) && itemSelector.equals(valueSelector)) {
+          if (serialDevice.cachedValues.get(valueSelector) == null || !serialDevice.cachedValues.get(valueSelector).equals(response)) {
+            serialDevice.cachedValues.put(valueSelector,response);
+            State value;
+            try {
+              value=createStateForType(valueSelector,response);
+            }
+ catch (            BindingConfigParseException e) {
+              logger.error("An exception occured while converting {} to a valide state : {}",response,e.getMessage());
+              return;
+            }
+            serialDevice.eventPublisher.postUpdate(itemName,value);
           }
- catch (          BindingConfigParseException e) {
-            logger.error("An exception occured while converting {} to a valide state : {}",response,e.getMessage());
-            return;
-          }
-          serialDevice.eventPublisher.postUpdate(itemName,value);
         }
       }
     }
