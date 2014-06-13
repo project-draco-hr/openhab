@@ -20,7 +20,6 @@
         boolean serialDeviceReady=true;
         if (serialDevice == null) {
           serialDevice=new SerialDevice(serialPort);
-          serialDevice.setEventPublisher(eventPublisher);
           try {
             serialDevice.initialize();
           }
@@ -32,7 +31,10 @@ catch (          Throwable e) {
             logger.error("Could not open serial port " + serialPort + ": "+ e.getMessage());
             serialDeviceReady=false;
           }
-          serialDevices.put(serialPort,serialDevice);
+          if (serialDeviceReady) {
+            serialDevice.setEventPublisher(eventPublisher);
+            serialDevices.put(serialPort,serialDevice);
+          }
         }
         Set<String> itemNames=contextMap.get(serialPort);
         if (itemNames == null) {
