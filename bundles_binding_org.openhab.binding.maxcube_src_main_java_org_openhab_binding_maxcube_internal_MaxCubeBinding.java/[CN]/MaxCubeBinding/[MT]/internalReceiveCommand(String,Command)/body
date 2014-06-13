@@ -14,9 +14,13 @@
     String rfAddress=device.getRFAddress();
     String commandString=null;
     if (command instanceof DecimalType || command instanceof OnOffType) {
-      DecimalType decimalType=new DecimalType(4.5);
-      if (command instanceof DecimalType)       decimalType=(DecimalType)command;
- else       if (command instanceof OnOffType)       decimalType=((OnOffType)command == OnOffType.ON) ? new DecimalType(30.5) : new DecimalType(4.5);
+      DecimalType decimalType=DEFAULT_OFF_TEMPERATURE;
+      if (command instanceof DecimalType) {
+        decimalType=(DecimalType)command;
+      }
+ else       if (command instanceof OnOffType) {
+        decimalType=OnOffType.ON.equals(command) ? DEFAULT_ON_TEMPERATURE : DEFAULT_OFF_TEMPERATURE;
+      }
       S_Command cmd=new S_Command(rfAddress,device.getRoomId(),decimalType.doubleValue());
       commandString=cmd.getCommandString();
     }
