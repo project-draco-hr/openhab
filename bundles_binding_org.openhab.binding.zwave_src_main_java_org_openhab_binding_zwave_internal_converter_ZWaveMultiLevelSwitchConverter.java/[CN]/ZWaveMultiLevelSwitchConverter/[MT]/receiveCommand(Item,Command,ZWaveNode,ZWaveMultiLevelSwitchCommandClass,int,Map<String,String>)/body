@@ -18,6 +18,13 @@
       logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring command.",item.getName(),node.getNodeId(),endpointId);
       return;
     }
+    if (command instanceof MultiLevelUpDownCommandConverter) {
+      if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
+        if (command == UpDownType.UP)         command=UpDownType.DOWN;
+ else         command=UpDownType.UP;
+      }
+    }
+    converter=this.getCommandConverter(command.getClass());
     Integer value=(Integer)converter.convertFromCommandToValue(item,command);
     logger.trace("Converted command '{}' to value {} for item = {}, node = {}, endpoint = {}.",command.toString(),value,item.getName(),node.getNodeId(),endpointId);
     serialMessage=commandClass.setValueMessage(value);
