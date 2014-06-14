@@ -1,0 +1,9 @@
+{
+  new ProviderItemIterator().iterate(bindingConfig,new ProviderItemIteratorCallback(){
+    @Override public void next(    HomematicBindingConfig providerBindingConfig,    Item item,    Converter<?> converter){
+      State state=converter.convertFromBinding(hmValueItem);
+      context.getEventPublisher().postUpdate(item.getName(),state);
+    }
+  }
+);
+}

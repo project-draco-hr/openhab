@@ -1,0 +1,11 @@
+{
+  while (accept) {
+    try {
+      Socket cs=serverSocket.accept();
+      BinRpcCallbackHandler ccuHandler=new BinRpcCallbackHandler(cs,callbackReceiver);
+      pool.execute(ccuHandler);
+    }
+ catch (    IOException ex) {
+    }
+  }
+}

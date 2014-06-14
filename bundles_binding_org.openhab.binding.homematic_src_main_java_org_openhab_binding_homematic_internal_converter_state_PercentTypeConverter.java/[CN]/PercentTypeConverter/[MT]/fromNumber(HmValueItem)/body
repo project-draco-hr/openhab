@@ -1,0 +1,8 @@
+{
+  Double number=((Number)hmValueItem.getValue()).doubleValue();
+  int percent=(int)((100 / hmValueItem.getMaxValue().doubleValue()) * number);
+  if (isRollerShutterLevelDatapoint(hmValueItem)) {
+    percent=100 - percent;
+  }
+  return new PercentType(percent);
+}

@@ -1,0 +1,41 @@
+{
+  if (event.isProgram()) {
+    if (event.isOnType()) {
+      executeProgram(event);
+    }
+  }
+ else {
+    event.setHmValueItem(context.getStateHolder().getState(event.getBindingConfig()));
+    if (event.getHmValueItem() == null) {
+      logger.warn("Can't find {}, value is not published to CCU!",event.getBindingConfig());
+    }
+ else {
+      try {
+        if (event.isStopLevelDatapoint()) {
+          ccuClient.setDatapointValue((HmDatapoint)event.getHmValueItem(),"STOP",true);
+        }
+ else {
+          Converter<?> converter=context.getConverterFactory().createConverter(event.getItem(),event.getBindingConfig());
+          if (converter != null) {
+            if (!event.isStopLevelDatapoint()) {
+              event.setNewValue(converter.convertToBinding(event.getType(),event.getHmValueItem()));
+            }
+            publishToCcu(event);
+            publishToAllBindings(event);
+            if (event.isOnType()) {
+              executeBindingAction(event.getBindingConfig());
+              if (event.isPressValueItem()) {
+                itemDisabler.add(event.getBindingConfig());
+              }
+            }
+          }
+        }
+      }
+ catch (      Exception ex) {
+        logger.error(ex.getMessage(),ex);
+        context.getStateHolder().reloadDatapoints();
+        context.getStateHolder().reloadVariables();
+      }
+    }
+  }
+}

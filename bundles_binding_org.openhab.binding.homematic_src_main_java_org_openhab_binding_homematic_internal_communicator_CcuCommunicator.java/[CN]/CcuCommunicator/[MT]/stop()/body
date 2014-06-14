@@ -1,0 +1,27 @@
+{
+  if (ccuCallbackServer != null) {
+    logger.info("Shutting down CCU communicator");
+    try {
+      delayedExecutor.cancel();
+      ccuCallbackServer.shutdown();
+      if (ccuClient != null) {
+        try {
+          ccuClient.release(HmInterface.RF);
+          ccuClient.release(HmInterface.WIRED);
+        }
+ catch (        CcuClientException e) {
+        }
+      }
+      context.getTclRegaScriptClient().shutdown();
+      if (itemDisabler != null) {
+        itemDisabler.stop();
+      }
+      if (context.getStateHolder() != null) {
+        context.getStateHolder().destroy();
+      }
+    }
+  finally {
+      ccuCallbackServer=null;
+    }
+  }
+}

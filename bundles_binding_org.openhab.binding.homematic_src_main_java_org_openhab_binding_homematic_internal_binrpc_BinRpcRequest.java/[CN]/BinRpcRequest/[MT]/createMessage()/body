@@ -1,0 +1,17 @@
+{
+  data=new byte[256];
+  if (methodName != null) {
+    addInt(methodName.length());
+    addString(methodName);
+    addInt(args.size());
+  }
+  addList(args);
+  byte fullreq[]=new byte[dataoffset + 8];
+  System.arraycopy(data,0,fullreq,8,dataoffset);
+  fullreq[0]='B';
+  fullreq[1]='i';
+  fullreq[2]='n';
+  addInt(dataoffset);
+  System.arraycopy(data,dataoffset - 4,fullreq,4,4);
+  return fullreq;
+}

@@ -1,0 +1,43 @@
+{
+  for (  Object o : args) {
+    if (o.getClass() == String.class) {
+      addInt(3);
+      String s=(String)o;
+      addInt(s.length());
+      addString(s);
+    }
+ else     if (o.getClass() == Boolean.class) {
+      addInt(2);
+      addByte(((Boolean)o).booleanValue() ? (byte)1 : (byte)0);
+    }
+ else     if (o.getClass() == Integer.class) {
+      addInt(1);
+      addInt(((Integer)o).intValue());
+    }
+ else     if (o.getClass() == Double.class) {
+      addInt(4);
+      addDouble(((Double)o).doubleValue());
+    }
+ else     if (o.getClass() == BigInteger.class) {
+      addInt(4);
+      addDouble(((BigInteger)o).doubleValue());
+    }
+ else     if (o instanceof List<?>) {
+      Collection<?> l=(Collection<?>)o;
+      addInt(0x100);
+      addInt(l.size());
+      addList(l);
+    }
+ else     if (o instanceof Map<?,?>) {
+      Map<?,?> l=(Map<?,?>)o;
+      addInt(0x101);
+      addInt(l.size());
+      for (      Map.Entry<?,?> me : l.entrySet()) {
+        String key=(String)me.getKey();
+        addInt(key.length());
+        addString(key);
+        addList(Collections.singleton(me.getValue()));
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  if (logger.isDebugEnabled()) {
+    logger.debug("Converting type {} with value '{}' to ({}) value with {} for {}",type.getClass().getSimpleName(),type.toString(),hmValueItem.getValue().getClass().getSimpleName(),this.getClass().getSimpleName(),hmValueItem);
+  }
+  if (type.getClass().isEnum() && !(this instanceof AbstractEnumTypeConverter)) {
+    return commandToBinding((Command)type,hmValueItem);
+  }
+ else {
+    if (hmValueItem.isBooleanValue()) {
+      return toBoolean((T)type,hmValueItem);
+    }
+ else     if (hmValueItem.isNumberValue()) {
+      return toNumber((T)type,hmValueItem);
+    }
+ else {
+      return toString((T)type,hmValueItem);
+    }
+  }
+}

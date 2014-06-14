@@ -1,0 +1,11 @@
+{
+  String valueListValue=getValueListValue(hmValueItem);
+  if (valueListValue != null) {
+    return new StringType(valueListValue);
+  }
+  Double value=Double.valueOf(hmValueItem.getValue().toString());
+  if (hmValueItem.isIntegerValue()) {
+    return new StringType(String.valueOf(value.intValue()));
+  }
+  return new StringType(String.valueOf(round(value).doubleValue()));
+}

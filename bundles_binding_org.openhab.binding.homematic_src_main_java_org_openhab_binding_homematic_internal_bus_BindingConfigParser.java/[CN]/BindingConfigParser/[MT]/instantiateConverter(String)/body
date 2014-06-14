@@ -1,0 +1,17 @@
+{
+  Converter<?> converter=null;
+  if (converterName != null) {
+    try {
+      converter=(Converter<?>)Class.forName(converterName).newInstance();
+    }
+ catch (    Exception e) {
+      try {
+        converter=(Converter<?>)Class.forName(ConverterFactory.CONVERTER_PACKAGE + converterName).newInstance();
+      }
+ catch (      Exception e1) {
+        logger.warn("Can't instantiate converter " + converterName + ", ignoring it!");
+      }
+    }
+  }
+  return converter;
+}

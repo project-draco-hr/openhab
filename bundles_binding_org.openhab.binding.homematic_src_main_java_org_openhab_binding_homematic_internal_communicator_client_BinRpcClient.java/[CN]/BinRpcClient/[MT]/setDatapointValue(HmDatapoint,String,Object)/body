@@ -1,0 +1,12 @@
+{
+  HmInterface hmInterface=dp.getChannel().getDevice().getHmInterface();
+  String address=dp.getChannel().getAddress();
+  if (dp.isIntegerValue() && value instanceof Double) {
+    value=((Number)value).intValue();
+  }
+  BinRpcRequest request=new BinRpcRequest("setValue");
+  request.addArg(address);
+  request.addArg(datapointName);
+  request.addArg(value);
+  sendMessage(hmInterface,request);
+}

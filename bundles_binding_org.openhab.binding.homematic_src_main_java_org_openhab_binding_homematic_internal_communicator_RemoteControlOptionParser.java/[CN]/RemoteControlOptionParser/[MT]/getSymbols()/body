@@ -1,0 +1,14 @@
+{
+  DatapointConfig dpConfig=new DatapointConfig(remoteControlAddress,"18","SUBMIT");
+  HmDatapoint rcDatapoint=(HmDatapoint)context.getStateHolder().getState(dpConfig);
+  if (rcDatapoint == null) {
+    throw new CcuClientException("Address " + remoteControlAddress + " is not a Homematic remote control with a display");
+  }
+  List<String> symbols=new ArrayList<String>();
+  for (  HmDatapoint datapoint : rcDatapoint.getChannel().getDatapoints()) {
+    if (datapoint.isWriteable() && datapoint.getValueType() == 2 && !"SUBMIT".equals(datapoint.getName())) {
+      symbols.add(datapoint.getName());
+    }
+  }
+  return symbols.toArray(new String[0]);
+}

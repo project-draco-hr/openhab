@@ -1,0 +1,28 @@
+{
+  this.remoteControlAddress=remoteControlAddress;
+  String[] parms=StringUtils.split(StringUtils.remove(options,' '),",");
+  String[] symbols=getSymbols();
+  String[] beepValueList=getValueItems("BEEP");
+  String[] backlightValueList=getValueItems("BACKLIGHT");
+  String[] unitValueList=getValueItems("UNIT");
+  if (logger.isDebugEnabled()) {
+    logger.debug("Remote control {} supports these beep parameter: {}",remoteControlAddress,beepValueList);
+    logger.debug("Remote control {} supports these backlight parameter: {}",remoteControlAddress,backlightValueList);
+    logger.debug("Remote control {} supports these unit parameter: {}",remoteControlAddress,unitValueList);
+    logger.debug("Remote control {} supports these symbols: {}",remoteControlAddress,symbols);
+  }
+  HmRemoteControlOptions rcd=new HmRemoteControlOptions();
+  if (parms != null) {
+    for (    String parameter : parms) {
+      logger.debug("Parsing remote control parameter {}",parameter);
+      rcd.setBeep(getIntParameter(beepValueList,rcd.getBeep(),parameter,"BEEP"));
+      rcd.setBacklight(getIntParameter(backlightValueList,rcd.getBacklight(),parameter,"BACKLIGHT"));
+      rcd.setUnit(getIntParameter(unitValueList,rcd.getUnit(),parameter,"UNIT"));
+      if (ArrayUtils.contains(symbols,parameter)) {
+        logger.debug("Symbol {} found for remote control {}",parameter,remoteControlAddress);
+        rcd.addSymbol(parameter);
+      }
+    }
+  }
+  return rcd;
+}
