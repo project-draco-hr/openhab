@@ -7,17 +7,17 @@
     }
     String ip=(String)config.get("ip");
     if (StringUtils.isBlank(ip)) {
-      return;
+      throw new ConfigurationException("ip","The ip address must not be empty.");
     }
     this.ip=ip;
     String username=(String)config.get("username");
     if (StringUtils.isBlank(username)) {
-      return;
+      throw new ConfigurationException("username","The username must not be empty.");
     }
     this.username=username;
     String password=(String)config.get("password");
     if (StringUtils.isBlank(password)) {
-      return;
+      throw new ConfigurationException("password","The password must not be empty.");
     }
     this.password=password;
     setProperlyConfigured(true);
