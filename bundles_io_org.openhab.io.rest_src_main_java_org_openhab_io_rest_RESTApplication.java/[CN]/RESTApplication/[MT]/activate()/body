@@ -10,7 +10,8 @@
     }
     httpPort=Integer.parseInt(bundleContext.getProperty("jetty.port"));
     httpSSLPort=Integer.parseInt(bundleContext.getProperty("jetty.port.ssl"));
-    httpService.registerServlet(REST_SERVLET_ALIAS,new AtmosphereServlet(),getJerseyServletParams(),createHttpContext());
+    Servlet atmosphereServlet=new AtmosphereServlet();
+    httpService.registerServlet(REST_SERVLET_ALIAS,atmosphereServlet,getJerseyServletParams(),createHttpContext());
     logger.info("Started REST API at /rest");
     if (discoveryService != null) {
       discoveryService.registerService(getDefaultServiceDescription());
