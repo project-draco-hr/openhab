@@ -1,0 +1,23 @@
+{
+  String pmsIp=pmsIpConfig.get(pmsId);
+  String url="http://" + pmsIp;
+  try {
+    URL obj=new URL(url);
+    HttpURLConnection con=(HttpURLConnection)obj.openConnection();
+    con.setRequestProperty("User-Agent",USER_AGENT);
+    con.setRequestMethod("GET");
+    int responseCode=con.getResponseCode();
+    BufferedReader in=new BufferedReader(new InputStreamReader(con.getInputStream()));
+    String inputLine;
+    StringBuffer response=new StringBuffer();
+    while ((inputLine=in.readLine()) != null) {
+      response.append(inputLine);
+    }
+    in.close();
+    logger.trace("energenie: responseCode : {}",responseCode);
+    logger.trace("energenie: logout from ip {}",pmsIp);
+  }
+ catch (  Exception e) {
+    logger.error("energenie: failed to logout from ip {}",pmsIp);
+  }
+}
