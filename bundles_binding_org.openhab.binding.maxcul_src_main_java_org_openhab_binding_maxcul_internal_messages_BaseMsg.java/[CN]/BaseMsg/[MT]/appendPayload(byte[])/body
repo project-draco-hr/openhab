@@ -5,11 +5,12 @@
   for (int byteIdx=0; byteIdx < payload.length; byteIdx++) {
     sb.append(String.format("%02X",payload[byteIdx]).toUpperCase());
   }
-  byte len=(byte)((sb.length() / 2) & 0xFF);
-  if ((int)len * 2 != sb.length()) {
-    this.flgReadyToSend=true;
+  byte len=(byte)((sb.length() / PKT_CHARS_PER_BYTE) & 0xFF);
+  if ((int)len * PKT_CHARS_PER_BYTE != sb.length()) {
+    this.flgReadyToSend=false;
     logger.error("Unable to build raw message. Length is not correct");
   }
   sb.insert(0,String.format("Zs%02X",len));
   this.rawMsg=sb.toString();
+  this.flgReadyToSend=true;
 }

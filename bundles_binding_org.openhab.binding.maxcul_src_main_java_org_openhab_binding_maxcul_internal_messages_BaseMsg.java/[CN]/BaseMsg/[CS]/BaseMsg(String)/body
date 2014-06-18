@@ -7,36 +7,24 @@
     pkt.len=0;
     return;
   }
-  int startIdx=3;
-  pkt.msgCount=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.msgFlag=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.msgTypeRaw=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
+  pkt.msgCount=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_COUNT,PKT_POS_MSG_COUNT + PKT_POS_MSG_COUNT_LEN),16) & 0xFF);
+  pkt.msgFlag=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_FLAG,PKT_POS_MSG_FLAG + PKT_POS_MSG_FLAG_LEN),16) & 0xFF);
+  pkt.msgTypeRaw=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_TYPE,PKT_POS_MSG_TYPE + PKT_POS_MSG_TYPE_LEN),16) & 0xFF);
   pkt.msgType=MaxCulMsgType.fromByte(pkt.msgTypeRaw);
-  pkt.srcAddrStr=rawMsg.substring(startIdx,startIdx + 6);
-  pkt.srcAddr[0]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.srcAddr[1]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.srcAddr[2]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.dstAddrStr=rawMsg.substring(startIdx,startIdx + 6);
-  pkt.dstAddr[0]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.dstAddr[1]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.dstAddr[2]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  pkt.groupid=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-  startIdx+=2;
-  int payloadStrLen=((pkt.len) * 2) + 3 - startIdx;
-  int payloadByteLen=payloadStrLen / 2;
+  pkt.srcAddrStr=rawMsg.substring(PKT_POS_SRC_ADDR,PKT_POS_SRC_ADDR + PKT_POS_SRC_ADDR_LEN);
+  for (int idx=PKT_POS_SRC_ADDR; idx < PKT_POS_SRC_ADDR + PKT_POS_SRC_ADDR_LEN; idx+=PKT_CHARS_PER_BYTE) {
+    pkt.srcAddr[(idx - PKT_POS_SRC_ADDR) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(idx,idx + PKT_CHARS_PER_BYTE),16) & 0xFF);
+  }
+  pkt.dstAddrStr=rawMsg.substring(PKT_POS_DST_ADDR,PKT_POS_DST_ADDR + PKT_POS_DST_ADDR_LEN);
+  for (int idx=PKT_POS_DST_ADDR; idx < PKT_POS_DST_ADDR + PKT_POS_DST_ADDR_LEN; idx+=PKT_CHARS_PER_BYTE) {
+    pkt.dstAddr[(idx - PKT_POS_DST_ADDR) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(idx,idx + PKT_CHARS_PER_BYTE),16) & 0xFF);
+  }
+  pkt.groupid=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_GROUP_ID,PKT_POS_GROUP_ID + PKT_POS_GROUP_ID_LEN),16) & 0xFF);
+  int payloadStrLen=((pkt.len) * PKT_CHARS_PER_BYTE) + PKT_POS_MSG_START - PKT_POS_PAYLOAD_START;
+  int payloadByteLen=payloadStrLen / PKT_CHARS_PER_BYTE;
   logger.debug("Payload length = " + payloadStrLen + " => "+ (payloadByteLen));
   pkt.payload=new byte[payloadByteLen];
-  for (int payIdx=0; payIdx < payloadByteLen; payIdx++) {
-    pkt.payload[payIdx]=(byte)(Integer.parseInt(rawMsg.substring(startIdx,startIdx + 2),16) & 0xFF);
-    startIdx+=2;
+  for (int payIdx=PKT_POS_PAYLOAD_START; payIdx < (PKT_POS_PAYLOAD_START + payloadStrLen); payIdx+=PKT_CHARS_PER_BYTE) {
+    pkt.payload[(payIdx - PKT_POS_PAYLOAD_START) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(payIdx,payIdx + PKT_CHARS_PER_BYTE),16) & 0xFF);
   }
 }
