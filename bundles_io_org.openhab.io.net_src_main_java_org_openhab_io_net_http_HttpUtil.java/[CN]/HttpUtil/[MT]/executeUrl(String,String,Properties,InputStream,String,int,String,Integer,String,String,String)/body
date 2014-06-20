@@ -36,7 +36,21 @@
     if (statusCode != HttpStatus.SC_OK) {
       logger.warn("Method failed: " + method.getStatusLine());
     }
-    String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
+    InputStream tmpResponseStream=method.getResponseBodyAsStream();
+    Header encodingHeader=method.getResponseHeader("Content-Encoding");
+    if (encodingHeader != null) {
+      for (      HeaderElement ehElem : encodingHeader.getElements()) {
+        if (ehElem.toString().matches(".*gzip.*")) {
+          tmpResponseStream=new GZIPInputStream(tmpResponseStream);
+          logger.debug("GZipped InputStream from {}",url);
+        }
+ else         if (ehElem.toString().matches(".*deflate.*")) {
+          tmpResponseStream=new InflaterInputStream(tmpResponseStream);
+          logger.debug("Deflated InputStream from {}",url);
+        }
+      }
+    }
+    String responseBody=IOUtils.toString(tmpResponseStream);
     if (!responseBody.isEmpty()) {
       logger.debug(responseBody);
     }
