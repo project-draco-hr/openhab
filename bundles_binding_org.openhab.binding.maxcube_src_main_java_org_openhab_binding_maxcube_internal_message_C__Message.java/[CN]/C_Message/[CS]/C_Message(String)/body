@@ -19,5 +19,5 @@
   deviceType=DeviceType.create(data[4]);
   serialNumber=getSerialNumber(bytes);
   if (deviceType == DeviceType.HeatingThermostatPlus || deviceType == DeviceType.HeatingThermostat)   ParseHeatingThermostatPlusData(bytes);
-  logger.debug("");
+  if (deviceType == DeviceType.EcoSwitch || deviceType == DeviceType.WallMountedThermostat)   logger.trace("Data:" + ParseData(bytes));
 }
