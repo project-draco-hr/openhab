@@ -1,30 +1,43 @@
 {
   logger.debug("Received data from CUL: " + data);
-  if (data.startsWith("Z")) {
-    MaxCulMsgType msgType=BaseMsg.getMsgType(data);
-    if (pairMode && msgType == MaxCulMsgType.PAIR_PING) {
-      logger.debug("Got PAIR_PING message");
-      PairPingMsg pkt=new PairPingMsg(data);
-      if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
-        Collection<MaxCulBindingConfig> bindingConfigs=null;
-        for (        MaxCulBindingProvider provider : super.providers) {
-          bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
-          if (bindingConfigs != null) {
-            break;
-          }
+  MaxCulMsgType msgType=BaseMsg.getMsgType(data);
+  if (((pairMode && BaseMsg.isForUs(data,this.BROADCAST_ADDRESS)) || BaseMsg.isForUs(data,this.srcAddr)) && msgType == MaxCulMsgType.PAIR_PING) {
+    logger.debug("Got PAIR_PING message");
+    PairPingMsg pkt=new PairPingMsg(data);
+    if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
+      Collection<MaxCulBindingConfig> bindingConfigs=null;
+      for (      MaxCulBindingProvider provider : super.providers) {
+        bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
+        if (bindingConfigs != null) {
+          break;
         }
-        if (bindingConfigs == null) {
-          logger.error("Unable to find configuration for serial " + pkt.serial + ". Do you have a binding for it?");
-          return;
-        }
-        for (        MaxCulBindingConfig bc : bindingConfigs)         bc.setPairedInfo(pkt.srcAddrStr);
-        messageHandler.sendPairPong(pkt.srcAddrStr);
       }
- else {
-        logger.debug("Got pairing message for another controller");
+      if (bindingConfigs == null) {
+        logger.error("Unable to find configuration for serial " + pkt.serial + ". Do you have a binding for it?");
+        return;
       }
+      for (      MaxCulBindingConfig bc : bindingConfigs)       bc.setPairedInfo(pkt.srcAddrStr);
+      messageHandler.sendPairPong(pkt.srcAddrStr);
     }
  else {
+      logger.debug("Got pairing message for another controller");
     }
   }
+ else {
+switch (msgType) {
+case WALL_THERMOSTAT_CONTROL:
+      WallThermostatControlMsg wallThemCtrlMsg=new WallThermostatControlMsg(data);
+    wallThemCtrlMsg.debugPrint();
+  this.messageHandler.sendAck(wallThemCtrlMsg);
+break;
+case SET_TEMPERATURE:
+SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
+setTempMsg.debugPrint();
+this.messageHandler.sendAck(setTempMsg);
+break;
+default :
+logger.debug("Unhandled message type " + msgType.toString());
+break;
+}
+}
 }
