@@ -1,0 +1,51 @@
+{
+  if (item.getState() instanceof UnDefType) {
+    return;
+  }
+  if (initialized == false) {
+    logger.warn("Jpa not initialized");
+    return;
+  }
+  if (!isDbConnectionOpen()) {
+    try {
+      initializeDbConnection();
+    }
+ catch (    Exception e) {
+      logger.error("Error while initializing database connection!");
+      logger.error(e.getMessage());
+      return;
+    }
+  }
+  String name=(alias != null) ? alias : item.getName();
+  JpaPersistentItem pItem;
+  if (StateHelper.isOtherStateType(item.getState())) {
+    pItem=new JpaPersistentOtherItem();
+    try {
+      ((JpaPersistentOtherItem)pItem).setValue(StateHelper.toOther(item.getState()));
+    }
+ catch (    Exception e) {
+      logger.error("Error on converting item value type: " + item.getState() + " to string!");
+      logger.error(e.getMessage());
+      return;
+    }
+  }
+ else {
+    pItem=new JpaPersistentStringItem();
+    ((JpaPersistentStringItem)pItem).setValue(StateHelper.toString(item.getState()));
+  }
+  pItem.setName(name);
+  pItem.setRealName(item.getName());
+  pItem.setTimestamp(new Date());
+  try {
+    logger.debug("Persisting item...");
+    beginTransaction();
+    em.persist(pItem);
+    commitTransaction();
+    logger.debug("Persisting item...done");
+  }
+ catch (  Exception e) {
+    logger.error("Error on persisting item! Rolling back!");
+    logger.error(e.getMessage());
+    rollbackTransaction();
+  }
+}

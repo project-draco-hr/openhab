@@ -1,0 +1,49 @@
+{
+  logger.debug("Update config...");
+  if (properties == null) {
+    logger.error("Got a null properties object!");
+    return;
+  }
+  Enumeration keys=properties.keys();
+  while (keys.hasMoreElements()) {
+    String key=(String)keys.nextElement();
+    String value=(String)properties.get(key);
+    logger.debug("key=" + key + ", value="+ value);
+  }
+  String param=(String)properties.get(DB_CONNECTION_URL);
+  logger.debug("url: " + param);
+  if (param == null) {
+    logger.error("Connection url is required in openhab.cfg!");
+    throw new ConfigurationException(DB_CONNECTION_URL,"Connection url is required in openhab.cfg!");
+  }
+  if (StringUtils.isBlank(param)) {
+    logger.error("Empty connection url in openhab.cfg!");
+    throw new ConfigurationException(DB_CONNECTION_URL,"Empty connection url in openhab.cfg!");
+  }
+  dbConnectionUrl=(String)param;
+  param=(String)properties.get(DB_DRIVER_CLASS);
+  logger.debug("driver: " + param);
+  if (param == null) {
+    throw new ConfigurationException(DB_DRIVER_CLASS,"Driver class is required in openhab.cfg!");
+  }
+  if (StringUtils.isBlank(param)) {
+    throw new ConfigurationException(DB_DRIVER_CLASS,"Empty driver class in openhab.cfg!");
+  }
+  dbDriverClass=(String)param;
+  if (properties.get(DB_USERNAME) == null) {
+    logger.info(DB_USERNAME + " was not specified!");
+  }
+  dbUserName=(String)properties.get(DB_USERNAME);
+  if (properties.get(DB_PASSWORD) == null) {
+    logger.info(DB_PASSWORD + " was not specified!");
+  }
+  dbPassword=(String)properties.get(DB_PASSWORD);
+  closeDbConnection();
+  try {
+    initializeDbConnection();
+    initialized=true;
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+  }
+}
