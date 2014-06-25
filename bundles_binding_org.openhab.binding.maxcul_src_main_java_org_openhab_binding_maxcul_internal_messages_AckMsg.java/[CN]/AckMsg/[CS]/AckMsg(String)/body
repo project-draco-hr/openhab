@@ -1,4 +1,7 @@
 {
   super(rawMsg);
-  isNack=(this.payload[0] == 0x80);
+  if (this.payload.length == ACK_MSG_PAYLOAD_LEN) {
+    isNack=(this.payload[0] == 0x81);
+  }
+ else   logger.error("Got " + this.msgType + " message with incorrect length!");
 }
