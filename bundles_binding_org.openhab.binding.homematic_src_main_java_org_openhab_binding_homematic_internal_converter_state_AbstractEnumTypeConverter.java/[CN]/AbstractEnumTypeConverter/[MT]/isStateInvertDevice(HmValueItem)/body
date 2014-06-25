@@ -2,9 +2,8 @@
   if ("STATE".equals(hmValueItem.getName())) {
     if (hmValueItem instanceof HmDatapoint) {
       HmDatapoint dp=(HmDatapoint)hmValueItem;
-      String deviceType=dp.getChannel().getDevice().getType().toUpperCase();
-      for (      String invertDeviceType : stateInvertDevices) {
-        if (deviceType.startsWith(invertDeviceType)) {
+      for (      StateInvertInfo stateInvertInfo : stateInvertDevices) {
+        if (stateInvertInfo.isToInvert(dp)) {
           return true;
         }
       }
