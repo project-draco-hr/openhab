@@ -1,0 +1,10 @@
+{
+  Double number=(type.doubleValue() / 100) * hmValueItem.getMaxValue().doubleValue();
+  if (isRollerShutterLevelDatapoint(hmValueItem)) {
+    number=hmValueItem.getMaxValue().doubleValue() - number;
+  }
+  if (hmValueItem.isIntegerValue()) {
+    return number.intValue();
+  }
+  return round(number).doubleValue();
+}

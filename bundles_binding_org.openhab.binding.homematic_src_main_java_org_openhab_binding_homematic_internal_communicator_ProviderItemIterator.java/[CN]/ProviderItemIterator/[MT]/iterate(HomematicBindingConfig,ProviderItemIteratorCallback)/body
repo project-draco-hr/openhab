@@ -1,0 +1,12 @@
+{
+  for (  HomematicBindingProvider provider : context.getProviders()) {
+    List<Item> items=provider.getItemsFor(bindingConfig);
+    for (    Item item : items) {
+      HomematicBindingConfig providerBindingConfig=provider.getBindingFor(item.getName());
+      Converter<?> converter=context.getConverterFactory().createConverter(item,providerBindingConfig);
+      if (converter != null) {
+        callback.next(providerBindingConfig,item,converter);
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  int idx=ArrayUtils.indexOf(valueList,parameter);
+  if (idx != -1) {
+    if (currentValue == 0) {
+      logger.debug("{} Parameter {} found at index {} for remote control {}",parameterName,parameter,idx + 1,remoteControlAddress);
+      return idx + 1;
+    }
+ else {
+      logger.warn("{} Parameter already set for remote control {}, ignoring {}!",parameterName,remoteControlAddress,parameter);
+      return currentValue;
+    }
+  }
+ else {
+    return currentValue;
+  }
+}

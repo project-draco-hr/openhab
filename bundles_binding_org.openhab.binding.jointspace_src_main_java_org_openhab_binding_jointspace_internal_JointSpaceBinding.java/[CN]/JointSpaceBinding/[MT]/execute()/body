@@ -1,0 +1,28 @@
+{
+  logger.debug("Checking if host is available");
+  boolean success=false;
+  int timeout=5000;
+  try {
+    success=Ping.checkVitality(ip,0,timeout);
+    if (success) {
+      logger.debug("established connection [host '{}' port '{}' timeout '{}']",new Object[]{ip,0,timeout});
+      for (      JointSpaceBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames()) {
+          String tvcommand=provider.getTVCommand(itemName,"POLL");
+          if (tvcommand != null) {
+            updateItemState(itemName,tvcommand);
+          }
+        }
+      }
+    }
+ else {
+      logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{ip,0,timeout});
+    }
+  }
+ catch (  SocketTimeoutException se) {
+    logger.debug("timed out while connecting to host '{}' port '{}' timeout '{}'",new Object[]{ip,0,timeout});
+  }
+catch (  IOException ioe) {
+    logger.debug("couldn't establish network connection [host '{}' port '{}' timeout '{}']",new Object[]{ip,0,timeout});
+  }
+}

@@ -1,7 +1,9 @@
 {
-  logger.debug("bindingChanged provider={}, itemName={}",provider,itemName);
-  if (provider instanceof HomematicBindingProvider) {
-    HomematicBindingProvider homematicBindingProvider=(HomematicBindingProvider)provider;
-    initializeDeviceAndParameters(homematicBindingProvider,itemName);
+  super.bindingChanged(provider,itemName);
+  if (isProperlyConfigured()) {
+    if (provider instanceof HomematicBindingProvider) {
+      HomematicBindingProvider hmProvider=(HomematicBindingProvider)provider;
+      informCommunicator(hmProvider,itemName);
+    }
   }
 }

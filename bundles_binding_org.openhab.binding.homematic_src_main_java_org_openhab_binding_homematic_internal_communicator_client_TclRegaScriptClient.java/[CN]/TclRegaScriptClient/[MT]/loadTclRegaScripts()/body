@@ -1,0 +1,15 @@
+{
+  try {
+    Unmarshaller um=JAXBContext.newInstance(TclScripts.class).createUnmarshaller();
+    InputStream stream=Thread.currentThread().getContextClassLoader().getResourceAsStream("homematic/tclrega-scripts.xml");
+    TclScripts scripts=(TclScripts)um.unmarshal(stream);
+    Map<String,String> result=new HashMap<String,String>();
+    for (    TclScript script : scripts.getScripts()) {
+      result.put(script.getName(),script.getData());
+    }
+    return result;
+  }
+ catch (  JAXBException ex) {
+    throw new CcuClientException(ex.getMessage(),ex);
+  }
+}

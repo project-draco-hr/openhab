@@ -1,0 +1,10 @@
+{
+  RemoteControlOptionParser rcParameterParser=new RemoteControlOptionParser();
+  HmRemoteControlOptions rco=rcParameterParser.parse(remoteControlAddress,options);
+  rco.setText(text);
+  logger.debug("Sending to remote control {}: {}",remoteControlAddress,rco);
+  HmResult result=sendScriptByName("setRemoteControlDisplay",HmResult.class,new String[]{"remote_address","text","beep_value","backlight_value","unit_value","symbols"},new String[]{remoteControlAddress,rco.getText(),rco.getBeepAsString(),rco.getBacklightAsString(),rco.getUnitAsString(),StringUtils.join(rco.getSymbols(),"\t")});
+  if (!result.isValid()) {
+    throw new CcuClientException("Failed to set remote control with address " + remoteControlAddress);
+  }
+}

@@ -9,6 +9,8 @@
   }
  catch (  SwegonVentilationException e) {
     logger.error("Error occured when connecting to Swegon ventilation system",e);
+    logger.warn("Closing Swegon ventilation system message listener");
+    interrupted=true;
   }
   while (!interrupted) {
     try {

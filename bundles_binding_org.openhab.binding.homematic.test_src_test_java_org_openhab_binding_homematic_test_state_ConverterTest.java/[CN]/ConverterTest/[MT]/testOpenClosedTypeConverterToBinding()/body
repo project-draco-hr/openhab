@@ -1,0 +1,29 @@
+{
+  OpenClosedTypeConverter converter=new OpenClosedTypeConverter();
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("PRESS_SHORT",true)));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("PRESS_SHORT",false)));
+  Assert.assertEquals("CLOSED",converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("LEVEL","")));
+  Assert.assertEquals("OPEN",converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("LEVEL","")));
+  Assert.assertEquals(1,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("LEVEL",1,0,1)));
+  Assert.assertEquals(0,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("LEVEL",0)));
+  Assert.assertEquals(5,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("LEVEL",5,0,5)));
+  Assert.assertEquals(0,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("LEVEL",0)));
+  Assert.assertEquals(5,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("LEVEL",1,0,5)));
+  Assert.assertEquals(5,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("LEVEL",4,0,5)));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("SENSOR",true)));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("SENSOR",false)));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("STATE",true,0,0,"HM-Sec-SC")));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("STATE",false,0,0,"HM-Sec-SC")));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("STATE",true,0,0,"HM-Sec-SC-2")));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("STATE",false,0,0,"HM-Sec-SC")));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("STATE",true,0,0,"ZEL STG RM FFK")));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("STATE",false,0,0,"ZEL STG RM FFK")));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("STATE",true,0,0,"HM-Sec-TiS")));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("STATE",false,0,0,"HM-Sec-TiS")));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("STATE",true)));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("STATE",false)));
+  Assert.assertEquals(false,converter.convertToBinding(OpenClosedType.CLOSED,getDatapoint("SENSOR",false)));
+  Assert.assertEquals(true,converter.convertToBinding(OpenClosedType.OPEN,getDatapoint("SENSOR",true)));
+  Assert.assertEquals(1.0,converter.convertToBinding(OpenClosedType.OPEN,getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(0.0,converter.convertToBinding(OpenClosedType.CLOSED,getRollerShutterDatapoint("LEVEL",0.0)));
+}

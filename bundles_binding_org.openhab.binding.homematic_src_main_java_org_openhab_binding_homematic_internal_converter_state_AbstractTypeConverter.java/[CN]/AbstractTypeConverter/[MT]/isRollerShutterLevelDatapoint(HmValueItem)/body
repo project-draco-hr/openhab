@@ -1,0 +1,9 @@
+{
+  if (hmValueItem != null && hmValueItem instanceof HmDatapoint) {
+    String device=((HmDatapoint)hmValueItem).getChannel().getDevice().getType();
+    if (ArrayUtils.contains(ROLLERSHUTTER_DEVICES,device) && "LEVEL".equalsIgnoreCase(hmValueItem.getName())) {
+      return true;
+    }
+  }
+  return false;
+}

@@ -1,6 +1,15 @@
 {
-  List<Class<? extends State>> acceptedTypes=new ArrayList<Class<? extends State>>(item.getAcceptedDataTypes());
-  acceptedTypes.retainAll(converters.getMatchingStates(protocolValue));
+  List<Class<? extends State>> acceptedTypes=new ArrayList<Class<? extends State>>();
+  List<Class<? extends State>> itemTypes=new ArrayList<Class<? extends State>>(item.getAcceptedDataTypes());
+  List<Class<? extends State>> matchingTypes=converters.getMatchingStates(protocolValue);
+  for (  Class<? extends State> matchingType : matchingTypes) {
+    for (    Class<? extends State> itemType : itemTypes) {
+      if (itemType.isAssignableFrom(matchingType)) {
+        acceptedTypes.add(matchingType);
+        break;
+      }
+    }
+  }
   if (acceptedTypes.isEmpty()) {
     return null;
   }

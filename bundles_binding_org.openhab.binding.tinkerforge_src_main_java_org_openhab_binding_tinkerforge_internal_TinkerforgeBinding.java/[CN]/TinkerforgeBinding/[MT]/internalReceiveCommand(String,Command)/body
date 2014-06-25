@@ -1,4 +1,5 @@
 {
+  logger.debug("received command {} for item {}",command,itemName);
   for (  TinkerforgeBindingProvider provider : providers) {
     for (    String itemNameP : provider.getItemNames()) {
       if (itemNameP.equals(itemName)) {
@@ -33,6 +34,20 @@
             logger.trace("{} found string command",LoggerConstants.COMMAND);
             if (mDevice instanceof MTextActor) {
               ((MTextActor)mDevice).setText(command.toString());
+            }
+          }
+ else           if (command instanceof DecimalType) {
+            logger.debug("{} found number command",LoggerConstants.COMMAND);
+            if (command instanceof HSBType) {
+              logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
+              if (mDevice instanceof ColorActor) {
+                ((ColorActor)mDevice).setColor((HSBType)command,provider.getDeviceOptions(itemName));
+              }
+            }
+ else {
+              if (mDevice instanceof NumberActor) {
+                ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
+              }
             }
           }
  else {

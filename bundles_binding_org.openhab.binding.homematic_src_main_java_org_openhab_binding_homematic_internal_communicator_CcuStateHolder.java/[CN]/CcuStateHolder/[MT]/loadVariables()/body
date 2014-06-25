@@ -1,0 +1,10 @@
+{
+  logger.info("Loading CCU variables");
+  context.getTclRegaScriptClient().iterateAllVariables(new TclIteratorCallback(){
+    @Override public void iterate(    HomematicBindingConfig bindingConfig,    HmValueItem variable){
+      ccuVariables.put(bindingConfig,variable);
+    }
+  }
+);
+  logger.info("Finished loading {} CCU variables",ccuVariables.size());
+}

@@ -1,0 +1,30 @@
+{
+  final DatapointConfig bindingConfig=new DatapointConfig(HmInterface.parse(interfaceId),addressWithChannel,parameter);
+  String className=value == null ? "Unknown" : value.getClass().getSimpleName();
+  logger.debug("Received new ({}) value '{}' for {}",className,value,bindingConfig);
+  lastEventTime=System.currentTimeMillis();
+  final Event event=new Event(bindingConfig,value);
+  if (context.getStateHolder().isDatapointReloadInProgress()) {
+    context.getStateHolder().addToRefreshCache(event.getBindingConfig(),event.getNewValue());
+  }
+  event.setHmValueItem(context.getStateHolder().getState(event.getBindingConfig()));
+  if (event.getHmValueItem() != null) {
+    event.getHmValueItem().setValue(event.getNewValue());
+    new ProviderItemIterator().iterate(event.getBindingConfig(),new ProviderItemIteratorCallback(){
+      @Override public void next(      HomematicBindingConfig providerBindingConfig,      Item item,      Converter<?> converter){
+        State state=converter.convertFromBinding(event.getHmValueItem());
+        context.getEventPublisher().postUpdate(item.getName(),state);
+        if (state == OnOffType.ON) {
+          executeBindingAction(providerBindingConfig);
+          if (event.isPressValueItem()) {
+            itemDisabler.add(providerBindingConfig);
+          }
+        }
+      }
+    }
+);
+  }
+ else {
+    logger.warn("Can't find {}, value is not published to openHAB!",event.getBindingConfig());
+  }
+}

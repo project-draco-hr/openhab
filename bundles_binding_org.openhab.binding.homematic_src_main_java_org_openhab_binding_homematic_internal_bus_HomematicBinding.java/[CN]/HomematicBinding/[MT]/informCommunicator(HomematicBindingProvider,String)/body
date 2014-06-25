@@ -1,0 +1,14 @@
+{
+  final Item item=hmProvider.getItem(itemName);
+  final HomematicBindingConfig bindingConfig=hmProvider.getBindingFor(itemName);
+  if (bindingConfig != null) {
+    delayedExecutor.cancel();
+    delayedExecutor.addBindingConfig(item,bindingConfig);
+    delayedExecutor.schedule(new TimerTask(){
+      @Override public void run(){
+        delayedExecutor.publishChangedBindings();
+      }
+    }
+,3000);
+  }
+}

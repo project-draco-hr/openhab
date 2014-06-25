@@ -5,9 +5,9 @@
     gpioPin.setActiveLow(provider.getActiveLow(itemName));
     direction=provider.getDirection(itemName);
     gpioPin.setDirection(direction);
-    gpioPin.setEdgeDetection(GPIOPin.EDGEDETECTION_BOTH);
     if (direction == GPIOPin.DIRECTION_IN) {
       long debounceInterval=provider.getDebounceInterval(itemName);
+      gpioPin.setEdgeDetection(GPIOPin.EDGEDETECTION_BOTH);
       if (debounceInterval != GPIOBindingProvider.DEBOUNCEINTERVAL_UNDEFINED) {
         gpioPin.setDebounceInterval(debounceInterval);
       }

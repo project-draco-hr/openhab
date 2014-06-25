@@ -1,0 +1,22 @@
+{
+  volumeConfig conf=new volumeConfig();
+  String url="http://" + host + "/1/audio/volume";
+  String volume_json=HttpUtil.executeUrl("GET",url,IOUtils.toInputStream(""),CONTENT_TYPE_JSON,1000);
+  if (volume_json != null) {
+    try {
+      Object obj=JSONValue.parse(volume_json);
+      JSONObject array=(JSONObject)obj;
+      conf.mute=Boolean.parseBoolean(array.get("muted").toString());
+      conf.volume=Integer.parseInt(array.get("current").toString());
+      conf.min=Integer.parseInt(array.get("min").toString());
+      conf.max=Integer.parseInt(array.get("max").toString());
+    }
+ catch (    NumberFormatException ex) {
+      logger.warn("Exception while interpreting volume json return");
+    }
+catch (    Throwable t) {
+      logger.warn("Could not parse JSON String for volume value. Error: {}",t.toString());
+    }
+  }
+  return conf;
+}

@@ -1,0 +1,10 @@
+{
+  logger.info("Scheduling one datapoint reload job in 60 seconds");
+  delayedExecutor.schedule(new TimerTask(){
+    @Override public void run(){
+      logger.debug("Initial CCU datapoints reload");
+      context.getStateHolder().reloadDatapoints();
+    }
+  }
+,60000);
+}

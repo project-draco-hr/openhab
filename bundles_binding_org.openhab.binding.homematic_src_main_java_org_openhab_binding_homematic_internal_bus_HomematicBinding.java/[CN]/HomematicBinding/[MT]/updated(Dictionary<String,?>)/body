@@ -1,35 +1,17 @@
 {
-  logger.debug("updated config={}",config);
-  if (config == null) {
-    return;
-  }
-  String checkAliveIntervallStr=(String)config.get(CONFIG_KEY_CONNECTION_REFRESH_INTERVALL);
-  if (StringUtils.isBlank(checkAliveIntervallStr)) {
-    checkAlifeIntervallMS=DEFAULT_INTERVALL_5_MINUTES;
-  }
- else {
-    checkAlifeIntervallMS=Integer.valueOf(checkAliveIntervallStr);
-  }
-  ccuHost=(String)config.get(CONFIG_KEY_CCU_HOST);
-  ccu=new CCURF(new XmlRpcConnectionRF(ccuHost));
-  converterLookupByConfiguredDevices.setCcu(ccu);
-  String callbackPortStr=(String)config.get(CONFIG_KEY_CALLBACK_PORT);
-  if (StringUtils.isBlank(callbackPortStr)) {
-    callbackPort=DEFAULT_CALLBACK_PORT;
-  }
- else {
-    callbackPort=Integer.valueOf(callbackPortStr);
-  }
-  callbackHost=(String)config.get(CONFIG_KEY_CALLBACK_HOST);
-  if (StringUtils.isBlank(callbackHost)) {
-    callbackHost=LocalNetworkInterface.getLocalNetworkInterface();
-  }
-  if (isCallbackServerInitialized()) {
-    removeCallbackHandler();
-  }
-  registerCallbackHandler();
-  setProperlyConfigured(true);
-  for (  HomematicBindingProvider provider : providers) {
-    queryAndSendAllActualStates(provider);
+  if (config != null) {
+    setProperlyConfigured(false);
+    communicator.stop();
+    context.getConfig().parse(config);
+    logger.info(context.getConfig().toString());
+    if (context.getConfig().isValid()) {
+      communicator.start();
+      setProperlyConfigured(true);
+      for (      HomematicBindingProvider hmProvider : providers) {
+        for (        String itemName : hmProvider.getItemNames()) {
+          informCommunicator(hmProvider,itemName);
+        }
+      }
+    }
   }
 }

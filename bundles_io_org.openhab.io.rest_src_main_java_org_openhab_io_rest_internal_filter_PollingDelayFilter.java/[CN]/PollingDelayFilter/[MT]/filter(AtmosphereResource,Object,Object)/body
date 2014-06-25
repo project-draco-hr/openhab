@@ -1,7 +1,16 @@
 {
   final HttpServletRequest request=resource.getRequest();
   try {
-    if (!ResponseTypeHelper.isStreamingTransport(request) && message instanceof PageBean && originalMessage instanceof Item) {
+    boolean isItemMessage=originalMessage instanceof Item || originalMessage instanceof GroupItem;
+    boolean isStreamingTransport=false;
+    try {
+      isStreamingTransport=ResponseTypeHelper.isStreamingTransport(request);
+    }
+ catch (    Exception e) {
+      logger.error(e.getMessage());
+      return new BroadcastAction(ACTION.ABORT,message);
+    }
+    if (!isStreamingTransport && message instanceof PageBean && isItemMessage) {
       final String delayedBroadcasterName=resource.getRequest().getPathInfo();
       Executors.newSingleThreadExecutor().submit(new Runnable(){
         public void run(){
@@ -23,6 +32,7 @@
   }
  catch (  Exception e) {
     logger.error(e.getMessage());
+    return new BroadcastAction(ACTION.ABORT,message);
   }
   return new BroadcastAction(ACTION.ABORT,message);
 }

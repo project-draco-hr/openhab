@@ -1,0 +1,24 @@
+{
+  try {
+    BinRpcResponse response=new BinRpcResponse(socket.getInputStream(),true);
+    if (TRACE_ENABLED) {
+      logger.trace("Event BinRpcResponse: {}",response.toString());
+    }
+    byte[] returnValue=handleMethodCall(response.getMethodName(),response.getResponseData());
+    if (returnValue != null) {
+      socket.getOutputStream().write(returnValue);
+    }
+  }
+ catch (  EOFException eof) {
+  }
+catch (  Exception e) {
+    logger.error(e.getMessage(),e);
+  }
+ finally {
+    try {
+      socket.close();
+    }
+ catch (    IOException ex) {
+    }
+  }
+}
