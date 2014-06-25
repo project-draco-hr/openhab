@@ -10,8 +10,10 @@
   if (this.endOfQueueTransmit.before(this.lastTransmit)) {
     this.endOfQueueTransmit=this.lastTransmit;
   }
-  SenderQueueItem qi=new SenderQueueItem();
-  qi.msg=data;
-  qi.expiry=new Date(this.lastTransmit.getTime() + MESSAGE_EXPIRY_PERIOD);
-  this.pendingAckQueue.put(qi.msg.msgCount,qi);
+  if (data.msgType != MaxCulMsgType.ACK) {
+    SenderQueueItem qi=new SenderQueueItem();
+    qi.msg=data;
+    qi.expiry=new Date(this.lastTransmit.getTime() + MESSAGE_EXPIRY_PERIOD);
+    this.pendingAckQueue.put(qi.msg.msgCount,qi);
+  }
 }
