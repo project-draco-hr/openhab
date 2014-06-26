@@ -3,12 +3,15 @@
   if (item.getState() instanceof UnDefType) {
     return;
   }
+  if (!JpaConfiguration.isInitialized) {
+    logger.warn("Trying to create EntityManagerFactory but we don't have configuration yet!");
+    return;
+  }
   String name=(alias != null) ? alias : item.getName();
-  JpaPersistentItem pItem;
+  JpaPersistentItem pItem=new JpaPersistentItem();
   if (StateHelper.isOtherStateType(item.getState())) {
-    pItem=new JpaPersistentOtherItem();
     try {
-      ((JpaPersistentOtherItem)pItem).setValue(StateHelper.toOther(item.getState()));
+      pItem.setValue(StateHelper.toOther(item.getState()));
     }
  catch (    Exception e) {
       logger.error("Error on converting item value type: " + item.getState() + " to string!");
@@ -17,8 +20,7 @@
     }
   }
  else {
-    pItem=new JpaPersistentStringItem();
-    ((JpaPersistentStringItem)pItem).setValue(StateHelper.toString(item.getState()));
+    pItem.setValue(StateHelper.toString(item.getState()));
   }
   pItem.setName(name);
   pItem.setRealName(item.getName());
@@ -33,7 +35,7 @@
   }
  catch (  Exception e) {
     logger.error("Error on persisting item! Rolling back!");
-    logger.error(e.getMessage());
+    logger.error(e.getMessage(),e);
     em.getTransaction().rollback();
   }
  finally {
