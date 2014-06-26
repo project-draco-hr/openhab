@@ -1,4 +1,9 @@
 {
+  logger.debug("Update config...");
+  if (properties == null) {
+    logger.error("Got a null properties object!");
+    return;
+  }
   String param=(String)properties.get(CFG_CONNECTION_URL);
   logger.debug("url: " + param);
   if (param == null) {
@@ -27,4 +32,5 @@
     logger.info(CFG_PASSWORD + " was not specified!");
   }
   dbPassword=(String)properties.get(CFG_PASSWORD);
+  logger.debug("Update config...done");
 }

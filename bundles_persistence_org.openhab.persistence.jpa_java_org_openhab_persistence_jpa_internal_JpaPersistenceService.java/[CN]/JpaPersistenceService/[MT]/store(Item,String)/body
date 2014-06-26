@@ -1,20 +1,7 @@
 {
+  logger.debug("Storing item: " + item.getName());
   if (item.getState() instanceof UnDefType) {
     return;
-  }
-  if (initialized == false) {
-    logger.warn("Jpa not initialized");
-    return;
-  }
-  if (!isEntityManagerFactoryOpen()) {
-    try {
-      initializeEntityManagerFactory();
-    }
- catch (    Exception e) {
-      logger.error("Error while initializing database connection!");
-      logger.error(e.getMessage());
-      return;
-    }
   }
   String name=(alias != null) ? alias : item.getName();
   JpaPersistentItem pItem;
@@ -36,7 +23,7 @@
   pItem.setName(name);
   pItem.setRealName(item.getName());
   pItem.setTimestamp(new Date());
-  EntityManager em=emf.createEntityManager();
+  EntityManager em=getEntityManagerFactory().createEntityManager();
   try {
     logger.debug("Persisting item...");
     em.getTransaction().begin();
@@ -52,4 +39,5 @@
  finally {
     em.close();
   }
+  logger.debug("Storing item...done");
 }
