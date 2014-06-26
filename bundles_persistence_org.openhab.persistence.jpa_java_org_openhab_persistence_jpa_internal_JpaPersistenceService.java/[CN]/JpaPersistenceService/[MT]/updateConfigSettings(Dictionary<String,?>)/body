@@ -1,0 +1,30 @@
+{
+  String param=(String)properties.get(CFG_CONNECTION_URL);
+  logger.debug("url: " + param);
+  if (param == null) {
+    logger.error("Connection url is required in openhab.cfg!");
+    throw new ConfigurationException(CFG_CONNECTION_URL,"Connection url is required in openhab.cfg!");
+  }
+  if (StringUtils.isBlank(param)) {
+    logger.error("Empty connection url in openhab.cfg!");
+    throw new ConfigurationException(CFG_CONNECTION_URL,"Empty connection url in openhab.cfg!");
+  }
+  dbConnectionUrl=(String)param;
+  param=(String)properties.get(CFG_DRIVER_CLASS);
+  logger.debug("driver: " + param);
+  if (param == null) {
+    throw new ConfigurationException(CFG_DRIVER_CLASS,"Driver class is required in openhab.cfg!");
+  }
+  if (StringUtils.isBlank(param)) {
+    throw new ConfigurationException(CFG_DRIVER_CLASS,"Empty driver class in openhab.cfg!");
+  }
+  dbDriverClass=(String)param;
+  if (properties.get(CFG_USERNAME) == null) {
+    logger.info(CFG_USERNAME + " was not specified!");
+  }
+  dbUserName=(String)properties.get(CFG_USERNAME);
+  if (properties.get(CFG_PASSWORD) == null) {
+    logger.info(CFG_PASSWORD + " was not specified!");
+  }
+  dbPassword=(String)properties.get(CFG_PASSWORD);
+}
