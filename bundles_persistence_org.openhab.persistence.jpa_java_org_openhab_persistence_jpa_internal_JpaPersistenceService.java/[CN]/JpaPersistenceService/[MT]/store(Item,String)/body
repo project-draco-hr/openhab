@@ -36,16 +36,20 @@
   pItem.setName(name);
   pItem.setRealName(item.getName());
   pItem.setTimestamp(new Date());
+  EntityManager em=emf.createEntityManager();
   try {
     logger.debug("Persisting item...");
-    beginTransaction();
+    em.getTransaction().begin();
     em.persist(pItem);
-    commitTransaction();
+    em.getTransaction().commit();
     logger.debug("Persisting item...done");
   }
  catch (  Exception e) {
     logger.error("Error on persisting item! Rolling back!");
     logger.error(e.getMessage());
-    rollbackTransaction();
+    em.getTransaction().rollback();
+  }
+ finally {
+    em.close();
   }
 }
