@@ -1,0 +1,27 @@
+{
+  HmDatapoint dp=new HmDatapoint();
+  FieldUtils.writeField(dp,"name",name,true);
+  FieldUtils.writeField(dp,"minValue",min,true);
+  FieldUtils.writeField(dp,"maxValue",max,true);
+  Object convertedValue=new TypeGuessAdapter().unmarshal(value == null ? null : value.toString());
+  if (convertedValue instanceof Boolean) {
+    FieldUtils.writeField(dp,"valueType",2,true);
+  }
+ else   if (convertedValue instanceof Integer) {
+    FieldUtils.writeField(dp,"valueType",8,true);
+  }
+ else   if (convertedValue instanceof Double) {
+    FieldUtils.writeField(dp,"valueType",4,true);
+  }
+ else {
+    FieldUtils.writeField(dp,"valueType",-1,true);
+  }
+  dp.setValue(convertedValue);
+  HmChannel channel=new HmChannel();
+  FieldUtils.writeField(dp,"channel",channel,true);
+  FieldUtils.writeField(channel,"number",channelNumber,true);
+  HmDevice device=new HmDevice();
+  FieldUtils.writeField(device,"type",StringUtils.defaultString(deviceType,""),true);
+  FieldUtils.writeField(channel,"device",device,true);
+  return dp;
+}
