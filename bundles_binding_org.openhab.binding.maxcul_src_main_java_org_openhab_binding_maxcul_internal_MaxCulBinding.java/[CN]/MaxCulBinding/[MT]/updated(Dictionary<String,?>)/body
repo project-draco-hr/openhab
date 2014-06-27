@@ -5,6 +5,13 @@
     if (StringUtils.isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
+    String timezoneString=(String)config.get("timezone");
+    if (StringUtils.isNotBlank(timezoneString)) {
+      this.tzStr=timezoneString;
+    }
+ else {
+      this.tzStr="Europe/London";
+    }
     String deviceString=(String)config.get("device");
     if (StringUtils.isNotBlank(deviceString)) {
       logger.debug("Setting up device " + deviceString);

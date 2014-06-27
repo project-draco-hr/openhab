@@ -8,9 +8,7 @@
       Collection<MaxCulBindingConfig> bindingConfigs=null;
       for (      MaxCulBindingProvider provider : super.providers) {
         bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
-        if (bindingConfigs != null) {
-          break;
-        }
+        if (bindingConfigs != null)         break;
       }
       if (bindingConfigs == null) {
         logger.error("Unable to find configuration for serial " + pkt.serial + ". Do you have a binding for it?");
@@ -27,12 +25,12 @@
 switch (msgType) {
 case WALL_THERMOSTAT_CONTROL:
       WallThermostatControlMsg wallThemCtrlMsg=new WallThermostatControlMsg(data);
-    wallThemCtrlMsg.debugPrint();
+    wallThemCtrlMsg.printMessage();
   this.messageHandler.sendAck(wallThemCtrlMsg);
 break;
 case SET_TEMPERATURE:
 SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
-setTempMsg.debugPrint();
+setTempMsg.printMessage();
 this.messageHandler.sendAck(setTempMsg);
 break;
 default :

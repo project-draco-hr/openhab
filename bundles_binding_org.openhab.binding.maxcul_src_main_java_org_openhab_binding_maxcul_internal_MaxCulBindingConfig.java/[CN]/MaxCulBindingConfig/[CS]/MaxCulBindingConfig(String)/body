@@ -1,12 +1,19 @@
 {
   String[] configParts=bindingConfig.trim().split(":");
   if (bindingConfig.startsWith("PairMode")) {
+    logger.debug("Pair Mode switch found");
     this.deviceType=MaxCulDevice.PAIR_MODE;
+    return;
+  }
+  if (bindingConfig.startsWith("ListenMode")) {
+    logger.debug("Listen Mode switch found");
+    this.deviceType=MaxCulDevice.LISTEN_MODE;
     return;
   }
   if (configParts.length < 2) {
     throw new BindingConfigParseException("MaxCul configuration requires a configuration of at least the format <device_type>:<serial_num> for a MAX! device.");
   }
+  logger.debug("Found real device");
   logger.debug("Part 0/" + (configParts.length - 1) + " -> "+ configParts[0]);
   if (configParts[0].compareTo("RadiatorThermostat") == 0) {
     this.deviceType=MaxCulDevice.RADIATOR_THERMOSTAT;
@@ -68,6 +75,7 @@ case WALL_THERMOSTAT:
 this.feature=MaxCulFeature.THERMOSTAT;
 break;
 case PAIR_MODE:
+case LISTEN_MODE:
 break;
 }
 }

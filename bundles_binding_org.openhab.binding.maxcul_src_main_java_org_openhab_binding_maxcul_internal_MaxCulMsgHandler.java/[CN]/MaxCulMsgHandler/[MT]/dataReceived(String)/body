@@ -1,6 +1,10 @@
 {
   logger.debug("MaxCulSender Received " + data);
   if (data.startsWith("Z")) {
+    if (listenMode) {
+      listenModeHandler(data);
+      return;
+    }
     if (BaseMsg.isForUs(data,srcAddr)) {
       MaxCulMsgType msgType=BaseMsg.getMsgType(data);
       if (msgType == MaxCulMsgType.ACK) {
@@ -18,7 +22,7 @@
       }
  else       if (msgType == MaxCulMsgType.TIME_INFO) {
         TimeInfoMsg msg=new TimeInfoMsg(data);
-        sendTimeInfo(msg.srcAddrStr);
+        sendTimeInfo(msg.srcAddrStr,this.tzStr);
       }
  else {
         this.mcbmp.MaxCulMsgReceived(data);

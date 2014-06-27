@@ -45,6 +45,9 @@ logger.debug(itemName + " pairMode cleared");
 break;
 }
 }
+ else if (bindingConfig.deviceType == MaxCulDevice.LISTEN_MODE && (command instanceof OnOffType)) {
+this.messageHandler.setListenMode(((OnOffType)command == OnOffType.ON));
+}
  else if ((bindingConfig.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT || bindingConfig.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || bindingConfig.deviceType == MaxCulDevice.WALL_THERMOSTAT) && bindingConfig.feature == MaxCulFeature.THERMOSTAT) {
 if (command instanceof OnOffType) {
 }

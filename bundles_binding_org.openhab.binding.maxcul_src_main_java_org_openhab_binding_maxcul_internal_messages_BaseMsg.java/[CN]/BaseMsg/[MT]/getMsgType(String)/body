@@ -1,4 +1,4 @@
 {
   if (pktLenOk(rawMsg) == false)   return MaxCulMsgType.UNKNOWN;
-  return MaxCulMsgType.fromByte(Byte.parseByte(rawMsg.substring(PKT_POS_MSG_TYPE,PKT_POS_MSG_TYPE + PKT_POS_MSG_TYPE_LEN),16));
+  return MaxCulMsgType.fromByte((byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_TYPE,PKT_POS_MSG_TYPE + PKT_POS_MSG_TYPE_LEN),16) & 0xff));
 }
