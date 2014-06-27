@@ -1,0 +1,12 @@
+{
+  List<MaxCulBindingConfig> configs=new ArrayList<MaxCulBindingConfig>();
+  for (  BindingConfig c : super.bindingConfigs.values()) {
+    MaxCulBindingConfig config=(MaxCulBindingConfig)c;
+    if (config.serialNumber != null) {
+      logger.debug("Comparing '" + config.devAddr + "' with '"+ addr+ "'");
+      if (config.devAddr.equalsIgnoreCase(addr))       configs.add(config);
+    }
+  }
+  if (configs.isEmpty())   return null;
+ else   return configs;
+}

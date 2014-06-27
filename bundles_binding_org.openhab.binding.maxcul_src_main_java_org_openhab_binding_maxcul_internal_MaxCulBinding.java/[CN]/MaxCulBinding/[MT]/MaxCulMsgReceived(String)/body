@@ -5,15 +5,7 @@
     logger.debug("Got PAIR_PING message");
     PairPingMsg pkt=new PairPingMsg(data);
     if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
-      Collection<MaxCulBindingConfig> bindingConfigs=null;
-      for (      MaxCulBindingProvider provider : super.providers) {
-        bindingConfigs=provider.getConfigsForSerialNumber(pkt.serial);
-        if (bindingConfigs != null)         break;
-      }
-      if (bindingConfigs == null) {
-        logger.error("Unable to find configuration for serial " + pkt.serial + ". Do you have a binding for it?");
-        return;
-      }
+      Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
       for (      MaxCulBindingConfig bc : bindingConfigs)       bc.setPairedInfo(pkt.srcAddrStr);
       messageHandler.sendPairPong(pkt.srcAddrStr);
     }
@@ -24,13 +16,22 @@
  else {
 switch (msgType) {
 case WALL_THERMOSTAT_CONTROL:
-      WallThermostatControlMsg wallThemCtrlMsg=new WallThermostatControlMsg(data);
-    wallThemCtrlMsg.printMessage();
-  this.messageHandler.sendAck(wallThemCtrlMsg);
+      WallThermostatControlMsg wallThermCtrlMsg=new WallThermostatControlMsg(data);
+    wallThermCtrlMsg.printMessage();
+  if (BaseMsg.isForUs(data,this.srcAddr))   this.messageHandler.sendAck(wallThermCtrlMsg);
 break;
 case SET_TEMPERATURE:
 SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
 setTempMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(setTempMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+if (bc.feature == MaxCulFeature.THERMOSTAT) {
+String itemName=provider.getItemNameForConfig(bc);
+eventPublisher.postUpdate(itemName,new DecimalType(setTempMsg.getDesiredTemperature()));
+}
+}
+}
 this.messageHandler.sendAck(setTempMsg);
 break;
 default :
