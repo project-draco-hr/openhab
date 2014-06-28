@@ -5,14 +5,19 @@
 switch (c.getDeviceType()) {
 case HeatingThermostatPlus:
 case HeatingThermostat:
-        return new HeatingThermostat(c);
+        HeatingThermostat thermostat=new HeatingThermostat(c);
+      thermostat.setType(c.getDeviceType());
+    return thermostat;
 case EcoSwitch:
+  return new EcoSwitch(c);
 case ShutterContact:
-      return new ShutterContact(c);
+return new ShutterContact(c);
 case WallMountedThermostat:
-    return new WallMountedThermostat(c);
+WallMountedThermostat wallThermostat=new WallMountedThermostat(c);
+wallThermostat.setType(c.getDeviceType());
+return wallThermostat;
 default :
-  return new UnsupportedDevice(c);
+return new UnsupportedDevice(c);
 }
 }
 }
