@@ -1,0 +1,23 @@
+{
+  StringBuilder sb=new StringBuilder();
+  this.msgCount=msgCount;
+  sb.append(String.format("%02x",msgCount).toUpperCase());
+  this.msgFlag=msgFlag;
+  sb.append(String.format("%02x",msgFlag).toUpperCase());
+  this.msgType=msgType;
+  this.msgTypeRaw=this.msgType.toByte();
+  sb.append(String.format("%02x",this.msgTypeRaw).toUpperCase());
+  this.srcAddrStr=srcAddr;
+  this.srcAddr[0]=(byte)(Integer.parseInt(srcAddr.substring(0,2),16) & 0xFF);
+  this.srcAddr[1]=(byte)(Integer.parseInt(srcAddr.substring(2,4),16) & 0xFF);
+  this.srcAddr[2]=(byte)(Integer.parseInt(srcAddr.substring(4,6),16) & 0xFF);
+  sb.append(srcAddr.toUpperCase());
+  this.dstAddrStr=dstAddr;
+  this.dstAddr[0]=(byte)(Integer.parseInt(dstAddr.substring(0,2),16) & 0xFF);
+  this.dstAddr[1]=(byte)(Integer.parseInt(dstAddr.substring(2,4),16) & 0xFF);
+  this.dstAddr[2]=(byte)(Integer.parseInt(dstAddr.substring(4,6),16) & 0xFF);
+  sb.append(dstAddr.toUpperCase());
+  this.groupid=groupId;
+  sb.append(String.format("%02x",this.groupid).toUpperCase());
+  this.rawMsg=sb.toString();
+}

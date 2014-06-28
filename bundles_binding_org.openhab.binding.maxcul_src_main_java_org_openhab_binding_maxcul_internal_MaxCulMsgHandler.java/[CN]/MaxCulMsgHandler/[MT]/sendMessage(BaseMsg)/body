@@ -27,7 +27,7 @@
 ;
       timer=new Timer();
       timers.put(qi,timer);
-      this.endOfQueueTransmit=new Date(this.endOfQueueTransmit.getTime() + ((msg.requiredCredit() + 2) * 10));
+      this.endOfQueueTransmit=new Date(this.endOfQueueTransmit.getTime() + ((msg.requiredCredit() + 2) * 1000));
       timer.schedule(task,this.endOfQueueTransmit);
       this.sendQueue.add(qi);
       logger.debug("Added message to queue to be TX'd at " + this.endOfQueueTransmit.toString());
