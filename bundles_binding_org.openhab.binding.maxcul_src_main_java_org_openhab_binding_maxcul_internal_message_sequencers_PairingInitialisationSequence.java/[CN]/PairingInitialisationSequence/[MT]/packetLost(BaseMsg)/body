@@ -1,0 +1,12 @@
+{
+  pktLostCount++;
+  logger.debug("Lost " + pktLostCount + " packets");
+  if (pktLostCount < 3) {
+    logger.debug("Attempt retransmission");
+    messageHandler.sendMessage(msg);
+  }
+ else {
+    logger.error("Lost " + pktLostCount + " packets. Ending Sequence in state "+ this.state);
+    state=PairingInitialisationState.FINISHED;
+  }
+}

@@ -11,24 +11,26 @@
   logger.debug("Received command " + command.toString() + " for item "+ itemName);
   if (bindingConfig != null) {
     logger.debug("Found config for " + itemName);
-    if (bindingConfig.deviceType == MaxCulDevice.PAIR_MODE && (command instanceof OnOffType)) {
+switch (bindingConfig.deviceType) {
+case PAIR_MODE:
+      if ((command instanceof OnOffType)) {
 switch ((OnOffType)command) {
 case ON:
-        pairMode=true;
-      TimerTask task=new TimerTask(){
-        public void run(){
-          logger.debug(itemName + " pairMode time out executed");
-          pairMode=false;
-          eventPublisher.postUpdate(itemName,OnOffType.OFF);
+          pairMode=true;
+        TimerTask task=new TimerTask(){
+          public void run(){
+            logger.debug(itemName + " pairMode time out executed");
+            pairMode=false;
+            eventPublisher.postUpdate(itemName,OnOffType.OFF);
+          }
         }
-      }
 ;
-    timer=timers.get(itemName);
-  if (timer != null) {
-    timer.cancel();
-    timers.remove(itemName);
-  }
-timer=new Timer();
+      timer=timers.get(itemName);
+    if (timer != null) {
+      timer.cancel();
+      timers.remove(itemName);
+    }
+  timer=new Timer();
 timers.put(itemName,timer);
 timer.schedule(task,pairModeTimeout);
 logger.debug(itemName + " pairMode enabled & timeout scheduled");
@@ -45,15 +47,28 @@ logger.debug(itemName + " pairMode cleared");
 break;
 }
 }
- else if (bindingConfig.deviceType == MaxCulDevice.LISTEN_MODE && (command instanceof OnOffType)) {
+ else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType");
+break;
+case LISTEN_MODE:
+if (command instanceof OnOffType) {
 this.messageHandler.setListenMode(((OnOffType)command == OnOffType.ON));
 }
- else if ((bindingConfig.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT || bindingConfig.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT_PLUS || bindingConfig.deviceType == MaxCulDevice.WALL_THERMOSTAT) && bindingConfig.feature == MaxCulFeature.THERMOSTAT) {
+ else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType");
+break;
+case RADIATOR_THERMOSTAT:
+case RADIATOR_THERMOSTAT_PLUS:
+case WALL_THERMOSTAT:
+if (bindingConfig.feature == MaxCulFeature.THERMOSTAT) {
 if (command instanceof OnOffType) {
 }
  else if (command instanceof DecimalType) {
 }
 }
- else logger.warn("Command ignored as it doesn't make sense");
+ else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType or DecimalType");
+break;
+default :
+logger.warn("Command not handled for " + bindingConfig.deviceType);
+break;
+}
 }
 }

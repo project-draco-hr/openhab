@@ -11,7 +11,7 @@
         AckMsg msg=new AckMsg(data);
         if (pendingAckQueue.containsKey(msg.msgCount) && msg.dstAddrStr.compareTo(srcAddr) == 0) {
           SenderQueueItem qi=pendingAckQueue.remove(msg.msgCount);
-          if ((qi.msg.dstAddrStr.compareToIgnoreCase(msg.srcAddrStr) == 0) && (qi.msg.srcAddrStr.compareToIgnoreCase(msg.dstAddrStr) == 0)) {
+          if ((qi.msg.dstAddrStr.equalsIgnoreCase(msg.srcAddrStr)) && (qi.msg.srcAddrStr.equalsIgnoreCase(msg.dstAddrStr))) {
             if (msg.getIsNack()) {
               logger.error("Message was NAK'd, packet lost");
             }
@@ -19,20 +19,30 @@
           }
         }
  else         logger.info("Got ACK for message " + msg.msgCount + " but it wasn't in the queue");
+        if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
+          BaseMsg bMsg=new BaseMsg(data);
+          logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
+          sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
+        }
       }
  else       if (msgType == MaxCulMsgType.TIME_INFO) {
         TimeInfoMsg msg=new TimeInfoMsg(data);
         sendTimeInfo(msg.srcAddrStr,this.tzStr);
       }
+ else       if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
+        BaseMsg bMsg=new BaseMsg(data);
+        logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
+        sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
+      }
  else {
-        this.mcbmp.MaxCulMsgReceived(data);
+        this.mcbmp.MaxCulMsgReceived(data,false);
       }
     }
  else     if (BaseMsg.isForUs(data,"000000")) {
 switch (BaseMsg.getMsgType(data)) {
 case PAIR_PING:
 case WALL_THERMOSTAT_CONTROL:
-        this.mcbmp.MaxCulMsgReceived(data);
+        this.mcbmp.MaxCulMsgReceived(data,true);
       break;
 default :
     logger.debug("Unhandled broadcast message of type " + BaseMsg.getMsgType(data).toString());

@@ -2,8 +2,12 @@
   Date now=new Date();
   for (  SenderQueueItem qi : pendingAckQueue.values()) {
     if (now.after(qi.expiry)) {
-      logger.error("Packet lost - timeout");
+      logger.error("Packet " + qi.msg.msgCount + " ("+ qi.msg.msgType+ ") lost - timeout");
       pendingAckQueue.remove(qi.msg.msgCount);
+      if (sequenceRegister.containsKey(qi.msg.msgCount)) {
+        sequenceRegister.get(qi.msg.msgCount).packetLost(qi.msg);
+        sequenceRegister.remove(qi.msg.msgCount);
+      }
     }
   }
 }

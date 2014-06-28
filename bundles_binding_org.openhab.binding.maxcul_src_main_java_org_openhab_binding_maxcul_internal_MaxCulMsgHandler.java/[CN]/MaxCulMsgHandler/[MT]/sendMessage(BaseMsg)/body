@@ -32,6 +32,10 @@
       this.sendQueue.add(qi);
       logger.debug("Added message to queue to be TX'd at " + this.endOfQueueTransmit.toString());
     }
+    if (msg.isPartOfSequence()) {
+      logger.debug("Message " + msg.msgCount + " is part of sequence. Adding to register.");
+      sequenceRegister.put(msg.msgCount,msg.getMessageSequencer());
+    }
   }
  else   logger.debug("Tried to send a message that wasn't ready!");
 }

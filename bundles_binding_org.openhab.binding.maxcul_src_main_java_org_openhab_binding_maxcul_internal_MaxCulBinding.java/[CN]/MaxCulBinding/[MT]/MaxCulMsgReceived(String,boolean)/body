@@ -1,17 +1,13 @@
 {
   logger.debug("Received data from CUL: " + data);
   MaxCulMsgType msgType=BaseMsg.getMsgType(data);
-  if (((pairMode && BaseMsg.isForUs(data,this.BROADCAST_ADDRESS)) || BaseMsg.isForUs(data,this.srcAddr)) && msgType == MaxCulMsgType.PAIR_PING) {
+  if (((pairMode && isBroadcast) || BaseMsg.isForUs(data,this.srcAddr)) && msgType == MaxCulMsgType.PAIR_PING) {
     logger.debug("Got PAIR_PING message");
     PairPingMsg pkt=new PairPingMsg(data);
-    if (pkt.len > 0 && (pkt.dstAddrStr.compareToIgnoreCase(this.srcAddr) == 0 || (pkt.dstAddrStr.compareToIgnoreCase(BROADCAST_ADDRESS) == 0))) {
-      Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
-      for (      MaxCulBindingConfig bc : bindingConfigs)       bc.setPairedInfo(pkt.srcAddrStr);
-      messageHandler.sendPairPong(pkt.srcAddrStr);
-    }
- else {
-      logger.debug("Got pairing message for another controller");
-    }
+    Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
+    for (    MaxCulBindingConfig bc : bindingConfigs)     bc.setPairedInfo(pkt.srcAddrStr);
+    PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,this.tzStr,messageHandler);
+    messageHandler.startSequence(ps,pkt);
   }
  else {
 switch (msgType) {
