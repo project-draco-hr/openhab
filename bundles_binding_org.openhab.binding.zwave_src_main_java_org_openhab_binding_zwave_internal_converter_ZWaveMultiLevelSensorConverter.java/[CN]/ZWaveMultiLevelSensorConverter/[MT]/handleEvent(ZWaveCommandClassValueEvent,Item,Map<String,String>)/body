@@ -1,12 +1,32 @@
 {
   ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
   String sensorType=arguments.get("sensor_type");
+  String sensorScale=arguments.get("sensor_scale");
   ZWaveMultiLevelSensorValueEvent sensorEvent=(ZWaveMultiLevelSensorValueEvent)event;
   if (converter == null) {
     logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
     return;
   }
   if (sensorType != null && SensorType.getSensorType(Integer.parseInt(sensorType)) != sensorEvent.getSensorType())   return;
-  State state=converter.convertFromValueToState(event.getValue());
-  this.getEventPublisher().postUpdate(item.getName(),state);
+  Object val=event.getValue();
+  if (sensorScale != null && Integer.parseInt(sensorScale) != sensorEvent.getSensorScale()) {
+    logger.debug("MultiLevel - scale conversion");
+switch (SensorType.getSensorType(Integer.parseInt(sensorType))) {
+case TEMPERATURE:
+      logger.debug("MultiLevel - scale conversion - temperature - {}",sensorEvent.getSensorScale());
+    if (sensorEvent.getSensorScale() == 0) {
+      double c=((BigDecimal)val).doubleValue();
+      val=new BigDecimal((c * 9.0 / 5.0) + 32.0);
+    }
+ else     if (sensorEvent.getSensorScale() == 1) {
+      double f=((BigDecimal)val).doubleValue();
+      val=new BigDecimal((f - 32.0) * 5.0 / 9.0);
+    }
+  break;
+default :
+break;
+}
+}
+State state=converter.convertFromValueToState(val);
+this.getEventPublisher().postUpdate(item.getName(),state);
 }
