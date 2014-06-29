@@ -14,7 +14,20 @@ switch (msgType) {
 case WALL_THERMOSTAT_CONTROL:
       WallThermostatControlMsg wallThermCtrlMsg=new WallThermostatControlMsg(data);
     wallThermCtrlMsg.printMessage();
-  if (BaseMsg.isForUs(data,this.srcAddr))   this.messageHandler.sendAck(wallThermCtrlMsg);
+  for (  MaxCulBindingProvider provider : super.providers) {
+    Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermCtrlMsg.srcAddrStr);
+    for (    MaxCulBindingConfig bc : bindingConfigs) {
+      if (bc.feature == MaxCulFeature.THERMOSTAT) {
+        String itemName=provider.getItemNameForConfig(bc);
+        eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getDesiredTemperature()));
+      }
+ else       if (bc.feature == MaxCulFeature.TEMPERATURE && wallThermCtrlMsg.getMeasuredTemperature() != null) {
+        String itemName=provider.getItemNameForConfig(bc);
+        eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getMeasuredTemperature()));
+      }
+    }
+  }
+if (BaseMsg.isForUs(data,this.srcAddr)) this.messageHandler.sendAck(wallThermCtrlMsg);
 break;
 case SET_TEMPERATURE:
 SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
