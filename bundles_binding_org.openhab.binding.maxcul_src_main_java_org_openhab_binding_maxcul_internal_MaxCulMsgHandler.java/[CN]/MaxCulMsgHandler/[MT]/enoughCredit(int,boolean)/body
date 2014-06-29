@@ -1,10 +1,3 @@
 {
-  Date now=new Date();
-  long credit=((now.getTime() - this.lastTransmit.getTime()) / 100) + this.surplusCredit;
-  boolean result=(credit > (requiredCredit + 100));
-  if (result && updateSurplus) {
-    this.surplusCredit=(int)credit - (requiredCredit + 100);
-    if (this.surplusCredit > 360)     this.surplusCredit=360;
-  }
-  return result;
+  return enoughCredit(requiredCredit,fastSend,false);
 }

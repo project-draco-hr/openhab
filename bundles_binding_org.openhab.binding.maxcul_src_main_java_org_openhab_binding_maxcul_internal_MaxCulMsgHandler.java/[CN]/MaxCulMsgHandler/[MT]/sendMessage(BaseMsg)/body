@@ -1,7 +1,7 @@
 {
   Timer timer=null;
   if (msg.readyToSend()) {
-    if (enoughCredit(msg.requiredCredit()) && this.sendQueue.isEmpty()) {
+    if (enoughCredit(msg.requiredCredit(),msg.isFastSend()) && this.sendQueue.isEmpty()) {
       logger.debug("Sending message immediately. Message is " + msg.msgType + " => "+ msg.rawMsg);
       transmitMessage(msg);
     }
@@ -12,7 +12,7 @@
         public void run(){
           SenderQueueItem topItem=sendQueue.remove();
           logger.debug("Checking credit");
-          if (enoughCredit(topItem.msg.requiredCredit())) {
+          if (enoughCredit(topItem.msg.requiredCredit(),topItem.msg.isFastSend())) {
             logger.debug("Sending item from queue. Message is " + topItem.msg.msgType + " => "+ topItem.msg.rawMsg);
             if (topItem.msg.msgType == MaxCulMsgType.TIME_INFO) {
               ((TimeInfoMsg)topItem.msg).updateTime();

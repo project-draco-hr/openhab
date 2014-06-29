@@ -5,7 +5,11 @@
  catch (  CULCommunicationException e) {
     logger.error("Unable to send CUL message " + data + " because: "+ e.getMessage());
   }
-  enoughCredit(data.requiredCredit(),true);
+  boolean fastSend=false;
+  if (data.isPartOfSequence()) {
+    fastSend=data.getMessageSequencer().useFastSend();
+  }
+  enoughCredit(data.requiredCredit(),fastSend,true);
   this.lastTransmit=new Date();
   if (this.endOfQueueTransmit.before(this.lastTransmit)) {
     this.endOfQueueTransmit=this.lastTransmit;
