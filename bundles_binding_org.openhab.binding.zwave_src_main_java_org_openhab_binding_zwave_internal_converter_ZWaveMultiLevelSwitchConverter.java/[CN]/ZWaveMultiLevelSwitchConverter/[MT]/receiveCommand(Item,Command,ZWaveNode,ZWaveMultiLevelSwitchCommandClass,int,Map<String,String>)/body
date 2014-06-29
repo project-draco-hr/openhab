@@ -1,10 +1,12 @@
 {
   SerialMessage serialMessage=null;
   String restoreLastValue=null;
+  logger.debug("Multilevel Switch COMMAND: {}",command.toString());
   if (command instanceof StopMoveType && (StopMoveType)command == StopMoveType.STOP) {
     serialMessage=commandClass.stopLevelChangeMessage();
   }
  else {
+    logger.debug("Multilevel Switch ELSE");
     ZWaveCommandConverter<?,?> converter=null;
     if (command instanceof OnOffType) {
       restoreLastValue=arguments.get("restore_last_value");
@@ -19,9 +21,12 @@
       return;
     }
     if (converter instanceof MultiLevelUpDownCommandConverter) {
+      logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter");
       if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
+        logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter - invert");
         if (command == UpDownType.UP)         command=UpDownType.DOWN;
  else         command=UpDownType.UP;
+        logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter - inverted: {}",command);
       }
     }
     Integer value=(Integer)converter.convertFromCommandToValue(item,command);
