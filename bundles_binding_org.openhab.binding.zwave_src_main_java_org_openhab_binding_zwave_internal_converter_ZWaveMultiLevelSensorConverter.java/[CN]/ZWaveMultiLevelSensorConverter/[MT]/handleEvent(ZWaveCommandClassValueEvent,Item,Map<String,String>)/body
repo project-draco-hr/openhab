@@ -10,22 +10,19 @@
   if (sensorType != null && SensorType.getSensorType(Integer.parseInt(sensorType)) != sensorEvent.getSensorType())   return;
   Object val=event.getValue();
   if (sensorScale != null && Integer.parseInt(sensorScale) != sensorEvent.getSensorScale()) {
-    logger.debug("MultiLevel - scale conversion - in  - {}",val);
 switch (SensorType.getSensorType(Integer.parseInt(sensorType))) {
 case TEMPERATURE:
-      logger.debug("MultiLevel - scale conversion - temperature - {}",sensorEvent.getSensorScale());
-    if (sensorEvent.getSensorScale() == 0) {
-      double c=((BigDecimal)val).doubleValue();
-      val=new BigDecimal((c * 9.0 / 5.0) + 32.0);
-    }
- else     if (sensorEvent.getSensorScale() == 1) {
-      double f=((BigDecimal)val).doubleValue();
-      val=new BigDecimal((f - 32.0) * 5.0 / 9.0);
-    }
-  logger.debug("MultiLevel - scale conversion - out - {}",val);
-break;
+      if (sensorEvent.getSensorScale() == 0) {
+        double c=((BigDecimal)val).doubleValue();
+        val=new BigDecimal((c * 9.0 / 5.0) + 32.0);
+      }
+ else       if (sensorEvent.getSensorScale() == 1) {
+        double f=((BigDecimal)val).doubleValue();
+        val=new BigDecimal((f - 32.0) * 5.0 / 9.0);
+      }
+    break;
 default :
-break;
+  break;
 }
 }
 State state=converter.convertFromValueToState(val);
