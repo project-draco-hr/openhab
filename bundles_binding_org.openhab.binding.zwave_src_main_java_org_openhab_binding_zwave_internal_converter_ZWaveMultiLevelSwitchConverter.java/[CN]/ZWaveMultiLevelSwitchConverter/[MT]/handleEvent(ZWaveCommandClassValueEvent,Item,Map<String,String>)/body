@@ -4,21 +4,15 @@
     logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
     return;
   }
-  logger.debug("Multilevel Switch Received {}",event.getValue().toString());
   State state=converter.convertFromValueToState(event.getValue());
-  logger.debug("Multilevel Switch Received State {}",state.toString());
   if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
-    logger.debug("Multilevel Switch inverted");
     if (converter instanceof IntegerUpDownTypeConverter) {
-      logger.debug("Multilevel Switch inverted UPDN");
       if (state == UpDownType.UP)       state=UpDownType.DOWN;
  else       state=UpDownType.UP;
     }
     if (converter instanceof IntegerPercentTypeConverter) {
-      logger.debug("Multilevel Switch inverted Percent");
       state=new PercentType(100 - ((DecimalType)state).intValue());
     }
-    logger.debug("Multilevel Switch inverted: {}",state.toString());
   }
   this.getEventPublisher().postUpdate(item.getName(),state);
 }
