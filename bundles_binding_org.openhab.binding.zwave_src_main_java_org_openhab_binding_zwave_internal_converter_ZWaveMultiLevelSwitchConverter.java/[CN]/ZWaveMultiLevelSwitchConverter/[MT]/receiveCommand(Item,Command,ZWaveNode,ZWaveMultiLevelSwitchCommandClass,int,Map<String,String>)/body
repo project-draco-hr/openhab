@@ -5,6 +5,7 @@
     serialMessage=commandClass.stopLevelChangeMessage();
   }
  else {
+    logger.debug("Multilevel Switch ELSE");
     ZWaveCommandConverter<?,?> converter=null;
     if (command instanceof OnOffType) {
       restoreLastValue=arguments.get("restore_last_value");
@@ -17,6 +18,15 @@
     if (converter == null) {
       logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring command.",item.getName(),node.getNodeId(),endpointId);
       return;
+    }
+    if (converter instanceof MultiLevelUpDownCommandConverter) {
+      logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter");
+      if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
+        logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter - invert");
+        if (command == UpDownType.UP)         command=UpDownType.DOWN;
+ else         command=UpDownType.UP;
+        logger.debug("Multilevel Switch MultiLevelUpDownCommandConverter - inverted: {}",command);
+      }
     }
     Integer value=(Integer)converter.convertFromCommandToValue(item,command);
     logger.trace("Converted command '{}' to value {} for item = {}, node = {}, endpoint = {}.",command.toString(),value,item.getName(),node.getNodeId(),endpointId);
