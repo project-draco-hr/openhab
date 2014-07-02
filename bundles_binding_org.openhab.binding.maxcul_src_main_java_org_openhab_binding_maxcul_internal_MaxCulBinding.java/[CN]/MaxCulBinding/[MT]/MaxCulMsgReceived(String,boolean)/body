@@ -43,6 +43,26 @@ eventPublisher.postUpdate(itemName,new DecimalType(setTempMsg.getDesiredTemperat
 }
 this.messageHandler.sendAck(setTempMsg);
 break;
+case THERMOSTAT_STATE:
+ThermostatStateMsg thermStateMsg=new ThermostatStateMsg(data);
+thermStateMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(thermStateMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.feature == MaxCulFeature.THERMOSTAT) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getDesiredTemperature()));
+}
+ else if (bc.feature == MaxCulFeature.TEMPERATURE) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getMeasuredTemperature()));
+}
+ else if (bc.feature == MaxCulFeature.BATTERY) {
+eventPublisher.postUpdate(itemName,thermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
+}
+}
+}
+if (BaseMsg.isForUs(data,this.srcAddr)) this.messageHandler.sendAck(thermStateMsg);
+break;
 default :
 logger.debug("Unhandled message type " + msgType.toString());
 break;
