@@ -62,6 +62,9 @@ eventPublisher.postUpdate(itemName,thermStateMsg.getBatteryLow() ? OnOffType.ON 
  else if (bc.feature == MaxCulFeature.MODE) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getControlMode().toInt()));
 }
+ else if (bc.feature == MaxCulFeature.VALVE_POS) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getValvePos()));
+}
 }
 }
 if (isBroadcast == false) this.messageHandler.sendAck(thermStateMsg);
