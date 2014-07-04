@@ -89,6 +89,12 @@ eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getControlM
 }
 if (isBroadcast == false) this.messageHandler.sendAck(wallThermStateMsg);
 break;
+case TIME_INFO:
+TimeInfoMsg timeMsg=new TimeInfoMsg(data);
+timeMsg.printMessage();
+TimeUpdateRequestSequence timeSeq=new TimeUpdateRequestSequence(this.tzStr,messageHandler);
+messageHandler.startSequence(timeSeq,timeMsg);
+break;
 default :
 logger.debug("Unhandled message type " + msgType.toString());
 break;
