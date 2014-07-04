@@ -1,0 +1,27 @@
+{
+  super(rawMsg);
+  logger.debug(this.msgType + " Payload Len -> " + this.payload.length);
+  if (this.payload.length == WALL_THERMOSTAT_STATE_SHORT_PAYLOAD_LEN || this.payload.length == WALL_THERMOSTAT_STATE_PAIR_THERM_PAYLOAD_LEN || this.payload.length == WALL_THERMOSTAT_STATE_UNTIL_PAYLOAD_LEN || this.payload.length == WALL_THERMOSTAT_STATE_TEMP_PAYLOAD_LEN) {
+    ctrlMode=ThermostatControlMode.values()[(this.payload[0] & 0x3)];
+    dstActive=extractBitFromByte(this.payload[0],3);
+    ;
+    lanGateway=extractBitFromByte(this.payload[0],4);
+    lockedForManualSetPoint=extractBitFromByte(this.payload[0],5);
+    rfError=extractBitFromByte(this.payload[0],6);
+    batteryLow=extractBitFromByte(this.payload[0],7);
+    displayMeasuredTemp=(this.payload[1] == 0 ? false : true);
+    desiredTemperature=(this.payload[2] & 0x7f) / 2.0;
+    if (this.payload.length == WALL_THERMOSTAT_STATE_PAIR_THERM_PAYLOAD_LEN) {
+    }
+ else     if (this.payload.length == WALL_THERMOSTAT_STATE_UNTIL_PAYLOAD_LEN) {
+    }
+ else     if (this.payload.length == WALL_THERMOSTAT_STATE_TEMP_PAYLOAD_LEN) {
+      int mTemp=this.payload[2];
+      mTemp&=0x80;
+      mTemp<<=1;
+      mTemp|=(this.payload[6] & 0xff);
+      this.measuredTemperature=mTemp / 10.0;
+    }
+  }
+ else   logger.error("Got " + this.msgType + " message with incorrect length!");
+}
