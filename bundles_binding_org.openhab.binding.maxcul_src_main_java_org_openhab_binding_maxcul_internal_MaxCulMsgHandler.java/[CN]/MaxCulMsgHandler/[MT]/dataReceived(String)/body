@@ -6,8 +6,10 @@
       return;
     }
     if (BaseMsg.isForUs(data,srcAddr)) {
+      boolean passToBinding=true;
       MaxCulMsgType msgType=BaseMsg.getMsgType(data);
       if (msgType == MaxCulMsgType.ACK) {
+        passToBinding=false;
         AckMsg msg=new AckMsg(data);
         if (pendingAckQueue.containsKey(msg.msgCount) && msg.dstAddrStr.compareTo(srcAddr) == 0) {
           SenderQueueItem qi=pendingAckQueue.remove(msg.msgCount);
@@ -19,22 +21,14 @@
           }
         }
  else         logger.info("Got ACK for message " + msg.msgCount + " but it wasn't in the queue");
-        if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
-          BaseMsg bMsg=new BaseMsg(data);
-          logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
-          sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
-        }
       }
- else       if (msgType == MaxCulMsgType.TIME_INFO) {
-        TimeInfoMsg msg=new TimeInfoMsg(data);
-        sendTimeInfoFast(msg.srcAddrStr,this.tzStr);
-      }
- else       if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
+      if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
+        passToBinding=false;
         BaseMsg bMsg=new BaseMsg(data);
         logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
         sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
       }
- else {
+      if (passToBinding) {
         this.mcbmp.MaxCulMsgReceived(data,false);
       }
     }
