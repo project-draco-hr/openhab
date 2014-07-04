@@ -1,0 +1,23 @@
+{
+  reloadExecutorPool.execute(new Runnable(){
+    @Override public void run(){
+      logger.debug("Reloading Homematic server variables");
+      try {
+        context.getTclRegaScriptClient().iterateAllVariables(new TclIteratorCallback(){
+          @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem variable){
+            if (hasChanged(bindingConfig,variables.get(bindingConfig),variable)) {
+              variables.put(bindingConfig,variable);
+              publish(bindingConfig,variable);
+            }
+          }
+        }
+);
+        logger.debug("Finished reloading {} Homematic server variables",variables.size());
+      }
+ catch (      HomematicClientException ex) {
+        logger.error(ex.getMessage(),ex);
+      }
+    }
+  }
+);
+}
