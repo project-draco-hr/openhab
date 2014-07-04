@@ -1,6 +1,5 @@
 {
-  logger.debug("internalReceiveCommand() is called!");
-  Timer timer=null;
+  Timer pairModeTimer=null;
   MaxCulBindingConfig bindingConfig=null;
   for (  MaxCulBindingProvider provider : super.providers) {
     bindingConfig=provider.getConfigForItemName(itemName);
@@ -25,22 +24,22 @@ case ON:
           }
         }
 ;
-      timer=timers.get(itemName);
-    if (timer != null) {
-      timer.cancel();
+      pairModeTimer=timers.get(itemName);
+    if (pairModeTimer != null) {
+      pairModeTimer.cancel();
       timers.remove(itemName);
     }
-  timer=new Timer();
-timers.put(itemName,timer);
-timer.schedule(task,pairModeTimeout);
+  pairModeTimer=new Timer();
+timers.put(itemName,pairModeTimer);
+pairModeTimer.schedule(task,pairModeTimeout);
 logger.debug(itemName + " pairMode enabled & timeout scheduled");
 break;
 case OFF:
 pairMode=false;
-timer=timers.get(itemName);
-if (timer != null) {
+pairModeTimer=timers.get(itemName);
+if (pairModeTimer != null) {
 logger.debug(itemName + " pairMode timer cancelled");
-timer.cancel();
+pairModeTimer.cancel();
 timers.remove(itemName);
 }
 logger.debug(itemName + " pairMode cleared");
@@ -59,13 +58,13 @@ case RADIATOR_THERMOSTAT:
 case RADIATOR_THERMOSTAT_PLUS:
 case WALL_THERMOSTAT:
 if (bindingConfig.feature == MaxCulFeature.THERMOSTAT) {
-if (command instanceof OnOffType) {
-if (((OnOffType)command) == OnOffType.ON) messageHandler.sendSetTemperature(bindingConfig.devAddr,SetTemperatureMsg.TEMPERATURE_ON);
- else if (((OnOffType)command) == OnOffType.OFF) messageHandler.sendSetTemperature(bindingConfig.devAddr,SetTemperatureMsg.TEMPERATURE_OFF);
+if (pacedBindingTransmitTimers.containsKey(bindingConfig)) {
+pacedBindingTransmitTimers.get(bindingConfig).cancel();
+pacedBindingTransmitTimers.remove(bindingConfig);
 }
- else if (command instanceof DecimalType) {
-messageHandler.sendSetTemperature(bindingConfig.devAddr,((DecimalType)command).doubleValue());
-}
+Timer pacingTimer=new Timer();
+pacedBindingTransmitTimers.put(bindingConfig,pacingTimer);
+pacingTimer.schedule(new MaxCulPacedThermostatTransmitTask(command,bindingConfig,messageHandler),PACED_TRANSMIT_TIME);
 }
  else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType or DecimalType");
 break;
