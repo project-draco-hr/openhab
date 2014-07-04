@@ -17,7 +17,7 @@ case WALL_THERMOSTAT_CONTROL:
   for (  MaxCulBindingProvider provider : super.providers) {
     Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermCtrlMsg.srcAddrStr);
     for (    MaxCulBindingConfig bc : bindingConfigs) {
-      if (bc.feature == MaxCulFeature.THERMOSTAT) {
+      if (bc.feature == MaxCulFeature.THERMOSTAT && wallThermCtrlMsg.getDesiredTemperature() != null) {
         String itemName=provider.getItemNameForConfig(bc);
         eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getDesiredTemperature()));
       }
@@ -50,14 +50,17 @@ for (MaxCulBindingProvider provider : super.providers) {
 Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(thermStateMsg.srcAddrStr);
 for (MaxCulBindingConfig bc : bindingConfigs) {
 String itemName=provider.getItemNameForConfig(bc);
-if (bc.feature == MaxCulFeature.THERMOSTAT) {
+if (bc.feature == MaxCulFeature.THERMOSTAT && thermStateMsg.getDesiredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getDesiredTemperature()));
 }
- else if (bc.feature == MaxCulFeature.TEMPERATURE) {
+ else if (bc.feature == MaxCulFeature.TEMPERATURE && thermStateMsg.getMeasuredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getMeasuredTemperature()));
 }
  else if (bc.feature == MaxCulFeature.BATTERY) {
 eventPublisher.postUpdate(itemName,thermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (bc.feature == MaxCulFeature.MODE) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getControlMode().toInt()));
 }
 }
 }
