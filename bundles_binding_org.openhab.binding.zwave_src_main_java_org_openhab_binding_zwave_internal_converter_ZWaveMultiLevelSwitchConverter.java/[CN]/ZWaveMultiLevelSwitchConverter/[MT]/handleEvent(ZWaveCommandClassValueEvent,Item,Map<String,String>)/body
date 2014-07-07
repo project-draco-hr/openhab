@@ -10,9 +10,9 @@
       if (state == UpDownType.UP)       state=UpDownType.DOWN;
  else       state=UpDownType.UP;
     }
-    if (converter instanceof IntegerPercentTypeConverter) {
-      state=new PercentType(100 - ((DecimalType)state).intValue());
-    }
+  }
+  if ("true".equalsIgnoreCase(arguments.get("invert_percent")) && converter instanceof IntegerPercentTypeConverter) {
+    state=new PercentType(100 - ((DecimalType)state).intValue());
   }
   this.getEventPublisher().postUpdate(item.getName(),state);
 }
