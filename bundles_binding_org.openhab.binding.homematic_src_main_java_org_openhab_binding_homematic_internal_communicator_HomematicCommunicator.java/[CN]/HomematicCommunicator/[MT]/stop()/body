@@ -6,13 +6,16 @@
       homematicCallbackServer.shutdown();
       if (homematicClient != null) {
         try {
-          homematicClient.release(HmInterface.RF);
-          homematicClient.release(HmInterface.WIRED);
+          homematicClient.releaseCallback();
+        }
+ catch (        HomematicClientException e) {
+        }
+        try {
+          homematicClient.shutdown();
         }
  catch (        HomematicClientException e) {
         }
       }
-      context.getTclRegaScriptClient().shutdown();
       if (itemDisabler != null) {
         itemDisabler.stop();
       }

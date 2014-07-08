@@ -1,0 +1,7 @@
+{
+  if (xmlRpcConnections.get(hmInterface) == null) {
+    XmlRpcConnection xmlRpcCon=HmInterface.WIRED == hmInterface ? new XmlRpcConnectionWired(config.getHost()) : new XmlRpcConnectionRF(config.getHost());
+    xmlRpcConnections.put(hmInterface,xmlRpcCon);
+  }
+  return xmlRpcConnections.get(hmInterface);
+}

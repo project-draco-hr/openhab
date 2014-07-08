@@ -4,17 +4,20 @@
     try {
       boolean isBinRpc=context.getConfig().isBinRpc();
       homematicCallbackServer=isBinRpc ? new BinRpcCallbackServer(this) : new XmlRpcCallbackServer(this);
-      context.getTclRegaScriptClient().start();
-      context.getStateHolder().init();
-      context.getStateHolder().loadDatapoints();
-      context.getStateHolder().loadVariables();
       itemDisabler=new ItemDisabler();
       itemDisabler.start();
       newDevicesCounter=0;
+      RpcClient rpcClient=isBinRpc ? new BinRpcClient() : new XmlRpcClient();
+      ServerId serverId=rpcClient.getServerId(HmInterface.RF);
+      logger.info("Homematic {}",serverId);
+      homematicClient=serverId.isHomegear() ? new HomegearClient(rpcClient) : new CcuClient(rpcClient);
+      context.setHomematicClient(homematicClient);
+      homematicClient.start();
+      context.getStateHolder().init();
+      context.getStateHolder().loadDatapoints();
+      context.getStateHolder().loadVariables();
       homematicCallbackServer.start();
-      homematicClient=isBinRpc ? new BinRpcClient() : new XmlRpcClient();
-      homematicClient.init(HmInterface.RF);
-      homematicClient.init(HmInterface.WIRED);
+      homematicClient.registerCallback();
       scheduleFirstRefresh();
     }
  catch (    Exception e) {

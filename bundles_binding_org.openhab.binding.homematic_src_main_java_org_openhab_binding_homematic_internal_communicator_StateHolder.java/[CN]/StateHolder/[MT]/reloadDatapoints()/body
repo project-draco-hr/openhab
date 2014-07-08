@@ -4,7 +4,7 @@
       try {
         logger.debug("Reloading Homematic server datapoints");
         datapointReloadInProgress=true;
-        context.getTclRegaScriptClient().iterateAllDatapoints(new TclIteratorCallback(){
+        context.getHomematicClient().iterateAllDatapoints(new HmValueItemIteratorCallback(){
           @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem hmValueItem){
             if (!datapoints.containsKey(bindingConfig)) {
               logger.info("Adding new {}",bindingConfig);
