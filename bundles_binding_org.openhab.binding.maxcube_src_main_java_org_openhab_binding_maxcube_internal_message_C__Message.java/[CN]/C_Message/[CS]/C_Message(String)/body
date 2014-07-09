@@ -1,5 +1,6 @@
 {
   super(raw);
+  logger.debug(" *** C-Message ***");
   String[] tokens=this.getPayload().split(Message.DELIMETER);
   rfAddress=tokens[0];
   byte[] bytes=Base64.decodeBase64(tokens[1].getBytes());
@@ -17,4 +18,6 @@
   }
   deviceType=DeviceType.create(data[4]);
   serialNumber=getSerialNumber(bytes);
+  if (deviceType == DeviceType.HeatingThermostatPlus || deviceType == DeviceType.HeatingThermostat || deviceType == DeviceType.WallMountedThermostat)   parseHeatingThermostatData(bytes);
+  if (deviceType == DeviceType.EcoSwitch || deviceType == DeviceType.ShutterContact)   logger.trace("Device {} type {} Data:",rfAddress,deviceType.toString(),parseData(bytes));
 }

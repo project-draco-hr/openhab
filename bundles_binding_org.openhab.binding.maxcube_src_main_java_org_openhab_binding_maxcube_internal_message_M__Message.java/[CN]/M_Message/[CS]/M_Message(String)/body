@@ -1,8 +1,14 @@
 {
   super(raw);
+  hasConfiguration=false;
   String[] tokens=this.getPayload().split(Message.DELIMETER);
   if (tokens.length > 1)   try {
     byte[] bytes=Base64.decodeBase64(tokens[2].getBytes());
+    hasConfiguration=true;
+    logger.trace("*** M_Message trace**** ");
+    logger.trace("\tMagic? (expect 86) : {}",(int)bytes[0]);
+    logger.trace("\tVersion? (expect 2): {}",(int)bytes[1]);
+    logger.trace("\t#defined rooms in M: {}",(int)bytes[2]);
     rooms=new ArrayList<RoomInformation>();
     devices=new ArrayList<DeviceInformation>();
     int roomCount=bytes[2];
@@ -44,5 +50,6 @@
   }
  else {
     logger.info("No rooms defined. Configure your Max!Cube");
+    hasConfiguration=false;
   }
 }
