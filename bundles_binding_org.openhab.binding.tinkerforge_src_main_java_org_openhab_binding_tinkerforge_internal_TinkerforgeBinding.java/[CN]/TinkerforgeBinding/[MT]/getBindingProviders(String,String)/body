@@ -6,10 +6,10 @@
       String subDeviceId=provider.getSubId(itemName);
       String deviceName=provider.getName(itemName);
       if (deviceName != null) {
-        logger.trace("found item for command: name {}",deviceName);
         OHTFDevice<?,?> ohtfDevice=ohConfig.getConfigByOHId(deviceName);
         deviceUid=ohtfDevice.getUid();
-        deviceName=ohtfDevice.getSubid();
+        subDeviceId=ohtfDevice.getSubid();
+        logger.trace("found deviceName {}, uid={}, subId {}",deviceName,deviceUid,subDeviceId);
       }
       if (uid.equals(deviceUid)) {
         if (subId == null && subDeviceId == null) {
