@@ -14,8 +14,8 @@
   }
   Object value=dpData.get("VALUE");
   if (value instanceof Number) {
-    writeDatapointFieldIfNotEmpty(dpData.get("MIN"),"minValue",dp);
-    writeDatapointFieldIfNotEmpty(dpData.get("MAX"),"maxValue",dp);
+    writeField(dp,"minValue",dpData.get("MIN"),value.getClass());
+    writeField(dp,"maxValue",dpData.get("MAX"),value.getClass());
   }
   if (value instanceof Boolean) {
     writeField(dp,"valueType",2,Integer.class);
