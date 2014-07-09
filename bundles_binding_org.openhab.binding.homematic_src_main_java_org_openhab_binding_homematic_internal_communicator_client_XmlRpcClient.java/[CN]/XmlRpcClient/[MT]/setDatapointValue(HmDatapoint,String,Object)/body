@@ -4,10 +4,5 @@
   if (dp.isIntegerValue() && value instanceof Double) {
     value=((Number)value).intValue();
   }
-  try {
-    getConnection(hmInterface).setValue(address,datapointName,value);
-  }
- catch (  Exception ex) {
-    throw new HomematicClientException(ex.getMessage(),ex);
-  }
+  setDatapointValue(hmInterface,address,datapointName,value);
 }
