@@ -1,6 +1,7 @@
 {
   SerialMessage serialMessage=null;
   String restoreLastValue=null;
+  logger.debug("NODE {}: MULTILEVEL COMMAND {}",node.getNodeId(),command);
   if (command instanceof StopMoveType && (StopMoveType)command == StopMoveType.STOP) {
     serialMessage=commandClass.stopLevelChangeMessage();
   }
@@ -18,8 +19,18 @@
       logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring command.",item.getName(),node.getNodeId(),endpointId);
       return;
     }
+    if (converter instanceof MultiLevelUpDownCommandConverter) {
+      logger.debug("MULTILEVEL Command is UP/DOWN");
+      if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
+        logger.debug("MULTILEVEL Command is UP/DOWN - INVERT STATE true - {}",command);
+        if (command == UpDownType.UP)         command=UpDownType.DOWN;
+ else         command=UpDownType.UP;
+        logger.debug("MULTILEVEL Command is UP/DOWN - INVERT STATE true - update - {}",command);
+      }
+    }
     Integer value=(Integer)converter.convertFromCommandToValue(item,command);
     logger.trace("Converted command '{}' to value {} for item = {}, node = {}, endpoint = {}.",command.toString(),value,item.getName(),node.getNodeId(),endpointId);
+    logger.debug("Converted command '{}' to value {} for item = {}, node = {}, endpoint = {}.",command.toString(),value,item.getName(),node.getNodeId(),endpointId);
     serialMessage=commandClass.setValueMessage(value);
   }
   serialMessage=node.encapsulate(serialMessage,commandClass,endpointId);

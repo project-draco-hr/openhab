@@ -33,6 +33,9 @@
   }
   try {
     int statusCode=client.executeMethod(method);
+    if (statusCode == HttpStatus.SC_NO_CONTENT) {
+      return null;
+    }
     if (statusCode != HttpStatus.SC_OK) {
       logger.warn("Method failed: " + method.getStatusLine());
     }
