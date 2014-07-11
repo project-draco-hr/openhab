@@ -1,6 +1,6 @@
 {
   HmDatapoint dp=new HmDatapoint();
-  writeField(dp,"name",name,String.class);
+  dp.setName(name);
   writeField(dp,"channel",channel,HmChannel.class);
   writeField(dp,"writeable",dpData.get("WRITEABLE"),Boolean.class);
   Object valueList=dpData.get("VALUE_LIST");
@@ -17,15 +17,7 @@
     writeField(dp,"minValue",dpData.get("MIN"),value.getClass());
     writeField(dp,"maxValue",dpData.get("MAX"),value.getClass());
   }
-  if (value instanceof Boolean) {
-    writeField(dp,"valueType",2,Integer.class);
-  }
- else   if (value instanceof Number) {
-    writeField(dp,"valueType",8,Integer.class);
-  }
- else {
-    writeField(dp,"valueType",20,Integer.class);
-  }
+  setValueType(dp,value);
   dp.setValue(value);
   return dp;
 }

@@ -1,3 +1,8 @@
 {
-  logger.warn("iterateAllVariables not supported on interface " + getDefaultInterface().toString());
+  Map<String,?> result=rpcClient.getAllSystemVariables(getDefaultInterface());
+  for (  String variableName : result.keySet()) {
+    HmVariable variable=createVariable(variableName,result.get(variableName));
+    VariableConfig bindingConfig=new VariableConfig(variable.getName());
+    callback.iterate(bindingConfig,variable);
+  }
 }
