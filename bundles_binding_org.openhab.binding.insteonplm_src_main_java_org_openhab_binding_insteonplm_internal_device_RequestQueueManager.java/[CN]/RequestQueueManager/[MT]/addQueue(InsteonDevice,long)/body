@@ -1,0 +1,14 @@
+{
+synchronized (m_requestQueues) {
+    if (!m_requestQueueHash.containsKey(dev)) {
+      RequestQueue q=new RequestQueue(dev,time);
+      m_requestQueues.add(q);
+      m_requestQueues.notify();
+      m_requestQueueHash.put(dev,q);
+      logger.trace("scheduling queue for dev {}",dev.getAddress());
+    }
+ else {
+      logger.trace("queue for dev {} is already scheduled",dev.getAddress());
+    }
+  }
+}

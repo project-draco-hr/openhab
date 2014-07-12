@@ -1,0 +1,33 @@
+{
+  logger.info("starting request queue thread");
+synchronized (m_requestQueues) {
+    while (true) {
+      try {
+        while (!m_requestQueues.isEmpty()) {
+          RequestQueue q=m_requestQueues.poll();
+          long now=System.currentTimeMillis();
+          long expTime=q.getExpirationTime();
+          InsteonDevice dev=q.getDevice();
+          logger.trace("found busy request queue dev {} expTime: {} wait: {}",dev.getAddress(),expTime,expTime - now);
+          if (expTime > now) {
+            m_requestQueues.wait(expTime - now);
+          }
+          long nextExp=dev.processRequestQueue(now);
+          if (nextExp > 0) {
+            m_requestQueues.add(new RequestQueue(dev,nextExp));
+            logger.trace("device queue for {} rescheduled",dev.getAddress());
+          }
+ else {
+            m_requestQueueHash.remove(dev);
+            logger.trace("device queue for {} off schedule",dev.getAddress());
+          }
+        }
+        logger.trace("waiting for request queues to fill");
+        m_requestQueues.wait();
+      }
+ catch (      InterruptedException e) {
+        logger.error("request queue thread got interrupted, continuing",e);
+      }
+    }
+  }
+}

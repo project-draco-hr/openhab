@@ -1,3 +1,7 @@
 {
-  m_requestQueue.add(new QEntry(f,m));
+synchronized (m_requestQueue) {
+    m_requestQueue.add(new QEntry(f,m));
+  }
+  long now=System.currentTimeMillis();
+  RequestQueueManager.instance().addQueue(this,now);
 }

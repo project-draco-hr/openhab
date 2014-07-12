@@ -2,7 +2,7 @@
 synchronized (m_devices) {
     for (    InsteonDevice dev : m_devices.values()) {
       if (dev.isModem())       continue;
-      if (!dev.isReferenced()) {
+      if (!dev.isReferenced() && !isInItemsFile(dev.getAddress())) {
         logger.info("device {} is known to modem, but not in items file!",dev.toString());
       }
       if (!dev.isInitialized()) {
