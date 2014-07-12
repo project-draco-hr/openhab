@@ -1,0 +1,14 @@
+{
+  super(rawMsg);
+  logger.debug(this.msgType + " Payload Len -> " + this.payload.length);
+  if (this.payload.length == CONFIG_TEMPERATURES_PAYLOAD_LEN) {
+    this.comfortTemp=payload[0] / 2.0;
+    this.ecoTemp=payload[1] / 2.0;
+    this.maxTemp=payload[2] / 2.0;
+    this.minTemp=payload[3] / 2.0;
+    this.offset=(payload[4] / 2.0) - 3.5;
+    this.windowOpenTemp=payload[5] / 2.0;
+    this.windowOpenTime=payload[6] * 5.0;
+  }
+ else   logger.error("Got " + this.msgType + " message with incorrect length!");
+}

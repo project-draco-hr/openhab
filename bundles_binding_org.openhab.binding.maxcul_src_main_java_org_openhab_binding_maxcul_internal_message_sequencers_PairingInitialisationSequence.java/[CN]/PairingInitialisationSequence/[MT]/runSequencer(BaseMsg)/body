@@ -2,8 +2,10 @@
   pktLostCount=0;
 switch (state) {
 case INITIAL_PING:
-    logger.debug("Sending PONG");
-  this.devAddr=msg.srcAddrStr;
+    PairPingMsg ppMsg=new PairPingMsg(msg.rawMsg);
+  this.deviceType=MaxCulDevice.getDeviceTypeFromInt(ppMsg.type);
+logger.debug("Sending PONG");
+this.devAddr=msg.srcAddrStr;
 messageHandler.sendPairPong(devAddr,this);
 state=PairingInitialisationState.PONG_ACKED;
 break;
@@ -11,9 +13,16 @@ case PONG_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
 AckMsg ack=new AckMsg(msg.rawMsg);
 if (!ack.getIsNack()) {
+if (this.deviceType == MaxCulDevice.PUSH_BUTTON) {
+logger.debug("Sending GROUP_ID");
+messageHandler.sendSetGroupId(devAddr,group_id,this);
+state=PairingInitialisationState.GROUP_ID_ACKED;
+}
+ else {
 logger.debug("Sending WAKEUP");
 messageHandler.sendWakeup(devAddr,this);
 state=PairingInitialisationState.WAKEUP_ACKED;
+}
 }
  else {
 logger.error("PONG was nacked. Ending sequence");
@@ -52,7 +61,8 @@ break;
 case GROUP_ID_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
 AckMsg ack=new AckMsg(msg.rawMsg);
-if (!ack.getIsNack()) {
+if (!ack.getIsNack() && (this.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType == MaxCulDevice.WALL_THERMOSTAT || this.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT_PLUS)) {
+messageHandler.sendConfigTemperatures(devAddr,this,config.getComfortTemp(),config.getEcoTemp(),config.getMaxTemp(),config.getMinTemp(),config.getMeasurementOffset(),config.getWindowOpenTemperature(),config.getWindowOpenDuration());
 state=PairingInitialisationState.FINISHED;
 }
  else {

@@ -10,7 +10,7 @@
   logger.debug("Received command " + command.toString() + " for item "+ itemName);
   if (bindingConfig != null) {
     logger.debug("Found config for " + itemName);
-switch (bindingConfig.deviceType) {
+switch (bindingConfig.getDeviceType()) {
 case PAIR_MODE:
       if ((command instanceof OnOffType)) {
 switch ((OnOffType)command) {
@@ -46,18 +46,18 @@ logger.debug(itemName + " pairMode cleared");
 break;
 }
 }
- else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType");
+ else logger.warn("Command not handled for " + bindingConfig.getDeviceType() + " that is not OnOffType");
 break;
 case LISTEN_MODE:
 if (command instanceof OnOffType) {
 this.messageHandler.setListenMode(((OnOffType)command == OnOffType.ON));
 }
- else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType");
+ else logger.warn("Command not handled for " + bindingConfig.getDeviceType() + " that is not OnOffType");
 break;
 case RADIATOR_THERMOSTAT:
 case RADIATOR_THERMOSTAT_PLUS:
 case WALL_THERMOSTAT:
-if (bindingConfig.feature == MaxCulFeature.THERMOSTAT) {
+if (bindingConfig.getFeature() == MaxCulFeature.THERMOSTAT) {
 if (pacedBindingTransmitTimers.containsKey(bindingConfig)) {
 pacedBindingTransmitTimers.get(bindingConfig).cancel();
 pacedBindingTransmitTimers.remove(bindingConfig);
@@ -66,10 +66,10 @@ Timer pacingTimer=new Timer();
 pacedBindingTransmitTimers.put(bindingConfig,pacingTimer);
 pacingTimer.schedule(new MaxCulPacedThermostatTransmitTask(command,bindingConfig,messageHandler),PACED_TRANSMIT_TIME);
 }
- else logger.warn("Command not handled for " + bindingConfig.deviceType + " that is not OnOffType or DecimalType");
+ else logger.warn("Command not handled for " + bindingConfig.getDeviceType() + " that is not OnOffType or DecimalType");
 break;
 default :
-logger.warn("Command not handled for " + bindingConfig.deviceType);
+logger.warn("Command not handled for " + bindingConfig.getDeviceType());
 break;
 }
 }

@@ -1,13 +1,21 @@
 {
   logger.debug("Received data from CUL: " + data);
   MaxCulMsgType msgType=BaseMsg.getMsgType(data);
-  if (((pairMode && isBroadcast) || BaseMsg.isForUs(data,this.srcAddr)) && msgType == MaxCulMsgType.PAIR_PING) {
+  if (((pairMode && isBroadcast) || !isBroadcast) && msgType == MaxCulMsgType.PAIR_PING) {
     logger.debug("Got PAIR_PING message");
+    MaxCulBindingConfig configWithTempsConfig=null;
     PairPingMsg pkt=new PairPingMsg(data);
     Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
-    for (    MaxCulBindingConfig bc : bindingConfigs)     bc.setPairedInfo(pkt.srcAddrStr);
-    PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,this.tzStr,messageHandler);
-    messageHandler.startSequence(ps,pkt);
+    if (bindingConfigs != null) {
+      for (      MaxCulBindingConfig bc : bindingConfigs) {
+        bc.setPairedInfo(pkt.srcAddrStr);
+        if (bc.isTemperatureConfigSet() && configWithTempsConfig == null)         configWithTempsConfig=bc;
+      }
+      if (configWithTempsConfig == null)       configWithTempsConfig=(MaxCulBindingConfig)bindingConfigs.toArray()[0];
+      PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,this.tzStr,messageHandler,configWithTempsConfig);
+      messageHandler.startSequence(ps,pkt);
+    }
+ else     logger.error("Pairing failed: Unable to find binding config for device " + pkt.serial);
   }
  else {
 switch (msgType) {
@@ -17,11 +25,11 @@ case WALL_THERMOSTAT_CONTROL:
   for (  MaxCulBindingProvider provider : super.providers) {
     Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermCtrlMsg.srcAddrStr);
     for (    MaxCulBindingConfig bc : bindingConfigs) {
-      if (bc.feature == MaxCulFeature.THERMOSTAT && wallThermCtrlMsg.getDesiredTemperature() != null) {
+      if (bc.getFeature() == MaxCulFeature.THERMOSTAT && wallThermCtrlMsg.getDesiredTemperature() != null) {
         String itemName=provider.getItemNameForConfig(bc);
         eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getDesiredTemperature()));
       }
- else       if (bc.feature == MaxCulFeature.TEMPERATURE && wallThermCtrlMsg.getMeasuredTemperature() != null) {
+ else       if (bc.getFeature() == MaxCulFeature.TEMPERATURE && wallThermCtrlMsg.getMeasuredTemperature() != null) {
         String itemName=provider.getItemNameForConfig(bc);
         eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getMeasuredTemperature()));
       }
@@ -35,7 +43,7 @@ setTempMsg.printMessage();
 for (MaxCulBindingProvider provider : super.providers) {
 Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(setTempMsg.srcAddrStr);
 for (MaxCulBindingConfig bc : bindingConfigs) {
-if (bc.feature == MaxCulFeature.THERMOSTAT) {
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT) {
 String itemName=provider.getItemNameForConfig(bc);
 eventPublisher.postUpdate(itemName,new DecimalType(setTempMsg.getDesiredTemperature()));
 }
@@ -50,19 +58,19 @@ for (MaxCulBindingProvider provider : super.providers) {
 Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(thermStateMsg.srcAddrStr);
 for (MaxCulBindingConfig bc : bindingConfigs) {
 String itemName=provider.getItemNameForConfig(bc);
-if (bc.feature == MaxCulFeature.THERMOSTAT && thermStateMsg.getDesiredTemperature() != null) {
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT && thermStateMsg.getDesiredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getDesiredTemperature()));
 }
- else if (bc.feature == MaxCulFeature.TEMPERATURE && thermStateMsg.getMeasuredTemperature() != null) {
+ else if (bc.getFeature() == MaxCulFeature.TEMPERATURE && thermStateMsg.getMeasuredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getMeasuredTemperature()));
 }
- else if (bc.feature == MaxCulFeature.BATTERY) {
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
 eventPublisher.postUpdate(itemName,thermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
 }
- else if (bc.feature == MaxCulFeature.MODE) {
+ else if (bc.getFeature() == MaxCulFeature.MODE) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getControlMode().toInt()));
 }
- else if (bc.feature == MaxCulFeature.VALVE_POS) {
+ else if (bc.getFeature() == MaxCulFeature.VALVE_POS) {
 eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getValvePos()));
 }
 }
@@ -76,16 +84,16 @@ for (MaxCulBindingProvider provider : super.providers) {
 Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermStateMsg.srcAddrStr);
 for (MaxCulBindingConfig bc : bindingConfigs) {
 String itemName=provider.getItemNameForConfig(bc);
-if (bc.feature == MaxCulFeature.THERMOSTAT && wallThermStateMsg.getDesiredTemperature() != null) {
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT && wallThermStateMsg.getDesiredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getDesiredTemperature()));
 }
- else if (bc.feature == MaxCulFeature.TEMPERATURE && wallThermStateMsg.getMeasuredTemperature() != null) {
+ else if (bc.getFeature() == MaxCulFeature.TEMPERATURE && wallThermStateMsg.getMeasuredTemperature() != null) {
 eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getMeasuredTemperature()));
 }
- else if (bc.feature == MaxCulFeature.BATTERY) {
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
 eventPublisher.postUpdate(itemName,wallThermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
 }
- else if (bc.feature == MaxCulFeature.MODE) {
+ else if (bc.getFeature() == MaxCulFeature.MODE) {
 eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getControlMode().toInt()));
 }
 }

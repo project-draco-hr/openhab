@@ -1,0 +1,25 @@
+{
+  if (configPart.compareTo("thermostat") == 0) {
+    if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT && this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS && this.deviceType != MaxCulDevice.WALL_THERMOSTAT)     throw new BindingConfigParseException("Invalid device feature. Can only use 'thermostat' on radiator or wall thermostats. This is a " + this.deviceType);
+    this.feature=MaxCulFeature.THERMOSTAT;
+  }
+ else   if (configPart.compareTo("temperature") == 0) {
+    if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT && this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS && this.deviceType != MaxCulDevice.WALL_THERMOSTAT)     throw new BindingConfigParseException("Invalid device feature. Can only use 'temperature' on radiator or wall thermostats. This is a " + this.deviceType);
+    this.feature=MaxCulFeature.TEMPERATURE;
+  }
+ else   if (configPart.compareTo("battery") == 0) {
+    this.feature=MaxCulFeature.BATTERY;
+  }
+ else   if (configPart.compareTo("mode") == 0) {
+    if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT && this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS && this.deviceType != MaxCulDevice.WALL_THERMOSTAT)     throw new BindingConfigParseException("Invalid device feature. Can only use 'temperature' on radiator or wall thermostats. This is a " + this.deviceType);
+    this.feature=MaxCulFeature.MODE;
+  }
+ else   if (configPart.compareTo("switch") == 0) {
+    if (this.deviceType != MaxCulDevice.PUSH_BUTTON && this.deviceType != MaxCulDevice.SHUTTER_CONTACT)     throw new BindingConfigParseException("Invalid device feature. Can only use 'switch' on PushButton or ShutterContact. This is a " + this.deviceType);
+    this.feature=MaxCulFeature.TEMPERATURE;
+  }
+ else   if (configPart.compareTo("valvepos") == 0) {
+    if (this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT && this.deviceType != MaxCulDevice.RADIATOR_THERMOSTAT_PLUS)     throw new BindingConfigParseException("Invalid device feature. Can only use 'switch' on RadiatorThermostat or RadiatorThermostatPlus. This is a " + this.deviceType);
+    this.feature=MaxCulFeature.VALVE_POS;
+  }
+}

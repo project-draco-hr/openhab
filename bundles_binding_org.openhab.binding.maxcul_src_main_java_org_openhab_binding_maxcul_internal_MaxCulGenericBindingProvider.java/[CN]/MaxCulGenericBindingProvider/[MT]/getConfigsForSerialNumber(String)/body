@@ -2,9 +2,9 @@
   List<MaxCulBindingConfig> configs=new ArrayList<MaxCulBindingConfig>();
   for (  BindingConfig c : super.bindingConfigs.values()) {
     MaxCulBindingConfig config=(MaxCulBindingConfig)c;
-    if (config.serialNumber != null) {
-      logger.debug("Comparing '" + config.serialNumber + "' with '"+ serial+ "'");
-      if (config.serialNumber.compareToIgnoreCase(serial) == 0)       configs.add(config);
+    if (config.getSerialNumber() != null) {
+      logger.debug("Comparing '" + config.getSerialNumber() + "' with '"+ serial+ "'");
+      if (config.getSerialNumber().compareToIgnoreCase(serial) == 0)       configs.add(config);
     }
   }
   if (configs.isEmpty())   return null;
