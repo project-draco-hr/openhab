@@ -106,6 +106,20 @@ timeMsg.printMessage();
 TimeUpdateRequestSequence timeSeq=new TimeUpdateRequestSequence(this.tzStr,messageHandler);
 messageHandler.startSequence(timeSeq,timeMsg);
 break;
+case PUSH_BUTTON_STATE:
+PushButtonMsg pbMsg=new PushButtonMsg(data);
+pbMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(pbMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.getFeature() == MaxCulFeature.SWITCH) {
+if (pbMsg.getMode() == PushButtonMode.AUTO) eventPublisher.postUpdate(itemName,OnOffType.ON);
+ else if (pbMsg.getMode() == PushButtonMode.ECO) eventPublisher.postUpdate(itemName,OnOffType.OFF);
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(pbMsg);
 default :
 logger.debug("Unhandled message type " + msgType.toString());
 break;
