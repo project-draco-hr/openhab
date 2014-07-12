@@ -14,9 +14,7 @@ if (msg.msgType == MaxCulMsgType.ACK) {
 AckMsg ack=new AckMsg(msg.rawMsg);
 if (!ack.getIsNack()) {
 if (this.deviceType == MaxCulDevice.PUSH_BUTTON) {
-logger.debug("Sending GROUP_ID");
-messageHandler.sendSetGroupId(devAddr,group_id,this);
-state=PairingInitialisationState.GROUP_ID_ACKED;
+state=PairingInitialisationState.FINISHED;
 }
  else {
 logger.debug("Sending WAKEUP");
