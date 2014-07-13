@@ -1,5 +1,6 @@
 {
   pktLostCount=0;
+  logger.debug("Sequence State: " + state);
 switch (state) {
 case INITIAL_PING:
     PairPingMsg ppMsg=new PairPingMsg(msg.rawMsg);
@@ -27,6 +28,7 @@ logger.error("PONG was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
 break;
 case WAKEUP_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
@@ -41,6 +43,7 @@ logger.error("WAKEUP was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
 break;
 case TIME_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
@@ -55,27 +58,70 @@ logger.error("TIME_INFO was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
 break;
 case GROUP_ID_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
 AckMsg ack=new AckMsg(msg.rawMsg);
 if (!ack.getIsNack() && (this.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT || this.deviceType == MaxCulDevice.WALL_THERMOSTAT || this.deviceType == MaxCulDevice.RADIATOR_THERMOSTAT_PLUS)) {
 messageHandler.sendConfigTemperatures(devAddr,this,config.getComfortTemp(),config.getEcoTemp(),config.getMaxTemp(),config.getMinTemp(),config.getMeasurementOffset(),config.getWindowOpenTemperature(),config.getWindowOpenDuration());
-state=PairingInitialisationState.FINISHED;
+state=PairingInitialisationState.CONFIG_TEMPS_ACKED;
 }
  else {
 logger.error("SET_GROUP_ID was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
 break;
 case CONFIG_TEMPS_ACKED:
+if (msg.msgType == MaxCulMsgType.ACK) {
+AckMsg ack=new AckMsg(msg.rawMsg);
+if (!ack.getIsNack()) {
+if (associations.isEmpty() == false) {
+assocIter=associations.iterator();
+MaxCulBindingConfig partnerCfg=assocIter.next();
+messageHandler.sendAddLinkPartner(devAddr,this,partnerCfg.getDevAddr(),partnerCfg.getDeviceType());
+if (assocIter.hasNext()) state=PairingInitialisationState.SENDING_ASSOCIATIONS;
+ else state=PairingInitialisationState.SENDING_ASSOCIATIONS_ACKED;
+}
+ else {
+logger.debug("No associations");
+state=PairingInitialisationState.FINISHED;
+}
+}
+ else {
+logger.error("CONFIG_TEMPERATURES was nacked. Ending sequence");
+state=PairingInitialisationState.FINISHED;
+}
+}
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
+break;
+case SENDING_ASSOCIATIONS:
+if (msg.msgType == MaxCulMsgType.ACK) {
+AckMsg ack=new AckMsg(msg.rawMsg);
+if (!ack.getIsNack()) {
+if (assocIter.hasNext()) {
+MaxCulBindingConfig partnerCfg=assocIter.next();
+messageHandler.sendAddLinkPartner(this.devAddr,this,partnerCfg.getDevAddr(),partnerCfg.getDeviceType());
+if (assocIter.hasNext()) state=PairingInitialisationState.SENDING_ASSOCIATIONS;
+ else state=PairingInitialisationState.SENDING_ASSOCIATIONS_ACKED;
+}
+ else {
+state=PairingInitialisationState.FINISHED;
+}
+}
+ else {
+logger.error("SENDING_ASSOCIATIONS was nacked. Ending sequence");
+state=PairingInitialisationState.FINISHED;
+}
+}
+ else logger.error("Received " + msg.msgType + " when expecting ACK");
+break;
+case SENDING_ASSOCIATIONS_ACKED:
 state=PairingInitialisationState.FINISHED;
 break;
 case SENDING_WEEK_PROFILE:
-state=PairingInitialisationState.FINISHED;
-break;
-case CONFIG_TEMPS_2_ACKED:
 state=PairingInitialisationState.FINISHED;
 break;
 case FINISHED:

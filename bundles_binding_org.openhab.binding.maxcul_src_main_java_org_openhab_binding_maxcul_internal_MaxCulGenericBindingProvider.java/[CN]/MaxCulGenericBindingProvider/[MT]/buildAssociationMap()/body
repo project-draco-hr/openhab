@@ -9,8 +9,15 @@
         logger.debug("Found " + config.getSerialNumber() + " in map already with "+ set.size()+ " entrys");
         for (        String serial : config.getAssociatedSerialNum()) {
           MaxCulBindingConfig bc=getConfigForSerialNumber(serial);
-          if (bc != null && set.contains(bc) == false) {
-            set.add(bc);
+          if (bc != null) {
+            boolean deviceInSet=false;
+            for (            MaxCulBindingConfig bcInSet : set) {
+              if (bcInSet.getSerialNumber().equalsIgnoreCase(bc.getSerialNumber()))               deviceInSet|=true;
+            }
+            if (!deviceInSet) {
+              logger.debug("Adding " + serial + " to set for "+ config.getSerialNumber());
+              set.add(bc);
+            }
           }
         }
       }
@@ -19,8 +26,14 @@
         for (        String serial : config.getAssociatedSerialNum()) {
           MaxCulBindingConfig bc=getConfigForSerialNumber(serial);
           if (bc != null) {
-            logger.debug("Adding " + serial + " to set for "+ config.getSerialNumber());
-            set.add(bc);
+            boolean deviceInSet=false;
+            for (            MaxCulBindingConfig bcInSet : set) {
+              if (bcInSet.getSerialNumber().equalsIgnoreCase(bc.getSerialNumber()))               deviceInSet|=true;
+            }
+            if (!deviceInSet) {
+              logger.debug("Adding " + serial + " to set for "+ config.getSerialNumber());
+              set.add(bc);
+            }
           }
         }
         if (!set.isEmpty())         associationMap.put(config.getSerialNumber(),set);
