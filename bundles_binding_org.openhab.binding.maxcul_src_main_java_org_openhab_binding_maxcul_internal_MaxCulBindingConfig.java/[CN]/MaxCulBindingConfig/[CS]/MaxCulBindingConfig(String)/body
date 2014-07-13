@@ -23,8 +23,12 @@
       logger.debug("Part 2/" + (configParts.length - 1) + " -> "+ configParts[2]);
       this.parseDeviceFeature(configParts[2]);
       for (int idx=3; idx < configParts.length; idx++) {
+        logger.debug("Part " + idx + "/"+ (configParts.length - 1)+ " -> "+ configParts[2]);
         if (configParts[idx].startsWith("configTemp")) {
           this.parseConfigTemp(configParts[idx]);
+        }
+ else         if (configParts[idx].startsWith("associate")) {
+          this.parseAssociation(configParts[idx]);
         }
       }
     }
