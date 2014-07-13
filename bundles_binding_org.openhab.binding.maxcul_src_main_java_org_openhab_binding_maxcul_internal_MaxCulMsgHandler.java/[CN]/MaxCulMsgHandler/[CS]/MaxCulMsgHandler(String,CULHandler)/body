@@ -4,7 +4,7 @@
   this.srcAddr=srcAddr;
   this.sequenceRegister=new HashMap<Byte,MessageSequencer>();
   this.sendQueue=new LinkedList<SenderQueueItem>();
-  this.pendingAckQueue=new HashMap<Byte,SenderQueueItem>();
+  this.pendingAckQueue=new ConcurrentHashMap<Byte,SenderQueueItem>();
   this.lastTransmit=new Date();
   this.endOfQueueTransmit=this.lastTransmit;
 }
