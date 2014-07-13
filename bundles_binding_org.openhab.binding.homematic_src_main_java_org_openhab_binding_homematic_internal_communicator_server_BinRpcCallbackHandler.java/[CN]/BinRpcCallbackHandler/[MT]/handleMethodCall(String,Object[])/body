@@ -14,7 +14,7 @@
     return BIN_EMPTY_ARRAY;
   }
  else   if ("system.listMethods".equals(methodName)) {
-    return createEmptyMessage();
+    return BIN_EMPTY_EVENT_LIST;
   }
  else   if ("system.multicall".equals(methodName)) {
     for (    Object o : (Object[])responseData[0]) {
@@ -23,10 +23,10 @@
       Object[] data=(Object[])call.get("params");
       handleMethodCall(method,data);
     }
-    return createEmptyMessage();
+    return BIN_EMPTY_EVENT_LIST;
   }
  else {
     logger.warn("Unknown method called by Homematic server: " + methodName);
-    return createEmptyMessage();
+    return BIN_EMPTY_EVENT_LIST;
   }
 }
