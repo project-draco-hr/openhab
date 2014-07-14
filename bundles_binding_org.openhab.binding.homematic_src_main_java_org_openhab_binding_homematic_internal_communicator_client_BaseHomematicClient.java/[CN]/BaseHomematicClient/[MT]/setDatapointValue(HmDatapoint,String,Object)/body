@@ -1,3 +1,8 @@
 {
-  rpcClient.setDatapointValue(dp,datapointName,value);
+  HmInterface hmInterface=dp.getChannel().getDevice().getHmInterface();
+  String address=dp.getChannel().getAddress();
+  if (dp.isIntegerValue() && value instanceof Double) {
+    value=((Number)value).intValue();
+  }
+  rpcClient.setDatapointValue(hmInterface,address,datapointName,value);
 }
