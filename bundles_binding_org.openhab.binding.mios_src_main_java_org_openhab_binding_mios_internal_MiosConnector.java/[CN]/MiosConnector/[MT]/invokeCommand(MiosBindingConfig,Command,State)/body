@@ -1,0 +1,27 @@
+{
+  if (!config.supportsCommands()) {
+    logger.debug("invokeCommand: Received ({}), for config '{}', but it's not configured to handle them.",command,config);
+    return;
+  }
+  if (config instanceof SceneBindingConfig) {
+    String newCommand=config.transformCommand(command);
+    if (newCommand != null) {
+      callScene((SceneBindingConfig)config);
+    }
+ else {
+      logger.debug("invokeScene: Command type not supported for Scenes '{}'",command.getClass());
+    }
+  }
+ else   if (config instanceof DeviceBindingConfig) {
+    String newCommand=config.transformCommand(command);
+    if (newCommand != null) {
+      callDevice((DeviceBindingConfig)config,newCommand,state);
+    }
+ else {
+      logger.debug("invokeCommand: Need to remote-invoke Device '{}', but no action determined for Command '{}' ('{}')",new Object[]{config.toProperty(),command.toString(),command.getClass()});
+    }
+  }
+ else {
+    logger.warn("Unhandled command execution for Command ('{}') on binding '{}'",command,config);
+  }
+}

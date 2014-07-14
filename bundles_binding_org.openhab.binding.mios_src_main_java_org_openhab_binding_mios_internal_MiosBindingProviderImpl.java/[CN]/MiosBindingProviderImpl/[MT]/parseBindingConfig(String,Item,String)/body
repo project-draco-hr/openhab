@@ -1,0 +1,33 @@
+{
+  Matcher matcher;
+  matcher=BINDING_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException(String.format("Config for item '%s' could not be parsed.  Bad general format '%s'",item.getName(),bindingConfig.toString()));
+  }
+  String unitName=matcher.group("unit");
+  String inThing=matcher.group("inThing");
+  String commandThing=matcher.group("command");
+  String updateThing=matcher.group("update");
+  String inTrans=matcher.group("inTransform");
+  String outTrans=matcher.group("outTransform");
+  logger.trace("parseBindingConfig: unit '{}' thing '{}' inTrans '{}' outTrans '{}'",new Object[]{unitName,inThing,inTrans,outTrans});
+  matcher=IN_CONFIG_PATTERN.matcher(inThing);
+  if (!matcher.matches())   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.  Bad thing format '"+ bindingConfig+ "'");
+  String inType=matcher.group("inType");
+  String inId=matcher.group("id");
+  String inStuff=matcher.group("inStuff");
+  logger.trace("parseBindingConfig: in: (Type '{}' id '{}' Stuff '{}'), command: ('{}'), update: ('{}')",new Object[]{inType,inId,inStuff,commandThing,updateThing});
+  if (inType.equals("device")) {
+    return DeviceBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+  }
+ else   if (inType.equals("scene")) {
+    return SceneBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+  }
+ else   if (inType.equals("system")) {
+    return SystemBindingConfig.create(context,unitName,inStuff,item.getClass(),inTrans,outTrans);
+  }
+ else   if (inType.equals("room")) {
+    return RoomBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),inTrans,outTrans);
+  }
+ else   throw new BindingConfigParseException("Invalid binding type received for item " + item.getName() + " bad type ("+ inType+ ")");
+}

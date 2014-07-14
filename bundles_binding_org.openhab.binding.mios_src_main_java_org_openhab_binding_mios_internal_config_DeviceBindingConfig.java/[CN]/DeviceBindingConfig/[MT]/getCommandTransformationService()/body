@@ -1,0 +1,15 @@
+{
+  String name=getCommandTransformName();
+  if (name == null || name.equals("")) {
+    return null;
+  }
+  if (commandTransformationService != null) {
+    return commandTransformationService;
+  }
+  BundleContext context=MiosActivator.getContext();
+  commandTransformationService=TransformationHelper.getTransformationService(context,name);
+  if (commandTransformationService == null) {
+    logger.debug("Transformation Service (command) '{}' not found for declaration '{}'.",name,getCommandThing());
+  }
+  return commandTransformationService;
+}

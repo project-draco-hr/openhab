@@ -1,0 +1,14 @@
+{
+  ArrayList<String> result=new ArrayList<String>();
+  for (  Entry<String,BindingConfig> bindingConfigEntry : bindingConfigs.entrySet()) {
+    if (bindingConfigEntry.getValue() instanceof MiosBindingConfig) {
+      String p=((MiosBindingConfig)bindingConfigEntry.getValue()).toProperty();
+      if (p.equals(property)) {
+        logger.trace("getItemsForProperty: MATCH property '{}' against BindingConfig.toProperty '{}'",property,p);
+        String itemName=bindingConfigEntry.getKey();
+        result.add(itemName);
+      }
+    }
+  }
+  return result;
+}

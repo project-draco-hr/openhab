@@ -1,0 +1,33 @@
+{
+  logger.debug("callDevice: Need to remote-invoke Device '{}' action '{}')",new Object[]{config.toProperty(),upnpAction});
+  Matcher matcher=DEVICE_PATTERN.matcher(upnpAction);
+  if (matcher.matches()) {
+    try {
+      MiosUnit u=getUnit();
+      String serviceName=matcher.group("serviceName");
+      String serviceAction=matcher.group("serviceAction");
+      String serviceParam=matcher.group("serviceParam");
+      String serviceValue=matcher.group("serviceValue");
+      logger.debug("callDevice: decoded as serviceName '{}' serviceAction '{}' serviceParam '{}' serviceValue '{}'",new Object[]{serviceName,serviceAction,serviceParam,serviceValue});
+      String p;
+      if (serviceParam != null) {
+        if (serviceValue == null || serviceValue.equals('?')) {
+          p=URLEncoder.encode(serviceParam,ENCODING_CHARSET) + '=' + URLEncoder.encode(state.toString(),ENCODING_CHARSET);
+        }
+ else {
+          p=URLEncoder.encode(serviceParam,ENCODING_CHARSET) + '=' + URLEncoder.encode(serviceValue,ENCODING_CHARSET);
+        }
+      }
+ else {
+        p=null;
+      }
+      callMios(String.format((p == null) ? DEVICE_URL : DEVICE_URL_PARAMS,u.getHostname(),u.getPort(),config.getId(),URLEncoder.encode(serviceName,ENCODING_CHARSET),URLEncoder.encode(serviceAction,ENCODING_CHARSET),p));
+    }
+ catch (    UnsupportedEncodingException uee) {
+      logger.debug("Really, trust me, this won't happen ;)   exception='{}'",uee);
+    }
+  }
+ else {
+    logger.error("callDevice: The parameter is in the wrong format.  BindingConfig '{}', UPnP Action '{}'",config,upnpAction);
+  }
+}

@@ -1,0 +1,15 @@
+{
+  if (json == null)   return new HashMap<String,Object>();
+  try {
+    return mapper.readValue(json,Map.class);
+  }
+ catch (  JsonParseException e) {
+    throw new RuntimeException("Failed to parse JSON",e);
+  }
+catch (  JsonMappingException e) {
+    throw new RuntimeException("Failed to map JSON",e);
+  }
+catch (  IOException e) {
+    throw new RuntimeException("Failed to read JSON",e);
+  }
+}

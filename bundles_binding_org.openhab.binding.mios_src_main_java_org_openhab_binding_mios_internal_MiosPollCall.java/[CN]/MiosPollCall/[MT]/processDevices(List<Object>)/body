@@ -1,0 +1,45 @@
+{
+  for (  Object d : devices) {
+    @SuppressWarnings("unchecked") Map<String,Object> device=(Map<String,Object>)d;
+    String deviceId;
+    Object v=device.get("id");
+    if (v instanceof String) {
+      deviceId=(String)v;
+    }
+ else     if (v instanceof Integer) {
+      deviceId=((Integer)v).toString();
+    }
+ else {
+      throw new IllegalArgumentException("WTF?");
+    }
+    for (    Map.Entry<String,Object> da : device.entrySet()) {
+      String key=da.getKey();
+      Object value=da.getValue();
+      if (value instanceof String || value instanceof Integer || value instanceof Double|| value instanceof Boolean) {
+        if (key.equals("time_created")) {
+          value=fixTimestamp(value);
+        }
+        String property="device:" + deviceId + '/'+ da.getKey();
+        publish(property,value);
+      }
+ else {
+        if (key.equals("states") || key.equals("ControlURLs") || key.equals("Jobs")|| key.equals("tooltip")) {
+          continue;
+        }
+        logger.debug("processDevices: skipping key={}, class={}",key,value.getClass());
+      }
+    }
+    List<Object> deviceStates=getList(device,"states");
+    for (    Object ds : deviceStates) {
+      @SuppressWarnings("unchecked") Map<String,Object> state=(Map<String,Object>)ds;
+      String service=(String)state.get("service");
+      String variable=(String)state.get("variable");
+      Object value=(Object)state.get("value");
+      if ((variable.equals("LastUpdate") && service.equals("urn:micasaverde-com:serviceId:HaDevice1")) || (variable.equals("BatteryDate") && service.equals("urn:micasaverde-com:serviceId:HaDevice1")) || (variable.equals("LastTimeCheck") && service.equals("urn:micasaverde-com:serviceId:HaDevice1"))|| (variable.equals("FirstConfigured") && service.equals("urn:micasaverde-com:serviceId:HaDevice1"))|| (variable.equals("LastSceneTime") && service.equals("urn:micasaverde-com:serviceId:SceneController1"))|| (variable.equals("LastTrip") && service.equals("urn:micasaverde-com:serviceId:SecuritySensor1"))|| (variable.equals("HealthDate") && service.equals("urn:micasaverde-com:serviceId:ZWaveDevice1"))|| (variable.equals("LastRouteUpdate") && service.equals("urn:micasaverde-com:serviceId:ZWaveDevice1"))|| (variable.equals("LastReset") && service.equals("urn:micasaverde-com:serviceId:ZWaveDevice1"))|| (variable.equals("LastRouteFailure") && service.equals("urn:micasaverde-com:serviceId:ZWaveNetwork1"))|| (variable.equals("LastHeal") && service.equals("urn:micasaverde-com:serviceId:ZWaveNetwork1"))|| (variable.equals("LastUpdate") && service.equals("urn:micasaverde-com:serviceId:ZWaveNetwork1"))|| (variable.equals("LastDongleBackup") && service.equals("urn:micasaverde-com:serviceId:ZWaveNetwork1"))|| (variable.equals("LastAlarmActive") && service.equals("urn:micasaverde-com:serviceId:AlarmPartition2"))|| (variable.equals("systemLuupRestartUnix") && service.equals("urn:cd-jackson-com:serviceId:SystemMonitor"))|| (variable.equals("cmhLastRebootUnix") && service.equals("urn:cd-jackson-com:serviceId:SystemMonitor"))|| (variable.equals("cmhLastRebootUnix") && service.equals("urn:cd-jackson-com:serviceId:SystemMonitor"))|| (variable.equals("systemVeraRestartUnix") && service.equals("urn:cd-jackson-com:serviceId:SystemMonitor"))|| (variable.equals("LastUpdate") && service.equals("urn:upnp-micasaverde-com:serviceId:Weather1"))) {
+        value=fixTimestamp(value);
+      }
+      String property="device:" + deviceId + "/service/"+ service+ '/'+ variable;
+      publish(property,value);
+    }
+  }
+}

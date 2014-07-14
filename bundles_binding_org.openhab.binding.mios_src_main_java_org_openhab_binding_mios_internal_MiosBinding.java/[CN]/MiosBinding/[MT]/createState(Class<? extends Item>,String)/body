@@ -1,0 +1,26 @@
+{
+  try {
+    if (itemType.isAssignableFrom(NumberItem.class)) {
+      return DecimalType.valueOf(value);
+    }
+ else     if (itemType.isAssignableFrom(ContactItem.class)) {
+      return OpenClosedType.valueOf(value);
+    }
+ else     if (itemType.isAssignableFrom(SwitchItem.class)) {
+      return OnOffType.valueOf(value);
+    }
+ else     if (itemType.isAssignableFrom(RollershutterItem.class)) {
+      return PercentType.valueOf(value);
+    }
+ else     if (itemType.isAssignableFrom(DateTimeItem.class)) {
+      return DateTimeType.valueOf(value);
+    }
+ else {
+      return StringType.valueOf(value);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Couldn't create state of type '{}' for value '{}'",itemType,value);
+    return StringType.valueOf(value);
+  }
+}

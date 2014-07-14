@@ -1,0 +1,34 @@
+{
+  assert(id >= 0);
+  this.unitName=unitName;
+  this.id=id;
+  this.inStuff=stuff;
+  this.itemType=itemType;
+  this.commandThing=commandThing;
+  this.updateThing=updateThing;
+  this.inTransform=inTransform;
+  this.outTransform=outTransform;
+  Matcher m;
+  if (inTransform != null) {
+    m=TRANSFORM_PATTERN.matcher(inTransform);
+    if (m.matches()) {
+      this.inTransformName=m.group("transform");
+      this.inTransformParam=m.group("param");
+      logger.trace("start: IN '{}', '{}'",this.inTransformName,this.inTransformParam);
+    }
+ else {
+      logger.warn("Unable to parse (in) Transformation string '{}', ignored.",inTransform);
+    }
+  }
+  if (outTransform != null) {
+    m=TRANSFORM_PATTERN.matcher(outTransform);
+    if (m.matches()) {
+      this.outTransformName=m.group("transform");
+      this.outTransformParam=m.group("param");
+      logger.trace("start: OUT '{}', '{}'",this.outTransformName,this.outTransformParam);
+    }
+ else {
+      logger.warn("Unable to parse (out) Transformation string '{}', ignored.",outTransform);
+    }
+  }
+}

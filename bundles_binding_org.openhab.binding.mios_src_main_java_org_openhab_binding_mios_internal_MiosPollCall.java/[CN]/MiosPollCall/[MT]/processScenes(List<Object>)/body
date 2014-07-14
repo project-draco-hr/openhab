@@ -1,0 +1,24 @@
+{
+  for (  Object s : scenes) {
+    @SuppressWarnings("unchecked") Map<String,Object> scene=(Map<String,Object>)s;
+    Integer sceneId=(Integer)scene.get("id");
+    for (    Map.Entry<String,Object> da : scene.entrySet()) {
+      String key=da.getKey();
+      Object value=da.getValue();
+      if (value instanceof String || value instanceof Integer || value instanceof Double|| value instanceof Boolean) {
+        if (key.equals("Timestamp")) {
+          value=fixTimestamp(value);
+          key="TimeStamp";
+        }
+        String property="scene:" + sceneId + "/"+ key;
+        publish(property,value);
+      }
+ else {
+        if (key.equals("timers") || key.equals("triggers") || key.equals("groups")|| key.equals("tooltip")|| key.equals("Jobs")|| key.equals("lua")) {
+          continue;
+        }
+        logger.debug("processScenes: skipping key={}, class={}",key,value.getClass());
+      }
+    }
+  }
+}

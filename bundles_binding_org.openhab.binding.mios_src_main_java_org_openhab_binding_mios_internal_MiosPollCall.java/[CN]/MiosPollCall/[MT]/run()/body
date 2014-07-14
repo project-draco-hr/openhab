@@ -1,0 +1,28 @@
+{
+  int loopCount=0;
+  do {
+    try {
+      String uri=getUri(loopCount == 0);
+      logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
+      loopCount=((loopCount + 1) % MAX_FULL_REFRESH_COUNT);
+      Future<Response> f=client.prepareGet(uri).execute();
+      Response r=(Response)f.get();
+      Map<String,Object> json=readJson(r.getResponseBody());
+      if (json.containsKey("error"))       throw new IOException(json.get("error").toString());
+      connected=true;
+      processResponse(json);
+    }
+ catch (    Exception e) {
+      connected=false;
+      logger.debug("run: Exception Error occurred fetching content: {}",e.getMessage(),e);
+      try {
+        Thread.sleep(5000);
+      }
+ catch (      InterruptedException tex) {
+      }
+    }
+  }
+ while (connector.isRunning());
+  logger.info("run: Shutting down MiOS Polling thread.  Unit={}",connector.getUnit().getName());
+  connected=false;
+}

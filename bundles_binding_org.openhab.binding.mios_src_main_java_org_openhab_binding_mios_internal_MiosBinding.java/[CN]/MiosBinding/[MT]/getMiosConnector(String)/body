@@ -1,0 +1,26 @@
+{
+  logger.trace("getMiosConnector: start unitName '{}'",unitName);
+  if (unitName == null)   return null;
+  MiosConnector connector=connectors.get(unitName);
+  if (connector != null)   return connector;
+  MiosUnit miosUnit;
+  if (nameUnitMapper == null) {
+    logger.trace("Attempting to access the named MiOS Unit '{}' before the binding config has been loaded",unitName);
+    return null;
+  }
+  miosUnit=nameUnitMapper.get(unitName);
+  if (miosUnit == null) {
+    logger.error("Named MiOS Unit '{}' does not exist in the binding config",unitName);
+    return null;
+  }
+  logger.debug("Creating new MiosConnector for '{}' on {}",unitName,miosUnit.getHostname());
+  connector=new MiosConnector(miosUnit,this);
+  connectors.put(unitName,connector);
+  try {
+    connector.open();
+  }
+ catch (  Exception e) {
+    logger.error("Connection failed for '{}' on {}",unitName,miosUnit.getHostname());
+  }
+  return connector;
+}

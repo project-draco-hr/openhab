@@ -1,0 +1,29 @@
+{
+  try {
+    logger.debug("internalReceiveCommand: itemName '{}', command '{}'",itemName,command);
+    String unitName=getMiosUnitName(itemName);
+    MiosConnector connector=getMiosConnector(unitName);
+    if (connector == null) {
+      logger.warn("Received command ({}) for item '{}' but no connector found for MiOS Unit '{}', ignoring",new Object[]{command.toString(),itemName,unitName});
+      return;
+    }
+    if (!connector.isConnected()) {
+      logger.warn("Received command ({}) for item '{}' but the connection to the MiOS Unit '{}' is down, ignoring",new Object[]{command.toString(),itemName,unitName});
+      return;
+    }
+    for (    BindingProvider provider : providers) {
+      if (provider instanceof MiosBindingProvider) {
+        MiosBindingConfig config=((MiosBindingProviderImpl)provider).getMiosBindingConfig(itemName);
+        if (config != null) {
+          connector.invokeCommand(config,command,null);
+        }
+ else {
+          logger.trace("internalReceiveCommand: Found null BindingConfig for item '{}' command '{}'",itemName,command);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error handling command",e);
+  }
+}

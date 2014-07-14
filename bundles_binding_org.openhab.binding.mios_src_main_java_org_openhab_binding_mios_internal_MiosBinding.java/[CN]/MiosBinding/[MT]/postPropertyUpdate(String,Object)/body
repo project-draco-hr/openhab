@@ -1,0 +1,20 @@
+{
+  if (value instanceof String) {
+    internalPropertyUpdate(property,new StringType(value == null ? "" : (String)value));
+  }
+ else   if (value instanceof Integer) {
+    internalPropertyUpdate(property,new DecimalType((Integer)value));
+  }
+ else   if (value instanceof Calendar) {
+    internalPropertyUpdate(property,new DateTimeType((Calendar)value));
+  }
+ else   if (value instanceof Double) {
+    internalPropertyUpdate(property,new DecimalType((Double)value));
+  }
+ else   if (value instanceof Boolean) {
+    postPropertyUpdate(property,((Boolean)value).booleanValue() ? OnOffType.ON.toString() : OnOffType.OFF.toString());
+  }
+ else {
+    throw new IllegalArgumentException("Unexpected Datatype, property=" + property + " datatype="+ value.getClass());
+  }
+}

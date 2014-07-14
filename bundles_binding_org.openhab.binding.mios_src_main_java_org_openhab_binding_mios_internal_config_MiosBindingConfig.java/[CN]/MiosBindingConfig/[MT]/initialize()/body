@@ -1,0 +1,33 @@
+{
+  StringBuilder result=new StringBuilder(100);
+  String tmp;
+  int i=getId();
+  String id=((i == 0) ? "" : String.valueOf(i));
+  String stuff=getStuff();
+  String unit=getUnitName();
+  unit=(unit == null) ? "" : "unit:" + unit + ',';
+  if (stuff != null) {
+    result.append(unit).append(getType()).append(':').append(id).append('/').append(stuff);
+  }
+ else {
+    result.append(unit).append(getType()).append(':').append(id);
+  }
+  cachedProperty=result.toString();
+  tmp=getCommandThing();
+  if (tmp != null) {
+    result.append(",command:").append(tmp);
+  }
+  tmp=getUpdateThing();
+  if (tmp != null) {
+    result.append(",update:").append(tmp);
+  }
+  tmp=getInTransform();
+  if (tmp != null) {
+    result.append(",in:").append(tmp);
+  }
+  tmp=getOutTransform();
+  if (tmp != null) {
+    result.append(",out:").append(tmp);
+  }
+  cachedBinding=result.toString();
+}

@@ -1,0 +1,44 @@
+{
+  logger.trace(getName() + " updated()");
+  Map<String,MiosUnit> units=new HashMap<String,MiosUnit>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    String unitName=null;
+    String value=((String)config.get(key)).trim();
+    String[] parts=key.split("\\.",2);
+    if (parts.length != 1) {
+      unitName=parts[0];
+      key=parts[1];
+    }
+    boolean created=false;
+    String hackUnitName=(unitName == null) ? "_default" : unitName;
+    MiosUnit unit=units.get(hackUnitName);
+    if (unit == null) {
+      unit=new MiosUnit(unitName);
+      created=true;
+    }
+    if ("host".equals(key)) {
+      unit.setHostname(value);
+    }
+ else     if ("port".equals(key)) {
+      unit.setPort(Integer.valueOf(value));
+    }
+ else     if ("timeout".equals(key)) {
+      unit.setTimeout(Integer.valueOf(value));
+    }
+ else {
+      logger.warn("Unexpected configuration parameter {}",key);
+      created=false;
+    }
+    if (created) {
+      logger.debug("updated: Created Unit '{}'",hackUnitName);
+      units.put(hackUnitName,unit);
+    }
+  }
+  nameUnitMapper=units;
+  registerAllWatches();
+}

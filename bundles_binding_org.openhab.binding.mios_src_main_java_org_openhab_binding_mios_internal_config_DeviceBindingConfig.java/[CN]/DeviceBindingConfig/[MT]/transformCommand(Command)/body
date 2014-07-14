@@ -1,0 +1,27 @@
+{
+  TransformationService ts=getCommandTransformationService();
+  String key=command.toString();
+  if (ts != null) {
+    return ts.transform(getCommandTransformParam(),key);
+  }
+ else {
+    Map<String,String> map=getCommandMap();
+    if (map != null) {
+      String value=map.get(key);
+      if (value != null) {
+        return value;
+      }
+ else {
+        if (map.containsKey(key)) {
+          return COMMAND_DEFAULTS.get(key);
+        }
+ else {
+          return key;
+        }
+      }
+    }
+ else {
+      return COMMAND_DEFAULTS.get(key);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  try {
+    MiosBindingConfig config=parseBindingConfig(context,item,bindingConfig);
+    config.validateItemType(item);
+    logger.debug("processBindingConfiguration: Adding Item '{}' Binding '{}', from '{}'",new Object[]{item.getName(),config,context});
+    addBindingConfig(item,config);
+  }
+ catch (  BindingConfigParseException bcpe) {
+    logger.debug(String.format("processBindingConfiguration: Exception parsing/validating context '%s', item'%s', bindingConfig '%s'.  Exception is %s.",context,item,bindingConfig,bcpe.getMessage()));
+    throw bcpe;
+  }
+}

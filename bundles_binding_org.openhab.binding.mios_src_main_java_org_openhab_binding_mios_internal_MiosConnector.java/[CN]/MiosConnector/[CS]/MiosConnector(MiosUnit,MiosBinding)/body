@@ -1,0 +1,10 @@
+{
+  logger.debug("Constructor: unit '{}', binding '{}'",unit,binding);
+  this.unit=unit;
+  this.binding=binding;
+  Builder builder=new AsyncHttpClientConfig.Builder();
+  builder.setRequestTimeoutInMs(unit.getTimeout());
+  this.client=new AsyncHttpClient(new JDKAsyncHttpProvider(builder.build()));
+  pollCall=new MiosPollCall(client,this);
+  pollThread=new Thread(pollCall);
+}

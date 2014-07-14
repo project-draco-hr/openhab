@@ -1,0 +1,12 @@
+{
+  logger.debug("registerAllWatches: start");
+  for (  BindingProvider provider : providers) {
+    logger.debug("registerAllWatches: provider '{}'",provider.getClass());
+    if (provider instanceof MiosBindingProvider) {
+      MiosBindingProvider miosProvider=(MiosBindingProvider)provider;
+      for (      String itemName : provider.getItemNames()) {
+        registerWatch(miosProvider,itemName);
+      }
+    }
+  }
+}

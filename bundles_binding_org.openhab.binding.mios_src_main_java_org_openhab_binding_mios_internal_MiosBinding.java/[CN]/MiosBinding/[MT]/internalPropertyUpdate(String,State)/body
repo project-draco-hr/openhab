@@ -1,0 +1,38 @@
+{
+  int bound=0;
+  if (value == null) {
+    logger.trace("Value is null for Property '{}', ignored.",property);
+    return;
+  }
+  for (  BindingProvider provider : providers) {
+    if (provider instanceof MiosBindingProvider) {
+      MiosBindingProviderImpl miosProvider=(MiosBindingProviderImpl)provider;
+      for (      String itemName : miosProvider.getItemsForProperty(property)) {
+        MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
+        if (config != null) {
+          if (config.supportsTransformIn()) {
+            State newValue=createState(config.getItemType(),config.transformIn(value.toString()));
+            logger.trace("internalPropertyUpdate: transformation present, from '{}' to '{}'",value,newValue);
+            value=newValue;
+          }
+          if (value instanceof StringType) {
+            value=createState(config.getItemType(),value.toString());
+            logger.trace("internalPropertyUpdate: Converted value '{}' from StringType to '{}'",value,value.getClass());
+          }
+          logger.debug("internalProperyUpdate: About to update itemName '{}' with value '{}'",itemName,value);
+          eventPublisher.postUpdate(itemName,value);
+          bound++;
+        }
+ else {
+          logger.trace("internalPropertyUpdate: Found null BindingConfig for item '{}' property '{}'",itemName,property);
+        }
+      }
+    }
+  }
+  if (bound == 0) {
+    logger.trace("internalPropertyUpdate: NOT BOUND {mios=\"{}\"}, value={}",property,value);
+  }
+ else {
+    logger.debug("internalPropertyUpdate: BOUND {mios=\"{}\"}, value={}, bound {} time(s)",new Object[]{property,value,bound});
+  }
+}
