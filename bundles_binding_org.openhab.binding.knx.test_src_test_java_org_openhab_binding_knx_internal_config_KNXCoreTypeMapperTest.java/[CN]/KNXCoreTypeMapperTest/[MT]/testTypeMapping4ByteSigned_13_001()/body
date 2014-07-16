@@ -1,0 +1,12 @@
+{
+  DPT dpt=DPTXlator4ByteSigned.DPT_COUNT;
+  testToTypeClass(dpt,DecimalType.class);
+  Type type=testToType(DPTXlator4ByteSigned.DPT_COUNT,new byte[]{0x00,0x00,0x00,0x00},DecimalType.class);
+  testToDPTValue(dpt,type,"0");
+  type=testToType(DPTXlator4ByteSigned.DPT_COUNT,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
+  testToDPTValue(dpt,type,"-1");
+  type=testToType(DPTXlator4ByteSigned.DPT_COUNT,new byte[]{(byte)0x80,0x00,0x00,0x00},DecimalType.class);
+  testToDPTValue(dpt,type,"-2147483648");
+  type=testToType(DPTXlator4ByteSigned.DPT_COUNT,new byte[]{(byte)0x7F,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
+  testToDPTValue(dpt,type,"2147483647");
+}
