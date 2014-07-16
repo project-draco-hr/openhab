@@ -18,6 +18,7 @@
         mTemp|=(((int)this.payload[4]) & 0xff);
         logger.debug("mTemp => " + mTemp);
         measuredTemperature=mTemp / 10.0;
+        if (measuredTemperature < 4.5)         measuredTemperature=null;
       }
     }
  else     if (this.payload.length == THERMOSTAT_STATE_TIME_PAYLOAD_LEN) {
