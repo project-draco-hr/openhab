@@ -1,9 +1,9 @@
 {
   if (command instanceof OnOffType) {
-    if (((OnOffType)command) == OnOffType.ON)     messageHandler.sendSetTemperature(bindingConfig.getDevAddr(),SetTemperatureMsg.TEMPERATURE_ON);
- else     if (((OnOffType)command) == OnOffType.OFF)     messageHandler.sendSetTemperature(bindingConfig.getDevAddr(),SetTemperatureMsg.TEMPERATURE_OFF);
+    if (((OnOffType)command) == OnOffType.ON)     sendToDevices(SetTemperatureMsg.TEMPERATURE_ON);
+ else     if (((OnOffType)command) == OnOffType.OFF)     sendToDevices(SetTemperatureMsg.TEMPERATURE_OFF);
   }
  else   if (command instanceof DecimalType) {
-    messageHandler.sendSetTemperature(bindingConfig.getDevAddr(),((DecimalType)command).doubleValue());
+    sendToDevices(((DecimalType)command).doubleValue());
   }
 }
