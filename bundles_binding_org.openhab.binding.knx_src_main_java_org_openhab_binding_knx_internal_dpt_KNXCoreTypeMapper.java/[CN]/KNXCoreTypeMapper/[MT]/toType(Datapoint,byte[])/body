@@ -7,7 +7,12 @@
     logger.trace("toType datapoint DPT = " + datapoint.getDPT());
     logger.trace("toType datapoint getMainNumber = " + datapoint.getMainNumber());
     if (datapoint.getMainNumber() == 9)     id="9.001";
-    if (datapoint.getMainNumber() == 14)     id="14.001";
+    if (datapoint.getMainNumber() == 14) {
+      id="14.001";
+      if (value.contains(",")) {
+        value=value.replaceFirst(",","\\.");
+      }
+    }
     Class<? extends Type> typeClass=toTypeClass(id);
     if (typeClass == null) {
       return null;
