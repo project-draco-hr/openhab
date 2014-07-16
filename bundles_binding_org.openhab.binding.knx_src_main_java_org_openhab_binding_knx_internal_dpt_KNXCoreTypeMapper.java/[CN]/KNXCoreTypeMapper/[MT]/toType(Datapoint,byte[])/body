@@ -7,7 +7,12 @@
     logger.trace("toType datapoint DPT = " + datapoint.getDPT());
     logger.trace("toType datapoint getMainNumber = " + datapoint.getMainNumber());
     if (datapoint.getMainNumber() == 9)     id=DPTXlator2ByteFloat.DPT_TEMPERATURE.getID();
-    if (datapoint.getMainNumber() == 14)     id=DPTXlator4ByteFloat.DPT_ACCELERATION_ANGULAR.getID();
+    if (datapoint.getMainNumber() == 14) {
+      id=DPTXlator4ByteFloat.DPT_ACCELERATION_ANGULAR.getID();
+      if (value.contains(",")) {
+        value=value.replaceFirst(",","\\.");
+      }
+    }
     Class<? extends Type> typeClass=toTypeClass(id);
     if (typeClass == null) {
       return null;
