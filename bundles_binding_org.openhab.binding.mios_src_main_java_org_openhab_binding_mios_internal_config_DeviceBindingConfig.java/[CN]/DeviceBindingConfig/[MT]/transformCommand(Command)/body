@@ -1,27 +1,45 @@
 {
   TransformationService ts=getCommandTransformationService();
+  String result;
   String key=command.toString();
   if (ts != null) {
-    return ts.transform(getCommandTransformParam(),key);
+    result=ts.transform(getCommandTransformParam(),key);
+    if (result == null || "".equals(result)) {
+      result=ts.transform(getCommandTransformParam(),DEFAULT_COMMAND_TRANSFORM);
+    }
   }
  else {
     Map<String,String> map=getCommandMap();
     if (map != null) {
       String value=map.get(key);
       if (value != null) {
-        return value;
+        result=value;
       }
  else {
         if (map.containsKey(key)) {
-          return COMMAND_DEFAULTS.get(key);
+          result=COMMAND_DEFAULTS.get(key);
         }
  else {
-          return key;
+          result=key;
         }
       }
     }
  else {
-      return COMMAND_DEFAULTS.get(key);
+      result=COMMAND_DEFAULTS.get(key);
     }
   }
+  int itemValue=50;
+  if (result.contains("?++")) {
+    result=result.replace("?++",String.valueOf(itemValue + 20));
+  }
+ else   if (result.contains("?--")) {
+    result=result.replace("?--",String.valueOf(itemValue - 20));
+  }
+ else   if (result.contains("??")) {
+    result=result.replace("??",key);
+  }
+ else   if (result.contains("?")) {
+    result=result.replace("?",String.valueOf(itemValue));
+  }
+  return result;
 }

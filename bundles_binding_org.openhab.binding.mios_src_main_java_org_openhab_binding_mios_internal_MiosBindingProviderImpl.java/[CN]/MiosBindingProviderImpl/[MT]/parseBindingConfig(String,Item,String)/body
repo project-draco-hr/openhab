@@ -18,16 +18,16 @@
   String inStuff=matcher.group("inStuff");
   logger.trace("parseBindingConfig: in: (Type '{}' id '{}' Stuff '{}'), command: ('{}'), update: ('{}')",new Object[]{inType,inId,inStuff,commandThing,updateThing});
   if (inType.equals("device")) {
-    return DeviceBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+    return DeviceBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
   }
  else   if (inType.equals("scene")) {
-    return SceneBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+    return SceneBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
   }
  else   if (inType.equals("system")) {
-    return SystemBindingConfig.create(context,unitName,inStuff,item.getClass(),inTrans,outTrans);
+    return SystemBindingConfig.create(context,item.getName(),unitName,inStuff,item.getClass(),inTrans,outTrans);
   }
  else   if (inType.equals("room")) {
-    return RoomBindingConfig.create(context,unitName,Integer.parseInt(inId),inStuff,item.getClass(),inTrans,outTrans);
+    return RoomBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),inTrans,outTrans);
   }
  else   throw new BindingConfigParseException("Invalid binding type received for item " + item.getName() + " bad type ("+ inType+ ")");
 }
