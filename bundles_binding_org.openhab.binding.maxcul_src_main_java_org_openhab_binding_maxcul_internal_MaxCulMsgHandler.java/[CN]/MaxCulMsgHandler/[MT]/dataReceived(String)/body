@@ -27,6 +27,7 @@
         BaseMsg bMsg=new BaseMsg(data);
         logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
         sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
+        sequenceRegister.remove(bMsg.msgCount);
       }
       if (passToBinding) {
         this.mcbmp.MaxCulMsgReceived(data,false);

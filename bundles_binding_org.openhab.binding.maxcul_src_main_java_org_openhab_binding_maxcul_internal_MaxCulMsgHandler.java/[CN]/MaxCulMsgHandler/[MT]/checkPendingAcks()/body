@@ -5,8 +5,9 @@
       logger.error("Packet " + qi.msg.msgCount + " ("+ qi.msg.msgType+ ") lost - timeout");
       pendingAckQueue.remove(qi.msg.msgCount);
       if (sequenceRegister.containsKey(qi.msg.msgCount)) {
-        sequenceRegister.get(qi.msg.msgCount).packetLost(qi.msg);
+        MessageSequencer msgSeq=sequenceRegister.get(qi.msg.msgCount);
         sequenceRegister.remove(qi.msg.msgCount);
+        msgSeq.packetLost(qi.msg);
       }
     }
   }

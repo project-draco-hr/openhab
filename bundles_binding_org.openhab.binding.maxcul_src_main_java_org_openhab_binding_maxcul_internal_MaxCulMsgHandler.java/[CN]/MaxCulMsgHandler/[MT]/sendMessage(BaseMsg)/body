@@ -4,8 +4,10 @@
     if (enoughCredit(msg.requiredCredit(),msg.isFastSend()) && this.sendQueue.isEmpty()) {
       logger.debug("Sending message immediately. Message is " + msg.msgType + " => "+ msg.rawMsg);
       transmitMessage(msg);
+      logger.debug("Credit required " + msg.requiredCredit() + ", surplus credit remaining after TX "+ this.surplusCredit);
     }
  else {
+      msg.setFastSend(false);
       SenderQueueItem qi=new SenderQueueItem();
       qi.msg=msg;
       TimerTask task=new TimerTask(){
@@ -27,7 +29,8 @@
 ;
       timer=new Timer();
       timers.put(qi,timer);
-      this.endOfQueueTransmit=new Date(this.endOfQueueTransmit.getTime() + ((msg.requiredCredit() + 2) * 1000));
+      int requiredCredit=msg.isFastSend() ? 0 : 100 + msg.requiredCredit() + 2;
+      this.endOfQueueTransmit=new Date(this.endOfQueueTransmit.getTime() + (requiredCredit * 1000));
       timer.schedule(task,this.endOfQueueTransmit);
       this.sendQueue.add(qi);
       logger.debug("Added message to queue to be TX'd at " + this.endOfQueueTransmit.toString());
