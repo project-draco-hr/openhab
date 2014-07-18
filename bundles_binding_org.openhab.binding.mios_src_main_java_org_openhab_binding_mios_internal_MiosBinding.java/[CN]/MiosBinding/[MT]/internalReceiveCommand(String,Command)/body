@@ -13,12 +13,21 @@
     }
     for (    BindingProvider provider : providers) {
       if (provider instanceof MiosBindingProvider) {
-        MiosBindingConfig config=((MiosBindingProviderImpl)provider).getMiosBindingConfig(itemName);
+        MiosBindingProviderImpl miosProvider=(MiosBindingProviderImpl)provider;
+        MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
         if (config != null) {
-          connector.invokeCommand(config,command,null);
+          ItemRegistry reg=miosProvider.getItemRegistry();
+          if (reg != null) {
+            Item item=reg.getItem(config.getItemName());
+            State state=item.getState();
+            connector.invokeCommand(config,command,state);
+          }
+ else {
+            logger.warn("internalReceiveCommand: Missing ItemRegistry for item '{}' command '{}'",itemName,command);
+          }
         }
  else {
-          logger.trace("internalReceiveCommand: Found null BindingConfig for item '{}' command '{}'",itemName,command);
+          logger.trace("internalReceiveCommand: Missing BindingConfig for item '{}' command '{}'",itemName,command);
         }
       }
     }

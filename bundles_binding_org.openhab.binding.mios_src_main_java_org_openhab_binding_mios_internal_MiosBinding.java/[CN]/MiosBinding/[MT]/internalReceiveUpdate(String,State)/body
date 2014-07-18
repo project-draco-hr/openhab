@@ -1,18 +1,3 @@
 {
-  try {
-    logger.trace("internalReceiveUpdate: itemName '{}', newState '{}', class '{}'",new Object[]{itemName,newState,newState.getClass()});
-    String unitName=getMiosUnitName(itemName);
-    MiosConnector connector=getMiosConnector(unitName);
-    if (connector == null) {
-      logger.warn("Received update '{}' for item '{}' but no connector found for MiOS Unit '{}', ignoring",new Object[]{newState.toString(),itemName,unitName});
-      return;
-    }
-    if (!connector.isConnected()) {
-      logger.warn("Received update '{}' for item '{}' but the connection to the MiOS Unit '{}' is down, ignoring",new Object[]{newState.toString(),itemName,unitName});
-      return;
-    }
-  }
- catch (  Exception e) {
-    logger.error("Error handling update",e);
-  }
+  logger.trace("internalReceiveUpdate: itemName '{}', newState '{}', class '{}'",new Object[]{itemName,newState,newState.getClass()});
 }
