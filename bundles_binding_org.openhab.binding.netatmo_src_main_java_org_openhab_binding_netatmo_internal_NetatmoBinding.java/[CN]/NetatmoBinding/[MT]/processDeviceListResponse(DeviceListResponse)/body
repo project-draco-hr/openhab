@@ -1,0 +1,60 @@
+{
+  final Map<String,Device> deviceMap=new HashMap<String,Device>();
+  final Map<String,Set<String>> deviceMeasurements=new HashMap<String,Set<String>>();
+  for (  final Device device : response.getDevices()) {
+    final String deviceId=device.getId();
+    deviceMap.put(deviceId,device);
+    for (    final String measurement : device.getMeasurements()) {
+      if (!deviceMeasurements.containsKey(deviceId)) {
+        deviceMeasurements.put(deviceId,new HashSet<String>());
+      }
+      deviceMeasurements.get(deviceId).add(measurement);
+    }
+  }
+  final Map<String,Module> moduleMap=new HashMap<String,Module>();
+  final Map<String,Set<String>> moduleMeasurements=new HashMap<String,Set<String>>();
+  for (  final Module module : response.getModules()) {
+    final String moduleId=module.getId();
+    moduleMap.put(moduleId,module);
+    for (    final String measurement : module.getMeasurements()) {
+      if (!moduleMeasurements.containsKey(moduleId)) {
+        moduleMeasurements.put(moduleId,new HashSet<String>());
+      }
+      moduleMeasurements.get(moduleId).add(measurement);
+    }
+  }
+  for (  final NetatmoBindingProvider provider : this.providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      final String deviceId=provider.getDeviceId(itemName);
+      final String moduleId=provider.getModuleId(itemName);
+      final String measure=provider.getMeasure(itemName);
+      final Set<String> measurements;
+      if (moduleId != null) {
+        measurements=moduleMeasurements.get(moduleId);
+      }
+ else {
+        measurements=deviceMeasurements.get(deviceId);
+      }
+      if (measurements != null) {
+        measurements.remove(measure);
+      }
+    }
+  }
+  final StringBuilder message=new StringBuilder();
+  message.append("The following Netatmo measurements are not yet configured:\n");
+  for (  Entry<String,Set<String>> entry : deviceMeasurements.entrySet()) {
+    final String deviceId=entry.getKey();
+    final Device device=deviceMap.get(deviceId);
+    for (    String measurement : entry.getValue()) {
+      message.append("\t" + deviceId + "#"+ measurement+ " ("+ device.getModuleName()+ ")\n");
+    }
+  }
+  for (  Entry<String,Set<String>> entry : moduleMeasurements.entrySet()) {
+    final String moduleId=entry.getKey();
+    final Module module=moduleMap.get(moduleId);
+    for (    String measurement : entry.getValue()) {
+      message.append("\t" + module.getMainDevice() + "#"+ moduleId+ "#"+ measurement+ " ("+ module.getModuleName()+ ")\n");
+    }
+  }
+  logger.info(message.toString());
+}
