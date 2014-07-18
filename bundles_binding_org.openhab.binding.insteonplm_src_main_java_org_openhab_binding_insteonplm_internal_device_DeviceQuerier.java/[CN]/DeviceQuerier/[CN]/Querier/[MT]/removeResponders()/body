@@ -1,0 +1,10 @@
+{
+  Iterator<Map.Entry<InsteonAddress,InsteonDevice>> i;
+  for (i=m_nonResponders.entrySet().iterator(); i.hasNext(); ) {
+    Map.Entry<InsteonAddress,InsteonDevice> me=i.next();
+    if (me.getValue().hasRespondedToQuery()) {
+      logger.info("device {} queried successfully",me.getValue());
+      i.remove();
+    }
+  }
+}

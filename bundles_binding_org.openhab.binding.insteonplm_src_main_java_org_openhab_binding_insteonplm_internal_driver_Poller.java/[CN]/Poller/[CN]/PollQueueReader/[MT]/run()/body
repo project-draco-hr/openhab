@@ -1,0 +1,13 @@
+{
+  logger.debug("starting poll thread.");
+  while (true) {
+synchronized (m_pollQueue) {
+      try {
+        readPollQueue();
+      }
+ catch (      InterruptedException e) {
+        logger.warn("poll queue reader thread interrupted!");
+      }
+    }
+  }
+}

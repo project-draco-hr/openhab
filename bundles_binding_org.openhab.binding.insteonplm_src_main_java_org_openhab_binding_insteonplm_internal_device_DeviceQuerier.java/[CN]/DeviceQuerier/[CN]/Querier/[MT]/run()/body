@@ -1,0 +1,22 @@
+{
+  logger.debug("starting query thread...");
+synchronized (m_nonResponders) {
+    while (true) {
+      while (!m_nonResponders.isEmpty()) {
+        InsteonDevice[] nonresp=m_nonResponders.values().toArray(new InsteonDevice[0]);
+        logger.debug("query array is size {}",nonresp.length);
+        for (        InsteonDevice d : nonresp) {
+          sendQueryMsg(d);
+        }
+        removeResponders();
+      }
+      try {
+        logger.debug("waiting for query to be added to list");
+        m_nonResponders.wait();
+      }
+ catch (      InterruptedException e) {
+        logger.debug("ignoring interruption of query thread");
+      }
+    }
+  }
+}
