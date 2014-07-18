@@ -1,0 +1,32 @@
+{
+  if ("event".equals(methodName)) {
+    handleEvent(responseData);
+    return BIN_EMPTY_STRING;
+  }
+ else   if ("listDevices".equals(methodName)) {
+    return BIN_EMPTY_ARRAY;
+  }
+ else   if ("deleteDevices".equals(methodName)) {
+    return BIN_EMPTY_ARRAY;
+  }
+ else   if ("newDevices".equals(methodName)) {
+    callbackReceiver.newDevices(null,null);
+    return BIN_EMPTY_ARRAY;
+  }
+ else   if ("system.listMethods".equals(methodName)) {
+    return BIN_MULTICALL;
+  }
+ else   if ("system.multicall".equals(methodName)) {
+    for (    Object o : (Object[])responseData[0]) {
+      Map<?,?> call=(Map<?,?>)o;
+      String method=call.get("methodName").toString();
+      Object[] data=(Object[])call.get("params");
+      handleMethodCall(method,data);
+    }
+    return BIN_EMPTY_EVENT_LIST;
+  }
+ else {
+    logger.warn("Unknown method called by Homematic server: " + methodName);
+    return BIN_EMPTY_EVENT_LIST;
+  }
+}

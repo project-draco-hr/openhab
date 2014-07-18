@@ -1,0 +1,10 @@
+{
+  logger.info("Loading Homematic datapoints");
+  context.getHomematicClient().iterateAllDatapoints(new HmValueItemIteratorCallback(){
+    @Override public void iterate(    HomematicBindingConfig bindingConfig,    HmValueItem hmValueItem){
+      datapoints.put(bindingConfig,hmValueItem);
+    }
+  }
+);
+  logger.info("Finished loading {} Homematic datapoints",datapoints.size());
+}
