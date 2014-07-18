@@ -7,7 +7,6 @@
   String unitName=matcher.group("unit");
   String inThing=matcher.group("inThing");
   String commandThing=matcher.group("command");
-  String updateThing=matcher.group("update");
   String inTrans=matcher.group("inTransform");
   String outTrans=matcher.group("outTransform");
   logger.trace("parseBindingConfig: unit '{}' thing '{}' inTrans '{}' outTrans '{}'",new Object[]{unitName,inThing,inTrans,outTrans});
@@ -16,12 +15,12 @@
   String inType=matcher.group("inType");
   String inId=matcher.group("id");
   String inStuff=matcher.group("inStuff");
-  logger.trace("parseBindingConfig: in: (Type '{}' id '{}' Stuff '{}'), command: ('{}'), update: ('{}')",new Object[]{inType,inId,inStuff,commandThing,updateThing});
+  logger.trace("parseBindingConfig: in: (Type '{}' id '{}' Stuff '{}'), command: ('{}')",new Object[]{inType,inId,inStuff,commandThing});
   if (inType.equals("device")) {
-    return DeviceBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+    return DeviceBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,inTrans,outTrans);
   }
  else   if (inType.equals("scene")) {
-    return SceneBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,updateThing,inTrans,outTrans);
+    return SceneBindingConfig.create(context,item.getName(),unitName,Integer.parseInt(inId),inStuff,item.getClass(),commandThing,inTrans,outTrans);
   }
  else   if (inType.equals("system")) {
     return SystemBindingConfig.create(context,item.getName(),unitName,inStuff,item.getClass(),inTrans,outTrans);

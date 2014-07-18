@@ -1,0 +1,33 @@
+{
+  logger.debug("callDevice: Need to remote-invoke Device '{}' action '{}' and current state '{}')",new Object[]{config.toProperty(),command,state});
+  String newCommand=config.transformCommand(command);
+  if (newCommand == null) {
+    logger.debug("invokeCommand: Need to remote-invoke Device '{}', but no action determined for Command '{}' ('{}')",new Object[]{config.toProperty(),command.toString(),command.getClass()});
+    return;
+  }
+  Matcher matcher=DEVICE_PATTERN.matcher(newCommand);
+  if (matcher.matches()) {
+    try {
+      MiosUnit u=getUnit();
+      String serviceName=matcher.group("serviceName");
+      String serviceAction=matcher.group("serviceAction");
+      String serviceParam=matcher.group("serviceParam");
+      String serviceValue=matcher.group("serviceValue");
+      logger.debug("callDevice: decoded as serviceName '{}' serviceAction '{}' serviceParam '{}' serviceValue '{}'",new Object[]{serviceName,serviceAction,serviceParam,serviceValue});
+      serviceValue=toBindValue(serviceValue,command,state);
+      if (serviceParam != null) {
+        String p=URLEncoder.encode(serviceParam,ENCODING_CHARSET) + '=' + URLEncoder.encode(serviceValue,ENCODING_CHARSET);
+        callMios(String.format(DEVICE_URL_PARAMS,u.getHostname(),u.getPort(),config.getId(),URLEncoder.encode(serviceName,ENCODING_CHARSET),URLEncoder.encode(serviceAction,ENCODING_CHARSET),p));
+      }
+ else {
+        callMios(String.format(DEVICE_URL,u.getHostname(),u.getPort(),config.getId(),URLEncoder.encode(serviceName,ENCODING_CHARSET),URLEncoder.encode(serviceAction,ENCODING_CHARSET)));
+      }
+    }
+ catch (    UnsupportedEncodingException uee) {
+      logger.debug("Really, trust me, this won't happen ;)   exception='{}'",uee);
+    }
+  }
+ else {
+    logger.error("callDevice: The parameter is in the wrong format.  BindingConfig '{}', UPnP Action '{}'",config,newCommand);
+  }
+}

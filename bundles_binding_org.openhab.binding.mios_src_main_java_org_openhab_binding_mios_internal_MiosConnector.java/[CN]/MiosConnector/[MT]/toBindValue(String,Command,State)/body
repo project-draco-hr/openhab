@@ -1,0 +1,22 @@
+{
+  if (value == null) {
+    return state.toString();
+  }
+ else   if (value.contains(BIND_COMMAND_VALUE)) {
+    return value.replace(BIND_COMMAND_VALUE,command.toString());
+  }
+ else   if (value.contains(BIND_ITEM_INCREMENT)) {
+    String tmp=String.valueOf(Integer.parseInt(state.toString()) + 1);
+    return value.replace(BIND_ITEM_INCREMENT,tmp);
+  }
+ else   if (value.contains(BIND_ITEM_DECREMENT)) {
+    String tmp=String.valueOf(Integer.parseInt(state.toString()) - 1);
+    return value.replace(BIND_ITEM_DECREMENT,tmp);
+  }
+ else   if (value.contains(BIND_ITEM_VALUE)) {
+    return value.replace(BIND_ITEM_VALUE,state.toString());
+  }
+ else {
+    return value;
+  }
+}

@@ -4,22 +4,10 @@
     return;
   }
   if (config instanceof SceneBindingConfig) {
-    String newCommand=config.transformCommand(command);
-    if (newCommand != null) {
-      callScene((SceneBindingConfig)config);
-    }
- else {
-      logger.debug("invokeScene: Command type not supported for Scenes '{}'",command.getClass());
-    }
+    callScene((SceneBindingConfig)config,command,state);
   }
  else   if (config instanceof DeviceBindingConfig) {
-    String newCommand=config.transformCommand(command);
-    if (newCommand != null) {
-      callDevice((DeviceBindingConfig)config,newCommand,state);
-    }
- else {
-      logger.debug("invokeCommand: Need to remote-invoke Device '{}', but no action determined for Command '{}' ('{}')",new Object[]{config.toProperty(),command.toString(),command.getClass()});
-    }
+    callDevice((DeviceBindingConfig)config,command,state);
   }
  else {
     logger.warn("Unhandled command execution for Command ('{}') on binding '{}'",command,config);
