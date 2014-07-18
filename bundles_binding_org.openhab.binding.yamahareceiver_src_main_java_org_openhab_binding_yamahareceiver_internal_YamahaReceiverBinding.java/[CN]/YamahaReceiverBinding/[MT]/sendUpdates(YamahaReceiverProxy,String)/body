@@ -1,0 +1,23 @@
+{
+  Collection<YamahaReceiverBindingConfig> configs=getDeviceConfigs(deviceUid);
+  try {
+    for (    Zone zone : Zone.values()) {
+      YamahaReceiverState state=receiverProxy.getState(zone);
+      State powerUpdate=state.isPower() ? OnOffType.ON : OnOffType.OFF;
+      State muteUpdate=state.isMute() ? OnOffType.ON : OnOffType.OFF;
+      State inputUpdate=new StringType(state.getInput());
+      State surroundUpdate=new StringType(state.getSurroundProgram());
+      State updateVolumeDb=new DecimalType(state.getVolume());
+      State updateVolumePercent=new PercentType((int)dbToPercent(state.getVolume()));
+      sendUpdate(configs,zone,BindingType.power,powerUpdate);
+      sendUpdate(configs,zone,BindingType.mute,muteUpdate);
+      sendUpdate(configs,zone,BindingType.input,inputUpdate);
+      sendUpdate(configs,zone,BindingType.surroundProgram,surroundUpdate);
+      sendUpdate(configs,zone,BindingType.volumePercent,updateVolumePercent);
+      sendUpdate(configs,zone,BindingType.volumeDb,updateVolumeDb);
+    }
+  }
+ catch (  IOException e) {
+    logger.warn("Cannot communicate with " + receiverProxy.getHost());
+  }
+}
