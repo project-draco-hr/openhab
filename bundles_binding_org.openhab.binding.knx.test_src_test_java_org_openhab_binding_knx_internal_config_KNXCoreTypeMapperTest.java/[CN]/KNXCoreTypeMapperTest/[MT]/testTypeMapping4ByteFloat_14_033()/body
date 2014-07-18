@@ -1,0 +1,10 @@
+{
+  DPT dpt=DPTXlator4ByteFloat.DPT_FREQUENCY;
+  testToTypeClass(dpt,DecimalType.class);
+  Type type=testToType(DPTXlator4ByteFloat.DPT_FREQUENCY,new byte[]{0x00,0x00,0x00,0x00},DecimalType.class);
+  testToDPTValue(dpt,type,"0.0");
+  type=testToType(DPTXlator4ByteFloat.DPT_FREQUENCY,new byte[]{0x00,0x00,0x00,0x01},DecimalType.class);
+  testToDPTValue(dpt,type,"0.0000000000000000000000000000000000000000000014");
+  type=testToType(DPTXlator4ByteFloat.DPT_FREQUENCY,new byte[]{(byte)0x80,0x00,0x00,0x01},DecimalType.class);
+  testToDPTValue(dpt,type,"-0.0000000000000000000000000000000000000000000014");
+}
