@@ -17,7 +17,7 @@
         associations=provider.getAssociations(configWithTempsConfig.getSerialNumber());
         if (associations.isEmpty() == false)         break;
       }
-      PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,this.tzStr,messageHandler,configWithTempsConfig,associations);
+      PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,messageHandler,configWithTempsConfig,associations);
       messageHandler.startSequence(ps,pkt);
     }
  else     logger.error("Pairing failed: Unable to find binding config for device " + pkt.serial);

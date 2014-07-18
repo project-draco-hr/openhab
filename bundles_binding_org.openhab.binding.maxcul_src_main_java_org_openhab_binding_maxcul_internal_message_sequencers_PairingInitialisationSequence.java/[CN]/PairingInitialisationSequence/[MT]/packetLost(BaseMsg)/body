@@ -2,8 +2,14 @@
   pktLostCount++;
   logger.debug("Lost " + pktLostCount + " packets");
   if (pktLostCount < 3) {
-    logger.debug("Attempt retransmission");
-    messageHandler.sendMessage(msg);
+    logger.debug("Attempt retransmission - first wakeup device");
+    this.useFast=false;
+    messageHandler.sendWakeup(msg.dstAddrStr,this);
+    if (this.state != PairingInitialisationState.RETX_WAKEUP_ACK) {
+      this.reTxMsg=msg;
+      this.reTxState=state;
+    }
+    state=PairingInitialisationState.RETX_WAKEUP_ACK;
   }
  else {
     logger.error("Lost " + pktLostCount + " packets. Ending Sequence in state "+ this.state);
