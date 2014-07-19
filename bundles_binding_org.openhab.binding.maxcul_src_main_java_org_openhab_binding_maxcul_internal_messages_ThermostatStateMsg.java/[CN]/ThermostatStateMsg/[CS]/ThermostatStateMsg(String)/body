@@ -13,10 +13,9 @@
     desiredTemperature=(this.payload[2] & 0x7f) / 2.0;
     if (this.payload.length == THERMOSTAT_STATE_MEAS_PAYLOAD_LEN) {
       if (ctrlMode != ThermostatControlMode.TEMPORARY) {
-        int mTemp=(this.payload[3] & 0x80);
-        mTemp<<=1;
+        int mTemp=(this.payload[3] & 0x1);
+        mTemp<<=8;
         mTemp|=(((int)this.payload[4]) & 0xff);
-        logger.debug("mTemp => " + mTemp);
         measuredTemperature=mTemp / 10.0;
         if (measuredTemperature < 4.5)         measuredTemperature=null;
       }
