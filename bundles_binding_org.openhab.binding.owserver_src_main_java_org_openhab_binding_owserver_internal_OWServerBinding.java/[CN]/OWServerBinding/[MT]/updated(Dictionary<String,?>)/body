@@ -26,8 +26,11 @@
       if ("host".equals(configKey)) {
         deviceConfig.host=value;
       }
- else {
-        throw new ConfigurationException(configKey,"The given OWServer configKey '" + configKey + "' is unknown");
+      if ("user".equals(configKey)) {
+        deviceConfig.user=value;
+      }
+      if ("password".equals(configKey)) {
+        deviceConfig.password=value;
       }
     }
     String timeoutString=(String)config.get("timeout");
