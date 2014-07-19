@@ -12,6 +12,11 @@
     displayMeasuredTemp=(this.payload[1] == 0 ? false : true);
     desiredTemperature=(this.payload[2] & 0x7f) / 2.0;
     if (this.payload.length == WALL_THERMOSTAT_STATE_PAIR_THERM_PAYLOAD_LEN) {
+      int mTemp=this.payload[3];
+      mTemp&=0x01;
+      mTemp<<=8;
+      mTemp|=(this.payload[4] & 0xff);
+      this.measuredTemperature=mTemp / 10.0;
     }
  else     if (this.payload.length == WALL_THERMOSTAT_STATE_UNTIL_PAYLOAD_LEN) {
     }
