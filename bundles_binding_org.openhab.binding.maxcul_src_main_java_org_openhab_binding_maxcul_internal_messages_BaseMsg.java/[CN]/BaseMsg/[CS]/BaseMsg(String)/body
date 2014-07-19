@@ -22,7 +22,6 @@
   pkt.groupid=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_GROUP_ID,PKT_POS_GROUP_ID + PKT_POS_GROUP_ID_LEN),16) & 0xFF);
   int payloadStrLen=((pkt.len) * PKT_CHARS_PER_BYTE) + PKT_POS_MSG_START - PKT_POS_PAYLOAD_START;
   int payloadByteLen=payloadStrLen / PKT_CHARS_PER_BYTE;
-  logger.debug("Payload length = " + payloadStrLen + " => "+ (payloadByteLen));
   pkt.payload=new byte[payloadByteLen];
   for (int payIdx=PKT_POS_PAYLOAD_START; payIdx < (PKT_POS_PAYLOAD_START + payloadStrLen); payIdx+=PKT_CHARS_PER_BYTE) {
     pkt.payload[(payIdx - PKT_POS_PAYLOAD_START) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(payIdx,payIdx + PKT_CHARS_PER_BYTE),16) & 0xFF);
