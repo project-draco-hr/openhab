@@ -46,5 +46,27 @@ default :
   break;
 }
 }
+ else {
+boolean passToBinding=false;
+BaseMsg bMsg=new BaseMsg(data);
+for (MaxCulBindingProvider provider : providers) {
+List<MaxCulBindingConfig> configs=provider.getConfigsForRadioAddr(bMsg.srcAddrStr);
+if (!configs.isEmpty()) {
+  String serialNum=((MaxCulBindingConfig)configs.get(0)).getSerialNumber();
+  HashSet<MaxCulBindingConfig> assocDevs=provider.getAssociations(serialNum);
+  if (!assocDevs.isEmpty()) {
+    for (    MaxCulBindingConfig device : assocDevs) {
+      if (device.getDevAddr().equalsIgnoreCase(bMsg.dstAddrStr)) {
+        passToBinding=true;
+        break;
+      }
+    }
+  }
+}
+}
+if (passToBinding && BaseMsg.getMsgType(data) != MaxCulMsgType.PAIR_PING) {
+this.mcbmp.MaxCulMsgReceived(data,true);
+}
+}
 }
 }
