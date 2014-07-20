@@ -1,0 +1,60 @@
+{
+  dev.setIsInItemsFile(true);
+  if (dev.needsQuerying()) {
+    m_deviceQuerier.addDevice(dev);
+    dev.setNeedsQuerying(false);
+  }
+  if (!dev.hasValidDescriptors()) {
+    return;
+  }
+  if (!dev.descriptorsHaveChanged()) {
+    if (!dev.needsQuerying()) {
+      logger.debug("descriptors for dev {} have not changed, no binding config applied.",dev);
+    }
+    return;
+  }
+  dev.setDescriptorsHaveChanged(false);
+  logger.debug("applying binding for item {} address {}",itemName,dev.getAddress());
+  String productKey=c.getProductKey();
+  if (!dev.hasProductKey()) {
+    dev.setProductKey(productKey);
+    dev.instantiateFeatures();
+  }
+ else   if (!dev.hasProductKey(productKey)) {
+    logger.error("inconsistent product key {} for device {}, already has {}",productKey,dev.getAddress(),dev.getProductKey());
+  }
+  if (c.getFeature() == null) {
+    logger.error("feature string missing for item {}",itemName);
+  }
+ else {
+    DeviceFeature f=dev.getFeature(c.getFeature());
+    if (f == null) {
+      if (dev.isInitialized()) {
+        logger.error(".items file references unknown feature {} for device {}," + " is the product key correct?",c.getFeature(),dev.getAddress());
+        logger.error("modem reports device {} as: {}. " + "If that is not correct, unlink from modem, and link again.",dev.getAddress(),dev.getDescriptorsAsString());
+      }
+ else {
+        logger.debug("adding place holder for feature {} ",c.getFeature());
+        f=DeviceFeature.s_makeDeviceFeature("PLACEHOLDER");
+        f.setParameters(c.getParameters());
+        f.addListener(new FeatureListener(itemName));
+        dev.addFeature(c.getFeature(),f);
+      }
+    }
+ else {
+      logger.debug("now listening for feature {} item {}",f.toString(),itemName);
+      f.setParameters(c.getParameters());
+      f.addListener(new FeatureListener(itemName));
+    }
+  }
+  if (!dev.hasValidPollingInterval()) {
+    dev.setPollInterval(m_devicePollInterval);
+  }
+  try {
+    Port p=m_driver.getPort(dev.getPort());
+    p.getPoller().startPolling(dev);
+  }
+ catch (  IOException e) {
+    logger.error("no port found for device {}, disabled polling.",dev);
+  }
+}

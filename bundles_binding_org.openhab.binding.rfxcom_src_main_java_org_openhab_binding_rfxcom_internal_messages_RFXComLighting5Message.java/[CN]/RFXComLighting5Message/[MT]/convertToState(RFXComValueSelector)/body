@@ -58,6 +58,9 @@ throw new RFXComException("Can't convert " + valueSelector + " to ContactItem");
 if (valueSelector == RFXComValueSelector.RAW_DATA) {
 state=new StringType(DatatypeConverter.printHexBinary(rawMessage));
 }
+ else if (valueSelector == RFXComValueSelector.MOOD) {
+state=new StringType(command.toString());
+}
  else {
 throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
 }

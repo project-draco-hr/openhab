@@ -5,11 +5,16 @@
   if (num != 1)   return;
   Driver dr=m_feature.getDevice().getDriver();
   HashMap<InsteonAddress,InsteonDevice> devs=dr.getDeviceList();
+  String erasedDevice=null;
   for (  InsteonDevice dev : devs.values()) {
-    if (!dev.isReferenced() && dev.hasLinkRecords()) {
+    if (!dev.isModem() && !dev.isInItemsFile()) {
       logger.info("ModemCommandHandler: erasing {} from modem link database",dev.getAddress());
       dev.eraseFromModem();
+      erasedDevice=dev.getAddress().toString();
       break;
     }
+  }
+  if (erasedDevice == null) {
+    logger.info("no devices erased from link database");
   }
 }

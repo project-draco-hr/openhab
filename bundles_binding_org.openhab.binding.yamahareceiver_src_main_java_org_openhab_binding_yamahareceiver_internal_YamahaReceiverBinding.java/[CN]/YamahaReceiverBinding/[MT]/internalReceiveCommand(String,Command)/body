@@ -1,0 +1,67 @@
+{
+  YamahaReceiverBindingConfig config=getConfigForItemName(itemName);
+  if (config == null) {
+    logger.error("Received command for unknown item '" + itemName + "'");
+    return;
+  }
+  YamahaReceiverProxy proxy=proxies.get(config.getDeviceUid());
+  if (proxy == null) {
+    logger.error("Received command for unknown device uid '" + config.getDeviceUid() + "'");
+    return;
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug(BINDING_NAME + " processing command '" + command+ "' of type '"+ command.getClass().getSimpleName()+ "' for item '"+ itemName+ "'");
+  }
+  try {
+    Zone zone=config.getZone();
+    BindingType type=config.getBindingType();
+    if (type == BindingType.power) {
+      if (command instanceof OnOffType) {
+        proxy.setPower(zone,command == OnOffType.ON);
+      }
+    }
+ else     if (type == BindingType.volumePercent || type == BindingType.volumeDb) {
+      if (command instanceof IncreaseDecreaseType || command instanceof UpDownType) {
+        float db=proxy.getState(zone).getVolume();
+        float adjAmt;
+        if (command == IncreaseDecreaseType.INCREASE || command == UpDownType.UP) {
+          adjAmt=.5f;
+        }
+ else {
+          adjAmt=-.5f;
+        }
+        float newDb=db + adjAmt;
+        proxy.setVolume(zone,newDb);
+        State newState=new DecimalType(newDb);
+        eventPublisher.postUpdate(itemName,newState);
+      }
+ else       if (command instanceof PercentType) {
+        byte percent=((PercentType)command).byteValue();
+        int db=percentToDB(percent);
+        proxy.setVolume(zone,db);
+      }
+ else {
+        float db=Float.parseFloat(command.toString());
+        proxy.setVolume(zone,db);
+      }
+      sendUpdates(proxy,config.getDeviceUid());
+    }
+ else     if (type == BindingType.mute) {
+      if (command instanceof OnOffType) {
+        proxy.setMute(zone,command == OnOffType.ON);
+      }
+    }
+ else     if (type == BindingType.input) {
+      proxy.setInput(zone,parseString(command.toString()));
+    }
+ else     if (type == BindingType.surroundProgram) {
+      proxy.setSurroundProgram(zone,parseString(command.toString()));
+    }
+  }
+ catch (  IOException e) {
+    logger.warn("Cannot communicate with " + proxy.getHost() + " (uid: "+ config.getDeviceUid()+ ")");
+  }
+catch (  Throwable t) {
+    logger.error("Error processing command '" + command + "' for item '"+ itemName+ "'",t);
+  }
+}

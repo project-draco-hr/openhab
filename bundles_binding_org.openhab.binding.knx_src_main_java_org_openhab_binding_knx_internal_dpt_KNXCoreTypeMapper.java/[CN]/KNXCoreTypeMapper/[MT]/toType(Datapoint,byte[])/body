@@ -6,8 +6,13 @@
     String id=translator.getType().getID();
     logger.trace("toType datapoint DPT = " + datapoint.getDPT());
     logger.trace("toType datapoint getMainNumber = " + datapoint.getMainNumber());
-    if (datapoint.getMainNumber() == 9)     id="9.001";
-    if (datapoint.getMainNumber() == 14)     id="14.001";
+    if (datapoint.getMainNumber() == 9)     id=DPTXlator2ByteFloat.DPT_TEMPERATURE.getID();
+    if (datapoint.getMainNumber() == 14) {
+      id=DPTXlator4ByteFloat.DPT_ACCELERATION_ANGULAR.getID();
+      if (value.contains(",")) {
+        value=value.replaceFirst(",","\\.");
+      }
+    }
     Class<? extends Type> typeClass=toTypeClass(id);
     if (typeClass == null) {
       return null;
@@ -15,14 +20,7 @@
     if (typeClass.equals(UpDownType.class))     return UpDownType.valueOf(value.toUpperCase());
     if (typeClass.equals(IncreaseDecreaseType.class))     return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
     if (typeClass.equals(OnOffType.class))     return OnOffType.valueOf(value.toUpperCase());
-    if (typeClass.equals(PercentType.class)) {
-      if (id.equals(DPTXlator8BitUnsigned.DPT_PERCENT_U8.getID())) {
-        return PercentType.valueOf(mapToPercent(value));
-      }
- else {
-        return PercentType.valueOf(value.split(" ")[0]);
-      }
-    }
+    if (typeClass.equals(PercentType.class))     return PercentType.valueOf(value.split(" ")[0]);
     if (typeClass.equals(DecimalType.class))     return DecimalType.valueOf(value.split(" ")[0]);
     if (typeClass.equals(StringType.class))     return StringType.valueOf(value);
     if (typeClass.equals(OpenClosedType.class))     return OpenClosedType.valueOf(value.toUpperCase());

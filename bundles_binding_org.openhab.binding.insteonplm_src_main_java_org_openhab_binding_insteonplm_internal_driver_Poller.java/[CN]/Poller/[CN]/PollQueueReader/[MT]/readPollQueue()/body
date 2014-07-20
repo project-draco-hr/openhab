@@ -1,0 +1,17 @@
+{
+  while (m_pollQueue.isEmpty()) {
+    m_pollQueue.wait();
+  }
+  long now=System.currentTimeMillis();
+  PQEntry pqe=m_pollQueue.first();
+  long tfirst=pqe.getExpirationTime();
+  long dt=tfirst - now;
+  if (dt > 0) {
+    logger.trace("waiting for {} msec until {} comes due",dt,pqe);
+    m_pollQueue.wait(dt);
+  }
+ else {
+    logger.trace("entry {} expired at time {}",pqe,now);
+    processQueue(now);
+  }
+}

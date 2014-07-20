@@ -1,0 +1,11 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    Map<String,String> props=parseProperties(bindingConfig);
+    String id=props.get(YamahaReceiverBindingConfig.KEY_DEVICE_UID);
+    String zone=props.get(YamahaReceiverBindingConfig.KEY_ZONE);
+    String bindingType=props.get(YamahaReceiverBindingConfig.KEY_BINDING_TYPE);
+    YamahaReceiverBindingConfig config=new YamahaReceiverBindingConfig(id,zone,bindingType,item.getName());
+    addBindingConfig(item,config);
+  }
+}

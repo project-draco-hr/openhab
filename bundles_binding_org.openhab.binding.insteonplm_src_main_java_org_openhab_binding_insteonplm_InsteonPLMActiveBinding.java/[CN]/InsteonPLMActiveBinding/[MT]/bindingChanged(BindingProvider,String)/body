@@ -10,7 +10,6 @@
     return;
   }
   InsteonAddress addr=c.getAddress();
-  logger.debug("applying binding for item {} address {}",itemName,addr);
 synchronized (m_devices) {
     if (m_driver.isDeviceListComplete() && (!m_devices.containsKey(addr))) {
       logger.warn("device {} not found in modem link database (is it linked?), disabling it.",c.getAddress());
@@ -21,42 +20,6 @@ synchronized (m_devices) {
       logger.error("addr {} referenced in items file is not found!");
       return;
     }
-    String productKey=c.getProductKey();
-    if (!dev.hasProductKey()) {
-      dev.setProductKey(productKey);
-      dev.instantiateFeatures();
-    }
- else     if (!dev.hasProductKey(productKey)) {
-      logger.error("inconsistent product key {} for device {}, already has {}",productKey,addr,dev.getProductKey());
-    }
-    if (c.getFeature() == null) {
-      logger.error("feature string missing for item {}",itemName);
-    }
- else {
-      DeviceFeature f=dev.getFeature(c.getFeature());
-      if (f == null) {
-        if (dev.isInitialized()) {
-          logger.error(".items file references unknown feature {} for device {}," + " is the product key correct?",c.getFeature(),addr);
-          logger.error("modem reports device {} as: {}. " + "If that is not correct, unlink from modem, and link again.",addr,dev.getDescriptorsAsString());
-        }
- else {
-          logger.debug("adding place holder for feature {} ",c.getFeature());
-          f=DeviceFeature.s_makeDeviceFeature("PLACEHOLDER");
-          f.setParameters(c.getParameters());
-          f.addListener(new FeatureListener(itemName));
-          dev.addFeature(c.getFeature(),f);
-        }
-      }
- else {
-        logger.debug("now listening for feature {} item {}",f.toString(),itemName);
-        f.setParameters(c.getParameters());
-        f.addListener(new FeatureListener(itemName));
-      }
-    }
-    if (!dev.hasValidPollingInterval()) {
-      dev.setPollInterval(m_devicePollInterval);
-    }
-    dev.startQueueThread();
-    dev.startPolling();
+    bindingChangedForDevice(dev,itemName,c);
   }
 }

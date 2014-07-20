@@ -1,0 +1,18 @@
+{
+synchronized (m_requestQueue) {
+    if (m_requestQueue.isEmpty()) {
+      return 0L;
+    }
+    QEntry qe=m_requestQueue.poll();
+    qe.getFeature().setQueryStatus(DeviceFeature.QueryStatus.QUERY_PENDING);
+    long quietTime=qe.getMsg().getQuietTime();
+    qe.getMsg().setQuietTime(500L);
+    try {
+      writeMessage(qe.getMsg());
+    }
+ catch (    IOException e) {
+      logger.warn("message write failed!");
+    }
+    return (timeNow + quietTime);
+  }
+}
