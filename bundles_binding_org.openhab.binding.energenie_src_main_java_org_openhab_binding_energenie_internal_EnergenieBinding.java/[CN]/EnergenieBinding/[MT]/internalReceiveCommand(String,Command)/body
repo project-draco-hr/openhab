@@ -1,0 +1,22 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  EnergenieBindingConfig deviceConfig=getConfigForItemName(itemName);
+  if (deviceConfig == null) {
+    return;
+  }
+  try {
+    String pmsId=deviceConfig.getDeviceId();
+    int pmsSocketId=deviceConfig.getSocketNumber();
+    sendLogin(pmsId);
+    if (OnOffType.ON.equals(command)) {
+      sendOn(pmsId,pmsSocketId);
+    }
+ else     if (OnOffType.OFF.equals(command)) {
+      sendOff(pmsId,pmsSocketId);
+    }
+    sendLogOut(pmsId);
+  }
+ catch (  Exception e) {
+    logger.error("energenie: failed to send {} command",command,e);
+  }
+}
