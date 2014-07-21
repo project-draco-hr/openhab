@@ -1,0 +1,11 @@
+{
+  String pmsIp=pmsIpConfig.get(pmsId);
+  String url="http://" + pmsIp;
+  try {
+    HttpUtil.executeUrl("POST",url,timeout);
+    logger.trace("logout from ip {}",pmsIp);
+  }
+ catch (  Exception e) {
+    logger.error("failed to logout from ip {}",pmsIp);
+  }
+}
