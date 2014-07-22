@@ -7,7 +7,7 @@
     return Collections.emptyList();
   }
   if (!isConnected()) {
-    logger.error("InfluxDB is not yet? connected");
+    logger.error("InfluxDB is not yet connected");
     return Collections.emptyList();
   }
   List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
@@ -46,9 +46,9 @@
       }
       query.append(" ");
       query.append(TIME_COLUMN_NAME);
-      query.append(" > '");
-      query.append(dateFormat.format(filter.getBeginDate()));
-      query.append("'");
+      query.append(" > ");
+      query.append(filter.getBeginDate().getTime());
+      query.append(" ");
     }
     if (filter.getEndDate() != null) {
       if (foundState || foundBeginDate) {
@@ -56,9 +56,9 @@
       }
       query.append(" ");
       query.append(TIME_COLUMN_NAME);
-      query.append(" < '");
-      query.append(dateFormat.format(filter.getEndDate().getTime()));
-      query.append("'");
+      query.append(" < ");
+      query.append(filter.getEndDate().getTime());
+      query.append(" ");
     }
     if (filter.getOrdering() == Ordering.ASCENDING) {
       query.append(" order asc");
@@ -75,7 +75,7 @@
   logger.debug("query string: {}",query.toString());
   List<Serie> results=Collections.emptyList();
   try {
-    results=influxDB.Query(dbName,query.toString(),TimeUnit.MILLISECONDS);
+    results=influxDB.query(dbName,query.toString(),TimeUnit.MILLISECONDS);
   }
  catch (  RuntimeException e) {
     logger.error("query failed with database error");
@@ -84,29 +84,17 @@
   for (  Serie result : results) {
     String historicItemName=result.getName();
     logger.trace("item name ",historicItemName);
-    String[] columns=result.getColumns();
-    int timeColumnNum=0;
-    int valueColumnNum=0;
-    for (int i=0; i < columns.length; i++) {
-      String column=columns[i];
-      logger.trace("column name: ",column);
-      if (column.equals(TIME_COLUMN_NAME)) {
-        timeColumnNum=i;
-      }
- else       if (column.equals(VALUE_COLUMN_NAME)) {
-        valueColumnNum=i;
-      }
-    }
-    Object[][] points=result.getPoints();
-    for (int i=0; i < points.length; i++) {
-      if (pageSize != null && pageNumber == null && pageSize < i) {
-        logger.debug("returning no more points pageSize {} pageNumber {} i {}",pageSize,pageNumber,i);
+    int pageCount=0;
+    for (    Map<String,Object> row : result.getRows()) {
+      pageCount++;
+      if (pageSize != null && pageNumber == null && pageSize < pageCount) {
+        logger.debug("returning no more points pageSize {} pageCount {}",pageSize,pageCount);
         break;
       }
-      Object[] objects=points[i];
-      logger.trace("adding historic item {}: time {} value {}",historicItemName,(Double)objects[timeColumnNum],String.valueOf(objects[valueColumnNum]));
-      historicItems.add(new InfluxdbItem(historicItemName,stringToState(String.valueOf(objects[valueColumnNum]),historicItemName),new Date(((Double)objects[timeColumnNum]).longValue())));
-      ;
+      Double time=(Double)row.get(TIME_COLUMN_NAME);
+      String value=String.valueOf(row.get(VALUE_COLUMN_NAME));
+      logger.trace("adding historic item {}: time {} value {}",historicItemName,time,value);
+      historicItems.add(new InfluxdbItem(historicItemName,stringToState(value,historicItemName),new Date(time.longValue())));
     }
   }
   return historicItems;
