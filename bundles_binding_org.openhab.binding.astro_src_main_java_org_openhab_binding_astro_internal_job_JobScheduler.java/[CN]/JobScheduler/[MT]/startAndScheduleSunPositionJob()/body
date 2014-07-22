@@ -1,7 +1,7 @@
 {
-  AstroConfig config=AstroContext.getInstance().getConfig();
+  AstroConfig config=context.getConfig();
   String jobName=SunPositionJob.class.getSimpleName();
   Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(config.getInterval())).build();
-  schedule(jobName,SunPositionJob.class,trigger);
+  schedule(jobName,SunPositionJob.class,trigger,new JobDataMap());
   logger.info("Scheduled astro SunPosition job with interval of {} seconds",config.getInterval());
 }

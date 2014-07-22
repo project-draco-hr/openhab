@@ -1,0 +1,8 @@
+{
+  String jobName=SunJob.class.getSimpleName();
+  CronTrigger cronTrigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startNow().withSchedule(CronScheduleBuilder.cronSchedule("0 0 0 * * ?")).build();
+  schedule(jobName,SunJob.class,cronTrigger,new JobDataMap());
+  logger.info("Scheduled a daily job at midnight for astro sun calculation");
+  Trigger trigger=newTrigger().withIdentity(jobName + "-StartupTrigger",JOB_GROUP).startNow().build();
+  schedule(jobName + "-Startup",SunJob.class,trigger,new JobDataMap());
+}

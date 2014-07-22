@@ -1,0 +1,36 @@
+{
+  if (value == null) {
+    context.getEventPublisher().postUpdate(item.getName(),UnDefType.UNDEF);
+  }
+ else   if (value instanceof Calendar) {
+    Calendar calendar=(Calendar)value;
+    if (bindingConfig.getOffset() != 0) {
+      calendar=(Calendar)calendar.clone();
+      calendar.add(Calendar.MINUTE,bindingConfig.getOffset());
+    }
+    if (item.getAcceptedDataTypes().contains(DateTimeType.class)) {
+      context.getEventPublisher().postUpdate(item.getName(),new DateTimeType(calendar));
+    }
+ else     if (item.getAcceptedCommandTypes().contains(OnOffType.class)) {
+      context.getJobScheduler().schedule(calendar,item.getName());
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only DateTimeType and OnOffType supported!",item.getName());
+    }
+  }
+ else   if (value instanceof Number) {
+    if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      BigDecimal decimalValue=new BigDecimal(value.toString()).setScale(2,RoundingMode.HALF_UP);
+      context.getEventPublisher().postUpdate(item.getName(),new DecimalType(decimalValue));
+    }
+ else     if (value instanceof Long && item.getAcceptedDataTypes().contains(StringType.class) && "duration".equals(bindingConfig.getProperty())) {
+      context.getEventPublisher().postUpdate(item.getName(),new StringType(durationToString((Long)value)));
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only DecimalType supported!",item.getName());
+    }
+  }
+ else {
+    logger.warn("Unsupported value type {}",value.getClass().getSimpleName());
+  }
+}

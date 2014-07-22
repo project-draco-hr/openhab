@@ -1,0 +1,11 @@
+{
+  Calendar cal=truncateToMidnight(calendar);
+  for (int minutes=0; minutes <= MINUTES_PER_DAY; minutes+=CURVE_TIME_INTERVAL) {
+    double elevation=getSunPosition(cal,latitude,longitude).getElevation();
+    if (elevation < SUN_ANGLE) {
+      return false;
+    }
+    cal.add(Calendar.MINUTE,CURVE_TIME_INTERVAL);
+  }
+  return true;
+}

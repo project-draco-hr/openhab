@@ -1,6 +1,8 @@
 {
+  AstroBindingConfig azimuthBindingConfig=new AstroBindingConfig(PlanetName.SUN,"position","azimuth");
+  AstroBindingConfig elevationBindingConfig=new AstroBindingConfig(PlanetName.SUN,"position","elevation");
   for (  AstroBindingProvider provider : context.getProviders()) {
-    if (provider.providesBindingFor(AstroType.AZIMUTH) || provider.providesBindingFor(AstroType.ELEVATION)) {
+    if (provider.hasBinding(azimuthBindingConfig) || provider.hasBinding(elevationBindingConfig)) {
       return true;
     }
   }
