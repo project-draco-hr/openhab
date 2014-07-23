@@ -47,7 +47,7 @@
       query.append(" ");
       query.append(TIME_COLUMN_NAME);
       query.append(" > ");
-      query.append(filter.getBeginDate().getTime());
+      query.append(getTimeFilter(filter.getBeginDate()));
       query.append(" ");
     }
     if (filter.getEndDate() != null) {
@@ -57,7 +57,7 @@
       query.append(" ");
       query.append(TIME_COLUMN_NAME);
       query.append(" < ");
-      query.append(filter.getEndDate().getTime());
+      query.append(getTimeFilter(filter.getEndDate()));
       query.append(" ");
     }
     if (filter.getOrdering() == Ordering.ASCENDING) {
@@ -91,10 +91,12 @@
         logger.debug("returning no more points pageSize {} pageCount {}",pageSize,pageCount);
         break;
       }
-      Double time=(Double)row.get(TIME_COLUMN_NAME);
-      String value=String.valueOf(row.get(VALUE_COLUMN_NAME));
-      logger.trace("adding historic item {}: time {} value {}",historicItemName,time,value);
-      historicItems.add(new InfluxdbItem(historicItemName,stringToState(value,historicItemName),new Date(time.longValue())));
+      Double rawTime=(Double)row.get(TIME_COLUMN_NAME);
+      Object rawValue=row.get(VALUE_COLUMN_NAME);
+      logger.trace("adding historic item {}: time {} value {}",historicItemName,rawTime,rawValue);
+      Date time=new Date(rawTime.longValue());
+      State value=objectToState(rawValue,historicItemName);
+      historicItems.add(new InfluxdbItem(historicItemName,value,time));
     }
   }
   return historicItems;
