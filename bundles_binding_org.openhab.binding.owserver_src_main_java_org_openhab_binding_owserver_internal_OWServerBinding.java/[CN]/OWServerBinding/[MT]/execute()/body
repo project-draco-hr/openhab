@@ -24,7 +24,13 @@
         }
         String response=null;
         if (needsUpdate == true) {
-          String address="http://" + server.host + "/details.xml";
+          String address;
+          if (server.user == null) {
+            address="http://" + server.host + "/details.xml";
+          }
+ else {
+            address="http://" + server.user + ":"+ server.password+ "@"+ server.host+ "/details.xml";
+          }
           logger.debug("Getting OWSERVER data from " + address);
           response=HttpUtil.executeUrl("GET",address,timeout);
           server.cache=response;
