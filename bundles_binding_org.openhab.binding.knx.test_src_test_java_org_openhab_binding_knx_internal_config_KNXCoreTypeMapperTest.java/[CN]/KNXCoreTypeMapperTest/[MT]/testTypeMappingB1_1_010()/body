@@ -1,0 +1,16 @@
+{
+  DPT dpt=DPTXlatorBoolean.DPT_START;
+  testToTypeClass(dpt,StopMoveType.class);
+  Type type=testToType(dpt,new byte[]{0},StopMoveType.class);
+  testToDPTValue(dpt,type,"stop");
+  type=testToType(dpt,new byte[]{1},StopMoveType.class);
+  testToDPTValue(dpt,type,"start");
+  type=testToType(dpt,new byte[]{2},StopMoveType.class);
+  testToDPTValue(dpt,type,"stop");
+  type=testToType(dpt,new byte[]{3},StopMoveType.class);
+  testToDPTValue(dpt,type,"start");
+  type=testToType(dpt,new byte[]{(byte)0xFF},StopMoveType.class);
+  testToDPTValue(dpt,type,"start");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},StopMoveType.class);
+  testToDPTValue(dpt,type,"start");
+}

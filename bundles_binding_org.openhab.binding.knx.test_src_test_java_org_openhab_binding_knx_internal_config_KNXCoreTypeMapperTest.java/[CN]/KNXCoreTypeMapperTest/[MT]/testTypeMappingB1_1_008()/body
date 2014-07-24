@@ -1,0 +1,16 @@
+{
+  DPT dpt=DPTXlatorBoolean.DPT_UPDOWN;
+  testToTypeClass(dpt,UpDownType.class);
+  Type type=testToType(dpt,new byte[]{0},UpDownType.class);
+  testToDPTValue(dpt,type,"up");
+  type=testToType(dpt,new byte[]{1},UpDownType.class);
+  testToDPTValue(dpt,type,"down");
+  type=testToType(dpt,new byte[]{2},UpDownType.class);
+  testToDPTValue(dpt,type,"up");
+  type=testToType(dpt,new byte[]{3},UpDownType.class);
+  testToDPTValue(dpt,type,"down");
+  type=testToType(dpt,new byte[]{(byte)0xFF},UpDownType.class);
+  testToDPTValue(dpt,type,"down");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},UpDownType.class);
+  testToDPTValue(dpt,type,"down");
+}

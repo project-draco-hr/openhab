@@ -1,0 +1,23 @@
+{
+  HmDatapoint dp=new HmDatapoint();
+  dp.setName(name);
+  writeField(dp,"channel",channel,HmChannel.class);
+  writeField(dp,"writeable",dpData.get("WRITEABLE"),Boolean.class);
+  Object valueList=dpData.get("VALUE_LIST");
+  if (valueList != null && valueList instanceof Object[]) {
+    Object[] vl=(Object[])valueList;
+    String[] stringArray=new String[vl.length];
+    for (int i=0; i < vl.length; i++) {
+      stringArray[i]=vl[i].toString();
+    }
+    writeField(dp,"valueList",stringArray,String[].class);
+  }
+  Object value=dpData.get("VALUE");
+  if (value instanceof Number) {
+    writeField(dp,"minValue",dpData.get("MIN"),value.getClass());
+    writeField(dp,"maxValue",dpData.get("MAX"),value.getClass());
+  }
+  setValueType(dp,value);
+  dp.setValue(value);
+  return dp;
+}

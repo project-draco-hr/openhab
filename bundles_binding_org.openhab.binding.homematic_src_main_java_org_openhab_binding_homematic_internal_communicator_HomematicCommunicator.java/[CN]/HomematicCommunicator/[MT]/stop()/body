@@ -1,0 +1,30 @@
+{
+  if (homematicCallbackServer != null) {
+    logger.info("Shutting down Homematic communicator");
+    try {
+      delayedExecutor.cancel();
+      homematicCallbackServer.shutdown();
+      if (homematicClient != null) {
+        try {
+          homematicClient.releaseCallback();
+        }
+ catch (        HomematicClientException e) {
+        }
+        try {
+          homematicClient.shutdown();
+        }
+ catch (        HomematicClientException e) {
+        }
+      }
+      if (itemDisabler != null) {
+        itemDisabler.stop();
+      }
+      if (context.getStateHolder() != null) {
+        context.getStateHolder().destroy();
+      }
+    }
+  finally {
+      homematicCallbackServer=null;
+    }
+  }
+}

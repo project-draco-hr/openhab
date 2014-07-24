@@ -1,0 +1,39 @@
+{
+  reloadExecutorPool.execute(new Runnable(){
+    @Override public void run(){
+      try {
+        logger.debug("Reloading Homematic server datapoints");
+        datapointReloadInProgress=true;
+        context.getHomematicClient().iterateAllDatapoints(new HmValueItemIteratorCallback(){
+          @Override public void iterate(          HomematicBindingConfig bindingConfig,          HmValueItem hmValueItem){
+            if (!datapoints.containsKey(bindingConfig)) {
+              logger.info("Adding new {}",bindingConfig);
+              datapoints.put(bindingConfig,hmValueItem);
+            }
+ else {
+              Object cachedValue=refreshCache.get(bindingConfig);
+              if (cachedValue != null) {
+                logger.debug("Value changed while refreshing from '{}' to '{}' for binding {}",hmValueItem.getValue(),cachedValue,bindingConfig);
+                hmValueItem.setValue(cachedValue);
+              }
+              if (hasChanged(bindingConfig,datapoints.get(bindingConfig),hmValueItem)) {
+                datapoints.put(bindingConfig,hmValueItem);
+                publish(bindingConfig,hmValueItem);
+              }
+            }
+          }
+        }
+);
+        logger.debug("Finished reloading {} Homematic server datapoints",datapoints.size());
+      }
+ catch (      HomematicClientException ex) {
+        logger.error(ex.getMessage(),ex);
+      }
+ finally {
+        datapointReloadInProgress=false;
+        refreshCache.clear();
+      }
+    }
+  }
+);
+}
