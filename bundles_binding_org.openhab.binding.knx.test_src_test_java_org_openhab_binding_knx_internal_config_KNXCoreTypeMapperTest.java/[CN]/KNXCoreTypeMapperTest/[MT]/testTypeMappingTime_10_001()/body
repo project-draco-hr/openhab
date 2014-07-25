@@ -4,6 +4,8 @@
   assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DateTimeType.class));
   Type type=testToType(dpt,new byte[]{0x20,0x00,0x00,(byte)0xFF},DateTimeType.class);
   testToDPTValue(dpt,type,"Mon, 00:00:00");
+  type=testToType(dpt,new byte[]{0x00,0x00,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"00:00:00");
   type=testToType(dpt,new byte[]{0x20,0x00,0x00},DateTimeType.class);
   testToDPTValue(dpt,type,"Mon, 00:00:00");
   type=testToType(dpt,new byte[]{0x40,0,0},DateTimeType.class);
