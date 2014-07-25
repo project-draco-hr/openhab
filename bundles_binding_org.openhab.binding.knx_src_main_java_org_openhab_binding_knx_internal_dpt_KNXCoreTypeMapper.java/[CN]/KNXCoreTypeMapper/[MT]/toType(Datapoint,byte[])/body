@@ -27,7 +27,13 @@
     if (typeClass.equals(StopMoveType.class))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
     if (typeClass.equals(DateTimeType.class))     return DateTimeType.valueOf(formatDateTime(value,datapoint.getDPT()));
   }
- catch (  KNXException e) {
+ catch (  KNXFormatException kfe) {
+    logger.info("Translator couldn't parse data for datapoint type ???{}??? (KNXFormatException).",datapoint.getDPT());
+  }
+catch (  KNXIllegalArgumentException kiae) {
+    logger.info("Translator couldn't parse data for datapoint type ???{}??? (KNXIllegalArgumentException).",datapoint.getDPT());
+  }
+catch (  KNXException e) {
     logger.warn("Failed creating a translator for datapoint type ???{}???.",datapoint.getDPT(),e);
   }
   return null;
