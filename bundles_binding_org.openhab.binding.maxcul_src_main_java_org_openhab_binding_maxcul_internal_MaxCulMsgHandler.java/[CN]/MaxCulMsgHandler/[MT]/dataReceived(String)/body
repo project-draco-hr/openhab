@@ -30,7 +30,7 @@
         sequenceRegister.remove(bMsg.msgCount);
       }
       if (passToBinding) {
-        this.mcbmp.MaxCulMsgReceived(data,false);
+        this.mcbmp.maxCulMsgReceived(data,false);
       }
     }
  else     if (BaseMsg.isForUs(data,"000000")) {
@@ -39,7 +39,7 @@ case PAIR_PING:
 case WALL_THERMOSTAT_CONTROL:
 case THERMOSTAT_STATE:
 case WALL_THERMOSTAT_STATE:
-        this.mcbmp.MaxCulMsgReceived(data,true);
+        this.mcbmp.maxCulMsgReceived(data,true);
       break;
 default :
     logger.debug("Unhandled broadcast message of type " + BaseMsg.getMsgType(data).toString());
@@ -65,7 +65,7 @@ if (!configs.isEmpty()) {
 }
 }
 if (passToBinding && (BaseMsg.getMsgType(data) != MaxCulMsgType.PAIR_PING && BaseMsg.getMsgType(data) != MaxCulMsgType.ACK)) {
-this.mcbmp.MaxCulMsgReceived(data,true);
+this.mcbmp.maxCulMsgReceived(data,true);
 }
 }
 }
