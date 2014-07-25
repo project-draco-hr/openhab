@@ -1,0 +1,6 @@
+{
+  logger.trace("setOn ={}",onOff);
+  String wemoCallResponse=wemoCall(itemName,"urn:Belkin:service:basicevent:1#SetBinaryState",IOUtils.toString(getClass().getResourceAsStream("SetRequest.xml")).replace("{{state}}",onOff ? "1" : "0"));
+  logger.trace("setOn ={}",wemoCallResponse);
+  isOn=onOff;
+}

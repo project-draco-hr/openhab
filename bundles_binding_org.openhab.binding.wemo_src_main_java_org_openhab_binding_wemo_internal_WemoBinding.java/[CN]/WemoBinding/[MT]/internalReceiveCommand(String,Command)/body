@@ -1,0 +1,22 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  for (  WemoBindingProvider provider : providers) {
+    String switchFriendlyName=provider.getWemoFriendlyName(itemName);
+    logger.info("item '{}' is configured as '{}'",itemName,switchFriendlyName);
+  }
+  try {
+    if (OnOffType.ON.equals(command)) {
+      logger.trace("Command ON is about to be send to item '{}'",itemName);
+      boolean onOff=true;
+      setOn(itemName,onOff);
+    }
+ else     if (OnOffType.OFF.equals(command)) {
+      logger.trace("Command OFF is about to be send to item '{}'",itemName);
+      boolean onOff=false;
+      setOn(itemName,onOff);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Failed to send {} command",command,e);
+  }
+}

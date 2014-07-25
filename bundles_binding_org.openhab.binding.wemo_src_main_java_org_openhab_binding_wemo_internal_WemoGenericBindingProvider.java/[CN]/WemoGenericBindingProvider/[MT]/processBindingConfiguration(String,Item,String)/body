@@ -1,0 +1,17 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  try {
+    if (bindingConfig != null) {
+      WemoBindingConfig config=new WemoBindingConfig();
+      item.getName();
+      config.wemoFriendlyName=bindingConfig;
+      addBindingConfig(item,config);
+    }
+ else {
+      logger.warn("bindingConfig is NULL (item=" + item + ") -> processing bindingConfig aborted!");
+    }
+  }
+ catch (  ArrayIndexOutOfBoundsException e) {
+    logger.warn("bindingConfig is invalid (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}

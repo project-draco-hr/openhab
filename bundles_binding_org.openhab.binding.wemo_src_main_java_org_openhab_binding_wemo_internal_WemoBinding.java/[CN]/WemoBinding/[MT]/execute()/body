@@ -1,0 +1,27 @@
+{
+  logger.debug("execute() method is called!");
+  for (  WemoBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      logger.trace("Wemo switch '{}' state will be updated",itemName);
+      try {
+        String resp=wemoCall(itemName,"urn:Belkin:service:basicevent:1#GetBinaryState",IOUtils.toString(getClass().getResourceAsStream("GetRequest.xml")));
+        String state=resp.replaceAll("[\\d\\D]*<BinaryState>(.*)</BinaryState>[\\d\\D]*","$1");
+        isOn=state.equals("1") ? true : false;
+        logger.trace("{} state on = {}",itemName,isOn);
+        if (state.equals("0")) {
+          State itemState=OnOffType.valueOf("OFF");
+          logger.trace("Transformed state for item {} = {}",itemName,state);
+          eventPublisher.postUpdate(itemName,itemState);
+        }
+        if (state.equals("1")) {
+          State itemState=OnOffType.valueOf("ON");
+          logger.trace("Transformed state for item {} = {}",itemName,state);
+          eventPublisher.postUpdate(itemName,itemState);
+        }
+      }
+ catch (      IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
