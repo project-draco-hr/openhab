@@ -30,6 +30,19 @@
       logger.warn("Unsupported type for item {}, only DecimalType supported!",item.getName());
     }
   }
+ else   if (value instanceof String || value instanceof Enum) {
+    if (item.getAcceptedDataTypes().contains(StringType.class)) {
+      if (value instanceof Enum) {
+        context.getEventPublisher().postUpdate(item.getName(),new StringType(WordUtils.capitalizeFully(value.toString())));
+      }
+ else {
+        context.getEventPublisher().postUpdate(item.getName(),new StringType(value.toString()));
+      }
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only String supported!",item.getName());
+    }
+  }
  else {
     logger.warn("Unsupported value type {}",value.getClass().getSimpleName());
   }

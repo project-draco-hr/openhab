@@ -41,7 +41,7 @@
   Range daylightRange=new Range();
   if (sun.getRise().getStart() == null && sun.getRise().getEnd() == null) {
     if (isSunUpAllDay) {
-      daylightRange=new Range(truncateToMidnight(calendar),truncateToMidnight(addDays(calendar,1)));
+      daylightRange=new Range(DateTimeUtils.truncateToMidnight(calendar),DateTimeUtils.truncateToMidnight(addDays(calendar,1)));
     }
   }
  else {
@@ -57,12 +57,12 @@
     morningNightRange=new Range();
   }
  else {
-    morningNightRange=new Range(truncateToMidnight(calendar),sun.getAstroDawn().getStart());
+    morningNightRange=new Range(DateTimeUtils.truncateToMidnight(calendar),sun.getAstroDawn().getStart());
   }
   sun.setMorningNight(morningNightRange);
   Range eveningNightRange=null;
   if (sun.getAstroDusk().getEnd() != null && DateUtils.isSameDay(sun.getAstroDusk().getEnd(),calendar)) {
-    eveningNightRange=new Range(sun.getAstroDusk().getEnd(),truncateToMidnight(addDays(calendar,1)));
+    eveningNightRange=new Range(sun.getAstroDusk().getEnd(),DateTimeUtils.truncateToMidnight(addDays(calendar,1)));
   }
  else {
     eveningNightRange=new Range();
