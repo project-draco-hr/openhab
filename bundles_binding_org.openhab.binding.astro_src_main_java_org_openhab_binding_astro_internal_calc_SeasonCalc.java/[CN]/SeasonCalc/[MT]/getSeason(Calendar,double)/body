@@ -1,0 +1,24 @@
+{
+  int year=calendar.get(Calendar.YEAR);
+  boolean isSouthernHemisphere=latitude < 0.0;
+  Season season=currentSeason;
+  if (currentYear != year) {
+    season=new Season();
+    if (!isSouthernHemisphere) {
+      season.setSpring(calcEquiSol(0,year));
+      season.setSummer(calcEquiSol(1,year));
+      season.setAutumn(calcEquiSol(2,year));
+      season.setWinter(calcEquiSol(3,year));
+    }
+ else {
+      season.setSpring(calcEquiSol(2,year));
+      season.setSummer(calcEquiSol(3,year));
+      season.setAutumn(calcEquiSol(0,year));
+      season.setWinter(calcEquiSol(1,year));
+    }
+    currentSeason=season;
+    currentYear=year;
+  }
+  season.setName(!isSouthernHemisphere ? getCurrentSeasonNameNorthern(calendar) : getCurrentSeasonNameSouthern(calendar));
+  return season;
+}
