@@ -5,5 +5,7 @@
     desiredTemperature=(this.payload[0] & 0x3f) / 2.0;
     ctrlMode=ThermostatControlMode.values()[(this.payload[0] >> 6)];
   }
- else   logger.error("Got " + this.msgType + " message with incorrect length!");
+ else {
+    logger.error("Got " + this.msgType + " message with incorrect length!");
+  }
 }

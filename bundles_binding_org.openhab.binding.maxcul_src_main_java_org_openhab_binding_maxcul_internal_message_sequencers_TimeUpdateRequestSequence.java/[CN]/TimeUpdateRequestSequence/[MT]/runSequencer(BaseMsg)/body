@@ -4,7 +4,7 @@ switch (state) {
 case RESPOND_TO_REQUEST:
     if (BaseMsg.getMsgType(msg.rawMsg) == MaxCulMsgType.TIME_INFO) {
       TimeInfoMsg timeMsg=new TimeInfoMsg(msg.rawMsg);
-      if (isTimeOk(timeMsg.getTimeInfo(),new GregorianCalendar(),TIME_TOLERANCE)) {
+      if (isValidDeviation(timeMsg.getTimeInfo(),new GregorianCalendar(),TIME_TOLERANCE)) {
         messageHandler.sendAck(msg);
         state=TimeUpdateRequestState.FINISHED;
       }

@@ -1,5 +1,7 @@
 {
-  if (state != PairingInitialisationState.RETX_WAKEUP_ACK)   pktLostCount=0;
+  if (state != PairingInitialisationState.RETX_WAKEUP_ACK) {
+    pktLostCount=0;
+  }
   logger.debug("Sequence State: " + state);
 switch (state) {
 case INITIAL_PING:
@@ -28,7 +30,9 @@ logger.error("PAIR_PONG was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
- else logger.error("Received " + msg.msgType + " when expecting ACK");
+ else {
+logger.error("Received " + msg.msgType + " when expecting ACK");
+}
 break;
 case GROUP_ID_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
@@ -42,7 +46,9 @@ logger.error("SET_GROUP_ID was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
- else logger.error("Received " + msg.msgType + " when expecting ACK");
+ else {
+logger.error("Received " + msg.msgType + " when expecting ACK");
+}
 break;
 case CONFIG_TEMPS_ACKED:
 if (msg.msgType == MaxCulMsgType.ACK) {
@@ -63,7 +69,9 @@ logger.error("CONFIG_TEMPERATURES was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
- else logger.error("Received " + msg.msgType + " when expecting ACK");
+ else {
+logger.error("Received " + msg.msgType + " when expecting ACK");
+}
 break;
 case SENDING_ASSOCIATIONS:
 if (msg.msgType == MaxCulMsgType.ACK) {
@@ -72,8 +80,12 @@ if (!ack.getIsNack()) {
 if (assocIter.hasNext()) {
 MaxCulBindingConfig partnerCfg=assocIter.next();
 messageHandler.sendAddLinkPartner(this.devAddr,this,partnerCfg.getDevAddr(),partnerCfg.getDeviceType());
-if (assocIter.hasNext()) state=PairingInitialisationState.SENDING_ASSOCIATIONS;
- else state=PairingInitialisationState.SENDING_ASSOCIATIONS_ACKED;
+if (assocIter.hasNext()) {
+state=PairingInitialisationState.SENDING_ASSOCIATIONS;
+}
+ else {
+state=PairingInitialisationState.SENDING_ASSOCIATIONS_ACKED;
+}
 }
  else {
 state=PairingInitialisationState.FINISHED;
@@ -84,7 +96,9 @@ logger.error("SENDING_ASSOCIATIONS was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
- else logger.error("Received " + msg.msgType + " when expecting ACK");
+ else {
+logger.error("Received " + msg.msgType + " when expecting ACK");
+}
 break;
 case SENDING_ASSOCIATIONS_ACKED:
 state=PairingInitialisationState.FINISHED;
@@ -108,7 +122,9 @@ logger.error("WAKEUP for ReTx was nacked. Ending sequence");
 state=PairingInitialisationState.FINISHED;
 }
 }
- else logger.error("Received " + msg.msgType + " when expecting ACK");
+ else {
+logger.error("Received " + msg.msgType + " when expecting ACK");
+}
 break;
 default :
 logger.error("Invalid state for PairingInitialisation Message Sequence!");
