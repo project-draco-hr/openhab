@@ -26,14 +26,26 @@ catch (        IndexOutOfBoundsException ioobe) {
     }
     logger.trace("toType datapoint getMainNumber = {}",datapoint.getMainNumber());
 switch (mainNumber) {
+case 3:
+      DPTXlator3BitControlled translator3BitControlled=(DPTXlator3BitControlled)translator;
+    if (translator3BitControlled.getStepCode() == 0) {
+      logger.debug("toType: KNX DPT_Control_Dimming: break ignored.");
+      return null;
+    }
+  break;
 case 14:
-      DPTXlator4ByteFloat translator4ByteFloat=(DPTXlator4ByteFloat)translator;
-    Float f=translator4ByteFloat.getValueFloat();
-  NumberFormat dcf=NumberFormat.getInstance(Locale.US);
-if (dcf instanceof DecimalFormat) {
-  ((DecimalFormat)dcf).applyPattern("0.#####E0");
+DPTXlator4ByteFloat translator4ByteFloat=(DPTXlator4ByteFloat)translator;
+Float f=translator4ByteFloat.getValueFloat();
+if (Math.abs(f) < 100000) {
+value=String.valueOf(f);
 }
-value=Math.abs(f) < 100000 ? String.valueOf(f) : dcf.format(f);
+ else {
+NumberFormat dcf=NumberFormat.getInstance(Locale.US);
+if (dcf instanceof DecimalFormat) {
+((DecimalFormat)dcf).applyPattern("0.#####E0");
+}
+value=dcf.format(f);
+}
 break;
 case 19:
 DPTXlatorDateTime translatorDateTime=(DPTXlatorDateTime)translator;
