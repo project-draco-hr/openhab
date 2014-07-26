@@ -1,0 +1,15 @@
+{
+  int year=calendar.get(Calendar.YEAR);
+  Season season=currentSeason;
+  if (currentYear != year) {
+    season=new Season();
+    season.setSpring(calcEquiSol(0,year));
+    season.setSummer(calcEquiSol(1,year));
+    season.setAutumn(calcEquiSol(2,year));
+    season.setWinter(calcEquiSol(3,year));
+    currentSeason=season;
+    currentYear=year;
+  }
+  season.setName(getCurrentSeasonName(calendar));
+  return season;
+}

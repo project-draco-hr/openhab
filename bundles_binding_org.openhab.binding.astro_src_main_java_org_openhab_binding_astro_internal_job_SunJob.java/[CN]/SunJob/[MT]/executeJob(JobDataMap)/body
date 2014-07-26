@@ -6,6 +6,9 @@
   sun.setPosition(sp);
   ZodiacCalc zodiacCalc=new ZodiacCalc();
   sun.setZodiac(zodiacCalc.getZodiac(now));
+  SeasonCalc seasonCalc=new SeasonCalc();
+  sun.setSeason(seasonCalc.getSeason(now));
+  context.getJobScheduler().scheduleSeasonJobs(sun.getSeason());
   context.setPlanet(PlanetName.SUN,sun);
   planetPublisher.publish(PlanetName.SUN);
 }

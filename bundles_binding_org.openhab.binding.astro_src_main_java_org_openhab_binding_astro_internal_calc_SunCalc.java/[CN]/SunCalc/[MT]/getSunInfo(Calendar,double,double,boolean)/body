@@ -25,18 +25,18 @@
   double jnau2=getSunriseJulianDate(jtransit,jastro);
   double jastro2=getSunriseJulianDate(jtransit,jdark);
   Sun sun=new Sun();
-  sun.setAstroDawn(new Range(julianDateToDate(jastro2),julianDateToDate(jnau2)));
-  sun.setAstroDusk(new Range(julianDateToDate(jastro),julianDateToDate(jdark)));
+  sun.setAstroDawn(new Range(DateTimeUtils.toCalendar(jastro2),DateTimeUtils.toCalendar(jnau2)));
+  sun.setAstroDusk(new Range(DateTimeUtils.toCalendar(jastro),DateTimeUtils.toCalendar(jdark)));
   if (onlyAstro) {
     return sun;
   }
-  sun.setNoon(new Range(julianDateToDate(jtransit),julianDateToDate(jtransit + JD_ONE_MINUTE_FRACTION)));
-  sun.setRise(new Range(julianDateToDate(jrise),julianDateToDate(jriseend)));
-  sun.setSet(new Range(julianDateToDate(jsetstart),julianDateToDate(jset)));
-  sun.setCivilDawn(new Range(julianDateToDate(Jciv2),julianDateToDate(jrise)));
-  sun.setCivilDusk(new Range(julianDateToDate(jset),julianDateToDate(jnau)));
-  sun.setNauticDawn(new Range(julianDateToDate(jnau2),julianDateToDate(Jciv2)));
-  sun.setNauticDusk(new Range(julianDateToDate(jnau),julianDateToDate(jastro)));
+  sun.setNoon(new Range(DateTimeUtils.toCalendar(jtransit),DateTimeUtils.toCalendar(jtransit + JD_ONE_MINUTE_FRACTION)));
+  sun.setRise(new Range(DateTimeUtils.toCalendar(jrise),DateTimeUtils.toCalendar(jriseend)));
+  sun.setSet(new Range(DateTimeUtils.toCalendar(jsetstart),DateTimeUtils.toCalendar(jset)));
+  sun.setCivilDawn(new Range(DateTimeUtils.toCalendar(Jciv2),DateTimeUtils.toCalendar(jrise)));
+  sun.setCivilDusk(new Range(DateTimeUtils.toCalendar(jset),DateTimeUtils.toCalendar(jnau)));
+  sun.setNauticDawn(new Range(DateTimeUtils.toCalendar(jnau2),DateTimeUtils.toCalendar(Jciv2)));
+  sun.setNauticDusk(new Range(DateTimeUtils.toCalendar(jnau),DateTimeUtils.toCalendar(jastro)));
   boolean isSunUpAllDay=isSunUpAllDay(calendar,latitude,longitude);
   Range daylightRange=new Range();
   if (sun.getRise().getStart() == null && sun.getRise().getEnd() == null) {
