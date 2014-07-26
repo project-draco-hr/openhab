@@ -7,20 +7,32 @@
     PairPingMsg pkt=new PairPingMsg(data);
     Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
     if (bindingConfigs != null) {
+      logger.debug("Found " + bindingConfigs.size() + " configs for "+ pkt.serial);
       for (      MaxCulBindingConfig bc : bindingConfigs) {
         bc.setPairedInfo(pkt.srcAddrStr);
-        if (bc.isTemperatureConfigSet() && configWithTempsConfig == null)         configWithTempsConfig=bc;
+        if (bc.isTemperatureConfigSet() && configWithTempsConfig == null) {
+          configWithTempsConfig=bc;
+        }
       }
-      if (configWithTempsConfig == null)       configWithTempsConfig=(MaxCulBindingConfig)bindingConfigs.toArray()[0];
+      if (configWithTempsConfig == null) {
+        logger.debug("Using default temperature configuration from config 0");
+        configWithTempsConfig=(MaxCulBindingConfig)bindingConfigs.toArray()[0];
+      }
       HashSet<MaxCulBindingConfig> associations=null;
       for (      MaxCulBindingProvider provider : super.providers) {
         associations=provider.getAssociations(configWithTempsConfig.getSerialNumber());
-        if (associations.isEmpty() == false)         break;
+        if (associations != null && associations.isEmpty() == false) {
+          logger.debug("Found associations");
+          break;
+        }
       }
+      logger.debug("Creating pairing sequencer");
       PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,messageHandler,configWithTempsConfig,associations);
       messageHandler.startSequence(ps,pkt);
     }
- else     logger.error("Pairing failed: Unable to find binding config for device " + pkt.serial);
+ else {
+      logger.error("Pairing failed: Unable to find binding config for device " + pkt.serial);
+    }
   }
  else {
 switch (msgType) {

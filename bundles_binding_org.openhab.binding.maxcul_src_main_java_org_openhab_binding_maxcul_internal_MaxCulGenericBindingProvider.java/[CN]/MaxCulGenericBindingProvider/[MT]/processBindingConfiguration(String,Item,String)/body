@@ -4,10 +4,9 @@
   logger.debug("Processing item " + itemName);
   final MaxCulBindingConfig config=new MaxCulBindingConfig(bindingConfig);
   addBindingConfig(item,config);
-  buildAssociationMap();
   addBindingChangeListener(new BindingChangeListener(){
     @Override public void bindingChanged(    BindingProvider provider,    String itemName){
-      buildAssociationMap();
+      associationsMapBuilt=false;
     }
     @Override public void allBindingsChanged(    BindingProvider provider){
       if (!provider.providesBindingFor(itemName)) {
