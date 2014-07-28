@@ -1,14 +1,17 @@
 {
   DPT dpt=DPTXlatorDate.DPT_DATE;
   testToTypeClass(dpt,DateTimeType.class);
-  Type type=testToType(DPTXlatorDate.DPT_DATE,new byte[]{0x01,0x01,0x00},DateTimeType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DateTimeType.class));
+  Type type=testToType(dpt,new byte[]{0x01,0x01,0x00,(byte)0xFF},DateTimeType.class);
   testToDPTValue(dpt,type,"2000-01-01");
-  type=testToType(DPTXlatorDate.DPT_DATE,new byte[]{0x01,0x01,99},DateTimeType.class);
+  type=testToType(dpt,new byte[]{0x01,0x01,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"2000-01-01");
+  type=testToType(dpt,new byte[]{0x01,0x01,99},DateTimeType.class);
   testToDPTValue(dpt,type,"1999-01-01");
-  type=testToType(DPTXlatorDate.DPT_DATE,new byte[]{0x01,0x01,90},DateTimeType.class);
+  type=testToType(dpt,new byte[]{0x01,0x01,90},DateTimeType.class);
   testToDPTValue(dpt,type,"1990-01-01");
-  type=testToType(DPTXlatorDate.DPT_DATE,new byte[]{0x01,0x01,89},DateTimeType.class);
+  type=testToType(dpt,new byte[]{0x01,0x01,89},DateTimeType.class);
   testToDPTValue(dpt,type,"2089-01-01");
-  type=testToType(DPTXlatorDate.DPT_DATE,new byte[]{31,0x02,0x00},DateTimeType.class);
+  type=testToType(dpt,new byte[]{31,0x02,0x00},DateTimeType.class);
   testToDPTValue(dpt,type,"2000-03-02");
 }
