@@ -4,7 +4,7 @@
     String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
     if (responseType != null) {
       Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(getPageBean(sitemapname,pageId,uriInfo.getBaseUriBuilder().build()),callback) : getPageBean(sitemapname,pageId,uriInfo.getBaseUriBuilder().build());
-      throw new WebApplicationException(Response.ok(responseObject,responseType).build());
+      throw new WebApplicationException(Response.ok(responseObject,responseType).header(ATMOS_TIMEOUT_HEADER,DEFAULT_TIMEOUT_SECS + "").build());
     }
  else {
       throw new WebApplicationException(Response.notAcceptable(null).build());
@@ -20,5 +20,5 @@
  catch (  Exception e) {
     logger.debug(e.getMessage());
   }
-  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).resumeOnBroadcast(resume).broadcaster(sitemapBroadcaster).outputComments(true).build();
+  return new SuspendResponse.SuspendResponseBuilder<Response>().scope(SCOPE.REQUEST).resumeOnBroadcast(resume).broadcaster(sitemapBroadcaster).period(DEFAULT_TIMEOUT_SECS,TimeUnit.SECONDS).outputComments(true).build();
 }
