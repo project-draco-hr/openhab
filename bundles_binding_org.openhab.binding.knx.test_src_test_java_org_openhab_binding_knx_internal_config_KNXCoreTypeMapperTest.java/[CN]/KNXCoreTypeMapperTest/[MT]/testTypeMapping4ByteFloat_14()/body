@@ -1,0 +1,53 @@
+{
+  Locale[] locales={Locale.getDefault(),Locale.ENGLISH,Locale.GERMAN};
+  DPT[] dpts={DPTXlator4ByteFloat.DPT_ACCELERATION_ANGULAR,DPTXlator4ByteFloat.DPT_ANGLE_DEG,DPTXlator4ByteFloat.DPT_ELECTRIC_CURRENT,DPTXlator4ByteFloat.DPT_ELECTRIC_POTENTIAL,DPTXlator4ByteFloat.DPT_FREQUENCY,DPTXlator4ByteFloat.DPT_POWER};
+  for (  Locale locale : locales) {
+    for (    DPT dpt : dpts) {
+      Locale.setDefault(locale);
+      testToTypeClass(dpt,DecimalType.class);
+      assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DecimalType.class));
+      try {
+        Type type=testToType(dpt,new byte[]{(byte)0x7F,(byte)0x7F,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
+        testToDPTValue(dpt,type,"340282000000000000000000000000000000000");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting 0.0");
+      }
+      try {
+        Type type=testToType(dpt,new byte[]{0x00,0x00,0x00,0x00},DecimalType.class);
+        testToDPTValue(dpt,type,"0.0");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting 0.0");
+      }
+      try {
+        Type type=testToType(dpt,new byte[]{0x00,0x00,0x00,0x01},DecimalType.class);
+        testToDPTValue(dpt,type,"0.0000000000000000000000000000000000000000000014");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting 0.0000000000000000000000000000000000000000000014");
+      }
+      try {
+        Type type=testToType(dpt,new byte[]{(byte)0x80,0x00,0x00,0x01},DecimalType.class);
+        testToDPTValue(dpt,type,"-0.0000000000000000000000000000000000000000000014");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting -0.0000000000000000000000000000000000000000000014");
+      }
+      try {
+        Type type=testToType(dpt,new byte[]{(byte)0x7F,(byte)0x7F,(byte)0xFF,(byte)0xFF},DecimalType.class);
+        testToDPTValue(dpt,type,"340282000000000000000000000000000000000");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting 340282000000000000000000000000000000000");
+      }
+      try {
+        Type type=testToType(dpt,new byte[]{(byte)0xFF,(byte)0x7F,(byte)0xFF,(byte)0xFF},DecimalType.class);
+        testToDPTValue(dpt,type,"-340282000000000000000000000000000000000");
+      }
+ catch (      NumberFormatException nfe) {
+        fail("DptId: " + dpt.getID() + ", locale: "+ locale+ ", NumberFormatException. Expecting -340282000000000000000000000000000000000");
+      }
+    }
+  }
+}

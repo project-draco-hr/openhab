@@ -28,8 +28,11 @@
     dataoffset+=slen;
     readInt();
   }
+  List<Object> values=new ArrayList<Object>();
   while (dataoffset < data.length) {
-    responseData.add(readRpcValue());
+    values.add(readRpcValue());
   }
+  responseData=values.toArray();
+  values.clear();
   data=null;
 }

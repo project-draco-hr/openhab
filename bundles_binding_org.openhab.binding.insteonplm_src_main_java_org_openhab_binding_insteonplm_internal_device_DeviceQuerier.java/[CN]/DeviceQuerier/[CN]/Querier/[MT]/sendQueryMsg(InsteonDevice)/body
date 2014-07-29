@@ -1,0 +1,24 @@
+{
+  try {
+    Msg m=d.makeStandardMessage((byte)0x0f,(byte)0x03,(byte)0x00);
+    Port p=m_driver.getPort(d.getPort());
+    if (p != null) {
+      logger.debug("sending query msg {}",m);
+      p.writeMessage(m);
+      m_nonResponders.wait(MSEC_BETWEEN_QUERIES);
+      logger.debug("query msg wait complete");
+    }
+ else {
+      logger.error("cannot query {} on unknown port {}",d,d.getPort());
+    }
+  }
+ catch (  IOException e) {
+    logger.error("got io exception during query:",e);
+  }
+catch (  FieldException e) {
+    logger.error("got field exception during query:",e);
+  }
+catch (  InterruptedException e) {
+    logger.error("got interrupted while querying:",e);
+  }
+}

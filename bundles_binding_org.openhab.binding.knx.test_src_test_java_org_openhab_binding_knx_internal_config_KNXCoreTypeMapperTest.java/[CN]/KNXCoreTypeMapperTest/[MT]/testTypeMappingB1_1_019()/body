@@ -1,0 +1,17 @@
+{
+  DPT dpt=DPTXlatorBoolean.DPT_WINDOW_DOOR;
+  testToTypeClass(dpt,OpenClosedType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},OpenClosedType.class));
+  Type type=testToType(dpt,new byte[]{0},OpenClosedType.class);
+  testToDPTValue(dpt,type,"closed");
+  type=testToType(dpt,new byte[]{1},OpenClosedType.class);
+  testToDPTValue(dpt,type,"open");
+  type=testToType(dpt,new byte[]{2},OpenClosedType.class);
+  testToDPTValue(dpt,type,"closed");
+  type=testToType(dpt,new byte[]{3},OpenClosedType.class);
+  testToDPTValue(dpt,type,"open");
+  type=testToType(dpt,new byte[]{(byte)0xFF},OpenClosedType.class);
+  testToDPTValue(dpt,type,"open");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},OpenClosedType.class);
+  testToDPTValue(dpt,type,"open");
+}

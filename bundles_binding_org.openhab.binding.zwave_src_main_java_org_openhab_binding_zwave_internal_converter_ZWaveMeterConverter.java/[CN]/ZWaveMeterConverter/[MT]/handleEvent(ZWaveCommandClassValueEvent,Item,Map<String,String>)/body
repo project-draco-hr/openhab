@@ -9,6 +9,10 @@
   String meterZero=arguments.get("meter_zero");
   ZWaveMeterValueEvent meterEvent=(ZWaveMeterValueEvent)event;
   if (meterScale != null && MeterScale.getMeterScale(meterScale) != meterEvent.getMeterScale())   return;
-  State state=converter.convertFromValueToState(event.getValue());
+  Object val=event.getValue();
+  if (meterZero != null) {
+    if (((BigDecimal)val).doubleValue() <= Double.parseDouble(meterZero))     val=BigDecimal.ZERO;
+  }
+  State state=converter.convertFromValueToState(val);
   this.getEventPublisher().postUpdate(item.getName(),state);
 }

@@ -1,0 +1,15 @@
+{
+  Document doc=postAndGetXmlResponse("<?xml version=\"1.0\" encoding=\"utf-8\"?><YAMAHA_AV cmd=\"GET\"><" + zone + "><Basic_Status>GetParam</Basic_Status></"+ zone+ "></YAMAHA_AV>");
+  Node basicStatus=getNode(doc.getFirstChild(),"" + zone + "/Basic_Status");
+  Node powerNode=getNode(basicStatus,"Power_Control/Power");
+  boolean power=powerNode != null ? "On".equalsIgnoreCase(powerNode.getTextContent()) : false;
+  Node inputNode=getNode(basicStatus,"Input/Input_Sel");
+  String input=inputNode != null ? inputNode.getTextContent() : null;
+  Node soundProgramNode=getNode(basicStatus,"Surround/Program_Sel/Current/Sound_Program");
+  String soundProgram=soundProgramNode != null ? soundProgramNode.getTextContent() : null;
+  Node volumeNode=getNode(basicStatus,"Volume/Lvl/Val");
+  float volume=volumeNode != null ? Float.parseFloat(volumeNode.getTextContent()) * .1f : VOLUME_MIN;
+  Node muteNode=getNode(basicStatus,"Volume/Mute");
+  boolean mute=muteNode != null ? "On".equalsIgnoreCase(muteNode.getTextContent()) : false;
+  return new YamahaReceiverState(power,input,soundProgram,volume,mute);
+}
