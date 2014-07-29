@@ -4,6 +4,7 @@
   try {
     byte[] encodedValue=encodeValue(setpoint);
     byte[] payload=ArrayUtils.addAll(new byte[]{(byte)this.getNode().getNodeId(),(byte)(3 + encodedValue.length),(byte)getCommandClass().getKey(),THERMOSTAT_SETPOINT_SET,(byte)setpointType.getKey()},encodedValue);
+    payload[5]+=(byte)(scale << 3);
     result.setMessagePayload(payload);
     return result;
   }

@@ -1,10 +1,15 @@
 {
   DPT dpt=DPTXlator3BitControlled.DPT_CONTROL_DIMMING;
   testToTypeClass(dpt,IncreaseDecreaseType.class);
-  Type type=testToType(dpt,new byte[]{0x00},IncreaseDecreaseType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},IncreaseDecreaseType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (decrease break control needs to be ignored)",testToType(dpt,new byte[]{0x00},IncreaseDecreaseType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (increase break control needs to be ignored)",testToType(dpt,new byte[]{0x08},IncreaseDecreaseType.class));
+  Type type=testToType(dpt,new byte[]{0x01},IncreaseDecreaseType.class);
   testToDPTValue(dpt,type,"decrease 5");
-  type=testToType(dpt,new byte[]{0x01},IncreaseDecreaseType.class);
-  testToDPTValue(dpt,type,"decrease 5");
-  type=testToType(dpt,new byte[]{0x08},IncreaseDecreaseType.class);
+  type=testToType(dpt,new byte[]{0x0F},IncreaseDecreaseType.class);
+  testToDPTValue(dpt,type,"increase 5");
+  type=testToType(dpt,new byte[]{(byte)0xFF},IncreaseDecreaseType.class);
+  testToDPTValue(dpt,type,"increase 5");
+  type=testToType(dpt,new byte[]{(byte)0x0F,0},IncreaseDecreaseType.class);
   testToDPTValue(dpt,type,"increase 5");
 }

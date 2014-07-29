@@ -1,6 +1,7 @@
 {
   DPT dpt=DPTXlatorBoolean.DPT_UPDOWN;
   testToTypeClass(dpt,UpDownType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},UpDownType.class));
   Type type=testToType(dpt,new byte[]{0},UpDownType.class);
   testToDPTValue(dpt,type,"up");
   type=testToType(dpt,new byte[]{1},UpDownType.class);
