@@ -5,7 +5,21 @@
       date=DATE_FORMATTER.parse(value);
     }
  else     if (DPTXlatorTime.DPT_TIMEOFDAY.getID().equals(dpt)) {
-      date=TIME_FORMATTER.parse(value);
+      if (value.contains("no-day, ")) {
+        StringBuffer stb=new StringBuffer(value);
+        int start=stb.indexOf("no-day, ");
+        int end=start + "no-day, ".length();
+        stb.delete(start,end);
+        value=stb.toString();
+        date=TIME_FORMATTER.parse(value);
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.MONTH,2);
+        date=cal.getTime();
+      }
+ else {
+        date=TIME_DAY_FORMATTER.parse(value);
+      }
     }
   }
  catch (  ParseException pe) {
