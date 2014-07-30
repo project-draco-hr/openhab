@@ -1,0 +1,8 @@
+{
+  messageHandler.sendSetTemperature(bindingConfig.getDevAddr(),temp);
+  for (  MaxCulBindingProvider provider : providers) {
+    for (    MaxCulBindingConfig bc : provider.getAssociations(bindingConfig.getSerialNumber())) {
+      messageHandler.sendSetTemperature(bc.getDevAddr(),temp);
+    }
+  }
+}

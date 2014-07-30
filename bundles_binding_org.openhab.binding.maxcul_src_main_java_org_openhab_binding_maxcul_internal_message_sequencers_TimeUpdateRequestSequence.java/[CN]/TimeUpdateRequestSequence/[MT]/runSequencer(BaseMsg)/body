@@ -1,0 +1,38 @@
+{
+  pktLostCount=0;
+switch (state) {
+case RESPOND_TO_REQUEST:
+    if (BaseMsg.getMsgType(msg.rawMsg) == MaxCulMsgType.TIME_INFO) {
+      TimeInfoMsg timeMsg=new TimeInfoMsg(msg.rawMsg);
+      if (isValidDeviation(timeMsg.getTimeInfo(),new GregorianCalendar(),TIME_TOLERANCE)) {
+        messageHandler.sendAck(msg);
+        state=TimeUpdateRequestState.FINISHED;
+      }
+ else {
+        messageHandler.sendTimeInfo(msg.srcAddrStr,tzStr,this);
+        state=TimeUpdateRequestState.HANDLE_RESPONSE;
+      }
+    }
+ else {
+      state=TimeUpdateRequestState.FINISHED;
+      logger.debug("Got invalid message type for Time Update Sequence");
+    }
+  break;
+case HANDLE_RESPONSE:
+if (msg.msgType == MaxCulMsgType.ACK) {
+  AckMsg ack=new AckMsg(msg.rawMsg);
+  if (ack.getIsNack()) {
+    logger.error("TIME_INFO was nacked. Ending sequence");
+    state=TimeUpdateRequestState.FINISHED;
+  }
+ else   state=TimeUpdateRequestState.FINISHED;
+}
+state=TimeUpdateRequestState.FINISHED;
+break;
+case FINISHED:
+break;
+default :
+logger.error("Invalid state for PairingInitialisation Message Sequence!");
+break;
+}
+}

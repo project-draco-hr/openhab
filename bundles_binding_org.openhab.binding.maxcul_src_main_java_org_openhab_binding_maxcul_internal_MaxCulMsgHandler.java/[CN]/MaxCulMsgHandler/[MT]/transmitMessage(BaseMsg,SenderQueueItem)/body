@@ -1,0 +1,34 @@
+{
+  try {
+    cul.send(data.rawMsg);
+  }
+ catch (  CULCommunicationException e) {
+    logger.error("Unable to send CUL message " + data + " because: "+ e.getMessage());
+  }
+  boolean fastSend=false;
+  if (data.isPartOfSequence()) {
+    fastSend=data.getMessageSequencer().useFastSend();
+  }
+  enoughCredit(data.requiredCredit(),fastSend,true);
+  this.lastTransmit=new Date();
+  if (this.endOfQueueTransmit.before(this.lastTransmit)) {
+    this.endOfQueueTransmit=this.lastTransmit;
+  }
+  if (data.msgType != MaxCulMsgType.ACK) {
+    SenderQueueItem qi=queueItem;
+    if (qi == null) {
+      qi=new SenderQueueItem();
+      qi.msg=data;
+    }
+    qi.expiry=new Date(this.lastTransmit.getTime() + MESSAGE_EXPIRY_PERIOD);
+    this.pendingAckQueue.put(qi.msg.msgCount,qi);
+    TimerTask ackCheckTask=new TimerTask(){
+      public void run(){
+        checkPendingAcks();
+      }
+    }
+;
+    Timer timer=new Timer();
+    timer.schedule(ackCheckTask,qi.expiry);
+  }
+}

@@ -1,0 +1,11 @@
+{
+  super(rawMsg);
+  logger.debug(this.msgType + " Payload Len -> " + this.payload.length);
+  if (this.payload.length == SET_TEMPERATURE_PAYLOAD_LEN) {
+    desiredTemperature=(this.payload[0] & 0x3f) / 2.0;
+    ctrlMode=ThermostatControlMode.values()[(this.payload[0] >> 6)];
+  }
+ else {
+    logger.error("Got " + this.msgType + " message with incorrect length!");
+  }
+}

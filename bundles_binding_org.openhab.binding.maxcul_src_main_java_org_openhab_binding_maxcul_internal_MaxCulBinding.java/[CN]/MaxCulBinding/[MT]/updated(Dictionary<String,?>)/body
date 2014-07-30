@@ -1,0 +1,21 @@
+{
+  logger.debug("MaxCUL Reading config");
+  if (config != null) {
+    String timezoneString=(String)config.get("timezone");
+    if (StringUtils.isNotBlank(timezoneString)) {
+      this.tzStr=timezoneString;
+    }
+ else {
+      this.tzStr="Europe/London";
+    }
+    String deviceString=(String)config.get("device");
+    if (StringUtils.isNotBlank(deviceString)) {
+      logger.debug("Setting up device " + deviceString);
+      setupDevice(deviceString);
+      if (cul == null)       throw new ConfigurationException("device","Configuration failed. Unable to access CUL device " + deviceString);
+    }
+ else {
+      throw new ConfigurationException("device","No device set - please set one");
+    }
+  }
+}

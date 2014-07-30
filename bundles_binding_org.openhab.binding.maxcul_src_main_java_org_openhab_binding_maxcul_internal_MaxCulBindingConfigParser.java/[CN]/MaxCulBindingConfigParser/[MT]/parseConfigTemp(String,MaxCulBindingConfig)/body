@@ -1,0 +1,18 @@
+{
+  String[] configKeyValueSplit=configPart.split("=");
+  if (configKeyValueSplit.length == 2) {
+    String[] configParts=configKeyValueSplit[1].split("/");
+    if (configParts.length == 7) {
+      cfg.setComfortTemp(Double.parseDouble(configParts[0]));
+      cfg.setEcoTemp(Double.parseDouble(configParts[1]));
+      cfg.setMaxTemp(Double.parseDouble(configParts[2]));
+      cfg.setMinTemp(Double.parseDouble(configParts[3]));
+      cfg.setWindowOpenTemperature(Double.parseDouble(configParts[4]));
+      cfg.setWindowOpenDuration(Double.parseDouble(configParts[5]));
+      cfg.setMeasurementOffset(Double.parseDouble(configParts[6]));
+      cfg.setTemperatureConfigSet(true);
+    }
+ else     throw new BindingConfigParseException("Temperature configuration should be of form 'configTemp=<comfortTemp>/<ecoTemp>/<maxTemp>/<minTemp>/<windowOpenTemperature>/<windowOpenDuration>/<measurementOffset>'");
+  }
+ else   throw new BindingConfigParseException("Temperature configuration should be of form 'configTemp=<comfortTemp>/<ecoTemp>/<maxTemp>/<minTemp>/<windowOpenTemperature>/<windowOpenDuration>/<measurementOffset>'");
+}
