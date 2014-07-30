@@ -6,18 +6,8 @@
       try {
         String resp=wemoCall(itemName,"urn:Belkin:service:basicevent:1#GetBinaryState",IOUtils.toString(getClass().getResourceAsStream("GetRequest.xml")));
         String state=resp.replaceAll("[\\d\\D]*<BinaryState>(.*)</BinaryState>[\\d\\D]*","$1");
-        isOn=state.equals("1") ? true : false;
-        logger.trace("{} state on = {}",itemName,isOn);
-        if (state.equals("0")) {
-          State itemState=OnOffType.valueOf("OFF");
-          logger.trace("Transformed state for item {} = {}",itemName,state);
-          eventPublisher.postUpdate(itemName,itemState);
-        }
-        if (state.equals("1")) {
-          State itemState=OnOffType.valueOf("ON");
-          logger.trace("Transformed state for item {} = {}",itemName,state);
-          eventPublisher.postUpdate(itemName,itemState);
-        }
+        State itemState=state.equals("1") ? OnOffType.ON : OnOffType.OFF;
+        eventPublisher.postUpdate(itemName,itemState);
       }
  catch (      IOException e) {
         e.printStackTrace();
