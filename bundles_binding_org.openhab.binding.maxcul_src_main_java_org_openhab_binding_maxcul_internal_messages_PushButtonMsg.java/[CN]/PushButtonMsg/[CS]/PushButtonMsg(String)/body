@@ -1,0 +1,12 @@
+{
+  super(rawMsg);
+  logger.debug(this.msgType + " Payload Len -> " + this.payload.length);
+  if (this.payload.length == PUSH_BUTTON_PAYLOAD_LEN) {
+    if (this.payload[0] == 0x50)     isRetransmission=true;
+    if (this.payload[1] == 0x0)     mode=PushButtonMode.ECO;
+ else     if (this.payload[1] == 0x1)     mode=PushButtonMode.AUTO;
+  }
+ else {
+    logger.error("Got " + this.msgType + " message with incorrect length!");
+  }
+}

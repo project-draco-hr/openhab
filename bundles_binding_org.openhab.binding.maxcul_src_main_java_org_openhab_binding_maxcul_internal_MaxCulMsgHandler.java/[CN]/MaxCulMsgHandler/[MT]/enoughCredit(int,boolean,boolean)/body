@@ -1,0 +1,12 @@
+{
+  Date now=new Date();
+  long credit=((now.getTime() - this.lastCreditUpdateTime.getTime()) / 1000) + this.surplusCredit;
+  int preambleCredit=fastSend ? 0 : 100;
+  boolean result=(credit > (requiredCredit + preambleCredit));
+  if (result && updateSurplus) {
+    this.surplusCredit=(int)credit - (requiredCredit + preambleCredit);
+    if (this.surplusCredit > 900)     this.surplusCredit=900;
+    lastCreditUpdateTime=new Date();
+  }
+  return result;
+}
