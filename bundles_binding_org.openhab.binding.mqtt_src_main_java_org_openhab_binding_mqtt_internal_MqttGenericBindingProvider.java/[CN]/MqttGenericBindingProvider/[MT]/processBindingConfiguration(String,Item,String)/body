@@ -17,6 +17,7 @@
         for (        MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
           mqttService.unregisterMessageConsumer(subscriber.getBroker(),subscriber);
         }
+        removeBindingChangeListener(this);
       }
     }
     @Override public void allBindingsChanged(    BindingProvider provider){
@@ -25,6 +26,7 @@
         for (        MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
           mqttService.unregisterMessageConsumer(subscriber.getBroker(),subscriber);
         }
+        removeBindingChangeListener(this);
       }
     }
   }
@@ -40,6 +42,7 @@
         for (        MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
           mqttService.unregisterMessageProducer(publisher.getBroker(),publisher);
         }
+        removeBindingChangeListener(this);
       }
     }
     @Override public void allBindingsChanged(    BindingProvider provider){
@@ -48,6 +51,7 @@
         for (        MqttMessagePublisher publisher : itemConfig.getMessagePublishers()) {
           mqttService.unregisterMessageProducer(publisher.getBroker(),publisher);
         }
+        removeBindingChangeListener(this);
       }
     }
   }
