@@ -1,0 +1,62 @@
+{
+  String[] configParts=bindingConfigStr.trim().split(":");
+  if (bindingConfigStr.startsWith("PairMode")) {
+    logger.debug("Pair Mode switch found");
+    cfg.setDeviceType(MaxCulDevice.PAIR_MODE);
+    return;
+  }
+ else   if (bindingConfigStr.startsWith("ListenMode")) {
+    logger.debug("Listen Mode switch found");
+    cfg.setDeviceType(MaxCulDevice.LISTEN_MODE);
+    return;
+  }
+ else   if (configParts.length < 2) {
+    throw new BindingConfigParseException("MaxCul configuration requires a configuration of at least the format <device_type>:<serial_num> for a MAX! device.");
+  }
+ else {
+    logger.debug("Found real device");
+    logger.debug("Part 0/" + (configParts.length - 1) + " -> "+ configParts[0]);
+    parseDeviceCategory(configParts[0],cfg);
+    logger.debug("Part 1/" + (configParts.length - 1) + " -> "+ configParts[1]);
+    cfg.setSerialNumber(configParts[1]);
+    if (configParts.length > 2) {
+      for (int idx=2; idx < configParts.length; idx++) {
+        logger.debug("Part " + idx + "/"+ (configParts.length - 1)+ " -> "+ configParts[idx]);
+        if (configParts[idx].startsWith("configTemp")) {
+          parseConfigTemp(configParts[idx],cfg);
+        }
+ else         if (configParts[idx].startsWith("associate")) {
+          parseAssociation(configParts[idx],cfg);
+        }
+ else         if (configParts[idx].startsWith("feature")) {
+          parseDeviceFeature(configParts[idx],cfg);
+        }
+      }
+    }
+ else {
+switch (cfg.getDeviceType()) {
+case PUSH_BUTTON:
+        cfg.setFeature(MaxCulFeature.SWITCH);
+      break;
+case RADIATOR_THERMOSTAT:
+    cfg.setFeature(MaxCulFeature.THERMOSTAT);
+  break;
+case RADIATOR_THERMOSTAT_PLUS:
+cfg.setFeature(MaxCulFeature.THERMOSTAT);
+break;
+case SHUTTER_CONTACT:
+cfg.setFeature(MaxCulFeature.SWITCH);
+break;
+case WALL_THERMOSTAT:
+cfg.setFeature(MaxCulFeature.THERMOSTAT);
+break;
+case PAIR_MODE:
+case LISTEN_MODE:
+case CUBE:
+case UNKNOWN:
+break;
+}
+}
+if (cfg.getDeviceType() != MaxCulDevice.PAIR_MODE || cfg.getDeviceType() != MaxCulDevice.LISTEN_MODE) cfg.loadStoredConfig();
+}
+}

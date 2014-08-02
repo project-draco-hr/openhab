@@ -1,0 +1,54 @@
+{
+  if (super.bindingConfigs.values().isEmpty() == false) {
+    logger.debug("Found " + super.bindingConfigs.values().size() + " binding configs to process in association map");
+    for (    BindingConfig c : super.bindingConfigs.values()) {
+      MaxCulBindingConfig config=(MaxCulBindingConfig)c;
+      logger.debug("Processing " + config.getSerialNumber() + " with "+ config.getAssociatedSerialNum().size()+ " associations");
+      if (associationMap.containsKey(config.getSerialNumber()) && config.getAssociatedSerialNum().isEmpty() == false) {
+        HashSet<MaxCulBindingConfig> set=associationMap.get(config.getSerialNumber());
+        logger.debug("Found " + config.getSerialNumber() + " in map already with "+ set.size()+ " entrys");
+        for (        String serial : config.getAssociatedSerialNum()) {
+          MaxCulBindingConfig bc=getConfigForSerialNumber(serial);
+          if (bc != null) {
+            boolean deviceInSet=false;
+            for (            MaxCulBindingConfig bcInSet : set) {
+              if (bcInSet.getSerialNumber().equalsIgnoreCase(bc.getSerialNumber()))               deviceInSet|=true;
+            }
+            if (!deviceInSet) {
+              logger.debug("Adding " + serial + " to set for "+ config.getSerialNumber());
+              set.add(bc);
+            }
+          }
+        }
+      }
+ else       if (config.getAssociatedSerialNum().isEmpty() == false) {
+        HashSet<MaxCulBindingConfig> set=new HashSet<MaxCulBindingConfig>();
+        for (        String serial : config.getAssociatedSerialNum()) {
+          MaxCulBindingConfig bc=getConfigForSerialNumber(serial);
+          if (bc != null) {
+            boolean deviceInSet=false;
+            for (            MaxCulBindingConfig bcInSet : set) {
+              if (bcInSet.getSerialNumber().equalsIgnoreCase(bc.getSerialNumber()))               deviceInSet|=true;
+            }
+            if (!deviceInSet) {
+              logger.debug("Adding " + serial + " to set for "+ config.getSerialNumber());
+              set.add(bc);
+            }
+          }
+        }
+        if (!set.isEmpty())         associationMap.put(config.getSerialNumber(),set);
+      }
+    }
+    associationsMapBuilt=true;
+    if (!associationMap.isEmpty()) {
+      for (      String serialKey : associationMap.keySet()) {
+        if (serialKey != null) {
+          logger.debug("Device " + serialKey + " associated with:");
+          for (          MaxCulBindingConfig bc : associationMap.get(serialKey)) {
+            logger.debug("\t=> " + bc.getSerialNumber());
+          }
+        }
+      }
+    }
+  }
+}

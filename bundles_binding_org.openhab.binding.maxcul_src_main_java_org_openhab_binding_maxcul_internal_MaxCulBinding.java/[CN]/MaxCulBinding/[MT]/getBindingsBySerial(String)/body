@@ -1,0 +1,12 @@
+{
+  Collection<MaxCulBindingConfig> bindingConfigs=null;
+  for (  MaxCulBindingProvider provider : super.providers) {
+    bindingConfigs=provider.getConfigsForSerialNumber(serial);
+    if (bindingConfigs != null)     break;
+  }
+  if (bindingConfigs == null) {
+    logger.error("Unable to find configuration for serial " + serial + ". Do you have a binding for it?");
+    return null;
+  }
+  return bindingConfigs;
+}

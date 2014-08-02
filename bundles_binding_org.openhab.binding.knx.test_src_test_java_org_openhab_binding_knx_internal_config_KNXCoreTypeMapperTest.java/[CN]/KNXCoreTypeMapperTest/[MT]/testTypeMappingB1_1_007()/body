@@ -1,6 +1,7 @@
 {
   DPT dpt=DPTXlatorBoolean.DPT_STEP;
   testToTypeClass(dpt,IncreaseDecreaseType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},IncreaseDecreaseType.class));
   Type type=testToType(dpt,new byte[]{0x00},IncreaseDecreaseType.class);
   testToDPTValue(dpt,type,"decrease 5");
   type=testToType(dpt,new byte[]{0x01},IncreaseDecreaseType.class);

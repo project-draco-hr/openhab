@@ -1,0 +1,17 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final String itemName=item.getName();
+  logger.debug("Processing item " + itemName);
+  final MaxCulBindingConfig config=new MaxCulBindingConfig(bindingConfig);
+  addBindingConfig(item,config);
+  addBindingChangeListener(new BindingChangeListener(){
+    @Override public void bindingChanged(    BindingProvider provider,    String itemName){
+      associationsMapBuilt=false;
+    }
+    @Override public void allBindingsChanged(    BindingProvider provider){
+      if (!provider.providesBindingFor(itemName)) {
+      }
+    }
+  }
+);
+}

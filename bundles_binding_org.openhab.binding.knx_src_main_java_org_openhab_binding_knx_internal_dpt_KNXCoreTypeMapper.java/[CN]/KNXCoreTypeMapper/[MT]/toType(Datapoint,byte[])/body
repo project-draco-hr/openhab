@@ -5,30 +5,120 @@
     String value=translator.getValue();
     String id=translator.getType().getID();
     logger.trace("toType datapoint DPT = " + datapoint.getDPT());
-    logger.trace("toType datapoint getMainNumber = " + datapoint.getMainNumber());
-    if (datapoint.getMainNumber() == 9)     id=DPTXlator2ByteFloat.DPT_TEMPERATURE.getID();
-    if (datapoint.getMainNumber() == 14) {
-      id=DPTXlator4ByteFloat.DPT_ACCELERATION_ANGULAR.getID();
-      if (value.contains(",")) {
-        value=value.replaceFirst(",","\\.");
+    int mainNumber=datapoint.getMainNumber();
+    if (mainNumber == 0) {
+      String dptID=datapoint.getDPT();
+      int dptSepratorPosition=dptID.indexOf('.');
+      if (dptSepratorPosition > 0) {
+        try {
+          mainNumber=Integer.parseInt(dptID.substring(0,dptSepratorPosition));
+        }
+ catch (        NumberFormatException nfe) {
+          logger.error("toType couldn't identify main number in dptID (NumberFormatException): {}",dptID);
+        }
+catch (        IndexOutOfBoundsException ioobe) {
+          logger.error("toType couldn't identify main number in dptID (IndexOutOfBoundsException): {}",dptID);
+        }
+      }
+ else {
+        logger.error("toType couldn't identify main number in dptID: {}",dptID);
       }
     }
-    Class<? extends Type> typeClass=toTypeClass(id);
-    if (typeClass == null) {
+    logger.trace("toType datapoint getMainNumber = {}",datapoint.getMainNumber());
+switch (mainNumber) {
+case 3:
+      DPTXlator3BitControlled translator3BitControlled=(DPTXlator3BitControlled)translator;
+    if (translator3BitControlled.getStepCode() == 0) {
+      logger.debug("toType: KNX DPT_Control_Dimming: break ignored.");
       return null;
     }
-    if (typeClass.equals(UpDownType.class))     return UpDownType.valueOf(value.toUpperCase());
-    if (typeClass.equals(IncreaseDecreaseType.class))     return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
-    if (typeClass.equals(OnOffType.class))     return OnOffType.valueOf(value.toUpperCase());
-    if (typeClass.equals(PercentType.class))     return PercentType.valueOf(value.split(" ")[0]);
-    if (typeClass.equals(DecimalType.class))     return DecimalType.valueOf(value.split(" ")[0]);
-    if (typeClass.equals(StringType.class))     return StringType.valueOf(value);
-    if (typeClass.equals(OpenClosedType.class))     return OpenClosedType.valueOf(value.toUpperCase());
-    if (typeClass.equals(StopMoveType.class))     return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
-    if (typeClass.equals(DateTimeType.class))     return DateTimeType.valueOf(formatDateTime(value,datapoint.getDPT()));
-  }
- catch (  KNXException e) {
-    logger.warn("Failed creating a translator for datapoint type ???{}???.",datapoint.getDPT(),e);
-  }
-  return null;
+  break;
+case 14:
+DPTXlator4ByteFloat translator4ByteFloat=(DPTXlator4ByteFloat)translator;
+Float f=translator4ByteFloat.getValueFloat();
+if (Math.abs(f) < 100000) {
+value=String.valueOf(f);
+}
+ else {
+NumberFormat dcf=NumberFormat.getInstance(Locale.US);
+if (dcf instanceof DecimalFormat) {
+((DecimalFormat)dcf).applyPattern("0.#####E0");
+}
+value=dcf.format(f);
+}
+break;
+case 19:
+DPTXlatorDateTime translatorDateTime=(DPTXlatorDateTime)translator;
+if (translatorDateTime.isFaultyClock()) {
+logger.debug("toType: KNX clock msg ignored: clock faulty bit set, which is not supported");
+return null;
+}
+ else if (!translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && translatorDateTime.isValidField(DPTXlatorDateTime.DATE)) {
+logger.debug("toType: KNX clock msg ignored: no year, but day and month, which is not supported");
+return null;
+}
+ else if (translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && !translatorDateTime.isValidField(DPTXlatorDateTime.DATE)) {
+logger.debug("toType: KNX clock msg ignored: no day and month, but year, which is not supported");
+return null;
+}
+ else if (!translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && !translatorDateTime.isValidField(DPTXlatorDateTime.DATE) && !translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
+logger.debug("toType: KNX clock msg ignored: no day and month or year, which is not supported");
+return null;
+}
+Calendar cal=Calendar.getInstance();
+if (translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && !translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
+cal.setTimeInMillis(translatorDateTime.getValueMilliseconds());
+value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+}
+ else if (!translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
+cal.clear();
+cal.set(Calendar.HOUR_OF_DAY,translatorDateTime.getHour());
+cal.set(Calendar.MINUTE,translatorDateTime.getHour());
+cal.set(Calendar.SECOND,translatorDateTime.getSecond());
+value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+}
+ else if (translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
+cal.setTimeInMillis(translatorDateTime.getValueMilliseconds());
+value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+}
+break;
+}
+Class<? extends Type> typeClass=toTypeClass(id);
+if (typeClass == null) {
+return null;
+}
+if (typeClass.equals(UpDownType.class)) return UpDownType.valueOf(value.toUpperCase());
+if (typeClass.equals(IncreaseDecreaseType.class)) return IncreaseDecreaseType.valueOf(StringUtils.substringBefore(value.toUpperCase()," "));
+if (typeClass.equals(OnOffType.class)) return OnOffType.valueOf(value.toUpperCase());
+if (typeClass.equals(PercentType.class)) return PercentType.valueOf(value.split(" ")[0]);
+if (typeClass.equals(DecimalType.class)) return DecimalType.valueOf(value.split(" ")[0]);
+if (typeClass.equals(StringType.class)) return StringType.valueOf(value);
+if (typeClass.equals(OpenClosedType.class)) return OpenClosedType.valueOf(value.toUpperCase());
+if (typeClass.equals(StopMoveType.class)) return value.equals("start") ? StopMoveType.MOVE : StopMoveType.STOP;
+if (typeClass.equals(DateTimeType.class)) {
+if (mainNumber == 19) {
+return DateTimeType.valueOf(value);
+}
+ else {
+String date=formatDateTime(value,datapoint.getDPT());
+if ((date == null) || (date.isEmpty())) {
+logger.debug("toType: KNX clock msg ignored: no day and month or year, which is not supported");
+return null;
+}
+ else {
+return DateTimeType.valueOf(date);
+}
+}
+}
+}
+ catch (KNXFormatException kfe) {
+logger.info("Translator couldn't parse data for datapoint type ???{}??? (KNXFormatException).",datapoint.getDPT());
+}
+catch (KNXIllegalArgumentException kiae) {
+logger.info("Translator couldn't parse data for datapoint type ???{}??? (KNXIllegalArgumentException).",datapoint.getDPT());
+}
+catch (KNXException e) {
+logger.warn("Failed creating a translator for datapoint type ???{}???.",datapoint.getDPT(),e);
+}
+return null;
 }
