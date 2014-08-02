@@ -33,7 +33,8 @@
  else   if (value instanceof String || value instanceof Enum) {
     if (item.getAcceptedDataTypes().contains(StringType.class)) {
       if (value instanceof Enum) {
-        context.getEventPublisher().postUpdate(item.getName(),new StringType(WordUtils.capitalizeFully(value.toString())));
+        String enumValue=WordUtils.capitalizeFully(StringUtils.replace(value.toString(),"_"," "));
+        context.getEventPublisher().postUpdate(item.getName(),new StringType(enumValue));
       }
  else {
         context.getEventPublisher().postUpdate(item.getName(),new StringType(value.toString()));

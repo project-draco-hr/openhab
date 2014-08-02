@@ -1,0 +1,30 @@
+{
+  double p2=6.283185307;
+  double arc=206264.8062;
+  double coseps=.91748;
+  double sineps=.39778;
+  double lo=FRAK(.606433 + 1336.855225 * t);
+  double l=p2 * FRAK(.374897 + 1325.55241 * t);
+  double ls=p2 * FRAK(.993133 + 99.997361 * t);
+  double d=p2 * FRAK(.827361 + 1236.853086 * t);
+  double f=p2 * FRAK(.259086 + 1342.227825 * t);
+  double dl=22640 * Math.sin(l) - 4586 * Math.sin(l - 2 * d) + 2370 * Math.sin(2 * d) + 769 * Math.sin(2 * l) - 668 * Math.sin(ls) - 412 * Math.sin(2 * f) - 212 * Math.sin(2 * l - 2 * d) - 206 * Math.sin(l + ls - 2 * d) + 192 * Math.sin(l + 2 * d) - 165 * Math.sin(ls - 2 * d) - 125 * Math.sin(d) - 110 * Math.sin(l + ls) + 148 * Math.sin(l - ls) - 55 * Math.sin(2 * f - 2 * d);
+  double s=f + (dl + 412 * Math.sin(2 * f) + 541 * Math.sin(ls)) / arc;
+  double h=f - 2 * d;
+  double n=-526 * Math.sin(h) + 44 * Math.sin(l + h) - 31 * Math.sin(-l + h) - 23 * Math.sin(ls + h) + 11 * Math.sin(-ls + h) - 25 * Math.sin(-2 * l + f) + 21 * Math.sin(-l + f);
+  double lmoon=p2 * FRAK(lo + dl / 1296000);
+  double bmoon=(18520 * Math.sin(s) + n) / arc;
+  double cb=Math.cos(bmoon);
+  double x=cb * Math.cos(lmoon);
+  double v=cb * Math.sin(lmoon);
+  double w=Math.sin(bmoon);
+  double y=coseps * v - sineps * w;
+  double z=sineps * v + coseps * w;
+  double rho=Math.sqrt(1 - z * z);
+  double dec=(360 / p2) * Math.atan(z / rho);
+  double ra=(48 / p2) * Math.atan(y / (x + rho));
+  if (ra < 0) {
+    ra+=24;
+  }
+  return new double[]{dec,ra};
+}

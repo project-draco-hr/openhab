@@ -1,7 +1,7 @@
 {
   double lw=-longitude * DEG2RAD;
   double phi=latitude * DEG2RAD;
-  double j=midnightDateToJulianDate(calendar);
+  double j=DateTimeUtils.midnightDateToJulianDate(calendar) + 0.5;
   double n=getJulianCycle(j,lw);
   double js=getApproxSolarTransit(0,lw,n);
   double m=getSolarMeanAnomaly(js);
@@ -75,5 +75,13 @@
     Sun sunTomorrow=getSunInfo(addDays(calendar,1),latitude,longitude,true);
     sun.setNight(new Range(sun.getAstroDusk().getEnd(),sunTomorrow.getAstroDawn().getStart()));
   }
+  SunEclipse eclipse=sun.getEclipse();
+  MoonCalc mc=new MoonCalc();
+  double partial=mc.getEclipse(calendar,MoonCalc.ECLIPSE_TYPE_SUN,j,MoonCalc.ECLIPSE_MODE_PARTIAL);
+  eclipse.setPartial(DateTimeUtils.toCalendar(partial));
+  double ring=mc.getEclipse(calendar,MoonCalc.ECLIPSE_TYPE_SUN,j,MoonCalc.ECLIPSE_MODE_RING);
+  eclipse.setRing(DateTimeUtils.toCalendar(ring));
+  double total=mc.getEclipse(calendar,MoonCalc.ECLIPSE_TYPE_SUN,j,MoonCalc.ECLIPSE_MODE_TOTAL);
+  eclipse.setTotal(DateTimeUtils.toCalendar(total));
   return sun;
 }

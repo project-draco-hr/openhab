@@ -1,12 +1,5 @@
 {
-  if (System.currentTimeMillis() < calendar.getTimeInMillis()) {
-    Trigger trigger=newTrigger().withIdentity(itemName + "-Trigger",JOB_GROUP).startAt(calendar.getTime()).build();
-    JobDataMap jobDataMap=new JobDataMap();
-    jobDataMap.put("itemName",itemName);
-    schedule(itemName,ItemJob.class,trigger,jobDataMap);
-    logger.debug("Scheduled job for item {} at {}",itemName,sdf.format(calendar.getTime()));
-  }
- else {
-    logger.debug("Skipping job for item {} for today, starttime is in the past",itemName);
-  }
+  JobDataMap jobDataMap=new JobDataMap();
+  jobDataMap.put("itemName",itemName);
+  schedule(calendar,itemName,jobDataMap);
 }

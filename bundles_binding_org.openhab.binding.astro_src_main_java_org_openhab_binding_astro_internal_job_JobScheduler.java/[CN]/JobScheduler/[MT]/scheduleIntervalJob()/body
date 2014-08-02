@@ -1,0 +1,8 @@
+{
+  AstroConfig config=context.getConfig();
+  String jobName=IntervalJob.class.getSimpleName();
+  Date start=new Date(System.currentTimeMillis() + (config.getInterval()) * 1000);
+  Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startAt(start).withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(config.getInterval())).build();
+  schedule(jobName,IntervalJob.class,trigger,new JobDataMap());
+  logger.info("Scheduled astro job with interval of {} seconds",config.getInterval());
+}

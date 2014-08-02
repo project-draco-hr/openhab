@@ -1,0 +1,32 @@
+{
+  Moon moon=new Moon();
+  double julianDate=DateTimeUtils.dateToJulianDate(calendar);
+  double julianDateMidnight=DateTimeUtils.midnightDateToJulianDate(calendar);
+  double[] riseSet=getRiseSet(calendar,latitude,longitude);
+  Calendar rise=DateTimeUtils.timeToCalendar(calendar,riseSet[0]);
+  Calendar set=DateTimeUtils.timeToCalendar(calendar,riseSet[1]);
+  moon.setRise(new Range(rise,rise));
+  moon.setSet(new Range(set,set));
+  MoonPhase phase=moon.getPhase();
+  phase.setNew(DateTimeUtils.toCalendar(getNextPhase(calendar,julianDateMidnight,NEW_MOON)));
+  phase.setFirstQuarter(DateTimeUtils.toCalendar(getNextPhase(calendar,julianDateMidnight,FIRST_QUARTER)));
+  phase.setFull(DateTimeUtils.toCalendar(getNextPhase(calendar,julianDateMidnight,FULL_MOON)));
+  phase.setThirdQuarter(DateTimeUtils.toCalendar(getNextPhase(calendar,julianDateMidnight,LAST_QUARTER)));
+  Eclipse eclipse=moon.getEclipse();
+  double eclipseJd=getEclipse(calendar,ECLIPSE_TYPE_MOON,julianDateMidnight,ECLIPSE_MODE_PARTIAL);
+  eclipse.setPartial(DateTimeUtils.toCalendar(eclipseJd));
+  eclipseJd=getEclipse(calendar,ECLIPSE_TYPE_MOON,julianDateMidnight,ECLIPSE_MODE_TOTAL);
+  eclipse.setTotal(DateTimeUtils.toCalendar(eclipseJd));
+  double decimalYear=DateTimeUtils.getDecimalYear(calendar);
+  MoonDistance apogee=moon.getApogee();
+  double apogeeJd=getApogee(julianDate,decimalYear);
+  apogee.setDate(DateTimeUtils.toCalendar(apogeeJd));
+  apogee.setKilometer(getDistance(apogeeJd));
+  MoonDistance perigee=moon.getPerigee();
+  double perigeeJd=getPerigee(julianDate,decimalYear);
+  perigee.setDate(DateTimeUtils.toCalendar(perigeeJd));
+  perigee.setKilometer(getDistance(perigeeJd));
+  setMoonPosition(julianDate,moon);
+  setAgeAndPhaseName(calendar,phase);
+  return moon;
+}
