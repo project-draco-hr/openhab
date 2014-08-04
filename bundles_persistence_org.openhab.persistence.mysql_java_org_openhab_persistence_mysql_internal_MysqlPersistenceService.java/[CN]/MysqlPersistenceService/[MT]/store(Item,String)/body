@@ -25,7 +25,7 @@
   Statement statement=null;
   try {
     statement=connection.createStatement();
-    sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),'"+ item.getState().toString()+ "');");
+    sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),'"+ item.getState().toString()+ "') ON DUPLICATE KEY UPDATE VALUE='"+ item.getState().toString()+ "';");
     statement.executeUpdate(sqlCmd);
     logger.debug("mySQL: Stored item '{}' as '{}'[{}] in SQL database at {}.",item.getName(),item.getState().toString(),value,(new java.util.Date()).toString());
     logger.debug("mySQL: {}",sqlCmd);
