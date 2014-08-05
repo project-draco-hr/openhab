@@ -1,0 +1,31 @@
+{
+  k=Math.floor(k) + mode;
+  double t=k / 1236.85;
+  double e=var_e(t);
+  double m=var_m(k,t);
+  double m1=var_m1(k,t);
+  double f=var_f(k,t);
+  double o=var_o(k,t);
+  double jd=var_jde(k,t);
+  if (mode == NEW_MOON) {
+    jd+=-.4072 * SN(m1) + .17241 * e * SN(m) + .01608 * SN(2 * m1) + .01039 * SN(2 * f) + .00739 * e * SN(m1 - m) - .00514 * e * SN(m1 + m) + .00208 * e * e* SN(2 * m) - .00111 * SN(m1 - 2 * f) - .00057 * SN(m1 + 2 * f);
+    jd+=.00056 * e * SN(2 * m1 + m) - .00042 * SN(3 * m1) + .00042 * e * SN(m + 2 * f) + .00038 * e * SN(m - 2 * f) - .00024 * e * SN(2 * m1 - m) - .00017 * SN(o) - .00007 * SN(m1 + 2 * m) + .00004 * SN(2 * m1 - 2 * f);
+    jd+=.00004 * SN(3 * m) + .00003 * SN(m1 + m - 2 * f) + .00003 * SN(2 * m1 + 2 * f) - .00003 * SN(m1 + m + 2 * f) + .00003 * SN(m1 - m + 2 * f) - .00002 * SN(m1 - m - 2 * f) - .00002 * SN(3 * m1 + m);
+    jd+=.00002 * SN(4 * m1);
+  }
+ else   if (mode == FULL_MOON) {
+    jd+=-.40614 * SN(m1) + .17302 * e * SN(m) + .01614 * SN(2 * m1) + .01043 * SN(2 * f) + .00734 * e * SN(m1 - m) - .00515 * e * SN(m1 + m) + .00209 * e * e* SN(2 * m) - .00111 * SN(m1 - 2 * f) - .00057 * SN(m1 + 2 * f);
+    jd+=.00056 * e * SN(2 * m1 + m) - .00042 * SN(3 * m1) + .00042 * e * SN(m + 2 * f) + .00038 * e * SN(m - 2 * f) - .00024 * e * SN(2 * m1 - m) - .00017 * SN(o) - .00007 * SN(m1 + 2 * m) + .00004 * SN(2 * m1 - 2 * f);
+    jd+=.00004 * SN(3 * m) + .00003 * SN(m1 + m - 2 * f) + .00003 * SN(2 * m1 + 2 * f) - .00003 * SN(m1 + m + 2 * f) + .00003 * SN(m1 - m + 2 * f) - .00002 * SN(m1 - m - 2 * f) - .00002 * SN(3 * m1 + m);
+    jd+=.00002 * SN(4 * m1);
+  }
+ else {
+    jd+=-.62801 * SN(m1) + .17172 * e * SN(m) - .01183 * e * SN(m1 + m) + .00862 * SN(2 * m1) + .00804 * SN(2 * f) + .00454 * e * SN(m1 - m) + .00204 * e * e* SN(2 * m) - .0018 * SN(m1 - 2 * f) - .0007 * SN(m1 + 2 * f);
+    jd+=-.0004 * SN(3 * m1) - .00034 * e * SN(2 * m1 - m) + .00032 * e * SN(m + 2 * f) + .00032 * e * SN(m - 2 * f) - .00028 * e * e* SN(m1 + 2 * m) + .00027 * e * SN(2 * m1 + m) - .00017 * SN(o);
+    jd+=-.00005 * SN(m1 - m - 2 * f) + .00004 * SN(2 * m1 + 2 * f) - .00004 * SN(m1 + m + 2 * f) + .00004 * SN(m1 - 2 * m) + .00003 * SN(m1 + m - 2 * f) + .00003 * SN(3 * m) + .00002 * SN(2 * m1 - 2 * f);
+    jd+=.00002 * SN(m1 - m + 2 * f) - .00002 * SN(3 * m1 + m);
+    double w=.00306 - .00038 * e * CS(m) + .00026 * CS(m1) - .00002 * CS(m1 - m) + .00002 * CS(m1 + m) + .00002 * CS(2 * f);
+    jd+=(mode == FIRST_QUARTER) ? w : -w;
+  }
+  return moonCorrection(jd,t,k);
+}

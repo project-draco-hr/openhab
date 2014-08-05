@@ -1,0 +1,20 @@
+{
+  final Planet planet=context.getPlanet(planetName);
+  new ItemIterator().iterate(new ItemIteratorCallback(){
+    @Override public void next(    AstroBindingConfig bindingConfig,    Item item){
+      if (planetName == bindingConfig.getPlanetName()) {
+        try {
+          Object value=PropertyUtils.getPropertyValue(planet,bindingConfig.getPlanetProperty());
+          if (!equalsCachedValue(value,item)) {
+            publishValue(item,value,bindingConfig);
+            itemCache.put(item.getName(),value);
+          }
+        }
+ catch (        Exception ex) {
+          logger.warn(ex.getMessage(),ex);
+        }
+      }
+    }
+  }
+);
+}

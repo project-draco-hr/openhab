@@ -1,0 +1,48 @@
+{
+  double lambda=prepareCoordinate(longitude,180);
+  if (longitude > 0) {
+    lambda*=-1;
+  }
+  double phi=prepareCoordinate(latitude,90);
+  if (latitude < 0) {
+    phi*=-1;
+  }
+  double moonJd=Math.floor(DateTimeUtils.midnightDateToJulianDate(calendar)) - 2400000.0;
+  moonJd-=((calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)) / 60000.0) / 1440.0;
+  double sphi=SN(phi);
+  double cphi=CS(phi);
+  double sinho=SN(8.0 / 60.0);
+  int hour=1;
+  double utrise=-1;
+  double utset=-1;
+  do {
+    double yminus=SINALT(moonJd,hour - 1,lambda,cphi,sphi) - sinho;
+    double yo=SINALT(moonJd,hour,lambda,cphi,sphi) - sinho;
+    double yplus=SINALT(moonJd,hour + 1,lambda,cphi,sphi) - sinho;
+    double[] quadRet=QUAD(yminus,yo,yplus);
+    if (quadRet[3] == 1) {
+      if (yminus < 0) {
+        utrise=hour + quadRet[1];
+      }
+ else {
+        utset=hour + quadRet[1];
+      }
+    }
+    if (quadRet[3] == 2) {
+      if (quadRet[0] < 0) {
+        utrise=hour + quadRet[2];
+        utset=hour + quadRet[1];
+      }
+ else {
+        utrise=hour + quadRet[1];
+        utset=hour + quadRet[2];
+      }
+    }
+    yminus=yplus;
+    hour+=2;
+  }
+ while (hour < 25 && (utrise == -1 || utset == -1));
+  double rise=prepareTime(utrise);
+  double set=prepareTime(utset);
+  return new double[]{rise,set};
+}

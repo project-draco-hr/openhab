@@ -1,0 +1,26 @@
+{
+  double julianDateEndOfDay=DateTimeUtils.endOfDayDateToJulianDate(calendar);
+  double parentNewMoon=getPreviousPhase(calendar,julianDateEndOfDay,NEW_MOON);
+  double age=Math.abs(parentNewMoon - julianDateEndOfDay);
+  phase.setAge((int)age);
+  int illumination=(int)phase.getIllumination();
+  boolean isWaxing=age < (29.530588853 / 2);
+  if (DateTimeUtils.isSameDay(calendar,phase.getNew())) {
+    phase.setName(MoonPhaseName.NEW);
+  }
+ else   if (DateTimeUtils.isSameDay(calendar,phase.getFirstQuarter())) {
+    phase.setName(MoonPhaseName.FIRST_QUARTER);
+  }
+ else   if (DateTimeUtils.isSameDay(calendar,phase.getThirdQuarter())) {
+    phase.setName(MoonPhaseName.THIRD_QUARTER);
+  }
+ else   if (DateTimeUtils.isSameDay(calendar,phase.getFull())) {
+    phase.setName(MoonPhaseName.FULL);
+  }
+ else   if (illumination >= 0 && illumination < 50) {
+    phase.setName(isWaxing ? MoonPhaseName.WAXING_CRESCENT : MoonPhaseName.WANING_CRESCENT);
+  }
+ else   if (illumination >= 50 && illumination < 100) {
+    phase.setName(isWaxing ? MoonPhaseName.WAXING_GIBBOUS : MoonPhaseName.WANING_GIBBOUS);
+  }
+}

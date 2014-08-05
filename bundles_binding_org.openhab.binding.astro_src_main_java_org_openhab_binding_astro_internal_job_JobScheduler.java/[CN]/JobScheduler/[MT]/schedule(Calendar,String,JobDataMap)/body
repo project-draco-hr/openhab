@@ -1,0 +1,20 @@
+{
+  if (System.currentTimeMillis() < calendar.getTimeInMillis()) {
+    try {
+      JobKey jobKey=new JobKey(jobName,JOB_GROUP);
+      if (scheduler.getJobDetail(jobKey) != null) {
+        scheduler.deleteJob(jobKey);
+      }
+      Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startAt(calendar.getTime()).build();
+      JobDetail jobDetail=newJob(ItemJob.class).withIdentity(jobKey).usingJobData(jobDataMap).build();
+      scheduler.scheduleJob(jobDetail,trigger);
+      logger.debug("Scheduled job with name {} at {}",jobName,sdf.format(calendar.getTime()));
+    }
+ catch (    SchedulerException ex) {
+      logger.error(ex.getMessage(),ex);
+    }
+  }
+ else {
+    logger.debug("Skipping job with name {} for today, starttime is in the past",jobName);
+  }
+}

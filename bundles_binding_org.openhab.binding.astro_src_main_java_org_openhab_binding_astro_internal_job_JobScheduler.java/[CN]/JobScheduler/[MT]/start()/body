@@ -1,13 +1,11 @@
 {
-  if (isBindingForDayInfoAvailable()) {
-    startAndScheduleDayInfoJob();
-  }
-  if (isBindingForSunPositionAvailable()) {
+  startAndScheduleDailyJob();
+  if (isBindingForIntervalJobAvailable()) {
     if (context.getConfig().getInterval() > 0) {
-      startAndScheduleSunPositionJob();
+      scheduleIntervalJob();
     }
  else {
-      logger.warn("Azimuth/Elevation binding available, but configuration is disabled (interval = 0)!");
+      logger.warn("Sun azimuth/elevation and/or moon distance/illumination binding available, but configuration is disabled (interval = 0)!");
     }
   }
 }
