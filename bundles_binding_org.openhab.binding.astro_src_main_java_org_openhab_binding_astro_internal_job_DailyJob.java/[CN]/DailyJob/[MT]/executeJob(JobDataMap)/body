@@ -2,9 +2,9 @@
   Calendar now=Calendar.getInstance();
   SunCalc sunCalc=new SunCalc();
   Sun sun=sunCalc.getSunInfo(now,context.getConfig().getLatitude(),context.getConfig().getLongitude());
-  SunPosition sp=sunCalc.getSunPosition(now,context.getConfig().getLatitude(),context.getConfig().getLongitude());
+  Position sp=sunCalc.getSunPosition(now,context.getConfig().getLatitude(),context.getConfig().getLongitude());
   sun.setPosition(sp);
-  ZodiacCalc zodiacCalc=new ZodiacCalc();
+  SunZodiacCalc zodiacCalc=new SunZodiacCalc();
   sun.setZodiac(zodiacCalc.getZodiac(now));
   SeasonCalc seasonCalc=new SeasonCalc();
   sun.setSeason(seasonCalc.getSeason(now,context.getConfig().getLatitude()));
