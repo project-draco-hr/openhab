@@ -1,0 +1,15 @@
+{
+  AstroBindingConfig bindingConfig=null;
+  for (  AstroBindingProvider provider : context.getProviders()) {
+    if (bindingConfig == null) {
+      bindingConfig=provider.getBindingFor(itemName);
+    }
+  }
+  if (bindingConfig == null) {
+    logger.warn("Astro binding for item {} not found",itemName);
+  }
+ else {
+    itemCache.remove(itemName);
+    publish(bindingConfig.getPlanetName());
+  }
+}
