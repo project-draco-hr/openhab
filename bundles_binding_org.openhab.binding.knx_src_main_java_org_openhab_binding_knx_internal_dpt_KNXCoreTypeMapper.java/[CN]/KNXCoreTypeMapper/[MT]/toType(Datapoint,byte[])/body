@@ -110,6 +110,13 @@ return DateTimeType.valueOf(date);
 }
 }
 }
+if (typeClass.equals(HSBType.class)) {
+int r=Integer.parseInt(value.split(" ")[0].split(":")[1]);
+int g=Integer.parseInt(value.split(" ")[1].split(":")[1]);
+int b=Integer.parseInt(value.split(" ")[2].split(":")[1]);
+Color color=new Color(r,g,b);
+return new HSBType(color);
+}
 }
  catch (KNXFormatException kfe) {
 logger.info("Translator couldn't parse data for datapoint type ???{}??? (KNXFormatException).",datapoint.getDPT());
