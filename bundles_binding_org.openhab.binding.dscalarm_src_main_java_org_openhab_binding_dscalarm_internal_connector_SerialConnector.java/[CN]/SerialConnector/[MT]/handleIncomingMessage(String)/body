@@ -1,0 +1,15 @@
+{
+  APIMessage Message=new APIMessage(incomingMessage);
+  logger.debug("handleIncomingMessage(): Message recieved: {} - {}",incomingMessage,Message.toString());
+  DSCAlarmEvent event=new DSCAlarmEvent(this);
+  event.dscAlarmEventMessage(Message);
+  try {
+    Iterator<DSCAlarmEventListener> iterator=_listeners.iterator();
+    while (iterator.hasNext()) {
+      ((DSCAlarmEventListener)iterator.next()).dscAlarmEventRecieved(event);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("handleIncomingMessage(): Event listener invoking error",e);
+  }
+}

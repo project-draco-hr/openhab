@@ -1,0 +1,37 @@
+{
+  int state;
+  String strStatus="";
+  logger.debug("refreshItem(): Zone Item Name: {}",item.getName());
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case ZONE_ALARM_STATUS:
+        state=zoneProperties.getState(StateType.ALARM_STATE);
+      strStatus=zoneProperties.getStateDescription(StateType.ALARM_STATE);
+    publisher.postUpdate(item.getName(),new StringType(strStatus));
+  break;
+case ZONE_TAMPER_STATUS:
+state=zoneProperties.getState(StateType.TAMPER_STATE);
+strStatus=zoneProperties.getStateDescription(StateType.TAMPER_STATE);
+publisher.postUpdate(item.getName(),new StringType(strStatus));
+break;
+case ZONE_FAULT_STATUS:
+state=zoneProperties.getState(StateType.FAULT_STATE);
+strStatus=zoneProperties.getStateDescription(StateType.FAULT_STATE);
+publisher.postUpdate(item.getName(),new StringType(strStatus));
+break;
+case ZONE_GENERAL_STATUS:
+state=zoneProperties.getState(StateType.GENERAL_STATE);
+publisher.postUpdate(item.getName(),state == 1 ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+break;
+case ZONE_BYPASS_MODE:
+state=zoneProperties.getState(StateType.ARM_STATE);
+publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+default :
+logger.debug("refreshItem(): Zone item not updated.");
+break;
+}
+}
+}
+}

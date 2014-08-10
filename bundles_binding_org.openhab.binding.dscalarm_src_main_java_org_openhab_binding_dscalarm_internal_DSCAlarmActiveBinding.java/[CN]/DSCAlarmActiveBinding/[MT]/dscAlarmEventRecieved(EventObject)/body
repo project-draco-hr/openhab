@@ -1,0 +1,155 @@
+{
+  DSCAlarmEvent dscAlarmEvent=(DSCAlarmEvent)event;
+  APIMessage apiMessage=dscAlarmEvent.getAPIMessage();
+  APIMessage.APIMessageType apiMessageType=apiMessage.getAPIMessageType();
+  DSCAlarmItemType dscAlarmItemType=null;
+  String apiCode=apiMessage.getAPICode();
+  String apiData=apiMessage.getAPIData();
+  DSCAlarmBindingConfig config=null;
+  Item item=null;
+  String itemName="";
+  int forLimit=1;
+  boolean found=false;
+switch (apiCode) {
+case "500":
+    dscAlarmItemUpdate.setConnected(true);
+  dscAlarmItemType=DSCAlarmItemType.PANEL_CONNECTION;
+break;
+case "502":
+dscAlarmItemType=DSCAlarmItemType.PANEL_SYSTEM_ERROR;
+break;
+case "510":
+case "511":
+keypadLEDStateEventHandler(event);
+break;
+case "550":
+dscAlarmItemType=DSCAlarmItemType.PANEL_TIME_DATE;
+break;
+case "650":
+case "651":
+case "653":
+case "654":
+case "672":
+case "674":
+dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
+break;
+case "652":
+forLimit=2;
+case "655":
+dscAlarmItemType=DSCAlarmItemType.PARTITION_ARM_MODE;
+break;
+case "601":
+case "602":
+dscAlarmItemType=DSCAlarmItemType.ZONE_ALARM_STATUS;
+break;
+case "603":
+case "604":
+dscAlarmItemType=DSCAlarmItemType.ZONE_TAMPER_STATUS;
+break;
+case "605":
+case "606":
+dscAlarmItemType=DSCAlarmItemType.ZONE_FAULT_STATUS;
+break;
+case "609":
+case "610":
+dscAlarmItemType=DSCAlarmItemType.ZONE_GENERAL_STATUS;
+break;
+case "900":
+api.sendCommand(APICode.CodeSend,api.getUserCode());
+break;
+case "903":
+switch (apiData.substring(0,1)) {
+case "1":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_READY_LED;
+break;
+case "2":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_ARMED_LED;
+break;
+case "3":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_MEMORY_LED;
+break;
+case "4":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_BYPASS_LED;
+break;
+case "5":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_TROUBLE_LED;
+break;
+case "6":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_PROGRAM_LED;
+break;
+case "7":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_FIRE_LED;
+break;
+case "8":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_BACKLIGHT_LED;
+break;
+case "9":
+dscAlarmItemType=DSCAlarmItemType.KEYPAD_AC_LED;
+break;
+}
+default :
+break;
+}
+int partitionId=apiMessage.getPartition();
+int zoneId=apiMessage.getZone();
+logger.debug("dscAlarmEventRecieved(): Event received! Looking for item: {}",dscAlarmItemType);
+for (int i=0; i <= forLimit; i++) {
+if (dscAlarmItemType != null) {
+for (DSCAlarmBindingProvider prov : providers) {
+for (String iName : prov.getItemNames()) {
+config=prov.getDSCAlarmBindingConfig(iName);
+if (config != null) {
+switch (apiMessageType) {
+case PANEL_EVENT:
+if (dscAlarmItemType == config.getDSCAlarmItemType()) {
+itemName=iName;
+found=true;
+}
+break;
+case PARTITION_EVENT:
+if (partitionId == config.getPartitionId() && dscAlarmItemType == config.getDSCAlarmItemType()) {
+itemName=iName;
+found=true;
+}
+break;
+case ZONE_EVENT:
+if (zoneId == config.getZoneId() && dscAlarmItemType == config.getDSCAlarmItemType()) {
+itemName=iName;
+found=true;
+}
+break;
+case KEYPAD_EVENT:
+if (dscAlarmItemType == config.getDSCAlarmItemType()) {
+itemName=iName;
+found=true;
+}
+break;
+default :
+found=false;
+break;
+}
+}
+if (found) {
+item=prov.getItem(itemName);
+dscAlarmItemUpdate.updateDeviceItem(item,config,eventPublisher,dscAlarmEvent);
+pollPeriod=0;
+break;
+}
+}
+if (found) break;
+}
+}
+if (dscAlarmItemType == DSCAlarmItemType.PARTITION_ARM_MODE && apiCode.equals("652")) {
+dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
+apiMessageType=APIMessage.APIMessageType.PARTITION_EVENT;
+found=false;
+}
+ else {
+dscAlarmItemType=DSCAlarmItemType.PANEL_MESSAGE;
+apiMessageType=APIMessage.APIMessageType.PANEL_EVENT;
+partitionId=0;
+zoneId=0;
+found=false;
+}
+}
+}

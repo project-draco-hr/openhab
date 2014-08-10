@@ -1,0 +1,13 @@
+{
+  String itemName;
+  if (api != null) {
+    connected=api.close();
+    api.removeEventListener(this);
+  }
+  dscAlarmItemUpdate.setConnected(false);
+  itemName=getItemName(DSCAlarmItemType.PANEL_CONNECTION,0,0);
+  if (itemName != "") {
+    updateItem(itemName);
+  }
+  logger.debug("closeConnection(): {} Connection Closed!",connectorType);
+}

@@ -1,0 +1,34 @@
+{
+  try {
+    CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(serialPortName);
+    CommPort commPort=portIdentifier.open(this.getClass().getName(),2000);
+    serialPort=(SerialPort)commPort;
+    serialPort.setSerialPortParams(baudRate,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    serialPort.enableReceiveThreshold(1);
+    serialPort.disableReceiveTimeout();
+    serialOutput=new OutputStreamWriter(serialPort.getOutputStream(),"US-ASCII");
+    serialInput=new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+    setSerialEventHandler(this);
+    connected=true;
+  }
+ catch (  NoSuchPortException noSuchPortException) {
+    logger.error("open(): No Such Port Exception: ",noSuchPortException);
+    connected=false;
+  }
+catch (  PortInUseException portInUseException) {
+    logger.error("open(): Port in Use Exception: ",portInUseException);
+    connected=false;
+  }
+catch (  UnsupportedCommOperationException unsupportedCommOperationException) {
+    logger.error("open(): Unsupported Comm Operation Exception: ",unsupportedCommOperationException);
+    connected=false;
+  }
+catch (  UnsupportedEncodingException unsupportedEncodingException) {
+    logger.error("open(): Unsupported Encoding Exception: ",unsupportedEncodingException);
+    connected=false;
+  }
+catch (  IOException ioException) {
+    logger.error("open(): IO Exception: ",ioException);
+    connected=false;
+  }
+}

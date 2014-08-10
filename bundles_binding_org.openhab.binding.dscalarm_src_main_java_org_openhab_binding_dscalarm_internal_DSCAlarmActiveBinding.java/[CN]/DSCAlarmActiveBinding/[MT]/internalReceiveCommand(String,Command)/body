@@ -1,0 +1,107 @@
+{
+  DSCAlarmBindingConfig dscAlarmBindingConfig=null;
+  Item item=null;
+  for (  DSCAlarmBindingProvider prov : providers) {
+    dscAlarmBindingConfig=prov.getDSCAlarmBindingConfig(itemName);
+    item=prov.getItem(itemName);
+    if (dscAlarmBindingConfig != null) {
+      DSCAlarmDeviceType dscAlarmDeviceType=dscAlarmBindingConfig.getDeviceType();
+      int partitionId;
+      int zoneId;
+      logger.debug("internalReceiveCommand():  Item Name: {} Command: {} Item Device Type: {}",itemName,command,dscAlarmDeviceType);
+      if (connected) {
+switch (dscAlarmDeviceType) {
+case PANEL:
+          if (dscAlarmBindingConfig.getDSCAlarmItemType() == DSCAlarmItemType.PANEL_CONNECTION) {
+            if (command.toString() == "0") {
+              closeConnection();
+              if (!connected) {
+                dscAlarmItemUpdate.setConnected(false);
+                dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Disconnected");
+              }
+            }
+          }
+        break;
+case PARTITION:
+      partitionId=dscAlarmBindingConfig.getPartitionId();
+switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
+case PARTITION_ARM_MODE:
+      if (command.toString().equals("0")) {
+        if (api.sendCommand(APICode.PartitionDisarmControl,String.valueOf(partitionId))) {
+          dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Partition Disarmed");
+        }
+      }
+ else       if (command.toString().equals("1")) {
+        if (api.sendCommand(APICode.PartitionArmControlAway,String.valueOf(partitionId))) {
+          dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Partition Armed (Away)");
+        }
+      }
+ else       if (command.toString().equals("2")) {
+        if (api.sendCommand(APICode.PartitionArmControlStay,String.valueOf(partitionId))) {
+          dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,2,"Partition Armed (Stay)");
+        }
+      }
+ else       if (command.toString().equals("3")) {
+        if (api.sendCommand(APICode.PartitionArmControlZeroEntryDelay,String.valueOf(partitionId))) {
+          dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,3,"Partition Armed (Zero Entry Delay)");
+        }
+      }
+ else       if (command.toString().equals("4")) {
+        if (api.sendCommand(APICode.PartitionArmControlWithUserCode,String.valueOf(partitionId))) {
+          dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,4,"Partition Armed (With User Code)");
+        }
+      }
+    break;
+default :
+  break;
+}
+dscAlarmUpdateMap.put(itemName,dscAlarmBindingConfig);
+processUpdateMap();
+break;
+case ZONE:
+partitionId=dscAlarmBindingConfig.getPartitionId();
+zoneId=dscAlarmBindingConfig.getZoneId();
+switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
+case ZONE_BYPASS_MODE:
+if (command.toString().equals("0")) {
+String data=String.valueOf(partitionId) + "*1" + String.format("%02d",zoneId)+ "#";
+if (api.sendCommand(APICode.KeySequence,data)) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Zone Armed");
+}
+}
+ else if (command.toString().equals("1")) {
+String data=String.valueOf(partitionId) + "*1" + String.format("%02d",zoneId)+ "#";
+if (api.sendCommand(APICode.KeySequence,data)) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Zone Bypassed");
+}
+}
+break;
+default :
+break;
+}
+break;
+default :
+logger.debug("internalReceiveCommand(): No Command Sent.");
+break;
+}
+}
+ else {
+if (dscAlarmDeviceType == DSCAlarmDeviceType.PANEL) {
+if (dscAlarmBindingConfig.getDSCAlarmItemType() == DSCAlarmItemType.PANEL_CONNECTION) {
+if (command.toString().equals("1")) {
+if (api != null) {
+openConnection();
+if (connected) {
+dscAlarmItemUpdate.setConnected(true);
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Connected");
+}
+}
+}
+}
+}
+}
+dscAlarmUpdateMap.put(itemName,dscAlarmBindingConfig);
+itemHasChanged=true;
+}
+}
+}

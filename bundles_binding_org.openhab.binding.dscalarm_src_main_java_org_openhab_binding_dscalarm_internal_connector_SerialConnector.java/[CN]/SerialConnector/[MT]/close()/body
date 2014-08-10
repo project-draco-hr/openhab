@@ -1,0 +1,20 @@
+{
+  logger.debug("close(): Closing Serial Connection!");
+  if (serialPort == null) {
+    connected=false;
+    return;
+  }
+  serialPort.removeEventListener();
+  if (serialInput != null) {
+    IOUtils.closeQuietly(serialInput);
+    serialInput=null;
+  }
+  if (serialOutput != null) {
+    IOUtils.closeQuietly(serialOutput);
+    serialOutput=null;
+  }
+  serialPort.close();
+  serialPort=null;
+  connected=false;
+  logger.debug("close(): Serial Connection Closed!");
+}

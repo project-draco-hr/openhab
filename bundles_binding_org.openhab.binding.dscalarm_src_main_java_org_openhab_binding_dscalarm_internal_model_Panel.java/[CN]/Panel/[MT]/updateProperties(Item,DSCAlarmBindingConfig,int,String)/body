@@ -1,0 +1,18 @@
+{
+  logger.debug("updateProperties(): Panel Item Name: {}",item.getName());
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PANEL_CONNECTION:
+        panelProperties.setState(StateType.CONNECTION_STATE,state,description);
+      break;
+case PANEL_MESSAGE:
+    panelProperties.setSystemMessage(description);
+  break;
+default :
+logger.debug("updateProperties(): Panel property not updated.");
+break;
+}
+}
+}
+}
