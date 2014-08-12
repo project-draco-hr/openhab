@@ -39,7 +39,7 @@ case HeatingThermostatPlus:
  else {
   }
 heatingThermostat.setValvePosition(raw[6] & 0xFF);
-heatingThermostat.setTemperatureSetpoint(raw[7] & 0xFF);
+heatingThermostat.setTemperatureSetpoint(raw[7] & 0x7F);
 String hexDate=Utils.toHex(raw[8] & 0xFF,raw[9] & 0xFF);
 int dateValue=Utils.fromHex(hexDate);
 int timeValue=raw[10] & 0xFF;
@@ -47,8 +47,7 @@ Date date=Utils.resolveDateTime(dateValue,timeValue);
 heatingThermostat.setDateSetpoint(date);
 int actualTemp=0;
 if (device.getType() == DeviceType.WallMountedThermostat) {
-actualTemp=(raw[11] & 0xFF);
-if (actualTemp < 100) actualTemp+=256;
+actualTemp=(raw[11] & 0xFF) + (raw[7] & 0x80) * 2;
 }
  else {
 if (heatingThermostat.getMode() != ThermostatModeType.VACATION && heatingThermostat.getMode() != ThermostatModeType.BOOST) {
