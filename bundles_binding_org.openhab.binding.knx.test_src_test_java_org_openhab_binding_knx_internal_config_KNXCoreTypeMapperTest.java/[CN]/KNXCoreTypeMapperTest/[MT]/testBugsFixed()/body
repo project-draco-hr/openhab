@@ -1,0 +1,11 @@
+{
+  try {
+    Type type=testToType(DPTXlator2ByteFloat.DPT_TEMPERATURE,new byte[]{(byte)0x7F,(byte)0xFF},DecimalType.class);
+    String value=knxCoreTypeMapper.toDPTValue(type,DPTXlator2ByteFloat.DPT_TEMPERATURE.getID());
+    bugsFixed.put("calimero #5","670760.96".equals(value));
+    type=testToType(DPTXlatorString.DPT_STRING_8859_1,new byte[]{0x61,0x62},StringType.class);
+    bugsFixed.put("calimero #8",type == null);
+  }
+ catch (  KNXFormatException e) {
+  }
+}
