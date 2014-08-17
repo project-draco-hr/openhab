@@ -1,0 +1,14 @@
+{
+  testToTypeClass(dpt,expectedClass);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},expectedClass));
+  assertNull("KNXCoreTypeMapper.toType() should return null (decrease break control needs to be ignored)",testToType(dpt,new byte[]{0x00},expectedClass));
+  assertNull("KNXCoreTypeMapper.toType() should return null (increase break control needs to be ignored)",testToType(dpt,new byte[]{0x08},expectedClass));
+  Type type=testToType(dpt,new byte[]{0x01},expectedClass);
+  testToDPTValue(dpt,type,valueLow);
+  type=testToType(dpt,new byte[]{0x0F},expectedClass);
+  testToDPTValue(dpt,type,valueHigh);
+  type=testToType(dpt,new byte[]{(byte)0xFF},expectedClass);
+  testToDPTValue(dpt,type,valueHigh);
+  type=testToType(dpt,new byte[]{(byte)0x0F,0},expectedClass);
+  testToDPTValue(dpt,type,valueHigh);
+}

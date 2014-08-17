@@ -1,15 +1,3 @@
 {
-  DPT dpt=DPTXlator4ByteSigned.DPT_ACTIVE_ENERGY_KWH;
-  testToTypeClass(dpt,DecimalType.class);
-  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DecimalType.class));
-  Type type=testToType(dpt,new byte[]{(byte)0x7F,(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
-  testToDPTValue(dpt,type,"2147483647");
-  type=testToType(dpt,new byte[]{0x00,0x00,0x00,0x00},DecimalType.class);
-  testToDPTValue(dpt,type,"0");
-  type=testToType(dpt,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
-  testToDPTValue(dpt,type,"-1");
-  type=testToType(dpt,new byte[]{(byte)0x80,0x00,0x00,0x00},DecimalType.class);
-  testToDPTValue(dpt,type,"-2147483648");
-  type=testToType(dpt,new byte[]{(byte)0x7F,(byte)0xFF,(byte)0xFF,(byte)0xFF},DecimalType.class);
-  testToDPTValue(dpt,type,"2147483647");
+  testTypeMapping4ByteSigned(DPTXlator4ByteSigned.DPT_ACTIVE_ENERGY_KWH);
 }
