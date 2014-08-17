@@ -1,14 +1,14 @@
 {
-  logger.trace(getName() + "Mios updated()");
+  logger.trace(getName() + "MiOS updated()");
   Map<String,MiosUnit> units=new HashMap<String,MiosUnit>();
-  Enumeration<String> keys=config.keys();
+  Enumeration<String> keys=properties.keys();
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
     if ("service.pid".equals(key)) {
       continue;
     }
     String unitName=null;
-    String value=((String)config.get(key)).trim();
+    String value=((String)properties.get(key)).trim();
     String[] parts=key.split("\\.",2);
     if (parts.length != 1) {
       unitName=parts[0];
