@@ -1,3 +1,11 @@
 {
-  logger.debug("execute() method is called!");
+  for (  BenqProjectorBindingProvider binding : super.providers) {
+    for (    String itemName : binding.getItemNames()) {
+      logger.debug("Polling projector status for " + itemName);
+      BenqProjectorBindingConfig cfg=binding.getConfigForItemName(itemName);
+      State s=queryProjector(cfg);
+      eventPublisher.postUpdate(itemName,s);
+      logger.debug(itemName + " status is " + s);
+    }
+  }
 }

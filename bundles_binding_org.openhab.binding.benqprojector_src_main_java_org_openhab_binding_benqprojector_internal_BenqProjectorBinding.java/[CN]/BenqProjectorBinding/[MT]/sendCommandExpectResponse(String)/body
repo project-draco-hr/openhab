@@ -1,0 +1,26 @@
+{
+  String respStr="";
+  String tmp;
+  if (this.projectorWriter != null) {
+    this.projectorWriter.printf("%s",cmd);
+    logger.debug("Sent command '" + cmd.replace("\r","") + "'");
+    try {
+      tmp=this.projectorReader.readLine();
+      while (tmp != null) {
+        if (tmp.startsWith(">") == false && tmp.endsWith("#")) {
+          logger.debug("Response: '" + tmp + "'");
+          respStr=tmp;
+          break;
+        }
+        tmp=this.projectorReader.readLine();
+      }
+    }
+ catch (    IOException e) {
+      logger.error("IO Exception while reading response from projector: " + e.getMessage());
+    }
+  }
+ else {
+    logger.debug("Not sending command to projector as connection is not configured yet.");
+  }
+  return respStr;
+}

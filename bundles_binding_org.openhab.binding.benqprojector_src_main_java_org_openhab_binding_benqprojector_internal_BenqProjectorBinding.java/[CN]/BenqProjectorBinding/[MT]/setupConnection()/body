@@ -1,0 +1,28 @@
+{
+  boolean setupOK=false;
+  if (this.projectorSocket == null && this.networkMode) {
+    logger.debug("Running connection setup");
+    try {
+      logger.debug("Setting up socket connection to " + this.networkHost + ":"+ this.networkPort);
+      this.projectorSocket=new Socket(this.networkHost,this.networkPort);
+      logger.debug("Setup reader/writer");
+      this.projectorReader=new BufferedReader(new InputStreamReader(this.projectorSocket.getInputStream()));
+      this.projectorWriter=new PrintWriter(this.projectorSocket.getOutputStream(),true);
+      setupOK=true;
+    }
+ catch (    UnknownHostException e) {
+      logger.error("Unable to find host: " + this.networkHost);
+    }
+catch (    IOException e) {
+      logger.error("IO Exception: " + e.getMessage());
+    }
+    logger.debug("Network connection setup successfully!");
+  }
+ else   if (this.networkMode == false) {
+    logger.error("Non-network mode not implemented yet!");
+  }
+ else {
+    logger.debug("Socket is already setup");
+  }
+  return setupOK;
+}

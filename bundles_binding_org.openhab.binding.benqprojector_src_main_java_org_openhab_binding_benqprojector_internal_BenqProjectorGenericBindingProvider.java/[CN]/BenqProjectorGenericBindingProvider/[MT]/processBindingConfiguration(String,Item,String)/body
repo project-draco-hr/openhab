@@ -1,5 +1,15 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   BenqProjectorBindingConfig config=new BenqProjectorBindingConfig();
-  addBindingConfig(item,config);
+switch (bindingConfig.toLowerCase()) {
+case "power":
+    config.mode=BenqProjectorItemMode.POWER;
+  break;
+case "mute":
+config.mode=BenqProjectorItemMode.MUTE;
+break;
+default :
+throw new BindingConfigParseException("Unable to parse '" + bindingConfig + "' to create a valid item binding.");
+}
+addBindingConfig(item,config);
 }
