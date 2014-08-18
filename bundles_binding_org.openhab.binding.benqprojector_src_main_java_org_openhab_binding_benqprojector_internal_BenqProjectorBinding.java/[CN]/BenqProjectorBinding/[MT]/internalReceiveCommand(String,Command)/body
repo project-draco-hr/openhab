@@ -1,3 +1,9 @@
 {
-  logger.debug("internalReceiveCommand() is called!");
+  for (  BenqProjectorBindingProvider binding : super.providers) {
+    if (binding.providesBindingFor(itemName)) {
+      logger.debug("Process command " + command + " for "+ itemName);
+      BenqProjectorBindingConfig cfg=binding.getConfigForItemName(itemName);
+      sendCommandToProjector(cfg,command);
+    }
+  }
 }

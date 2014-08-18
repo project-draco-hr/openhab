@@ -1,0 +1,57 @@
+{
+  Boolean cmdSent=false;
+switch (cfg.mode) {
+case POWER:
+case MUTE:
+    if (c instanceof OnOffType) {
+      if ((OnOffType)c == OnOffType.ON) {
+        sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
+        cmdSent=true;
+      }
+ else       if ((OnOffType)c == OnOffType.OFF) {
+        sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
+        cmdSent=true;
+      }
+    }
+  break;
+case VOLUME:
+if (c instanceof DecimalType) {
+  State currentVolState=queryProjector(cfg);
+  int currentVol=((DecimalType)currentVolState).intValue();
+  int volLevel=((DecimalType)c).intValue();
+  if (volLevel > this.MAX_VOLUME) {
+    volLevel=this.MAX_VOLUME;
+  }
+ else   if (volLevel < this.MIN_VOLUME) {
+    volLevel=this.MIN_VOLUME;
+  }
+  if (currentVol == volLevel)   cmdSent=true;
+  while (currentVol != volLevel) {
+    if (currentVol < volLevel) {
+      sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+      currentVol++;
+      cmdSent=true;
+    }
+ else {
+      sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+      currentVol--;
+      cmdSent=true;
+    }
+  }
+}
+ else if (c instanceof IncreaseDecreaseType) {
+  if ((IncreaseDecreaseType)c == IncreaseDecreaseType.INCREASE) {
+    sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+    cmdSent=true;
+  }
+ else   if ((IncreaseDecreaseType)c == IncreaseDecreaseType.DECREASE) {
+    sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+    cmdSent=true;
+  }
+}
+break;
+}
+if (cmdSent == false) {
+logger.error("Unable to convert item command to projector state: Command=" + c);
+}
+}
