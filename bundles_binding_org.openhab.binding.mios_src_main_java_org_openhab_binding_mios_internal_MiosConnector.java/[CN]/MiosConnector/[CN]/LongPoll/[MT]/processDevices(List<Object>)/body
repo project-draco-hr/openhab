@@ -1,0 +1,44 @@
+{
+  for (  Object d : devices) {
+    @SuppressWarnings("unchecked") Map<String,Object> device=(Map<String,Object>)d;
+    String deviceId;
+    Object v=device.get("id");
+    if (v instanceof String) {
+      deviceId=(String)v;
+    }
+ else     if (v instanceof Integer) {
+      deviceId=((Integer)v).toString();
+    }
+ else {
+      throw new IllegalArgumentException("WTF?");
+    }
+    for (    Map.Entry<String,Object> da : device.entrySet()) {
+      String key=da.getKey();
+      Object value=da.getValue();
+      if (value instanceof String || value instanceof Integer || value instanceof Double|| value instanceof Boolean) {
+        if (key.equals("time_created")) {
+          value=fixTimestamp(value);
+        }
+        String property="device:" + deviceId + '/'+ da.getKey();
+        publish(property,value);
+      }
+ else {
+        if (key.equals("states") || key.equals("ControlURLs") || key.equals("Jobs")|| key.equals("tooltip")) {
+          continue;
+        }
+        logger.debug("processDevices: skipping key={}, class={}",key,value.getClass());
+      }
+    }
+    List<Object> deviceStates=getList(device,"states");
+    for (    Object ds : deviceStates) {
+      @SuppressWarnings("unchecked") Map<String,Object> state=(Map<String,Object>)ds;
+      String var=(String)state.get("service") + "/" + (String)state.get("variable");
+      String property="device:" + deviceId + "/service/"+ var;
+      Object value=(Object)state.get("value");
+      if (datetimeMap.containsKey(var)) {
+        value=fixTimestamp(value);
+      }
+      publish(property,value);
+    }
+  }
+}

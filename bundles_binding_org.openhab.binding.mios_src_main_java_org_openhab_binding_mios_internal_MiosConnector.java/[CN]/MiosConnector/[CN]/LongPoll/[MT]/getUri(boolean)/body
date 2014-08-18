@@ -1,8 +1,8 @@
 {
   boolean force=full || (failures != 0) && ((failures % FORCE_FULL_POLL) == 0);
-  MiosUnit unit=connector.getUnit();
+  MiosUnit unit=getMiosUnit();
   if (!force && loadTime != null && dataVersion != null) {
-    AsyncHttpClientConfig c=client.getConfig();
+    AsyncHttpClientConfig c=getAsyncHttpClient().getConfig();
     int t=Math.min(c.getIdleConnectionTimeoutInMs(),c.getRequestTimeoutInMs()) / 1000 / 3;
     return String.format(Locale.US,STATUS2_INCREMENTAL_URL,unit.getHostname(),unit.getPort(),loadTime,dataVersion,new Integer(t));
   }

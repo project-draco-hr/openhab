@@ -5,7 +5,7 @@
       String uri=getUri(loopCount == 0);
       logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
       loopCount=((loopCount + 1) % MAX_FULL_REFRESH_COUNT);
-      Future<Response> f=client.prepareGet(uri).execute();
+      Future<Response> f=getAsyncHttpClient().prepareGet(uri).execute();
       Response r=(Response)f.get();
       Map<String,Object> json=readJson(r.getResponseBody());
       if (json.containsKey("error"))       throw new IOException(json.get("error").toString());
@@ -22,7 +22,7 @@
       }
     }
   }
- while (connector.isRunning());
-  logger.info("run: Shutting down MiOS Polling thread.  Unit={}",connector.getUnit().getName());
+ while (isRunning());
+  logger.info("run: Shutting down MiOS Polling thread.  Unit={}",getMiosUnit().getName());
   connected=false;
 }

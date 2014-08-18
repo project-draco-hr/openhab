@@ -5,6 +5,6 @@
   Builder builder=new AsyncHttpClientConfig.Builder();
   builder.setRequestTimeoutInMs(unit.getTimeout());
   this.client=new AsyncHttpClient(new JDKAsyncHttpProvider(builder.build()));
-  pollCall=new MiosPollCall(client,this);
+  pollCall=new LongPoll();
   pollThread=new Thread(pollCall);
 }
