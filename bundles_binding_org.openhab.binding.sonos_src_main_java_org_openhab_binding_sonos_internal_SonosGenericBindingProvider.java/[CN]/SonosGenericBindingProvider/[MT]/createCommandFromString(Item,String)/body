@@ -1,5 +1,12 @@
 {
-  Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
+  List<Class<? extends Command>> acceptedType=new ArrayList<Class<? extends Command>>();
+  if (item != null) {
+    acceptedType=item.getAcceptedCommandTypes();
+  }
+ else {
+    acceptedType.add(StringType.class);
+  }
+  Command command=TypeParser.parseCommand(acceptedType,commandAsString);
   if (command == null) {
     throw new BindingConfigParseException("couldn't create Command from '" + commandAsString + "' ");
   }
