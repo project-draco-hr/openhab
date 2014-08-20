@@ -7,18 +7,17 @@
     String modeString=(String)config.get("mode");
     if (StringUtils.isNotBlank(modeString)) {
       if (modeString.equalsIgnoreCase("serial")) {
-        networkMode=false;
       }
+ else {
+        transport=new BenqProjectorNetworkTransport();
+      }
+    }
+ else {
+      transport=new BenqProjectorNetworkTransport();
     }
     String deviceIdString=(String)config.get("deviceId");
     if (StringUtils.isNotBlank(deviceIdString)) {
-      String[] deviceIdParts=deviceIdString.split(":");
-      if (deviceIdParts.length == 2) {
-        this.networkHost=deviceIdParts[0];
-        this.networkPort=Integer.parseInt(deviceIdParts[1]);
-      }
-      setProperlyConfigured(true);
-      setupConnection();
+      setProperlyConfigured(transport.setupConnection(deviceIdString));
     }
   }
 }

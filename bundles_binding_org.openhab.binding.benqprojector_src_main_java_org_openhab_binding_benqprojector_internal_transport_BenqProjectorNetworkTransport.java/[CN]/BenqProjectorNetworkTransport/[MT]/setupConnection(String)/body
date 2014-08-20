@@ -1,6 +1,14 @@
 {
   boolean setupOK=false;
-  if (this.projectorSocket == null && this.networkMode) {
+  if (this.projectorSocket == null) {
+    String[] deviceIdParts=connectionParams.split(":");
+    if (deviceIdParts.length == 2) {
+      this.networkHost=deviceIdParts[0];
+      this.networkPort=Integer.parseInt(deviceIdParts[1]);
+    }
+ else {
+      return false;
+    }
     logger.debug("Running connection setup");
     try {
       logger.debug("Setting up socket connection to " + this.networkHost + ":"+ this.networkPort);
@@ -18,9 +26,6 @@ catch (    IOException e) {
       logger.error("IO Exception: " + e.getMessage());
     }
     logger.debug("Network connection setup successfully!");
-  }
- else   if (this.networkMode == false) {
-    logger.error("Non-network mode not implemented yet!");
   }
  else {
     logger.debug("Socket is already setup");

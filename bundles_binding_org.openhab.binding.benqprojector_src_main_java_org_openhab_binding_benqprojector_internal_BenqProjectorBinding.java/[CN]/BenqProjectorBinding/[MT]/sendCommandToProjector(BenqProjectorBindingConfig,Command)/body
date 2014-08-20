@@ -5,11 +5,11 @@ case POWER:
 case MUTE:
     if (c instanceof OnOffType) {
       if ((OnOffType)c == OnOffType.ON) {
-        sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
+        transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
         cmdSent=true;
       }
  else       if ((OnOffType)c == OnOffType.OFF) {
-        sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
+        transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
         cmdSent=true;
       }
     }
@@ -28,12 +28,12 @@ if (c instanceof DecimalType) {
   if (currentVol == volLevel)   cmdSent=true;
   while (currentVol != volLevel) {
     if (currentVol < volLevel) {
-      sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+      transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
       currentVol++;
       cmdSent=true;
     }
  else {
-      sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+      transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
       currentVol--;
       cmdSent=true;
     }
@@ -41,11 +41,11 @@ if (c instanceof DecimalType) {
 }
  else if (c instanceof IncreaseDecreaseType) {
   if ((IncreaseDecreaseType)c == IncreaseDecreaseType.INCREASE) {
-    sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+    transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
     cmdSent=true;
   }
  else   if ((IncreaseDecreaseType)c == IncreaseDecreaseType.DECREASE) {
-    sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+    transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
     cmdSent=true;
   }
 }
@@ -58,7 +58,7 @@ if (c instanceof DecimalType) {
 DecimalType sourceIdx=(DecimalType)c;
 String cmd=BenqProjectorSourceMapping.getStringFromMapping(sourceIdx.intValue());
 if (cmd.isEmpty() == false) {
-sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
+transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
 cmdSent=true;
 }
 }
@@ -68,7 +68,7 @@ if (c instanceof StringType) {
 StringType sourceStr=(StringType)c;
 int mappingIdx=BenqProjectorSourceMapping.getMappingFromString(sourceStr.toString());
 if (mappingIdx != -1) {
-sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
+transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
 cmdSent=true;
 }
 }
