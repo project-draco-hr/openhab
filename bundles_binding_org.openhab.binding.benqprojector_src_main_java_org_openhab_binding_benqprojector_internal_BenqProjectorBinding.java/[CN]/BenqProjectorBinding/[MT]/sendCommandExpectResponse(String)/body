@@ -7,7 +7,7 @@
     try {
       tmp=this.projectorReader.readLine();
       while (tmp != null) {
-        if (tmp.startsWith(">") == false && tmp.endsWith("#")) {
+        if (tmp.startsWith("*") == true && tmp.endsWith("#")) {
           logger.debug("Response: '" + tmp + "'");
           respStr=tmp;
           break;
@@ -15,7 +15,10 @@
         tmp=this.projectorReader.readLine();
       }
     }
- catch (    IOException e) {
+ catch (    SocketTimeoutException e) {
+      logger.warn("Timed out reading response from projector");
+    }
+catch (    IOException e) {
       logger.error("IO Exception while reading response from projector: " + e.getMessage());
     }
   }

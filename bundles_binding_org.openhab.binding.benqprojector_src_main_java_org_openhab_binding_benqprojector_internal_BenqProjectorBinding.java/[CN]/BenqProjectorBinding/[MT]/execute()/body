@@ -4,8 +4,13 @@
       logger.debug("Polling projector status for " + itemName);
       BenqProjectorBindingConfig cfg=binding.getConfigForItemName(itemName);
       State s=queryProjector(cfg);
-      eventPublisher.postUpdate(itemName,s);
-      logger.debug(itemName + " status is " + s);
+      if (!(s instanceof UnDefType)) {
+        eventPublisher.postUpdate(itemName,s);
+        logger.debug(itemName + " status is " + s);
+      }
+ else {
+        logger.debug(itemName + " not updated as result was undefined");
+      }
     }
   }
 }
