@@ -50,6 +50,32 @@ if (c instanceof DecimalType) {
   }
 }
 break;
+case LAMP_HOURS:
+logger.warn("Cannot send command to set lamp hours - not a valid operation!");
+break;
+case SOURCE_NUMBER:
+if (c instanceof DecimalType) {
+DecimalType sourceIdx=(DecimalType)c;
+String cmd=BenqProjectorSourceMapping.getStringFromMapping(sourceIdx.intValue());
+if (cmd.isEmpty() == false) {
+sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
+cmdSent=true;
+}
+}
+break;
+case SOURCE_STRING:
+if (c instanceof StringType) {
+StringType sourceStr=(StringType)c;
+int mappingIdx=BenqProjectorSourceMapping.getMappingFromString(sourceStr.toString());
+if (mappingIdx != -1) {
+sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
+cmdSent=true;
+}
+}
+break;
+default :
+logger.error("Unexpected Item Mode!");
+break;
 }
 if (cmdSent == false) {
 logger.error("Unable to convert item command to projector state: Command=" + c);

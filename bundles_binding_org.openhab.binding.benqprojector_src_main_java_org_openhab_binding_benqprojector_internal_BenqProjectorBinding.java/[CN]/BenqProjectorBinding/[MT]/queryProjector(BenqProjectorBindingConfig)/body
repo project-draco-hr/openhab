@@ -1,14 +1,4 @@
 {
-  State s=UnDefType.UNDEF;
   String resp=sendCommandExpectResponse(cfg.mode.getItemModeCommandQueryString());
-switch (cfg.mode) {
-case POWER:
-case MUTE:
-    s=parseOnOffQuery(resp);
-  break;
-case VOLUME:
-s=parseNumberQuery(resp);
-break;
-}
-return s;
+  return cfg.mode.parseResponse(resp);
 }
