@@ -1,28 +1,27 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   BenqProjectorBindingConfig config=new BenqProjectorBindingConfig();
-switch (bindingConfig.toLowerCase()) {
-case "power":
+  if (bindingConfig.equalsIgnoreCase("power")) {
     config.mode=BenqProjectorItemMode.POWER;
-  break;
-case "mute":
-config.mode=BenqProjectorItemMode.MUTE;
-break;
-case "volume":
-config.mode=BenqProjectorItemMode.VOLUME;
-break;
-case "lamp_hours":
-config.mode=BenqProjectorItemMode.LAMP_HOURS;
-break;
-case "source_number":
-config.mode=BenqProjectorItemMode.SOURCE_NUMBER;
-break;
-case "source_string":
-config.mode=BenqProjectorItemMode.SOURCE_STRING;
-break;
-default :
-throw new BindingConfigParseException("Unable to parse '" + bindingConfig + "' to create a valid item binding.");
-}
-logger.debug("Adding " + item.getName() + " as "+ config.mode);
-addBindingConfig(item,config);
+  }
+ else   if (bindingConfig.equalsIgnoreCase("mute")) {
+    config.mode=BenqProjectorItemMode.MUTE;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("volume")) {
+    config.mode=BenqProjectorItemMode.VOLUME;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("lamp_hours")) {
+    config.mode=BenqProjectorItemMode.LAMP_HOURS;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("source_number")) {
+    config.mode=BenqProjectorItemMode.SOURCE_NUMBER;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("source_string")) {
+    config.mode=BenqProjectorItemMode.SOURCE_STRING;
+  }
+ else {
+    throw new BindingConfigParseException("Unable to parse '" + bindingConfig + "' to create a valid item binding.");
+  }
+  logger.debug("Adding " + item.getName() + " as "+ config.mode);
+  addBindingConfig(item,config);
 }
