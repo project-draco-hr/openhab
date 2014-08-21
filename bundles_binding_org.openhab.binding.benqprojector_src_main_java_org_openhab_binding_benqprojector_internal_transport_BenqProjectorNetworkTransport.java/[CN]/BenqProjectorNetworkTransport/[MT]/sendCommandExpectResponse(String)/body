@@ -19,11 +19,23 @@
       logger.warn("Timed out reading response from projector");
     }
 catch (    IOException e) {
-      logger.error("IO Exception while reading response from projector: " + e.getMessage());
+      if (retryAttempt == false) {
+        this.closeConnection();
+        if (this.networkConnect()) {
+          retryAttempt=true;
+          sendCommandExpectResponse(cmd);
+        }
+ else {
+          logger.error("Attempt to reconnect after IOException failed: " + e.getMessage());
+        }
+      }
+ else {
+        logger.error("IO Exception while reading response from projector: " + e.getMessage());
+      }
     }
   }
  else {
-    logger.debug("Not sending command to projector as connection is not configured yet.");
+    logger.debug("Not sending command to projector as connection is not setup yet.");
   }
   return respStr;
 }
