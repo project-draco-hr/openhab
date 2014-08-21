@@ -1,0 +1,8 @@
+{
+  int len=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_LEN,PKT_POS_MSG_LEN + PKT_POS_MSG_LEN_LEN),16) & 0xFF);
+  if (len != ((rawMsg.length() - (PKT_POS_MSG_START + PKT_CHARS_PER_BYTE)) / PKT_CHARS_PER_BYTE)) {
+    logger.error("Unable to process packet " + rawMsg + ". Length is not correct.");
+    return false;
+  }
+  return true;
+}

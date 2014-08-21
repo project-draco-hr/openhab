@@ -7,20 +7,16 @@
     return;
   }
   if (!isConnected()) {
-    logger.error("InfluxDB is not yet? connected");
+    logger.error("InfluxDB is not yet connected");
     return;
   }
   String realName=item.getName();
   String name=(alias != null) ? alias : realName;
   Object value=stateToObject(item.getState());
   logger.trace("storing {} in influxdb {}",name,value);
-  Serie serie=new Serie(name);
-  serie.setColumns(new String[]{VALUE_COLUMN_NAME});
-  Object[] point=new Object[]{value};
-  serie.setPoints(new Object[][]{point});
-  Serie[] series=new Serie[]{serie};
+  Serie serie=new Serie.Builder(name).columns(VALUE_COLUMN_NAME).values(value).build();
   try {
-    influxDB.write(dbName,series,TimeUnit.MILLISECONDS);
+    influxDB.write(dbName,TimeUnit.MILLISECONDS,serie);
   }
  catch (  RuntimeException e) {
     logger.error("storing failed with exception for item: {}",name);

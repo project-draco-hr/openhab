@@ -1,0 +1,18 @@
+{
+  if (time < 0.0) {
+    return null;
+  }
+  Calendar cal=(Calendar)calendar.clone();
+  int hour=0;
+  int minute=0;
+  if (time == 24.0) {
+    cal.add(Calendar.DAY_OF_MONTH,1);
+  }
+ else {
+    hour=(int)time;
+    minute=(int)((time * 100) - (hour * 100));
+  }
+  cal.set(Calendar.HOUR_OF_DAY,hour);
+  cal.set(Calendar.MINUTE,minute);
+  return DateUtils.truncate(cal,Calendar.MINUTE);
+}

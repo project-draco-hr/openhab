@@ -1,0 +1,23 @@
+{
+  File cfgFile=new File(generateConfigFilename());
+  if (cfgFile.exists()) {
+    try {
+      FileInputStream fiStream=new FileInputStream(cfgFile);
+      Properties propertiesFile=new Properties();
+      propertiesFile.load(fiStream);
+      this.devAddr=propertiesFile.getProperty("devAddr");
+      this.paired=true;
+      fiStream.close();
+    }
+ catch (    IOException e) {
+      logger.warn("Unable to load information for " + this.getDeviceType() + " "+ this.getSerialNumber()+ " it may not yet be paired. Error was "+ e.getMessage());
+      this.paired=false;
+      return;
+    }
+    logger.debug("Successfully loaded pairing info for " + this.getSerialNumber());
+  }
+ else {
+    logger.warn("Unable to locate information for " + this.getDeviceType() + " "+ this.getSerialNumber()+ " it may not yet be paired");
+    this.paired=false;
+  }
+}

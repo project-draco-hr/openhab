@@ -1,0 +1,145 @@
+{
+  logger.debug("Received data from CUL: " + data);
+  MaxCulMsgType msgType=BaseMsg.getMsgType(data);
+  if (((pairMode && isBroadcast) || !isBroadcast) && msgType == MaxCulMsgType.PAIR_PING) {
+    logger.debug("Got PAIR_PING message");
+    MaxCulBindingConfig configWithTempsConfig=null;
+    PairPingMsg pkt=new PairPingMsg(data);
+    Collection<MaxCulBindingConfig> bindingConfigs=getBindingsBySerial(pkt.serial);
+    if (bindingConfigs != null) {
+      logger.debug("Found " + bindingConfigs.size() + " configs for "+ pkt.serial);
+      for (      MaxCulBindingConfig bc : bindingConfigs) {
+        bc.setPairedInfo(pkt.srcAddrStr);
+        if (bc.isTemperatureConfigSet() && configWithTempsConfig == null) {
+          configWithTempsConfig=bc;
+        }
+      }
+      if (configWithTempsConfig == null) {
+        logger.debug("Using default temperature configuration from config 0");
+        configWithTempsConfig=(MaxCulBindingConfig)bindingConfigs.toArray()[0];
+      }
+      HashSet<MaxCulBindingConfig> associations=null;
+      for (      MaxCulBindingProvider provider : super.providers) {
+        associations=provider.getAssociations(configWithTempsConfig.getSerialNumber());
+        if (associations != null && associations.isEmpty() == false) {
+          logger.debug("Found associations");
+          break;
+        }
+      }
+      logger.debug("Creating pairing sequencer");
+      PairingInitialisationSequence ps=new PairingInitialisationSequence(this.DEFAULT_GROUP_ID,messageHandler,configWithTempsConfig,associations);
+      messageHandler.startSequence(ps,pkt);
+    }
+ else {
+      logger.error("Pairing failed: Unable to find binding config for device " + pkt.serial);
+    }
+  }
+ else {
+switch (msgType) {
+case WALL_THERMOSTAT_CONTROL:
+      WallThermostatControlMsg wallThermCtrlMsg=new WallThermostatControlMsg(data);
+    wallThermCtrlMsg.printMessage();
+  for (  MaxCulBindingProvider provider : super.providers) {
+    Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermCtrlMsg.srcAddrStr);
+    for (    MaxCulBindingConfig bc : bindingConfigs) {
+      if (bc.getFeature() == MaxCulFeature.THERMOSTAT && wallThermCtrlMsg.getDesiredTemperature() != null) {
+        String itemName=provider.getItemNameForConfig(bc);
+        eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getDesiredTemperature()));
+      }
+ else       if (bc.getFeature() == MaxCulFeature.TEMPERATURE && wallThermCtrlMsg.getMeasuredTemperature() != null) {
+        String itemName=provider.getItemNameForConfig(bc);
+        eventPublisher.postUpdate(itemName,new DecimalType(wallThermCtrlMsg.getMeasuredTemperature()));
+      }
+    }
+  }
+if (isBroadcast == false) this.messageHandler.sendAck(wallThermCtrlMsg);
+break;
+case SET_TEMPERATURE:
+SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
+setTempMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(setTempMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT) {
+String itemName=provider.getItemNameForConfig(bc);
+eventPublisher.postUpdate(itemName,new DecimalType(setTempMsg.getDesiredTemperature()));
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(setTempMsg);
+break;
+case THERMOSTAT_STATE:
+ThermostatStateMsg thermStateMsg=new ThermostatStateMsg(data);
+thermStateMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(thermStateMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT && thermStateMsg.getDesiredTemperature() != null) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getDesiredTemperature()));
+}
+ else if (bc.getFeature() == MaxCulFeature.TEMPERATURE && thermStateMsg.getMeasuredTemperature() != null) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getMeasuredTemperature()));
+}
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
+eventPublisher.postUpdate(itemName,thermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (bc.getFeature() == MaxCulFeature.MODE) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getControlMode().toInt()));
+}
+ else if (bc.getFeature() == MaxCulFeature.VALVE_POS) {
+eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getValvePos()));
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(thermStateMsg);
+break;
+case WALL_THERMOSTAT_STATE:
+WallThermostatStateMsg wallThermStateMsg=new WallThermostatStateMsg(data);
+wallThermStateMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(wallThermStateMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.getFeature() == MaxCulFeature.THERMOSTAT && wallThermStateMsg.getDesiredTemperature() != null) {
+eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getDesiredTemperature()));
+}
+ else if (bc.getFeature() == MaxCulFeature.TEMPERATURE && wallThermStateMsg.getMeasuredTemperature() != null) {
+eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getMeasuredTemperature()));
+}
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
+eventPublisher.postUpdate(itemName,wallThermStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (bc.getFeature() == MaxCulFeature.MODE) {
+eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getControlMode().toInt()));
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(wallThermStateMsg);
+break;
+case TIME_INFO:
+TimeInfoMsg timeMsg=new TimeInfoMsg(data);
+timeMsg.printMessage();
+TimeUpdateRequestSequence timeSeq=new TimeUpdateRequestSequence(this.tzStr,messageHandler);
+messageHandler.startSequence(timeSeq,timeMsg);
+break;
+case PUSH_BUTTON_STATE:
+PushButtonMsg pbMsg=new PushButtonMsg(data);
+pbMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(pbMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.getFeature() == MaxCulFeature.SWITCH) {
+if (pbMsg.getMode() == PushButtonMode.AUTO) eventPublisher.postUpdate(itemName,OnOffType.ON);
+ else if (pbMsg.getMode() == PushButtonMode.ECO) eventPublisher.postUpdate(itemName,OnOffType.OFF);
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(pbMsg);
+default :
+logger.debug("Unhandled message type " + msgType.toString());
+break;
+}
+}
+}

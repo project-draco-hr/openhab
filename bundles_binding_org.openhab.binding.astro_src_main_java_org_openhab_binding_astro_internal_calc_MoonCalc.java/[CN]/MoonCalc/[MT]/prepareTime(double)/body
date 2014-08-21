@@ -1,0 +1,14 @@
+{
+  if (riseSet == -1) {
+    return riseSet;
+  }
+  double riseMinute=(riseSet - Math.floor(riseSet)) * 60.0 / 100.0;
+  if (riseMinute >= .595) {
+    riseMinute=0;
+    riseSet+=1;
+  }
+  riseSet=Math.floor(riseSet) + riseMinute;
+  BigDecimal bd=new BigDecimal(Double.toString(riseSet));
+  bd=bd.setScale(2,BigDecimal.ROUND_HALF_UP);
+  return bd.doubleValue();
+}

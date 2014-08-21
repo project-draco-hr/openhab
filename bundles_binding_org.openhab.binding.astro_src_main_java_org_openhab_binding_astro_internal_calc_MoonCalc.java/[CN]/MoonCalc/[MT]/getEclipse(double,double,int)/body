@@ -1,0 +1,51 @@
+{
+  k=Math.floor(k) + typ;
+  double t=k / 1236.85;
+  double f=var_f(k,t);
+  double jd=0;
+  double ringTest=0;
+  if (SN(Math.abs(f)) <= .36) {
+    double o=var_o(k,t);
+    double f1=f - .02665 * SN(o);
+    double a1=299.77 + .107408 * k - .009173 * t * t;
+    double e=var_e(t);
+    double m=var_m(k,t);
+    double m1=var_m1(k,t);
+    double p=.207 * e * SN(m) + .0024 * e * SN(2 * m) - .0392 * SN(m1) + .0116 * SN(2 * m1) - .0073 * e * SN(m1 + m) + .0067 * e * SN(m1 - m) + .0118 * SN(2 * f1);
+    double q=5.2207 - .0048 * e * CS(m) + .002 * e * CS(2 * m) - .3299 * CS(m1) - .006 * e * CS(m1 + m) + .0041 * e * CS(m1 - m);
+    double g=(p * CS(f1) + q * SN(f1)) * (1 - .0048 * CS(Math.abs(f1)));
+    double u=.0059 + .0046 * e * CS(m) - .0182 * CS(m1) + .0004 * CS(2 * m1) - .0005 * CS(m + m1);
+    jd=var_jde(k,t);
+    jd+=(typ == ECLIPSE_TYPE_MOON) ? -.4065 * SN(m1) + .1727 * e * SN(m) : -.4075 * SN(m1) + .1721 * e * SN(m);
+    jd+=.0161 * SN(2 * m1) - .0097 * SN(2 * f1) + .0073 * e * SN(m1 - m) - .005 * e * SN(m1 + m) - .0023 * SN(m1 - 2 * f1) + .0021 * e * SN(2 * m);
+    jd+=.0012 * SN(m1 + 2 * f1) + .0006 * e * SN(2 * m1 + m) - .0004 * SN(3 * m1) - .0003 * e * SN(m + 2 * f1) + .0003 * SN(a1) - .0002 * e * SN(m - 2 * f1) - .0002 * e * SN(2 * m1 - m) - .0002 * SN(o);
+    if (typ == ECLIPSE_TYPE_MOON) {
+      if ((1.0248 - u - Math.abs(g)) / .545 <= 0)       jd=0;
+      if (mode == ECLIPSE_MODE_PARTIAL && (1.0128 - u - Math.abs(g)) / .545 > 0 && (.4678 - u) * (.4678 - u) - g * g > 0)       jd=0;
+      if (mode == ECLIPSE_MODE_TOTAL && ((1.0128 - u - Math.abs(g)) / .545 <= 0 != (.4678 - u) * (.4678 - u) - g * g <= 0))       jd=0;
+    }
+ else {
+      if (Math.abs(g) > 1.5433 + u) {
+        jd=0;
+      }
+      if (mode == ECLIPSE_MODE_PARTIAL && ((g >= -.9972 && g <= .9972) || (Math.abs(g) >= .9972 && Math.abs(g) < .9972 + Math.abs(u)))) {
+        jd=0;
+      }
+      if (mode > ECLIPSE_MODE_PARTIAL) {
+        if ((g < -.9972 || g > .9972) || (Math.abs(g) < .9972 && Math.abs(g) > .9972 + Math.abs(u))) {
+          jd=0;
+        }
+        if (u > .0047 || u >= .00464 * Math.sqrt(1 - g * g)) {
+          ringTest=1;
+        }
+        if (ringTest == 1 && mode == ECLIPSE_MODE_TOTAL) {
+          jd=0;
+        }
+        if (ringTest == 0 && mode == ECLIPSE_MODE_RING) {
+          jd=0;
+        }
+      }
+    }
+  }
+  return jd;
+}

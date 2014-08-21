@@ -1,4 +1,5 @@
 {
+  logger.debug("milight: sendPercent");
   if (BindingType.brightness.equals(type) && command.equals(PercentType.ZERO)) {
     sendOff(bulb,bridgeId);
     return;
@@ -49,7 +50,6 @@
       }
     }
  else     if (bulb > 5) {
-      logger.debug("milight: Dimming RGBW bulb");
       if (command.intValue() > 0 && command.intValue() < 100) {
         int newCommand=(command.intValue() * rgbwSteps / 100);
         sendOn(bulb,bridgeId);
@@ -57,6 +57,12 @@
         String messageBytes="4E:" + Integer.toHexString(newCommand) + ":55";
         logger.debug("milight: send dimming packet '{}' to RGBW bulb channel '{}'",messageBytes,bulb);
         sendMessage(messageBytes,bridgeId);
+      }
+ else       if (command.intValue() > 99) {
+        sendFull(bulb,rgbwSteps,bridgeId);
+      }
+ else       if (command.intValue() < 1) {
+        sendOff(bulb,bridgeId);
       }
     }
     setCurrentState(bulb,bridgeId,command,type);

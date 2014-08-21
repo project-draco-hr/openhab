@@ -1,0 +1,14 @@
+{
+  double cosdec=Math.cos(dec);
+  double sindec=Math.sin(dec);
+  double lha=lmst - ra;
+  double coslha=Math.cos(lha);
+  double sinlha=Math.sin(lha);
+  double coslat=Math.cos(geolat);
+  double sinlat=Math.sin(geolat);
+  double n=-cosdec * sinlha;
+  double d=sindec * coslat - cosdec * coslha * sinlat;
+  double az=mod2Pi(Math.atan2(n,d));
+  double alt=Math.asin(sindec * sinlat + cosdec * coslha * coslat);
+  return new double[]{az,alt};
+}
