@@ -22,8 +22,10 @@ catch (    IOException e) {
       if (retryAttempt == false) {
         this.closeConnection();
         if (this.networkConnect()) {
+          logger.debug("Reconnect successful - retrying transmission");
           retryAttempt=true;
           sendCommandExpectResponse(cmd);
+          retryAttempt=false;
         }
  else {
           logger.error("Attempt to reconnect after IOException failed: " + e.getMessage());
