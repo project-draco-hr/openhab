@@ -1,7 +1,9 @@
 {
-  Object result=getConnection(hmInterface).getVersion();
-  if (result instanceof String) {
-    return new ServerId((String)result);
+  Object result=getConnection(hmInterface).getDeviceDescription();
+  String firmwareVersion=null;
+  if (result instanceof Map) {
+    @SuppressWarnings("unchecked") Map<?,String> map=(Map<?,String>)result;
+    firmwareVersion=map.get("FIRMWARE");
   }
-  throw new HomematicClientException("getVersion returns unknown result type: " + (result == null ? "null" : result.getClass()));
+  return new ServerId(StringUtils.defaultIfBlank(firmwareVersion,"unknown"));
 }
