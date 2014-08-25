@@ -1,17 +1,3 @@
 {
-  DPT dpt=DPTXlatorBoolean.DPT_START;
-  testToTypeClass(dpt,StopMoveType.class);
-  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},StopMoveType.class));
-  Type type=testToType(dpt,new byte[]{0},StopMoveType.class);
-  testToDPTValue(dpt,type,"stop");
-  type=testToType(dpt,new byte[]{1},StopMoveType.class);
-  testToDPTValue(dpt,type,"start");
-  type=testToType(dpt,new byte[]{2},StopMoveType.class);
-  testToDPTValue(dpt,type,"stop");
-  type=testToType(dpt,new byte[]{3},StopMoveType.class);
-  testToDPTValue(dpt,type,"start");
-  type=testToType(dpt,new byte[]{(byte)0xFF},StopMoveType.class);
-  testToDPTValue(dpt,type,"start");
-  type=testToType(dpt,new byte[]{(byte)0xFF,0},StopMoveType.class);
-  testToDPTValue(dpt,type,"start");
+  testTypeMappingB1(DPTXlatorBoolean.DPT_START,StopMoveType.class,"stop","start");
 }

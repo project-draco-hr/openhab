@@ -1,0 +1,10 @@
+{
+  double t=(jd - 2451545.0) / 36525.0;
+  double eps=(23. + (26 + 21.45 / 60.) / 60. + t * (-46.815 + t * (-0.0006 + t * 0.00181)) / 3600.) * SunCalc.DEG2RAD;
+  double coseps=Math.cos(eps);
+  double sineps=Math.sin(eps);
+  double sinlon=Math.sin(lon);
+  double ra=mod2Pi(Math.atan2((sinlon * coseps - Math.tan(lat) * sineps),Math.cos(lon)));
+  double dec=Math.asin(Math.sin(lat) * coseps + Math.cos(lat) * sineps * sinlon);
+  return new double[]{ra,dec};
+}

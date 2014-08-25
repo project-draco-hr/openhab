@@ -1,12 +1,11 @@
 {
   Calendar now=Calendar.getInstance();
   SunCalc sunCalc=new SunCalc();
-  SunPosition sp=sunCalc.getSunPosition(now,context.getConfig().getLatitude(),context.getConfig().getLongitude());
   Sun sun=(Sun)context.getPlanet(PlanetName.SUN);
-  sun.setPosition(sp);
+  sunCalc.setSunPosition(now,context.getConfig().getLatitude(),context.getConfig().getLongitude(),sun);
   planetPublisher.publish(PlanetName.SUN);
   MoonCalc moonCalc=new MoonCalc();
   Moon moon=(Moon)context.getPlanet(PlanetName.MOON);
-  moonCalc.setMoonPosition(now,moon);
+  moonCalc.setMoonPosition(now,context.getConfig().getLatitude(),context.getConfig().getLongitude(),moon);
   planetPublisher.publish(PlanetName.MOON);
 }
