@@ -1,0 +1,26 @@
+{
+  final ApplicationSetVolume applicationsetvolume=new ApplicationSetVolume(client,httpUri);
+  if (volume.equals("ON")) {
+    this.volume=new BigDecimal(100);
+  }
+ else   if (volume.equals("OFF")) {
+    this.volume=new BigDecimal(0);
+  }
+ else   if (volume.equals("DECREASE")) {
+    this.volume=this.volume.subtract(VOLUMESTEP);
+  }
+ else   if (volume.equals("INCREASE")) {
+    this.volume=this.volume.add(VOLUMESTEP);
+  }
+ else {
+    try {
+      this.volume=new BigDecimal(volume);
+    }
+ catch (    NumberFormatException e) {
+      logger.error("applicationSetVolume cannot parse volume parameter: " + volume);
+      this.volume=BigDecimal.ZERO;
+    }
+  }
+  applicationsetvolume.setVolume(this.volume.intValue());
+  applicationsetvolume.execute();
+}

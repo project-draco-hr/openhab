@@ -8,7 +8,11 @@
     XbmcBindingConfig config=parseOutgoingBindingConfig(item,bindingConfig);
     addBindingConfig(item,config);
   }
+ else   if (bindingConfig.startsWith("=")) {
+    XbmcBindingConfig config=parseBidirectionalBindingConfig(item,bindingConfig);
+    addBindingConfig(item,config);
+  }
  else {
-    throw new BindingConfigParseException("Item '" + item.getName() + "' does not start with < or >.");
+    throw new BindingConfigParseException("Item '" + item.getName() + "' does not start with <, > or =.");
   }
 }
