@@ -1,0 +1,18 @@
+{
+  if ("Application.OnVolumeChanged".equals(method)) {
+    Map<String,Object> params=RpcCall.getMap(json,"params");
+    Map<String,Object> data=RpcCall.getMap(params,"data");
+    Object o=data.get("volume");
+    PercentType volume=new PercentType(0);
+    if (o instanceof Integer) {
+      volume=new PercentType((Integer)o);
+    }
+ else {
+      if (o instanceof Double) {
+        volume=new PercentType(((Double)o).intValue());
+      }
+    }
+    updateProperty("Application.Volume",volume);
+    this.volume=new BigDecimal(volume.intValue());
+  }
+}
