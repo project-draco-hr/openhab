@@ -1,0 +1,17 @@
+{
+  DPT dpt=DPTXlatorRGB.DPT_RGB;
+  testToTypeClass(dpt,HSBType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},HSBType.class));
+  Type type=testToType(dpt,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,0},HSBType.class);
+  testToDPTValue(dpt,type,"r:255 g:255 b:255");
+  type=testToType(dpt,new byte[]{(byte)0xFF,(byte)0xFF,(byte)0xFF,0},HSBType.class);
+  testToDPTValue(dpt,type,"r:255 g:255 b:255");
+  type=testToType(dpt,new byte[]{0x00,0x00,0x00},HSBType.class);
+  testToDPTValue(dpt,type,"r:0 g:0 b:0");
+  type=testToType(dpt,new byte[]{(byte)0xff,0x00,0x00},HSBType.class);
+  testToDPTValue(dpt,type,"r:255 g:0 b:0");
+  type=testToType(dpt,new byte[]{0x00,(byte)0xff,0x00},HSBType.class);
+  testToDPTValue(dpt,type,"r:0 g:255 b:0");
+  type=testToType(dpt,new byte[]{0x00,0x00,(byte)0xff},HSBType.class);
+  testToDPTValue(dpt,type,"r:0 g:0 b:255");
+}
