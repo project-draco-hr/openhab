@@ -1,0 +1,14 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    serialPort=(String)config.get("serialPort");
+  }
+  serialConnector=new SerialConnector(serialPort);
+  try {
+    serialConnector.connect();
+    serialConnector.addSerialEventProcessor(this);
+  }
+ catch (  EHealthException e) {
+    logger.error("Error connecting to serial port '{}'",serialPort,e);
+  }
+}

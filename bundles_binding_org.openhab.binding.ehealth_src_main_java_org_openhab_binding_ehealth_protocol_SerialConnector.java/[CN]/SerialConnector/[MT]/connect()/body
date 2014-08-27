@@ -1,0 +1,48 @@
+{
+  logger.debug("Goint to open Serial connection on port '{}'",portName);
+  Enumeration<?> portList=CommPortIdentifier.getPortIdentifiers();
+  while (portList.hasMoreElements()) {
+    CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+    if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+      if (id.getName().equals(portName)) {
+        logger.debug("Serial port '{}' has been found.",portName);
+        portId=id;
+      }
+    }
+  }
+  if (portId != null) {
+    try {
+      serialPort=(SerialPort)portId.open("openHAB",2000);
+      inputStream=serialPort.getInputStream();
+      outputStream=serialPort.getOutputStream();
+      bReader=new BufferedReader(new InputStreamReader(inputStream));
+      bWriter=new BufferedWriter(new OutputStreamWriter(outputStream));
+      serialPort.addEventListener(this);
+      serialPort.notifyOnDataAvailable(true);
+      serialPort.setSerialPortParams(BAUD,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+    }
+ catch (    IOException e) {
+      throw new EHealthException(e);
+    }
+catch (    PortInUseException e) {
+      throw new EHealthException(e);
+    }
+catch (    UnsupportedCommOperationException e) {
+      throw new EHealthException(e);
+    }
+catch (    TooManyListenersException e) {
+      throw new EHealthException(e);
+    }
+  }
+ else {
+    StringBuilder sb=new StringBuilder();
+    portList=CommPortIdentifier.getPortIdentifiers();
+    while (portList.hasMoreElements()) {
+      CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+      if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+        sb.append(id.getName() + "\n");
+      }
+    }
+    throw new EHealthException("Serial port '" + portName + "' could not be found. Available ports are:\n"+ sb.toString());
+  }
+}

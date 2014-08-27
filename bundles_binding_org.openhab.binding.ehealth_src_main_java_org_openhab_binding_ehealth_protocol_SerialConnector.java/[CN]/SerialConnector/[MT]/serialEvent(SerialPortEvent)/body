@@ -1,0 +1,12 @@
+{
+  if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+    try {
+      String data=bReader.readLine();
+      logger.trace("Received raw message to process: '{}'",data);
+      notifyEventProcessors(data);
+    }
+ catch (    IOException e) {
+      logger.error("Exception while reading from serial port",e);
+    }
+  }
+}

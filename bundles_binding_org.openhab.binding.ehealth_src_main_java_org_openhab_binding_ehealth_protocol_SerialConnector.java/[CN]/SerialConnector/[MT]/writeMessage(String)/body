@@ -1,0 +1,15 @@
+{
+  logger.debug("Sending raw message to serial port: " + message);
+  if (bWriter == null) {
+    logger.error("Can't write message, BufferedWriter is NULL");
+  }
+synchronized (bWriter) {
+    try {
+      bWriter.write(message);
+      bWriter.flush();
+    }
+ catch (    IOException e) {
+      logger.error("Can't write to serial port",e);
+    }
+  }
+}
