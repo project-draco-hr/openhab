@@ -1,9 +1,0 @@
-{
-  Object result=getConnection(hmInterface).getDeviceDescription();
-  String firmwareVersion=null;
-  if (result instanceof Map) {
-    @SuppressWarnings("unchecked") Map<?,String> map=(Map<?,String>)result;
-    firmwareVersion=map.get("FIRMWARE");
-  }
-  return new ServerId(StringUtils.defaultIfBlank(firmwareVersion,"unknown"));
-}
