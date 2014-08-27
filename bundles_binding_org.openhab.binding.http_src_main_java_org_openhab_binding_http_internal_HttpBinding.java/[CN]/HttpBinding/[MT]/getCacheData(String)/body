@@ -6,7 +6,7 @@ synchronized (itemCacheLock) {
     boolean cacheNeedsUpdate=cacheAge >= cacheConfig.updateInterval;
     if (cacheNeedsUpdate) {
       logger.debug("updating cache for '{}' ('{}')",cacheId,cacheConfig.url);
-      cacheConfig.data=HttpUtil.executeUrl("GET",cacheConfig.url,null,null,null,timeout);
+      cacheConfig.data=HttpUtil.executeUrl("GET",cacheConfig.url,cacheConfig.headers,null,null,timeout);
       if (cacheConfig.data != null)       cacheConfig.lastUpdate=System.currentTimeMillis();
     }
     return cacheConfig.data;
