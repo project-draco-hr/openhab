@@ -3,7 +3,15 @@
     if (binding.providesBindingFor(itemName)) {
       logger.debug("Process command " + command + " for "+ itemName);
       BenqProjectorBindingConfig cfg=binding.getConfigForItemName(itemName);
-      sendCommandToProjector(cfg,command);
+      String resp=sendCommandToProjector(cfg,command);
+      State s=cfg.mode.parseResponse(resp);
+      if (!(s instanceof UnDefType)) {
+        eventPublisher.postUpdate(itemName,s);
+        logger.debug(itemName + " status is " + s);
+      }
+ else {
+        logger.debug(itemName + " not updated as result was undefined");
+      }
     }
   }
 }

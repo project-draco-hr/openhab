@@ -1,15 +1,16 @@
 {
   Boolean cmdSent=false;
+  String response="";
 switch (cfg.mode) {
 case POWER:
 case MUTE:
     if (c instanceof OnOffType) {
       if ((OnOffType)c == OnOffType.ON) {
-        transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
+        response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
         cmdSent=true;
       }
  else       if ((OnOffType)c == OnOffType.OFF) {
-        transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
+        response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
         cmdSent=true;
       }
     }
@@ -49,6 +50,7 @@ if (c instanceof DecimalType) {
     cmdSent=true;
   }
 }
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandQueryString());
 break;
 case LAMP_HOURS:
 logger.warn("Cannot send command to set lamp hours - not a valid operation!");
@@ -58,7 +60,7 @@ if (c instanceof DecimalType) {
 DecimalType sourceIdx=(DecimalType)c;
 String cmd=BenqProjectorSourceMapping.getStringFromMapping(sourceIdx.intValue());
 if (cmd.isEmpty() == false) {
-transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
 cmdSent=true;
 }
 }
@@ -68,7 +70,7 @@ if (c instanceof StringType) {
 StringType sourceStr=(StringType)c;
 int mappingIdx=BenqProjectorSourceMapping.getMappingFromString(sourceStr.toString());
 if (mappingIdx != -1) {
-transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
 cmdSent=true;
 }
 }
@@ -80,4 +82,5 @@ break;
 if (cmdSent == false) {
 logger.error("Unable to convert item command to projector state: Command=" + c);
 }
+return response;
 }
