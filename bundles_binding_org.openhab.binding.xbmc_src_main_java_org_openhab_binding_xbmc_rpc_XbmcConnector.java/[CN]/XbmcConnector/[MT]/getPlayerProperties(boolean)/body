@@ -1,0 +1,22 @@
+{
+  List<String> properties=new ArrayList<String>();
+  if (updatePolledPropertiesOnly) {
+    for (    String property : watches.values()) {
+      if (properties.contains(property)) {
+        continue;
+      }
+ else       if (property.equals("Player.Label")) {
+        properties.add(property);
+      }
+    }
+  }
+ else {
+    for (    String property : watches.values()) {
+      if (!property.startsWith("Player."))       continue;
+      if (property.equals("Player.State"))       continue;
+      if (properties.contains(property))       continue;
+      properties.add(property);
+    }
+  }
+  return properties;
+}

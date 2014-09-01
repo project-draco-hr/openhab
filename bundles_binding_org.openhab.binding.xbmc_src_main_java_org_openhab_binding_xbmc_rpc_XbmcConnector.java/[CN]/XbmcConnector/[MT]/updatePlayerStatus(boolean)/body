@@ -1,0 +1,19 @@
+{
+  final PlayerGetActivePlayers activePlayers=new PlayerGetActivePlayers(client,httpUri);
+  activePlayers.execute(new Runnable(){
+    @Override public void run(){
+      if (activePlayers.isPlaying()) {
+        if (!updatePolledPropertiesOnly) {
+          updateState(State.Play);
+        }
+        requestPlayerUpdate(activePlayers.getPlayerId(),updatePolledPropertiesOnly);
+      }
+ else {
+        if (!updatePolledPropertiesOnly) {
+          updateState(State.Stop);
+        }
+      }
+    }
+  }
+);
+}
