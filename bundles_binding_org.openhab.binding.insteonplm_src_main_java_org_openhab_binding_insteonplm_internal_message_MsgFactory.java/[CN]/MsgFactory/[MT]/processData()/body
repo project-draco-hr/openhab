@@ -13,6 +13,7 @@
   if (m_end > 0 && m_buf[0] != 0x02) {
     logger.error("incoming message does not start with 0x02, searching for start");
     drainBuffer();
+    throw new IOException("message does not start with 0x02!");
   }
   int msgLen=-1;
   boolean isExtended=false;
@@ -21,10 +22,12 @@
     isExtended=Msg.s_isExtended(m_buf,m_end,headerLength);
     logger.trace("header length expected: {} extended: {}",headerLength,isExtended);
     if (headerLength < 0) {
-      logger.debug("got unknown command code {}, draining!",Utils.getHexByte(m_buf[1]));
+      String cmdCode=Utils.getHexByte(m_buf[1]);
+      logger.debug("got unknown command code {}, draining!",cmdCode);
       removeFromBuffer(1);
       drainBuffer();
       msgLen=-1;
+      throw new IOException("got unknown command code: " + cmdCode);
     }
  else     if (headerLength >= 2) {
       if (m_end >= headerLength) {

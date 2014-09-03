@@ -12,6 +12,8 @@
     sc=fbClient.getSystemManager().getConfiguration();
     cs=fbClient.getConnectionManager().getStatus();
     wc=fbClient.getWifiManager().getGlobalConfig();
+    lcd=fbClient.getLCDManager().getLCDConfig();
+    xdsl=fbClient.getConnectionManager().getxDslStatus();
     List<CallEntry> appels=fbClient.getCallManager().getCallEntries();
     for (    FreeboxBindingProvider provider : providers) {
       Collection<String> items=provider.getItemNames();
@@ -82,6 +84,18 @@ setItemValue(bindingConfig.item,sc.getUptimeVal());
 break;
 case WIFISTATUS:
 setItemValue(bindingConfig.item,wc.getEnabled());
+break;
+case LCDBRIGHTNESS:
+setItemValue(bindingConfig.item,(long)lcd.getBrightness());
+break;
+case LCDORIENTATION:
+setItemValue(bindingConfig.item,(long)lcd.getOrientation());
+break;
+case LCDFORCED:
+setItemValue(bindingConfig.item,lcd.getOrientationForced());
+break;
+case XDSLSTATUS:
+setItemValue(bindingConfig.item,xdsl.getStatus());
 break;
 default :
 break;

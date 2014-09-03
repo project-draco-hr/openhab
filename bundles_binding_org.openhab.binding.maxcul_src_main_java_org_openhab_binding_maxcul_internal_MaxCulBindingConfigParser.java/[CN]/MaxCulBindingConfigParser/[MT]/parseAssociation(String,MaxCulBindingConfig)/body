@@ -1,0 +1,11 @@
+{
+  String[] configKeyValueSplit=configPart.split("=");
+  if (configKeyValueSplit.length == 2) {
+    String[] associations=configKeyValueSplit[1].split(",");
+    cfg.clearAssociatedSerialNum();
+    for (int idx=0; idx < associations.length; idx++) {
+      cfg.addAssociatedSerialNum(associations[idx]);
+    }
+  }
+ else   throw new BindingConfigParseException("Format of association configuration is incorrect! must be 'association=<serialNum>[,<serialNum>,[...]]'");
+}

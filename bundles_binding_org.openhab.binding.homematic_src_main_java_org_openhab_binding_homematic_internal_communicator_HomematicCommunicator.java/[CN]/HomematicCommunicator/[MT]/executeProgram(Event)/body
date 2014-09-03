@@ -1,0 +1,11 @@
+{
+  try {
+    homematicClient.executeProgram(((ProgramConfig)event.getBindingConfig()).getName());
+  }
+ catch (  HomematicClientException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+ finally {
+    itemDisabler.add(event.getBindingConfig());
+  }
+}

@@ -1,0 +1,10 @@
+{
+  logger.info("Starting {}",CcuClient.class.getSimpleName());
+  super.start();
+  tclregaScripts=loadTclRegaScripts();
+  httpClient=new HttpClient(new SimpleHttpConnectionManager(true));
+  HttpClientParams params=httpClient.getParams();
+  params.setConnectionManagerTimeout(5000);
+  params.setSoTimeout(30000);
+  params.setContentCharset("ISO-8859-1");
+}

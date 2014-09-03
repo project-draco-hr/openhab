@@ -1,0 +1,16 @@
+{
+  if (xmlRpcConnections.get(hmInterface) == null) {
+    XmlRpcConnection xmlRpcCon=null;
+    if (HmInterface.WIRED == hmInterface) {
+      xmlRpcCon=new XmlRpcConnectionWired(config.getHost());
+    }
+ else     if (HmInterface.CUXD == hmInterface) {
+      xmlRpcCon=new XmlRpcConnectionCuxd(config.getHost());
+    }
+ else {
+      xmlRpcCon=new XmlRpcConnectionRF(config.getHost());
+    }
+    xmlRpcConnections.put(hmInterface,xmlRpcCon);
+  }
+  return xmlRpcConnections.get(hmInterface);
+}

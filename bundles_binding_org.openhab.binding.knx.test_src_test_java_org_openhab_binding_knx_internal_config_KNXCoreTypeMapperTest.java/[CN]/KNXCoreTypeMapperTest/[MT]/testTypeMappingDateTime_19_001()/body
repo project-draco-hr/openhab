@@ -1,0 +1,31 @@
+{
+  DPT dpt=DPTXlatorDateTime.DPT_DATE_TIME;
+  testToTypeClass(dpt,DateTimeType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (no-day)",testToType(dpt,new byte[]{0x00,0x01,0x01,0x00,0x00,0x00,0x00,0x00},DateTimeType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (illegal date)",testToType(dpt,new byte[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},DateTimeType.class));
+  Type type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x00,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1900-01-01 00:00:00");
+  assertNull("KNXCoreTypeMapper.toType() should return null (faulty clock)",testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,(byte)0x80,0x00},DateTimeType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (date but no year)",testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x10,0x00},DateTimeType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (date but no day and month)",testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x08,0x00},DateTimeType.class));
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x18,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1970-01-01 00:00:00");
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x1C,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1970-01-01 00:00:00");
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x3C,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1970-01-01 00:00:00");
+  assertNull("KNXCoreTypeMapper.toType() should return null (neither date nor time)",testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x3E,0x00},DateTimeType.class));
+  assertNull("KNXCoreTypeMapper.toType() should return null (neither date nor time, but summertime flag)",type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x3F,0x00},DateTimeType.class));
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x00,0x00,0x00,0x04,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1900-01-01 00:00:00");
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,0x04,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1900-01-01 00:00:00");
+  type=testToType(dpt,new byte[]{0x00,0x01,0x01,0x20,0x00,0x00,(byte)0x60,0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"1900-01-01 00:00:00");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0x0C,0x1F,0x17,0x3B,0x3B,(byte)0x04,(byte)0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"2155-12-31 23:59:59");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0x0C,0x1F,0x18,0x00,0x00,(byte)0x04,(byte)0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"2155-12-31 23:59:59");
+  type=testToType(dpt,new byte[]{(byte)0x72,0x0C,0x1F,0x18,0x00,0x00,(byte)0x04,(byte)0x00},DateTimeType.class);
+  testToDPTValue(dpt,type,"2014-12-31 23:59:59");
+}

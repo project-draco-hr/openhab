@@ -1,12 +1,18 @@
 {
   ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
-  String meterScale=arguments.get("meter_scale");
-  ZWaveMeterValueEvent meterEvent=(ZWaveMeterValueEvent)event;
   if (converter == null) {
     logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
     return;
   }
+  if ("true".equalsIgnoreCase(arguments.get("meter_reset")))   return;
+  String meterScale=arguments.get("meter_scale");
+  String meterZero=arguments.get("meter_zero");
+  ZWaveMeterValueEvent meterEvent=(ZWaveMeterValueEvent)event;
   if (meterScale != null && MeterScale.getMeterScale(meterScale) != meterEvent.getMeterScale())   return;
-  State state=converter.convertFromValueToState(event.getValue());
+  Object val=event.getValue();
+  if (meterZero != null) {
+    if (((BigDecimal)val).doubleValue() <= Double.parseDouble(meterZero))     val=BigDecimal.ZERO;
+  }
+  State state=converter.convertFromValueToState(val);
   this.getEventPublisher().postUpdate(item.getName(),state);
 }

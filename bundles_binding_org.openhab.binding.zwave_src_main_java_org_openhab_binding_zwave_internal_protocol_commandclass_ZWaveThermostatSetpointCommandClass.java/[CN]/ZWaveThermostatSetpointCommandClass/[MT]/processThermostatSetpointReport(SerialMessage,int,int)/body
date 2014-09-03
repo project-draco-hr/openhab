@@ -1,7 +1,8 @@
 {
   int setpointTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
+  int scale=(serialMessage.getMessagePayloadByte(offset + 2) >> 3) & 0x03;
   BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
-  logger.debug(String.format("Thermostat Setpoint report from nodeId = %d",this.getNode().getNodeId()));
+  logger.debug(String.format("Thermostat Setpoint report from nodeId = %d, Scale = %d",this.getNode().getNodeId(),scale));
   logger.debug(String.format("Thermostat Setpoint Value = (%f)",value));
   SetpointType setpointType=SetpointType.getSetpointType(setpointTypeCode);
   if (setpointType == null) {
@@ -11,6 +12,6 @@
   if (!this.setpointTypes.contains(setpointType))   this.setpointTypes.add(setpointType);
   logger.debug(String.format("Setpoint Type = %s (0x%02x)",setpointType.getLabel(),setpointTypeCode));
   logger.debug(String.format("Thermostat Setpoint Report from Node ID = %d, value = %s",this.getNode().getNodeId(),value.toPlainString()));
-  ZWaveThermostatSetpointValueEvent zEvent=new ZWaveThermostatSetpointValueEvent(this.getNode().getNodeId(),endpoint,setpointType,value);
+  ZWaveThermostatSetpointValueEvent zEvent=new ZWaveThermostatSetpointValueEvent(this.getNode().getNodeId(),endpoint,setpointType,scale,value);
   this.getController().notifyEventListeners(zEvent);
 }

@@ -1,0 +1,19 @@
+{
+  Object[] result=rpcClient.getAllValues(getDefaultInterface());
+  try {
+    for (int i=0; i < result.length; i++) {
+      @SuppressWarnings("unchecked") Map<String,?> entryMap=(Map<String,?>)result[i];
+      HmDevice device=parseDevice(entryMap);
+      addBatteryInfo(device);
+      for (      HmChannel channel : device.getChannels()) {
+        for (        HmDatapoint dp : channel.getDatapoints()) {
+          DatapointConfig bindingConfig=new DatapointConfig(device.getAddress(),channel.getNumber(),dp.getName());
+          callback.iterate(bindingConfig,dp);
+        }
+      }
+    }
+  }
+ catch (  Exception ex) {
+    throw new HomematicClientException(ex.getMessage(),ex);
+  }
+}

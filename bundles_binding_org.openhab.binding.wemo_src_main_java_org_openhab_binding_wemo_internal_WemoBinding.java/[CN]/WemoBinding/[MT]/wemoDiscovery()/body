@@ -1,0 +1,93 @@
+{
+  logger.debug("wemoDiscovery() is called!");
+  try {
+    final int SSDP_PORT=1900;
+    final int SSDP_SEARCH_PORT=1901;
+    final String SSDP_IP="239.255.255.250";
+    int TIMEOUT=5000;
+    InetAddress localhost=InetAddress.getLocalHost();
+    InetSocketAddress srcAddress=new InetSocketAddress(localhost,SSDP_SEARCH_PORT);
+    InetSocketAddress dstAddress=new InetSocketAddress(InetAddress.getByName(SSDP_IP),SSDP_PORT);
+    StringBuffer discoveryMessage=new StringBuffer();
+    discoveryMessage.append("M-SEARCH * HTTP/1.1\r\n");
+    discoveryMessage.append("HOST: " + SSDP_IP + ":"+ SSDP_PORT+ "\r\n");
+    discoveryMessage.append("ST: urn:Belkin:device:controllee:1\r\n");
+    discoveryMessage.append("MAN: \"ssdp:discover\"\r\n");
+    discoveryMessage.append("MX: 5\r\n");
+    discoveryMessage.append("\r\n");
+    logger.trace("Request: {}",discoveryMessage.toString());
+    byte[] discoveryMessageBytes=discoveryMessage.toString().getBytes();
+    DatagramPacket discoveryPacket=new DatagramPacket(discoveryMessageBytes,discoveryMessageBytes.length,dstAddress);
+    MulticastSocket multicast=null;
+    try {
+      multicast=new MulticastSocket(null);
+      multicast.bind(srcAddress);
+      logger.trace("Source-Address = '{}'",srcAddress);
+      multicast.setTimeToLive(4);
+      logger.trace("Send multicast request.");
+      multicast.send(discoveryPacket);
+    }
+  finally {
+      logger.trace("Multicast ends. Close connection.");
+      multicast.disconnect();
+      multicast.close();
+    }
+    DatagramSocket wemoReceiveSocket=null;
+    DatagramPacket receivePacket=null;
+    try {
+      wemoReceiveSocket=new DatagramSocket(SSDP_SEARCH_PORT);
+      wemoReceiveSocket.setSoTimeout(TIMEOUT);
+      logger.trace("Send datagram packet.");
+      wemoReceiveSocket.send(discoveryPacket);
+      while (true) {
+        try {
+          logger.trace("Receive SSDP Message.");
+          receivePacket=new DatagramPacket(new byte[1536],1536);
+          wemoReceiveSocket.receive(receivePacket);
+          final String message=new String(receivePacket.getData());
+          logger.trace("Recieved message: {}",message);
+          new Thread(new Runnable(){
+            @Override public void run(){
+              String locationStart="LOCATION:";
+              String locationEnd="/setup.xml";
+              int findStringStart=message.lastIndexOf(locationStart);
+              if (findStringStart != 0) {
+                int findStringEnd=message.lastIndexOf(locationEnd);
+                String slicedMessage=message.substring(findStringStart + 10,findStringEnd);
+                logger.trace("Wemo found at URL '{}'",slicedMessage);
+                try {
+                  int timeout=5000;
+                  String friendlyNameResponse=HttpUtil.executeUrl("GET",slicedMessage + "/setup.xml",timeout);
+                  String findFriendlyNameStart="<friendlyName>";
+                  String findFriendlyNameEnd="</friendlyName>";
+                  int findStart=friendlyNameResponse.lastIndexOf(findFriendlyNameStart);
+                  int findEnd=friendlyNameResponse.lastIndexOf(findFriendlyNameEnd);
+                  String slicedFriendlyName=friendlyNameResponse.substring(findStart + 14,findEnd);
+                  logger.info("Wemo friendlyName '{}' found at '{}'",slicedFriendlyName,slicedMessage);
+                  wemoConfigMap.put(slicedFriendlyName,slicedMessage);
+                }
+ catch (                Exception te) {
+                  logger.error("Response transformation throws exception ",te);
+                }
+              }
+            }
+          }
+).start();
+        }
+ catch (        SocketTimeoutException e) {
+          logger.error("Message receive timed out.");
+          break;
+        }
+      }
+    }
+  finally {
+      if (wemoReceiveSocket != null) {
+        wemoReceiveSocket.disconnect();
+        wemoReceiveSocket.close();
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Could not start wemo device discovery",e);
+  }
+}

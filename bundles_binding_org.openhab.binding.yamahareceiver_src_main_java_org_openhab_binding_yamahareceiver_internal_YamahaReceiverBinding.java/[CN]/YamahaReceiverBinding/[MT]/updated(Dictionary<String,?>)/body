@@ -1,0 +1,25 @@
+{
+  logger.debug(BINDING_NAME + " updated");
+  try {
+    if (config != null) {
+      String refreshIntervalString=(String)config.get("refresh");
+      if (StringUtils.isNotBlank(refreshIntervalString)) {
+        refreshInterval=Long.parseLong(refreshIntervalString);
+      }
+      Enumeration<String> keys=config.keys();
+      while (keys.hasMoreElements()) {
+        String key=keys.nextElement();
+        if (key.endsWith(CONFIG_KEY_HOST)) {
+          String host=(String)config.get(key);
+          int separatorIdx=key.indexOf('.');
+          String uid=separatorIdx == -1 ? DEFAULT_DEVICE_UID : key.substring(0,separatorIdx);
+          proxies.put(uid,new YamahaReceiverProxy(host));
+        }
+      }
+      setProperlyConfigured(true);
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error configuring " + getName(),t);
+  }
+}

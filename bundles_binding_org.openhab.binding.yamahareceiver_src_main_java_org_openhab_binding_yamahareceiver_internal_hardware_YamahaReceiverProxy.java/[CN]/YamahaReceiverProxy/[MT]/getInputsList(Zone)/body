@@ -1,0 +1,15 @@
+{
+  List<String> names=new ArrayList<String>();
+  Document doc=postAndGetXmlResponse("<?xml version=\"1.0\" encoding=\"utf-8\"?><YAMAHA_AV cmd=\"GET\"><" + zone + "><Input><Input_Sel_Item>GetParam</Input_Sel_Item></Input></"+ zone+ "></YAMAHA_AV>");
+  Node inputSelItem=getNode(doc.getFirstChild(),zone + "/Input/Input_Sel_Item");
+  NodeList items=inputSelItem.getChildNodes();
+  for (int i=0; i < items.getLength(); i++) {
+    Element item=(Element)items.item(i);
+    String name=item.getElementsByTagName("Param").item(0).getTextContent();
+    boolean writable=item.getElementsByTagName("RW").item(0).getTextContent().contains("W");
+    if (writable) {
+      names.add(name);
+    }
+  }
+  return names;
+}

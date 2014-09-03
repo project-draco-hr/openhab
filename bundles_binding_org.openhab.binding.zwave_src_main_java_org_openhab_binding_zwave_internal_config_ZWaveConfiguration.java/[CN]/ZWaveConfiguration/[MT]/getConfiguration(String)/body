@@ -103,7 +103,7 @@ record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/"
  else {
 record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/",node.getName());
 }
-if (node.getManufacturer() == 0) {
+if (node.getManufacturer() == Integer.MAX_VALUE) {
 }
  else if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
 if (database.FindManufacturer(node.getManufacturer()) == false) {
@@ -167,6 +167,7 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Location","Location",false);
 record.value=node.getLocation();
 records.add(record);
+if (node.getManufacturer() != Integer.MAX_VALUE) {
 if (database.FindManufacturer(node.getManufacturer()) == false) {
 record=new OpenHABConfigurationRecord(domain,"ManufacturerID","Manufacturer ID",true);
 record.value=Integer.toHexString(node.getManufacturer());
@@ -206,6 +207,7 @@ if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.WAK
 record=new OpenHABConfigurationRecord(domain + "wakeup/","Wakeup Period");
 record.addAction("Refresh","Refresh");
 records.add(record);
+}
 }
 }
 if (nodeId == zController.getOwnNodeId()) {

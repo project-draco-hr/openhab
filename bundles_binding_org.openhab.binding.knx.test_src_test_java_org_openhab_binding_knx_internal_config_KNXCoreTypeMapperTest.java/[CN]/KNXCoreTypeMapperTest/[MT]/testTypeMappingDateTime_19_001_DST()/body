@@ -1,0 +1,44 @@
+{
+  DPT dpt=DPTXlatorDateTime.DPT_DATE_TIME;
+  byte[] testDataDST=new byte[]{0x72,0x07,0x1F,0x00,0x00,0x00,(byte)0x05,(byte)0x00};
+  byte[] testDataNoDST=new byte[]{0x72,0x07,0x1F,0x00,0x00,0x00,(byte)0x04,(byte)0x00};
+  testToTypeClass(dpt,DateTimeType.class);
+  TimeZone defaultTimeZone=TimeZone.getDefault();
+  TimeZone[] timeZones={defaultTimeZone,TimeZone.getTimeZone("America/New_York"),TimeZone.getTimeZone("Europe/Berlin"),TimeZone.getTimeZone("Asia/Shanghai")};
+  try {
+    Field field=DPTXlatorDateTime.class.getDeclaredField("c");
+    field.setAccessible(true);
+    for (    TimeZone timeZone : timeZones) {
+      field.set(null,null);
+      TimeZone.setDefault(timeZone);
+      Calendar c=Calendar.getInstance();
+      c.set(2014,7,31);
+      if (c.get(Calendar.DST_OFFSET) > 0) {
+        assertNull(testToType(dpt,testDataNoDST,DateTimeType.class));
+        Type type=testToType(dpt,testDataDST,DateTimeType.class);
+        testToDPTValue(dpt,type,"2014-07-31 00:00:00");
+      }
+ else {
+        assertNull(testToType(dpt,testDataDST,DateTimeType.class));
+        Type type=testToType(dpt,testDataNoDST,DateTimeType.class);
+        testToDPTValue(dpt,type,"2014-07-31 00:00:00");
+      }
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    fail();
+  }
+catch (  IllegalAccessException e) {
+    System.out.println("Warning: Test testTypeMappingDateTime_19_001_DST skipped: IllegalAccessException");
+    assumeNoException(e);
+  }
+catch (  NoSuchFieldException e) {
+    System.out.println("Warning: Test testTypeMappingDateTime_19_001_DST skipped: NoSuchFieldException");
+    assumeNoException(e);
+  }
+catch (  SecurityException e) {
+    System.out.println("Warning: Test testTypeMappingDateTime_19_001_DST skipped: SecurityException");
+    assumeNoException(e);
+  }
+  TimeZone.setDefault(defaultTimeZone);
+}

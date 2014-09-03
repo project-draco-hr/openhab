@@ -1,0 +1,11 @@
+{
+  List<MaxCulBindingConfig> configs=new ArrayList<MaxCulBindingConfig>();
+  for (  BindingConfig c : super.bindingConfigs.values()) {
+    MaxCulBindingConfig config=(MaxCulBindingConfig)c;
+    if (config.getSerialNumber() != null) {
+      if (config.getSerialNumber().compareToIgnoreCase(serial) == 0)       configs.add(config);
+    }
+  }
+  if (configs.isEmpty())   return null;
+ else   return configs;
+}

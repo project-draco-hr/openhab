@@ -1,0 +1,12 @@
+{
+  if (context.getHomematicClient().supportsVariables()) {
+    logger.info("Loading Homematic Server variables");
+    context.getHomematicClient().iterateAllVariables(new HmValueItemIteratorCallback(){
+      @Override public void iterate(      HomematicBindingConfig bindingConfig,      HmValueItem variable){
+        variables.put(bindingConfig,variable);
+      }
+    }
+);
+    logger.info("Finished loading {} Homematic server variables",variables.size());
+  }
+}

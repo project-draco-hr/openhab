@@ -1,0 +1,12 @@
+{
+  try {
+    for (    Map.Entry<String,YamahaReceiverProxy> entry : proxies.entrySet()) {
+      String deviceUid=entry.getKey();
+      YamahaReceiverProxy receiverProxy=entry.getValue();
+      sendUpdates(receiverProxy,deviceUid);
+    }
+  }
+ catch (  Throwable t) {
+    logger.error("Error polling devices for " + getName(),t);
+  }
+}

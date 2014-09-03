@@ -1,0 +1,9 @@
+{
+  try {
+    JobDetail jobDetail=newJob(job).withIdentity(jobName,JOB_GROUP).usingJobData(jobDataMap).build();
+    scheduler.scheduleJob(jobDetail,trigger);
+  }
+ catch (  SchedulerException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+}

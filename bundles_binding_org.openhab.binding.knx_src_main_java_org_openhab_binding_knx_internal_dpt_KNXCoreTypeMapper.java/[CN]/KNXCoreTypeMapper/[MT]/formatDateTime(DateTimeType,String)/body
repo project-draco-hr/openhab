@@ -3,7 +3,16 @@
     return dateType.format("%tF");
   }
  else   if (DPTXlatorTime.DPT_TIMEOFDAY.getID().equals(dpt)) {
-    return dateType.format(Locale.US,"%1$ta, %1$tT");
+    Calendar cal=dateType.getCalendar();
+    if (cal.get(Calendar.MONTH) == 2) {
+      return dateType.format(Locale.US,"%1$tT");
+    }
+ else {
+      return dateType.format(Locale.US,"%1$ta, %1$tT");
+    }
+  }
+ else   if (DPTXlatorDateTime.DPT_DATE_TIME.getID().equals(dpt)) {
+    return dateType.format(Locale.US,"%tF %1$tT");
   }
  else {
     throw new IllegalArgumentException("Could not format date to datapoint type '" + dpt + "'");

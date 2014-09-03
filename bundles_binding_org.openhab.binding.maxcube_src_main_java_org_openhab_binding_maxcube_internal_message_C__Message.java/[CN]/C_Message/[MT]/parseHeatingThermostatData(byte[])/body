@@ -1,0 +1,63 @@
+{
+  try {
+    int plusDataStart=18;
+    int programDataStart=11;
+    tempComfort=Float.toString(bytes[plusDataStart] / 2);
+    tempEco=Float.toString(bytes[plusDataStart + 1] / 2);
+    tempSetpointMax=Float.toString(bytes[plusDataStart + 2] / 2);
+    tempSetpointMin=Float.toString(bytes[plusDataStart + 3] / 2);
+    logger.debug("DeviceType:             {}",deviceType.toString());
+    logger.debug("RFAddress:              {}",rfAddress);
+    logger.debug("Temp Comfort:           {}",tempComfort);
+    logger.debug("TempEco:                {}",tempEco);
+    logger.debug("Temp Setpoint Max:      {}",tempSetpointMax);
+    logger.debug("Temp Setpoint Min:      {}",tempSetpointMin);
+    if (bytes.length < 211) {
+      programDataStart=4;
+      logger.trace("WallThermostat byte {}: {}",bytes.length - 3,Float.toString(bytes[bytes.length - 3] & 0xFF));
+      logger.trace("WallThermostat byte {}: {}",bytes.length - 2,Float.toString(bytes[bytes.length - 2] & 0xFF));
+      logger.trace("WallThermostat byte {}: {}",bytes.length - 1,Float.toString(bytes[bytes.length - 1] & 0xFF));
+    }
+ else {
+      tempOffset=Double.toString((bytes[plusDataStart + 4] / 2) - 3.5);
+      tempOpenWindow=Float.toString(bytes[plusDataStart + 5] / 2);
+      durationOpenWindow=Float.toString(bytes[plusDataStart + 6]);
+      boostDuration=Float.toString(bytes[plusDataStart + 7] & 0xFF >> 5);
+      boostValve=Float.toString((bytes[plusDataStart + 7] & 0x1F) * 5);
+      decalcification=Float.toString(bytes[plusDataStart + 8]);
+      valveMaximum=Float.toString(bytes[plusDataStart + 9] & 0xFF * 100 / 255);
+      valveOffset=Float.toString(bytes[plusDataStart + 10] & 0xFF * 100 / 255);
+      logger.debug("Temp Offset:            {}",tempOffset);
+      logger.debug("Temp Open Window:       {}",tempOpenWindow);
+      logger.debug("Duration Open Window:   {}",durationOpenWindow);
+      logger.debug("Duration Boost:         {}",boostDuration);
+      logger.debug("Boost Valve Pos:        {}",boostValve);
+      logger.debug("Decalcification:        {}",decalcification);
+      logger.debug("ValveMaximum:           {}",valveMaximum);
+      logger.debug("ValveOffset:            {}",valveOffset);
+    }
+    programData="";
+    int ln=13 * 6;
+    String startTime="00:00h";
+    for (int char_idx=plusDataStart + programDataStart; char_idx < (plusDataStart + programDataStart + 26 * 7); char_idx++) {
+      if (ln % 13 == 0) {
+        programData+="\r\n Day " + Integer.toString((ln / 13) % 7) + ": ";
+        startTime="00:00h";
+      }
+      int progTime=(bytes[char_idx + 1] & 0xFF) * 5 + (bytes[char_idx] & 0x01) * 1280;
+      int progMinutes=progTime % 60;
+      int progHours=(progTime - progMinutes) / 60;
+      String endTime=Integer.toString(progHours) + ":" + String.format("%02d",progMinutes)+ "h";
+      programData+=startTime + "-" + endTime+ " "+ Double.toString(bytes[char_idx] / 4)+ "C  ";
+      startTime=endTime;
+      char_idx++;
+      ln++;
+    }
+    logger.debug("ProgramData:          {}",programData);
+  }
+ catch (  Exception e) {
+    logger.debug(e.getMessage());
+    logger.debug(Utils.getStackTrace(e));
+  }
+  return;
+}

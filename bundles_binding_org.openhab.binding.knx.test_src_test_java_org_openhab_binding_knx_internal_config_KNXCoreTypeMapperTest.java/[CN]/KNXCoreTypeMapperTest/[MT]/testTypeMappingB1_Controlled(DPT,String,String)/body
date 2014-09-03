@@ -1,0 +1,16 @@
+{
+  testToTypeClass(dpt,DecimalType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DecimalType.class));
+  Type type=testToType(dpt,new byte[]{0},DecimalType.class);
+  testToDPTValue(dpt,type,"0 " + valueLow);
+  type=testToType(dpt,new byte[]{1},DecimalType.class);
+  testToDPTValue(dpt,type,"0 " + valueHigh);
+  type=testToType(dpt,new byte[]{2},DecimalType.class);
+  testToDPTValue(dpt,type,"1 " + valueLow);
+  type=testToType(dpt,new byte[]{3},DecimalType.class);
+  testToDPTValue(dpt,type,"1 " + valueHigh);
+  type=testToType(dpt,new byte[]{(byte)0xFF},DecimalType.class);
+  testToDPTValue(dpt,type,"1 " + valueHigh);
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},DecimalType.class);
+  testToDPTValue(dpt,type,"1 " + valueHigh);
+}

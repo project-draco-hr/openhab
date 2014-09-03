@@ -1,0 +1,10 @@
+{
+  HmChannel channel=new HmChannel();
+  writeField(channel,"device",device,HmDevice.class);
+  writeField(channel,"number",String.valueOf(channelData.get("INDEX")),String.class);
+  Map<String,?> paramsList=(Map<String,?>)channelData.get("PARAMSET");
+  for (  String name : paramsList.keySet()) {
+    channel.addDatapoint(parseDatapoint(channel,name,(Map<String,?>)paramsList.get(name)));
+  }
+  return channel;
+}

@@ -1,0 +1,11 @@
+{
+  final List<BigDecimal> values=response.getBody().get(0).getValues().get(0);
+  final Map<String,BigDecimal> valueMap=new HashMap<String,BigDecimal>();
+  int index=0;
+  for (  final String measure : request.getMeasures()) {
+    final BigDecimal value=values.get(index);
+    valueMap.put(measure,value);
+    index++;
+  }
+  deviceMeasureValueMap.put(request.getKey(),valueMap);
+}

@@ -22,7 +22,18 @@
  else {
               throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
             }
-            logger.trace("Processed event (item='{}', type='{}', destination='{}')",new String[]{itemName,type.toString(),destination.toString()});
+            logger.trace("Processed event (item='{}', type='{}', destination='{}')",itemName,type.toString(),destination.toString());
+            return;
+          }
+ else {
+            final char[] hexCode="0123456789ABCDEF".toCharArray();
+            StringBuilder sb=new StringBuilder(2 + asdu.length * 2);
+            sb.append("0x");
+            for (            byte b : asdu) {
+              sb.append(hexCode[(b >> 4) & 0xF]);
+              sb.append(hexCode[(b & 0xF)]);
+            }
+            logger.debug("Ignoring KNX bus data: couldn't transform to an openHAB type (not supported). Destination='{}', datapoint='{}', data='{}'",new Object[]{destination.toString(),datapoint.toString(),sb.toString()});
             return;
           }
         }
