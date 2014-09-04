@@ -4,7 +4,9 @@
     logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring command.",item.getName(),node.getNodeId(),endpointId);
     return;
   }
-  SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage((Integer)converter.convertFromCommandToValue(item,command)),commandClass,endpointId);
+  logger.debug("receiveCommand with converter {} ",converter.getClass());
+  SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage(((BigDecimal)converter.convertFromCommandToValue(item,command)).intValue()),commandClass,endpointId);
+  logger.debug("receiveCommand sending message {} ",serialMessage);
   if (serialMessage == null) {
     logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
     return;

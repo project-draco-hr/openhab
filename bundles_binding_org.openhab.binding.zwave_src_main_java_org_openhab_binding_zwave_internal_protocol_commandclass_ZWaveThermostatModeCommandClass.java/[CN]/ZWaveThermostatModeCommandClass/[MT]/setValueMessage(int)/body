@@ -1,7 +1,9 @@
 {
+  logger.debug("setValueMessage {} , modeTypy empty {}",value,modeTypes.isEmpty());
   if (modeTypes.isEmpty())   return this.getSupportedMessage();
   if (!modeTypes.contains(ModeType.getModeType(value))) {
     logger.error("Unsupported mode type {} for node {}",value,this.getNode().getNodeId());
+    for (    ModeType t : modeTypes)     logger.error("Mode {} {} ",t.getKey(),t.getLabel());
     return null;
   }
   logger.debug("Creating new message for application command THERMOSTAT_MODE_SET for node {}",this.getNode().getNodeId());
