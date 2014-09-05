@@ -1,5 +1,5 @@
 {
-  if (isInBound(itemName)) {
+  if (!isOutBound(itemName)) {
     logger.warn("Received command ({}) for item {} which is configured as 'in-bound', ignoring",command.toString(),itemName);
     return;
   }
@@ -16,10 +16,11 @@
       return;
     }
     if (property.equals("Player.PlayPause"))     connector.playerPlayPause();
-    if (property.equals("Player.Open"))     connector.playerOpen(command.toString());
-    if (property.equals("Player.Stop"))     connector.playerStop();
-    if (property.equals("GUI.ShowNotification"))     connector.showNotification("openHAB",command.toString());
-    if (property.equals("System.Shutdown") && command == OnOffType.OFF)     connector.systemShutdown();
+ else     if (property.equals("Player.Open"))     connector.playerOpen(command.toString());
+ else     if (property.equals("Player.Stop"))     connector.playerStop();
+ else     if (property.equals("GUI.ShowNotification"))     connector.showNotification("openHAB",command.toString());
+ else     if (property.equals("System.Shutdown") && command == OnOffType.OFF)     connector.systemShutdown();
+ else     if (property.equals("Application.Volume"))     connector.applicationSetVolume(command.toString());
   }
  catch (  Exception e) {
     logger.error("Error handling command",e);
