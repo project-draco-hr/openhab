@@ -1,0 +1,12 @@
+{
+  if (fanModeTypes.isEmpty())   return this.getSupportedMessage();
+  if (!fanModeTypes.contains(FanModeType.getFanModeType(value))) {
+    logger.error("Unsupported fanMode type {} for node {}",value,this.getNode().getNodeId());
+    return null;
+  }
+  logger.debug("Creating new message for application command THERMOSTAT_FAN_MODE_SET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)THERMOSTAT_FAN_MODE_SET,(byte)value};
+  result.setMessagePayload(newPayload);
+  return result;
+}

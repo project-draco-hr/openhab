@@ -7,7 +7,6 @@
     return;
   }
   if (!this.modeTypes.contains(modeType))   this.modeTypes.add(modeType);
-  logger.debug(String.format("Mode Type = %s (0x%02x)",modeType.getLabel(),value));
   logger.debug(String.format("Thermostat Mode Report from Node ID = %d, value = %s",this.getNode().getNodeId(),modeType.getLabel()));
   ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),new BigDecimal(value));
   this.getController().notifyEventListeners(zEvent);
