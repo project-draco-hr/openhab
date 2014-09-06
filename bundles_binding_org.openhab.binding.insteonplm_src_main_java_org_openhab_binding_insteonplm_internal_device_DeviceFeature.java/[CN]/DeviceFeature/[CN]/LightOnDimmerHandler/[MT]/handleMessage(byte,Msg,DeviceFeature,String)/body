@@ -6,21 +6,21 @@
       if (cmd2 > 0) {
         if (cmd2 == 0xff) {
           logger.info("LightOnDimmerHandler: device {} was turned fully on",a);
-          m_pub.publish(OnOffType.ON);
+          m_feature.publishAll(OnOffType.ON);
         }
  else {
           int level=Math.max(1,(cmd2 * 100) / 255);
           logger.info("LightOnDimmerHandler: device {} was set to level {}",a,level);
-          m_pub.publish(new PercentType(level));
+          m_feature.publishAll(new PercentType(level));
         }
       }
  else {
         logger.info("LightOnDimmerHandler: device {} was turned fully off",a);
-        m_pub.publish(OnOffType.OFF);
+        m_feature.publishAll(OnOffType.OFF);
       }
     }
  else {
-      m_pub.publish(OnOffType.ON);
+      m_feature.publishAll(OnOffType.ON);
     }
   }
  catch (  FieldException e) {
