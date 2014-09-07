@@ -12,6 +12,6 @@
   if (msg.isAckOfDirect() && (f.getQueryStatus() == QueryStatus.QUERY_PENDING) && cmd == 0x50) {
     OpenClosedType oc=(cmd2 == 0) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
     logger.info("StateContactHandler: set contact {} to: {}",f.getDevice().getAddress(),oc);
-    m_pub.publish(oc);
+    m_feature.publishAll(oc);
   }
 }

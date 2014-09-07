@@ -72,6 +72,14 @@
           throw new ConfigurationException(configKey,"the given slave type '" + value + "' is invalid");
         }
       }
+ else       if ("valuetype".equals(configKey)) {
+        if (ArrayUtils.contains(ModbusBindingProvider.VALUE_TYPES,value)) {
+          modbusSlave.setValueType(value);
+        }
+ else {
+          throw new ConfigurationException(configKey,"the given value type '" + value + "' is invalid");
+        }
+      }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }
