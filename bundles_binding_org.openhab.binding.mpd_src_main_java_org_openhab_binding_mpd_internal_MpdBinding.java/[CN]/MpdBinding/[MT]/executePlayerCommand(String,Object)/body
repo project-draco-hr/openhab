@@ -33,6 +33,18 @@ break;
 case PREV:
 player.playPrev();
 break;
+case ENABLE:
+case DISABLE:
+Integer outputId=Integer.valueOf((String)commandParams);
+MPDAdmin admin=daemon.getMPDAdmin();
+MPDOutput output=new MPDOutput(outputId);
+if (pCommand == PlayerCommandTypeMapping.ENABLE) {
+admin.enableOutput(output);
+}
+ else {
+admin.disableOutput(output);
+}
+break;
 case VOLUME:
 logger.debug("Volume adjustment received: '{}' '{}'",pCommand,commandParams);
 player.setVolume(((PercentType)commandParams).intValue());
