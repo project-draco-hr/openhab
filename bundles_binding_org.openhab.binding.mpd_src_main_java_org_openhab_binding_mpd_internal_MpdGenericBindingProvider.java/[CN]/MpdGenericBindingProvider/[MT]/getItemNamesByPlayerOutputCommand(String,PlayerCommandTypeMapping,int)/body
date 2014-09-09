@@ -1,0 +1,14 @@
+{
+  Set<String> itemNames=new HashSet<String>();
+  for (  String itemName : bindingConfigs.keySet()) {
+    MpdBindingConfig config=(MpdBindingConfig)bindingConfigs.get(itemName);
+    String k1=command.type.toString();
+    String v1=playerId + ":" + command.toString().toLowerCase();
+    String k2=command.type.toString() + PARAM_SUFFIX;
+    String v2=String.valueOf(outputId);
+    if (StringUtils.equals(config.get(k1),v1) && StringUtils.equals(config.get(k2),v2)) {
+      itemNames.add(itemName);
+    }
+  }
+  return itemNames.toArray(new String[itemNames.size()]);
+}
