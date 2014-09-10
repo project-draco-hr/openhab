@@ -3,11 +3,11 @@
     throw new ConfigurationException("alarmdecoder:connect","no config!");
   }
   try {
-    String connect=(String)config.get("connect");
-    if (connect == null) {
+    m_connectString=(String)config.get("connect");
+    if (m_connectString == null) {
       throw new ConfigurationException("alarmdecoder:connect","no connect config in openhab.cfg!");
     }
-    String[] parts=connect.split(":");
+    String[] parts=m_connectString.split(":");
     if (parts.length < 2) {
       throw new ConfigurationException("alarmdecoder:connect","missing :, check openhab.cfg!");
     }
