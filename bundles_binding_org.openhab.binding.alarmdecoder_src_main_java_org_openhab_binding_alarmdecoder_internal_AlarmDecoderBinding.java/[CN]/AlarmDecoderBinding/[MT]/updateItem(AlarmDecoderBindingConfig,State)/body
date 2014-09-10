@@ -1,0 +1,10 @@
+{
+  if (bc.getMsgType() != ADMsgType.KPM) {
+    logger.debug("updating item: {} to state {}",bc.getItemName(),state);
+  }
+ else {
+    logger.trace("updating item: {} to state {}",bc.getItemName(),state);
+  }
+  m_unupdatedItems.remove(bc.getItemName());
+  eventPublisher.postUpdate(bc.getItemName(),state);
+}

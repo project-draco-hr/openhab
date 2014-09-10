@@ -1,0 +1,23 @@
+{
+  try {
+    disconnect();
+    if (m_tcpHostName != null && m_tcpPort > 0) {
+      m_socket=new Socket(m_tcpHostName,m_tcpPort);
+      m_reader=new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
+      m_writer=new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream()));
+      logger.info("connected to {}:{}",m_tcpHostName,m_tcpPort);
+      m_socketReader=new SocketReader();
+      m_thread=new Thread(m_socketReader);
+      m_thread.start();
+    }
+ else {
+      logger.warn("alarmdecoder hostname or port not configured!");
+    }
+  }
+ catch (  UnknownHostException e) {
+    logger.error("unknown host name :{}: ",m_tcpHostName,e);
+  }
+catch (  IOException e) {
+    logger.error("cannot open tcp connection to {}:{}: ",m_tcpHostName,m_tcpPort,e);
+  }
+}
