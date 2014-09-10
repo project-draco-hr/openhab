@@ -1,5 +1,5 @@
 {
-  logger.debug("socket reader thread started");
+  logger.debug("msg reader thread started");
   String msg;
   try {
     while ((msg=m_reader.readLine()) != null && m_keepRunning) {
@@ -26,9 +26,14 @@ break;
 logger.error("{} while parsing message {}",e.getMessage(),msg);
 }
 }
+if (msg == null) {
+logger.error("null read from input stream!");
+}
 }
  catch (IOException e) {
-logger.warn("I/O error while reading from socket:",e);
+logger.error("I/O error while reading from stream: {}",e.getMessage());
+m_socket=null;
+m_port=null;
 }
-logger.debug("socket reader thread exited");
+logger.debug("msg reader thread exited");
 }

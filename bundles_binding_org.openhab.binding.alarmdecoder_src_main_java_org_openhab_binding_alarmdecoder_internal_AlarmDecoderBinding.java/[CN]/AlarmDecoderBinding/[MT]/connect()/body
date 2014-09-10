@@ -4,20 +4,50 @@
     if (m_tcpHostName != null && m_tcpPort > 0) {
       m_socket=new Socket(m_tcpHostName,m_tcpPort);
       m_reader=new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
-      m_writer=new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream()));
       logger.info("connected to {}:{}",m_tcpHostName,m_tcpPort);
-      m_socketReader=new SocketReader();
-      m_thread=new Thread(m_socketReader);
-      m_thread.start();
+      startMsgReader();
+    }
+ else     if (this.m_serialDeviceName != null) {
+      System.setProperty("gnu.io.rxtx.SerialPorts",m_serialDeviceName);
+      CommPortIdentifier ci=CommPortIdentifier.getPortIdentifier(m_serialDeviceName);
+      CommPort cp=ci.open("openhabalarmdecoder",10000);
+      if (cp == null) {
+        throw new IllegalStateException("cannot open serial port!");
+      }
+      if (cp instanceof SerialPort) {
+        m_port=(SerialPort)cp;
+      }
+ else {
+        throw new IllegalStateException("unknown port type");
+      }
+      m_port.setSerialPortParams(19200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+      m_port.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
+      m_port.disableReceiveFraming();
+      m_port.disableReceiveThreshold();
+      m_reader=new BufferedReader(new InputStreamReader(m_port.getInputStream()));
+      logger.info("connected to serial port: {}",m_serialDeviceName);
+      startMsgReader();
     }
  else {
       logger.warn("alarmdecoder hostname or port not configured!");
     }
   }
- catch (  UnknownHostException e) {
+ catch (  PortInUseException e) {
+    logger.error("cannot open serial port: {}, it is in use!",m_serialDeviceName);
+  }
+catch (  UnsupportedCommOperationException e) {
+    logger.error("got unsupported operation {} on port {}",e.getMessage(),m_serialDeviceName);
+  }
+catch (  NoSuchPortException e) {
+    logger.error("got no such port for {}",m_serialDeviceName);
+  }
+catch (  IllegalStateException e) {
+    logger.error("got unknown port type for {}",m_serialDeviceName);
+  }
+catch (  UnknownHostException e) {
     logger.error("unknown host name :{}: ",m_tcpHostName,e);
   }
 catch (  IOException e) {
-    logger.error("cannot open tcp connection to {}:{}: ",m_tcpHostName,m_tcpPort,e);
+    logger.error("cannot open connection to {}",m_connectString);
   }
 }
