@@ -1,0 +1,21 @@
+{
+  HashMap<String,ArrayList<AlarmDecoderBindingConfig>> a2c=m_itemMap.get(mt.getValue());
+  if (addr != null) {
+    ArrayList<AlarmDecoderBindingConfig> al=a2c.get(addr);
+    return (al == null ? new ArrayList<AlarmDecoderBindingConfig>() : al);
+  }
+ else {
+    ArrayList<AlarmDecoderBindingConfig> al=new ArrayList<AlarmDecoderBindingConfig>();
+    for (    Entry<String,ArrayList<AlarmDecoderBindingConfig>> a : a2c.entrySet()) {
+      if (feature == null) {
+        al.addAll(a.getValue());
+      }
+ else {
+        for (        AlarmDecoderBindingConfig cf : a.getValue()) {
+          al.add(cf);
+        }
+      }
+    }
+    return (al);
+  }
+}

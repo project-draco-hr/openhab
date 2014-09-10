@@ -1,0 +1,15 @@
+{
+  if (m_socketReader != null) {
+    m_socketReader.stopRunning();
+    m_socketReader=null;
+  }
+  if (m_thread != null) {
+    try {
+      m_thread.interrupt();
+      m_thread.join();
+    }
+ catch (    InterruptedException e) {
+    }
+    m_thread=null;
+  }
+}

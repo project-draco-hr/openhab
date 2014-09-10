@@ -1,0 +1,36 @@
+{
+  if (config == null) {
+    throw new ConfigurationException("alarmdecoder:connect","no config!");
+  }
+  try {
+    String connect=(String)config.get("connect");
+    if (connect == null) {
+      throw new ConfigurationException("alarmdecoder:connect","no connect config in openhab.cfg!");
+    }
+    String[] parts=connect.split(":");
+    if (parts.length < 2) {
+      throw new ConfigurationException("alarmdecoder:connect","missing :, check openhab.cfg!");
+    }
+    if (parts[0].equals("tcp")) {
+      parseTcpConfig(parts);
+    }
+ else     if (parts[0].equals("serial")) {
+      if (parts.length != 2) {
+        throw new ConfigurationException("alarmdecoder:connect","serial device name cannot have :");
+      }
+      m_serialDeviceName=parts[1];
+    }
+ else {
+      throw new ConfigurationException("alarmdecoder:connect","invalid parameter " + parts[0]);
+    }
+    String reconn=(String)config.get("reconnect");
+    if (reconn != null && reconn.trim().length() > 0) {
+      refreshInterval=Long.parseLong(reconn);
+    }
+    setProperlyConfigured(true);
+  }
+ catch (  ConfigurationException e) {
+    logger.error("configuration error: {} ",e.getMessage(),e);
+    throw e;
+  }
+}
