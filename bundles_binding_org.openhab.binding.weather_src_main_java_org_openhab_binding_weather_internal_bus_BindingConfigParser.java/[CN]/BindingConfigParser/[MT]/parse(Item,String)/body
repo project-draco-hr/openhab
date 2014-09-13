@@ -34,9 +34,6 @@
  else {
     weatherConfig=new WeatherBindingConfig(helper.locationId,helper.type,helper.property);
   }
-  if (context.getConfig().getLocationConfig(weatherConfig.getLocationId()) == null) {
-    throw new BindingConfigParseException("Invalid binding, unknown locationId: " + bindingConfig);
-  }
   if (!PropertyUtils.hasProperty(new Weather(null),weatherConfig.getWeatherProperty())) {
     throw new BindingConfigParseException("Invalid binding, unknown type or property: " + bindingConfig);
   }
