@@ -1,0 +1,45 @@
+{
+  UpnpRequest requestOperation=requestMessage.getOperation();
+  HttpUriRequest request;
+switch (requestOperation.getMethod()) {
+case GET:
+    request=new HttpGet(requestOperation.getURI());
+  break;
+case SUBSCRIBE:
+request=new HttpGet(requestOperation.getURI()){
+  @Override public String getMethod(){
+    return UpnpRequest.Method.SUBSCRIBE.getHttpName();
+  }
+}
+;
+break;
+case UNSUBSCRIBE:
+request=new HttpGet(requestOperation.getURI()){
+@Override public String getMethod(){
+return UpnpRequest.Method.UNSUBSCRIBE.getHttpName();
+}
+}
+;
+break;
+case POST:
+HttpEntityEnclosingRequest post=new HttpPost(requestOperation.getURI());
+post.setEntity(createHttpRequestEntity(requestMessage));
+request=(HttpUriRequest)post;
+break;
+case NOTIFY:
+HttpEntityEnclosingRequest notify=new HttpPost(requestOperation.getURI()){
+@Override public String getMethod(){
+return UpnpRequest.Method.NOTIFY.getHttpName();
+}
+}
+;
+notify.setEntity(createHttpRequestEntity(requestMessage));
+request=(HttpUriRequest)notify;
+break;
+default :
+throw new RuntimeException("Unknown HTTP method: " + requestOperation.getHttpMethodName());
+}
+request.setParams(getRequestParams(requestMessage));
+HeaderUtil.add(request,requestMessage.getHeaders());
+return request;
+}

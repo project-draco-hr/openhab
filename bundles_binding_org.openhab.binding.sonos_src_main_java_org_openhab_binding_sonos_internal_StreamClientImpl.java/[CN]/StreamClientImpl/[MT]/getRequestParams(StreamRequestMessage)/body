@@ -1,0 +1,8 @@
+{
+  HttpParams localParams=new BasicHttpParams();
+  localParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION,requestMessage.getOperation().getHttpMinorVersion() == 0 ? HttpVersion.HTTP_1_0 : HttpVersion.HTTP_1_1);
+  if (!requestMessage.getHeaders().containsKey(UpnpHeader.Type.USER_AGENT)) {
+    HttpProtocolParams.setUserAgent(localParams,getConfiguration().getUserAgentValue(requestMessage.getUdaMajorVersion(),requestMessage.getUdaMinorVersion()));
+  }
+  return new DefaultedHttpParams(localParams,globalParams);
+}

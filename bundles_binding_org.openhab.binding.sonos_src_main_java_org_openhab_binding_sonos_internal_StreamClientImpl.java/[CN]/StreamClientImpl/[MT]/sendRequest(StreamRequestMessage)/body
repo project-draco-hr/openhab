@@ -1,0 +1,9 @@
+{
+  if (log.isLoggable(Level.FINE))   log.fine("Sending HTTP request: " + message);
+  try {
+    return httpClient.execute(createRequest(message),createResponseHandler());
+  }
+ catch (  IOException e) {
+    throw new RuntimeException(e);
+  }
+}
