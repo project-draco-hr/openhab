@@ -7,8 +7,7 @@ case HAIL:
     logger.trace("Process Hail command");
   logger.debug(String.format("Request an update of the dynamic values for node id %d",this.getNode().getNodeId()));
 if (this.getNode().getNodeStage() != NodeStage.DONE) return;
-this.getNode().setNodeStage(NodeStage.DYNAMIC);
-this.getNode().advanceNodeStage(NodeStage.DONE);
+pollNode();
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
