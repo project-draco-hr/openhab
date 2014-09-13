@@ -1,0 +1,15 @@
+{
+  Weather weather=new Weather(getProviderName());
+  executeRequest(weather,prepareUrl(getWeatherUrl(),locationConfig),locationConfig);
+  String forecastUrl=getForecastUrl();
+  if (forecastUrl != null && !weather.hasError()) {
+    executeRequest(weather,prepareUrl(forecastUrl,locationConfig),locationConfig);
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("{}[{}]: {}",getProviderName(),locationConfig.getLocationId(),weather.toString());
+    for (    Weather fc : weather.getForecast()) {
+      logger.debug("{}[{}]: {}",getProviderName(),locationConfig.getLocationId(),fc.toString());
+    }
+  }
+  return weather;
+}

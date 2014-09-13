@@ -1,0 +1,43 @@
+{
+  GetMethod get=null;
+  try {
+    logger.trace("{}[{}]: request : {}",getProviderName(),locationConfig.getLocationId(),url);
+    get=new GetMethod(url);
+    httpClient.executeMethod(get);
+    InputStream is=null;
+    if (logger.isTraceEnabled()) {
+      String response=get.getResponseBodyAsString(100000);
+      response=StringUtils.remove(response,"\n");
+      response=StringUtils.trim(response);
+      logger.trace("{}[{}]: response: {}",getProviderName(),locationConfig.getLocationId(),response);
+      is=new ByteArrayInputStream(response.getBytes(get.getResponseCharSet()));
+    }
+ else {
+      is=get.getResponseBodyAsStream();
+    }
+    if (get.getStatusCode() == HttpStatus.SC_OK) {
+      parser.parseInto(is,weather);
+    }
+    if (weather.getProvider() == ProviderName.OPENWEATHERMAP && weather.getResponseCode() != null && weather.getResponseCode() == 200) {
+      weather.setError(null);
+    }
+    if (!weather.hasError() && get.getStatusCode() != HttpStatus.SC_OK) {
+      weather.setError(get.getStatusLine().toString());
+    }
+    if (weather.hasError()) {
+      logger.error("{}[{}]: Can't retreive weather data: {}",getProviderName(),locationConfig.getLocationId(),weather.getError());
+    }
+ else {
+      setLastUpdate(weather);
+    }
+  }
+ catch (  Exception ex) {
+    logger.error(getProviderName() + ": " + ex.getMessage(),ex);
+    weather.setError(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+  }
+ finally {
+    if (get != null) {
+      get.releaseConnection();
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  final Weather weather=context.getWeather(locationId);
+  if (weather != null) {
+    new ItemIterator().iterate(new ItemIteratorCallback(){
+      @Override public void next(      WeatherBindingConfig bindingConfig,      Item item){
+        if (bindingConfig.getLocationId().equals(locationId)) {
+          try {
+            Object instance=getInstance(weather,bindingConfig);
+            if (instance != null) {
+              Object value=PropertyUtils.getPropertyValue(instance,bindingConfig.getWeatherProperty());
+              if (!equalsCachedValue(value,item)) {
+                publishValue(item,value);
+                itemCache.put(item.getName(),value);
+              }
+            }
+          }
+ catch (          Exception ex) {
+            logger.warn(ex.getMessage(),ex);
+          }
+        }
+      }
+    }
+);
+  }
+}

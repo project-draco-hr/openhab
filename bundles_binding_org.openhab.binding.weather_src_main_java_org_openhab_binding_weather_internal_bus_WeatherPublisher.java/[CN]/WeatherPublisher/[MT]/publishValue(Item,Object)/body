@@ -1,0 +1,40 @@
+{
+  if (value == null) {
+    context.getEventPublisher().postUpdate(item.getName(),UnDefType.UNDEF);
+  }
+ else   if (value instanceof Calendar) {
+    Calendar calendar=(Calendar)value;
+    if (item.getAcceptedDataTypes().contains(DateTimeType.class)) {
+      context.getEventPublisher().postUpdate(item.getName(),new DateTimeType(calendar));
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only DateTimeType supported!",item.getName());
+    }
+  }
+ else   if (value instanceof Number) {
+    if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      BigDecimal decimalValue=new BigDecimal(value.toString()).setScale(2,RoundingMode.HALF_UP);
+      context.getEventPublisher().postUpdate(item.getName(),new DecimalType(decimalValue));
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only DecimalType supported!",item.getName());
+    }
+  }
+ else   if (value instanceof String || value instanceof Enum) {
+    if (item.getAcceptedDataTypes().contains(StringType.class)) {
+      if (value instanceof Enum) {
+        String enumValue=WordUtils.capitalizeFully(StringUtils.replace(value.toString(),"_"," "));
+        context.getEventPublisher().postUpdate(item.getName(),new StringType(enumValue));
+      }
+ else {
+        context.getEventPublisher().postUpdate(item.getName(),new StringType(value.toString()));
+      }
+    }
+ else {
+      logger.warn("Unsupported type for item {}, only String supported!",item.getName());
+    }
+  }
+ else {
+    logger.warn("Unsupported value type {}",value.getClass().getSimpleName());
+  }
+}

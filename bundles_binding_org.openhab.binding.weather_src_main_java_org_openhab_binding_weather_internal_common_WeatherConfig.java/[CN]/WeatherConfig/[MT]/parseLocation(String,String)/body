@@ -1,0 +1,34 @@
+{
+  if (value == null) {
+    throw new ConfigurationException("weather","Empty property '" + key + "', please check your openhab.cfg!");
+  }
+  String locationId=StringUtils.substringBetween(key,".");
+  if (locationId == null) {
+    throw new ConfigurationException("weather","Malformed location property '" + key + "', please check your openhab.cfg!");
+  }
+  LocationConfig lc=locationConfigs.get(locationId);
+  if (lc == null) {
+    lc=new LocationConfig();
+    lc.setLocationId(locationId);
+    locationConfigs.put(locationId,lc);
+  }
+  String keyId=PropertyResolver.last(key);
+  if (StringUtils.equalsIgnoreCase(keyId,"provider")) {
+    lc.setProviderName(getProviderName(value));
+  }
+ else   if (StringUtils.equalsIgnoreCase(keyId,"updateInterval")) {
+    lc.setUpdateInterval(parseNumber(key,value).intValue());
+  }
+ else   if (StringUtils.equalsIgnoreCase(keyId,"latitude")) {
+    lc.setLatitude(parseNumber(key,value));
+  }
+ else   if (StringUtils.equalsIgnoreCase(keyId,"longitude")) {
+    lc.setLongitude(parseNumber(key,value));
+  }
+ else   if (StringUtils.equalsIgnoreCase(keyId,"language")) {
+    lc.setLanguage(value);
+  }
+ else {
+    throw new ConfigurationException("weather","Unknown configuration key '" + key + "', please check your openhab.cfg!");
+  }
+}

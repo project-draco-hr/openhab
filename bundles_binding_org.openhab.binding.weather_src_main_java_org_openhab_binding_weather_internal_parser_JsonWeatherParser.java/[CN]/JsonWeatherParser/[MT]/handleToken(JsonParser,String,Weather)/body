@@ -1,0 +1,22 @@
+{
+  JsonToken token=jp.getCurrentToken();
+  String prop=PropertyResolver.add(property,jp.getCurrentName());
+  if (token.isStructStart()) {
+    boolean isObject=token == JsonToken.START_OBJECT || token == JsonToken.END_OBJECT;
+    Weather forecast=!isObject ? weather : startIfForecast(weather,prop);
+    while (!jp.nextValue().isStructEnd()) {
+      handleToken(jp,prop,forecast);
+    }
+    if (isObject) {
+      endIfForecast(weather,forecast,prop);
+    }
+  }
+ else   if (token != null) {
+    try {
+      setValue(weather,prop,jp.getValueAsString());
+    }
+ catch (    Exception ex) {
+      logger.error("Error setting property '{}' with value '{}' ({})",prop,jp.getValueAsString(),ex.getMessage());
+    }
+  }
+}

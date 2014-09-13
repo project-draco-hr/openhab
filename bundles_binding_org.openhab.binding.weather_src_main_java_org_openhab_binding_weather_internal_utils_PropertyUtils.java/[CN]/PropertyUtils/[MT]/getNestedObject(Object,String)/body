@@ -1,0 +1,10 @@
+{
+  if (PropertyUtils.isWeatherProperty(propertyName)) {
+    return instance;
+  }
+  while (PropertyResolver.hasNested(propertyName)) {
+    instance=FieldUtils.readField(instance,PropertyResolver.first(propertyName),true);
+    propertyName=PropertyResolver.removeFirst(propertyName);
+  }
+  return instance;
+}

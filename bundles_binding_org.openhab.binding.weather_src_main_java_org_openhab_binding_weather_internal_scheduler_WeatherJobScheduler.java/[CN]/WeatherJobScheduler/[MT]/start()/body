@@ -1,0 +1,10 @@
+{
+  for (  LocationConfig locationConfig : context.getConfig().getAllLocationConfigs()) {
+    if (hasBinding(locationConfig.getLocationId())) {
+      scheduleIntervalJob(locationConfig);
+    }
+ else {
+      logger.info("Disabling weather locationId '{}', no binding available",locationConfig.getLocationId());
+    }
+  }
+}

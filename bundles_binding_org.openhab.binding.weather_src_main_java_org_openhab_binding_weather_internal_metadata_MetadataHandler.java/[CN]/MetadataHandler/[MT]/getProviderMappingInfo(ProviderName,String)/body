@@ -1,0 +1,13 @@
+{
+  Map<String,ProviderMappingInfo> mapping=providerMappings.get(provider);
+  if (mapping == null) {
+    return null;
+  }
+  ProviderMappingInfo provMapping=mapping.get(property);
+  String nestedProperty=property;
+  while (provMapping == null && PropertyResolver.hasNested(nestedProperty)) {
+    nestedProperty=PropertyResolver.removeFirst(nestedProperty);
+    provMapping=mapping.get(nestedProperty);
+  }
+  return provMapping;
+}

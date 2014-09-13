@@ -1,0 +1,14 @@
+{
+  JobDataMap jobDataMap=jobContext.getJobDetail().getJobDataMap();
+  String locationId=jobDataMap.getString("locationId");
+  logger.debug("Starting Weather job for location '{}'",locationId);
+  try {
+    LocationConfig locationConfig=context.getConfig().getLocationConfig(locationId);
+    WeatherProvider weatherProvider=WeatherProviderFactory.createWeatherProvider(locationConfig.getProviderName());
+    context.setWeather(locationId,weatherProvider.getWeather(locationConfig));
+    weatherPublisher.publish(locationId);
+  }
+ catch (  Exception ex) {
+    throw new JobExecutionException(ex.getMessage(),ex);
+  }
+}

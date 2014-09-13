@@ -1,0 +1,10 @@
+{
+  if (config != null) {
+    context.getJobScheduler().stop();
+    context.getConfig().parse(config);
+    context.getConfig().dump();
+    if (context.getConfig().isValid()) {
+      context.getJobScheduler().restart();
+    }
+  }
+}

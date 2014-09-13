@@ -1,0 +1,15 @@
+{
+  WeatherBindingConfig bindingConfig=null;
+  for (  WeatherBindingProvider provider : context.getProviders()) {
+    if (bindingConfig == null) {
+      bindingConfig=provider.getBindingFor(itemName);
+    }
+  }
+  if (bindingConfig == null) {
+    logger.warn("Weather binding for item {} not found",itemName);
+  }
+ else {
+    itemCache.remove(itemName);
+    publish(bindingConfig.getLocationId());
+  }
+}

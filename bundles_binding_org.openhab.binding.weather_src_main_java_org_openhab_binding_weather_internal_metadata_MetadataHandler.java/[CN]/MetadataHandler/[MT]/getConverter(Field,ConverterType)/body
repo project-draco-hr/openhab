@@ -1,0 +1,12 @@
+{
+  if (type == ConverterType.AUTO) {
+    String fieldType=field.getType().getSimpleName().toUpperCase();
+    return ConverterFactory.getConverter(ConverterType.valueOf(fieldType));
+  }
+ else   if (type == ConverterType.NONE) {
+    return null;
+  }
+ else {
+    return ConverterFactory.getConverter(type);
+  }
+}

@@ -1,0 +1,31 @@
+{
+  Temperature temp=weather.getTemperature();
+  if (temp.getCurrent() != null && weather instanceof Forecast) {
+    temp.setCurrent(null);
+  }
+  Athmosphere athm=weather.getAthmosphere();
+  if (temp.getFeel() == null && temp.getCurrent() != null && athm.getHumidity() != null) {
+    Double humidex=UnitUtils.getHumidex(temp.getCurrent(),athm.getHumidity());
+    temp.setFeel(humidex);
+  }
+  Wind wind=weather.getWind();
+  if (wind.getSpeed() == null || wind.getSpeed() == 0.0) {
+    wind.setSpeed(null);
+    wind.setDegree(null);
+  }
+  if (wind.getDirection() == null && wind.getDegree() != null) {
+    String direction=UnitUtils.getWindDirection(wind.getDegree());
+    wind.setDirection(direction);
+  }
+  Precipitation precip=weather.getPrecipitation();
+  if (weather.getProvider() == ProviderName.FORECASTIO && StringUtils.equalsIgnoreCase("snow",precip.getType())) {
+    precip.setSnow(precip.getRain());
+    precip.setRain(null);
+  }
+  if (precip.getSnow() != null && precip.getSnow() == 0.0) {
+    precip.setSnow(null);
+  }
+  if (precip.getRain() != null && precip.getRain() == 0.0) {
+    precip.setRain(null);
+  }
+}
