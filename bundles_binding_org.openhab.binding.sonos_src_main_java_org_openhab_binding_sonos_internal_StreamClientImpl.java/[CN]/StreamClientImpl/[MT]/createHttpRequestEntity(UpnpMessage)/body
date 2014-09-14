@@ -1,10 +1,10 @@
 {
   if (upnpMessage.getBodyType().equals(UpnpMessage.BodyType.BYTES)) {
-    if (log.isLoggable(Level.FINE))     log.fine("Preparing HTTP request entity as byte[]");
+    log.fine("Preparing HTTP request entity as byte[]");
     return new ByteArrayEntity(upnpMessage.getBodyBytes());
   }
  else {
-    if (log.isLoggable(Level.FINE))     log.fine("Preparing HTTP request entity as string");
+    log.fine("Preparing HTTP request entity as string");
     try {
       String charset=upnpMessage.getContentTypeCharset();
       return new StringEntity(upnpMessage.getBodyString(),charset != null ? charset : "UTF-8");

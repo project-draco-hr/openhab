@@ -1,9 +1,24 @@
 {
-  if (log.isLoggable(Level.FINE))   log.fine("Sending HTTP request: " + message);
+  final UpnpRequest requestOperation=requestMessage.getOperation();
+  log.fine("Preparing HTTP request message with method '" + requestOperation.getHttpMethodName() + "': "+ requestMessage);
   try {
-    return httpClient.execute(createRequest(message),createResponseHandler());
+    HttpUriRequest httpRequest=createHttpRequest(requestMessage,requestOperation);
+    httpRequest.setParams(getRequestParams(requestMessage));
+    HeaderUtil.add(httpRequest,requestMessage.getHeaders());
+    log.fine("Sending HTTP request: " + httpRequest.getURI());
+    return httpClient.execute(httpRequest,createResponseHandler());
   }
- catch (  IOException e) {
-    throw new RuntimeException(e);
+ catch (  MethodNotSupportedException ex) {
+    log.warning("Request aborted: " + ex.toString());
+    return null;
+  }
+catch (  ClientProtocolException ex) {
+    log.warning("HTTP protocol exception executing request: " + requestMessage);
+    log.warning("Cause: " + Exceptions.unwrap(ex));
+    return null;
+  }
+catch (  IOException ex) {
+    log.fine("Client connection was aborted: " + ex.getMessage());
+    return null;
   }
 }
