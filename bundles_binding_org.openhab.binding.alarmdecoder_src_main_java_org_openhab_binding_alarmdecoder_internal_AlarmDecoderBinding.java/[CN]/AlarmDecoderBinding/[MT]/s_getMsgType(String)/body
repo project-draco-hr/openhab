@@ -1,0 +1,13 @@
+{
+  if (s == null || s.length() < 4) {
+    return ADMsgType.INVALID;
+  }
+  if (s.startsWith("[")) {
+    return ADMsgType.KPM;
+  }
+  ADMsgType mt=s_startToMsgType.get(s.substring(0,4));
+  if (mt == null) {
+    mt=ADMsgType.INVALID;
+  }
+  return mt;
+}

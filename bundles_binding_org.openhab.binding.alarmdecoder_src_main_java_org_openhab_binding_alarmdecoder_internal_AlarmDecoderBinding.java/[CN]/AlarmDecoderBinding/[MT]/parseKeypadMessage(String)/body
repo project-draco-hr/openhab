@@ -1,0 +1,54 @@
+{
+  String parts[]=msg.split(",");
+  if (parts.length != 4) {
+    throw new MessageParseException("got invalid keypad msg");
+  }
+  if (parts[0].length() != 22) {
+    throw new MessageParseException("bad keypad status length : " + parts[0].length());
+  }
+  try {
+    int numeric=Integer.parseInt(parts[1]);
+    int upper=Integer.parseInt(parts[0].substring(1,6),2);
+    int nbeeps=Integer.parseInt(parts[0].substring(6,7));
+    int lower=Integer.parseInt(parts[0].substring(7,17),2);
+    int status=((upper & 0x1F) << 13) | ((nbeeps & 0x3) << 10) | lower;
+    ArrayList<AlarmDecoderBindingConfig> bcl=getItems(ADMsgType.KPM,null,null);
+    for (    AlarmDecoderBindingConfig c : bcl) {
+      if (c.hasFeature("zone")) {
+        updateItem(c,new DecimalType(numeric));
+      }
+ else       if (c.hasFeature("text")) {
+        updateItem(c,new StringType(parts[3]));
+      }
+ else       if (c.hasFeature("beeps")) {
+        updateItem(c,new DecimalType(nbeeps));
+      }
+ else       if (c.hasFeature("status")) {
+        int bit=c.getIntParameter("bit",0,17,-1);
+        if (bit >= 0) {
+          int v=(status >> bit) & 0x1;
+          updateItem(c,new DecimalType(v));
+        }
+ else {
+          updateItem(c,new DecimalType(status));
+        }
+      }
+ else       if (c.hasFeature("contact")) {
+        int bit=c.getIntParameter("bit",0,17,-1);
+        if (bit >= 0) {
+          int v=(status >> bit) & 0x1;
+          updateItem(c,(v == 0) ? OpenClosedType.CLOSED : OpenClosedType.OPEN);
+        }
+ else {
+          logger.warn("ignoring item {}: it has contact without bit field",c.getItemName());
+        }
+      }
+    }
+    if ((status & (1 << 17)) != 0) {
+      setUnupdatedItemsToDefault();
+    }
+  }
+ catch (  NumberFormatException e) {
+    throw new MessageParseException("keypad msg contains invalid number: " + e.getMessage());
+  }
+}
