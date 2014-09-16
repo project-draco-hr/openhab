@@ -7,13 +7,6 @@
   if (!dev.hasValidDescriptors()) {
     return;
   }
-  if (!dev.descriptorsHaveChanged()) {
-    if (!dev.needsQuerying()) {
-      logger.debug("descriptors for dev {} have not changed, no binding config applied.",dev);
-    }
-    return;
-  }
-  dev.setDescriptorsHaveChanged(false);
   logger.debug("applying binding for item {} address {}",itemName,dev.getAddress());
   String productKey=c.getProductKey();
   if (!dev.hasProductKey()) {
@@ -36,15 +29,17 @@
  else {
         logger.debug("adding place holder for feature {} ",c.getFeature());
         f=DeviceFeature.s_makeDeviceFeature("PLACEHOLDER");
-        f.setParameters(c.getParameters());
-        f.addListener(new FeatureListener(itemName));
+        DeviceFeatureListener fl=new DeviceFeatureListener(itemName,eventPublisher);
+        fl.setParameters(c.getParameters());
+        f.addListener(fl);
         dev.addFeature(c.getFeature(),f);
       }
     }
  else {
       logger.debug("now listening for feature {} item {}",f.toString(),itemName);
-      f.setParameters(c.getParameters());
-      f.addListener(new FeatureListener(itemName));
+      DeviceFeatureListener fl=new DeviceFeatureListener(itemName,eventPublisher);
+      fl.setParameters(c.getParameters());
+      f.addListener(fl);
     }
   }
   if (!dev.hasValidPollingInterval()) {

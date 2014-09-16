@@ -1,0 +1,11 @@
+{
+  logger.debug("{} publishing filtered: {} param {} == {}",getName(),newState,key,val);
+synchronized (m_listeners) {
+    for (    DeviceFeatureListener listener : m_listeners) {
+      if (listener.hasParameter(key) && listener.getIntParameter(key) == val) {
+        logger.debug("{} publishing to: {}",getName(),listener.getItemName());
+        listener.stateChanged(newState);
+      }
+    }
+  }
+}

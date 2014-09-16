@@ -1,0 +1,7 @@
+{
+  logger.debug("Creating new message for application command THERMOSTAT_FAN_MODE_SUPPORTED_GET for node {}",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.High);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)THERMOSTAT_FAN_MODE_SUPPORTED_GET};
+  result.setMessagePayload(newPayload);
+  return result;
+}
