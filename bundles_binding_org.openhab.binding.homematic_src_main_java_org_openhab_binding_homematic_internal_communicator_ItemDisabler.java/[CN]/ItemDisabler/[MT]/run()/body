@@ -7,7 +7,7 @@
       new ProviderItemIterator().iterate(entry.getKey(),new ProviderItemIteratorCallback(){
         @Override public void next(        HomematicBindingConfig providerBindingConfig,        Item item,        Converter<?> converter){
           HmValueItem hmValueItem=context.getStateHolder().getState(providerBindingConfig);
-          if (providerBindingConfig instanceof ProgramConfig) {
+          if (providerBindingConfig instanceof ProgramConfig || providerBindingConfig instanceof ActionConfig) {
             context.getEventPublisher().postUpdate(item.getName(),OnOffType.OFF);
           }
  else {
