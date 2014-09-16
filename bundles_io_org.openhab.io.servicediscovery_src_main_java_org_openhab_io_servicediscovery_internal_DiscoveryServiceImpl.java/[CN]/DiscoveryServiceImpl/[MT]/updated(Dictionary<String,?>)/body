@@ -1,0 +1,17 @@
+{
+  try {
+    if (config != null) {
+      String bindAddress=(String)config.get("bind_address");
+      if (bindAddress != null && StringUtils.isNotBlank(bindAddress)) {
+        jmdns=JmDNS.create(InetAddress.getByName(bindAddress));
+        logger.info("Service Discovery initialization completed (bound to address: {}).",bindAddress);
+        return;
+      }
+    }
+    jmdns=JmDNS.create();
+    logger.info("Service Discovery initialization completed.");
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
+}
