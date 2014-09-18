@@ -13,6 +13,11 @@
     writeField(dp,"valueList",stringArray,String[].class);
   }
   Object value=dpData.get("VALUE");
+  String type=(String)dpData.get("TYPE");
+  boolean isString=StringUtils.equals("STRING",type);
+  if (isString && !(value instanceof String)) {
+    value=ObjectUtils.toString(value);
+  }
   if (value instanceof Number) {
     writeField(dp,"minValue",dpData.get("MIN"),value.getClass());
     writeField(dp,"maxValue",dpData.get("MAX"),value.getClass());
