@@ -1,5 +1,10 @@
 {
   logger.debug("Executing timer '{}'",context.getJobDetail().getKey().toString());
-  procedure.apply();
+  if (procedure != null) {
+    procedure.apply();
+  }
+ else   if (procedure1 != null) {
+    procedure1.apply(argument1);
+  }
   timer.setTerminated(true);
 }
