@@ -21,5 +21,18 @@
   }
   logger.debug("Sending Message: {}",serialMessage);
   this.getController().sendData(serialMessage);
-  if (command instanceof State)   this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+  if (setpointType != null) {
+    serialMessage=node.encapsulate(commandClass.getMessage(SetpointType.getSetpointType(Integer.parseInt(setpointType))),commandClass,endpointId);
+  }
+ else {
+    serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,endpointId);
+  }
+  if (serialMessage == null) {
+    logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
+    return;
+  }
+  this.getController().sendData(serialMessage);
 }
