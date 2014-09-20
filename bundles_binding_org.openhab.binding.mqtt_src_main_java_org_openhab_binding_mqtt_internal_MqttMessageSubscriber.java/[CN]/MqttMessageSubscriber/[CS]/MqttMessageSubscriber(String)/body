@@ -1,8 +1,8 @@
 {
   String[] config=splitConfigurationString(configuration);
   try {
-    if (config.length != 4) {
-      throw new BindingConfigParseException("Configuration requires 4 parameters separated by ':'");
+    if (config.length < 4) {
+      throw new BindingConfigParseException("Configuration requires at least 4 parameters separated by ':'");
     }
     if (StringUtils.isEmpty(config[0])) {
       throw new BindingConfigParseException("Missing broker name.");
@@ -34,6 +34,9 @@
  else {
       setTransformationRule(config[3].trim());
       initTransformService();
+    }
+    if (config.length > 4) {
+      setMsgFilter(config[4].trim());
     }
   }
  catch (  BindingConfigParseException e) {
