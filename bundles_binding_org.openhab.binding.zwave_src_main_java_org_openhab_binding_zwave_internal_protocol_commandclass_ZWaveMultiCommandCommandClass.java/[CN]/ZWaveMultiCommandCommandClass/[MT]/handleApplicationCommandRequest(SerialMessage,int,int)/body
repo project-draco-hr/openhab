@@ -1,7 +1,9 @@
 {
-  logger.trace("Handle Message Multi-instance/Multi-channel Request");
-  logger.debug("NODE {}: Received Multi-instance/Multi-channel Request",this.getNode().getNodeId());
+  logger.debug("NODE {}: Received Multi-Command Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
-  }
+case 0x01:
+    handleMultiCommandEncapResponse(serialMessage,offset + 1);
+  break;
+}
 }
