@@ -1,0 +1,19 @@
+{
+  Properties headers=new Properties();
+  if (group != null && group.length() > 0) {
+    if (group.startsWith("{")) {
+      group=group.substring(1);
+    }
+    if (group.endsWith("}")) {
+      group=group.substring(0,group.length() - 1);
+    }
+    String[] headersArray=group.split("&");
+    for (    String headerElement : headersArray) {
+      int idx=headerElement.indexOf("=");
+      if (idx >= 0) {
+        headers.setProperty(headerElement.substring(0,idx),headerElement.substring(idx + 1));
+      }
+    }
+  }
+  return headers;
+}
