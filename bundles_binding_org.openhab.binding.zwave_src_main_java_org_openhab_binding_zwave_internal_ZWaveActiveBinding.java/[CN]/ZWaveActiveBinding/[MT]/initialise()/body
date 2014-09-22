@@ -7,7 +7,12 @@
     zController.initialize();
     zController.addEventListener(this);
     this.networkMonitor=new ZWaveNetworkMonitor(this.zController);
-    if (healtime != null)     this.networkMonitor.setHealTime(healtime);
+    if (healtime != null) {
+      this.networkMonitor.setHealTime(healtime);
+    }
+    if (softReset != false) {
+      this.networkMonitor.resetOnError(softReset);
+    }
     this.zConfigurationService=new ZWaveConfiguration(this.zController,this.networkMonitor);
     zController.addEventListener(this.zConfigurationService);
     return;
