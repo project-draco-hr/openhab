@@ -8,14 +8,14 @@
       if (instances == 0) {
         Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
         for (        SerialMessage serialMessage : dynamicQueries) {
-          zController.sendData(serialMessage);
+          sendData(serialMessage);
         }
       }
  else {
         for (int i=1; i <= instances; i++) {
           Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
           for (          SerialMessage serialMessage : dynamicQueries) {
-            zController.sendData(node.encapsulate(serialMessage,zwaveCommandClass,i));
+            sendData(node.encapsulate(serialMessage,zwaveCommandClass,i));
           }
         }
       }
@@ -30,7 +30,7 @@
             ZWaveCommandClassDynamicState zdds2=(ZWaveCommandClassDynamicState)endpointCommandClass;
             Collection<SerialMessage> dynamicQueries=zdds2.getDynamicValues();
             for (            SerialMessage serialMessage : dynamicQueries) {
-              zController.sendData(node.encapsulate(serialMessage,endpointCommandClass,endpoint.getEndpointId()));
+              sendData(node.encapsulate(serialMessage,endpointCommandClass,endpoint.getEndpointId()));
             }
           }
         }
