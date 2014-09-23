@@ -1,11 +1,7 @@
 {
   logger.trace("Process Multi-command Encapsulation");
   int classCnt=serialMessage.getMessagePayloadByte(offset++);
-  logger.debug("======== classCnt={}",classCnt);
   for (int c=0; c < classCnt; c++) {
-    logger.debug("======= Processing class {}, offset {}",c,offset);
-    logger.debug("======= length is {},",serialMessage.getMessagePayloadByte(offset));
-    logger.debug("======= class is {},",serialMessage.getMessagePayloadByte(offset + 1));
     CommandClass commandClass;
     ZWaveCommandClass zwaveCommandClass;
     int commandClassCode=serialMessage.getMessagePayloadByte(offset + 1);
