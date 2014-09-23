@@ -1,8 +1,8 @@
 {
   HmDatapoint dp=new HmDatapoint();
   dp.setName(name);
-  writeField(dp,"channel",channel,HmChannel.class);
-  writeField(dp,"writeable",dpData.get("WRITEABLE"),Boolean.class);
+  FieldUtils.writeField(dp,"channel",channel,true);
+  FieldUtils.writeField(dp,"writeable",dpData.get("WRITEABLE"),true);
   Object valueList=dpData.get("VALUE_LIST");
   if (valueList != null && valueList instanceof Object[]) {
     Object[] vl=(Object[])valueList;
@@ -10,19 +10,19 @@
     for (int i=0; i < vl.length; i++) {
       stringArray[i]=vl[i].toString();
     }
-    writeField(dp,"valueList",stringArray,String[].class);
+    FieldUtils.writeField(dp,"valueList",stringArray,true);
   }
   Object value=dpData.get("VALUE");
   String type=(String)dpData.get("TYPE");
   boolean isString=StringUtils.equals("STRING",type);
-  if (isString && !(value instanceof String)) {
+  if (isString && value != null && !(value instanceof String)) {
     value=ObjectUtils.toString(value);
   }
-  if (value instanceof Number) {
-    writeField(dp,"minValue",dpData.get("MIN"),value.getClass());
-    writeField(dp,"maxValue",dpData.get("MAX"),value.getClass());
+  setValueType(dp,type,value);
+  if (dp.isNumberValueType()) {
+    FieldUtils.writeField(dp,"minValue",dpData.get("MIN"),true);
+    FieldUtils.writeField(dp,"maxValue",dpData.get("MAX"),true);
   }
-  setValueType(dp,value);
   dp.setValue(value);
   return dp;
 }
