@@ -1,0 +1,13 @@
+{
+  HmValueItem valueItem=datapoints.get(bindingConfig);
+  if (valueItem != null) {
+    if (!valueItem.getValue().equals(rssiValue)) {
+      logger.debug("Value changed from '{}' to '{}' for binding {}",valueItem == null ? "null" : valueItem.getValue(),rssiValue,bindingConfig);
+      valueItem.setValue(rssiValue);
+      publish(bindingConfig,valueItem);
+    }
+  }
+ else {
+    logger.debug("Rssi info not found: {}",bindingConfig);
+  }
+}

@@ -1,0 +1,20 @@
+{
+  reloadExecutorPool.execute(new Runnable(){
+    @Override public void run(){
+      try {
+        logger.debug("Reloading Homematic server RSSI values");
+        Map<String,HmRssiInfo> rssiList=context.getHomematicClient().getRssiInfo();
+        for (        String address : rssiList.keySet()) {
+          HmRssiInfo rssiInfo=rssiList.get(address);
+          updateRssiInfo(new DatapointConfig(address,"0","RSSI_DEVICE"),rssiInfo.getDevice());
+          updateRssiInfo(new DatapointConfig(address,"0","RSSI_PEER"),rssiInfo.getPeer());
+        }
+        logger.debug("Finished reloading {} Homematic server RSSI values",rssiList.size());
+      }
+ catch (      HomematicClientException ex) {
+        logger.error(ex.getMessage(),ex);
+      }
+    }
+  }
+);
+}
