@@ -1,0 +1,40 @@
+{
+  logger.debug("Retrieve Hue bulb status and update items that are linked with bulbs");
+  if (activeBridge != null) {
+    HueSettings settings=activeBridge.getSettings();
+    for (int i=1; i <= settings.getCount(); i++) {
+      HueBulb bulb=bulbCache.get(i);
+      if (bulb == null) {
+        bulb=new HueBulb(activeBridge,i);
+        bulbCache.put(i,bulb);
+      }
+      bulb.getStatus(settings);
+    }
+    for (    HueBindingProvider provider : this.providers) {
+      for (      String hueItemName : provider.getInBindingItemNames()) {
+        HueBindingConfig deviceConfig=getConfigForItemName(hueItemName);
+        if (deviceConfig != null) {
+          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+          if (bulb != null) {
+            if (deviceConfig.getType().equals(BindingType.brightness)) {
+              eventPublisher.postUpdate(hueItemName,new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255)));
+            }
+            if (deviceConfig.getType().equals(BindingType.rgb)) {
+              DecimalType decimalHue=new DecimalType(bulb.getHue() / (double)182);
+              PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
+              PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)255));
+              HSBType newHsb=new HSBType(decimalHue,percentSaturation,percentBrightness);
+              eventPublisher.postUpdate(hueItemName,newHsb);
+            }
+            if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+              eventPublisher.postUpdate(hueItemName,OnOffType.ON);
+            }
+ else {
+              eventPublisher.postUpdate(hueItemName,OnOffType.OFF);
+            }
+          }
+        }
+      }
+    }
+  }
+}
