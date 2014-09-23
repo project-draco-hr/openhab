@@ -1,3 +1,11 @@
 {
-  throw new EpsonProjectorException("The TCP connector is not yet implemented");
+  logger.debug("Open connection to address'{}:{}'",ip,port);
+  try {
+    socket=new Socket(ip,port);
+    in=socket.getInputStream();
+    out=socket.getOutputStream();
+  }
+ catch (  Exception e) {
+    throw new EpsonProjectorException(e);
+  }
 }
