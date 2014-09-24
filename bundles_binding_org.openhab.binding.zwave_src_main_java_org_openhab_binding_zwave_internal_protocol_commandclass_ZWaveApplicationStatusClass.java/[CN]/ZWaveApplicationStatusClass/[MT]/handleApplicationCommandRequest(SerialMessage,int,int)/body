@@ -1,0 +1,27 @@
+{
+  logger.debug("NODE {} Application Status message",getNode());
+  int status=serialMessage.getMessagePayloadByte(offset++);
+switch (status) {
+case ApplicationStatusBusy:
+    logger.trace("NODE {} Process ApplicationStatusBusy status",getNode());
+  int busyStatus=serialMessage.getMessagePayloadByte(offset++);
+switch (busyStatus) {
+case StatusBusyTryAgainLater:
+  logger.warn("NODE {} is busy and wants us to try again later",getNode());
+break;
+case StatusBusyTryAgainLaterInSeconds:
+int seconds=serialMessage.getMessagePayloadByte(offset++);
+logger.warn("NODE {} is busy and wants us to try again in {} seconds",getNode(),seconds);
+break;
+case StatusBusyQueued:
+logger.warn("NODE {} is busy and has queued the request",getNode());
+break;
+}
+break;
+case ApplicationStatusRejected:
+logger.warn("NODE {} has rejected the request",getNode());
+break;
+default :
+logger.warn(String.format("Unsupported status 0x%02X for command class %s (0x%02X).",status,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}
