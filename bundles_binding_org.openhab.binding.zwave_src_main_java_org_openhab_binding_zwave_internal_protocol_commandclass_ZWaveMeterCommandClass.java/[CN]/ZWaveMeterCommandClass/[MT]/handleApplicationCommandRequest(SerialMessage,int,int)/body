@@ -31,10 +31,15 @@ return;
 }
 logger.debug(String.format("Meter Scale = %s (0x%02x)",scale.getUnit(),scale.getScale()));
 if (!this.meterScales.contains(scale)) this.meterScales.add(scale);
+try {
 BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
 logger.debug(String.format("Meter Value = (%f)",value));
 ZWaveMeterValueEvent zEvent=new ZWaveMeterValueEvent(this.getNode().getNodeId(),endpoint,meterType,scale,value);
 this.getController().notifyEventListeners(zEvent);
+}
+ catch (NumberFormatException e) {
+return;
+}
 if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 case METER_SUPPORTED_REPORT:

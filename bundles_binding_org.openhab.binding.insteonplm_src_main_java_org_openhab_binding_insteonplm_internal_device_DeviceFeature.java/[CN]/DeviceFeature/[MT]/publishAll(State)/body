@@ -1,0 +1,8 @@
+{
+  logger.debug("{} publishing: {}",getName(),newState);
+synchronized (m_listeners) {
+    for (    DeviceFeatureListener listener : m_listeners) {
+      listener.stateChanged(newState);
+    }
+  }
+}

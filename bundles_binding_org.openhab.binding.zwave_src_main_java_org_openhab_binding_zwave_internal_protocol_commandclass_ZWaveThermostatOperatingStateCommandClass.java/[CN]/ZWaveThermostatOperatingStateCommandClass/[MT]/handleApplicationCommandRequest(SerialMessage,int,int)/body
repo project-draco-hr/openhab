@@ -1,0 +1,14 @@
+{
+  logger.trace("Handle Message Thermostat Operating State Request");
+  logger.debug(String.format("Received Thermostat Operating State Request for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case THERMOSTAT_OPERATING_STATE_REPORT:
+    logger.trace("Process Thermostat Operating State Report");
+  processThermostatOperatingStateReport(serialMessage,offset,endpoint);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

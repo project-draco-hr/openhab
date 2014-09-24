@@ -1,10 +1,20 @@
 {
   List<HmDevice> devices=sendScriptByName("getAllDevices",HmDeviceList.class).getDevices();
+  Map<String,HmRssiInfo> rssiList=rpcClient.getRssiInfo(HmInterface.RF);
   for (  HmDevice device : devices) {
     addBatteryInfo(device);
     for (    HmChannel channel : device.getChannels()) {
       for (      HmDatapoint dp : channel.getDatapoints()) {
         DatapointConfig bindingConfig=new DatapointConfig(device.getAddress(),channel.getNumber(),dp.getName());
+        HmRssiInfo rssiInfo=rssiList.get(bindingConfig.getAddress());
+        if (rssiInfo != null) {
+          if ("RSSI_DEVICE".equals(bindingConfig.getParameter())) {
+            dp.setValue(rssiInfo.getDevice());
+          }
+ else           if ("RSSI_PEER".equals(bindingConfig.getParameter())) {
+            dp.setValue(rssiInfo.getPeer());
+          }
+        }
         callback.iterate(bindingConfig,dp);
       }
     }

@@ -1,0 +1,16 @@
+{
+  int i=deflt;
+  String v=m_params.get(key);
+  if (v != null) {
+    try {
+      int tmp=Integer.decode(v);
+      if (tmp >= min && tmp <= max) {
+        i=tmp;
+      }
+    }
+ catch (    NumberFormatException e) {
+      logger.error("bad number in int parameter configuration: {} = {}",key,v);
+    }
+  }
+  return i;
+}

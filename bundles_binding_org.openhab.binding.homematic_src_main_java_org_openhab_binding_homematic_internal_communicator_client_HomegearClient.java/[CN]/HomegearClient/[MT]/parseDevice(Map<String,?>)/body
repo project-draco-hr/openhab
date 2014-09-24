@@ -1,8 +1,8 @@
 {
   HmDevice device=new HmDevice();
-  writeField(device,"address",deviceData.get("ADDRESS"),String.class);
-  writeField(device,"type",deviceData.get("TYPE"),String.class);
-  writeField(device,"hmInterface",HmInterface.HOMEGEAR,HmInterface.class);
+  FieldUtils.writeField(device,"address",deviceData.get("ADDRESS"),true);
+  FieldUtils.writeField(device,"type",deviceData.get("TYPE"),true);
+  FieldUtils.writeField(device,"hmInterface",HmInterface.HOMEGEAR,true);
   Object[] channelList=(Object[])deviceData.get("CHANNELS");
   for (int i=0; i < channelList.length; i++) {
     Map<String,?> channelData=(Map<String,?>)channelList[i];
