@@ -1,5 +1,4 @@
 {
-  logger.debug("Retrieve Hue bulb status and update items that are linked with bulbs");
   if (activeBridge != null) {
     HueSettings settings=activeBridge.getSettings();
     for (int i=1; i <= settings.getCount(); i++) {
@@ -16,25 +15,30 @@
         if (deviceConfig != null) {
           HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
           if (bulb != null) {
-            if (deviceConfig.getType().equals(BindingType.brightness)) {
-              eventPublisher.postUpdate(hueItemName,new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255)));
-              if (bulb.getIsOn() == false) {
-                eventPublisher.postUpdate(hueItemName,OnOffType.OFF);
+            if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+              if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.ON) == false)) {
+                eventPublisher.postUpdate(hueItemName,OnOffType.ON);
+                deviceConfig.itemStateOnOffType=OnOffType.ON;
               }
             }
  else {
-              if (deviceConfig.getType().equals(BindingType.rgb)) {
+              if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.OFF) == false)) {
+                eventPublisher.postUpdate(hueItemName,OnOffType.OFF);
+                deviceConfig.itemStateOnOffType=OnOffType.OFF;
+              }
+            }
+            if (deviceConfig.getType().equals(BindingType.brightness)) {
+              if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+                eventPublisher.postUpdate(hueItemName,new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255)));
+              }
+            }
+ else             if (deviceConfig.getType().equals(BindingType.rgb)) {
+              if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
                 DecimalType decimalHue=new DecimalType(bulb.getHue() / (double)182);
                 PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
                 PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)255));
                 HSBType newHsb=new HSBType(decimalHue,percentSaturation,percentBrightness);
                 eventPublisher.postUpdate(hueItemName,newHsb);
-              }
-              if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
-                eventPublisher.postUpdate(hueItemName,OnOffType.ON);
-              }
- else {
-                eventPublisher.postUpdate(hueItemName,OnOffType.OFF);
               }
             }
           }
