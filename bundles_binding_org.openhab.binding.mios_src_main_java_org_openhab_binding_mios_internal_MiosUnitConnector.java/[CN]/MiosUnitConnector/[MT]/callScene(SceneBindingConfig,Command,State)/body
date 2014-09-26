@@ -1,0 +1,11 @@
+{
+  logger.debug("callScene: Need to remote-invoke Scene '{}'",config.toProperty());
+  String newCommand=config.transformCommand(command);
+  if (newCommand != null) {
+    MiosUnit u=getMiosUnit();
+    callMios(String.format(SCENE_URL,u.getHostname(),u.getPort(),config.getMiosId()));
+  }
+ else {
+    logger.warn("callScene: Command '{}' not supported, or missing command: declaration, for Item '{}'",command.toString(),config.getItemName());
+  }
+}

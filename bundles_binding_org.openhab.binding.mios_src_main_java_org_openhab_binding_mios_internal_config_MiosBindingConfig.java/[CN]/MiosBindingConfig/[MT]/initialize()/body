@@ -1,19 +1,19 @@
 {
   StringBuilder result=new StringBuilder(100);
   String tmp;
-  int i=getId();
+  int i=getMiosId();
   String id=((i == 0) ? "" : String.valueOf(i));
-  String stuff=getStuff();
+  String stuff=getMiosStuff();
   String unit=getUnitName();
   unit=(unit == null) ? "" : "unit:" + unit + ',';
   if (stuff != null) {
-    result.append(unit).append(getType()).append(':').append(id).append('/').append(stuff);
+    result.append(unit).append(getMiosType()).append(':').append(id).append('/').append(stuff);
   }
  else {
-    result.append(unit).append(getType()).append(':').append(id);
+    result.append(unit).append(getMiosType()).append(':').append(id);
   }
   cachedProperty=result.toString();
-  tmp=getCommandThing();
+  tmp=getCommandTransform();
   if (tmp != null) {
     result.append(",command:").append(tmp);
   }

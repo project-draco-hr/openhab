@@ -1,0 +1,13 @@
+{
+  TransformationService ts=getInTransformationService();
+  if (ts != null) {
+    return createState(ts.transform(getInTransformParam(),value.toString()));
+  }
+ else {
+    if (value instanceof StringType) {
+      value=createState(value.toString());
+      logger.trace("transformIn: Converted value '{}' from StringType to more scoped type '{}'",value,value.getClass());
+    }
+    return value;
+  }
+}

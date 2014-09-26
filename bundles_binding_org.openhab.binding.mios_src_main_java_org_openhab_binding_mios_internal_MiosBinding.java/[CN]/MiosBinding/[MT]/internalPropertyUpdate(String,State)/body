@@ -10,14 +10,10 @@
       for (      String itemName : miosProvider.getItemsForProperty(property)) {
         MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
         if (config != null) {
-          if (config.supportsTransformIn()) {
-            State newValue=createState(config.getItemType(),config.transformIn(value.toString()));
-            logger.trace("internalPropertyUpdate: transformation present, from '{}' to '{}'",value,newValue);
+          State newValue=config.transformIn(value);
+          if (newValue != value) {
+            logger.trace("internalPropertyUpdate: transformation performed, from '{}' to '{}'",value,newValue);
             value=newValue;
-          }
-          if (value instanceof StringType) {
-            value=createState(config.getItemType(),value.toString());
-            logger.trace("internalPropertyUpdate: Converted value '{}' from StringType to '{}'",value,value.getClass());
           }
           logger.debug("internalPropertyUpdate: About to update itemName '{}' with value '{}'",itemName,value);
           eventPublisher.postUpdate(itemName,value);

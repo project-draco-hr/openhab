@@ -1,7 +1,7 @@
 {
   logger.trace("getMiosConnector: start unitName '{}'",unitName);
   if (unitName == null)   return null;
-  MiosConnector connector=connectors.get(unitName);
+  MiosUnitConnector connector=connectors.get(unitName);
   if (connector != null)   return connector;
   MiosUnit miosUnit;
   if (nameUnitMapper == null) {
@@ -14,7 +14,7 @@
     return null;
   }
   logger.debug("Creating new MiosConnector for '{}' on {}",unitName,miosUnit.getHostname());
-  connector=new MiosConnector(miosUnit,this);
+  connector=new MiosUnitConnector(miosUnit,this);
   connectors.put(unitName,connector);
   try {
     connector.open();
