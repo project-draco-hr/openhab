@@ -210,6 +210,7 @@ record=new OpenHABConfigurationRecord(domain,"Product","Product",true);
 record.value=database.getProductName();
 records.add(record);
 }
+}
 record=new OpenHABConfigurationRecord(domain,"ManufacturerID","Manufacturer ID",true);
 record.value=Integer.toHexString(node.getManufacturer());
 records.add(record);
@@ -252,11 +253,22 @@ if (versionCommandClass.getApplicationVersion() == null) record.value="Unknown";
  else record.value=Double.toString(versionCommandClass.getApplicationVersion());
 records.add(record);
 }
+ZWaveDeviceClass devClass=node.getDeviceClass();
+if (devClass != null) {
+record=new OpenHABConfigurationRecord(domain,"BasicClass","Basic Device Class",true);
+record.value=devClass.getBasicDeviceClass().toString();
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"GenericClass","Generic Device Class",true);
+record.value=devClass.getGenericDeviceClass().toString();
+records.add(record);
+record=new OpenHABConfigurationRecord(domain,"SpecificClass","Specific Device Class",true);
+record.value=devClass.getSpecificDeviceClass().toString();
+records.add(record);
 }
 }
  else if (arg.equals("status/")) {
 record=new OpenHABConfigurationRecord(domain,"LastUpdated","Last Updated",true);
-record.value=node.getLastUpdated().toString();
+record.value=df.format(node.getLastUpdated());
 records.add(record);
 if (networkMonitor != null) {
 record=new OpenHABConfigurationRecord(domain,"LastHeal","Heal Status",true);
@@ -264,7 +276,7 @@ record.value=networkMonitor.getNodeState(nodeId);
 records.add(record);
 }
 record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
-record.value=node.getNodeStage().getLabel() + " @ " + node.getQueryStageTimeStamp().toString();
+record.value=node.getNodeStage().getLabel() + " @ " + df.format(node.getQueryStageTimeStamp());
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Packets","Packet Statistics",true);
 record.value=node.getRetryCount() + " / " + node.getSendCount();
