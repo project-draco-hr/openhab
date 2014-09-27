@@ -15,24 +15,20 @@
         tmp=this.projectorReader.readLine();
       }
     }
- catch (    SocketTimeoutException e) {
-      logger.warn("Timed out reading response from projector");
-    }
-catch (    IOException e) {
+ catch (    Exception e) {
+      if (e instanceof SocketTimeoutException)       logger.warn("Timed out reading response from projector");
+ else       if (e instanceof IOException)       logger.error("IO Exception while reading response from projector: " + e.getMessage());
       if (retryAttempt == false) {
         this.closeConnection();
         if (this.networkConnect()) {
           logger.debug("Reconnect successful - retrying transmission");
           retryAttempt=true;
           sendCommandExpectResponse(cmd);
-          retryAttempt=false;
         }
  else {
           logger.error("Attempt to reconnect after IOException failed: " + e.getMessage());
         }
-      }
- else {
-        logger.error("IO Exception while reading response from projector: " + e.getMessage());
+        retryAttempt=false;
       }
     }
   }
