@@ -5,13 +5,12 @@
     if (node.nodeId == nodeId) {
 switch (node.state) {
 case IDLE:
-case WAITING:
         break;
 case FAILED:
-      status="FAILED during " + node.failState + " @ "+ node.lastChange.toString();
+      status="FAILED during " + node.failState + " @ "+ df.format(node.lastChange);
     break;
 default :
-  status=node.state + " @ " + node.lastChange.toString();
+  status=node.state + " @ " + df.format(node.lastChange);
 if (node.retryCnt > 1) {
   status+=" (" + node.retryCnt + ")";
 }

@@ -232,7 +232,7 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Power","Power",true);
 ZWaveBatteryCommandClass batteryCommandClass=(ZWaveBatteryCommandClass)node.getCommandClass(CommandClass.BATTERY);
 if (batteryCommandClass != null) {
-record.value="Battery";
+record.value="Battery " + batteryCommandClass.getBatteryLevel() + "%";
 }
  else {
 record.value="Mains";
