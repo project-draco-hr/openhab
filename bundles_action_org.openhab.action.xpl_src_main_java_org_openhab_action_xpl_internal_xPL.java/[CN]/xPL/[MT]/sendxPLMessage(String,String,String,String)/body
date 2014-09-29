@@ -1,9 +1,6 @@
 {
-  if (!xPLActionService.isProperlyConfigured) {
-    logger.error("xPL action is not yet configured - execution aborted!");
-    return false;
-  }
-  xPL_IdentifierI targetIdentifier=theManager.getIdentifierManager().parseNamedIdentifier(target);
+  xPL_MutableMessageI theMessage=xPL_Utils.createMessage();
+  xPL_IdentifierI targetIdentifier=xPLTransportService.parseNamedIdentifier(target);
   if (targetIdentifier == null) {
     logger.error("Invalid target identifier");
     return false;
@@ -43,7 +40,6 @@
     theValue=bodyElements[pairPtr].substring(delimPtr + 1);
     theMessage.addNamedValue(theName,theValue);
   }
-  logger.debug(theMessage.toString());
-  theManager.sendMessage(theMessage);
+  xPLTransportService.sendMessage(theMessage);
   return true;
 }
