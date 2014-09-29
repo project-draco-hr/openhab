@@ -1,0 +1,6 @@
+{
+  boolean onOff=OnOffType.ON.equals(command);
+  logger.debug("command '{}' transformed to '{}'",command,onOff);
+  String wemoCallResponse=wemoCall(itemName,"urn:Belkin:service:basicevent:1#SetBinaryState",IOUtils.toString(getClass().getResourceAsStream("SetRequest.xml")).replace("{{state}}",onOff ? "1" : "0"));
+  logger.debug("setOn ={}",wemoCallResponse);
+}

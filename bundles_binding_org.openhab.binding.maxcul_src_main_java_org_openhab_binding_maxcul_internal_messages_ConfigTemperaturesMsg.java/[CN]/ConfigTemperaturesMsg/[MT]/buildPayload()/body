@@ -1,0 +1,12 @@
+{
+  byte[] payload=new byte[CONFIG_TEMPERATURES_PAYLOAD_LEN];
+  payload[0]=(byte)(comfortTemp * 2.0);
+  payload[1]=(byte)(ecoTemp * 2.0);
+  payload[2]=(byte)(maxTemp * 2.0);
+  payload[3]=(byte)(minTemp * 2.0);
+  if (offset < -3.5)   offset=-3.5;
+  payload[4]=(byte)((offset + 3.5) * 2.0);
+  payload[5]=(byte)(windowOpenTemp * 2.0);
+  payload[6]=(byte)(windowOpenTime / 5.0);
+  return payload;
+}

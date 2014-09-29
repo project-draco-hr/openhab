@@ -1,0 +1,71 @@
+{
+  Color color=LINECOLORS[seriesCounter % LINECOLORS.length];
+  String label=null;
+  if (itemUIRegistry != null) {
+    label=itemUIRegistry.getLabel(item.getName());
+    if (label != null && label.contains("[") && label.contains("]")) {
+      label=label.substring(0,label.indexOf('['));
+    }
+  }
+  if (label == null) {
+    label=item.getName();
+  }
+  Iterable<HistoricItem> result;
+  FilterCriteria filter;
+  Collection<Date> xData=new ArrayList<Date>();
+  Collection<Number> yData=new ArrayList<Number>();
+  org.openhab.core.types.State state=null;
+  filter=new FilterCriteria();
+  filter.setEndDate(timeBegin);
+  filter.setItemName(item.getName());
+  filter.setPageSize(1);
+  filter.setOrdering(Ordering.DESCENDING);
+  result=service.query(filter);
+  if (result.iterator().hasNext()) {
+    HistoricItem historicItem=result.iterator().next();
+    state=historicItem.getState();
+    xData.add(timeBegin);
+    yData.add(convertData(state));
+  }
+  filter.setBeginDate(timeBegin);
+  filter.setEndDate(timeEnd);
+  filter.setPageSize(Integer.MAX_VALUE);
+  filter.setOrdering(Ordering.ASCENDING);
+  result=service.query(filter);
+  Iterator<HistoricItem> it=result.iterator();
+  while (it.hasNext()) {
+    HistoricItem historicItem=it.next();
+    if (state instanceof OnOffType || state instanceof OpenClosedType) {
+      Calendar cal=Calendar.getInstance();
+      cal.setTime(historicItem.getTimestamp());
+      cal.add(Calendar.MILLISECOND,-1);
+      xData.add(cal.getTime());
+      yData.add(convertData(state));
+    }
+    state=historicItem.getState();
+    xData.add(historicItem.getTimestamp());
+    yData.add(convertData(state));
+  }
+  if (state != null) {
+    xData.add(timeEnd);
+    yData.add(convertData(state));
+  }
+  if (xData.size() == 0) {
+    return false;
+  }
+  if (xData.size() == 1) {
+    xData.add(xData.iterator().next());
+    yData.add(yData.iterator().next());
+  }
+  Series series=chart.addSeries(label,xData,yData);
+  series.setLineStyle(new BasicStroke(1.5f));
+  series.setMarker(SeriesMarker.NONE);
+  series.setLineColor(color);
+  if (yData.iterator().next().floatValue() > ((series.getYMax() - series.getYMin()) / 2 + series.getYMin())) {
+    legendPosition++;
+  }
+ else {
+    legendPosition--;
+  }
+  return true;
+}

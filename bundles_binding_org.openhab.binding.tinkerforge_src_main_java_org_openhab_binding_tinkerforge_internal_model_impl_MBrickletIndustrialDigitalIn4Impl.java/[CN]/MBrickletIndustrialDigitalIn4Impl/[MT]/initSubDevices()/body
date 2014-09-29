@@ -1,0 +1,13 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  for (int i=0; i < 4; i++) {
+    MIndustrialDigitalIn digitalIn=factory.createMIndustrialDigitalIn();
+    digitalIn.setUid(getUid());
+    String subId="in" + String.valueOf(i);
+    logger.debug("addSubDevice: {}",subId);
+    digitalIn.setSubId(subId);
+    digitalIn.init();
+    digitalIn.setMbrick(this);
+    getMsubdevices().add(digitalIn);
+  }
+}

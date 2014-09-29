@@ -1,0 +1,103 @@
+{
+  Integer pageSize=null;
+  Integer pageNumber=null;
+  logger.debug("got a query");
+  if (!isProperlyConfigured) {
+    logger.error("Configuration for influxdb not yet loaded or broken.");
+    return Collections.emptyList();
+  }
+  if (!isConnected()) {
+    logger.error("InfluxDB is not yet connected");
+    return Collections.emptyList();
+  }
+  List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
+  StringBuffer query=new StringBuffer();
+  query.append("select ");
+  query.append(VALUE_COLUMN_NAME);
+  query.append(", ");
+  query.append(TIME_COLUMN_NAME);
+  query.append(" ");
+  query.append("from ");
+  if (filter.getItemName() != null) {
+    query.append(filter.getItemName());
+  }
+ else {
+    query.append("/.*/");
+  }
+  if (filter.getState() != null || filter.getOperator() != null || filter.getBeginDate() != null || filter.getEndDate() != null) {
+    query.append(" where ");
+    boolean foundState=false;
+    boolean foundBeginDate=false;
+    if (filter.getState() != null && filter.getOperator() != null) {
+      String value=stateToString(filter.getState());
+      if (value != null) {
+        foundState=true;
+        query.append(VALUE_COLUMN_NAME);
+        query.append(" ");
+        query.append(filter.getOperator().toString());
+        query.append(" ");
+        query.append(value);
+      }
+    }
+    if (filter.getBeginDate() != null) {
+      foundBeginDate=true;
+      if (foundState) {
+        query.append(" and");
+      }
+      query.append(" ");
+      query.append(TIME_COLUMN_NAME);
+      query.append(" > ");
+      query.append(getTimeFilter(filter.getBeginDate()));
+      query.append(" ");
+    }
+    if (filter.getEndDate() != null) {
+      if (foundState || foundBeginDate) {
+        query.append(" and");
+      }
+      query.append(" ");
+      query.append(TIME_COLUMN_NAME);
+      query.append(" < ");
+      query.append(getTimeFilter(filter.getEndDate()));
+      query.append(" ");
+    }
+    if (filter.getOrdering() == Ordering.ASCENDING) {
+      query.append(" order asc");
+    }
+    if (filter.getPageSize() != 0) {
+      logger.debug("got page size {}",filter.getPageSize());
+      pageSize=filter.getPageSize();
+    }
+    if (filter.getPageNumber() != 0) {
+      logger.debug("got page number {}",filter.getPageNumber());
+      pageNumber=filter.getPageNumber();
+    }
+  }
+  logger.debug("query string: {}",query.toString());
+  List<Serie> results=Collections.emptyList();
+  try {
+    results=influxDB.query(dbName,query.toString(),TimeUnit.MILLISECONDS);
+  }
+ catch (  RuntimeException e) {
+    logger.error("query failed with database error");
+    handleDatabaseException(e);
+  }
+  for (  Serie result : results) {
+    String historicItemName=result.getName();
+    logger.trace("item name ",historicItemName);
+    int pageCount=0;
+    for (    Map<String,Object> row : result.getRows()) {
+      pageCount++;
+      if (pageSize != null && pageNumber == null && pageSize < pageCount) {
+        logger.debug("returning no more points pageSize {} pageCount {}",pageSize,pageCount);
+        break;
+      }
+      Double rawTime=(Double)row.get(TIME_COLUMN_NAME);
+      Object rawValue=row.get(VALUE_COLUMN_NAME);
+      logger.trace("adding historic item {}: time {} value {}",historicItemName,rawTime,rawValue);
+      Date time=new Date(rawTime.longValue());
+      State value=objectToState(rawValue,historicItemName);
+      historicItems.add(new InfluxdbItem(historicItemName,value,time));
+    }
+  }
+  return historicItems;
+}

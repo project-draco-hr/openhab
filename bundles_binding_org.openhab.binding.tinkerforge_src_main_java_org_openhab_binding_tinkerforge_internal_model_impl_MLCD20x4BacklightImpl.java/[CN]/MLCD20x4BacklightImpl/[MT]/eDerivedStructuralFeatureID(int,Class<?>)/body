@@ -1,0 +1,33 @@
+{
+  if (baseClass == MBaseDevice.class) {
+switch (baseFeatureID) {
+case ModelPackage.MBASE_DEVICE__LOGGER:
+      return ModelPackage.MLCD2_0X4_BACKLIGHT__LOGGER;
+case ModelPackage.MBASE_DEVICE__UID:
+    return ModelPackage.MLCD2_0X4_BACKLIGHT__UID;
+case ModelPackage.MBASE_DEVICE__POLL:
+  return ModelPackage.MLCD2_0X4_BACKLIGHT__POLL;
+case ModelPackage.MBASE_DEVICE__ENABLED_A:
+return ModelPackage.MLCD2_0X4_BACKLIGHT__ENABLED_A;
+default :
+return -1;
+}
+}
+if (baseClass == MSubDevice.class) {
+switch (baseFeatureID) {
+case ModelPackage.MSUB_DEVICE__SUB_ID:
+return ModelPackage.MLCD2_0X4_BACKLIGHT__SUB_ID;
+case ModelPackage.MSUB_DEVICE__MBRICK:
+return ModelPackage.MLCD2_0X4_BACKLIGHT__MBRICK;
+default :
+return -1;
+}
+}
+if (baseClass == MLCDSubDevice.class) {
+switch (baseFeatureID) {
+default :
+return -1;
+}
+}
+return super.eDerivedStructuralFeatureID(baseFeatureID,baseClass);
+}

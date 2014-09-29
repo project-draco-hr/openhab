@@ -3,19 +3,13 @@
     if (provider.providesBindingFor(itemName)) {
       ModbusBindingConfig config=provider.getConfig(itemName);
       if (config.slaveName.equals(slaveName)) {
-        InputRegister value=registers[config.readRegister];
+        String slaveValueType=modbusSlaves.get(slaveName).getValueType();
+        State newState=extractStateFromRegisters(registers,config.readRegister,slaveValueType);
         if (config.getItem() instanceof SwitchItem) {
-          if (value.getValue() == 0 && (provider.getConfig(itemName).getItemState() != OnOffType.OFF)) {
-            eventPublisher.postUpdate(itemName,OnOffType.OFF);
-          }
- else           if (value.getValue() != 0 && (provider.getConfig(itemName).getItemState() != OnOffType.ON)) {
-            eventPublisher.postUpdate(itemName,OnOffType.ON);
-          }
+          newState=newState.equals(DecimalType.ZERO) ? OnOffType.OFF : OnOffType.ON;
         }
- else {
-          DecimalType newState=new DecimalType(value.getValue());
-          if (!newState.equals(provider.getConfig(itemName).getItemState()))           eventPublisher.postUpdate(itemName,newState);
-        }
+        State currentState=config.getItemState();
+        if (!newState.equals(currentState))         eventPublisher.postUpdate(itemName,newState);
       }
     }
   }

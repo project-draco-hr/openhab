@@ -1,0 +1,17 @@
+{
+  RemoteControlOptionParser rcParameterParser=new RemoteControlOptionParser();
+  HmRemoteControlOptions rco=rcParameterParser.parse(remoteControlAddress,options);
+  rco.setText(text);
+  logger.debug("Sending to remote control {}: {}",remoteControlAddress,rco);
+  String address=remoteControlAddress + ":18";
+  if (StringUtils.isNotBlank(rco.getText())) {
+    rpcClient.setDatapointValue(getDefaultInterface(),address,"TEXT",rco.getText());
+  }
+  rpcClient.setDatapointValue(getDefaultInterface(),address,"BEEP",rco.getBeep());
+  rpcClient.setDatapointValue(getDefaultInterface(),address,"UNIT",rco.getUnit());
+  rpcClient.setDatapointValue(getDefaultInterface(),address,"BACKLIGHT",rco.getBacklight());
+  for (  String symbol : rco.getSymbols()) {
+    rpcClient.setDatapointValue(getDefaultInterface(),address,symbol,Boolean.TRUE);
+  }
+  rpcClient.setDatapointValue(getDefaultInterface(),address,"SUBMIT",Boolean.TRUE);
+}

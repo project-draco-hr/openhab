@@ -1,0 +1,51 @@
+{
+  int group=serialMessage.getMessagePayloadByte(offset + 1);
+  int maxAssociations=serialMessage.getMessagePayloadByte(offset + 2);
+  int following=serialMessage.getMessagePayloadByte(offset + 3);
+  if (maxAssociations == 0) {
+    if (updateAssociationsNode == group) {
+      logger.debug("NODE {}: All association groups acquired.",this.getNode().getNodeId());
+      updateAssociationsNode=0;
+      this.getController().notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssociationUpdate,this.getNode().getNodeId(),ZWaveNetworkEvent.State.Success));
+    }
+    return;
+  }
+  logger.debug("NODE {}: association group {} has max associations " + maxAssociations,this.getNode().getNodeId(),group);
+  if (pendingAssociation == null) {
+    pendingAssociation=new AssociationGroup(group);
+  }
+  if (serialMessage.getMessagePayload().length > (offset + 4)) {
+    logger.debug("NODE {}: association group {} includes the following nodes:",this.getNode().getNodeId(),group);
+    int numAssociations=serialMessage.getMessagePayload().length - (offset + 4);
+    for (int cnt=0; cnt < numAssociations; cnt++) {
+      int node=serialMessage.getMessagePayloadByte(offset + 4 + cnt);
+      logger.debug("Node {}",node);
+      pendingAssociation.addNode(node);
+    }
+  }
+  if (following == 0) {
+    configAssociations.remove(group);
+    configAssociations.put(group,pendingAssociation);
+    pendingAssociation=null;
+    ZWaveAssociationEvent zEvent=new ZWaveAssociationEvent(this.getNode().getNodeId(),group);
+    List<Integer> members=getGroupMembers(group);
+    if (members != null) {
+      for (      int node : members) {
+        zEvent.addMember(node);
+      }
+    }
+    this.getController().notifyEventListeners(zEvent);
+  }
+  if (following == 0 && group == updateAssociationsNode) {
+    if (updateAssociationsNode < maxGroups) {
+      updateAssociationsNode++;
+      SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
+      if (outputMessage != null)       this.getController().sendData(outputMessage);
+    }
+ else {
+      logger.debug("NODE {}: All association groups acquired.",this.getNode().getNodeId());
+      updateAssociationsNode=0;
+      this.getController().notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssociationUpdate,this.getNode().getNodeId(),ZWaveNetworkEvent.State.Success));
+    }
+  }
+}

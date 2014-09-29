@@ -24,14 +24,14 @@
       continue;
     }
     encodedSentence=encodedSentence.replace("+","%20");
-    logger.trace("Encoded sentence " + encodedSentence);
-    String url=GOOGLE_TRANSLATE_URL + encodedSentence;
-    SqueezeboxListener listener=new SqueezeboxListener(playerId,url);
+    logger.debug("Encoded sentence " + encodedSentence);
+    String url=String.format(GOOGLE_TRANSLATE_URL,squeezeServer.language()) + encodedSentence;
+    SqueezeboxSentenceListener listener=new SqueezeboxSentenceListener(playerId);
     player.addPlayerEventListener(listener);
     logger.trace("Sending URL '{}' to device to play",url);
     squeezeServer.playUrl(playerId,url);
     int timeoutCount=0;
-    while (!listener.isFinished() && timeoutCount < 100) {
+    while (!listener.isFinished() && timeoutCount < 300) {
       try {
         Thread.sleep(100);
       }
@@ -39,6 +39,9 @@
         break;
       }
       timeoutCount++;
+    }
+    if (timeoutCount >= 200) {
+      logger.warn("Sentence timed out while speaking!");
     }
     player.removePlayerEventListener(listener);
     listener=null;

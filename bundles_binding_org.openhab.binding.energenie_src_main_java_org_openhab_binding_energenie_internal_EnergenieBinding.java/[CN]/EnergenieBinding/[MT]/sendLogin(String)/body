@@ -1,0 +1,15 @@
+{
+  String pmsIp=pmsIpConfig.get(pmsId);
+  String pmsPw=pmsPasswordConfig.get(pmsId);
+  String url="http://" + pmsIp + "/login.html";
+  String urlParameters="pw=" + pmsPw;
+  InputStream urlContent=new ByteArrayInputStream(urlParameters.getBytes(Charset.forName("UTF-8")));
+  try {
+    HttpUtil.executeUrl("POST",url,urlContent,"TEXT/PLAIN",timeout);
+    logger.trace("sendlogin to {} with password {}",pmsIp,pmsPw);
+    logger.trace("sending 'POST' request to URL : {}",url);
+  }
+ catch (  Exception e) {
+    logger.error("energenie: failed to login to ip {}",pmsIp);
+  }
+}

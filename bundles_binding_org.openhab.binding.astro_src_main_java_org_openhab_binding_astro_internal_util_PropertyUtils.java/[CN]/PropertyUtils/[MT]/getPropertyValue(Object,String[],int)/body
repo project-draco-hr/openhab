@@ -1,0 +1,9 @@
+{
+  String propertyName=properties[nestedIndex];
+  Method m=instance.getClass().getMethod(toGetterString(propertyName),null);
+  Object result=m.invoke(instance,(Object[])null);
+  if (++nestedIndex < properties.length) {
+    return getPropertyValue(result,properties,nestedIndex);
+  }
+  return result;
+}

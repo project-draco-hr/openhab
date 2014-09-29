@@ -1,0 +1,9 @@
+{
+  double estimate=calcInitial(season,year);
+  double t=(estimate - 2451545.0) / 36525;
+  double w=35999.373 * t - 2.47;
+  double dl=1 + 0.0334 * cosDeg(w) + 0.0007 * cosDeg(2 * w);
+  double s=periodic24(t);
+  double julianDate=estimate + ((0.00001 * s) / dl);
+  return DateTimeUtils.toCalendar(julianDate);
+}

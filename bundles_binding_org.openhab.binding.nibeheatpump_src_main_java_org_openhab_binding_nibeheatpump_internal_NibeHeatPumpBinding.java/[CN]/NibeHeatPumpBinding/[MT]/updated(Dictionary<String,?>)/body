@@ -10,6 +10,16 @@
     if (StringUtils.isNotBlank(testPortString)) {
       simulateHeatPump=Boolean.parseBoolean(testPortString);
     }
+    if (messageListener != null) {
+      logger.debug("Close previous message listener");
+      messageListener.setInterrupted(true);
+      try {
+        messageListener.join();
+      }
+ catch (      InterruptedException e) {
+        logger.info("Previous message listener closing interrupted",e);
+      }
+    }
     messageListener=new NibeHeatPumpMessageListener();
     messageListener.start();
   }

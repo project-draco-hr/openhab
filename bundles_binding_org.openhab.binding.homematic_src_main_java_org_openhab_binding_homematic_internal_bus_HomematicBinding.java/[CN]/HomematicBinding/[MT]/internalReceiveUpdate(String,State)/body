@@ -1,7 +1,7 @@
 {
   for (  HomematicBindingProvider provider : providers) {
-    logger.debug("Checking provider with names {}",provider.getItemNames());
-    HomematicParameterAddress parameterAddress=provider.getParameterAddress(itemName);
-    setStateOnDevice(newState,parameterAddress);
+    Item item=provider.getItem(itemName);
+    HomematicBindingConfig config=provider.getBindingFor(itemName);
+    communicator.receiveUpdate(item,newState,config);
   }
 }

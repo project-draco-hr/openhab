@@ -1,0 +1,33 @@
+{
+  logger.debug("Getting ambilight color for host {} for layers {}",host,layers);
+  Color retval=new Color(0,0,0);
+  String url="http://" + host + "/1/ambilight/processed";
+  String ambilight_json=HttpUtil.executeUrl("GET",url,IOUtils.toInputStream(""),CONTENT_TYPE_JSON,1000);
+  if (ambilight_json != null) {
+    logger.trace("TV returned for ambilight request: {}",ambilight_json);
+    try {
+      Object obj=JSONValue.parse(ambilight_json);
+      JSONObject array=(JSONObject)obj;
+      for (      String layer : layers) {
+        array=(JSONObject)array.get((Object)layer.trim());
+        if (array == null) {
+          logger.warn("Could not find layer {} in the json string",layer);
+          return null;
+        }
+      }
+      int r=0, g=0, b=0;
+      r=Integer.parseInt(array.get("r").toString());
+      g=Integer.parseInt(array.get("g").toString());
+      b=Integer.parseInt(array.get("b").toString());
+      retval=new Color(r,g,b);
+    }
+ catch (    Throwable t) {
+      logger.warn("Could not parse JSON String for ambilight value. Error: {}",t.toString());
+    }
+  }
+ else {
+    logger.debug("Could not get ambilight value from JointSpace Server \"{}\"",host);
+    return null;
+  }
+  return retval;
+}

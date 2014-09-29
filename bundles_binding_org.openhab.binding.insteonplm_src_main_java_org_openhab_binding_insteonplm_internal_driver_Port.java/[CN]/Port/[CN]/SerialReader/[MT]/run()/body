@@ -1,0 +1,27 @@
+{
+  byte[] buffer=new byte[2 * m_readSize];
+  int len=-1;
+  try {
+    while ((len=m_in.read(buffer,0,m_readSize)) > -1) {
+      m_msgFactory.addData(buffer,len);
+      try {
+        for (Msg m=m_msgFactory.processData(); m != null; m=m_msgFactory.processData()) {
+          toAllListeners(m);
+          notifyWaiters(m);
+        }
+      }
+ catch (      IOException e) {
+        logger.warn("bad data received: {}",e.toString());
+        if (m_reply == ReplyType.WAITING_FOR_ACK) {
+          logger.warn("got bad data back, must assume message was acked.");
+          m_reply=ReplyType.GOT_ACK;
+          notify();
+        }
+      }
+    }
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+    logger.error("got io exception on port {}, port is no longer read!",m_logName);
+  }
+}

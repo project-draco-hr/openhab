@@ -1,0 +1,14 @@
+{
+  String pmsIp=pmsIpConfig.get(pmsId);
+  String url="http://" + pmsIp;
+  String urlParameters="cte" + pmsSocketId + "=0";
+  InputStream urlContent=new ByteArrayInputStream(urlParameters.getBytes(Charset.forName("UTF-8")));
+  try {
+    HttpUtil.executeUrl("POST",url,urlContent,"TEXT/PLAIN",timeout);
+    logger.trace("sending 'POST' request to URL : {}",url);
+    logger.trace("send command OFF to socket {} at host {}",pmsSocketId,pmsIp);
+  }
+ catch (  Exception e) {
+    logger.error("failed so send command OFF to socket {} at ip {}",pmsIp,pmsSocketId);
+  }
+}

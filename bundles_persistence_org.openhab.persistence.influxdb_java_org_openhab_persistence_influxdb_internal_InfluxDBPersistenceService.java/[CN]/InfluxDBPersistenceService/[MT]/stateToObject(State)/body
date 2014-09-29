@@ -1,0 +1,22 @@
+{
+  Object value;
+  if (state instanceof PercentType) {
+    value=convertBigDecimalToNum(((PercentType)state).toBigDecimal());
+  }
+ else   if (state instanceof DecimalType) {
+    value=convertBigDecimalToNum(((DecimalType)state).toBigDecimal());
+  }
+ else   if (state instanceof DateTimeType) {
+    value=((DateTimeType)state).getCalendar().getTime().getTime();
+  }
+ else   if (state instanceof OnOffType) {
+    value=(OnOffType)state == OnOffType.ON ? 1 : 0;
+  }
+ else   if (state instanceof OpenClosedType) {
+    value=(OpenClosedType)state == OpenClosedType.OPEN ? 1 : 0;
+  }
+ else {
+    value=state.toString();
+  }
+  return value;
+}

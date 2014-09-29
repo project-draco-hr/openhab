@@ -49,6 +49,14 @@
  else     if (property.equals("clientId")) {
       conn.setClientId(value);
     }
+ else     if (property.equals("lwt")) {
+      MqttWillAndTestament will=MqttWillAndTestament.fromString(value);
+      logger.debug("Setting last will: {}",will);
+      conn.setLastWill(will);
+    }
+ else     if (property.equals("keepAlive")) {
+      conn.setKeepAliveInterval(Integer.parseInt(value));
+    }
  else {
       logger.warn("Unrecognized property: {}",key);
     }
@@ -59,7 +67,7 @@
       con.start();
     }
  catch (    Exception e) {
-      logger.error("Error starting broker connection {} : {}",con.getName(),e.getMessage());
+      logger.error("Error starting broker connection",e);
     }
   }
 }

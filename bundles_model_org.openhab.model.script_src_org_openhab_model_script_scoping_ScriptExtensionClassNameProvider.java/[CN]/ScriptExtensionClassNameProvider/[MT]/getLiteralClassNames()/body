@@ -1,6 +1,11 @@
 {
   int currentTrackingCount=ScriptActivator.actionServiceTracker.getTrackingCount();
   if (trackingCount != currentTrackingCount) {
+    String actions="";
+    for (    Object obj : ScriptActivator.actionServiceTracker.getServices()) {
+      actions+=obj.getClass().getSimpleName() + ", ";
+    }
+    logger.debug("Script actions have changed: " + actions);
     trackingCount=currentTrackingCount;
     return computeLiteralClassNames();
   }

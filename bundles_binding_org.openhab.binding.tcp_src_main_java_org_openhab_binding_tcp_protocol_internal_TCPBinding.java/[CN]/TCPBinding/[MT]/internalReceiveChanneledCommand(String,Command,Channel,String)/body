@@ -3,9 +3,10 @@
   if (command != null) {
     String transformedMessage=transformResponse(provider.getProtocolCommand(itemName,command),commandAsString);
     String tcpCommandName=preAmble + transformedMessage + postAmble;
-    ByteBuffer outputBuffer=ByteBuffer.allocate(tcpCommandName.getBytes().length);
+    ByteBuffer outputBuffer=null;
     try {
-      outputBuffer.put(tcpCommandName.getBytes("ASCII"));
+      outputBuffer=ByteBuffer.allocate(tcpCommandName.getBytes(charset).length);
+      outputBuffer.put(tcpCommandName.getBytes(charset));
     }
  catch (    UnsupportedEncodingException e) {
       logger.warn("Exception while attempting an unsupported encoding scheme");
@@ -18,8 +19,15 @@
       logger.error("An exception occurred while writing a buffer to a channel: {}",e.getMessage());
     }
     if (result != null && blocking) {
-      logger.info("Received {} from the remote end {}",new String(result.array()),sChannel.toString());
-      String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,command),new String(result.array()));
+      String resultString="";
+      try {
+        resultString=new String(result.array(),charset).split("\0")[0];
+      }
+ catch (      UnsupportedEncodingException e) {
+        logger.warn("Exception while attempting an unsupported encoding scheme");
+      }
+      logger.info("Received {} from the remote end {}",resultString,sChannel.toString());
+      String transformedResponse=transformResponse(provider.getProtocolCommand(itemName,command),resultString);
       if (updateWithResponse) {
         List<Class<? extends State>> stateTypeList=provider.getAcceptedDataTypes(itemName,command);
         State newState=createStateFromString(stateTypeList,transformedResponse);

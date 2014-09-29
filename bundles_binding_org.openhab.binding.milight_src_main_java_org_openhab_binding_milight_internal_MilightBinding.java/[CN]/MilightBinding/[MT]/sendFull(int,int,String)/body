@@ -1,0 +1,38 @@
+{
+  logger.debug("milight: sendFull");
+  String messageBytes=null;
+switch (bulb) {
+case 0:
+    messageBytes="B5:00:55";
+  break;
+case 1:
+messageBytes="B8:00:55";
+break;
+case 2:
+messageBytes="BD:00:55";
+break;
+case 3:
+messageBytes="B7:00:55";
+break;
+case 4:
+messageBytes="B2:00:55";
+break;
+case 6:
+case 7:
+case 8:
+case 9:
+case 10:
+try {
+sendOn(bulb,bridgeId);
+Thread.sleep(100);
+messageBytes="4E:" + Integer.toHexString(rgbwSteps) + ":55";
+logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
+}
+ catch (InterruptedException e) {
+logger.debug("Sleeping thread has been interrupted.");
+}
+break;
+}
+sendMessage(messageBytes,bridgeId);
+setCurrentState(bulb,bridgeId,PercentType.HUNDRED,BindingType.brightness);
+}

@@ -1,0 +1,15 @@
+{
+  if (!StringUtils.isEmpty(deviceName)) {
+    try {
+      cul=CULManager.getOpenCULHandler(deviceName,CULMode.SLOW_RF);
+      cul.send("it" + wavelength);
+      cul.send("isr" + repititions);
+    }
+ catch (    CULDeviceException e) {
+      logger.error("Can't open CUL",e);
+    }
+catch (    CULCommunicationException e) {
+      logger.error("Can't set intertechno parameters",e);
+    }
+  }
+}

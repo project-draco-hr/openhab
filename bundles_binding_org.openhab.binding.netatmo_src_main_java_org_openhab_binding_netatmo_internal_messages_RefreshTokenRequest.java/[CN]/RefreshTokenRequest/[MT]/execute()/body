@@ -1,0 +1,12 @@
+{
+  String json=null;
+  try {
+    final String content=String.format(CONTENT,this.refreshToken,this.clientId,this.clientSecret);
+    json=executeQuery(content);
+    final RefreshTokenResponse response=JSON.readValue(json,RefreshTokenResponse.class);
+    return response;
+  }
+ catch (  final Exception e) {
+    throw newException("Could not refresh access token!",e,URL,json);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  HmValueItem hmValueItem=context.getStateHolder().getState(bindingConfig);
+  if (hmValueItem != null) {
+    Converter<?> converter=context.getConverterFactory().createConverter(item,bindingConfig);
+    if (converter != null) {
+      State state=converter.convertFromBinding(hmValueItem);
+      context.getEventPublisher().postUpdate(item.getName(),state);
+    }
+  }
+ else   if (bindingConfig instanceof ProgramConfig || bindingConfig instanceof ActionConfig) {
+    context.getEventPublisher().postUpdate(item.getName(),OnOffType.OFF);
+  }
+ else {
+    logger.warn("Can't find {}, value is not published to openHAB!",bindingConfig);
+  }
+}

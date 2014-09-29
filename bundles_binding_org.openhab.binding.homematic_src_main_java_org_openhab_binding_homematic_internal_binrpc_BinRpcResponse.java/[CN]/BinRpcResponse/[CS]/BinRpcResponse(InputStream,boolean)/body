@@ -1,0 +1,38 @@
+{
+  byte sig[]=new byte[4];
+  int l=is.read(sig);
+  if (l != sig.length) {
+    throw new EOFException("Only " + l + " bytes received reading signature");
+  }
+  if (sig[0] != 'B' || sig[1] != 'i' || sig[2] != 'n') {
+    throw new UnsupportedEncodingException("No BinX signature");
+  }
+  l=is.read(sig);
+  if (l != sig.length) {
+    throw new EOFException("Only " + l + " bytes received reading length");
+  }
+  int datasize=(new BigInteger(sig)).intValue();
+  data=new byte[datasize];
+  int offset=0;
+  while (datasize > 0) {
+    int r=is.read(data,offset,datasize);
+    if (r < 1) {
+      throw new EOFException("EOF while reading data");
+    }
+    datasize-=r;
+    offset+=r;
+  }
+  if (methodHeader) {
+    int slen=readInt();
+    methodName=new String(data,dataoffset,slen,"ISO-8859-1");
+    dataoffset+=slen;
+    readInt();
+  }
+  List<Object> values=new ArrayList<Object>();
+  while (dataoffset < data.length) {
+    values.add(readRpcValue());
+  }
+  responseData=values.toArray();
+  values.clear();
+  data=null;
+}

@@ -1,0 +1,11 @@
+{
+  double co=Math.cos(lat);
+  double si=Math.sin(lat);
+  double fl=1.0 - 1.0 / 298.257223563;
+  fl=fl * fl;
+  si=si * si;
+  double u=1.0 / Math.sqrt(co * co + fl * si);
+  double a=6378.137 * u;
+  double b=6378.137 * fl * u;
+  return Math.sqrt(a * a * co* co + b * b * si);
+}

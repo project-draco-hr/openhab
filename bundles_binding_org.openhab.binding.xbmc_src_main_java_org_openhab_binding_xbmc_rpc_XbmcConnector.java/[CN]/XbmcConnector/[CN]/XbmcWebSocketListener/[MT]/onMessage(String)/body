@@ -1,0 +1,36 @@
+{
+  logger.debug("[{}]: Message received: {}",xbmc.getHostname(),message);
+  Map<String,Object> json;
+  try {
+    json=mapper.readValue(message,Map.class);
+  }
+ catch (  JsonParseException e) {
+    logger.error("Error parsing JSON",e);
+    return;
+  }
+catch (  JsonMappingException e) {
+    logger.error("Error mapping JSON",e);
+    return;
+  }
+catch (  IOException e) {
+    logger.error("An I/O error occured while decoding JSON",e);
+    return;
+  }
+  try {
+    if (json.containsKey("method")) {
+      String method=(String)json.get("method");
+      if (method.startsWith("Player.On")) {
+        processPlayerStateChanged(method,json);
+      }
+ else       if (method.startsWith("Application.On")) {
+        processApplicationStateChanged(method,json);
+      }
+ else       if (method.startsWith("System.On")) {
+        processSystemStateChanged(method,json);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error handling player state change message",e);
+  }
+}

@@ -6,16 +6,17 @@
   for (  GenericItem item : items) {
     item.addStateChangeListener(listener);
   }
-  while (!listener.hasChangeOccurred() && !timeout) {
+  do {
     timeout=(new Date()).getTime() - startTime > TIMEOUT_IN_MS;
     try {
-      Thread.sleep(300);
+      Thread.sleep(500);
     }
  catch (    InterruptedException e) {
       timeout=true;
       break;
     }
   }
+ while (!listener.hasChangeOccurred() && !timeout);
   for (  GenericItem item : items) {
     item.removeStateChangeListener(listener);
   }

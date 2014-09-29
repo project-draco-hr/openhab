@@ -1,0 +1,25 @@
+{
+  super.bindingChanged(provider,itemName);
+  InsteonPLMBindingConfig c=((InsteonPLMBindingProvider)provider).getInsteonPLMBindingConfig(itemName);
+  if (c == null) {
+    return;
+  }
+  m_gotInitialConfig=true;
+  if (!m_driver.isDeviceListComplete()) {
+    logger.debug("ignoring binding config for {} until device list is complete",itemName);
+    return;
+  }
+  InsteonAddress addr=c.getAddress();
+synchronized (m_devices) {
+    if (m_driver.isDeviceListComplete() && (!m_devices.containsKey(addr))) {
+      logger.warn("device {} not found in modem link database (is it linked?), disabling it.",c.getAddress());
+      return;
+    }
+    InsteonDevice dev=getDevice(addr);
+    if (dev == null) {
+      logger.error("addr {} referenced in items file is not found!");
+      return;
+    }
+    bindingChangedForDevice(dev,itemName,c);
+  }
+}

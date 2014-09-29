@@ -1,0 +1,34 @@
+{
+  if (indent > 0) {
+    for (int in=0; in < indent - 1; in++) {
+      sb.append('\t');
+    }
+    sb.append("{\n");
+  }
+  for (  Map.Entry<?,?> me : c.entrySet()) {
+    Object o=me.getValue();
+    for (int in=0; in < indent; in++) {
+      sb.append('\t');
+    }
+    sb.append(me.getKey());
+    sb.append('=');
+    if (o instanceof Map<?,?>) {
+      sb.append("\n");
+      dumpMap((Map<?,?>)o,sb,indent + 1);
+    }
+ else     if (o instanceof Object[]) {
+      sb.append("\n");
+      dumpCollection((Object[])o,sb,indent + 1);
+    }
+ else {
+      sb.append(o);
+      sb.append('\n');
+    }
+  }
+  if (indent > 0) {
+    for (int in=0; in < indent - 1; in++) {
+      sb.append('\t');
+    }
+    sb.append("}\n");
+  }
+}

@@ -1,0 +1,51 @@
+{
+switch (BaseMsg.getMsgType(data)) {
+case WALL_THERMOSTAT_CONTROL:
+    new WallThermostatControlMsg(data).printMessage();
+  break;
+case TIME_INFO:
+new TimeInfoMsg(data).printMessage();
+break;
+case SET_TEMPERATURE:
+new SetTemperatureMsg(data).printMessage();
+break;
+case ACK:
+new AckMsg(data).printMessage();
+break;
+case PAIR_PING:
+new PairPingMsg(data).printMessage();
+break;
+case PAIR_PONG:
+new PairPongMsg(data).printMessage();
+break;
+case THERMOSTAT_STATE:
+new ThermostatStateMsg(data).printMessage();
+break;
+case SET_GROUP_ID:
+new SetGroupIdMsg(data).printMessage();
+break;
+case WAKEUP:
+new WakeupMsg(data).printMessage();
+break;
+case WALL_THERMOSTAT_STATE:
+new WallThermostatStateMsg(data).printMessage();
+break;
+case ADD_LINK_PARTNER:
+case CONFIG_TEMPERATURES:
+case CONFIG_VALVE:
+case CONFIG_WEEK_PROFILE:
+case PUSH_BUTTON_STATE:
+case REMOVE_GROUP_ID:
+case REMOVE_LINK_PARTNER:
+case RESET:
+case SET_COMFORT_TEMPERATURE:
+case SET_DISPLAY_ACTUAL_TEMP:
+case SET_ECO_TEMPERATURE:
+case SHUTTER_CONTACT_STATE:
+case UNKNOWN:
+default :
+BaseMsg baseMsg=new BaseMsg(data);
+baseMsg.printMessage();
+break;
+}
+}

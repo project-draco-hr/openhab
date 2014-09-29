@@ -1,0 +1,13 @@
+{
+  JobDataMap jobDataMap=jobContext.getJobDetail().getJobDataMap();
+  if (logger.isDebugEnabled()) {
+    String itemName=jobDataMap.getString("itemName");
+    if (itemName != null) {
+      logger.debug("Starting Astro {} for item {}",this.getClass().getSimpleName(),itemName);
+    }
+ else {
+      logger.debug("Starting Astro {}",this.getClass().getSimpleName());
+    }
+  }
+  executeJob(jobDataMap);
+}

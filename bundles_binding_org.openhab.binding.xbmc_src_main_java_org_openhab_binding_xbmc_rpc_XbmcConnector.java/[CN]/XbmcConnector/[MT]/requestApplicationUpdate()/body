@@ -1,0 +1,10 @@
+{
+  final ApplicationGetProperties app=new ApplicationGetProperties(client,httpUri);
+  app.execute(new Runnable(){
+    public void run(){
+      volume=new BigDecimal(app.getVolume());
+      updateProperty("Application.Volume",new PercentType(volume));
+    }
+  }
+);
+}

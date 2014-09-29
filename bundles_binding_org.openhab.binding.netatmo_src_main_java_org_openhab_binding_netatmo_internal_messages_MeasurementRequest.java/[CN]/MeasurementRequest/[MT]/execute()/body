@@ -1,0 +1,12 @@
+{
+  final String url=buildQueryString();
+  String json=null;
+  try {
+    json=executeQuery(url);
+    final MeasurementResponse response=JSON.readValue(json,MeasurementResponse.class);
+    return response;
+  }
+ catch (  final Exception e) {
+    throw newException("Could not get measurements!",e,url,json);
+  }
+}

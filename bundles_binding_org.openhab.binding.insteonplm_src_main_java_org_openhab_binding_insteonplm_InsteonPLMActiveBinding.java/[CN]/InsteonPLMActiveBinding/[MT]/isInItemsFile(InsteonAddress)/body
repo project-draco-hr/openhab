@@ -1,0 +1,15 @@
+{
+  for (  InsteonPLMBindingProvider provider : providers) {
+    Collection<String> items=provider.getItemNames();
+    InsteonPLMBindingProvider bp=(InsteonPLMBindingProvider)provider;
+    for (Iterator<String> item=items.iterator(); item.hasNext(); ) {
+      String itemName=item.next();
+      InsteonPLMBindingConfig c=bp.getInsteonPLMBindingConfig(itemName);
+      if (c == null)       continue;
+      if (c.getAddress().equals(dev)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

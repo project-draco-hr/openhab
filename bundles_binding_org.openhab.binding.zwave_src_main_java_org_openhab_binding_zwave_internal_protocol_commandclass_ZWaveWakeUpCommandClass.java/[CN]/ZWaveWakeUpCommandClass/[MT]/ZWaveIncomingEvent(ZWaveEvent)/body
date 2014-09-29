@@ -3,10 +3,17 @@
   SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
   if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request)   return;
   byte[] payload=serialMessage.getMessagePayload();
-  if (payload.length < 4)   return;
-  if ((payload[0] & 0xFF) != this.getNode().getNodeId())   return;
-  if ((payload[2] & 0xFF) != this.getCommandClass().getKey())   return;
-  if ((payload[3] & 0xFF) != WAKE_UP_NO_MORE_INFORMATION)   return;
-  logger.debug("Node {} went to sleep",this.getNode().getNodeId());
-  this.setAwake(false);
+  if (payload.length == 0 || (payload[0] & 0xFF) != this.getNode().getNodeId())   return;
+  if (payload.length >= 4 && (payload[2] & 0xFF) == this.getCommandClass().getKey() && (payload[3] & 0xFF) == WAKE_UP_NO_MORE_INFORMATION) {
+    logger.debug("NODE {}: Went to sleep",this.getNode().getNodeId());
+    this.setAwake(false);
+    return;
+  }
+  if (!this.wakeUpQueue.isEmpty()) {
+    serialMessage=this.wakeUpQueue.poll();
+    this.getController().sendData(serialMessage);
+  }
+ else   if (isAwake() == true) {
+    setSleepTimer();
+  }
 }

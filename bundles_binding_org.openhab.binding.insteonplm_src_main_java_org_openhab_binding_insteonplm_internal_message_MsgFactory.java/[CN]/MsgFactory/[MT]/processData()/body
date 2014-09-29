@@ -1,0 +1,50 @@
+{
+  if (m_end > 0 && m_buf[0] == 0x15) {
+    logger.trace("got pure nack!");
+    removeFromBuffer(1);
+    try {
+      Msg m=Msg.s_makeMessage("PureNACK");
+      return m;
+    }
+ catch (    IOException e) {
+      return null;
+    }
+  }
+  if (m_end > 0 && m_buf[0] != 0x02) {
+    logger.error("incoming message does not start with 0x02, searching for start");
+    drainBuffer();
+    throw new IOException("message does not start with 0x02!");
+  }
+  int msgLen=-1;
+  boolean isExtended=false;
+  if (m_end > 1) {
+    int headerLength=Msg.s_getHeaderLength(m_buf[1]);
+    isExtended=Msg.s_isExtended(m_buf,m_end,headerLength);
+    logger.trace("header length expected: {} extended: {}",headerLength,isExtended);
+    if (headerLength < 0) {
+      String cmdCode=Utils.getHexByte(m_buf[1]);
+      logger.debug("got unknown command code {}, draining!",cmdCode);
+      removeFromBuffer(1);
+      drainBuffer();
+      msgLen=-1;
+      throw new IOException("got unknown command code: " + cmdCode);
+    }
+ else     if (headerLength >= 2) {
+      if (m_end >= headerLength) {
+        msgLen=Msg.s_getMessageLength(m_buf[1],isExtended);
+      }
+    }
+ else {
+      logger.error("invalid header length, internal error!");
+      msgLen=-1;
+    }
+  }
+  logger.trace("msgLen expected: {}",msgLen);
+  Msg msg=null;
+  if (msgLen > 0 && m_end >= msgLen) {
+    msg=Msg.s_createMessage(m_buf,msgLen,isExtended);
+    removeFromBuffer(msgLen);
+  }
+  logger.trace("keeping buffer len {} data: {}",m_end,Utils.getHexString(m_buf,m_end));
+  return msg;
+}

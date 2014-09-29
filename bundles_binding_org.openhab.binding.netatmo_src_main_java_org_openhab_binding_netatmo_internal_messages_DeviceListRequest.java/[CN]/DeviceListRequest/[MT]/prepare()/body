@@ -1,0 +1,11 @@
+{
+  final StringBuilder urlBuilder=new StringBuilder(RESOURCE_URL);
+  urlBuilder.append("?access_token=");
+  urlBuilder.append(this.accessToken);
+  try {
+    return encodeQuery(urlBuilder.toString());
+  }
+ catch (  final URIException e) {
+    throw new NetatmoException("Could not prepare device list request!",e);
+  }
+}

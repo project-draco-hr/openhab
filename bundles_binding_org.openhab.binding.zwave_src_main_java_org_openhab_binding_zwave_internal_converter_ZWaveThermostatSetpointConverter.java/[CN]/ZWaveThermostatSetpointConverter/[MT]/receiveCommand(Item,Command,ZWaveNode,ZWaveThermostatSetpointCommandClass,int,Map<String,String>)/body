@@ -1,0 +1,40 @@
+{
+  ZWaveCommandConverter<?,?> converter=this.getCommandConverter(command.getClass());
+  String scaleString=arguments.get("setpoint_scale");
+  String setpointType=arguments.get("setpoint_type");
+  int scale=0;
+  if (scaleString != null)   scale=Integer.parseInt(scaleString);
+  logger.debug("NODE {}: Thermostat command received for {}",node.getNodeId(),command.toString());
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring command.",item.getName(),node.getNodeId(),endpointId);
+    return;
+  }
+  SerialMessage serialMessage;
+  if (setpointType != null) {
+    serialMessage=node.encapsulate(commandClass.setMessage(scale,SetpointType.getSetpointType(Integer.parseInt(setpointType)),(BigDecimal)converter.convertFromCommandToValue(item,command)),commandClass,endpointId);
+  }
+ else {
+    serialMessage=node.encapsulate(commandClass.setMessage(scale,(BigDecimal)converter.convertFromCommandToValue(item,command)),commandClass,endpointId);
+  }
+  if (serialMessage == null) {
+    logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
+    return;
+  }
+  logger.debug("Sending Message: {}",serialMessage);
+  this.getController().sendData(serialMessage);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+  if (setpointType != null) {
+    serialMessage=node.encapsulate(commandClass.getMessage(SetpointType.getSetpointType(Integer.parseInt(setpointType))),commandClass,endpointId);
+  }
+ else {
+    serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,endpointId);
+  }
+  if (serialMessage == null) {
+    logger.warn("Generating message failed for command class = {}, node = {}, endpoint = {}",commandClass.getCommandClass().getLabel(),node.getNodeId(),endpointId);
+    return;
+  }
+  logger.debug("Sending Message: {}",serialMessage);
+  this.getController().sendData(serialMessage);
+}

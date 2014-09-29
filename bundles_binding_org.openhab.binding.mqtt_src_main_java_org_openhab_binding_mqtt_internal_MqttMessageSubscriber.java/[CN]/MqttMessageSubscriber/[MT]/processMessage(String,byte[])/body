@@ -1,9 +1,14 @@
 {
   try {
     if (getTransformationServiceName() != null && getTransformationService() == null) {
+      logger.debug("Received message before transformation service '{}' was initialized.");
       initTransformService();
     }
     String value=new String(message);
+    if (!msgFilterApplies(value)) {
+      logger.debug("Skipped message '{}' because Message Filter '{}' does not apply.",value,msgFilter);
+      return;
+    }
     if (getTransformationService() != null) {
       value=getTransformationService().transform(getTransformationServiceParam(),value);
     }

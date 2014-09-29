@@ -26,6 +26,9 @@
         if (dptID == null || dptID.trim().isEmpty()) {
           throw new BindingConfigParseException("No DPT could be determined for the type '" + typeClass.getSimpleName() + "'.");
         }
+        if (KNXCoreTypeMapper.toTypeClass(dptID) == null) {
+          throw new BindingConfigParseException("DPT " + dptID + " is not supported by the KNX binding.");
+        }
         String ga=(segments.length == 1) ? segments[0].trim() : segments[1].trim();
         GroupAddress groupAddress=new GroupAddress(ga);
         Datapoint dp;
@@ -41,7 +44,12 @@
         if (isReadable) {
           configItem.readableDataPoint=dp;
         }
-        configItem.allDataPoints.add(dp);
+        if (!configItem.allDataPoints.contains(dp)) {
+          configItem.allDataPoints.add(dp);
+        }
+ else {
+          throw new BindingConfigParseException("Datapoint '" + dp.getDPT() + "' already exists for item '"+ item.getName()+ "'.");
+        }
       }
       config.add(configItem);
     }

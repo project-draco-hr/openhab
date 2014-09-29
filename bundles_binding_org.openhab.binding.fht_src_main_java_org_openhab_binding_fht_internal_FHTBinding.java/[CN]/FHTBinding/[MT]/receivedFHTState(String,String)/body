@@ -1,0 +1,32 @@
+{
+  logger.debug("Received state " + state + " for FHT device "+ device);
+  int stateValue=Integer.parseInt(state,16);
+  FHTBindingConfig config=getConfig(device,Datapoint.BATTERY);
+  OnOffType batteryAlarm=null;
+  if (stateValue % 2 == 0) {
+    batteryAlarm=OnOffType.OFF;
+  }
+ else {
+    stateValue=stateValue - 1;
+    batteryAlarm=OnOffType.ON;
+  }
+  if (config != null) {
+    logger.debug("Updating item " + config.getItem().getName() + " with battery state");
+    eventPublisher.postUpdate(config.getItem().getName(),batteryAlarm);
+  }
+  OpenClosedType windowState=null;
+  if (stateValue == 0) {
+    windowState=OpenClosedType.CLOSED;
+  }
+ else {
+    windowState=OpenClosedType.OPEN;
+  }
+  config=getConfig(device,Datapoint.WINDOW);
+  if (config != null) {
+    logger.debug("Updating item " + config.getItem().getName() + " with window state");
+    eventPublisher.postUpdate(config.getItem().getName(),windowState);
+  }
+ else {
+    logger.debug("Received FHT state from unknown device " + device);
+  }
+}

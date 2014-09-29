@@ -1,0 +1,19 @@
+{
+  StringBuffer strBuffer;
+  try {
+    strBuffer=new StringBuffer();
+    byte[] buf=new byte[4096];
+    int len=0;
+    Thread.sleep(750L);
+    while ((len=client.getInputStream().read(buf)) != 0) {
+      strBuffer.append(new String(buf,0,len));
+      Thread.sleep(750L);
+      if (client.getInputStream().available() == 0)       break;
+    }
+    return strBuffer.toString();
+  }
+ catch (  Exception e) {
+    logger.warn("Error receiving data",e);
+  }
+  return null;
+}

@@ -1,0 +1,18 @@
+{
+  for (  Map.Entry<String,XbmcConnector> entry : connectors.entrySet()) {
+    XbmcConnector connector=entry.getValue();
+    if (connector.isConnected()) {
+      connector.ping();
+      connector.updatePlayerStatus(true);
+    }
+ else {
+      logger.debug("Broken connection found for '{}', attempting to reconnect...",entry.getKey());
+      try {
+        connector.open();
+      }
+ catch (      Exception e) {
+        logger.debug("Reconnect failed for '{}', will retry in {}s",entry.getKey(),refreshInterval / 1000);
+      }
+    }
+  }
+}

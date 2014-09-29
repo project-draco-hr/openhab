@@ -1,0 +1,13 @@
+{
+  if ("STATE".equals(hmValueItem.getName())) {
+    if (hmValueItem instanceof HmDatapoint) {
+      HmDatapoint dp=(HmDatapoint)hmValueItem;
+      for (      StateInvertInfo stateInvertInfo : stateInvertDevices) {
+        if (stateInvertInfo.isToInvert(dp)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}

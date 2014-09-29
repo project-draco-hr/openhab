@@ -1,0 +1,10 @@
+{
+synchronized (m_devices) {
+    for (    InsteonDevice dev : m_devices.values()) {
+      if (dev.isModem())       continue;
+      if (m_deadDeviceTimeout > 0 && dev.getPollOverDueTime() > m_deadDeviceTimeout) {
+        logger.info("device {} has not responded to polls for {} sec",dev.toString(),dev.getPollOverDueTime() / 3600);
+      }
+    }
+  }
+}

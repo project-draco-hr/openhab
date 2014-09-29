@@ -1,0 +1,44 @@
+{
+  if (itemName != null) {
+    IhcBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+    if (provider == null) {
+      logger.warn("Doesn't find matching binding provider [itemName={}]",itemName);
+      return;
+    }
+    if (updateOnlyOutBinding && provider.isOutBindingOnly(itemName) == false) {
+      logger.trace("Ignore in binding update for item '{}'",itemName);
+      return;
+    }
+    logger.debug("Received update/command (item='{}', state='{}', class='{}')",new Object[]{itemName,type.toString(),type.getClass().toString()});
+    if (ihc == null) {
+      logger.warn("Controller is not initialized, abort resource value update for item '{}'!",itemName);
+      return;
+    }
+    if (ihc.getConnectionState() != ConnectionState.CONNECTED) {
+      logger.warn("Connection to controller is not ok, abort resource value update for item '{}'!",itemName);
+      return;
+    }
+    try {
+      int resourceId=provider.getResourceId(itemName);
+      WSResourceValue value=ihc.getResourceValueInformation(resourceId);
+      ArrayList<IhcEnumValue> enumValues=null;
+      if (value instanceof WSEnumValue) {
+        enumValues=ihc.getEnumValues(((WSEnumValue)value).getDefinitionTypeID());
+      }
+      value=IhcDataConverter.convertCommandToResourceValue(type,value,enumValues);
+      boolean result=updateResource(value);
+      if (result == true) {
+        logger.debug("Item updated '{}' succesfully sent",itemName);
+      }
+ else {
+        logger.error("Item '{}' update failed",itemName);
+      }
+    }
+ catch (    IhcExecption e) {
+      logger.error("Can't update Item '{}' value ",itemName,e);
+    }
+catch (    Exception e) {
+      logger.error("Error occured during item update",e);
+    }
+  }
+}

@@ -1,7 +1,11 @@
 {
-  logger.debug("allBindingsChanged provider={}",provider);
-  if (provider instanceof HomematicBindingProvider) {
-    HomematicBindingProvider homematicBindingProvider=(HomematicBindingProvider)provider;
-    queryAndSendAllActualStates(homematicBindingProvider);
+  super.allBindingsChanged(provider);
+  if (isProperlyConfigured()) {
+    if (provider instanceof HomematicBindingProvider) {
+      HomematicBindingProvider hmProvider=(HomematicBindingProvider)provider;
+      for (      String itemName : hmProvider.getItemNames()) {
+        informCommunicator(hmProvider,itemName);
+      }
+    }
   }
 }

@@ -1,0 +1,59 @@
+{
+  logger.debug("execute() method is called!");
+  for (  EnergenieBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      EnergenieBindingConfig deviceConfig=getConfigForItemName(itemName);
+      if (deviceConfig == null) {
+        return;
+      }
+      try {
+        String pmsId=deviceConfig.getDeviceId();
+        int pmsSocketId=deviceConfig.getSocketNumber();
+        String pmsIp=pmsIpConfig.get(pmsId);
+        String pmsPw=pmsPasswordConfig.get(pmsId);
+        String url="http://" + pmsIp + "/login.html";
+        String urlParameters="pw=" + pmsPw;
+        InputStream urlContent=new ByteArrayInputStream(urlParameters.getBytes(Charset.forName("UTF-8")));
+        String loginResponseString=null;
+        try {
+          loginResponseString=HttpUtil.executeUrl("POST",url,urlContent,"TEXT/PLAIN",timeout);
+          String stateResponseSearch="var sockstates = ";
+          int findState=loginResponseString.lastIndexOf(stateResponseSearch);
+          if (findState != 0) {
+            logger.trace("searchstring sockstates found at position {}",findState);
+            String slicedResponse=loginResponseString.substring(findState + 18,findState + 25);
+            logger.trace("transformed state response = {}",slicedResponse);
+            try {
+              String[] parts=slicedResponse.split(",");
+              String itemState=parts[pmsSocketId - 1];
+              logger.trace("Response for item {} = {}",itemName,itemState);
+              if (itemState.equals("0")) {
+                State state=OnOffType.valueOf("OFF");
+                logger.trace("transformed state for item {} = {}",itemName,state);
+                eventPublisher.postUpdate(itemName,state);
+              }
+              if (itemState.equals("1")) {
+                State state=OnOffType.valueOf("ON");
+                logger.trace("transformed state for item {} = {}",itemName,state);
+                eventPublisher.postUpdate(itemName,state);
+              }
+            }
+ catch (            Exception te) {
+              logger.error("Response transformation throws exception ",te);
+            }
+          }
+ else {
+            logger.trace("searchstring sockstates not found");
+          }
+        }
+ catch (        Exception e) {
+          logger.error("Failed to logout from ip {}",pmsIp);
+        }
+        sendLogOut(pmsId);
+      }
+ catch (      Exception e) {
+        logger.error("failed to read state",e);
+      }
+    }
+  }
+}

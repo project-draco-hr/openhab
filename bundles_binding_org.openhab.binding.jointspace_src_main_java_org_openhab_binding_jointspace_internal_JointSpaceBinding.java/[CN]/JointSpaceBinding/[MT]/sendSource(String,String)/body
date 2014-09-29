@@ -1,0 +1,7 @@
+{
+  String url="http://" + host + "/1/sources/current";
+  String content="{\"id\":\"" + source + "\"}";
+  logger.debug("Switching source of host {} to {}",host,source);
+  logger.trace(content.toString());
+  HttpUtil.executeUrl("POST",url,IOUtils.toInputStream(content),CONTENT_TYPE_JSON,1000);
+}

@@ -1,0 +1,26 @@
+{
+  logger.trace("setting {} unupdated items to default",m_unupdatedItems.size());
+  while (!m_unupdatedItems.isEmpty()) {
+    String itemName=m_unupdatedItems.keySet().iterator().next();
+    ArrayList<AlarmDecoderBindingConfig> al=getItems(itemName);
+    for (    AlarmDecoderBindingConfig bc : al) {
+switch (bc.getMsgType()) {
+case RFX:
+        if (bc.hasFeature("data")) {
+          updateItem(bc,new DecimalType(0));
+        }
+ else         if (bc.hasFeature("contact")) {
+          updateItem(bc,OpenClosedType.CLOSED);
+        }
+      break;
+case EXP:
+case REL:
+    updateItem(bc,OpenClosedType.CLOSED);
+  break;
+default :
+break;
+}
+}
+}
+m_unupdatedItems.clear();
+}

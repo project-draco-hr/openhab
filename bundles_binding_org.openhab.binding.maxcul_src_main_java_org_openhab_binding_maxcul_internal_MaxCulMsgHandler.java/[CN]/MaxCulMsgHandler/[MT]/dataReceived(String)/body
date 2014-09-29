@@ -1,0 +1,74 @@
+{
+  logger.debug("MaxCulSender Received " + data);
+  if (data.startsWith("Z")) {
+    if (listenMode) {
+      listenModeHandler(data);
+      return;
+    }
+    if (BaseMsg.isForUs(data,srcAddr)) {
+      boolean passToBinding=true;
+      MaxCulMsgType msgType=BaseMsg.getMsgType(data);
+      if (msgType == MaxCulMsgType.ACK) {
+        passToBinding=false;
+        AckMsg msg=new AckMsg(data);
+        if (pendingAckQueue.containsKey(msg.msgCount) && msg.dstAddrStr.compareTo(srcAddr) == 0) {
+          SenderQueueItem qi=pendingAckQueue.remove(msg.msgCount);
+          if ((qi.msg.dstAddrStr.equalsIgnoreCase(msg.srcAddrStr)) && (qi.msg.srcAddrStr.equalsIgnoreCase(msg.dstAddrStr))) {
+            if (msg.getIsNack()) {
+              logger.error("Message was NAK'd, packet lost");
+            }
+ else {
+              logger.debug("Message " + msg.msgCount + " ACK'd ok!");
+            }
+          }
+        }
+ else         logger.info("Got ACK for message " + msg.msgCount + " but it wasn't in the queue");
+      }
+      if (sequenceRegister.containsKey(new BaseMsg(data).msgCount)) {
+        passToBinding=false;
+        BaseMsg bMsg=new BaseMsg(data);
+        logger.debug("Message " + bMsg.msgCount + " is part of sequence. Running next step in sequence.");
+        sequenceRegister.get(bMsg.msgCount).runSequencer(bMsg);
+        sequenceRegister.remove(bMsg.msgCount);
+      }
+      if (passToBinding) {
+        this.mcbmp.maxCulMsgReceived(data,false);
+      }
+    }
+ else     if (BaseMsg.isForUs(data,"000000")) {
+switch (BaseMsg.getMsgType(data)) {
+case PAIR_PING:
+case WALL_THERMOSTAT_CONTROL:
+case THERMOSTAT_STATE:
+case WALL_THERMOSTAT_STATE:
+        this.mcbmp.maxCulMsgReceived(data,true);
+      break;
+default :
+    logger.debug("Unhandled broadcast message of type " + BaseMsg.getMsgType(data).toString());
+  break;
+}
+}
+ else {
+boolean passToBinding=false;
+BaseMsg bMsg=new BaseMsg(data);
+for (MaxCulBindingProvider provider : providers) {
+List<MaxCulBindingConfig> configs=provider.getConfigsForRadioAddr(bMsg.srcAddrStr);
+if (!configs.isEmpty()) {
+  String serialNum=((MaxCulBindingConfig)configs.get(0)).getSerialNumber();
+  HashSet<MaxCulBindingConfig> assocDevs=provider.getAssociations(serialNum);
+  if (!assocDevs.isEmpty()) {
+    for (    MaxCulBindingConfig device : assocDevs) {
+      if (device.getDevAddr().equalsIgnoreCase(bMsg.dstAddrStr)) {
+        passToBinding=true;
+        break;
+      }
+    }
+  }
+}
+}
+if (passToBinding && (BaseMsg.getMsgType(data) != MaxCulMsgType.PAIR_PING && BaseMsg.getMsgType(data) != MaxCulMsgType.ACK)) {
+this.mcbmp.maxCulMsgReceived(data,true);
+}
+}
+}
+}

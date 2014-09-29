@@ -1,0 +1,25 @@
+{
+  HashMap<String,Integer> result=new HashMap<String,Integer>();
+  Collection<String> items=getItemNames();
+  Iterator<String> itemIterator=items.iterator();
+  while (itemIterator.hasNext()) {
+    String anItem=itemIterator.next();
+    HDanywhereBindingConfig aConfig=(HDanywhereBindingConfig)bindingConfigs.get(anItem);
+    Iterator<HDanywhereBindingConfigElement> iterator=aConfig.iterator();
+    while (iterator.hasNext()) {
+      HDanywhereBindingConfigElement anElement=iterator.next();
+      boolean found=false;
+      if (result.containsKey(anElement.getHost())) {
+        found=true;
+        if (result.get(anElement.getHost()) > anElement.getInterval()) {
+          result.put(anElement.getHost(),anElement.getInterval());
+          break;
+        }
+      }
+      if (!found) {
+        result.put(anElement.getHost(),anElement.getInterval());
+      }
+    }
+  }
+  return result;
+}

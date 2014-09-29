@@ -1,0 +1,29 @@
+{
+  BaseMsg pkt=this;
+  this.rawMsg=rawMsg;
+  pkt.len=(byte)(Integer.parseInt(rawMsg.substring(1,3),16) & 0xFF);
+  if (pkt.len != ((rawMsg.length() - 5) / 2)) {
+    logger.error("Unable to process packet " + rawMsg + ". Length is not correct.");
+    pkt.len=0;
+    return;
+  }
+  pkt.msgCount=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_COUNT,PKT_POS_MSG_COUNT + PKT_POS_MSG_COUNT_LEN),16) & 0xFF);
+  pkt.msgFlag=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_FLAG,PKT_POS_MSG_FLAG + PKT_POS_MSG_FLAG_LEN),16) & 0xFF);
+  pkt.msgTypeRaw=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_MSG_TYPE,PKT_POS_MSG_TYPE + PKT_POS_MSG_TYPE_LEN),16) & 0xFF);
+  pkt.msgType=MaxCulMsgType.fromByte(pkt.msgTypeRaw);
+  pkt.srcAddrStr=rawMsg.substring(PKT_POS_SRC_ADDR,PKT_POS_SRC_ADDR + PKT_POS_SRC_ADDR_LEN);
+  for (int idx=PKT_POS_SRC_ADDR; idx < PKT_POS_SRC_ADDR + PKT_POS_SRC_ADDR_LEN; idx+=PKT_CHARS_PER_BYTE) {
+    pkt.srcAddr[(idx - PKT_POS_SRC_ADDR) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(idx,idx + PKT_CHARS_PER_BYTE),16) & 0xFF);
+  }
+  pkt.dstAddrStr=rawMsg.substring(PKT_POS_DST_ADDR,PKT_POS_DST_ADDR + PKT_POS_DST_ADDR_LEN);
+  for (int idx=PKT_POS_DST_ADDR; idx < PKT_POS_DST_ADDR + PKT_POS_DST_ADDR_LEN; idx+=PKT_CHARS_PER_BYTE) {
+    pkt.dstAddr[(idx - PKT_POS_DST_ADDR) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(idx,idx + PKT_CHARS_PER_BYTE),16) & 0xFF);
+  }
+  pkt.groupid=(byte)(Integer.parseInt(rawMsg.substring(PKT_POS_GROUP_ID,PKT_POS_GROUP_ID + PKT_POS_GROUP_ID_LEN),16) & 0xFF);
+  int payloadStrLen=((pkt.len) * PKT_CHARS_PER_BYTE) + PKT_POS_MSG_START - PKT_POS_PAYLOAD_START;
+  int payloadByteLen=payloadStrLen / PKT_CHARS_PER_BYTE;
+  pkt.payload=new byte[payloadByteLen];
+  for (int payIdx=PKT_POS_PAYLOAD_START; payIdx < (PKT_POS_PAYLOAD_START + payloadStrLen); payIdx+=PKT_CHARS_PER_BYTE) {
+    pkt.payload[(payIdx - PKT_POS_PAYLOAD_START) / PKT_CHARS_PER_BYTE]=(byte)(Integer.parseInt(rawMsg.substring(payIdx,payIdx + PKT_CHARS_PER_BYTE),16) & 0xFF);
+  }
+}

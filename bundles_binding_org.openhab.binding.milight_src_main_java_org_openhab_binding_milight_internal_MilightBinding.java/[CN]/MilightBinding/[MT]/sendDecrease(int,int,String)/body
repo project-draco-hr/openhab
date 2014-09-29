@@ -1,0 +1,34 @@
+{
+  logger.debug("milight: sendDecrease");
+  String messageBytes=null;
+switch (bulb) {
+case 0:
+case 1:
+case 2:
+case 3:
+case 4:
+    messageBytes="34:00:55";
+  break;
+case 5:
+messageBytes="24:00:55";
+break;
+}
+int newPercent=getCurrentState(bulb,bridgeId,BindingType.brightness).intValue() - 10;
+if (newPercent < 0) {
+newPercent=0;
+}
+PercentType newValue=new PercentType(newPercent);
+if (newValue.equals(PercentType.ZERO)) {
+sendOff(bulb,bridgeId);
+}
+ else {
+if (bulb > 5) {
+int decreasePercent=newPercent * rgbwSteps / 100;
+messageBytes="4E:" + Integer.toHexString(decreasePercent) + ":55";
+logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
+}
+sendMessage(messageBytes,bridgeId);
+}
+setCurrentState(bulb,bridgeId,newValue,BindingType.brightness);
+return newValue;
+}

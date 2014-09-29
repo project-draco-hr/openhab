@@ -1,0 +1,20 @@
+{
+  StringTypeConverter converter=new StringTypeConverter();
+  Assert.assertEquals(new StringType("0"),converter.convertFromBinding(getValueListVariable("0","0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("10"),converter.convertFromBinding(getValueListVariable("1","0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("50"),converter.convertFromBinding(getValueListVariable("5","0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("6"),converter.convertFromBinding(getValueListVariable("6","0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("10"),converter.convertFromBinding(getValueListVariable(1,"0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("6"),converter.convertFromBinding(getValueListVariable(6,"0;10;20;30;40;50")));
+  Assert.assertEquals(new StringType("two"),converter.convertFromBinding(getValueListVariable(1,"one;two")));
+  Assert.assertEquals(new StringType("one"),converter.convertFromBinding(getValueListVariable(false,"one;two")));
+  Assert.assertEquals(new StringType("two"),converter.convertFromBinding(getValueListVariable(true,"one;two")));
+  Assert.assertEquals("0",converter.convertToBinding(new StringType("0"),getValueListVariable("","0;10;20;30;40;50")));
+  Assert.assertEquals("1",converter.convertToBinding(new StringType("10"),getValueListVariable("","0;10;20;30;40;50")));
+  Assert.assertEquals("5",converter.convertToBinding(new StringType("50"),getValueListVariable("","0;10;20;30;40;50")));
+  Assert.assertEquals("2",converter.convertToBinding(new StringType("three"),getValueListVariable("","one;two;three")));
+  Assert.assertEquals("2",converter.convertToBinding(new StringType("three"),getValueListVariable("1","one;two;three")));
+  Assert.assertEquals(2,converter.convertToBinding(new StringType("three"),getValueListVariable(1,"one;two;three")));
+  Assert.assertEquals(false,converter.convertToBinding(new StringType("one"),getValueListVariable(false,"one;two")));
+  Assert.assertEquals(true,converter.convertToBinding(new StringType("two"),getValueListVariable(true,"one;two")));
+}

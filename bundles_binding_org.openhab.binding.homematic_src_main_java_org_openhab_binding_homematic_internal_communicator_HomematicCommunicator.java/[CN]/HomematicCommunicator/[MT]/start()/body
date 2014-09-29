@@ -1,0 +1,27 @@
+{
+  if (homematicCallbackServer == null) {
+    logger.info("Starting Homematic communicator");
+    try {
+      homematicCallbackServer=new BinRpcCallbackServer(this);
+      itemDisabler=new ItemDisabler();
+      itemDisabler.start();
+      newDevicesCounter=0;
+      RpcClient rpcClient=new BinRpcClient();
+      context.setServerId(rpcClient.getServerId(HmInterface.RF));
+      logger.info("Homematic {}",context.getServerId());
+      homematicClient=context.getServerId().isHomegear() ? new HomegearClient(rpcClient) : new CcuClient(rpcClient);
+      context.setHomematicClient(homematicClient);
+      homematicClient.start();
+      context.getStateHolder().init();
+      context.getStateHolder().loadDatapoints();
+      context.getStateHolder().loadVariables();
+      homematicCallbackServer.start();
+      homematicClient.registerCallback();
+      scheduleFirstRefresh();
+    }
+ catch (    Exception e) {
+      logger.error("Could not start Homematic communicator: " + e.getMessage(),e);
+      stop();
+    }
+  }
+}

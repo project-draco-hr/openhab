@@ -1,0 +1,21 @@
+{
+  logger.debug("milight: sendColor");
+  HSBType hsbCommand=(HSBType)command;
+  DecimalType hue=hsbCommand.getHue();
+  Integer milightColorNo=(256 + 176 - (int)(hue.floatValue() / 360.0 * 255.0)) % 256;
+  try {
+    if (bulb == 5) {
+      String messageBytes="20:" + Integer.toHexString(milightColorNo) + ":55";
+      sendMessage(messageBytes,bridgeId);
+    }
+    if (bulb > 5) {
+      sendOn(bulb,bridgeId);
+      Thread.sleep(100);
+      String messageBytes="40:" + Integer.toHexString(milightColorNo) + ":55";
+      sendMessage(messageBytes,bridgeId);
+    }
+  }
+ catch (  InterruptedException e) {
+    logger.debug("Sleeping thread has been interrupted.");
+  }
+}

@@ -11,16 +11,18 @@
     }
     for (    Command someCommand : commands) {
       String sonosID=provider.getSonosID(itemName,someCommand);
-      Direction direction=provider.getDirection(itemName,someCommand);
-      SonosCommandType sonosCommandType=provider.getSonosCommandType(itemName,someCommand,direction);
-      if (sonosID != null && direction != null) {
+      String sonosCommand=provider.getSonosCommand(itemName,someCommand);
+      SonosCommandType sonosCommandType=null;
+      try {
+        sonosCommandType=SonosCommandType.getCommandType(sonosCommand,Direction.OUT);
+      }
+ catch (      Exception e) {
+        logger.error("An exception occured while verifying command compatibility ({})",e.getMessage());
+      }
+      if (sonosID != null) {
         if (sonosCommandType != null) {
-          if (direction.equals(Direction.OUT) | direction.equals(Direction.BIDIRECTIONAL)) {
-            executeCommand(itemName,someCommand,sonosID,sonosCommandType,commandAsString);
-          }
- else {
-            logger.error("wrong command direction for binding [Item={}, command={}]",itemName,commandAsString);
-          }
+          logger.debug("Executing command: item:{}, command:{}, ID:{}, CommandType:{}, commandString:{}",new Object[]{itemName,someCommand,sonosID,sonosCommandType,commandAsString});
+          executeCommand(itemName,someCommand,sonosID,sonosCommandType,commandAsString);
         }
  else {
           logger.error("wrong command type for binding [Item={}, command={}]",itemName,commandAsString);

@@ -11,6 +11,9 @@
   try {
     tinkerforgeDevice.setResponseExpected(BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD,false);
     tinkerforgeDevice.setAirPressureCallbackPeriod(callbackPeriod);
+    listener=new AirPressureListener();
+    tinkerforgeDevice.addAirPressureListener(listener);
+    fetchSensorValue();
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
@@ -18,16 +21,4 @@
 catch (  NotConnectedException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
   }
-  tinkerforgeDevice.addAirPressureListener(new BrickletBarometer.AirPressureListener(){
-    @Override public void airPressure(    int newAirPressure){
-      if (newAirPressure > (airPressure + threshold) || newAirPressure < (airPressure - threshold)) {
-        setSensorValue(newAirPressure / 1000);
-        setAirPressure(newAirPressure);
-      }
- else {
-        logger.trace(String.format("new airPressure: %s, old %s",newAirPressure,airPressure));
-      }
-    }
-  }
-);
 }

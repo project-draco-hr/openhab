@@ -15,6 +15,9 @@
     logger.error("Unable to get item type for {}",itemName);
     item=null;
   }
+  if (item instanceof GroupItem) {
+    item=GroupItem.class.cast(item).getBaseItem();
+  }
   String table=sqlTables.get(itemName);
   if (table == null) {
     logger.error("mySQL: Unable to find table for query '" + itemName + "'.");
@@ -32,7 +35,7 @@
     filterString+=" TIME<'" + mysqlDateFormat.format(filter.getEndDate().getTime()) + "'";
   }
   if (filter.getOrdering() == Ordering.ASCENDING) {
-    filterString+=" ORDER BY 'Time' ASC";
+    filterString+=" ORDER BY Time ASC";
   }
  else {
     filterString+=" ORDER BY Time DESC";
@@ -53,11 +56,11 @@
     while (rs.next()) {
       count++;
       if (item instanceof NumberItem)       state=new DecimalType(rs.getDouble(2));
+ else       if (item instanceof ColorItem)       state=new HSBType(rs.getString(2));
+ else       if (item instanceof DimmerItem)       state=new PercentType(rs.getInt(2));
  else       if (item instanceof SwitchItem)       state=OnOffType.valueOf(rs.getString(2));
  else       if (item instanceof ContactItem)       state=OpenClosedType.valueOf(rs.getString(2));
- else       if (item instanceof DimmerItem)       state=new PercentType(rs.getInt(2));
  else       if (item instanceof RollershutterItem)       state=new PercentType(rs.getInt(2));
- else       if (item instanceof ColorItem)       state=new HSBType(rs.getString(2));
  else       if (item instanceof DateTimeItem) {
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(rs.getTimestamp(2).getTime());

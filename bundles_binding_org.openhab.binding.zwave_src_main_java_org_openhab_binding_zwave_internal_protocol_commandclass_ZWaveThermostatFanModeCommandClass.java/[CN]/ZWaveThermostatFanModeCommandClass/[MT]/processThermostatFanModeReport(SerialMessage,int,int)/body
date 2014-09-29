@@ -1,0 +1,13 @@
+{
+  int value=serialMessage.getMessagePayloadByte(offset + 1);
+  logger.debug(String.format("Thermostat Fan Mode report from nodeId = %d,  value = 0x%02X",this.getNode().getNodeId(),value));
+  FanModeType fanModeType=FanModeType.getFanModeType(value);
+  if (fanModeType == null) {
+    logger.error(String.format("Unknown Fan Mode Type = 0x%02x, ignoring report.",value));
+    return;
+  }
+  if (!this.fanModeTypes.contains(fanModeType))   this.fanModeTypes.add(fanModeType);
+  logger.debug(String.format("Thermostat Fan Mode Report from Node ID = %d, value = %s",this.getNode().getNodeId(),fanModeType.getLabel()));
+  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),new BigDecimal(value));
+  this.getController().notifyEventListeners(zEvent);
+}

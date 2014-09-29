@@ -5,6 +5,7 @@
   }
  else {
     TinkerforgeBindingConfig config=new TinkerforgeBindingConfig();
+    DeviceOptions deviceOptions=new DeviceOptions();
     String[] tokens=bindingConfig.trim().split(",");
     for (    String token : tokens) {
       token=token.trim();
@@ -26,10 +27,12 @@
           config.setName(value);
         }
  else {
-          throw new BindingConfigParseException("unknown configuration key: " + key);
+          deviceOptions.put(key,value);
         }
       }
     }
+    config.setDeviceOptions(deviceOptions);
+    config.setItem(item);
     addBindingConfig(item,config);
   }
 }

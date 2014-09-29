@@ -1,6 +1,7 @@
 {
   if (connection == null) {
-    connection=new FritzahaWebInterface(host,port,protocol,username,password);
+    logger.debug("New connection to " + host + " with timeouts ("+ synctimeout+ "|"+ asynctimeout+ ").");
+    connection=new FritzahaWebInterface(host,port,protocol,username,password,synctimeout,asynctimeout);
     connection.setEventPublisher(eventPublisher);
   }
   return connection;

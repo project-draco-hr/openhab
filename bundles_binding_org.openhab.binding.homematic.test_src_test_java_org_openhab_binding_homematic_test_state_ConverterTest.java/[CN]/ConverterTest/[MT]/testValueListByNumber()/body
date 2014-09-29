@@ -1,0 +1,20 @@
+{
+  DecimalTypeConverter converter=new DecimalTypeConverter();
+  Assert.assertEquals(new DecimalType(0),converter.convertFromBinding(getValueListVariable(0,"0;10;20;30;40;50")));
+  Assert.assertEquals(new DecimalType(1),converter.convertFromBinding(getValueListVariable(1,"0;10;20;30;40;50")));
+  Assert.assertEquals(new DecimalType(5),converter.convertFromBinding(getValueListVariable(5,"0;10;20;30;40;50")));
+  Assert.assertEquals(new DecimalType(6),converter.convertFromBinding(getValueListVariable(6,"0;10;20;30;40;50")));
+  Assert.assertEquals(new DecimalType(1),converter.convertFromBinding(getValueListVariable(1,"one;two;three")));
+  Assert.assertEquals(new DecimalType(1),converter.convertFromBinding(getValueListVariable("1","one;two;three")));
+  Assert.assertEquals(new DecimalType(1),converter.convertFromBinding(getValueListVariable(true,"one;two;three")));
+  Assert.assertEquals(new DecimalType(0),converter.convertFromBinding(getValueListVariable(false,"one;two;three")));
+  Assert.assertEquals(0,converter.convertToBinding(new DecimalType("0"),getValueListVariable(0,"0;10;20;30;40;50")));
+  Assert.assertEquals(10,converter.convertToBinding(new DecimalType("10"),getValueListVariable(0,"0;10;20;30;40;50")));
+  Assert.assertEquals(50,converter.convertToBinding(new DecimalType("50"),getValueListVariable(0,"0;10;20;30;40;50")));
+  Assert.assertEquals(60,converter.convertToBinding(new DecimalType("60"),getValueListVariable(0,"0;10;20;30;40;50")));
+  Assert.assertEquals(60,converter.convertToBinding(new DecimalType("60"),getValueListVariable(1,"0;10;20;30;40;50")));
+  Assert.assertEquals(1,converter.convertToBinding(new DecimalType("1"),getValueListVariable(1,"one;two;three")));
+  Assert.assertEquals("1.0",converter.convertToBinding(new DecimalType("1"),getValueListVariable("1","one;two;three")));
+  Assert.assertEquals(true,converter.convertToBinding(new DecimalType("1"),getValueListVariable(true,"one;two;three")));
+  Assert.assertEquals(false,converter.convertToBinding(new DecimalType("0"),getValueListVariable(true,"one;two;three")));
+}

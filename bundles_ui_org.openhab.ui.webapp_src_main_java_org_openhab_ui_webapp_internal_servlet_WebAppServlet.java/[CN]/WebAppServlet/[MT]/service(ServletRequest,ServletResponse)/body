@@ -24,8 +24,6 @@
  else     if (!widgetId.equals("Colorpicker")) {
       Widget w=renderer.getItemUIRegistry().getWidget(sitemap,widgetId);
       if (w != null) {
-        String label=renderer.getItemUIRegistry().getLabel(w);
-        if (label == null)         label="undefined";
         if (!(w instanceof LinkableWidget)) {
           throw new RenderException("Widget '" + w + "' can not have any content");
         }
@@ -34,6 +32,8 @@
           res.getWriter().append(getTimeoutResponse()).close();
           return;
         }
+        String label=renderer.getItemUIRegistry().getLabel(w);
+        if (label == null)         label="undefined";
         result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w),sitemapName,label,children,async));
       }
     }

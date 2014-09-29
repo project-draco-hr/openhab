@@ -8,20 +8,14 @@
     return;
   }
   ZWaveNode node=this.getNode(serialMessage.getMessageNode());
-  if (node.getNodeStage() == NodeStage.DEAD) {
-    logger.debug("Node {} is dead, not sending message.",node.getNodeId());
-    return;
-  }
+  node.incrementSendCount();
   if (!node.isListening() && !node.isFrequentlyListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-    if (wakeUpCommandClass != null && !wakeUpCommandClass.isAwake()) {
-      wakeUpCommandClass.putInWakeUpQueue(serialMessage);
+    if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
       return;
     }
   }
   serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE | TRANSMIT_OPTION_EXPLORE);
-  if (++sentDataPointer > 0xFF)   sentDataPointer=1;
-  serialMessage.setCallbackId(sentDataPointer);
-  logger.debug("Callback ID = {}",sentDataPointer);
+  serialMessage.setCallbackId(getCallbackId());
   this.enqueue(serialMessage);
 }

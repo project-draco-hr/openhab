@@ -5,5 +5,14 @@
     return;
   }
   State state=converter.convertFromValueToState(event.getValue());
+  if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
+    if (converter instanceof IntegerUpDownTypeConverter) {
+      if (state == UpDownType.UP)       state=UpDownType.DOWN;
+ else       state=UpDownType.UP;
+    }
+  }
+  if ("true".equalsIgnoreCase(arguments.get("invert_percent")) && converter instanceof IntegerPercentTypeConverter) {
+    state=new PercentType(100 - ((DecimalType)state).intValue());
+  }
   this.getEventPublisher().postUpdate(item.getName(),state);
 }

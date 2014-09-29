@@ -1,0 +1,48 @@
+{
+  Socket socket=null;
+  try {
+    if (TRACE_ENABLED) {
+      logger.trace("Client BinRpcRequest {}",request);
+    }
+    socket=new Socket(context.getConfig().getHost(),hmInterface.getPort());
+    socket.setSoTimeout(5000);
+    socket.getOutputStream().write(request.createMessage());
+    BinRpcResponse resp=new BinRpcResponse(socket.getInputStream(),false);
+    if (TRACE_ENABLED) {
+      logger.trace("Client BinRpcResponse: {}",resp.toString());
+    }
+    Object[] data=resp.getResponseData();
+    if (data != null && data.length > 0) {
+      Object responseData=data[0];
+      if (responseData instanceof Map) {
+        @SuppressWarnings("unchecked") Map<String,Object> map=(Map<String,Object>)responseData;
+        if (map.containsKey("faultCode")) {
+          Object faultCode=map.get("faultCode");
+          Object faultString=map.get("faultString");
+          throw new IOException(faultCode + " " + faultString);
+        }
+      }
+      return data;
+    }
+    throw new IOException("Unknown Result: " + data);
+  }
+ catch (  ConnectException cex) {
+    if (HmInterface.WIRED == hmInterface || HmInterface.CUXD == hmInterface) {
+      logger.info("Interface {} not available, disabling support.",hmInterface);
+      return null;
+    }
+    throw new HomematicClientException("Can't connect to interface " + hmInterface + ": "+ cex.getMessage(),cex);
+  }
+catch (  Exception ex) {
+    throw new HomematicClientException(ex.getMessage() + " (sending " + request+ ")",ex);
+  }
+ finally {
+    try {
+      if (socket != null) {
+        socket.close();
+      }
+    }
+ catch (    IOException ex) {
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  if (config != null) {
+    HashMap<String,OpenEnergyMonitorParserRule> parsingRules=new HashMap<String,OpenEnergyMonitorParserRule>();
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      String value=(String)config.get(key);
+      if ("udpPort".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          udpPort=Integer.parseInt(value);
+        }
+      }
+ else       if ("serialPort".equals(key)) {
+        serialPort=value;
+      }
+ else       if ("simulate".equals(key)) {
+        if (StringUtils.isNotBlank(value)) {
+          simulate=Boolean.parseBoolean(value);
+        }
+      }
+ else {
+        try {
+          OpenEnergyMonitorParserRule rule=new OpenEnergyMonitorParserRule(value);
+          parsingRules.put(key,rule);
+        }
+ catch (        OpenEnergyMonitorException e) {
+          throw new ConfigurationException(key,"invalid parser rule",e);
+        }
+      }
+    }
+    if (parsingRules != null) {
+      dataParser=new OpenEnergyMonitorDataParser(parsingRules);
+    }
+    if (messageListener != null) {
+      logger.debug("Close previous message listener");
+      messageListener.setInterrupted(true);
+      try {
+        messageListener.join();
+      }
+ catch (      InterruptedException e) {
+        logger.info("Previous message listener closing interrupted",e);
+      }
+    }
+    messageListener=new MessageListener();
+    messageListener.start();
+  }
+}

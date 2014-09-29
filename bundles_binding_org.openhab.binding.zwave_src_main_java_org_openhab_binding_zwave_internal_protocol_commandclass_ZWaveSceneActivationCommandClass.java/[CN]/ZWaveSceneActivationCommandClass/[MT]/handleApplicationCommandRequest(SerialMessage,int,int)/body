@@ -1,0 +1,12 @@
+{
+  logger.debug(String.format("Received Scene Activation for Node ID = %d",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SCENEACTIVATION_SET:
+    logger.debug("Scene Activation Set");
+  processSceneActivationSet(serialMessage,offset,endpoint);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

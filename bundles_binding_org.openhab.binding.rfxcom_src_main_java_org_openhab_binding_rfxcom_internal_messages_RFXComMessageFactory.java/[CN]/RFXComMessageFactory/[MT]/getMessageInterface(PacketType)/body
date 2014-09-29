@@ -1,0 +1,13 @@
+{
+  try {
+    String className=messageClasses.get(packetType);
+    Class<?> cl=Class.forName(classUrl + className);
+    return (RFXComMessageInterface)cl.newInstance();
+  }
+ catch (  ClassNotFoundException e) {
+    throw new RFXComException("Message " + packetType + " not implemented",e);
+  }
+catch (  Exception e) {
+    throw new RFXComException(e);
+  }
+}

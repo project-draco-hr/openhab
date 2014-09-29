@@ -1,0 +1,44 @@
+{
+  bindingConfig=StringUtils.trimToEmpty(bindingConfig);
+  bindingConfig=StringUtils.removeStart(bindingConfig,"{");
+  bindingConfig=StringUtils.removeEnd(bindingConfig,"}");
+  String[] entries=bindingConfig.split("[,]");
+  AstroBindingConfigHelper helper=new AstroBindingConfigHelper();
+  for (  String entry : entries) {
+    String[] entryParts=StringUtils.trimToEmpty(entry).split("[=]");
+    if (entryParts.length != 2) {
+      throw new BindingConfigParseException("A bindingConfig must have a key and a value");
+    }
+    String key=StringUtils.trim(entryParts[0]);
+    String value=StringUtils.trim(entryParts[1]);
+    value=StringUtils.removeStart(value,"\"");
+    value=StringUtils.removeEnd(value,"\"");
+    try {
+      if ("offset".equalsIgnoreCase(key)) {
+        helper.getClass().getDeclaredField(key).set(helper,Integer.valueOf(value.toString()));
+      }
+ else {
+        helper.getClass().getDeclaredField(key).set(helper,value);
+      }
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Could not set value " + value + " for attribute "+ key);
+    }
+  }
+  if (helper.isOldStyle()) {
+    logger.warn("Old Astro binding style for item {}, please see Wiki page for new style: https://github.com/openhab/openhab/wiki/Astro-binding",item.getName());
+    return getOldAstroBindingConfig(helper);
+  }
+  if (!helper.isValid()) {
+    throw new BindingConfigParseException("Invalid binding: " + bindingConfig);
+  }
+  PlanetName planetName=getPlanetName(helper);
+  if (planetName == null) {
+    throw new BindingConfigParseException("Invalid binding, unknown planet: " + bindingConfig);
+  }
+  AstroBindingConfig astroConfig=new AstroBindingConfig(planetName,helper.type,helper.property,helper.offset);
+  if (!PropertyUtils.hasProperty(context.getPlanet(astroConfig.getPlanetName()),astroConfig.getPlanetProperty())) {
+    throw new BindingConfigParseException("Invalid binding, unknown type or property: " + bindingConfig);
+  }
+  return astroConfig;
+}

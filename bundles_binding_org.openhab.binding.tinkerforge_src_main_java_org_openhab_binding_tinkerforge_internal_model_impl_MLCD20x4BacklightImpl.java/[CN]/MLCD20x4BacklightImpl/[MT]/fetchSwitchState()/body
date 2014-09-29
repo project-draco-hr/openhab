@@ -1,0 +1,14 @@
+{
+  OnOffValue switchValue=OnOffValue.UNDEF;
+  try {
+    switchValue=brickletLCD20x4.isBacklightOn() ? OnOffValue.ON : OnOffValue.OFF;
+    setSwitchState(switchValue);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  setSwitchState(switchValue);
+}

@@ -1,0 +1,46 @@
+{
+  JobDataMap dataMap=context.getJobDetail().getJobDataMap();
+  String host=(String)dataMap.get("host");
+  HDanywhereBinding theBinding=(HDanywhereBinding)dataMap.get("binding");
+  String httpMethod="GET";
+  String url="http://" + host + "/status_show.shtml";
+  if (isNotBlank(httpMethod) && isNotBlank(url)) {
+    String response=HttpUtil.executeUrl(httpMethod,url,null,null,null,timeout);
+    Integer numberOfPorts=theBinding.matrixCache.get(host);
+    if (numberOfPorts == null) {
+      numberOfPorts=4;
+    }
+    if (response != null) {
+      for (int i=1; i <= numberOfPorts; i++) {
+        Pattern p=Pattern.compile("var out" + i + "var = (.*);");
+        Matcher m=p.matcher(response);
+        while (m.find()) {
+          List<Class<? extends State>> stateTypeList=new ArrayList<Class<? extends State>>();
+          stateTypeList.add(DecimalType.class);
+          State state=TypeParser.parseState(stateTypeList,m.group(1));
+          for (          HDanywhereBindingProvider provider : theBinding.providers) {
+            Collection<String> theItems=provider.getItemNames();
+            for (            String anItem : theItems) {
+              List<Integer> itemPorts=provider.getPorts(host,anItem);
+              for (              Integer aPort : itemPorts) {
+                if (aPort == i) {
+                  if (!theBinding.portMappingCache.containsKey(host + ":" + aPort)) {
+                    theBinding.portMappingCache.put(host + ":" + aPort,Integer.valueOf(m.group(1)));
+                    theBinding.eventPublisher.postUpdate(anItem,(State)state);
+                  }
+ else {
+                    int cachedValue=theBinding.portMappingCache.get(host + ":" + aPort);
+                    if (cachedValue != Integer.valueOf(m.group(1))) {
+                      theBinding.portMappingCache.put(host + ":" + aPort,Integer.valueOf(m.group(1)));
+                      theBinding.eventPublisher.postUpdate(anItem,(State)state);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

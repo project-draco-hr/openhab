@@ -1,0 +1,24 @@
+{
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
+  String setpointType=arguments.get("setpoint_type");
+  String scale=arguments.get("setpoint_scale");
+  ZWaveThermostatSetpointValueEvent setpointEvent=(ZWaveThermostatSetpointValueEvent)event;
+  if (converter == null) {
+    logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+    return;
+  }
+  if (setpointType != null && SetpointType.getSetpointType(Integer.parseInt(setpointType)) != setpointEvent.getSetpointType())   return;
+  Object val=event.getValue();
+  if (scale != null && Integer.parseInt(scale) != setpointEvent.getScale()) {
+    if (setpointEvent.getScale() == 0) {
+      double c=((BigDecimal)val).doubleValue();
+      val=new BigDecimal((c * 9.0 / 5.0) + 32.0);
+    }
+ else     if (setpointEvent.getScale() == 1) {
+      double f=((BigDecimal)val).doubleValue();
+      val=new BigDecimal((f - 32.0) * 5.0 / 9.0);
+    }
+  }
+  State state=converter.convertFromValueToState(val);
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

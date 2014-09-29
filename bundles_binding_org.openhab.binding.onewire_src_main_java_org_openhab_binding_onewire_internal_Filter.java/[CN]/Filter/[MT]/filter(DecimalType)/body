@@ -1,0 +1,20 @@
+{
+  DecimalType y=v;
+  if (dataList.size() > WINDOW_SIZE) {
+    removeOldestPoint(v);
+    double qbottom=sortedList.get(sortedList.getNtile(1,NTILE)).doubleValue();
+    double qtop=sortedList.get(sortedList.getNtile(NTILE - 1,NTILE)).doubleValue();
+    double r=qtop - qbottom;
+    double lowerbound=qbottom - ALPHA * r;
+    double upperbound=qtop + ALPHA * r;
+    double yd=y.doubleValue();
+    yd=Math.max(yd,lowerbound);
+    yd=Math.min(yd,upperbound);
+    if (yd != y.doubleValue()) {
+      logger.debug("boxed outlier: range: {}-{}={} orig data: {} filt data: {}",qbottom,qtop,qtop - qbottom,v.doubleValue(),yd);
+    }
+    y=new DecimalType(yd);
+  }
+  addNewPoint(v);
+  return y;
+}

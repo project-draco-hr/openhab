@@ -1,0 +1,46 @@
+{
+  double lat=latitude * SunCalc.DEG2RAD;
+  double lon=longitude * SunCalc.DEG2RAD;
+  double gmst=toGMST(julianDate);
+  double lmst=toLMST(gmst,lon) * 15. * SunCalc.DEG2RAD;
+  double d=julianDate - 2447891.5;
+  double anomalyMean=360 * SunCalc.DEG2RAD / 365.242191 * d + 4.87650757829735 - 4.935239984568769;
+  double nu=anomalyMean + 360.0 * SunCalc.DEG2RAD / Math.PI * 0.016713 * Math.sin(anomalyMean);
+  double sunLon=mod2Pi(nu + 4.935239984568769);
+  double l0=318.351648 * SunCalc.DEG2RAD;
+  double p0=36.340410 * SunCalc.DEG2RAD;
+  double n0=318.510107 * SunCalc.DEG2RAD;
+  double i=5.145396 * SunCalc.DEG2RAD;
+  double l=13.1763966 * SunCalc.DEG2RAD * d + l0;
+  double mMoon=l - 0.1114041 * SunCalc.DEG2RAD * d - p0;
+  double n=n0 - 0.0529539 * SunCalc.DEG2RAD * d;
+  double c=l - sunLon;
+  double ev=1.2739 * SunCalc.DEG2RAD * Math.sin(2 * c - mMoon);
+  double ae=0.1858 * SunCalc.DEG2RAD * Math.sin(anomalyMean);
+  double a3=0.37 * SunCalc.DEG2RAD * Math.sin(anomalyMean);
+  double mMoon2=mMoon + ev - ae - a3;
+  double ec=6.2886 * SunCalc.DEG2RAD * Math.sin(mMoon2);
+  double a4=0.214 * SunCalc.DEG2RAD * Math.sin(2 * mMoon2);
+  double l2=l + ev + ec - ae + a4;
+  double v=0.6583 * SunCalc.DEG2RAD * Math.sin(2 * (l2 - sunLon));
+  double l3=l2 + v;
+  double n2=n - 0.16 * SunCalc.DEG2RAD * Math.sin(anomalyMean);
+  double moonLon=mod2Pi(n2 + Math.atan2(Math.sin(l3 - n2) * Math.cos(i),Math.cos(l3 - n2)));
+  double moonLat=Math.asin(Math.sin(l3 - n2) * Math.sin(i));
+  double raDec[]=ecl2Equ(moonLat,moonLon,julianDate);
+  double distance=(1 - 0.00301401) / (1 + 0.054900 * Math.cos(mMoon2 + ec)) * 384401;
+  double raDecTopo[]=geoEqu2TopoEqu(raDec,distance,lat,lmst);
+  double azAlt[]=equ2AzAlt(raDecTopo[0],raDecTopo[1],lat,lmst);
+  Position position=moon.getPosition();
+  position.setAzimuth(azAlt[0] * SunCalc.RAD2DEG);
+  position.setElevation(azAlt[1] * SunCalc.RAD2DEG + refraction(azAlt[1]));
+  double idxd=Math.floor(moonLon * SunCalc.RAD2DEG / 30);
+  int idx=0;
+  if (idxd < 0) {
+    idx=(int)(Math.ceil(idxd));
+  }
+ else   idx=(int)(Math.floor(idxd));
+  if (idx >= 0 || idx <= ZodiacSign.values().length) {
+    moon.setZodiac(new Zodiac(ZodiacSign.values()[idx]));
+  }
+}

@@ -1,0 +1,15 @@
+{
+  logger.debug("Shutting down {}",this.getClass().getSimpleName());
+  try {
+    if (networkService != null) {
+      networkService.shutdown();
+    }
+    if (networkServiceThread != null) {
+      networkServiceThread.interrupt();
+      networkServiceThread.join(5000);
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage(),e);
+  }
+}

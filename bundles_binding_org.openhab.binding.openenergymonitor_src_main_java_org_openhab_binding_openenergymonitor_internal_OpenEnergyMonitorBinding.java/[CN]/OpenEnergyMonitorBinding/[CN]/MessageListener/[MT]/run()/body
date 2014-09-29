@@ -1,0 +1,68 @@
+{
+  logger.debug("Open Energy Monitor message listener started");
+  OpenEnergyMonitorConnector connector;
+  if (simulate == true)   connector=new OpenEnergyMonitorSimulator();
+ else   if (serialPort != null)   connector=new OpenEnergyMonitorSerialConnector(serialPort);
+ else   connector=new OpenEnergyMonitorUDPConnector(udpPort);
+  try {
+    connector.connect();
+  }
+ catch (  OpenEnergyMonitorException e) {
+    logger.error("Error occured when connecting to Open Energy Monitor device",e);
+    logger.warn("Closing Open Energy Monitor message listener");
+    interrupted=true;
+  }
+  while (!interrupted) {
+    try {
+      byte[] data=connector.receiveDatagram();
+      logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
+      HashMap<String,Number> vals=dataParser.parseData(data);
+      for (      OpenEnergyMonitorBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames()) {
+          for (          Entry<String,Number> entry : vals.entrySet()) {
+            String key=entry.getKey();
+            Number value=entry.getValue();
+            if (key != null && value != null) {
+              boolean found=false;
+              org.openhab.core.types.State state=null;
+              String variable=provider.getVariable(itemName);
+              if (variable.equals(key)) {
+                state=new DecimalType(value.doubleValue());
+                found=true;
+              }
+ else               if (variable.contains(key) && variable.matches(".*[+-/*^%].*")) {
+                logger.debug("Eval key={}, variable={}",key,variable);
+                String tmp=replaceVariables(vals,variable);
+                try {
+                  double result=new DoubleEvaluator().evaluate(tmp);
+                  logger.debug("Eval '{}={}={}'",variable,tmp,result);
+                  state=new DecimalType(result);
+                  found=true;
+                }
+ catch (                Exception e) {
+                  logger.error("Error occured during data evaluation",e);
+                }
+              }
+              if (found) {
+                state=transformData(provider.getTransformationType(itemName),provider.getTransformationFunction(itemName),state);
+                if (state != null) {
+                  eventPublisher.postUpdate(itemName,state);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+ catch (    OpenEnergyMonitorException e) {
+      logger.error("Error occured when received data from Open Energy Monitor device",e);
+    }
+  }
+  try {
+    connector.disconnect();
+  }
+ catch (  OpenEnergyMonitorException e) {
+    logger.error("Error occured when disconnecting form Open Energy Monitor device",e);
+  }
+}

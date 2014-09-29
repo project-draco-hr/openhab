@@ -1,0 +1,33 @@
+{
+  if (configs.isEmpty()) {
+    throw new RuntimeException("No OpenWebIf receiver configs available, please check your openhab.cfg!");
+  }
+  OpenWebIfConfig config=configs.get(name);
+  if (config == null) {
+    throw new RuntimeException("OpenWebIf receiver config with name '" + name + "' not found!");
+  }
+  try {
+    MessageType type=MessageType.valueOf(StringUtils.upperCase(messageType));
+    if (!communicator.isOff(config)) {
+      if (!communicator.isStandby(config)) {
+        SimpleResult result=communicator.sendMessage(config,message,type,timeout);
+        if (!result.isValid()) {
+          logger.warn("Can't send message to OpenWebIf receiver with name '{}': {}",config.getName(),result.getStateText());
+        }
+ else {
+          return true;
+        }
+      }
+ else {
+        logger.debug("OpenWebIf receiver with name '{}' is in standby",config.getName());
+      }
+    }
+ else {
+      logger.debug("OpenWebIf receiver with name '{}' is off",config.getName());
+    }
+    return false;
+  }
+ catch (  IOException ex) {
+    throw new RuntimeException("OpenWebIf error for receiver with name '" + config.getName() + "': "+ ex.getMessage(),ex);
+  }
+}

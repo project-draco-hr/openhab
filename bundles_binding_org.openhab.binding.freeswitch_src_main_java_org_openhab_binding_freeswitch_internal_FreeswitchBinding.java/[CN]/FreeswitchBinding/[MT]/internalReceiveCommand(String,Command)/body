@@ -1,0 +1,21 @@
+{
+  logger.trace("Received command for item '{}' with command '{}'",itemName,command);
+  for (  FreeswitchBindingProvider provider : providers) {
+    FreeswitchBindingConfig config=provider.getFreeswitchBindingConfig(itemName);
+switch (config.getType()) {
+case CMD_API:
+{
+        if (!(command instanceof StringType)) {
+          logger.warn("could not process command '{}' for item '{}': command is not a StringType",command,itemName);
+          return;
+        }
+        String str=((StringType)command).toString().toLowerCase();
+        String response=executeApiCommand(str);
+        eventPublisher.postUpdate(itemName,new StringType(response));
+      }
+    break;
+default :
+  break;
+}
+}
+}

@@ -1,0 +1,9 @@
+{
+  BinRpcRequest request=new BinRpcRequest("getDeviceDescription");
+  request.addArg(address);
+  Object[] result=sendMessage(hmInterface,request);
+  if (result != null && result.length > 0 && result[0] instanceof Map) {
+    return (Map<String,String>)result[0];
+  }
+  return null;
+}

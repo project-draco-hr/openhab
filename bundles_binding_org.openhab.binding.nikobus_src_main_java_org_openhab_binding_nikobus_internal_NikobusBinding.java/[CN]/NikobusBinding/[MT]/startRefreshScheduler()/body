@@ -2,7 +2,6 @@
   if (refreshService != null) {
     refreshService.shutdownNow();
   }
-  final NikobusBinding self=this;
   if (refreshInterval > 0) {
     refreshService=Executors.newScheduledThreadPool(1);
     Runnable refreshCommand=new Runnable(){
@@ -17,7 +16,7 @@
         }
         NikobusModule m=allModules.get(nextModuleToRefresh);
         log.trace("Requesting scheduled status update for {}",m.getAddress());
-        NikobusCommand cmd=m.getStatusRequestCommand(self);
+        NikobusCommand cmd=m.getStatusRequestCommand();
         cmd.setWaitForSilence(true);
         try {
           sendCommand(cmd);

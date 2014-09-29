@@ -17,15 +17,24 @@
     }
     String preambleString=(String)config.get("preamble");
     if (StringUtils.isNotBlank(preambleString)) {
-      preAmble=preambleString.replaceAll("\\\\","\\");
+      try {
+        preAmble=preambleString.replaceAll("\\\\","\\");
+      }
+ catch (      Exception e) {
+        preAmble=preambleString;
+      }
     }
  else {
       logger.info("The preamble for all write operations will be set to the default vaulue of {}",preAmble);
     }
     String postambleString=(String)config.get("postamble");
     if (StringUtils.isNotBlank(postambleString)) {
-      postAmble=postambleString.replaceAll("\\\\","\\");
-      ;
+      try {
+        postAmble=postambleString.replaceAll("\\\\","\\");
+      }
+ catch (      Exception e) {
+        postAmble=postambleString;
+      }
     }
  else {
       logger.info("The postamble for all write operations will be set to the default vaulue of {}",postAmble);
@@ -36,6 +45,13 @@
     }
  else {
       logger.info("Updating states with returned values will be set to the default vaulue of {}",updateWithResponse);
+    }
+    String charsetString=(String)config.get("charset");
+    if (StringUtils.isNotBlank(charsetString)) {
+      charset=charsetString;
+    }
+ else {
+      logger.info("The characterset will be set to the default vaulue of {}",charset);
     }
   }
 }

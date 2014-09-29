@@ -1,0 +1,17 @@
+{
+  int check=0;
+  for (  byte b : input.getBytes()) {
+    check=check ^ b;
+    for (int i=0; i < 8; i++) {
+      if (((check & 0xff) >> 7) != 0) {
+        check=check << 1;
+        check=check ^ 0x99;
+      }
+ else {
+        check=check << 1;
+      }
+      check=check & 0xff;
+    }
+  }
+  return input + StringUtils.leftPad(Integer.toHexString(check),2,"0").toUpperCase();
+}

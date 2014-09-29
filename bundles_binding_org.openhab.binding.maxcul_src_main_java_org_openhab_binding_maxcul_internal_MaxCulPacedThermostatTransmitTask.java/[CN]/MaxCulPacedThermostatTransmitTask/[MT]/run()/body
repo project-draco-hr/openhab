@@ -1,0 +1,9 @@
+{
+  if (command instanceof OnOffType) {
+    if (((OnOffType)command) == OnOffType.ON)     sendToDevices(SetTemperatureMsg.TEMPERATURE_ON);
+ else     if (((OnOffType)command) == OnOffType.OFF)     sendToDevices(SetTemperatureMsg.TEMPERATURE_OFF);
+  }
+ else   if (command instanceof DecimalType) {
+    sendToDevices(((DecimalType)command).doubleValue());
+  }
+}

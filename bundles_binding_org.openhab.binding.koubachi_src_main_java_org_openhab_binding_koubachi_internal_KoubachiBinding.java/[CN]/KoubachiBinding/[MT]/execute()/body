@@ -3,6 +3,9 @@
   List<Plant> plants=getPlants(apiPlantListUrl,credentials,appKey);
   for (  KoubachiBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
+      if (provider.isCareAction(itemName)) {
+        continue;
+      }
       KoubachiResourceType resourceType=provider.getResourceType(itemName);
       String resourceId=provider.getResourceId(itemName);
       String propertyName=provider.getPropertyName(itemName);
@@ -19,7 +22,7 @@
       }
       try {
         Object propertyValue=PropertyUtils.getProperty(resource,propertyName);
-        State state=createState(propertyValue.getClass(),propertyValue);
+        State state=createState(propertyValue);
         if (state != null) {
           eventPublisher.postUpdate(itemName,state);
         }

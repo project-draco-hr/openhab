@@ -1,0 +1,11 @@
+{
+  DPT dpt=DPTXlator8BitUnsigned.DPT_TARIFF;
+  testToTypeClass(dpt,DecimalType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},DecimalType.class));
+  Type type=testToType(dpt,new byte[]{0},DecimalType.class);
+  testToDPTValue(dpt,type,"0");
+  type=testToType(dpt,new byte[]{(byte)0xFF},DecimalType.class);
+  testToDPTValue(dpt,type,"255");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},DecimalType.class);
+  testToDPTValue(dpt,type,"255");
+}

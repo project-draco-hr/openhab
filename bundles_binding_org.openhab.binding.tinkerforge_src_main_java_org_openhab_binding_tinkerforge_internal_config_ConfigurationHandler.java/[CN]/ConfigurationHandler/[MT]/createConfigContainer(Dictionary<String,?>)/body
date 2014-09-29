@@ -1,0 +1,55 @@
+{
+  Map<String,Map<String,String>> configContainer=new HashMap<String,Map<String,String>>();
+  Enumeration<String> keys=config.keys();
+  ArrayList<String> keys2ignore=new ArrayList<String>(3);
+  keys2ignore.add(ConfigKey.uid.name());
+  keys2ignore.add(ConfigKey.subid.name());
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    logger.debug("{} key:value {} : {}",LoggerConstants.CONFIG,key,config.get(key));
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    Matcher matcher=UID_PATTERN.matcher(key);
+    if (matcher.matches()) {
+      matcher.reset();
+      matcher.find();
+      HashMap<String,String> configMap=new HashMap<String,String>();
+      String ohId=matcher.group(1);
+      logger.trace("{} found symbolic name: {}",LoggerConstants.CONFIG,ohId);
+      configMap.put(ConfigKeyAdmin.ohId.name(),ohId);
+      configMap.put(ConfigKey.uid.name(),(String)config.get(key));
+      configMap.put(ConfigKey.subid.name(),(String)config.get(ohId + "." + ConfigKey.subid.name()));
+      String deviceType=(String)config.get(ohId + "." + ConfigKey.type.name());
+      configMap.put(ConfigKey.type.name(),deviceType);
+      if (deviceType == null) {
+        throw new ConfigurationException(ohId,"type is missing");
+      }
+      checkTfType(ohId,deviceType);
+      if (configContainer.containsKey(ohId)) {
+        throw new ConfigurationException(ohId,String.format("{} found duplicate entry for symbolic name {}",LoggerConstants.CONFIG,ohId));
+      }
+      Enumeration<String> keys2=config.keys();
+      Pattern ohIdPattern=Pattern.compile(String.format("^%s\\.(.*?)$",ohId));
+      while (keys2.hasMoreElements()) {
+        String key2=keys2.nextElement();
+        Matcher matcherOhId=ohIdPattern.matcher(key2);
+        if (matcherOhId.matches()) {
+          matcherOhId.reset();
+          matcherOhId.find();
+          String matchedKey=matcherOhId.group(1);
+          if (keys2ignore.contains(matchedKey)) {
+            continue;
+          }
+ else {
+            String value2=(String)config.get(key2);
+            logger.trace("TFOPENHABCONFIG {} ohConfigKey {}",matchedKey,value2);
+            configMap.put(matchedKey,value2);
+          }
+        }
+      }
+      configContainer.put(ohId,configMap);
+    }
+  }
+  return configContainer;
+}

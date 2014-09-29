@@ -1,14 +1,23 @@
 {
   super.encodeMessage(data);
-  subType=SubType.values()[super.subType];
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
   sensorId=(char)data[4];
-  unitcode=data[5];
-  command=Commands.OFF;
-  for (  Commands loCmd : Commands.values()) {
-    if (loCmd.toByte() == data[6]) {
-      command=loCmd;
-      break;
-    }
+  try {
+    command=Commands.values()[data[6]];
+  }
+ catch (  Exception e) {
+    command=Commands.UNKNOWN;
+  }
+  if ((command == Commands.GROUP_ON) || (command == Commands.GROUP_OFF)) {
+    unitcode=0;
+  }
+ else {
+    unitcode=data[5];
   }
   signalLevel=(byte)((data[7] & 0xF0) >> 4);
 }

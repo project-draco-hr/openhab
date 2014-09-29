@@ -1,0 +1,10 @@
+{
+  super(msgCount,msgFlag,MaxCulMsgType.ACK,groupId,srcAddr,dstAddr);
+  byte[] payload=new byte[ACK_MSG_PAYLOAD_LEN];
+  payload[0]=0x01;
+  if (isNack) {
+    payload[0]|=0x80;
+  }
+  super.appendPayload(payload);
+  this.printDebugPayload();
+}

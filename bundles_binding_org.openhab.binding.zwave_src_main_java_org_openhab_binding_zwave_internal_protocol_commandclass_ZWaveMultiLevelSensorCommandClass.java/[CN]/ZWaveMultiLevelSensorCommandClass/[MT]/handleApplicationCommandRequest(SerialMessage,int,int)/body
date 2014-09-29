@@ -1,6 +1,6 @@
 {
   logger.trace("Handle Message Sensor Multi Level Request");
-  logger.debug(String.format("Received Sensor Multi Level Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug("NODE {}: Received Sensor Multi Level Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case SENSOR_MULTI_LEVEL_GET:
@@ -17,26 +17,32 @@ int index=((i - (offset + 1)) * 8) + bit + 1;
 if (index >= SensorType.values().length) continue;
 SensorType sensorTypeToAdd=SensorType.getSensorType(index);
 this.sensors.add(sensorTypeToAdd);
-logger.debug(String.format("Added sensor type %s (0x%02x)",sensorTypeToAdd.getLabel(),index));
+logger.debug(String.format("NODE %d: Added sensor type %s (0x%02x)",this.getNode().getNodeId(),sensorTypeToAdd.getLabel(),index));
 }
 }
 this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;
 case SENSOR_MULTI_LEVEL_REPORT:
 logger.trace("Process Multi Level Sensor Report");
-logger.debug(String.format("Sensor Multi Level report from nodeId = %d",this.getNode().getNodeId()));
+logger.debug("NODE {}: Sensor Multi Level report received",this.getNode().getNodeId());
 int sensorTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
-logger.debug(String.format("Sensor Type = (0x%02x)",sensorTypeCode));
+int sensorScale=(serialMessage.getMessagePayloadByte(offset + 2) >> 3) & 0x03;
+logger.debug(String.format("NODE %d: Sensor Type = (0x%02x), Scale = %d",this.getNode().getNodeId(),sensorTypeCode,sensorScale));
 SensorType sensorType=SensorType.getSensorType(sensorTypeCode);
 if (sensorType == null) {
-logger.error(String.format("Unknown Alarm Type = 0x%02x, ignoring report.",sensorTypeCode));
+logger.error(String.format("NODE %d: Unknown Sensor Type = 0x%02x, ignoring report.",this.getNode().getNodeId(),sensorTypeCode));
 return;
 }
 if (!sensors.contains(sensorType)) this.sensors.add(sensorType);
+try {
 BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
-logger.debug(String.format("Sensor Value = (%f)",value));
-ZWaveMultiLevelSensorValueEvent zEvent=new ZWaveMultiLevelSensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,value);
+logger.debug(String.format("NODE %d: Sensor Value = (%f)",this.getNode().getNodeId(),value));
+ZWaveMultiLevelSensorValueEvent zEvent=new ZWaveMultiLevelSensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,sensorScale,value);
 this.getController().notifyEventListeners(zEvent);
+}
+ catch (NumberFormatException e) {
+return;
+}
 if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :

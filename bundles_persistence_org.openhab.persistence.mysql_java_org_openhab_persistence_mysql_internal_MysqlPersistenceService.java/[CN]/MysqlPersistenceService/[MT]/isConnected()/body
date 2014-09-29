@@ -1,6 +1,6 @@
 {
-  if (errReconnectThreshold != 0 && errCnt > errReconnectThreshold) {
-    logger.debug("mySQL: Error count exceeded " + errReconnectThreshold + ". Disconnecting database.");
+  if (errReconnectThreshold != 0 && errCnt >= errReconnectThreshold) {
+    logger.error("mySQL: Error count exceeded {}. Disconnecting database.",errReconnectThreshold);
     disconnectFromDatabase();
   }
   return connection != null;

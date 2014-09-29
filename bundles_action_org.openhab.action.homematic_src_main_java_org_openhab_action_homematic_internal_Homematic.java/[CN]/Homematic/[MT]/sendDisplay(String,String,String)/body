@@ -1,0 +1,16 @@
+{
+  if (!context.getHomematicClient().isStarted()) {
+    logger.warn("The Homematic client is not started, ignoring action sendHomematicDisplay!");
+    return false;
+  }
+ else {
+    try {
+      context.getHomematicClient().setRemoteControlDisplay(remoteControlAddress,text,options);
+      return true;
+    }
+ catch (    HomematicClientException ex) {
+      logger.error(ex.getMessage(),ex);
+      return false;
+    }
+  }
+}

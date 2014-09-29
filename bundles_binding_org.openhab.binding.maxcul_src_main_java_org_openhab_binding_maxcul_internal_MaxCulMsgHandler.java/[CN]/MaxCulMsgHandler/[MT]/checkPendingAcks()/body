@@ -1,0 +1,22 @@
+{
+  Date now=new Date();
+  for (  SenderQueueItem qi : pendingAckQueue.values()) {
+    if (now.after(qi.expiry)) {
+      logger.error("Packet " + qi.msg.msgCount + " ("+ qi.msg.msgType+ ") lost - timeout");
+      pendingAckQueue.remove(qi.msg.msgCount);
+      if (sequenceRegister.containsKey(qi.msg.msgCount)) {
+        MessageSequencer msgSeq=sequenceRegister.get(qi.msg.msgCount);
+        sequenceRegister.remove(qi.msg.msgCount);
+        msgSeq.packetLost(qi.msg);
+      }
+ else       if (qi.retryCount < 3) {
+        qi.retryCount++;
+        logger.debug("Retransmitting packet " + qi.msg.msgCount + " attempt "+ qi.retryCount);
+        sendMessage(qi.msg,qi);
+      }
+ else {
+        logger.error("Transmission of packet " + qi.msg.msgCount + " failed 3 times");
+      }
+    }
+  }
+}

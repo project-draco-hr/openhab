@@ -1,3 +1,15 @@
 {
   this.isAwake=isAwake;
+  if (isAwake) {
+    ZWaveWakeUpEvent event=new ZWaveWakeUpEvent(getNode().getNodeId(),WAKE_UP_NOTIFICATION);
+    this.getController().notifyEventListeners(event);
+    logger.debug("NODE {}: Is awake with {} messages in the wake-up queue.",this.getNode().getNodeId(),this.wakeUpQueue.size());
+    if (!this.wakeUpQueue.isEmpty()) {
+      SerialMessage serialMessage=this.wakeUpQueue.poll();
+      this.getController().sendData(serialMessage);
+    }
+ else {
+      setSleepTimer();
+    }
+  }
 }

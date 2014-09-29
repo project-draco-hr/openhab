@@ -1,0 +1,47 @@
+{
+  bindingConfig=StringUtils.trimToEmpty(bindingConfig);
+  bindingConfig=StringUtils.removeStart(bindingConfig,"{");
+  bindingConfig=StringUtils.removeEnd(bindingConfig,"}");
+  String[] entries=bindingConfig.split("[,]");
+  HomematicBindingConfigHelper helper=new HomematicBindingConfigHelper();
+  for (  String entry : entries) {
+    String[] entryParts=StringUtils.trimToEmpty(entry).split("[=]");
+    if (entryParts.length != 2) {
+      throw new BindingConfigParseException("Each entry must have a key and a value");
+    }
+    String key=StringUtils.trim(entryParts[0]);
+    if ("id".equalsIgnoreCase(key)) {
+      logger.info("Please change the Homematic binding with the attribute 'id' to 'address' in entry: " + entry + " -> "+ StringUtils.replace(entry,"id=","address="));
+      key="address";
+    }
+    String value=StringUtils.trim(entryParts[1]);
+    value=StringUtils.removeStart(value,"\"");
+    value=StringUtils.removeEnd(value,"\"");
+    try {
+      helper.getClass().getDeclaredField(key).set(helper,value);
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Could not set value " + value + " for attribute "+ key);
+    }
+  }
+  Converter<?> converter=null;
+  BindingAction bindingAction=getBindingAction(item,helper.action);
+  if (helper.isValidDatapoint()) {
+    return new DatapointConfig(helper.address,helper.channel,helper.parameter,converter,bindingAction,helper.isForceUpdate());
+  }
+ else   if (helper.isValidVariable()) {
+    return new VariableConfig(helper.variable,converter,bindingAction,helper.isForceUpdate());
+  }
+ else   if (helper.isValidProgram()) {
+    if (!acceptsOnOffType(item)) {
+      throw new BindingConfigParseException("Programs can only be attached to items which accepts OnOffType commands, ignoring item " + item.getName());
+    }
+    return new ProgramConfig(helper.program,bindingAction);
+  }
+ else   if (bindingAction != null) {
+    return new ActionConfig(bindingAction);
+  }
+ else {
+    throw new BindingConfigParseException("Invalid binding: " + bindingConfig);
+  }
+}

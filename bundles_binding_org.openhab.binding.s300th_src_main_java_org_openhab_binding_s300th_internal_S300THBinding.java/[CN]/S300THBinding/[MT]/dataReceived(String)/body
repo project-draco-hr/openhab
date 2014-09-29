@@ -1,0 +1,21 @@
+{
+  if (data.startsWith("K")) {
+    int firstByte=Integer.parseInt(data.substring(1,2),16);
+    int typByte=Integer.parseInt(data.substring(2,3),16) & 7;
+    int sfirstByte=firstByte & 7;
+    if (sfirstByte == 7) {
+      logger.debug("Received WS7000 message, but parsing for WS7000 is not implemented");
+    }
+ else {
+      if (data.length() > 8 && data.length() < 13) {
+        parseS300THData(data);
+      }
+ else       if (data.length() > 14 && data.length() < 20) {
+        parseKS300Data(data);
+      }
+ else {
+        logger.warn("Received unparseable message: " + data);
+      }
+    }
+  }
+}

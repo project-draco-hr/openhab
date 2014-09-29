@@ -1,0 +1,13 @@
+{
+  DPT dpt=DPTXlator8BitUnsigned.DPT_SCALING;
+  testToTypeClass(dpt,PercentType.class);
+  assertNull("KNXCoreTypeMapper.toType() should return null (required data length too short)",testToType(dpt,new byte[]{},PercentType.class));
+  Type type=testToType(dpt,new byte[]{0x0},PercentType.class);
+  testToDPTValue(dpt,type,"0");
+  type=testToType(dpt,new byte[]{(byte)0x80},PercentType.class);
+  testToDPTValue(dpt,type,"50");
+  type=testToType(dpt,new byte[]{(byte)0xFF},PercentType.class);
+  testToDPTValue(dpt,type,"100");
+  type=testToType(dpt,new byte[]{(byte)0xFF,0},PercentType.class);
+  testToDPTValue(dpt,type,"100");
+}

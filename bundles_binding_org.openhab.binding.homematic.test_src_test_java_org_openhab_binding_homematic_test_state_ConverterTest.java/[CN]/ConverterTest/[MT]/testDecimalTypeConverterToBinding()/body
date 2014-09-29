@@ -1,0 +1,16 @@
+{
+  DecimalTypeConverter converter=new DecimalTypeConverter();
+  Assert.assertEquals(true,converter.convertToBinding(new DecimalType(1),getDatapoint("PRESS_SHORT",true,0,1)));
+  Assert.assertEquals(false,converter.convertToBinding(new DecimalType(0),getDatapoint("PRESS_SHORT",true,0,1)));
+  Assert.assertEquals(true,converter.convertToBinding(new DecimalType(5),getDatapoint("LEVEL",true,0,5)));
+  Assert.assertEquals(false,converter.convertToBinding(new DecimalType(4),getDatapoint("LEVEL",true,0,5)));
+  Assert.assertEquals(false,converter.convertToBinding(new DecimalType(0),getDatapoint("LEVEL",true,0,1)));
+  Assert.assertEquals(true,converter.convertToBinding(new DecimalType(1),getDatapoint("LEVEL","true",0,1)));
+  Assert.assertEquals(false,converter.convertToBinding(new DecimalType(0),getDatapoint("LEVEL","false",0,1)));
+  Assert.assertEquals(1,converter.convertToBinding(new DecimalType(1),getDatapoint("LEVEL",0)));
+  Assert.assertEquals(1.0,converter.convertToBinding(new DecimalType(1),getDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(9876.678957,converter.convertToBinding(new DecimalType(9876.6789568),getDatapoint("LEVEL",0.0)));
+  Assert.assertEquals("1.0",converter.convertToBinding(new DecimalType(1),getDatapoint("LEVEL","text")));
+  Assert.assertEquals(0.5,converter.convertToBinding(new DecimalType(0.5),getRollerShutterDatapoint("LEVEL",0.0)));
+  Assert.assertEquals(0.4,converter.convertToBinding(new DecimalType(0.4),getRollerShutterDatapoint("LEVEL",0.0)));
+}

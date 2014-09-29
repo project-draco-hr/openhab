@@ -1,0 +1,126 @@
+{
+  logger.trace("doAction domain '{}' to '{}'",domain,action);
+  if (zController.isConnected() == false) {
+    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
+    return;
+  }
+  String[] splitDomain=domain.split("/");
+  if (splitDomain.length < 2) {
+    logger.error("Error malformed domain in doAction '{}'",domain);
+    return;
+  }
+  if (splitDomain[0].equals("binding")) {
+    if (splitDomain[1].equals("network")) {
+      if (action.equals("Heal")) {
+        if (networkMonitor != null)         networkMonitor.rescheduleHeal();
+      }
+      if (inclusion == false && exclusion == false) {
+        if (action.equals("Include")) {
+          inclusion=true;
+          zController.requestAddNodesStart();
+          setInclusionTimer();
+        }
+        if (action.equals("Exclude")) {
+          exclusion=true;
+          zController.requestRemoveNodesStart();
+          setInclusionTimer();
+        }
+      }
+ else {
+        logger.debug("Exclusion/Inclusion already in progress.");
+      }
+    }
+  }
+ else   if (splitDomain[0].equals("nodes")) {
+    int nodeId=Integer.parseInt(splitDomain[1].substring(4));
+    ZWaveNode node=zController.getNode(nodeId);
+    if (node == null) {
+      logger.error("NODE {}: Error finding node in doAction",nodeId);
+      return;
+    }
+    if (splitDomain.length == 2) {
+      if (action.equals("Heal")) {
+        logger.debug("NODE {}: Heal node",nodeId);
+        if (networkMonitor != null)         networkMonitor.healNode(nodeId);
+      }
+      if (action.equals("Save")) {
+        logger.debug("NODE {}: Saving node",nodeId);
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.SerializeNode(node);
+      }
+      if (action.equals("Delete")) {
+        logger.debug("NODE {}: Delete node",nodeId);
+        this.zController.requestRemoveFailedNode(nodeId);
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.DeleteNode(nodeId);
+      }
+      if (action.equals("Version")) {
+        logger.debug("NODE {}: Get node version",nodeId);
+        ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
+        if (versionCommandClass == null) {
+          logger.error("NODE {}: Error getting versionCommandClass in doAction",nodeId);
+          return;
+        }
+        this.zController.sendData(versionCommandClass.getVersionMessage());
+      }
+      return;
+    }
+    if (splitDomain[2].equals("parameters")) {
+      ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+      if (configurationCommandClass == null) {
+        logger.error("NODE {}: Error getting configurationCommandClass in doAction",nodeId);
+        return;
+      }
+      if (action.equals("Refresh")) {
+        logger.debug("NODE {}: Refresh parameters",nodeId);
+        ZWaveProductDatabase database=new ZWaveProductDatabase();
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+          logger.error("NODE {}: Error getting parameters - no database found",nodeId);
+          return;
+        }
+        List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+        for (        ZWaveDbConfigurationParameter parameter : configList)         this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+      }
+    }
+    if (splitDomain[2].equals("wakeup")) {
+      if (action.equals("Refresh")) {
+        logger.debug("NODE {}: Refresh wakeup capabilities",nodeId);
+        ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+        if (wakeupCommandClass == null) {
+          logger.error("NODE {}: Error getting wakeupCommandClass in doAction",nodeId);
+          return;
+        }
+        this.zController.sendData(wakeupCommandClass.getIntervalMessage());
+        this.zController.sendData(wakeupCommandClass.getIntervalCapabilitiesMessage());
+      }
+    }
+    if (splitDomain[2].equals("neighbors")) {
+      if (action.equals("Refresh")) {
+        this.zController.requestNodeRoutingInfo(nodeId);
+      }
+    }
+    if (splitDomain[2].equals("associations")) {
+      if (action.equals("Refresh")) {
+        logger.debug("NODE {}: Refresh associations",nodeId);
+        ZWaveProductDatabase database=new ZWaveProductDatabase();
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+          logger.error("NODE {}: Error in doAction - no database found",nodeId);
+          return;
+        }
+        ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+        if (associationCommandClass == null) {
+          logger.error("NODE {}: Error getting associationCommandClass in doAction",nodeId);
+          return;
+        }
+        if (splitDomain.length == 3) {
+          List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
+          for (          ZWaveDbAssociationGroup group : groupList)           this.zController.sendData(associationCommandClass.getAssociationMessage(group.Index));
+        }
+ else         if (splitDomain.length == 4) {
+          int nodeArg=Integer.parseInt(splitDomain[3].substring(11));
+          this.zController.sendData(associationCommandClass.getAssociationMessage(nodeArg));
+        }
+      }
+    }
+  }
+}

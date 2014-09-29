@@ -1,6 +1,27 @@
 {
-  IhcClient ihc=IhcConnection.getCommunicator();
+  if (ihc == null || isReconnectRequestActivated()) {
+    try {
+      if (ihc != null) {
+        discnnect();
+      }
+      connect();
+      setReconnectRequest(false);
+      enableResourceValueNotifications();
+    }
+ catch (    IhcExecption e) {
+      logger.warn("Can't open connection to controller",e);
+      return;
+    }
+  }
   if (ihc != null) {
+    if (isValueNotificationRequestActivated()) {
+      try {
+        enableResourceValueNotifications();
+      }
+ catch (      IhcExecption e) {
+        logger.warn("Can't enable resource value notifications from controller",e);
+      }
+    }
     for (    IhcBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         int resourceId=provider.getResourceId(itemName);
@@ -19,24 +40,25 @@
               try {
                 resourceValue=ihc.resourceQuery(resourceId);
               }
- catch (              IOException e1) {
-                logger.warn("Value could not be read from controller - retrying one time.");
+ catch (              IhcExecption e) {
+                logger.warn("Value could not be read from controller - retrying one time.",e);
                 try {
-                  IhcConnection.reconnect();
                   resourceValue=ihc.resourceQuery(resourceId);
                 }
- catch (                Exception e2) {
-                  logger.error("Communication error",e2);
+ catch (                IhcExecption ex) {
+                  logger.error("Communication error",ex);
+                  logger.debug("Reconnection request");
+                  setReconnectRequest(true);
                 }
               }
               if (resourceValue != null) {
                 Class<? extends Item> itemType=provider.getItemType(itemName);
-                State value=convertResourceValueToState(itemType,resourceValue);
+                State value=IhcDataConverter.convertResourceValueToState(itemType,resourceValue);
                 eventPublisher.postUpdate(itemName,value);
               }
             }
  catch (            Exception e) {
-              logger.error("Exception",e);
+              logger.error("Error occured during resource query",e);
             }
             lastUpdateMap.put(itemName,System.currentTimeMillis());
           }
@@ -45,6 +67,6 @@
     }
   }
  else {
-    logger.debug("Controller is null => refresh cycle aborted!");
+    logger.warn("Controller is not initialized => refresh cycle aborted!");
   }
 }

@@ -1,0 +1,31 @@
+{
+  if (!isOutBound(itemName)) {
+    logger.warn("Received command ({}) for item {} which is configured as 'in-bound', ignoring",command.toString(),itemName);
+    return;
+  }
+  try {
+    String xbmcInstance=getXbmcInstance(itemName);
+    String property=getProperty(itemName);
+    XbmcConnector connector=getXbmcConnector(xbmcInstance);
+    if (connector == null) {
+      logger.warn("Received command ({}) for item {} but no XBMC connector found for {}, ignoring",command.toString(),itemName,xbmcInstance);
+      return;
+    }
+    if (!connector.isConnected()) {
+      logger.warn("Received command ({}) for item {} but the connection to the XBMC instance {} is down, ignoring",command.toString(),itemName,xbmcInstance);
+      return;
+    }
+    if (property.equals("Player.PlayPause"))     connector.playerPlayPause();
+ else     if (property.equals("Player.Open"))     connector.playerOpen(command.toString());
+ else     if (property.equals("Player.Stop"))     connector.playerStop();
+ else     if (property.equals("GUI.ShowNotification"))     connector.showNotification("openHAB",command.toString());
+ else     if (property.equals("System.Shutdown") && command == OnOffType.OFF)     connector.systemShutdown();
+ else     if (property.equals("System.Suspend") && command == OnOffType.OFF)     connector.systemSuspend();
+ else     if (property.equals("System.Hibernate") && command == OnOffType.OFF)     connector.systemHibernate();
+ else     if (property.equals("System.Reboot") && command == OnOffType.OFF)     connector.systemReboot();
+ else     if (property.equals("Application.Volume"))     connector.applicationSetVolume(command.toString());
+  }
+ catch (  Exception e) {
+    logger.error("Error handling command",e);
+  }
+}

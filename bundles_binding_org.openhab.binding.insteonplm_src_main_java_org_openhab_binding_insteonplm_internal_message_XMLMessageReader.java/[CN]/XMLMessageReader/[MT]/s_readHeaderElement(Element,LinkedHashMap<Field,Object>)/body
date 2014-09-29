@@ -1,0 +1,19 @@
+{
+  int offset=0;
+  int headerLen=Integer.parseInt(header.getAttribute("length"));
+  NodeList nodes=header.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+      Pair<Field,Object> definition=s_readField((Element)node,offset);
+      if (definition != null) {
+        offset+=definition.getKey().getType().getSize();
+        fields.put(definition.getKey(),definition.getValue());
+      }
+    }
+  }
+  if (headerLen != offset) {
+    throw new ParsingException("Actual header length " + offset + " differs from given length "+ headerLen+ "!");
+  }
+  return headerLen;
+}

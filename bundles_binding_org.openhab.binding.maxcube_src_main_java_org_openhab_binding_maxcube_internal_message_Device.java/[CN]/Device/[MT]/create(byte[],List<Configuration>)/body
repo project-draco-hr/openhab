@@ -4,6 +4,9 @@
   }
   String rfAddress=Utils.toHex(raw[0] & 0xFF,raw[1] & 0xFF,raw[2] & 0xFF);
   Device device=Device.create(rfAddress,configurations);
+  if (device == null) {
+    logger.warn("Can't create device from received message, returning NULL.");
+  }
   boolean[] bits1=Utils.getBits(Utils.fromByte(raw[4]));
   boolean[] bits2=Utils.getBits(Utils.fromByte(raw[5]));
   device.setInitialized(bits1[1]);
@@ -15,44 +18,68 @@
   device.setPanelLocked(bits2[5]);
   device.setLinkStatusError(bits2[6]);
   device.setBatteryLow(bits2[7]);
+  logger.trace("Device {} L Message length: {} content: {}",rfAddress,raw.length,Utils.getHex(raw));
 switch (device.getType()) {
 case WallMountedThermostat:
 case HeatingThermostat:
+case HeatingThermostatPlus:
     HeatingThermostat heatingThermostat=(HeatingThermostat)device;
-  if (bits2[0] == false && bits2[0] == false) {
+  if (bits2[1] == false && bits2[0] == false) {
     heatingThermostat.setMode(ThermostatModeType.AUTOMATIC);
   }
- else   if (bits2[0] == false && bits2[1] == false) {
+ else   if (bits2[1] == false && bits2[0] == true) {
     heatingThermostat.setMode(ThermostatModeType.MANUAL);
   }
- else   if (bits2[1] == false && bits2[0] == false) {
+ else   if (bits2[1] == true && bits2[0] == false) {
     heatingThermostat.setMode(ThermostatModeType.VACATION);
   }
- else   if (bits2[1] == false && bits2[1] == false) {
+ else   if (bits2[1] == true && bits2[0] == true) {
     heatingThermostat.setMode(ThermostatModeType.BOOST);
   }
  else {
   }
 heatingThermostat.setValvePosition(raw[6] & 0xFF);
-heatingThermostat.setTemperatureSetpoint(raw[7] & 0xFF);
+heatingThermostat.setTemperatureSetpoint(raw[7] & 0x7F);
 String hexDate=Utils.toHex(raw[8] & 0xFF,raw[9] & 0xFF);
 int dateValue=Utils.fromHex(hexDate);
 int timeValue=raw[10] & 0xFF;
 Date date=Utils.resolveDateTime(dateValue,timeValue);
 heatingThermostat.setDateSetpoint(date);
+int actualTemp=0;
+if (device.getType() == DeviceType.WallMountedThermostat) {
+actualTemp=(raw[11] & 0xFF) + (raw[7] & 0x80) * 2;
+}
+ else {
+if (heatingThermostat.getMode() != ThermostatModeType.VACATION && heatingThermostat.getMode() != ThermostatModeType.BOOST) {
+actualTemp=(raw[8] & 0xFF) * 256 + (raw[9] & 0xFF);
+}
+ else {
+logger.debug("No temperature reading in {} mode",heatingThermostat.getMode());
+}
+}
+logger.debug("Actual Temperature : {}",(double)actualTemp / 10);
+heatingThermostat.setTemperatureActual((double)actualTemp / 10);
 break;
+case EcoSwitch:
+String eCoSwitchData=Utils.toHex(raw[3] & 0xFF,raw[4] & 0xFF,raw[5] & 0xFF);
+logger.trace("EcoSwitch Device {} status bytes : {}",rfAddress,eCoSwitchData);
 case ShutterContact:
 ShutterContact shutterContact=(ShutterContact)device;
 if (bits2[1] == true && bits2[0] == false) {
 shutterContact.setShutterState(OpenClosedType.OPEN);
+logger.trace("Device {} status: Open",rfAddress);
 }
  else if (bits2[1] == false && bits2[0] == false) {
 shutterContact.setShutterState(OpenClosedType.CLOSED);
+logger.trace("Device {} status: Closed",rfAddress);
 }
  else {
+logger.trace("Device {} status switch status Unknown (true-true)",rfAddress);
 }
 break;
 default :
+logger.debug("Unhandled Device. DataBytes: " + Utils.getHex(raw));
+break;
 }
 return device;
 }

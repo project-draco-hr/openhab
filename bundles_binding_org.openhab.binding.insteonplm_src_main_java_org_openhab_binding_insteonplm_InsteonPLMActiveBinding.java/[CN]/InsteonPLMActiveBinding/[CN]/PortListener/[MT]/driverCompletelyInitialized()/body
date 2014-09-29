@@ -1,0 +1,13 @@
+{
+  logger.info("driver is completely initialized");
+  for (  InsteonDevice dev : m_devices.values()) {
+    if (!dev.hasValidDescriptors()) {
+      logger.warn("device {} has invalid modem db entry, probably caused by houselinc",dev.getAddress());
+      logger.warn("will attempt to query device {}, if that fails consider re-linking",dev.getAddress());
+    }
+  }
+  applyConfigurationToDevices();
+  m_deviceQuerier.start();
+  dumpAllDevices();
+  logDeviceProblems();
+}

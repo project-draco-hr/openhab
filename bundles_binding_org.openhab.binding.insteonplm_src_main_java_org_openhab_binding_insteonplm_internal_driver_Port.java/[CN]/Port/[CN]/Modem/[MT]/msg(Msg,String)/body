@@ -1,0 +1,27 @@
+{
+  try {
+    if (msg.isPureNack())     return;
+    if (msg.getByte("Cmd") == 0x60) {
+      InsteonAddress a=new InsteonAddress(msg.getAddress("IMAddress"));
+      m_address=a;
+      InsteonDevice dev=InsteonDevice.s_makeDevice(a,m_driver);
+      HashMap<InsteonAddress,InsteonDevice> devices=m_driver.getDeviceList();
+      int devCat=msg.getByte("DeviceCategory");
+      int subCat=msg.getByte("DeviceSubCategory");
+      int vers=msg.getByte("FirmwareVersion");
+      DeviceDescriptor d=DeviceDescriptor.s_getDeviceDescriptor(devCat,subCat,vers);
+      dev.addDescriptor(d);
+      dev.setInitStatus(InitStatus.INITIALIZED);
+      dev.setIsModem(true);
+      dev.addPort(fromPort);
+synchronized (devices) {
+        devices.put(a,dev);
+      }
+      removeListener(this);
+      logger.debug("modem address: {} ident: {}",a,dev.toString());
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("error parsing im info reply field: ",e);
+  }
+}

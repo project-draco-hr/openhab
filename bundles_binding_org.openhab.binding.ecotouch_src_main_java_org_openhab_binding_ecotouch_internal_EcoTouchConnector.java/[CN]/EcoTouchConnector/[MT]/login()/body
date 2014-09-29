@@ -1,0 +1,16 @@
+{
+  cookies=null;
+  String url=null;
+  try {
+    url="http://" + ip + "/cgi/login?username="+ URLEncoder.encode(username,"UTF-8")+ "&password="+ URLEncoder.encode(password,"UTF-8");
+    URL loginurl=new URL(url);
+    URLConnection connection=loginurl.openConnection();
+    cookies=connection.getHeaderFields().get("Set-Cookie");
+  }
+ catch (  MalformedURLException e) {
+    logger.debug("The URL '" + url + "' is malformed: "+ e.toString());
+  }
+catch (  Exception e) {
+    logger.debug("Cannot log into Waterkotte EcoTouch: " + e.toString());
+  }
+}

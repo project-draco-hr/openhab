@@ -1,0 +1,16 @@
+{
+  double cosdec=Math.cos(raDec[1]);
+  double sindec=Math.sin(raDec[1]);
+  double coslst=Math.cos(lmst);
+  double sinlst=Math.sin(lmst);
+  double coslat=Math.cos(observerLat);
+  double sinlat=Math.sin(observerLat);
+  double rho=getCenterDistance(observerLat);
+  double x=distance * cosdec * Math.cos(raDec[0]) - rho * coslat * coslst;
+  double y=distance * cosdec * Math.sin(raDec[0]) - rho * coslat * sinlst;
+  double z=distance * sindec - rho * sinlat;
+  double distanceTopocentric=Math.sqrt(x * x + y * y + z * z);
+  double raTopo=mod2Pi(Math.atan2(y,x));
+  double decTopo=Math.asin(z / distanceTopocentric);
+  return new double[]{raTopo,decTopo};
+}

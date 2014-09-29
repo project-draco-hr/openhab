@@ -1,2 +1,7 @@
 {
+  if (device != null && isConfigured()) {
+    Service service=subscription.getService();
+    SonosPlayerSubscriptionCallback callback=new SonosPlayerSubscriptionCallback(service,interval);
+    upnpService.getControlPoint().execute(callback);
+  }
 }

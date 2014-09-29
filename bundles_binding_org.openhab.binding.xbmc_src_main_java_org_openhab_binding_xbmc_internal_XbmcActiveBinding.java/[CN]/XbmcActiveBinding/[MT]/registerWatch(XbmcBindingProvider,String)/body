@@ -1,0 +1,18 @@
+{
+  if (!xbmcProvider.isInBound(itemName))   return;
+  String xbmcInstance=xbmcProvider.getXbmcInstance(itemName);
+  String property=xbmcProvider.getProperty(itemName);
+  XbmcConnector connector=getXbmcConnector(xbmcInstance);
+  if (connector != null) {
+    connector.addItem(itemName,property);
+    if (connector.isConnected()) {
+      connector.updatePlayerStatus();
+    }
+    if (property.startsWith("Application")) {
+      connector.requestApplicationUpdate();
+    }
+ else     if (property.equals("System.State")) {
+      connector.updateSystemStatus();
+    }
+  }
+}

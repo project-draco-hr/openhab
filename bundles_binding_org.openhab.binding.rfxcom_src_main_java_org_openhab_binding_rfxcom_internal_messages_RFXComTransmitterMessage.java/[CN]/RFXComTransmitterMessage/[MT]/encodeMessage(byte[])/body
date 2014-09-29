@@ -1,5 +1,15 @@
 {
   super.encodeMessage(data);
-  subType=SubType.values()[super.subType];
-  response=Response.values()[data[4]];
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  try {
+    response=Response.values()[data[4]];
+  }
+ catch (  Exception e) {
+    response=Response.UNKNOWN;
+  }
 }

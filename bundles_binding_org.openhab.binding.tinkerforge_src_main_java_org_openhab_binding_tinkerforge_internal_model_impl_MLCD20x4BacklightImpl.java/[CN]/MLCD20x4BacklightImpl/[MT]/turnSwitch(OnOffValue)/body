@@ -1,0 +1,22 @@
+{
+  try {
+    if (state == OnOffValue.OFF) {
+      logger.debug("setSwitchState off");
+      brickletLCD20x4.backlightOff();
+    }
+ else     if (state == OnOffValue.ON) {
+      logger.debug("setSwitchState on");
+      brickletLCD20x4.backlightOn();
+    }
+ else {
+      logger.error("{} unkown switchstate {}",LoggerConstants.TFMODELUPDATE,state);
+    }
+    setSwitchState(state);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

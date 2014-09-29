@@ -1,0 +1,106 @@
+{
+  if (isProperlyConfigured()) {
+    Scheduler sched=null;
+    try {
+      sched=StdSchedulerFactory.getDefaultScheduler();
+    }
+ catch (    SchedulerException e) {
+      logger.error("An exception occurred while getting a reference to the Quartz Scheduler");
+    }
+    for (    String serialPort : serialDevices.keySet()) {
+      Set<String> itemNames=contextMap.get(serialPort);
+      if (itemNames != null) {
+        contextMap.clear();
+      }
+    }
+    for (    OceanicBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String serialPort=((OceanicBindingProvider)provider).getSerialPort(itemName);
+        SerialDevice serialDevice=serialDevices.get(serialPort);
+        boolean serialDeviceReady=true;
+        if (serialDevice == null) {
+          serialDevice=new SerialDevice(serialPort);
+          try {
+            serialDevice.initialize();
+          }
+ catch (          InitializationException e) {
+            logger.error("Could not open serial port " + serialPort + ": "+ e.getMessage());
+            serialDeviceReady=false;
+          }
+catch (          Throwable e) {
+            logger.error("Could not open serial port " + serialPort + ": "+ e.getMessage());
+            serialDeviceReady=false;
+          }
+          if (serialDeviceReady) {
+            serialDevice.setEventPublisher(eventPublisher);
+            serialDevices.put(serialPort,serialDevice);
+          }
+        }
+        Set<String> itemNames=contextMap.get(serialPort);
+        if (itemNames == null) {
+          itemNames=new HashSet<String>();
+          contextMap.put(serialPort,itemNames);
+        }
+        itemNames.add(itemName);
+        if (serialDeviceReady) {
+          boolean jobExists=false;
+          try {
+            for (            String group : sched.getJobGroupNames()) {
+              if (group.equals("Oceanic-" + provider.toString())) {
+                for (                JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                  if (jobKey.getName().equals(itemName + "-" + provider.getValueSelector(itemName).toString())) {
+                    jobExists=true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+ catch (          SchedulerException e1) {
+            logger.error("An exception occurred while quering the Quartz Scheduler ({})",e1.getMessage());
+          }
+          if (!jobExists && OceanicValueSelector.getValueSelector(provider.getValueSelector(itemName),ValueSelectorType.GET) != null) {
+            JobDataMap map=new JobDataMap();
+            map.put("SerialPort",serialPort);
+            map.put("ValueSelector",OceanicValueSelector.getValueSelector(provider.getValueSelector(itemName),ValueSelectorType.GET));
+            map.put("Binding",this);
+            JobDetail job=newJob(OceanicBinding.PollJob.class).withIdentity(itemName + "-" + provider.getValueSelector(itemName).toString(),"Oceanic-" + provider.toString()).usingJobData(map).build();
+            Trigger trigger=newTrigger().withIdentity(itemName + "-" + provider.getValueSelector(itemName).toString(),"Oceanic-" + provider.toString()).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(provider.getPollingInterval(itemName))).build();
+            try {
+              logger.debug("Adding a poll job {} for {}",job.getKey(),itemName);
+              sched.scheduleJob(job,trigger);
+            }
+ catch (            SchedulerException e) {
+              logger.error("An exception occurred while scheduling a Quartz Job");
+            }
+          }
+          try {
+            for (            String group : sched.getJobGroupNames()) {
+              if (group.equals("Oceanic-" + provider.toString())) {
+                for (                JobKey jobKey : sched.getJobKeys(jobGroupEquals(group))) {
+                  if (findFirstMatchingBindingProvider(jobKey.getName().split("-")[0]) == null) {
+                    logger.debug("Removing a poll job {} for {}",jobKey,itemName);
+                    sched.deleteJob(jobKey);
+                  }
+                }
+              }
+            }
+          }
+ catch (          SchedulerException e1) {
+            logger.error("An exception occurred while quering the Quartz Scheduler ({})",e1.getMessage());
+          }
+        }
+      }
+    }
+    for (    String serialPort : serialDevices.keySet()) {
+      SerialDevice serialDevice=serialDevices.get(serialPort);
+      Set<String> itemNames=contextMap.get(serialPort);
+      if (itemNames == null || itemNames.size() == 0) {
+        contextMap.remove(serialPort);
+        logger.debug("Closing the serial port {}",serialPort);
+        serialDevice.close();
+        serialDevices.remove(serialPort);
+      }
+    }
+  }
+}

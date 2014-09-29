@@ -1,5 +1,4 @@
 {
-  String direction=null;
   String sonosID=null;
   String commandAsString=null;
   String sonosCommand=null;
@@ -7,65 +6,29 @@
     Matcher actionMatcher=ACTION_CONFIG_PATTERN.matcher(bindingConfig);
     Matcher statusMatcher=STATUS_CONFIG_PATTERN.matcher(bindingConfig);
     if (!actionMatcher.matches() && !statusMatcher.matches()) {
-      throw new BindingConfigParseException("Sonos binding configuration must consist of either three [config=" + statusMatcher + "] or four parts [config="+ actionMatcher+ "]");
+      throw new BindingConfigParseException("Sonos binding configuration must consist of either two [config=" + statusMatcher + "] or three parts [config="+ actionMatcher+ "]");
     }
  else {
       if (actionMatcher.matches()) {
-        direction=actionMatcher.group(1);
-        commandAsString=actionMatcher.group(2);
-        sonosID=actionMatcher.group(3);
-        sonosCommand=actionMatcher.group(4);
+        commandAsString=actionMatcher.group(1);
+        sonosID=actionMatcher.group(2);
+        sonosCommand=actionMatcher.group(3);
       }
  else       if (statusMatcher.matches()) {
-        direction=statusMatcher.group(1);
         commandAsString=null;
-        sonosID=statusMatcher.group(2);
-        sonosCommand=statusMatcher.group(3);
+        sonosID=statusMatcher.group(1);
+        sonosCommand=statusMatcher.group(2);
       }
-      Direction directionType=Direction.BIDIRECTIONAL;
-      if (direction.equals(">")) {
-        directionType=Direction.OUT;
-      }
- else       if (direction.equals("<")) {
-        directionType=Direction.IN;
-      }
- else       if (direction.equals("*")) {
-        directionType=Direction.BIDIRECTIONAL;
-      }
-      SonosCommandType type=null;
-      try {
-        type=SonosCommandType.getCommandType(sonosCommand,directionType);
-      }
- catch (      SonosIllegalCommandTypeException e) {
-        logger.error("Error parsing binding configuration : {}",e.getMessage());
-        throw new BindingConfigParseException("Sonos binding configuration error : " + sonosCommand.toString() + " does not match the direction of type "+ directionType.toString()+ "]");
-      }
-      if (SonosCommandType.validateBinding(type,item)) {
-        SonosBindingConfigElement newElement=new SonosBindingConfigElement(directionType,sonosID,type);
-        Command command=null;
-        if (commandAsString == null) {
-          if (item instanceof NumberItem || item instanceof StringItem) {
-            command=createCommandFromString(item,Integer.toString(counter));
-            counter++;
-            config.put(command,newElement);
-          }
- else {
-            logger.warn("Only NumberItem or StringItem can have undefined command types");
-          }
-        }
- else {
-          command=createCommandFromString(item,commandAsString);
-          config.put(command,newElement);
-        }
+      SonosBindingConfigElement newElement=new SonosBindingConfigElement(sonosCommand,sonosID,item.getAcceptedDataTypes());
+      Command command=null;
+      if (commandAsString == null) {
+        command=createCommandFromString(null,Integer.toString(counter));
+        counter++;
+        config.put(command,newElement);
       }
  else {
-        String validItemType=SonosCommandType.getValidItemTypes(sonosCommand);
-        if (StringUtils.isEmpty(validItemType)) {
-          throw new BindingConfigParseException("'" + bindingConfig + "' is no valid binding type");
-        }
- else {
-          throw new BindingConfigParseException("'" + bindingConfig + "' is not bound to a valid item type. Valid item type(s): "+ validItemType);
-        }
+        command=createCommandFromString(item,commandAsString);
+        config.put(command,newElement);
       }
     }
   }

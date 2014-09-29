@@ -1,0 +1,8 @@
+{
+  long timeSinceLastEvent=(System.currentTimeMillis() - communicator.getLastEventTime()) / 1000;
+  if (timeSinceLastEvent > context.getConfig().getAliveInterval()) {
+    logger.info("No event since {} seconds, refreshing Homematic server connections",timeSinceLastEvent);
+    communicator.stop();
+    communicator.start();
+  }
+}
