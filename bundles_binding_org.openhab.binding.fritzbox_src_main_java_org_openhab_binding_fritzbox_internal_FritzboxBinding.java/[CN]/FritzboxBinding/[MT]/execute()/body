@@ -1,10 +1,8 @@
 {
+  if (password == null)   return;
+ else   if (password.trim().isEmpty())   return;
   try {
-    TelnetClient client=new TelnetClient();
-    client.connect(ip);
-    receive(client);
-    send(client,password);
-    receive(client);
+    TelnetClient client=null;
     for (    FritzboxBindingProvider provider : providers) {
       for (      String item : provider.getItemNames()) {
         String query=null;
@@ -19,6 +17,13 @@
           query=type.substring(type.indexOf(":") + 1).trim();
         }
  else         continue;
+        if (client == null) {
+          client=new TelnetClient();
+          client.connect(ip);
+          receive(client);
+          send(client,password);
+          receive(client);
+        }
         send(client,query);
         String answer=receive(client);
         String[] lines=answer.split("\r\n");
@@ -40,9 +45,9 @@
         if (state != null)         eventPublisher.postUpdate(item,state);
       }
     }
-    client.disconnect();
+    if (client != null)     client.disconnect();
   }
  catch (  Exception e) {
-    logger.warn("Could not get item state",e);
+    logger.warn("Could not get item state ",e);
   }
 }
