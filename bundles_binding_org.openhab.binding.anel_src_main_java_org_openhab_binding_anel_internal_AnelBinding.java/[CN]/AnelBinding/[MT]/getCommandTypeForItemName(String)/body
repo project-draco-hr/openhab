@@ -1,0 +1,11 @@
+{
+  if (itemName == null || itemName.isEmpty())   return null;
+  for (  AnelBindingProvider provider : providers) {
+    for (    String providerItemName : provider.getItemNames()) {
+      if (itemName.equals(providerItemName)) {
+        return provider.getCommandType(itemName);
+      }
+    }
+  }
+  return null;
+}

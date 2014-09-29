@@ -1,0 +1,12 @@
+{
+  final Set<String> itemNames=new HashSet<String>();
+  for (  AnelBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      final AnelCommandType commandType=provider.getCommandType(itemName);
+      if (commandType.equals(cmd)) {
+        itemNames.add(itemName);
+      }
+    }
+  }
+  return itemNames;
+}

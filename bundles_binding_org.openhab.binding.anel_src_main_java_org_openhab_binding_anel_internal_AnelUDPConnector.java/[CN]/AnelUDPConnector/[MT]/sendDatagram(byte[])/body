@@ -1,0 +1,19 @@
+{
+  if (data == null || data.length == 0)   throw new IllegalArgumentException("data must not be null or empty");
+  try {
+    final InetAddress ipAddress=InetAddress.getByName(ip);
+    final DatagramPacket packet=new DatagramPacket(data,data.length,ipAddress,sendPort);
+    final DatagramSocket socket=new DatagramSocket();
+    socket.send(packet);
+    socket.close();
+  }
+ catch (  SocketException e) {
+    throw new Exception(e);
+  }
+catch (  UnknownHostException e) {
+    throw new Exception("Could not resolve host: " + ip,e);
+  }
+catch (  IOException e) {
+    throw new Exception(e);
+  }
+}

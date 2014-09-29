@@ -1,0 +1,45 @@
+{
+  logger.debug("Anel NET-PwrCtrl message listener started");
+  try {
+    connector.connect();
+  }
+ catch (  Exception e) {
+    logger.error("Error occured when connecting to NET-PwrCtrl device",e);
+    logger.warn("Closing NET-PwrCtrl message listener");
+    interrupted=true;
+  }
+  while (!interrupted) {
+    try {
+      logger.trace("Listening on " + state.host + "...");
+      final byte[] data=connector.receiveDatagram();
+      logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printString(new String(data)));
+      final Map<AnelCommandType,org.openhab.core.types.State> newValues;
+synchronized (state) {
+        newValues=AnelDataParser.parseData(data,state);
+      }
+      if (newValues != null && !newValues.isEmpty()) {
+        logger.debug("newValues (len={}): {}",newValues.size(),newValues);
+        for (        AnelCommandType cmd : newValues.keySet()) {
+          final org.openhab.core.types.State state=newValues.get(cmd);
+          final Collection<String> itemNames=binding.getItemNamesForCommandType(cmd);
+          for (          String itemName : itemNames) {
+            binding.getEventPublisher().postUpdate(itemName,state);
+          }
+        }
+      }
+    }
+ catch (    InterruptedException e) {
+    }
+catch (    SocketTimeoutException e) {
+    }
+catch (    Exception e) {
+      logger.error("Error occured when received data from Anel device: " + state.host,e);
+    }
+  }
+  try {
+    connector.disconnect();
+  }
+ catch (  Exception e) {
+    logger.error("Error occured when disconnecting form Anel device: " + state.host,e);
+  }
+}

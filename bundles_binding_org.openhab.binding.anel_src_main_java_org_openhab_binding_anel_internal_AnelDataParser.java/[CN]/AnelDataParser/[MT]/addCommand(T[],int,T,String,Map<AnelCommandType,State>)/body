@@ -1,0 +1,23 @@
+{
+  if (newValue != null) {
+    if (!newValue.equals(cache[index])) {
+      final AnelCommandType cmd=AnelCommandType.getCommandType(commandType);
+      final State state;
+      if (newValue instanceof String) {
+        state=new StringType((String)newValue);
+      }
+ else       if (newValue instanceof Boolean) {
+        state=(Boolean)newValue ? OnOffType.ON : OnOffType.OFF;
+      }
+ else {
+        throw new UnsupportedOperationException("TODO: implement value to state conversion for: " + newValue.getClass().getCanonicalName());
+      }
+      result.put(cmd,state);
+      cache[index]=newValue;
+    }
+  }
+ else   if (cache[index] != null) {
+    result.put(AnelCommandType.getCommandType(commandType),UnDefType.UNDEF);
+    cache[index]=null;
+  }
+}

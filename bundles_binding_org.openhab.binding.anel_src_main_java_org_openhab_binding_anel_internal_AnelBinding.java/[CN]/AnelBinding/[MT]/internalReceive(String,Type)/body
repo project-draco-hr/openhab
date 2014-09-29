@@ -1,0 +1,30 @@
+{
+  final AnelCommandType cmd=getCommandTypeForItemName(itemName);
+  if (cmd == null) {
+    logger.debug("Invalid command for item name: '" + itemName + "'");
+    return;
+  }
+  if (connectorThread == null) {
+    logger.debug("Connection to Anel device not yet initialized, no device updates sent.");
+  }
+  final boolean isSwitch=AnelCommandType.SWITCHES.contains(cmd);
+  final boolean isIO=AnelCommandType.IOS.contains(cmd);
+  if (isIO || isSwitch) {
+    if (newState instanceof OnOffType) {
+      final boolean newStateBoolean=OnOffType.ON.equals(newState);
+      if (isSwitch) {
+        final int switchNr=Integer.parseInt(cmd.name().substring(1));
+        connectorThread.sendSwitch(switchNr,newStateBoolean);
+      }
+ else       if (isIO) {
+        final int ioNr=Integer.parseInt(cmd.name().substring(2));
+        connectorThread.sendIO(ioNr,newStateBoolean);
+      }
+    }
+ else {
+      logger.debug("Invalid state for '" + cmd.name() + "' (expected: ON/OFF): "+ newState);
+    }
+  }
+ else {
+  }
+}

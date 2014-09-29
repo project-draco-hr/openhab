@@ -1,0 +1,46 @@
+{
+  final String string=new String(data);
+  final String[] arr=string.split(":");
+  if (arr.length != 26)   throw new IllegalArgumentException("Data with 26 values expected but " + arr.length + " received: "+ string);
+  if (!arr[0].equals("NET-PwrCtrl"))   throw new IllegalArgumentException("Data must start with 'NET-PwrCtrl' but it didn't: " + arr[0]);
+  if (!state.host.equals(arr[2]) && !state.host.equalsIgnoreCase(arr[1].trim()))   return Collections.emptyMap();
+  final Map<AnelCommandType,State> result=new HashMap<AnelCommandType,State>();
+  final int locked=Integer.parseInt(arr[14]);
+  for (int i=0; i < 8; i++) {
+    final String[] swState=arr[6 + i].split(",");
+    if (swState.length == 2) {
+      addCommand(state.switchName,i,swState[0],"F" + (i + 1) + "NAME",result);
+      addCommand(state.switchState,i,"1".equals(swState[1]),"F" + (i + 1),result);
+    }
+ else {
+      addCommand(state.switchName,i,null,"F" + (i + 1) + "NAME",result);
+      addCommand(state.switchState,i,null,"F" + (i + 1),result);
+    }
+    addCommand(state.switchLocked,i,(locked & (1 << i)) > 0,"F" + (i + 1) + "LOCKED",result);
+  }
+  for (int i=0; i < 8; i++) {
+    final String[] ioState=arr[16 + i].split(",");
+    if (ioState.length == 3) {
+      addCommand(state.ioName,i,ioState[0],"IO" + (i + 1) + "NAME",result);
+      addCommand(state.ioIsInput,i,"1".equals(ioState[1]),"IO" + (i + 1) + "ISINPUT",result);
+      addCommand(state.ioState,i,"1".equals(ioState[2]),"IO" + (i + 1),result);
+    }
+ else {
+      addCommand(state.ioName,i,null,"IO" + (i + 1) + "NAME",result);
+      addCommand(state.ioIsInput,i,null,"IO" + (i + 1) + "ISINPUT",result);
+      addCommand(state.ioState,i,null,"IO" + (i + 1),result);
+    }
+  }
+  final String temperature=arr[24].substring(0,arr[24].length() - 2);
+  if (!temperature.equals(state.temperature)) {
+    result.put(AnelCommandType.TEMPERATURE,new DecimalType(temperature));
+    state.temperature=temperature;
+  }
+  final String name=arr[1];
+  if (!name.equals(state.name)) {
+    result.put(AnelCommandType.NAME,new StringType(name));
+    state.name=name;
+  }
+  if (!result.isEmpty())   state.lastUpdate=System.currentTimeMillis();
+  return result;
+}

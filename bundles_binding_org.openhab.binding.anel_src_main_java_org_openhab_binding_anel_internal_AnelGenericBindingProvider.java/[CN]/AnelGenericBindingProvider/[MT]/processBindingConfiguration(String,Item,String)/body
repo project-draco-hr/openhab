@@ -1,0 +1,15 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final String commandType=bindingConfig.trim();
+  try {
+    AnelCommandType.validateBinding(commandType,item.getClass());
+    final AnelCommandType cmdType=AnelCommandType.getCommandType(commandType);
+    addBindingConfig(item,new AnelBindingConfig(item.getClass(),cmdType));
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("'" + commandType + "' is not a valid command type");
+  }
+catch (  InvalidClassException e) {
+    throw new BindingConfigParseException("Not valid class for command type '" + commandType + "'");
+  }
+}
