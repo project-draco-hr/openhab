@@ -1,5 +1,7 @@
 {
-  if (connectorThread != null && refreshInterval > 0) {
-    connectorThread.requestRefresh();
+  if (refreshInterval > 0 && bindingsExist()) {
+    for (    AnelConnectorThread connectorThread : connectorThreads.values()) {
+      connectorThread.requestRefresh();
+    }
   }
 }

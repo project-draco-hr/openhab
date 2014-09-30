@@ -1,12 +1,16 @@
 {
-  final AnelCommandType cmd=getCommandTypeForItemName(itemName);
-  if (cmd == null) {
+  final Map<String,AnelCommandType> map=getCommandTypeForItemName(itemName);
+  if (map == null || map.isEmpty()) {
     logger.debug("Invalid command for item name: '" + itemName + "'");
     return;
   }
+  final String deviceId=map.keySet().iterator().next();
+  final AnelConnectorThread connectorThread=connectorThreads.get(deviceId);
   if (connectorThread == null) {
-    logger.debug("Connection to Anel device not yet initialized, no device updates sent.");
+    logger.debug("Could not find device '" + deviceId + "', missing configuration or not yet initialized.");
+    return;
   }
+  final AnelCommandType cmd=map.get(deviceId);
   final boolean isSwitch=AnelCommandType.SWITCHES.contains(cmd);
   final boolean isIO=AnelCommandType.IOS.contains(cmd);
   if (isIO || isSwitch) {

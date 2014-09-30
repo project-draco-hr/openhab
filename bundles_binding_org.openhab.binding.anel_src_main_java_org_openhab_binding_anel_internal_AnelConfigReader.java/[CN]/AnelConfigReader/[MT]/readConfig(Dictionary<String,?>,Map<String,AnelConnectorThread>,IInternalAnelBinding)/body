@@ -1,0 +1,54 @@
+{
+  if (config == null || config.isEmpty())   return 0;
+  long refresh=DEFAULT_REFRESH_INTERVAL;
+  final Map<String,AnelConfig> anelConfigs=new HashMap<String,AnelConfig>();
+  for (final Enumeration<String> e=config.keys(); e.hasMoreElements(); ) {
+    final String key=e.nextElement();
+    final String value=(String)config.get(key);
+    if (value == null || value.trim().isEmpty())     continue;
+    if ("service.pid".equals(key))     continue;
+    try {
+      if ("refresh".equalsIgnoreCase(key)) {
+        refresh=Long.parseLong(((String)config.get(key)).trim());
+        continue;
+      }
+      final Matcher matcher=CONFIG_PATTERN.matcher(key);
+      if (matcher.matches()) {
+        final String device=matcher.group(1);
+        final String property=matcher.group(2);
+        AnelConfig anelConfig=anelConfigs.get(device);
+        if (anelConfig == null) {
+          anelConfig=new AnelConfig();
+          anelConfigs.put(device,anelConfig);
+        }
+        if ("host".equalsIgnoreCase(property)) {
+          anelConfig.host=value.trim();
+        }
+ else         if ("user".equalsIgnoreCase(property)) {
+          anelConfig.user=value.trim();
+        }
+ else         if ("password".equalsIgnoreCase(property)) {
+          anelConfig.password=value.trim();
+        }
+ else         if ("udpSendPort".equalsIgnoreCase(property)) {
+          anelConfig.sendPort=Integer.parseInt(value.trim());
+        }
+ else         if ("udpReceivePort".equalsIgnoreCase(property)) {
+          anelConfig.receivePort=Integer.parseInt(value.trim());
+        }
+      }
+ else {
+        throw new ConfigurationException(key,"Invalid config key");
+      }
+    }
+ catch (    NumberFormatException ex) {
+      throw new ConfigurationException(key,"Invalid value: '" + value + "'");
+    }
+    for (    String device : anelConfigs.keySet()) {
+      final AnelConfig anelConfig=anelConfigs.get(device);
+      final AnelConnectorThread thread=new AnelConnectorThread(anelConfig.host,anelConfig.receivePort,anelConfig.sendPort,anelConfig.user,anelConfig.password,bindingFacade);
+      threads.put(device,thread);
+    }
+  }
+  return refresh;
+}

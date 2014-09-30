@@ -1,9 +1,11 @@
 {
   if (itemName == null || itemName.isEmpty())   return null;
-  for (  AnelBindingProvider provider : providers) {
-    for (    String providerItemName : provider.getItemNames()) {
+  for (  final AnelBindingProvider provider : providers) {
+    for (    final String providerItemName : provider.getItemNames()) {
       if (itemName.equals(providerItemName)) {
-        return provider.getCommandType(itemName);
+        final AnelCommandType cmd=provider.getCommandType(itemName);
+        final String deviceId=provider.getDeviceId(itemName);
+        return Collections.singletonMap(deviceId,cmd);
       }
     }
   }

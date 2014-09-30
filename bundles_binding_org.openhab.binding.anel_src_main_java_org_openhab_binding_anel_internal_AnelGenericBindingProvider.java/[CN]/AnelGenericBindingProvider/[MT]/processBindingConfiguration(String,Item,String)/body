@@ -1,15 +1,19 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  final String commandType=bindingConfig.trim();
+  if (bindingConfig == null || bindingConfig.trim().isEmpty())   return;
+  final String[] segments=bindingConfig.trim().split(":");
+  if (segments.length != 2)   throw new BindingConfigParseException("Invalid binding format '" + bindingConfig + "', expected: '<anelId>:<property>'");
+  final String deviceId=segments[0];
+  final String commandType=segments[1];
   try {
     AnelCommandType.validateBinding(commandType,item.getClass());
     final AnelCommandType cmdType=AnelCommandType.getCommandType(commandType);
-    addBindingConfig(item,new AnelBindingConfig(item.getClass(),cmdType));
+    addBindingConfig(item,new AnelBindingConfig(item.getClass(),cmdType,deviceId));
   }
  catch (  IllegalArgumentException e) {
-    throw new BindingConfigParseException("'" + commandType + "' is not a valid command type");
+    throw new BindingConfigParseException("'" + commandType + "' is not a valid Anel property");
   }
 catch (  InvalidClassException e) {
-    throw new BindingConfigParseException("Not valid class for command type '" + commandType + "'");
+    throw new BindingConfigParseException("Invalid class for Anel property '" + commandType + "'");
   }
 }

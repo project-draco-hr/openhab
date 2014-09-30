@@ -1,57 +1,46 @@
 {
-  String host=DEFAULT_HOST;
-  String user=DEFAULT_USER;
-  String password=DEFAULT_PASSWORD;
-  int udpReceivePort=DEFAULT_UDP_RECEIVE_PORT;
-  int udpSendPort=DEFAULT_UDP_SEND_PORT;
-  if (config != null) {
-    final String refreshIntervalString=(String)config.get("refresh");
-    if (StringUtils.isNotBlank(refreshIntervalString)) {
-      refreshInterval=Integer.parseInt(refreshIntervalString);
-    }
-    final String receivePortString=(String)config.get("udpReceivePort");
-    if (StringUtils.isNotBlank(receivePortString)) {
-      udpReceivePort=Integer.parseInt(receivePortString);
-    }
-    final String sendPortString=(String)config.get("udpSendPort");
-    if (StringUtils.isNotBlank(sendPortString)) {
-      udpSendPort=Integer.parseInt(sendPortString);
-    }
-    final String userString=(String)config.get("user");
-    if (StringUtils.isNotBlank(userString)) {
-      user=userString;
-    }
-    final String passwordString=(String)config.get("password");
-    if (StringUtils.isNotBlank(passwordString)) {
-      password=passwordString;
-    }
-    final String hostString=(String)config.get("host");
-    if (StringUtils.isNotBlank(hostString)) {
-      host=hostString;
-    }
-    logger.debug("Configuration read: host='" + host + "', sendUdpPort="+ udpSendPort+ ", receiveUdpPort="+ udpReceivePort+ ", user='"+ user+ "', pwd='"+ password+ "', refresh="+ (refreshInterval / 1000)+ "s.");
-    setProperlyConfigured(true);
-  }
-  if (connectorThread != null) {
-    logger.debug("Close previous message listener");
+  for (  String device : connectorThreads.keySet()) {
+    logger.debug("Close previous message listener for device '" + device + "'");
+    final AnelConnectorThread connectorThread=connectorThreads.get(device);
     connectorThread.setInterrupted();
+  }
+  for (  String device : connectorThreads.keySet()) {
+    final AnelConnectorThread connectorThread=connectorThreads.get(device);
     try {
       connectorThread.join();
     }
  catch (    InterruptedException e) {
-      logger.info("Previous message listener closing interrupted",e);
+      logger.info("Previous message listener closing interrupted for device '" + device + "'",e);
     }
   }
-  connectorThread=new AnelConnectorThread(host,udpReceivePort,udpSendPort,user,password,bindingFacade);
-  connectorThread.start();
+  connectorThreads.clear();
+  try {
+    refreshInterval=AnelConfigReader.readConfig(config,connectorThreads,bindingFacade);
+  }
+ catch (  ConfigurationException e) {
+    logger.error("Could not read configuration for Anel binding: " + e.getMessage());
+    return;
+  }
+catch (  Exception e) {
+    logger.error("Could not read configuration for Anel binding",e);
+    return;
+  }
+  setProperlyConfigured(true);
+  for (  String device : connectorThreads.keySet()) {
+    logger.debug("Starting message listener for device '" + device + "'");
+    final AnelConnectorThread connectorThread=connectorThreads.get(device);
+    connectorThread.start();
+  }
   new Thread(new Runnable(){
     @Override public void run(){
       try {
-        Thread.sleep(10000);
+        Thread.sleep(30000);
       }
  catch (      InterruptedException e) {
       }
-      if (connectorThread != null && !connectorThread.isInterrupted())       connectorThread.requestRefresh();
+      for (      AnelConnectorThread connectorThread : connectorThreads.values()) {
+        connectorThread.requestRefresh();
+      }
     }
   }
 ).start();
