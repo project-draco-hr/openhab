@@ -34,8 +34,29 @@
  else {
     weatherConfig=new WeatherBindingConfig(helper.locationId,helper.type,helper.property);
   }
-  if (!PropertyUtils.hasProperty(new Weather(null),weatherConfig.getWeatherProperty())) {
+  String property=weatherConfig.getWeatherProperty();
+  if (!Weather.isVirtualProperty(property) && !PropertyUtils.hasProperty(new Weather(null),property)) {
     throw new BindingConfigParseException("Invalid binding, unknown type or property: " + bindingConfig);
+  }
+  boolean isDecimalTypeItem=item.getAcceptedDataTypes().contains(DecimalType.class);
+  if (isDecimalTypeItem || Weather.isVirtualProperty(property)) {
+    RoundingMode roundingMode=RoundingMode.HALF_UP;
+    if (helper.roundingMode != null) {
+      try {
+        roundingMode=RoundingMode.valueOf(StringUtils.upperCase(helper.roundingMode));
+      }
+ catch (      IllegalArgumentException ex) {
+        throw new BindingConfigParseException("Invalid binding, unknown roundingMode: " + bindingConfig);
+      }
+    }
+    Integer scale=2;
+    if (helper.scale != null) {
+      scale=parseInteger(helper.scale,bindingConfig);
+      if (scale < 0) {
+        throw new BindingConfigParseException("Invalid binding, scale must be >= 0: " + bindingConfig);
+      }
+    }
+    weatherConfig.setScale(roundingMode,scale);
   }
   return weatherConfig;
 }

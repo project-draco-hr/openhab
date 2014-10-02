@@ -13,8 +13,7 @@
   }
  else   if (value instanceof Number) {
     if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
-      BigDecimal decimalValue=new BigDecimal(value.toString()).setScale(2,RoundingMode.HALF_UP);
-      context.getEventPublisher().postUpdate(item.getName(),new DecimalType(decimalValue));
+      context.getEventPublisher().postUpdate(item.getName(),new DecimalType(round(value.toString(),bindingConfig)));
     }
  else {
       logger.warn("Unsupported type for item {}, only DecimalType supported!",item.getName());

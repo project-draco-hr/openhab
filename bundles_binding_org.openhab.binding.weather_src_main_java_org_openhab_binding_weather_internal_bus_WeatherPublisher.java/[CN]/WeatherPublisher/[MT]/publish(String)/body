@@ -5,11 +5,24 @@
       @Override public void next(      WeatherBindingConfig bindingConfig,      Item item){
         if (bindingConfig.getLocationId().equals(locationId)) {
           try {
-            Object instance=getInstance(weather,bindingConfig);
+            Weather instance=getInstance(weather,bindingConfig);
             if (instance != null) {
-              Object value=PropertyUtils.getPropertyValue(instance,bindingConfig.getWeatherProperty());
+              String weatherProperty=bindingConfig.getWeatherProperty();
+              Object value=null;
+              if (Weather.isVirtualProperty(weatherProperty)) {
+                Temperature temp=instance.getTemperature();
+                if (Weather.VIRTUAL_TEMP_MINMAX.equals(weatherProperty)) {
+                  value=getMinMax(temp.getMin(),temp.getMax(),bindingConfig);
+                }
+ else                 if (Weather.VIRTUAL_TEMP_MINMAX_F.equals(weatherProperty)) {
+                  value=getMinMax(temp.getMinF(),temp.getMaxF(),bindingConfig);
+                }
+              }
+ else {
+                value=PropertyUtils.getPropertyValue(instance,weatherProperty);
+              }
               if (!equalsCachedValue(value,item)) {
-                publishValue(item,value);
+                publishValue(item,value,bindingConfig);
                 itemCache.put(item.getName(),value);
               }
             }
