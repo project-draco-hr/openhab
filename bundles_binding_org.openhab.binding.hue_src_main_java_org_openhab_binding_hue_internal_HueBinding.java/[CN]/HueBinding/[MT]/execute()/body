@@ -29,7 +29,11 @@
             }
             if (deviceConfig.getType().equals(BindingType.brightness)) {
               if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
-                eventPublisher.postUpdate(hueItemName,new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255)));
+                PercentType newPercent=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
+                if ((deviceConfig.itemStatePercentType == null) || (deviceConfig.itemStatePercentType.equals(newPercent) == false)) {
+                  eventPublisher.postUpdate(hueItemName,newPercent);
+                  deviceConfig.itemStatePercentType=newPercent;
+                }
               }
             }
  else             if (deviceConfig.getType().equals(BindingType.rgb)) {
@@ -38,7 +42,10 @@
                 PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
                 PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)255));
                 HSBType newHsb=new HSBType(decimalHue,percentSaturation,percentBrightness);
-                eventPublisher.postUpdate(hueItemName,newHsb);
+                if ((deviceConfig.itemStateHSBType == null) || (deviceConfig.itemStateHSBType.equals(newHsb) == false)) {
+                  eventPublisher.postUpdate(hueItemName,newHsb);
+                  deviceConfig.itemStateHSBType=newHsb;
+                }
               }
             }
           }
