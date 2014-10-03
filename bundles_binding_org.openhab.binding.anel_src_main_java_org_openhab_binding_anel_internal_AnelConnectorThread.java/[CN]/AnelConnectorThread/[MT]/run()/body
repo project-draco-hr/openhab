@@ -14,7 +14,12 @@
       final byte[] data=connector.receiveDatagram();
       logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printString(new String(data)));
       final Map<AnelCommandType,org.openhab.core.types.State> newValues;
+      long now=System.currentTimeMillis();
 synchronized (state) {
+        if (lastCachePurge + (cachePeriod * 60000) < now) {
+          state.clear();
+          lastCachePurge=now;
+        }
         newValues=AnelDataParser.parseData(data,state);
       }
       if (newValues != null && !newValues.isEmpty()) {

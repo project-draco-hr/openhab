@@ -1,5 +1,6 @@
 {
   if (config == null || config.isEmpty())   return 0;
+  long cachePeriod=DEFAULT_CACHE_PERIOD;
   long refresh=DEFAULT_REFRESH_INTERVAL;
   final Map<String,AnelConfig> anelConfigs=new HashMap<String,AnelConfig>();
   for (final Enumeration<String> e=config.keys(); e.hasMoreElements(); ) {
@@ -10,6 +11,10 @@
     try {
       if ("refresh".equalsIgnoreCase(key)) {
         refresh=Long.parseLong(((String)config.get(key)).trim());
+        continue;
+      }
+      if ("cachePeriod".equalsIgnoreCase(key)) {
+        cachePeriod=Integer.parseInt(((String)config.get(key)).trim());
         continue;
       }
       final Matcher matcher=CONFIG_PATTERN.matcher(key);
@@ -46,7 +51,7 @@
     }
     for (    String device : anelConfigs.keySet()) {
       final AnelConfig anelConfig=anelConfigs.get(device);
-      final AnelConnectorThread thread=new AnelConnectorThread(anelConfig.host,anelConfig.receivePort,anelConfig.sendPort,anelConfig.user,anelConfig.password,bindingFacade);
+      final AnelConnectorThread thread=new AnelConnectorThread(anelConfig.host,anelConfig.receivePort,anelConfig.sendPort,anelConfig.user,anelConfig.password,bindingFacade,cachePeriod);
       threads.put(device,thread);
     }
   }
