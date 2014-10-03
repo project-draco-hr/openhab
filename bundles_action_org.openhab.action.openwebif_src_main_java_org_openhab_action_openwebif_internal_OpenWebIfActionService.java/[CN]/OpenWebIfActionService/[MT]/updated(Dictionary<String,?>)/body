@@ -1,0 +1,18 @@
+{
+  if (properties != null) {
+    Enumeration<String> keys=properties.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String value=StringUtils.trimToNull((String)properties.get(key));
+      if (StringUtils.startsWithIgnoreCase(key,"receiver")) {
+        parseConfig(key,value);
+      }
+    }
+    for (    OpenWebIfConfig config : OpenWebIf.getConfigs().values()) {
+      if (!config.isValid()) {
+        throw new ConfigurationException("openwebif","Invalid OpenWebIf receiver configuration: " + config.toString());
+      }
+      logger.info("{}",config.toString());
+    }
+  }
+}

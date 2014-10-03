@@ -1,0 +1,15 @@
+{
+  if (m_msgReader != null) {
+    m_msgReader.stopRunning();
+    m_msgReader=null;
+  }
+  if (m_thread != null) {
+    try {
+      m_thread.interrupt();
+      m_thread.join();
+    }
+ catch (    InterruptedException e) {
+    }
+    m_thread=null;
+  }
+}

@@ -37,8 +37,15 @@
     this.getController().notifyEventListeners(zEvent);
   }
   if (following == 0 && group == updateAssociationsNode) {
-    updateAssociationsNode++;
-    SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
-    if (outputMessage != null)     this.getController().sendData(outputMessage);
+    if (updateAssociationsNode < maxGroups) {
+      updateAssociationsNode++;
+      SerialMessage outputMessage=getAssociationMessage(updateAssociationsNode);
+      if (outputMessage != null)       this.getController().sendData(outputMessage);
+    }
+ else {
+      logger.debug("NODE {}: All association groups acquired.",this.getNode().getNodeId());
+      updateAssociationsNode=0;
+      this.getController().notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssociationUpdate,this.getNode().getNodeId(),ZWaveNetworkEvent.State.Success));
+    }
   }
 }
