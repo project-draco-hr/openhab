@@ -17,6 +17,7 @@
       long now=System.currentTimeMillis();
 synchronized (state) {
         if (lastCachePurge + (cachePeriod * 60000) < now) {
+          logger.debug("Clearing cache because it was older than " + cachePeriod + " minutes.");
           state.clear();
           lastCachePurge=now;
         }

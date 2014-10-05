@@ -32,7 +32,7 @@
     }
   }
   final String temperature=arr[24].substring(0,arr[24].length() - 2);
-  if (!temperature.equals(state.temperature)) {
+  if (hasTemperaturChanged(state,temperature)) {
     result.put(AnelCommandType.TEMPERATURE,new DecimalType(temperature));
     state.temperature=temperature;
   }

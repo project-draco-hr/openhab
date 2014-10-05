@@ -17,6 +17,7 @@
   refreshInterval=0;
   try {
     refreshInterval=AnelConfigReader.readConfig(config,connectorThreads,bindingFacade);
+    logger.debug("Anel configuration read with refresh interval " + refreshInterval + "ms and "+ connectorThreads.size()+ " devices.");
   }
  catch (  ConfigurationException e) {
     logger.error("Could not read configuration for Anel binding: " + e.getMessage());
@@ -28,8 +29,8 @@ catch (  Exception e) {
   }
   setProperlyConfigured(true);
   for (  String device : connectorThreads.keySet()) {
-    logger.debug("Starting message listener for device '" + device + "'");
     final AnelConnectorThread connectorThread=connectorThreads.get(device);
+    logger.debug("Starting message listener for device: " + connectorThread);
     connectorThread.start();
   }
   new Thread(new Runnable(){
