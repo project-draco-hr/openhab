@@ -1,0 +1,10 @@
+{
+  int credit10ms=messageHandler.getCreditStatus();
+  for (  MaxCulBindingProvider provider : super.providers) {
+    Collection<MaxCulBindingConfig> bindingConfigs=provider.getCreditMonitorBindings();
+    for (    MaxCulBindingConfig bc : bindingConfigs) {
+      String itemName=provider.getItemNameForConfig(bc);
+      eventPublisher.postUpdate(itemName,new DecimalType(credit10ms));
+    }
+  }
+}
