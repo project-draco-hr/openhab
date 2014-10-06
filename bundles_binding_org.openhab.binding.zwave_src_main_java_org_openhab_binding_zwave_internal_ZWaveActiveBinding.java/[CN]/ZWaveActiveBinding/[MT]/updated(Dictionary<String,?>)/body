@@ -54,5 +54,15 @@
       logger.error("Error parsing 'setSUC'. This must be boolean.");
     }
   }
+  if (StringUtils.isNotBlank((String)config.get("softReset"))) {
+    try {
+      softReset=Boolean.parseBoolean((String)config.get("softReset"));
+      logger.info("Update config, softReset = {}",softReset);
+    }
+ catch (    NumberFormatException e) {
+      softReset=false;
+      logger.error("Error parsing 'softReset'. This must be boolean.");
+    }
+  }
   initialise();
 }
