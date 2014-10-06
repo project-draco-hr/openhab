@@ -1,9 +1,5 @@
 {
   logger.trace("doAction domain '{}' to '{}'",domain,action);
-  if (zController.isConnected() == false) {
-    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
-    return;
-  }
   String[] splitDomain=domain.split("/");
   if (splitDomain.length < 2) {
     logger.error("Error malformed domain in doAction '{}'",domain);
@@ -34,7 +30,11 @@
       }
     }
   }
- else   if (splitDomain[0].equals("nodes")) {
+  if (zController.isConnected() == false) {
+    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
+    return;
+  }
+  if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null) {
