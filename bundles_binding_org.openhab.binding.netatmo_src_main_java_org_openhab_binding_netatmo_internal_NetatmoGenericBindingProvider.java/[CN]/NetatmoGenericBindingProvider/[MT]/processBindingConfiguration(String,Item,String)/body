@@ -13,8 +13,14 @@ config.deviceId=configParts[0];
 config.moduleId=configParts[1];
 config.measure=configParts[2];
 break;
+case 4:
+config.userid=configParts[0];
+config.deviceId=configParts[1];
+config.moduleId=configParts[2];
+config.measure=configParts[3];
+break;
 default :
-throw new BindingConfigParseException("A Netatmo binding configuration must consist of two or three parts - please verify your *.items file");
+throw new BindingConfigParseException("A Netatmo binding configuration must consist of two, three or four parts - please verify your *.items file");
 }
 logger.debug("Adding binding: {}",config);
 addBindingConfig(item,config);

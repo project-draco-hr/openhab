@@ -1,58 +1,61 @@
 {
   logger.debug("Querying Netatmo API");
-  if (this.accessToken == null) {
-    refreshAccessToken();
-  }
-  if (this.firstExecution) {
-    final DeviceListRequest request=new DeviceListRequest(this.accessToken);
-    final DeviceListResponse response=request.execute();
-    logger.debug("Request: {}",request);
-    logger.debug("Response: {}",response);
-    if (response.isError()) {
-      final NetatmoError error=response.getError();
-      if (error.isAccessTokenExpired()) {
-        refreshAccessToken();
-        execute();
+  for (  String userid : credentialsCache.keySet()) {
+    OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+    if (oauthCredentials.noAccessToken()) {
+      oauthCredentials.refreshAccessToken();
+    }
+    if (oauthCredentials.firstExecution) {
+      final DeviceListRequest request=new DeviceListRequest(oauthCredentials.accessToken);
+      final DeviceListResponse response=request.execute();
+      logger.debug("Request: {}",request);
+      logger.debug("Response: {}",response);
+      if (response.isError()) {
+        final NetatmoError error=response.getError();
+        if (error.isAccessTokenExpired()) {
+          oauthCredentials.refreshAccessToken();
+          execute();
+        }
+ else {
+          logger.error(error.getMessage());
+        }
+        return;
       }
  else {
-        logger.error(error.getMessage());
+        processDeviceListResponse(response);
+        oauthCredentials.firstExecution=false;
       }
-      return;
     }
+    final Map<String,Map<String,BigDecimal>> deviceMeasureValueMap=new HashMap<String,Map<String,BigDecimal>>();
+    for (    final MeasurementRequest request : createMeasurementRequests()) {
+      final MeasurementResponse response=request.execute();
+      logger.debug("Request: {}",request);
+      logger.debug("Response: {}",response);
+      if (response.isError()) {
+        final NetatmoError error=response.getError();
+        if (error.isAccessTokenExpired()) {
+          oauthCredentials.refreshAccessToken();
+          execute();
+        }
  else {
-      processDeviceListResponse(response);
-      this.firstExecution=false;
-    }
-  }
-  final Map<String,Map<String,BigDecimal>> deviceMeasureValueMap=new HashMap<String,Map<String,BigDecimal>>();
-  for (  final MeasurementRequest request : createMeasurementRequests()) {
-    final MeasurementResponse response=request.execute();
-    logger.debug("Request: {}",request);
-    logger.debug("Response: {}",response);
-    if (response.isError()) {
-      final NetatmoError error=response.getError();
-      if (error.isAccessTokenExpired()) {
-        refreshAccessToken();
-        execute();
+          logger.error(error.getMessage());
+        }
+        return;
       }
  else {
-        logger.error(error.getMessage());
+        processMeasurementResponse(request,response,deviceMeasureValueMap);
       }
-      return;
     }
- else {
-      processMeasurementResponse(request,response,deviceMeasureValueMap);
-    }
-  }
-  for (  final NetatmoBindingProvider provider : this.providers) {
-    for (    final String itemName : provider.getItemNames()) {
-      final String deviceId=provider.getDeviceId(itemName);
-      final String moduleId=provider.getModuleId(itemName);
-      final String measure=provider.getMeasure(itemName);
-      final String requestKey=createKey(deviceId,moduleId);
-      final State state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measure));
-      if (state != null) {
-        this.eventPublisher.postUpdate(itemName,state);
+    for (    final NetatmoBindingProvider provider : this.providers) {
+      for (      final String itemName : provider.getItemNames()) {
+        final String deviceId=provider.getDeviceId(itemName);
+        final String moduleId=provider.getModuleId(itemName);
+        final String measure=provider.getMeasure(itemName);
+        final String requestKey=createKey(deviceId,moduleId);
+        final State state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measure));
+        if (state != null) {
+          this.eventPublisher.postUpdate(itemName,state);
+        }
       }
     }
   }
