@@ -7,9 +7,15 @@
     throw new CULDeviceException("No class for the device type " + deviceType + " is registred");
   }
   Class<?>[] constructorParametersTypes={String.class,CULMode.class};
+  Object[] parameters={deviceAddress,mode};
+  if (properties != null) {
+    constructorParametersTypes=Arrays.copyOf(constructorParametersTypes,constructorParametersTypes.length + 1);
+    constructorParametersTypes[constructorParametersTypes.length - 1]=Map.class;
+    parameters=Arrays.copyOf(parameters,parameters.length + 1);
+    parameters[parameters.length - 1]=properties;
+  }
   try {
     Constructor<? extends CULHandler> culHanlderConstructor=culHandlerclass.getConstructor(constructorParametersTypes);
-    Object[] parameters={deviceAddress,mode};
     CULHandler culHandler=culHanlderConstructor.newInstance(parameters);
     List<String> initCommands=mode.getCommands();
     if (!(culHandler instanceof CULHandlerInternal)) {
