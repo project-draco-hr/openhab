@@ -1,18 +1,5 @@
 {
-  for (  String device : connectorThreads.keySet()) {
-    logger.debug("Close previous message listener for device '" + device + "'");
-    final AnelConnectorThread connectorThread=connectorThreads.get(device);
-    connectorThread.setInterrupted();
-  }
-  for (  String device : connectorThreads.keySet()) {
-    final AnelConnectorThread connectorThread=connectorThreads.get(device);
-    try {
-      connectorThread.join();
-    }
- catch (    InterruptedException e) {
-      logger.info("Previous message listener closing interrupted for device '" + device + "'",e);
-    }
-  }
+  disconnectAll();
   connectorThreads.clear();
   refreshInterval=0;
   try {
@@ -36,13 +23,11 @@ catch (  Exception e) {
   new Thread(new Runnable(){
     @Override public void run(){
       try {
-        Thread.sleep(30000);
+        Thread.sleep(THREAD_INITIALIZATION_DELAY);
       }
  catch (      InterruptedException e) {
       }
-      for (      AnelConnectorThread connectorThread : connectorThreads.values()) {
-        connectorThread.requestRefresh();
-      }
+      refreshAll();
     }
   }
 ).start();

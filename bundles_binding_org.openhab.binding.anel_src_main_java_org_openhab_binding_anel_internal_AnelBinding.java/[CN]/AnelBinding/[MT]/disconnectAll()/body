@@ -1,0 +1,16 @@
+{
+  for (  String device : connectorThreads.keySet()) {
+    logger.debug("Close message listener for device '" + device + "'");
+    final AnelConnectorThread connectorThread=connectorThreads.get(device);
+    connectorThread.setInterrupted();
+  }
+  for (  String device : connectorThreads.keySet()) {
+    final AnelConnectorThread connectorThread=connectorThreads.get(device);
+    try {
+      connectorThread.join(THREAD_INTERRUPTION_TIMEOUT);
+    }
+ catch (    InterruptedException e) {
+      logger.info("Previous message listener closing interrupted for device '" + device + "'",e);
+    }
+  }
+}
