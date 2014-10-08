@@ -1,0 +1,65 @@
+{
+  try {
+    logger.debug("TX: " + command.getRequestCmd());
+    writeString(command.getRequestCmd() + '\n');
+    sleep(250);
+    DavisCommandType commandType=DavisCommandType.getCommandTypeByCommand(command.getRequestCmd());
+switch (commandType.getResponsetype()) {
+case Constants.RESPONSE_TYPE_NONE:
+      break;
+case Constants.RESPONSE_TYPE_ACK:
+    int in=inputStream.read();
+  if (in != Constants.ACK) {
+    throw new IOException("Invalid response");
+  }
+break;
+case Constants.RESPONSE_TYPE_OK:
+expectString("\n\rOK\n\r");
+break;
+}
+byte[] inputBuf=null;
+switch (commandType.getResponselimitertype()) {
+case Constants.RESPONSE_LIMITER_TYPE_CRLF:
+inputBuf=readLine();
+break;
+case Constants.RESPONSE_LIMITER_TYPE_FIXED_SIZE:
+inputBuf=readBytes(commandType.getResponselength());
+break;
+case Constants.RESPONSE_LIMITER_TYPE_MULTIPLE_CRLF:
+break;
+}
+switch (commandType.getCrcchecktype()) {
+case Constants.CRC_CHECK_TYPE_VAR1:
+if (!CRC16.check(inputBuf,0,inputBuf.length)) {
+throw new IOException("CRC error");
+}
+break;
+case Constants.CRC_CHECK_TYPE_NONE:
+break;
+}
+Set<DavisValueType> valueTypes=DavisValueType.getValueTypesByCommandType(commandType);
+for (DavisValueType valueType : valueTypes) {
+for (DavisBindingProvider provider : providers) {
+List<String> itemNames=provider.getItemNamesForKey(valueType.getKey());
+State state=valueType.getDataType().convertToState(inputBuf,valueType);
+for (String itemName : itemNames) {
+eventPublisher.postUpdate(itemName,state);
+}
+}
+}
+}
+ catch (IOException e) {
+try {
+sleep(2000);
+while (inputStream.read() != -1) {
+}
+logger.warn("IO Exception in sendCommand() method, dropped remaining data!");
+writeString("RXTEST\n");
+expectString("\n\rOK\n\r");
+}
+ catch (IOException e1) {
+logger.error("IO Exception in dropping corrupt data!");
+e1.printStackTrace();
+}
+}
+}

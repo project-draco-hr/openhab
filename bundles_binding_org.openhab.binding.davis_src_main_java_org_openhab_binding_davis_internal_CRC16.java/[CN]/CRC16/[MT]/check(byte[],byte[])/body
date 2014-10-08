@@ -1,0 +1,12 @@
+{
+  if (crc.length != 2) {
+    throw new IllegalArgumentException("Invalid CRC length (must be 2 bytes)");
+  }
+  CRC16 instance=new CRC16();
+  for (int i=0; i < data.length; i++) {
+    instance.add(data[i]);
+  }
+  instance.add(crc[0]);
+  instance.add(crc[1]);
+  return instance.isValid();
+}
