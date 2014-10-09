@@ -49,6 +49,7 @@ if (node == null) {
 logger.error("NODE {}: Status event received, but node not found.",statusEvent.getNodeId());
 return;
 }
+zController.requestIsFailedNode(node.getNodeId());
 if (!isNodeHealing(node.getNodeId())) {
 logger.debug("NODE {}: DEAD node - requesting network heal.",node.getNodeId());
 healNode(node.getNodeId());
