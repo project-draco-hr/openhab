@@ -53,11 +53,7 @@
       }
       if (action.equals("Delete")) {
         logger.debug("NODE {}: Delete node",nodeId);
-        if (node.isFailed()) {
-          this.zController.requestRemoveFailedNode(nodeId);
-          ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
-          nodeSerializer.DeleteNode(nodeId);
-        }
+        this.zController.requestRemoveFailedNode(nodeId);
       }
       if (action.equals("Version")) {
         logger.debug("NODE {}: Get node version",nodeId);

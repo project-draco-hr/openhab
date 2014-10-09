@@ -58,6 +58,21 @@ node.resetResendCount();
 logger.debug("NODE {}: DEAD node - already healing.",node.getNodeId());
 }
 break;
+case Failed:
+ZWaveNode failedNode=zController.getNode(statusEvent.getNodeId());
+if (failedNode == null) {
+logger.error("NODE {}: Status event received, but node not found.",statusEvent.getNodeId());
+return;
+}
+if (!isNodeHealing(failedNode.getNodeId())) {
+logger.debug("NODE {}: FAILED node - requesting network heal.",failedNode.getNodeId());
+healNode(failedNode.getNodeId());
+failedNode.resetResendCount();
+}
+ else {
+logger.debug("NODE {}: FAILED node - already healing.",failedNode.getNodeId());
+}
+break;
 case Alive:
 break;
 }
