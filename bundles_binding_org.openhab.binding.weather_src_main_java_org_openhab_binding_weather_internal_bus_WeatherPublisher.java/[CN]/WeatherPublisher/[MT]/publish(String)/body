@@ -12,14 +12,16 @@
               if (Weather.isVirtualProperty(weatherProperty)) {
                 Temperature temp=instance.getTemperature();
                 if (Weather.VIRTUAL_TEMP_MINMAX.equals(weatherProperty)) {
-                  value=getMinMax(temp.getMin(),temp.getMax(),bindingConfig);
-                }
- else                 if (Weather.VIRTUAL_TEMP_MINMAX_F.equals(weatherProperty)) {
-                  value=getMinMax(temp.getMinF(),temp.getMaxF(),bindingConfig);
+                  Double min=UnitUtils.convertUnit(temp.getMin(),bindingConfig);
+                  Double max=UnitUtils.convertUnit(temp.getMax(),bindingConfig);
+                  value=getMinMax(min,max,bindingConfig);
                 }
               }
  else {
                 value=PropertyUtils.getPropertyValue(instance,weatherProperty);
+                if (bindingConfig.hasUnit()) {
+                  value=UnitUtils.convertUnit((Double)value,bindingConfig);
+                }
               }
               if (!equalsCachedValue(value,item)) {
                 publishValue(item,value,bindingConfig);

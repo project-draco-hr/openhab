@@ -34,8 +34,9 @@
  else {
     weatherConfig=new WeatherBindingConfig(helper.locationId,helper.type,helper.property);
   }
+  Weather validationInstance=new Weather(null);
   String property=weatherConfig.getWeatherProperty();
-  if (!Weather.isVirtualProperty(property) && !PropertyUtils.hasProperty(new Weather(null),property)) {
+  if (!Weather.isVirtualProperty(property) && !PropertyUtils.hasProperty(validationInstance,property)) {
     throw new BindingConfigParseException("Invalid binding, unknown type or property: " + bindingConfig);
   }
   boolean isDecimalTypeItem=item.getAcceptedDataTypes().contains(DecimalType.class);
@@ -57,6 +58,23 @@
       }
     }
     weatherConfig.setScale(roundingMode,scale);
+  }
+  weatherConfig.setUnit(Unit.parse(helper.unit));
+  if (StringUtils.isNotBlank(helper.unit) && weatherConfig.getUnit() == null) {
+    throw new BindingConfigParseException("Invalid binding, unknown unit: " + bindingConfig);
+  }
+  try {
+    if (!Weather.isVirtualProperty(property) && weatherConfig.hasUnit()) {
+      String doubleTypeName=Double.class.getName();
+      String propertyTypeName=PropertyUtils.getPropertyTypeName(validationInstance,property);
+      if (!StringUtils.equals(doubleTypeName,propertyTypeName)) {
+        throw new BindingConfigParseException("Invalid binding, unit specified but property is not a double type: " + bindingConfig);
+      }
+    }
+  }
+ catch (  IllegalAccessException ex) {
+    logger.error(ex.getMessage(),ex);
+    throw new BindingConfigParseException(ex.getMessage());
   }
   return weatherConfig;
 }
