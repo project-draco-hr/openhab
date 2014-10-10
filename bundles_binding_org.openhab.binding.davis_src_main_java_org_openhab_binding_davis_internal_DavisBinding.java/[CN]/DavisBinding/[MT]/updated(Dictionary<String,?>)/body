@@ -1,11 +1,11 @@
 {
   if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
     String newPort=(String)config.get("port");
     if (StringUtils.isNotBlank(newPort) && !newPort.equals(port)) {
-      String refreshIntervalString=(String)config.get("refresh");
-      if (StringUtils.isNotBlank(refreshIntervalString)) {
-        refreshInterval=Long.parseLong(refreshIntervalString);
-      }
       try {
         openPort(newPort);
         setProperlyConfigured(true);
