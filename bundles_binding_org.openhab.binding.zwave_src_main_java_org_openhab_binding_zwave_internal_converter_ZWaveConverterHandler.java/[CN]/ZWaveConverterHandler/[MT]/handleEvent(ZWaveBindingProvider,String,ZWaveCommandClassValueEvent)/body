@@ -4,8 +4,12 @@
   String commandClassName=bindingConfiguration.getArguments().get("command");
   boolean respondToBasic="true".equalsIgnoreCase(bindingConfiguration.getArguments().get("respond_to_basic"));
   logger.trace("Getting converter for item = {}, command class = {}, item command class = {}",itemName,event.getCommandClass().getLabel(),commandClassName);
-  if (item == null)   return;
-  if (commandClassName != null && !commandClassName.equalsIgnoreCase(event.getCommandClass().getLabel().toLowerCase()) && !(respondToBasic && event.getCommandClass() == CommandClass.BASIC))   return;
+  if (item == null) {
+    return;
+  }
+  if (commandClassName != null && !commandClassName.equalsIgnoreCase(event.getCommandClass().getLabel().toLowerCase()) && !(respondToBasic && event.getCommandClass() == CommandClass.BASIC)) {
+    return;
+  }
   ZWaveCommandClassConverter<?> converter=this.getConverter(event.getCommandClass());
   if (converter == null) {
     logger.warn("No converter found for command class = {}, ignoring event.",event.getCommandClass().toString());
