@@ -1,0 +1,45 @@
+{
+  HttpURLConnection con=null;
+  try {
+    logger.trace("Request [{}]: {}",config.getName(),url);
+    con=(HttpURLConnection)new URL(url).openConnection();
+    con.setConnectTimeout(CONNECTION_TIMEOUT);
+    con.setReadTimeout(10000);
+    if (config.hasLogin()) {
+      String userpass=config.getUser() + ":" + config.getPassword();
+      String basicAuth="Basic " + DatatypeConverter.printBase64Binary(userpass.getBytes());
+      con.setRequestProperty("Authorization",basicAuth);
+    }
+    if (con instanceof HttpsURLConnection) {
+      HttpsURLConnection sCon=(HttpsURLConnection)con;
+      TrustManager[] trustManager=new TrustManager[]{new SimpleTrustManager()};
+      SSLContext context=SSLContext.getInstance("TLS");
+      context.init(new KeyManager[0],trustManager,new SecureRandom());
+      sCon.setSSLSocketFactory(context.getSocketFactory());
+      sCon.setHostnameVerifier(new AllowAllHostnameVerifier());
+    }
+    StringWriter sw=new StringWriter();
+    IOUtils.copy(con.getInputStream(),sw);
+    con.disconnect();
+    if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+      String response=sw.toString();
+      logger.trace("Response: [{}]: {}",config.getName(),response);
+      Unmarshaller um=JAXBContext.newInstance(clazz).createUnmarshaller();
+      return (T)um.unmarshal(new StringReader(response));
+    }
+ else {
+      throw new IOException(con.getResponseMessage());
+    }
+  }
+ catch (  JAXBException ex) {
+    throw new IOException(ex.getMessage(),ex);
+  }
+catch (  GeneralSecurityException ex) {
+    throw new IOException(ex.getMessage(),ex);
+  }
+ finally {
+    if (con != null) {
+      con.disconnect();
+    }
+  }
+}
