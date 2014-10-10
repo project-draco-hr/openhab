@@ -3,18 +3,31 @@
   int status=serialMessage.getMessagePayloadByte(offset++);
 switch (status) {
 case ApplicationStatusBusy:
-    logger.trace("NODE {} Process ApplicationStatusBusy status",getNode());
+    logger.trace("NODE {} Process Application StatusBusy status",getNode());
   int busyStatus=serialMessage.getMessagePayloadByte(offset++);
+int retry=DEFAULT_RETRY;
 switch (busyStatus) {
-case StatusBusyTryAgainLater:
-  logger.warn("NODE {} is busy and wants us to try again later",getNode());
-break;
 case StatusBusyTryAgainLaterInSeconds:
 int seconds=serialMessage.getMessagePayloadByte(offset++);
-logger.warn("NODE {} is busy and wants us to try again in {} seconds",getNode(),seconds);
+logger.info("NODE {} is busy and wants us to try again in {} seconds",getNode(),seconds);
+retry=seconds * 1000;
+case StatusBusyTryAgainLater:
+logger.info("NODE {} is busy and wants us to try again later",getNode());
+final ZWaveNode node=this.getNode();
+final ZWaveController controller=this.getController();
+scheduler.schedule(new Runnable(){
+@Override public void run(){
+if (node == null || node.getNodeStage() != NodeStage.DONE) return;
+controller.pollNode(node);
+}
+}
+,retry,TimeUnit.MILLISECONDS);
 break;
 case StatusBusyQueued:
 logger.warn("NODE {} is busy and has queued the request",getNode());
+break;
+default :
+logger.warn("NODE {} unknown busy status {} ",getNode(),busyStatus);
 break;
 }
 break;
