@@ -20,7 +20,7 @@ break;
 byte[] inputBuf=null;
 switch (commandType.getResponselimitertype()) {
 case Constants.RESPONSE_LIMITER_TYPE_CRLF:
-inputBuf=readLine();
+inputBuf=new BufferedReader(new InputStreamReader(inputStream)).readLine().getBytes();
 break;
 case Constants.RESPONSE_LIMITER_TYPE_FIXED_SIZE:
 inputBuf=readBytes(commandType.getResponselength());
