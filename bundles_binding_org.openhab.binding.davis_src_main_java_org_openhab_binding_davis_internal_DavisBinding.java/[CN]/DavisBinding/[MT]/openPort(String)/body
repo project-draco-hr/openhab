@@ -1,0 +1,33 @@
+{
+  CommPortIdentifier portIdentifier;
+  port=portName;
+  try {
+    portIdentifier=CommPortIdentifier.getPortIdentifier(port);
+    try {
+      serialPort=(SerialPort)portIdentifier.open("openhab",3000);
+      serialPort.setSerialPortParams(19200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+      inputStream=new DataInputStream(new BufferedInputStream(serialPort.getInputStream()));
+      outputStream=serialPort.getOutputStream();
+    }
+ catch (    PortInUseException e) {
+      throw new InitializationException(e);
+    }
+catch (    UnsupportedCommOperationException e) {
+      throw new InitializationException(e);
+    }
+catch (    IOException e) {
+      throw new InitializationException(e);
+    }
+  }
+ catch (  NoSuchPortException e) {
+    StringBuilder sb=new StringBuilder();
+    Enumeration portList=CommPortIdentifier.getPortIdentifiers();
+    while (portList.hasMoreElements()) {
+      CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+      if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+        sb.append(id.getName() + "\n");
+      }
+    }
+    throw new InitializationException("Serial port '" + port + "' could not be found. Available ports are:\n"+ sb.toString());
+  }
+}

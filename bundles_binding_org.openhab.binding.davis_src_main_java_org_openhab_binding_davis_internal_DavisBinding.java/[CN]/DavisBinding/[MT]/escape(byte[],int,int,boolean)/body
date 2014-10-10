@@ -1,0 +1,43 @@
+{
+  if (offset > length) {
+    throw new IllegalArgumentException("offset " + offset + " is greater than length "+ length);
+  }
+  StringBuilder buf=new StringBuilder();
+  for (int i=offset; i < (offset + length); i++) {
+switch (bytes[i]) {
+case '\n':
+      buf.append(printWritable ? "\\n" : "<0x0a>");
+    break;
+case '\r':
+  buf.append(printWritable ? "\\r" : "<0x0d>");
+break;
+case '\t':
+buf.append(printWritable ? "\\t" : "<0x09>");
+break;
+case 0x06:
+buf.append(printWritable ? "<ACK>" : "<0x06>");
+break;
+case 0x18:
+buf.append(printWritable ? "<CAN>" : "<0x18>");
+break;
+case 0x21:
+buf.append(printWritable ? "<NAK>" : "<0x21>");
+break;
+default :
+if (bytes[i] < 0x20 || bytes[i] > 0x7e || !printWritable) {
+String s=Integer.toHexString((int)bytes[i] & 0x000000ff);
+buf.append("<0x");
+if (s.length() == 1) {
+buf.append('0');
+}
+buf.append(s);
+buf.append('>');
+}
+ else {
+buf.append((char)bytes[i]);
+}
+break;
+}
+}
+return buf.toString();
+}
