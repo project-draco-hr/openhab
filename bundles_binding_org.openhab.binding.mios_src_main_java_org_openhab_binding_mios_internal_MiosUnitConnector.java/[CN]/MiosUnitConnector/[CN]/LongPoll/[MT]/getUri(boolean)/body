@@ -1,5 +1,6 @@
 {
-  boolean force=full || (failures != 0) && ((failures % FORCE_FULL_POLL) == 0);
+  int errorCount=getMiosUnit().getErrorCount();
+  boolean force=full || (errorCount != 0) && (failures != 0) && ((failures % errorCount) == 0);
   MiosUnit unit=getMiosUnit();
   if (!force && loadTime != null && dataVersion != null) {
     AsyncHttpClientConfig c=getAsyncHttpClient().getConfig();
