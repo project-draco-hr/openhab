@@ -272,8 +272,7 @@ record.value=df.format(node.getLastUpdated());
 records.add(record);
 if (networkMonitor != null) {
 record=new OpenHABConfigurationRecord(domain,"LastHeal","Heal Status",true);
-if (node.getHealState() == null) record.value="NONE";
- else record.value=node.getHealState();
+record.value=networkMonitor.getNodeState(nodeId);
 records.add(record);
 }
 record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
