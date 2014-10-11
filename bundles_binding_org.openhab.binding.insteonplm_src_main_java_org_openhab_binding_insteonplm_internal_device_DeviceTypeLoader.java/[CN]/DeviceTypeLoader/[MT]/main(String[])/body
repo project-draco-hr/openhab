@@ -1,0 +1,13 @@
+{
+  String fileName=System.getProperty("user.home") + "/workspace/openhab/bundles/binding/org.openhab.binding.insteonplm/target/classes/device_types.xml";
+  try {
+    DeviceTypeLoader dtl=s_instance();
+    dtl.loadDeviceTypesXML(fileName);
+    for (    Entry<String,DeviceType> dt : dtl.getDeviceTypes().entrySet()) {
+      System.out.println(String.format("%-10s ->",dt.getKey()) + dt.getValue());
+    }
+  }
+ catch (  SAXException e) {
+    System.out.println("got exception: " + e);
+  }
+}

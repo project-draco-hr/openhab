@@ -1,0 +1,28 @@
+{
+  long expTime=aTime;
+  SortedSet<PQEntry> ts=m_pollQueue.tailSet(new PQEntry(d,aTime - MIN_MSEC_BETWEEN_POLLS));
+  if (ts.isEmpty()) {
+    expTime=aTime;
+  }
+ else {
+    Iterator<PQEntry> pqi=ts.iterator();
+    PQEntry prev=pqi.next();
+    if (prev.getExpirationTime() > aTime + MIN_MSEC_BETWEEN_POLLS) {
+      expTime=aTime;
+    }
+ else {
+      while (pqi.hasNext()) {
+        PQEntry pqe=pqi.next();
+        long tcurr=pqe.getExpirationTime();
+        long tprev=prev.getExpirationTime();
+        if (tcurr - tprev >= 2 * MIN_MSEC_BETWEEN_POLLS) {
+          logger.trace("dev {} time {} found slot between {} and {}",d,aTime,tprev,tcurr);
+          break;
+        }
+        prev=pqe;
+      }
+      expTime=prev.getExpirationTime() + MIN_MSEC_BETWEEN_POLLS;
+    }
+  }
+  return expTime;
+}

@@ -1,6 +1,9 @@
 {
-  while (m_pollQueue.isEmpty()) {
+  while (m_pollQueue.isEmpty() && m_keepRunning) {
     m_pollQueue.wait();
+  }
+  if (!m_keepRunning) {
+    return;
   }
   long now=System.currentTimeMillis();
   PQEntry pqe=m_pollQueue.first();

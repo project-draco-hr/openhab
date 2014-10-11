@@ -11,7 +11,7 @@ synchronized (m_requestQueue) {
       writeMessage(qe.getMsg());
     }
  catch (    IOException e) {
-      logger.warn("message write failed!");
+      logger.error("message write failed for msg {}",qe.getMsg(),e);
     }
     return (timeNow + quietTime);
   }

@@ -1,7 +1,7 @@
 {
   logger.debug("starting poll thread.");
-  while (true) {
 synchronized (m_pollQueue) {
+    while (m_keepRunning) {
       try {
         readPollQueue();
       }
@@ -10,4 +10,5 @@ synchronized (m_pollQueue) {
       }
     }
   }
+  logger.debug("poll thread exiting");
 }

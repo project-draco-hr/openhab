@@ -1,0 +1,19 @@
+{
+synchronized (m_devices) {
+    for (Iterator<Entry<InsteonAddress,InsteonDevice>> it=m_devices.entrySet().iterator(); it.hasNext(); ) {
+      InsteonDevice dev=it.next().getValue();
+      boolean removedListener=dev.removeFeatureListener(aItem);
+      if (removedListener) {
+        logger.trace("removed feature listener {} from dev {}",aItem,dev);
+      }
+      if (!dev.hasAnyListeners()) {
+        Poller.s_instance().stopPolling(dev);
+        it.remove();
+        logger.trace("removing unreferenced {}",dev);
+        if (m_devices.isEmpty()) {
+          logger.debug("all devices removed!",dev);
+        }
+      }
+    }
+  }
+}

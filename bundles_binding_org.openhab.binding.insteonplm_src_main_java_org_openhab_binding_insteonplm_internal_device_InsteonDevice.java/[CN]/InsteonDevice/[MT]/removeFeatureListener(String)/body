@@ -1,0 +1,12 @@
+{
+  boolean removedListener=false;
+synchronized (m_features) {
+    for (Iterator<Entry<String,DeviceFeature>> it=m_features.entrySet().iterator(); it.hasNext(); ) {
+      DeviceFeature f=it.next().getValue();
+      if (f.removeListener(aItemName)) {
+        removedListener=true;
+      }
+    }
+  }
+  return removedListener;
+}

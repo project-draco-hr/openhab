@@ -1,0 +1,12 @@
+{
+  if (!(cmd instanceof OnOffType) || ((OnOffType)cmd) != OnOffType.ON)   return;
+  String removeAddr=conf.getParameters().get("remove_address");
+  if (!InsteonAddress.s_isValid(removeAddr)) {
+    logger.debug("invalid remove address: {}",removeAddr);
+    return;
+  }
+  InsteonAddress addr=new InsteonAddress(removeAddr);
+  if (removeFromModem(addr)) {
+    logger.debug("successfully removed device {} from modem db",addr);
+  }
+}

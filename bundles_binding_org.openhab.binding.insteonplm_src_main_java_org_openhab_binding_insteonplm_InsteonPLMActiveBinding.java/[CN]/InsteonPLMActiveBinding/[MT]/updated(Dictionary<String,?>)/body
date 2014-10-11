@@ -17,26 +17,43 @@
   m_config=newConfig;
   if (m_isActive) {
     if (isProperlyConfigured()) {
-      logger.debug("global binding config has changed, initializing.");
+      logger.debug("global binding config has changed, resetting.");
+      shutdown();
     }
  else {
       logger.debug("global binding config has arrived.");
     }
-    shutdown();
-    initialize();
-  }
-  if (!m_gotInitialConfig) {
-    applyConfigurationToDevices();
   }
   long deadDeviceCount=10;
+  if (m_config.containsKey("refresh")) {
+    m_refreshInterval=Integer.parseInt(m_config.get("refresh"));
+    logger.info("refresh interval set to {}s",m_refreshInterval / 1000);
+  }
   if (m_config.containsKey("device_dead_count")) {
     deadDeviceCount=s_parseLong(m_config.get("device_dead_count"),2L,100000L);
+    logger.info("device_dead_count set to {} per config file",deadDeviceCount);
   }
   if (m_config.containsKey("poll_interval")) {
     m_devicePollInterval=s_parseLong(m_config.get("poll_interval"),5000L,3600000L);
+    logger.info("poll interval set to {} per config file",m_devicePollInterval);
+  }
+  if (m_config.containsKey("more_devices")) {
+    String fileName=m_config.get("more_devices");
+    try {
+      DeviceTypeLoader.s_instance().loadDeviceTypesXML(fileName);
+      logger.info("read additional device definitions from {}",fileName);
+    }
+ catch (    Exception e) {
+      logger.error("error reading additional devices from {}",fileName,e);
+    }
   }
   m_deadDeviceTimeout=m_devicePollInterval * deadDeviceCount;
+  logger.info("dead device timeout set to {}s",m_deadDeviceTimeout / 1000);
   logger.debug("configuration update complete!");
   setProperlyConfigured(true);
+  if (m_isActive) {
+    initialize();
+  }
+  if (!m_hasInitialItemConfig)   triggerBindingChangedCalls();
   return;
 }

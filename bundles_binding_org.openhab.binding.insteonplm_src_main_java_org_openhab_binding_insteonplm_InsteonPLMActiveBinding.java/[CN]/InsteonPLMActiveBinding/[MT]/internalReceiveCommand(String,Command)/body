@@ -1,6 +1,6 @@
 {
   logger.info("Item: {} got command {}",itemName,command);
-  if (!(this.isProperlyConfigured() && m_isActive)) {
+  if (!(isProperlyConfigured() && m_isActive)) {
     logger.debug("not ready to handle commands yet, returning.");
     return;
   }
@@ -8,13 +8,12 @@
   for (  InsteonPLMBindingProvider provider : providers) {
     if (provider.providesBindingFor(itemName)) {
       commandHandled=true;
-      InsteonAddress ia=provider.getAddress(itemName);
-      String feature=provider.getFeature(itemName);
-      if (ia == null || feature == null) {
+      InsteonPLMBindingConfig c=provider.getInsteonPLMBindingConfig(itemName);
+      if (c == null) {
         logger.warn("could not find config for item {}",itemName);
       }
  else {
-        sendCommand(ia,feature,command);
+        sendCommand(c,command);
       }
     }
   }

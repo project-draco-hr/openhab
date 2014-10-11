@@ -1,0 +1,33 @@
+{
+  String productKey=e.getAttribute("productKey");
+  if (productKey.equals("")) {
+    throw new SAXException("device in device_types file has no product key!");
+  }
+  if (m_deviceTypes.containsKey(productKey)) {
+    logger.warn("overwriting previous definition of device {}",productKey);
+    m_deviceTypes.remove(productKey);
+  }
+  DeviceType devType=new DeviceType(productKey);
+  NodeList nodes=e.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() != Node.ELEMENT_NODE) {
+      continue;
+    }
+    Element subElement=(Element)node;
+    if (subElement.getNodeName().equals("model")) {
+      devType.setModel(subElement.getTextContent());
+    }
+ else     if (subElement.getNodeName().equals("description")) {
+      devType.setDescription(subElement.getTextContent());
+    }
+ else     if (subElement.getNodeName().equals("feature")) {
+      String name=subElement.getAttribute("name");
+      if (name.equals("")) {
+        throw new SAXException("device type " + productKey + " has feature without name!");
+      }
+      devType.addFeature(name,subElement.getTextContent());
+    }
+    m_deviceTypes.put(productKey,devType);
+  }
+}
