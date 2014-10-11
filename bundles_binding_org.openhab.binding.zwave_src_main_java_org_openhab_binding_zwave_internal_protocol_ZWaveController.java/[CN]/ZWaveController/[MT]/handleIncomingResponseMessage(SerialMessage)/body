@@ -26,9 +26,11 @@ this.isConnected=true;
 for (Integer nodeId : ((SerialApiGetInitDataMessageClass)processor).getNodes()) {
 ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
 ZWaveNode node=nodeSerializer.DeserializeNode(nodeId);
-String name=node.getName();
-String location=node.getLocation();
+String name=null;
+String location=null;
 if (node != null) {
+name=node.getName();
+location=node.getLocation();
 if (node.getManufacturer() == Integer.MAX_VALUE || node.getHomeId() != this.homeId || node.getNodeId() != nodeId) {
 logger.warn("NODE {}: Config file data is invalid, ignoring config.",nodeId);
 node=null;
