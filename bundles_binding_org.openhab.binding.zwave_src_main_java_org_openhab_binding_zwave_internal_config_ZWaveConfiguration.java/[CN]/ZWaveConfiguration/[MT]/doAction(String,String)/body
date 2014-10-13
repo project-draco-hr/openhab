@@ -1,21 +1,21 @@
 {
   logger.trace("doAction domain '{}' to '{}'",domain,action);
-  if (zController.isConnected() == false) {
-    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
-    return;
-  }
   String[] splitDomain=domain.split("/");
   if (splitDomain.length < 2) {
     logger.error("Error malformed domain in doAction '{}'",domain);
+    return;
+  }
+  if (splitDomain[0].equals("binding") && splitDomain[1].equals("network") && action.equals("SoftReset")) {
+    zController.requestSoftReset();
+  }
+  if (zController.isConnected() == false) {
+    logger.debug("Controller not ready - Ignoring request to '{}'",domain);
     return;
   }
   if (splitDomain[0].equals("binding")) {
     if (splitDomain[1].equals("network")) {
       if (action.equals("Heal")) {
         if (networkMonitor != null)         networkMonitor.rescheduleHeal();
-      }
-      if (action.equals("SoftReset")) {
-        zController.requestSoftReset();
       }
       if (inclusion == false && exclusion == false) {
         if (action.equals("Include")) {
@@ -34,7 +34,7 @@
       }
     }
   }
- else   if (splitDomain[0].equals("nodes")) {
+  if (splitDomain[0].equals("nodes")) {
     int nodeId=Integer.parseInt(splitDomain[1].substring(4));
     ZWaveNode node=zController.getNode(nodeId);
     if (node == null) {
@@ -116,8 +116,7 @@
           return;
         }
         if (splitDomain.length == 3) {
-          List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
-          for (          ZWaveDbAssociationGroup group : groupList)           this.zController.sendData(associationCommandClass.getAssociationMessage(group.Index));
+          associationCommandClass.getAllAssociations();
         }
  else         if (splitDomain.length == 4) {
           int nodeArg=Integer.parseInt(splitDomain[3].substring(11));

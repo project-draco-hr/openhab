@@ -20,5 +20,10 @@
       activeBridge=new HueBridge(bridgeIP,bridgeSecret);
       activeBridge.pairBridgeIfNecessary();
     }
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+      setProperlyConfigured(true);
+    }
   }
 }

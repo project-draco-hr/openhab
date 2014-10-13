@@ -1,6 +1,11 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   OpenSprinklerBindingConfig config=new OpenSprinklerBindingConfig();
-  config.stationNumber=Integer.parseInt(bindingConfig);
+  if (item instanceof SwitchItem) {
+    config.stationNumber=Integer.parseInt(bindingConfig);
+  }
+ else   if (item instanceof ContactItem) {
+    config.commandValue=bindingConfig;
+  }
   addBindingConfig(item,config);
 }
