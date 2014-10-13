@@ -1,0 +1,23 @@
+{
+  if (watchService != null) {
+    try {
+      watchService.close();
+    }
+ catch (    IOException e) {
+      logger.warn("Cannot deactivate folder watcher",e);
+    }
+  }
+  Path toWatch=Paths.get(getServiceConfigFolder());
+  if (toWatch.toFile().exists()) {
+    try {
+      watchService=toWatch.getFileSystem().newWatchService();
+      WatchQueueReader reader=new WatchQueueReader(watchService,toWatch);
+      Thread qr=new Thread(reader,"Dir Watcher");
+      qr.start();
+      toWatch.register(watchService,ENTRY_CREATE,ENTRY_MODIFY,ENTRY_DELETE);
+    }
+ catch (    IOException e) {
+      logger.error("Cannot activate folder watcher for folder '{}': ",toWatch,e);
+    }
+  }
+}

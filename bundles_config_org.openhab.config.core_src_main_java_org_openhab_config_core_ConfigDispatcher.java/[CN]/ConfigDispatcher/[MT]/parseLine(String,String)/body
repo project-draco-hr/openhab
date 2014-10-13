@@ -3,18 +3,20 @@
   if (trimmedLine.startsWith("#") || trimmedLine.isEmpty()) {
     return null;
   }
-  if (trimmedLine.substring(1).contains(":")) {
-    String pid=StringUtils.substringBefore(line,":");
-    String rest=line.substring(pid.length() + 1);
-    if (!pid.contains(".")) {
-      pid="org.openhab." + pid;
-    }
-    if (!rest.isEmpty() && rest.substring(1).contains("=")) {
-      String property=StringUtils.substringBefore(rest,"=");
-      String value=rest.substring(property.length() + 1);
-      return new String[]{pid.trim(),property.trim(),value.trim()};
-    }
+  String pid=null;
+  String key=StringUtils.substringBefore(trimmedLine,"=");
+  if (key.contains(":")) {
+    pid=StringUtils.substringBefore(key,":");
+    trimmedLine=trimmedLine.substring(pid.length() + 1);
+    pid=pid.trim();
   }
-  logger.warn("Cannot parse line '{}' of main configuration file '{}'.",line,filePath);
-  return null;
+  if (!trimmedLine.isEmpty() && trimmedLine.substring(1).contains("=")) {
+    String property=StringUtils.substringBefore(trimmedLine,"=");
+    String value=trimmedLine.substring(property.length() + 1);
+    return new String[]{pid,property.trim(),value.trim()};
+  }
+ else {
+    logger.warn("Could not parse line '{}'",line);
+    return null;
+  }
 }
