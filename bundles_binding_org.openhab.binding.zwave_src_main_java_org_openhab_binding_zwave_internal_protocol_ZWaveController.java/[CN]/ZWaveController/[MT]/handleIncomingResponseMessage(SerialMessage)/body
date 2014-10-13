@@ -44,6 +44,18 @@ commandClass.setNode(node);
 if (commandClass instanceof ZWaveEventListener) {
 this.addEventListener((ZWaveEventListener)commandClass);
 }
+if (commandClass instanceof ZWaveMultiInstanceCommandClass) {
+for (ZWaveEndpoint endPoint : ((ZWaveMultiInstanceCommandClass)commandClass).getEndpoints()) {
+  for (  ZWaveCommandClass endpointCommandClass : endPoint.getCommandClasses()) {
+    endpointCommandClass.setController(this);
+    endpointCommandClass.setNode(node);
+    endpointCommandClass.setEndpoint(endPoint);
+    if (endpointCommandClass instanceof ZWaveEventListener) {
+      this.addEventListener((ZWaveEventListener)endpointCommandClass);
+    }
+  }
+}
+}
 }
 }
 }
