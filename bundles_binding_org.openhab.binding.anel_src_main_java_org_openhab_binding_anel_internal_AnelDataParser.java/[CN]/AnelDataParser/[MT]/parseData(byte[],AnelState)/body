@@ -6,29 +6,29 @@
   if (!state.host.equals(arr[2]) && !state.host.equalsIgnoreCase(arr[1].trim()))   return Collections.emptyMap();
   final Map<AnelCommandType,State> result=new HashMap<AnelCommandType,State>();
   final int locked=Integer.parseInt(arr[14]);
-  for (int i=0; i < 8; i++) {
-    final String[] swState=arr[6 + i].split(",");
+  for (int nr=0; nr < 8; nr++) {
+    final String[] swState=arr[6 + nr].split(",");
     if (swState.length == 2) {
-      addCommand(state.switchName,i,swState[0],"F" + (i + 1) + "NAME",result);
-      addCommand(state.switchState,i,"1".equals(swState[1]),"F" + (i + 1),result);
+      addCommand(state.switchName,nr,swState[0],"F" + (nr + 1) + "NAME",result);
+      addCommand(state.switchState,nr,"1".equals(swState[1]),"F" + (nr + 1),result);
     }
  else {
-      addCommand(state.switchName,i,null,"F" + (i + 1) + "NAME",result);
-      addCommand(state.switchState,i,null,"F" + (i + 1),result);
+      addCommand(state.switchName,nr,null,"F" + (nr + 1) + "NAME",result);
+      addCommand(state.switchState,nr,null,"F" + (nr + 1),result);
     }
-    addCommand(state.switchLocked,i,(locked & (1 << i)) > 0,"F" + (i + 1) + "LOCKED",result);
+    addCommand(state.switchLocked,nr,(locked & (1 << nr)) > 0,"F" + (nr + 1) + "LOCKED",result);
   }
-  for (int i=0; i < 8; i++) {
-    final String[] ioState=arr[16 + i].split(",");
+  for (int nr=0; nr < 8; nr++) {
+    final String[] ioState=arr[16 + nr].split(",");
     if (ioState.length == 3) {
-      addCommand(state.ioName,i,ioState[0],"IO" + (i + 1) + "NAME",result);
-      addCommand(state.ioIsInput,i,"1".equals(ioState[1]),"IO" + (i + 1) + "ISINPUT",result);
-      addCommand(state.ioState,i,"1".equals(ioState[2]),"IO" + (i + 1),result);
+      addCommand(state.ioName,nr,ioState[0],"IO" + (nr + 1) + "NAME",result);
+      addCommand(state.ioIsInput,nr,"1".equals(ioState[1]),"IO" + (nr + 1) + "ISINPUT",result);
+      addCommand(state.ioState,nr,"1".equals(ioState[2]),"IO" + (nr + 1),result);
     }
  else {
-      addCommand(state.ioName,i,null,"IO" + (i + 1) + "NAME",result);
-      addCommand(state.ioIsInput,i,null,"IO" + (i + 1) + "ISINPUT",result);
-      addCommand(state.ioState,i,null,"IO" + (i + 1),result);
+      addCommand(state.ioName,nr,null,"IO" + (nr + 1) + "NAME",result);
+      addCommand(state.ioIsInput,nr,null,"IO" + (nr + 1) + "ISINPUT",result);
+      addCommand(state.ioState,nr,null,"IO" + (nr + 1),result);
     }
   }
   final String temperature=arr[24].substring(0,arr[24].length() - 2);
@@ -41,6 +41,5 @@
     result.put(AnelCommandType.NAME,new StringType(name));
     state.name=name;
   }
-  if (!result.isEmpty())   state.lastUpdate=System.currentTimeMillis();
   return result;
 }

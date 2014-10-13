@@ -29,7 +29,7 @@ synchronized (state) {
           final org.openhab.core.types.State state=newValues.get(cmd);
           final Collection<String> itemNames=binding.getItemNamesForCommandType(cmd);
           for (          String itemName : itemNames) {
-            binding.getEventPublisher().postUpdate(itemName,state);
+            binding.postUpdateToEventBus(itemName,state);
           }
         }
       }

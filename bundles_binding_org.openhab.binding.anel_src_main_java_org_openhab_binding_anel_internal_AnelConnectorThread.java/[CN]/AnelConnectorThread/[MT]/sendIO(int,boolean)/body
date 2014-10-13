@@ -7,7 +7,7 @@ synchronized (state) {
   }
   if (!Boolean.valueOf(newState).equals(ioState)) {
     if (isInput == null || !isInput) {
-      logger.debug("Attempted to change IO" + ioNr + " to "+ (newState ? "ON" : "OFF")+ " but it's direction is "+ (isInput == null ? "unknown" : "input"));
+      logger.warn("Attempted to change IO" + ioNr + " to "+ (newState ? "ON" : "OFF")+ " but it's direction is "+ (isInput == null ? "unknown" : "input"));
       return;
     }
     final String cmd="IO_" + (newState ? "on" : "off") + ioNr+ user+ password;
