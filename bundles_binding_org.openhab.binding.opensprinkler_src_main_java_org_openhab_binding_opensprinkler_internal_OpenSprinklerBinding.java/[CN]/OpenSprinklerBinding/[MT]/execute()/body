@@ -1,0 +1,25 @@
+{
+  logger.debug("State is being updated with the OpenSprinkler device.");
+  for (int station=0; station < numberOfStations; station++) {
+    String stationItemName=findFirstMatchingItemName(station);
+    logger.debug("Checking state of item: " + stationItemName);
+    if (stationItemName != null) {
+      if (openSprinkler.isStationOpen(station)) {
+        eventPublisher.postUpdate(stationItemName,OnOffType.ON);
+      }
+ else {
+        eventPublisher.postUpdate(stationItemName,OnOffType.OFF);
+      }
+    }
+  }
+  String rainSensorItemName=findFirstMatchingItemName(RAIN_SENSOR_CONTACT_VALUE);
+  logger.debug("Checking state of item: " + rainSensorItemName);
+  if (rainSensorItemName != null) {
+    if (openSprinkler.isRainDetected()) {
+      eventPublisher.postUpdate(rainSensorItemName,OpenClosedType.OPEN);
+    }
+ else {
+      eventPublisher.postUpdate(rainSensorItemName,OpenClosedType.CLOSED);
+    }
+  }
+}

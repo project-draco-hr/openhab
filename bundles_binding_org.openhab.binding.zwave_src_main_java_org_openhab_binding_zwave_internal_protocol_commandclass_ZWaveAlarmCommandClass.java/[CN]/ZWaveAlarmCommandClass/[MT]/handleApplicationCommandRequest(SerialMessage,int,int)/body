@@ -1,0 +1,33 @@
+{
+  logger.trace("Handle Message Alarm Request");
+  logger.debug(String.format("NODE %d: Received Alarm Request",this.getNode().getNodeId()));
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case ALARM_GET:
+    logger.warn(String.format("Command 0x%02X not implemented.",command));
+  return;
+case ALARM_REPORT:
+logger.trace("Process Alarm Report");
+int alarmTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
+int value=serialMessage.getMessagePayloadByte(offset + 2);
+logger.debug(String.format("NODE %d: Alarm report - Value = 0x%02x",this.getNode().getNodeId(),value));
+AlarmType alarmType=AlarmType.getAlarmType(alarmTypeCode);
+if (alarmType == null) {
+logger.error(String.format("NODE %d: Unknown Alarm Type = 0x%02x, ignoring report.",this.getNode().getNodeId(),alarmTypeCode));
+return;
+}
+if (!alarms.contains(alarmType)) {
+this.alarms.add(alarmType);
+}
+logger.debug(String.format("NODE %d: Alarm Type = %s (0x%02x)",this.getNode().getNodeId(),alarmType.getLabel(),alarmTypeCode));
+ZWaveAlarmValueEvent zEvent=new ZWaveAlarmValueEvent(this.getNode().getNodeId(),endpoint,alarmType,value);
+this.getController().notifyEventListeners(zEvent);
+if (this.getNode().getNodeStage() != NodeStage.DONE) {
+this.getNode().advanceNodeStage(NodeStage.DONE);
+}
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+break;
+}
+}

@@ -1,0 +1,13 @@
+{
+  String firstMatchingName=null;
+  for (  OpenSprinklerBindingProvider provider : this.providers) {
+    for (    String itemName : provider.getItemNames()) {
+      boolean match=(provider.getStationNumber(itemName) == stationValue);
+      if (match) {
+        firstMatchingName=itemName;
+        break;
+      }
+    }
+  }
+  return firstMatchingName;
+}
