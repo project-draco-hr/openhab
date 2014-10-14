@@ -2,8 +2,9 @@
   context.setProviders(providers);
   try {
     MetadataHandler.getInstance().generate(Weather.class);
+    CommonIdHandler.getInstance().loadMapping();
   }
- catch (  IllegalAccessException ex) {
-    logger.error("Error activating WeatherBinding: {}",ex.getMessage());
+ catch (  Exception ex) {
+    logger.error("Error activating WeatherBinding: {}",ex.getMessage(),ex);
   }
 }
