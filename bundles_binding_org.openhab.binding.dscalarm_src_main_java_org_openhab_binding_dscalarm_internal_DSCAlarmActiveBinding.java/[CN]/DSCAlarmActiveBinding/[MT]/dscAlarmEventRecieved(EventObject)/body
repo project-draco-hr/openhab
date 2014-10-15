@@ -3,7 +3,7 @@
   APIMessage apiMessage=dscAlarmEvent.getAPIMessage();
   APIMessage.APIMessageType apiMessageType=apiMessage.getAPIMessageType();
   DSCAlarmItemType dscAlarmItemType=null;
-  String apiCode=apiMessage.getAPICode();
+  APICode apiCode=APICode.getAPICodeValue(apiMessage.getAPICode());
   String apiData=apiMessage.getAPIData();
   DSCAlarmBindingConfig config=null;
   Item item=null;
@@ -11,79 +11,80 @@
   int forLimit=1;
   boolean found=false;
 switch (apiCode) {
-case "500":
+case CommandAcknowledge:
     dscAlarmItemUpdate.setConnected(true);
   dscAlarmItemType=DSCAlarmItemType.PANEL_CONNECTION;
 break;
-case "502":
+case SystemError:
 dscAlarmItemType=DSCAlarmItemType.PANEL_SYSTEM_ERROR;
 break;
-case "510":
-case "511":
+case KeypadLEDState:
+case KeypadLEDFlashState:
 keypadLEDStateEventHandler(event);
 break;
-case "550":
+case TimeDateBroadcast:
 dscAlarmItemType=DSCAlarmItemType.PANEL_TIME_DATE;
 break;
-case "650":
-case "651":
-case "653":
-case "654":
-case "672":
-case "674":
+case PartitionReady:
+case PartitionNotReady:
+case PartitionReadyForceArming:
+case PartitionInAlarm:
+case FailureToArm:
+case SystemArmingInProgress:
 dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 break;
-case "652":
+case PartitionArmed:
 forLimit=2;
-case "655":
+case PartitionDisarmed:
 dscAlarmItemType=DSCAlarmItemType.PARTITION_ARM_MODE;
 break;
-case "601":
-case "602":
+case ZoneAlarm:
+case ZoneAlarmRestore:
 dscAlarmItemType=DSCAlarmItemType.ZONE_ALARM_STATUS;
 break;
-case "603":
-case "604":
+case ZoneTamper:
+case ZoneTamperRestore:
 dscAlarmItemType=DSCAlarmItemType.ZONE_TAMPER_STATUS;
 break;
-case "605":
-case "606":
+case ZoneFault:
+case ZoneFaultRestore:
 dscAlarmItemType=DSCAlarmItemType.ZONE_FAULT_STATUS;
 break;
-case "609":
-case "610":
+case ZoneOpen:
+case ZoneRestored:
 dscAlarmItemType=DSCAlarmItemType.ZONE_GENERAL_STATUS;
 break;
-case "900":
+case CodeRequired:
 api.sendCommand(APICode.CodeSend,api.getUserCode());
 break;
-case "903":
-switch (apiData.substring(0,1)) {
-case "1":
+case LEDStatus:
+int aData=Integer.parseInt(apiData.substring(0,1));
+switch (aData) {
+case 1:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_READY_LED;
 break;
-case "2":
+case 2:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_ARMED_LED;
 break;
-case "3":
+case 3:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_MEMORY_LED;
 break;
-case "4":
+case 4:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_BYPASS_LED;
 break;
-case "5":
+case 5:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_TROUBLE_LED;
 break;
-case "6":
+case 6:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_PROGRAM_LED;
 break;
-case "7":
+case 7:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_FIRE_LED;
 break;
-case "8":
+case 8:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_BACKLIGHT_LED;
 break;
-case "9":
+case 9:
 dscAlarmItemType=DSCAlarmItemType.KEYPAD_AC_LED;
 break;
 }
@@ -139,7 +140,7 @@ break;
 if (found) break;
 }
 }
-if (dscAlarmItemType == DSCAlarmItemType.PARTITION_ARM_MODE && apiCode.equals("652")) {
+if (dscAlarmItemType == DSCAlarmItemType.PARTITION_ARM_MODE && apiCode == APICode.PartitionArmed) {
 dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 apiMessageType=APIMessage.APIMessageType.PARTITION_EVENT;
 found=false;
