@@ -1,0 +1,24 @@
+{
+  try {
+    log("Test compatible config");
+    this.binding.updated(testConfigCompatible);
+    for (    String key : this.binding.getLocations().keySet()) {
+      log(key + "=" + this.binding.getLocations().get(key).toString());
+    }
+    for (    String key : this.binding.getUsers().keySet()) {
+      log(key + "=" + this.binding.getUsers().get(key).toString());
+    }
+    log("Test new config");
+    this.binding.updated(testConfigNew);
+    for (    String key : this.binding.getLocations().keySet()) {
+      log(key + "=" + this.binding.getLocations().get(key).toString());
+    }
+    for (    String key : this.binding.getUsers().keySet()) {
+      log(key + "=" + this.binding.getUsers().get(key).toString());
+    }
+  }
+ catch (  ConfigurationException e) {
+    e.printStackTrace();
+    Assert.fail(e.getLocalizedMessage());
+  }
+}

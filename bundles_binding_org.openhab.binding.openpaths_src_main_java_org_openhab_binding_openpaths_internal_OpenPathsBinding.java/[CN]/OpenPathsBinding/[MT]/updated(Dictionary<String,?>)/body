@@ -1,8 +1,7 @@
 {
   openPathsUsers=new HashMap<String,OpenPathsUser>();
+  locations=new HashMap<String,Location>();
   if (config != null) {
-    float homeLat=0;
-    float homeLong=0;
     Enumeration<String> keys=config.keys();
     while (keys.hasMoreElements()) {
       String key=(String)keys.nextElement();
@@ -10,17 +9,7 @@
       if ("service.pid".equals(key)) {
         continue;
       }
-      if ("home.lat".equals(key)) {
-        if (StringUtils.isNotBlank(value)) {
-          homeLat=Float.parseFloat(value);
-        }
-      }
- else       if ("home.long".equals(key)) {
-        if (StringUtils.isNotBlank(value)) {
-          homeLong=Float.parseFloat(value);
-        }
-      }
- else       if ("refresh".equals(key)) {
+      if ("refresh".equals(key)) {
         if (StringUtils.isNotBlank(value)) {
           refreshInterval=Long.parseLong(value);
         }
@@ -30,7 +19,61 @@
           geoFence=Float.parseFloat(value);
         }
       }
+ else       if (key.endsWith("lat")) {
+        String[] keyParts=key.split("\\.");
+        if (keyParts.length != 2) {
+          throw new ConfigurationException(key,"Invalid OpenPaths user location lattitude: " + key);
+        }
+        if (StringUtils.isNotBlank(value)) {
+          float lat=Float.parseFloat(value);
+          String name=keyParts[0];
+          if (locations.containsKey(name)) {
+            locations.get(name).setLatitude(lat);
+          }
  else {
+            Location loc=new Location();
+            loc.setLatitude(lat);
+            locations.put(name,loc);
+          }
+        }
+      }
+ else       if (key.endsWith("long")) {
+        String[] keyParts=key.split("\\.");
+        if (keyParts.length != 2) {
+          throw new ConfigurationException(key,"Invalid OpenPaths user location longitude: " + key);
+        }
+        if (StringUtils.isNotBlank(value)) {
+          float lon=Float.parseFloat(value);
+          String name=keyParts[0];
+          if (locations.containsKey(name)) {
+            locations.get(name).setLongitude(lon);
+          }
+ else {
+            Location loc=new Location();
+            loc.setLongitude(lon);
+            locations.put(name,loc);
+          }
+        }
+      }
+ else       if (key.endsWith("geofence") && !key.equals("geofence")) {
+        String[] keyParts=key.split("\\.");
+        if (keyParts.length != 2) {
+          throw new ConfigurationException(key,"Invalid OpenPaths user location geofence: " + key);
+        }
+        if (StringUtils.isNotBlank(value)) {
+          float fence=Float.parseFloat(value);
+          String name=keyParts[0];
+          if (locations.containsKey(name)) {
+            locations.get(name).setGeofence(fence);
+          }
+ else {
+            Location loc=new Location();
+            loc.setGeofence(fence);
+            locations.put(name,loc);
+          }
+        }
+      }
+ else       if (key.endsWith("key")) {
         String[] keyParts=key.split("\\.");
         if (keyParts.length != 2) {
           throw new ConfigurationException(key,"Invalid OpenPaths user key: " + key);
@@ -52,9 +95,7 @@
         }
       }
     }
-    if (homeLat == 0)     throw new ConfigurationException("home.lat","No latitude specified for 'home'");
-    if (homeLong == 0)     throw new ConfigurationException("home.long","No longitude specified for 'home'");
-    homeLocation=new Location(homeLat,homeLong,"home");
+    if (!locations.containsKey("home"))     throw new ConfigurationException("home.lat","No location specified for 'home'");
     setProperlyConfigured(true);
   }
 }

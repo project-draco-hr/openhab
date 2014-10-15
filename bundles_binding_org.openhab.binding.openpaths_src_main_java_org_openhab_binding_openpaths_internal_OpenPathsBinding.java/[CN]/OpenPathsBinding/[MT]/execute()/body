@@ -6,40 +6,70 @@
   for (  OpenPathsBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       OpenPathsBindingConfig bindingConfig=provider.getItemConfig(itemName);
-      String name=bindingConfig.getName();
+      String bindingConfigName=bindingConfig.getName();
+      String[] bindingParts=bindingConfigName.split("\\:");
+      if (bindingParts.length < 1) {
+        logger.error("Empty OpenPaths binding config");
+        continue;
+      }
+      String name=bindingParts[0];
       if (!openPathsUsers.containsKey(name)) {
         logger.warn("There is no OpenPaths user configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
         continue;
       }
-      OpenPathsUser openPathsUser=openPathsUsers.get(name);
-      String accessKey=openPathsUser.getAccessKey();
-      String secretKey=openPathsUser.getSecretKey();
-      if (StringUtils.isEmpty(accessKey)) {
-        logger.warn("There is no ACCESS_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
+      if (bindingParts[1].startsWith("current")) {
+        logger.warn("current... Bindings will be supported soon");
         continue;
       }
-      if (StringUtils.isEmpty(secretKey)) {
-        logger.warn("There is no SECRET_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
-        continue;
+      String bindingLocationName=bindingParts[1];
+      if (!locations.containsKey(bindingLocationName)) {
+        logger.warn("location name " + bindingLocationName + " not configured, falling back to 'home'");
+        bindingLocationName="home";
       }
-      logger.debug("Requesting location for '{}'...",name);
-      Location location=getUserLocation(accessKey,secretKey);
-      if (location == null) {
-        logger.warn("Unable to determine location for '{}'. Skipping.",name);
-        continue;
+      LocationBindingType bindingType=LocationBindingType.on;
+      if (bindingParts.length == 3) {
+switch (bindingParts[2]) {
+case "distance":
+          bindingType=LocationBindingType.distance;
       }
-      logger.debug("Location received for '{}': {}",name,location.toString());
-      logger.debug("Calculating distance between home ({}) and user location ({}) for '{}'...",new Object[]{homeLocation.toString(),location.toString(),name});
-      double distance=calculateDistance(homeLocation,location);
-      logger.debug("Distance calculated as {} for '{}'",distance,name);
-      if (distance <= geoFence) {
-        logger.debug("Detected that '{}' is inside the geofence ({}m)",name,geoFence);
+    }
+    OpenPathsUser openPathsUser=openPathsUsers.get(name);
+    String accessKey=openPathsUser.getAccessKey();
+    String secretKey=openPathsUser.getSecretKey();
+    if (StringUtils.isEmpty(accessKey)) {
+      logger.warn("There is no ACCESS_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
+      continue;
+    }
+    if (StringUtils.isEmpty(secretKey)) {
+      logger.warn("There is no SECRET_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
+      continue;
+    }
+    logger.debug("Requesting location for '{}'...",name);
+    Location location=getUserLocation(accessKey,secretKey);
+    if (location == null) {
+      logger.warn("Unable to determine location for '{}'. Skipping.",name);
+      continue;
+    }
+    logger.debug("Location received for '{}': {}",name,location.toString());
+    Location bindingLocation=locations.get(bindingLocationName);
+    logger.debug("Calculating distance between home ({}) and user location ({}) for '{}'...",new Object[]{bindingLocation.toString(),location.toString(),name});
+    double distance=calculateDistance(bindingLocation,location);
+    bindingLocation.setDistance(distance);
+    logger.debug("Distance calculated as {} for '{}'@'{}'",distance,name,bindingLocationName);
+    if (bindingType.equals(LocationBindingType.on)) {
+      float fence=bindingLocation.getGeofence() == Float.MAX_VALUE ? geoFence : bindingLocation.getGeofence();
+      if (distance <= fence) {
+        logger.debug("Detected that '{}'@'{}' is inside the geofence ({}m)",name,bindingLocationName,fence);
         eventPublisher.postUpdate(itemName,OnOffType.ON);
       }
  else {
-        logger.debug("Detected that '{}' is outside the geofence ({}m)",name,geoFence);
+        logger.debug("Detected that '{}'@'{}' is outside the geofence ({}m)",name,bindingLocationName,fence);
         eventPublisher.postUpdate(itemName,OnOffType.OFF);
       }
     }
+ else     if (bindingType.equals(LocationBindingType.distance)) {
+      eventPublisher.postUpdate(itemName,new DecimalType(distance));
+    }
   }
+}
 }
