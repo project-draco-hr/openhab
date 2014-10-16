@@ -1,7 +1,6 @@
 {
   try {
     String newInStuff=inStuff;
-    String newCommandThing=commandThing;
     String tmp;
     Matcher matcher;
     String iName=null;
@@ -16,20 +15,40 @@
       }
       newInStuff="service/" + iName + '/'+ iVar;
     }
+    ParameterDefaults pd=paramDefaults.get(newInStuff);
+    if (pd != null) {
+      logger.trace("Device ParameterDefaults FOUND '{}' for '{}', '{}'",itemName,newInStuff,pd);
+      if (commandTransform == null) {
+        commandTransform=pd.getCommandTransform();
+        logger.trace("Device ParameterDefaults '{}' defaulted command: to '{}'",itemName,commandTransform);
+      }
+      if (inTransform == null) {
+        inTransform=pd.getInTransform();
+        logger.trace("Device ParameterDefaults '{}' defaulted in: to '{}'",itemName,inTransform);
+      }
+      if (outTransform == null) {
+        outTransform=pd.getOutTransform();
+        logger.trace("Device ParameterDefaults '{}' defaulted out: to '{}'",itemName,outTransform);
+      }
+    }
+ else {
+      logger.trace("Device ParameterDefaults NOT FOUND '{}' for '{}'",itemName,newInStuff);
+    }
     String cTransform=null;
     String cParam=null;
     Map<String,String> cMap=null;
-    if ("".equals(newCommandThing)) {
+    String newCommandTransform=commandTransform;
+    if ("".equals(newCommandTransform)) {
       cMap=COMMAND_DEFAULTS;
     }
- else     if (newCommandThing != null) {
-      matcher=SERVICE_COMMAND_TRANSFORM_PATTERN.matcher(newCommandThing);
+ else     if (newCommandTransform != null) {
+      matcher=SERVICE_COMMAND_TRANSFORM_PATTERN.matcher(newCommandTransform);
       if (matcher.matches()) {
         cTransform=matcher.group("transformCommand");
         cParam=matcher.group("transformParam");
       }
  else {
-        String[] commandList=newCommandThing.split("\\|");
+        String[] commandList=newCommandTransform.split("\\|");
         String command;
         Map<String,String> l=new HashMap<String,String>(commandList.length);
         for (int i=0; i < commandList.length; i++) {
@@ -40,18 +59,18 @@
             String mapValue=matcher.group("mapValue");
             String oldMapName=l.put(mapName,mapValue);
             if (oldMapName != null) {
-              throw new BindingConfigParseException(String.format("Duplicate inline Map entry '%s' in command: '%s'",oldMapName,newCommandThing));
+              throw new BindingConfigParseException(String.format("Duplicate inline Map entry '%s' in command: '%s'",oldMapName,newCommandTransform));
             }
           }
  else {
-            throw new BindingConfigParseException(String.format("Invalid command, parameter format '%s' in command: '%s'",command,newCommandThing));
+            throw new BindingConfigParseException(String.format("Invalid command, parameter format '%s' in command: '%s'",command,newCommandTransform));
           }
         }
         cMap=l;
       }
     }
     logger.trace("newInStuff '{}', iName '{}', iVar '{}'",new Object[]{newInStuff,iName,iVar});
-    DeviceBindingConfig c=new DeviceBindingConfig(context,itemName,unitName,id,newInStuff,itemType,newCommandThing,inTransform,outTransform);
+    DeviceBindingConfig c=new DeviceBindingConfig(context,itemName,unitName,id,newInStuff,itemType,newCommandTransform,inTransform,outTransform);
     c.initialize();
     c.commandTransformName=cTransform;
     c.commandTransformParam=cParam;

@@ -1,4 +1,19 @@
 {
+  ParameterDefaults pd=paramDefaults.get(stuff);
+  if (pd != null) {
+    logger.trace("System ParameterDefaults FOUND '{}' for '{}', '{}'",itemName,stuff,pd);
+    if (inTransform == null) {
+      inTransform=pd.getInTransform();
+      logger.trace("System ParameterDefaults '{}' defaulted in: to '{}'",itemName,inTransform);
+    }
+    if (outTransform == null) {
+      outTransform=pd.getOutTransform();
+      logger.trace("System ParameterDefaults '{}' defaulted out: to '{}'",itemName,outTransform);
+    }
+  }
+ else {
+    logger.trace("System ParameterDefaults NOT FOUND '{}' for '{}'",itemName,stuff);
+  }
   MiosBindingConfig c=new SystemBindingConfig(context,itemName,unitName,stuff,itemType,inTransform,outTransform);
   c.initialize();
   return c;
