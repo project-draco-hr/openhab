@@ -32,17 +32,10 @@ break;
 validCommand=true;
 break;
 case SetTimeDate:
-DateFormat dateFormat=new SimpleDateFormat("hhmmMMDDYY");
-String dateTime=apiData[0];
-try {
-dateFormat.parse(dateTime);
-data=apiData[0];
+Date date=new Date();
+SimpleDateFormat dateTime=new SimpleDateFormat("HHmmMMddYY");
+data=dateTime.format(date);
 validCommand=true;
-}
- catch (ParseException parseException) {
-logger.error("sendCommand(): Could not format date: " + dateTime + " to hhmmMMDDYY format: ",parseException);
-validCommand=false;
-}
 break;
 case CommandOutputControl:
 if (apiData[0] == null || !apiData[0].matches("[1-8]")) {
