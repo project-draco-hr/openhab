@@ -18,24 +18,28 @@
         logger.warn("There is no OpenPaths user configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
         continue;
       }
+      Location location=null;
       OpenPathsUser openPathsUser=openPathsUsers.get(name);
-      String accessKey=openPathsUser.getAccessKey();
-      String secretKey=openPathsUser.getSecretKey();
-      if (StringUtils.isEmpty(accessKey)) {
-        logger.warn("There is no ACCESS_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
-        continue;
+      if (openPathsUser.lastUpdateTS + this.refreshInterval < System.currentTimeMillis()) {
+        String accessKey=openPathsUser.getAccessKey();
+        String secretKey=openPathsUser.getSecretKey();
+        if (StringUtils.isEmpty(accessKey)) {
+          logger.warn("There is no ACCESS_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
+          continue;
+        }
+        if (StringUtils.isEmpty(secretKey)) {
+          logger.warn("There is no SECRET_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
+          continue;
+        }
+        logger.debug("Requesting location for '{}'...",name);
+        location=getUserLocation(accessKey,secretKey);
+        openPathsUsers.get(name).setLastLocation(location);
+        logger.debug("New location received for '{}': {}",name,location.toString());
       }
-      if (StringUtils.isEmpty(secretKey)) {
-        logger.warn("There is no SECRET_KEY configured for '" + name + "'. Please add this user to the binding configuration, including both the ACCESS_KEY and SECRET_KEY from the OpenPaths profile.");
-        continue;
+ else {
+        location=openPathsUsers.get(name).getLastLocation();
+        logger.debug("Using cached location for '{}'",openPathsUser.toString());
       }
-      logger.debug("Requesting location for '{}'...",name);
-      Location location=getUserLocation(accessKey,secretKey);
-      if (location == null) {
-        logger.warn("Unable to determine location for '{}'. Skipping.",name);
-        continue;
-      }
-      logger.debug("Location received for '{}': {}",name,location.toString());
       String bindingLocationName=bindingParts.length > 1 ? bindingParts[1] : "";
       if (bindingLocationName.startsWith("current")) {
         if (bindingLocationName.equals("currentLocation")) {

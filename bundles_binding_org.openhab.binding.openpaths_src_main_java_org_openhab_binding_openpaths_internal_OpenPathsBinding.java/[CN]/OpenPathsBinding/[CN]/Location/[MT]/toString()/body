@@ -1,3 +1,11 @@
 {
-  return "Lat: " + latitude + ", Long: "+ longitude+ ", Fence: "+ geofence+ "(from "+ device+ ")";
+  StringBuilder out=new StringBuilder();
+  out.append(latitude).append(", ").append(longitude);
+  if (geofence > 0) {
+    out.append(", Fence: ").append(geofence);
+  }
+  if (!device.isEmpty()) {
+    out.append("(from ").append(device).append(')');
+  }
+  return out.toString();
 }
