@@ -3,7 +3,7 @@
   for (int station=0; station < numberOfStations; station++) {
     String stationItemName=findFirstMatchingItemName(station);
     logger.debug("Checking state of item: " + stationItemName);
-    if (stationItemName != null) {
+    if (stationItemName != null && openSprinkler != null) {
       if (openSprinkler.isStationOpen(station)) {
         eventPublisher.postUpdate(stationItemName,OnOffType.ON);
       }
