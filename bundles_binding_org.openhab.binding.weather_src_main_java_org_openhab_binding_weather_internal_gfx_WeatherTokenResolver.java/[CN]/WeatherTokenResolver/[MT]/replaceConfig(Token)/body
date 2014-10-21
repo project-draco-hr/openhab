@@ -1,0 +1,18 @@
+{
+  LocationConfig locationConfig=WeatherContext.getInstance().getConfig().getLocationConfig(locationId);
+  if (locationConfig == null) {
+    throw new RuntimeException("Weather locationId '" + locationId + "' does not exist");
+  }
+  if ("latitude".equals(token.name)) {
+    return locationConfig.getLatitude().toString();
+  }
+ else   if ("longitude".equals(token.name)) {
+    return locationConfig.getLongitude().toString();
+  }
+ else   if ("name".equals(token.name)) {
+    return locationConfig.getName();
+  }
+ else {
+    throw new RuntimeException("Invalid weather token: " + token.full);
+  }
+}

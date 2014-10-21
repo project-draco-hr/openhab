@@ -1,0 +1,10 @@
+{
+  int day=NumberUtils.toInt(token.qualifier);
+  if (day < weather.getForecast().size()) {
+    Weather forecast=weather.getForecast().get(day);
+    return replaceWeather(token,forecast);
+  }
+ else {
+    throw new RuntimeException("Weather forecast day " + day + " not available, only "+ Math.max(weather.getForecast().size() - 1,0)+ " available");
+  }
+}
