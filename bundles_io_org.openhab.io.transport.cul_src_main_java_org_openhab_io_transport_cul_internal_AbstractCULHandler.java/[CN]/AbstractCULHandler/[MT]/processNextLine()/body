@@ -1,6 +1,11 @@
 {
   try {
     String data=br.readLine();
+    if (data == null) {
+      String msg="EOF encountered for " + deviceName;
+      log.error(msg);
+      throw new CULCommunicationException(msg);
+    }
     log.debug("Received raw message from CUL: " + data);
     if ("EOB".equals(data)) {
       log.warn("(EOB) End of Buffer. Last message lost. Try sending less messages per time slot to the CUL");
@@ -16,10 +21,10 @@
     }
     notifyDataReceived(data);
     requestCreditReport();
-    processNextLine();
   }
  catch (  IOException e) {
-    log.error("Exception while reading from CUL port",e);
+    log.error("Exception while reading from CUL port " + deviceName,e);
     notifyError(e);
+    throw new CULCommunicationException(e);
   }
 }

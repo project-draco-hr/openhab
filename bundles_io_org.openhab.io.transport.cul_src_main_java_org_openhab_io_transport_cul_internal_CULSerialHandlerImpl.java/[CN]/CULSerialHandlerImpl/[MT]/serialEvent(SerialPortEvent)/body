@@ -1,5 +1,10 @@
 {
   if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-    processNextLine();
+    try {
+      processNextLine();
+    }
+ catch (    CULCommunicationException e) {
+      log.error("Serial CUL connection read failed for " + deviceName);
+    }
   }
 }
