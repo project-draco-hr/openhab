@@ -1,0 +1,36 @@
+{
+  if (gc100InstanceName == null) {
+    return null;
+  }
+  GC100IRConnector connector=connectors.get(gc100InstanceName);
+  if (connector != null) {
+    return connector;
+  }
+  GC100IRHost gc100Host;
+  if (gc100InstanceName.startsWith("#")) {
+    String instance=gc100InstanceName.substring(1);
+    if (nameHostMapper == null) {
+      logger.trace("Attempting to access the named instance '{}' before the binding config has been loaded",instance);
+      return null;
+    }
+    if (!nameHostMapper.containsKey(instance)) {
+      logger.error("Named instance '{}' does not exist in the binding config",instance);
+      return null;
+    }
+    gc100Host=nameHostMapper.get(instance);
+  }
+ else {
+    gc100Host=new GC100IRHost();
+    gc100Host.setHostname(gc100InstanceName);
+  }
+  logger.debug("Creating new GC100IRConnector for '{}' on {}",gc100InstanceName,gc100Host.getHostname());
+  connector=new GC100IRConnector(gc100Host);
+  connectors.put(gc100InstanceName,connector);
+  try {
+    connector.open();
+  }
+ catch (  Exception e) {
+    logger.error("Connection failed for '{}' on {}",gc100InstanceName,gc100Host.getHostname());
+  }
+  return connector;
+}

@@ -1,0 +1,9 @@
+{
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches())   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  String gc100Instance=matcher.group(1);
+  String module=matcher.group(2);
+  String connector=matcher.group(3);
+  String code=matcher.group(4);
+  return new GC100BindingConfig(gc100Instance,Integer.parseInt(module),Integer.parseInt(connector),code);
+}

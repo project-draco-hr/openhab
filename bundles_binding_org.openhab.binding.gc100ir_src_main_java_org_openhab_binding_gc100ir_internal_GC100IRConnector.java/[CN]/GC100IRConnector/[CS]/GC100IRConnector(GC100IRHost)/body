@@ -1,0 +1,18 @@
+{
+  this.gc100=gc100;
+  this.gc100ControlPoint=GC100IRControlPoint.getInstance();
+  String deviceResponse=null;
+  try {
+    deviceResponse=this.gc100ControlPoint.queryGC100(GC100IRControlPoint.GC_100_QUERY_MESSAGE_GET_DEVICES,gc100.getHostname());
+  }
+ catch (  UnknownHostException e) {
+    logger.error("UnknownHostException: ",e);
+  }
+catch (  IOException e) {
+    logger.error("IOException: ",e);
+  }
+  if (deviceResponse != null) {
+    gc100ControlPoint.parseDevices(gc100.getHostname(),deviceResponse);
+  }
+  gc100ItemUtility=org.openhab.binding.gc100ir.util.GC100ItemUtility.getInstance();
+}

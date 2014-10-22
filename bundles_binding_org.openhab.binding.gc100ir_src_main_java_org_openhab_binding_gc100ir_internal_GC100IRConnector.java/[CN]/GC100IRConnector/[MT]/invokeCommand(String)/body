@@ -1,0 +1,10 @@
+{
+  GC100ItemBean itemBean=getGC100ItemBean(itemName);
+  String preparedCode=gc100ItemUtility.prepareCode(itemBean);
+  GC100IRCommand result=gc100ControlPoint.doAction(gc100.getHostname(),itemBean.getModule(),itemBean.getConnector(),preparedCode);
+  if (GC100IRCommandCode.COMPLETED_SUCCESSFULLY != result.getCommandCode()) {
+    logger.warn("Failed to execute command over GC100: {} with Module: {} of Connector: {} to Item: {}, the response was {}",gc100.getHostname(),itemBean.getModule(),itemBean.getConnector(),itemName,result);
+    return;
+  }
+  logger.info("Successfully executed command over GC100: {} with Module: {} of Connector: {} to Item: {}, the response was {}",gc100.getHostname(),itemBean.getModule(),itemBean.getConnector(),itemName,result);
+}

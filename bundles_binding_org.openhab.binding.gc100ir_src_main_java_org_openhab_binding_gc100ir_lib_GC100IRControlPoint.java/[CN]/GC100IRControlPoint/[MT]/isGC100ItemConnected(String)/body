@@ -1,0 +1,17 @@
+{
+synchronized (socketList) {
+    for (    GC100IRConnection gc100IRConnection : socketList) {
+      if (gc100IRConnection == null) {
+        continue;
+      }
+      String tcpIpString=gc100IRConnection.getInetAddress().toString();
+      if (tcpIpString.startsWith("/")) {
+        tcpIpString=tcpIpString.substring(1);
+      }
+      if (ipAddress.equals(tcpIpString)) {
+        return gc100IRConnection.isConnected();
+      }
+    }
+  }
+  return false;
+}
