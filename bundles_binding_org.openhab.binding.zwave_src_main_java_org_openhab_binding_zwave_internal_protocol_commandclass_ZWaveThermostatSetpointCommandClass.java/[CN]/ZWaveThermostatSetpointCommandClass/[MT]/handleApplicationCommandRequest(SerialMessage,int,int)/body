@@ -1,15 +1,14 @@
 {
-  logger.trace("Handle Message Thermostat Setpoint Request");
-  logger.debug(String.format("Received Thermostat Setpoint Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug("NODE {}: Received Thermostat Setpoint Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case THERMOSTAT_SETPOINT_SET:
 case THERMOSTAT_SETPOINT_GET:
 case THERMOSTAT_SETPOINT_SUPPORTED_GET:
-    logger.warn(String.format("Command 0x%02X not implemented.",command));
+    logger.warn(String.format("NODE %d: Command 0x%02X not implemented.",this.getNode().getNodeId(),command));
   return;
 case THERMOSTAT_SETPOINT_SUPPORTED_REPORT:
-logger.debug("Process Thermostat Supported Setpoint Report");
+logger.debug("NODE {}: Process Thermostat Supported Setpoint Report",this.getNode().getNodeId());
 int payloadLength=serialMessage.getMessagePayload().length;
 for (int i=offset + 1; i < payloadLength; ++i) {
 int bitMask=serialMessage.getMessagePayloadByte(i);
@@ -19,17 +18,17 @@ int index=((i - (offset + 1)) * 8) + bit;
 if (index >= SetpointType.values().length) continue;
 SetpointType setpointTypeToAdd=SetpointType.getSetpointType(index);
 this.setpointTypes.add(setpointTypeToAdd);
-logger.debug(String.format("Added setpoint type %s (0x%02x)",setpointTypeToAdd.getLabel(),index));
+logger.debug(String.format("NODE %d: Added setpoint type %s (0x%02x)",this.getNode().getNodeId(),setpointTypeToAdd.getLabel(),index));
 }
 }
 this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;
 case THERMOSTAT_SETPOINT_REPORT:
-logger.trace("Process Thermostat Setpoint Report");
+logger.trace("NODE {}: Process Thermostat Setpoint Report",this.getNode().getNodeId());
 processThermostatSetpointReport(serialMessage,offset,endpoint);
 if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :
-logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+logger.warn(String.format("NODE %d: Unsupported Command 0x%02X for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
 }
 }
