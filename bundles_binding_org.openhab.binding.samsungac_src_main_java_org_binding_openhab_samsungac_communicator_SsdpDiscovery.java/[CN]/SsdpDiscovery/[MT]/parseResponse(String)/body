@@ -1,0 +1,9 @@
+{
+  logger.debug("Response was:" + response);
+  Map<String,String> device=new HashMap<String,String>();
+  for (  String element : response.split(NEWLINE)) {
+    if (element.contains(": "))     device.put(element.split(": ")[0],element.split(": ")[1]);
+  }
+  device.put("IP",device.get("LOCATION").split("//")[1].toString());
+  return device;
+}

@@ -1,0 +1,30 @@
+{
+  logger.info("Updated:" + config);
+  Enumeration<String> keys=config.keys();
+  Map<String,SamsungAcHost> hosts=new HashMap<String,SamsungAcHost>();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    String[] parts=key.split("\\.");
+    String hostname=parts[0];
+    SamsungAcHost host=hosts.get(hostname);
+    if (host == null) {
+      host=new SamsungAcHost();
+    }
+    String value=((String)config.get(key)).trim();
+    if ("host".equals(parts[1])) {
+      host.setIpAddress(value);
+    }
+    if ("mac".equals(parts[1])) {
+      host.setMacAddress(value);
+    }
+    if ("token".equals(parts[1])) {
+      host.setToken(value);
+    }
+    hosts.put(hostname,host);
+  }
+  nameHostMapper=hosts;
+  logger.debug("Size of nameHostMapper is: " + nameHostMapper.size());
+}

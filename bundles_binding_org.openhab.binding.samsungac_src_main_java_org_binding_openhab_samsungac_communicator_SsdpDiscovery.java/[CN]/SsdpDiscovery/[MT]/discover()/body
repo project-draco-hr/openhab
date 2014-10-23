@@ -1,0 +1,12 @@
+{
+  Map<String,String> response=new HashMap<String,String>();
+  try {
+    sendNotify(DISCOVER_MESSAGE);
+    response.putAll(parseResponse(retrieveResponse()));
+  }
+ catch (  Exception e) {
+    logger.warn("Failed while trying to discover Samsung Air Conditioner",e);
+  }
+  logger.debug("Got the following response from Samsung Air Conditioner: " + response);
+  return response;
+}

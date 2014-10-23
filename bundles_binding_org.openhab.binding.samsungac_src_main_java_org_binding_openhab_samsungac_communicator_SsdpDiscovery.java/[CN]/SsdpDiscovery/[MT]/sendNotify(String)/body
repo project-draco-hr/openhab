@@ -1,0 +1,15 @@
+{
+  MulticastSocket socket=new MulticastSocket(null);
+  try {
+    socket.bind(new InetSocketAddress(InetAddress.getLocalHost().getCanonicalHostName(),PORT));
+    byte[] data=notifyMessage.toString().getBytes();
+    socket.send(new DatagramPacket(data,data.length,new InetSocketAddress(getBroadCastAddress(),PORT)));
+  }
+ catch (  IOException e) {
+    throw e;
+  }
+ finally {
+    socket.disconnect();
+    socket.close();
+  }
+}

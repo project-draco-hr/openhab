@@ -1,0 +1,27 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing Samsung AC binding configuration => refresh cycle aborted!");
+    return;
+  }
+  if (nameHostMapper == null) {
+    logger.debug("Name host mapper not yet set. Aborted refresh");
+    return;
+  }
+  for (  Map.Entry<String,SamsungAcHost> entry : nameHostMapper.entrySet()) {
+    SamsungAcHost host=entry.getValue();
+    if (host.isConnected()) {
+      Map<String,String> status=host.getAirConditioner().getStatus();
+      eventPublisher.postUpdate("ac_current_temp",StringType.valueOf(status.get("AC_FUN_TEMPNOW")));
+    }
+ else {
+      logger.debug("Broken connection found for '{}', attempting to reconnect...",entry.getKey());
+      try {
+        host.connect();
+        logger.debug("Connected");
+      }
+ catch (      Exception e) {
+        logger.debug("Reconnect failed for '{}', will retry in {}s",entry.getKey(),refreshInterval / 1000);
+      }
+    }
+  }
+}
