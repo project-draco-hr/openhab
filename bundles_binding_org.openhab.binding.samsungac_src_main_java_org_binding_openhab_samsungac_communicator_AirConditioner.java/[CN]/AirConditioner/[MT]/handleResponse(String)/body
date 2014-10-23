@@ -1,0 +1,46 @@
+{
+  String line;
+  while ((line=readLine(socket)) != null) {
+    logger.debug("Got response:'" + line + "'");
+    if (line == null || ResponseParser.isFirstLine(line)) {
+      return;
+    }
+    if (ResponseParser.isNotLoggedInResponse(line)) {
+      if (TOKEN_STRING != null)       return;
+      writeLine("<Request Type=\"GetToken\" />");
+      return;
+    }
+    if (ResponseParser.isFailedAuthenticationResponse(line)) {
+      throw new Exception("failed to connect");
+    }
+    if (commandId != null && ResponseParser.isCorrectCommandResponse(line,commandId)) {
+      return;
+    }
+    if (ResponseParser.isResponseWithToken(line)) {
+      TOKEN_STRING=ResponseParser.parseTokenFromResponse(line);
+      return;
+    }
+    if (ResponseParser.isReadyForTokenResponse(line)) {
+      logger.warn("Switch off and on the air conditioner within 30 seconds");
+      return;
+    }
+    if (ResponseParser.isSuccessfulLoginResponse(line)) {
+      return;
+    }
+    if (ResponseParser.isDeviceState(line)) {
+      statusMap=ResponseParser.parseStatusResponse(line);
+      return;
+    }
+    if (ResponseParser.isDeviceControl(line)) {
+      return;
+    }
+    if (ResponseParser.isUpdateStatus(line)) {
+      Pattern pattern=Pattern.compile("Attr ID=\"(.*)\" Value=\"(.*)\"");
+      Matcher matcher=pattern.matcher(line);
+      if (matcher.groupCount() == 2) {
+        statusMap.put(matcher.group(0),matcher.group(1));
+      }
+      return;
+    }
+  }
+}

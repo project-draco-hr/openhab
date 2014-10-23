@@ -1,0 +1,22 @@
+{
+  if (itemName != null) {
+    logger.debug("InternalReceiveCommand +'" + itemName + "':'"+ command+ "'");
+    String hostName=getAirConditionerInstance(itemName);
+    logger.debug("hostName: " + hostName);
+    String property=getProperty(itemName);
+    logger.debug("property: " + property);
+    SamsungAcHost host=nameHostMapper.get(hostName);
+    Command commandEnum=Command.valueOf(property);
+switch (commandEnum) {
+case "AC_FUN_POWER":
+      break;
+default :
+    break;
+}
+if ("AC_FUN_POWER".equals(property)) {
+  String cmd="Off";
+  if (command.toString() == "ON")   cmd="On";
+  host.getAirConditioner().sendCommand(property,cmd);
+}
+}
+}

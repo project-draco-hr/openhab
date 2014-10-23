@@ -1,0 +1,14 @@
+{
+  Map<String,String> status=new HashMap<String,String>();
+  try {
+    XMLReader reader=XMLReaderFactory.createXMLReader();
+    StatusHandler statusHandler=new StatusHandler();
+    reader.setContentHandler(statusHandler);
+    reader.parse(new InputSource(new StringReader(response)));
+    status=statusHandler.getStatusMap();
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  return status;
+}

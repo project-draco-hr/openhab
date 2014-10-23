@@ -1,0 +1,7 @@
+{
+  connect();
+  logger.debug("Sending command: '" + command + "' value: '"+ value);
+  String id="cmd" + Math.round(Math.random() * 10000);
+  writeLine("<Request Type=\"DeviceControl\"><Control CommandID=\"" + id + "\" DUID=\""+ MAC+ "\"><Attr ID=\""+ command+ "\" Value=\""+ value+ "\" /></Control></Request>");
+  return id;
+}

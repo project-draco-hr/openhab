@@ -1,0 +1,19 @@
+{
+  String response=null;
+  MulticastSocket recSocket=setUpSocket();
+  int i=0;
+  while (response == null) {
+    byte[] buf=new byte[2048];
+    DatagramPacket input=new DatagramPacket(buf,buf.length);
+    try {
+      recSocket.receive(input);
+      response=new String(input.getData());
+    }
+ catch (    SocketTimeoutException e) {
+      if (i >= 2)       break;
+      i++;
+    }
+  }
+  if (response == null)   throw new Exception("No air conditioner found");
+  return response;
+}
