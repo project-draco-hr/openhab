@@ -4,14 +4,14 @@
   try {
     BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
     logger.debug("NODE {}: Thermostat Setpoint report Scale = {}",this.getNode().getNodeId(),scale);
-    logger.debug(String.format("NODE %d: Thermostat Setpoint Value = (%f)",this.getNode().getNodeId(),value));
+    logger.debug("NODE {}: Thermostat Setpoint Value = {}",this.getNode().getNodeId(),value);
     SetpointType setpointType=SetpointType.getSetpointType(setpointTypeCode);
     if (setpointType == null) {
-      logger.error(String.format("NODE %d: Unknown Setpoint Type = 0x%02x, ignoring report.",this.getNode().getNodeId(),setpointTypeCode));
+      logger.error("NODE {}: Unknown Setpoint Type = {}, ignoring report.",this.getNode().getNodeId(),setpointTypeCode);
       return;
     }
     if (!this.setpointTypes.contains(setpointType))     this.setpointTypes.add(setpointType);
-    logger.debug(String.format("NODE %d: Setpoint Type = %s (0x%02x)",this.getNode().getNodeId(),setpointType.getLabel(),setpointTypeCode));
+    logger.debug("NODE {}: Setpoint Type = {} ({})",this.getNode().getNodeId(),setpointType.getLabel(),setpointTypeCode);
     logger.debug("NODE {}: Thermostat Setpoint Report value = {}",this.getNode().getNodeId(),value.toPlainString());
     ZWaveThermostatSetpointValueEvent zEvent=new ZWaveThermostatSetpointValueEvent(this.getNode().getNodeId(),endpoint,setpointType,scale,value);
     this.getController().notifyEventListeners(zEvent);
