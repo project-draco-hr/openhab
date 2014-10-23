@@ -1,12 +1,12 @@
 {
   this.item=item;
+  String attributes[]=conf.split(":");
+  couplerName=attributes[0];
   try {
-    String attributes[]=conf.split(":");
-    couplerName=attributes[0];
     module=Integer.parseInt(attributes[1]) - 1;
     channel=Integer.parseInt(attributes[2]) - 1;
   }
- catch (  Exception e) {
-    e.printStackTrace();
+ catch (  NumberFormatException e) {
+    logger.error("wago binding configuration invalid. Module or channel is not a number.");
   }
 }
