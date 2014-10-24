@@ -1,0 +1,15 @@
+{
+  if (speechDispatcherClient == null) {
+    logger.error("SpeechDispatcher TTS is not available");
+    return;
+  }
+  if (text == null) {
+    return;
+  }
+  try {
+    speechDispatcherClient.say(SSIPPriority.MESSAGE,text);
+  }
+ catch (  SSIPException e) {
+    logger.error("Error sending text to SpeechDispatcher TTS: " + e.getLocalizedMessage(),e);
+  }
+}
