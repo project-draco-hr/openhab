@@ -11,20 +11,24 @@
       return;
     }
     if (ResponseParser.isFailedAuthenticationResponse(line)) {
-      throw new Exception("failed to connect");
+      throw new Exception("failed to connect: '" + line + "'");
     }
     if (commandId != null && ResponseParser.isCorrectCommandResponse(line,commandId)) {
+      logger.debug("Correct command response: '" + line + "'");
       return;
     }
     if (ResponseParser.isResponseWithToken(line)) {
       TOKEN_STRING=ResponseParser.parseTokenFromResponse(line);
+      logger.info("Received TOKEN from AC: '" + TOKEN_STRING + "'");
       return;
     }
     if (ResponseParser.isReadyForTokenResponse(line)) {
       logger.warn("Switch off and on the air conditioner within 30 seconds");
+      Thread.sleep(20);
       return;
     }
     if (ResponseParser.isSuccessfulLoginResponse(line)) {
+      logger.debug("SuccessfulLoginResponse: '" + line + "'");
       return;
     }
     if (ResponseParser.isDeviceState(line)) {
@@ -32,13 +36,19 @@
       return;
     }
     if (ResponseParser.isDeviceControl(line)) {
+      logger.debug("DeviceControl: '" + line + "'");
       return;
     }
     if (ResponseParser.isUpdateStatus(line)) {
       Pattern pattern=Pattern.compile("Attr ID=\"(.*)\" Value=\"(.*)\"");
       Matcher matcher=pattern.matcher(line);
       if (matcher.groupCount() == 2) {
-        statusMap.put(matcher.group(0),matcher.group(1));
+        try {
+          CommandEnum cmd=CommandEnum.valueOf(matcher.group(0));
+          if (cmd != null)           statusMap.put(cmd,matcher.group(1));
+        }
+ catch (        IllegalStateException e) {
+        }
       }
       return;
     }

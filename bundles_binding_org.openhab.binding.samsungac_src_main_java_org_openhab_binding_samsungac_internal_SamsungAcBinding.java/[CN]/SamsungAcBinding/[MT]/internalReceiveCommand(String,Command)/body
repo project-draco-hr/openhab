@@ -1,18 +1,39 @@
 {
-  if (itemName != null) {
+  if (itemName != null && command != null) {
     logger.debug("InternalReceiveCommand +'" + itemName + "':'"+ command+ "'");
     String hostName=getAirConditionerInstance(itemName);
-    logger.debug("hostName: " + hostName);
-    String property=getProperty(itemName);
-    logger.debug("property: " + property);
-    SamsungAcHost host=nameHostMapper.get(hostName);
-    if ("AC_FUN_POWER".equals(property)) {
-      String cmd="Off";
-      if (command.toString() == "ON")       cmd="On";
-      host.getAirConditioner().sendCommand(property,cmd);
+    AirConditioner host=nameHostMapper.get(hostName);
+    if (host == null) {
+      return;
     }
- else     if ("AC_FUN_TEMPSET".equals(property)) {
-      host.getAirConditioner().sendCommand(property,command.toString());
-    }
-  }
+    CommandEnum property=getProperty(itemName);
+    String cmd=null;
+switch (property) {
+case AC_FUN_POWER:
+      cmd="ON".equals(command.toString()) ? "On" : "Off";
+    break;
+case AC_FUN_WINDLEVEL:
+  cmd=WindLevelEnum.getFromValue(command).toString();
+break;
+case AC_FUN_OPMODE:
+cmd=OperationModeEnum.getFromValue(command).toString();
+break;
+case AC_FUN_COMODE:
+cmd=ConvenientModeEnum.getFromValue(command).toString();
+break;
+case AC_FUN_DIRECTION:
+cmd=DirectionEnum.getFromValue(command).toString();
+break;
+case AC_FUN_TEMPSET:
+cmd=command.toString();
+break;
+default :
+cmd=command.toString();
+break;
+}
+if (cmd != null) {
+sendCommand(host,property,cmd);
+}
+ else logger.debug("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
+}
 }

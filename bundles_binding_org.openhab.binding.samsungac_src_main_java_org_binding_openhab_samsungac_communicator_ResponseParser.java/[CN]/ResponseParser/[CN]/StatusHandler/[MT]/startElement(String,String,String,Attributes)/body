@@ -1,5 +1,11 @@
 {
   if ("Attr".equals(qName)) {
-    values.put(attributes.getValue("ID"),attributes.getValue("Value"));
+    try {
+      CommandEnum cmd=CommandEnum.valueOf(attributes.getValue("ID"));
+      if (cmd != null)       values.put(cmd,attributes.getValue("Value"));
+    }
+ catch (    IllegalArgumentException e) {
+      logger.debug("Does not support attribute: '" + attributes.getValue("ID"));
+    }
   }
 }

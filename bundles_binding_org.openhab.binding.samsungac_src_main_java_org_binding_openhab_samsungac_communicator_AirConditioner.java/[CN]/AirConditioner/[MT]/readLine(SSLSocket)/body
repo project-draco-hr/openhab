@@ -1,9 +1,14 @@
 {
+  connect();
   BufferedReader r=new BufferedReader(new InputStreamReader(socket.getInputStream()));
   try {
     return r.readLine();
   }
  catch (  SocketTimeoutException e) {
+  }
+catch (  SSLException e) {
+    logger.debug("Got SSL Exception. Disconnecting...");
+    disconnect();
   }
   return null;
 }

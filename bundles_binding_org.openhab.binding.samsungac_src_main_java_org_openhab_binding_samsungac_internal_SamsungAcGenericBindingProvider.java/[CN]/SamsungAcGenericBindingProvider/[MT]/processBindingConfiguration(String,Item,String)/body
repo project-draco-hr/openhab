@@ -1,18 +1,5 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  if (bindingConfig.startsWith("<")) {
-    SamsungAcBindingConfig config=parseIncomingBindingConfig(item,bindingConfig);
-    addBindingConfig(item,config);
-  }
- else   if (bindingConfig.startsWith(">")) {
-    SamsungAcBindingConfig config=parseOutgoingBindingConfig(item,bindingConfig);
-    addBindingConfig(item,config);
-  }
- else   if (bindingConfig.startsWith("=")) {
-    SamsungAcBindingConfig config=parseBidirectionalBindingConfig(item,bindingConfig);
-    addBindingConfig(item,config);
-  }
- else {
-    throw new BindingConfigParseException("Item '" + item.getName() + "' does not start with <, > or =. it was:"+ bindingConfig);
-  }
+  SamsungAcBindingConfig config=parseBindingConfig(item,bindingConfig);
+  addBindingConfig(item,config);
 }

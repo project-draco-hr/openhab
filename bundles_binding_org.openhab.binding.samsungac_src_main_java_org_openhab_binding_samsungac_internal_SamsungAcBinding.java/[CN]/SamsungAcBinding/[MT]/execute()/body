@@ -7,21 +7,49 @@
     logger.debug("Name host mapper not yet set. Aborted refresh");
     return;
   }
-  for (  Map.Entry<String,SamsungAcHost> entry : nameHostMapper.entrySet()) {
-    SamsungAcHost host=entry.getValue();
+  for (  Map.Entry<String,AirConditioner> entry : nameHostMapper.entrySet()) {
+    AirConditioner host=entry.getValue();
     if (host.isConnected()) {
-      Map<String,String> status=host.getAirConditioner().getStatus();
-      eventPublisher.postUpdate("ac_current_temp",StringType.valueOf(status.get("AC_FUN_TEMPNOW")));
-    }
+      Map<CommandEnum,String> status=host.getStatus();
+      for (      CommandEnum cmd : CommandEnum.values()) {
+        String item=getItemName(cmd);
+        String value=status.get(cmd);
+        if (item != null && value != null) {
+switch (cmd) {
+case AC_FUN_TEMPNOW:
+case AC_FUN_TEMPSET:
+            postUpdate(item,DecimalType.valueOf(value));
+          break;
+case AC_FUN_POWER:
+        postUpdate(item,value.toUpperCase().equals("ON") ? OnOffType.ON : OnOffType.OFF);
+      break;
+case AC_FUN_COMODE:
+    postUpdate(item,DecimalType.valueOf(Integer.toString(ConvenientModeEnum.valueOf(value).value)));
+  break;
+case AC_FUN_OPMODE:
+postUpdate(item,DecimalType.valueOf(Integer.toString(OperationModeEnum.valueOf(value).value)));
+break;
+case AC_FUN_WINDLEVEL:
+postUpdate(item,DecimalType.valueOf(Integer.toString(DirectionEnum.valueOf(value).value)));
+break;
+case AC_FUN_DIRECTION:
+postUpdate(item,DecimalType.valueOf(Integer.toString(DirectionEnum.valueOf(value).value)));
+break;
+default :
+logger.debug("Not implementation for updating: '" + cmd + "'");
+break;
+}
+}
+}
+}
  else {
-      logger.debug("Broken connection found for '{}', attempting to reconnect...",entry.getKey());
-      try {
-        host.connect();
-        logger.debug("Connected");
-      }
- catch (      Exception e) {
-        logger.debug("Reconnect failed for '{}', will retry in {}s",entry.getKey(),refreshInterval / 1000);
-      }
-    }
-  }
+logger.debug("Broken connection found for '{}', attempting to reconnect...",entry.getKey());
+try {
+host.login();
+}
+ catch (Exception e) {
+logger.debug("Reconnect failed for '{}', will retry in {}s",entry.getKey(),refreshInterval / 1000);
+}
+}
+}
 }

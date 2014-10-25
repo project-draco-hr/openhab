@@ -1,7 +1,6 @@
 {
-  logger.info("Updated:" + config);
   Enumeration<String> keys=config.keys();
-  Map<String,SamsungAcHost> hosts=new HashMap<String,SamsungAcHost>();
+  Map<String,AirConditioner> hosts=new HashMap<String,AirConditioner>();
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
     if ("service.pid".equals(key)) {
@@ -9,9 +8,9 @@
     }
     String[] parts=key.split("\\.");
     String hostname=parts[0];
-    SamsungAcHost host=hosts.get(hostname);
+    AirConditioner host=hosts.get(hostname);
     if (host == null) {
-      host=new SamsungAcHost();
+      host=new AirConditioner();
     }
     String value=((String)config.get(key)).trim();
     if ("host".equals(parts[1])) {
@@ -26,5 +25,14 @@
     hosts.put(hostname,host);
   }
   nameHostMapper=hosts;
-  logger.debug("Size of nameHostMapper is: " + nameHostMapper.size());
+  if (nameHostMapper == null || nameHostMapper.size() == 0) {
+    Map<String,String> discovered=SsdpDiscovery.discover();
+    if (discovered != null && discovered.size() > 0) {
+      logger.warn("No Samsung Air Conditioner has been configured, but we found one with IP:'" + discovered.get("IP") + "' and MAC ADDRESS: '"+ discovered.get("MAC_ADDR")+ "'");
+      AirConditioner host=new AirConditioner();
+      host.setIpAddress(discovered.get("IP"));
+      host.setMacAddress(discovered.get("MAC_ADDR"));
+      nameHostMapper.put("DiscoveredAC",host);
+    }
+  }
 }
