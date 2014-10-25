@@ -2,7 +2,7 @@
   ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)this.getNode().getCommandClass(CommandClass.VERSION);
   if (versionCommandClass == null) {
     logger.error(String.format("NODE %d: Version command class not supported," + "reverting to version 1 for command class %s (0x%02x)",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel(),commandClass.getCommandClass().getKey()));
-    return;
+    return null;
   }
-  this.getController().sendData(versionCommandClass.getCommandClassVersionMessage(commandClass.getCommandClass()));
+  return versionCommandClass.getCommandClassVersionMessage(commandClass.getCommandClass());
 }
