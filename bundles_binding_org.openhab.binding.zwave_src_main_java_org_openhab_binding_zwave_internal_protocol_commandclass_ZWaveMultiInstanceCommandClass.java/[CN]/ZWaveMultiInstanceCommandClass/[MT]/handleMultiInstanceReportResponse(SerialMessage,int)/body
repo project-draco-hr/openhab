@@ -20,17 +20,4 @@
     zwaveCommandClass.setInstances(instances);
     logger.debug("NODE {}: Instances = {}, number of instances set.",this.getNode().getNodeId(),instances);
   }
-  int waiting=0;
-  for (  ZWaveCommandClass zwaveCommandClass : this.getNode().getCommandClasses()) {
-    if (zwaveCommandClass.getCommandClass() == CommandClass.NO_OPERATION)     continue;
-    if (zwaveCommandClass.getInstances() == 0) {
-      waiting++;
-      logger.debug("NODE {}: Waiting for command class {}.",this.getNode().getNodeId(),zwaveCommandClass.getCommandClass().getLabel());
-    }
-  }
-  if (waiting != 0) {
-    logger.debug("NODE {}: Waiting for {} responses.",this.getNode().getNodeId(),waiting);
-    return;
-  }
-  this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
 }

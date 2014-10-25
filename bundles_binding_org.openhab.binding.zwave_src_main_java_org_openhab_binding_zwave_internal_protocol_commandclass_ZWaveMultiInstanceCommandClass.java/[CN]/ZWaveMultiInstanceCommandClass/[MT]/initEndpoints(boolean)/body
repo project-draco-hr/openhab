@@ -1,0 +1,32 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  logger.debug("NODE {}: Initialising endpoints - version {}",this.getNode().getNodeId(),this.getVersion());
+switch (this.getVersion()) {
+case 1:
+    for (    ZWaveCommandClass commandClass : this.getNode().getCommandClasses()) {
+      if (commandClass.getCommandClass() == CommandClass.NO_OPERATION) {
+        continue;
+      }
+      if (commandClass.getInstances() == 0) {
+        result.add(getMultiInstanceGetMessage(commandClass.getCommandClass()));
+      }
+    }
+  break;
+case 2:
+if (refresh == true || this.endpoints.size() == 0) {
+  result.add(getMultiChannelEndpointGetMessage());
+}
+ else {
+  for (  Map.Entry<Integer,ZWaveEndpoint> entry : this.endpoints.entrySet()) {
+    if (refresh == true || entry.getValue().getCommandClasses().size() == 0) {
+      result.add(this.getMultiChannelCapabilityGetMessage(entry.getValue()));
+    }
+  }
+}
+break;
+default :
+logger.warn(String.format("NODE %d: Unknown version %d for command class %s (0x%02x)",this.getNode().getNodeId(),this.getVersion(),this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+break;
+}
+return result;
+}

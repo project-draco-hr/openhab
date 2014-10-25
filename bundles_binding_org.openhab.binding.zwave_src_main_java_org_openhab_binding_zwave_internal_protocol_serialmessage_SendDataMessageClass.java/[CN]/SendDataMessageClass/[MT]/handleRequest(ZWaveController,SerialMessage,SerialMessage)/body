@@ -7,26 +7,27 @@
     logger.warn("Transmission state not found, ignoring.");
     return false;
   }
-  logger.debug("CallBack ID = {}",callbackId);
-  logger.debug(String.format("Status = %s (0x%02x)",status.getLabel(),status.getKey()));
-  if (originalMessage == null || originalMessage.getCallbackId() != callbackId) {
-    logger.warn("Already processed another send data request for this callback Id, ignoring.");
+  ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
+  if (node == null) {
+    logger.warn("Node not found!");
     return false;
   }
+  logger.debug("NODE {}: SendData Request. CallBack ID = {}, Status = %s ({})",node.getNodeId(),callbackId,status.getLabel(),status.getKey());
+  if (originalMessage == null || originalMessage.getCallbackId() != callbackId) {
+    logger.warn("NODE {}: Already processed another send data request for this callback Id, ignoring.",node.getNodeId());
+    return false;
+  }
+  node.advanceNodeStage(lastSentMessage);
 switch (status) {
 case COMPLETE_OK:
-    ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
-  if (node == null)   break;
-if (node.isDead()) {
-  node.setAlive();
-  logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",node.getNodeId(),node.getNodeStage());
-}
+    if (node.isDead()) {
+      node.setAlive();
+      logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",node.getNodeId(),node.getNodeStage());
+    }
  else {
-  node.resetResendCount();
-  if (node.getNodeStage() == NodeStage.PING) {
-  }
-}
-checkTransactionComplete(lastSentMessage,incomingMessage);
+      node.resetResendCount();
+    }
+  checkTransactionComplete(lastSentMessage,incomingMessage);
 return true;
 case COMPLETE_NO_ACK:
 case COMPLETE_FAIL:

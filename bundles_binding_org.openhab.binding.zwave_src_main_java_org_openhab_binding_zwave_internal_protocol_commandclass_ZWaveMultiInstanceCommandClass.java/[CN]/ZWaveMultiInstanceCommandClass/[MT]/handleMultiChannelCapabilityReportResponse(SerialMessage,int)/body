@@ -11,7 +11,7 @@
   for (int endpointId=startId; endpointId <= endId; endpointId++) {
     ZWaveEndpoint endpoint=this.endpoints.get(endpointId);
     if (endpoint == null) {
-      logger.error("Endpoint {} not found on node {}. Cannot set command classes.",endpointId,this.getNode().getNodeId());
+      logger.error("NODE {}: Endpoint {} not found. Cannot set command classes.",this.getNode().getNodeId(),endpointId);
       continue;
     }
     Basic basic=this.getNode().getDeviceClass().getBasicDeviceClass();
@@ -57,6 +57,5 @@
         return;
       }
     }
-    this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
   }
 }

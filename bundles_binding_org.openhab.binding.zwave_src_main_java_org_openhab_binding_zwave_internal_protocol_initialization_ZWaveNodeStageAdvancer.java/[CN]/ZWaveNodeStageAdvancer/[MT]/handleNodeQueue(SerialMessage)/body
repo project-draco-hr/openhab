@@ -1,0 +1,11 @@
+{
+  if (this.initializationComplete) {
+    return;
+  }
+  logger.debug("NODE {}: Node advancer - checking intialisation queue.",this.node.getNodeId());
+  if (this.msgQueue.contains(incomingMessage)) {
+    this.msgQueue.remove(incomingMessage);
+    logger.debug("NODE {}: Node advancer - message removed from queue. Queue size now {}.",this.node.getNodeId(),this.msgQueue.size());
+    freeToSend=true;
+  }
+}
