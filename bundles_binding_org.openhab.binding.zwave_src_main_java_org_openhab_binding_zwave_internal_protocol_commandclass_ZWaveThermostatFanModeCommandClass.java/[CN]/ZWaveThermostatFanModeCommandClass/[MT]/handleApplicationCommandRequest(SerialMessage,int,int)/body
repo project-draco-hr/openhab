@@ -19,7 +19,8 @@ if (index >= FanModeType.values().length) continue;
 logger.debug("NODE {}: looking up Fan Mode type {}",this.getNode().getNodeId(),index);
 FanModeType fanModeTypeToAdd=FanModeType.getFanModeType(index);
 if (fanModeTypeToAdd != null) {
-  this.fanModeTypes.add(fanModeTypeToAdd);
+  FanMode newFanMode=new FanMode(fanModeTypeToAdd);
+  this.fanModes.put(fanModeTypeToAdd,newFanMode);
   logger.debug("NODE {}: Added Fan Mode type {} ({})",this.getNode().getNodeId(),fanModeTypeToAdd.getLabel(),index);
 }
  else {
@@ -27,12 +28,11 @@ if (fanModeTypeToAdd != null) {
 }
 }
 }
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 case THERMOSTAT_FAN_MODE_REPORT:
 logger.trace("NODE {}: Process Thermostat Fan Mode Report",this.getNode().getNodeId());
 processThermostatFanModeReport(serialMessage,offset,endpoint);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :
 logger.warn("NODE {}: Unsupported Command {} for command class {} ({}).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey());

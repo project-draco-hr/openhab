@@ -1,0 +1,13 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  for (  Map.Entry<AlarmType,Alarm> entry : this.alarms.entrySet()) {
+    if (refresh == true || entry.getValue().getInitialised() == false) {
+      if (this.getNode().getManufacturer() == 0x010F && this.getNode().getDeviceType() == 0x0700) {
+        logger.warn("NODE {}: Detected Fibaro FGK - 101 Door / Window sensor, only requesting alarm type {}.",this.getNode().getNodeId(),entry.getValue().getAlarmType().getLabel());
+        break;
+      }
+      result.add(getMessage(entry.getValue().getAlarmType()));
+    }
+  }
+  return result;
+}

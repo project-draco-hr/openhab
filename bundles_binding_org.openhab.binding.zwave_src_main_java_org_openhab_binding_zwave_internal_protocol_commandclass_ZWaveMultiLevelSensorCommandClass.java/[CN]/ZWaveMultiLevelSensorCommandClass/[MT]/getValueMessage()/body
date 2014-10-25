@@ -1,8 +1,10 @@
 {
   if (this.getVersion() > 4) {
-    for (    SensorType sensorType : this.sensors)     return this.getMessage(sensorType);
+    for (    Map.Entry<SensorType,Sensor> entry : this.sensors.entrySet()) {
+      return this.getMessage(entry.getValue().getSensorType());
+    }
   }
-  logger.debug("NODE {}: Creating new message for application command SENSOR_MULTI_LEVEL_GET",this.getNode().getNodeId());
+  logger.debug("NODE {}: Creating new message for command SENSOR_MULTI_LEVEL_GET",this.getNode().getNodeId());
   SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
   byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)SENSOR_MULTI_LEVEL_GET};
   result.setMessagePayload(newPayload);

@@ -51,10 +51,11 @@
       if (parentClass != null)       commandClass.setVersion(parentClass.getVersion());
     }
   }
-  if (this.endpointsAreTheSameDeviceClass)   this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
- else {
+  if (!this.endpointsAreTheSameDeviceClass) {
     for (    ZWaveEndpoint ep : this.endpoints.values()) {
-      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN)       return;
+      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN) {
+        return;
+      }
     }
     this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
   }

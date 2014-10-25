@@ -1,0 +1,16 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  if (refresh == true || dynamicDone == false) {
+    if (this.getVersion() > 4) {
+      for (      Map.Entry<SensorType,Sensor> entry : this.sensors.entrySet()) {
+        if (refresh == true || entry.getValue().getInitialised() == false) {
+          result.add(this.getMessage(entry.getValue().getSensorType()));
+        }
+      }
+    }
+ else {
+      result.add(this.getValueMessage());
+    }
+  }
+  return result;
+}

@@ -1,0 +1,9 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  for (  Map.Entry<AlarmType,Alarm> entry : this.alarms.entrySet()) {
+    if (refresh == true || entry.getValue().getInitialised() == false) {
+      result.add(getMessage(entry.getValue().getAlarmType()));
+    }
+  }
+  return result;
+}

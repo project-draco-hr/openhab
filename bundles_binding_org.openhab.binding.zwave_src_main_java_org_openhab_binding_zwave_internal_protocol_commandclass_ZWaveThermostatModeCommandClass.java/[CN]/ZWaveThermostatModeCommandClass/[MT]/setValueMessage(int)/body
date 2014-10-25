@@ -1,7 +1,9 @@
 {
-  logger.debug("NODE {}: setValueMessage {}, modeType empty {}",this.getNode().getNodeId(),value,modeTypes.isEmpty());
-  if (modeTypes.isEmpty())   return this.getSupportedMessage();
-  if (!modeTypes.contains(ModeType.getModeType(value))) {
+  logger.debug("NODE {}: setValueMessage {}, modeType empty {}",this.getNode().getNodeId(),value,modes.isEmpty());
+  if (modes.isEmpty()) {
+    return this.getSupportedMessage();
+  }
+  if (!modes.containsKey(ModeType.getModeType(value))) {
     logger.error("NODE {}: Unsupported mode type {}",this.getNode().getNodeId(),value);
     return null;
   }

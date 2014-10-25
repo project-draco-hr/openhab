@@ -1,11 +1,11 @@
 {
   if (this.nodeStageAdvancer.isInitializationComplete()) {
     logger.debug("NODE {}: Node is now ALIVE",this.nodeId);
-    this.nodeStage=NodeStage.DONE;
+    this.nodeStageAdvancer.setCurrentStage(NodeStage.DONE);
   }
  else {
-    this.nodeStage=NodeStage.DYNAMIC;
-    this.nodeStageAdvancer.advanceNodeStage(NodeStage.DONE);
+    this.nodeStageAdvancer.setCurrentStage(NodeStage.DYNAMIC);
+    this.nodeStageAdvancer.advanceNodeStage();
   }
   this.resendCount=0;
   this.lastUpdated=Calendar.getInstance().getTime();

@@ -14,7 +14,7 @@ return;
 case SWITCH_BINARY_REPORT:
 logger.trace("Process Switch Binary Report");
 processSwitchBinaryReport(serialMessage,offset,endpoint);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+dynamicDone=true;
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));

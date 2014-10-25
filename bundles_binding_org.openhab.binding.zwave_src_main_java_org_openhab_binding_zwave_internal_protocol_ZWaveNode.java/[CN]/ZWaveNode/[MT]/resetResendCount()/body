@@ -1,5 +1,7 @@
 {
   this.resendCount=0;
-  if (this.nodeStageAdvancer.isInitializationComplete() && this.nodeStage != NodeStage.DEAD)   this.nodeStage=NodeStage.DONE;
+  if (this.nodeStageAdvancer.isInitializationComplete() && this.nodeStageAdvancer.getCurrentStage() != NodeStage.DEAD) {
+    this.nodeStageAdvancer.setCurrentStage(NodeStage.DONE);
+  }
   this.lastUpdated=Calendar.getInstance().getTime();
 }

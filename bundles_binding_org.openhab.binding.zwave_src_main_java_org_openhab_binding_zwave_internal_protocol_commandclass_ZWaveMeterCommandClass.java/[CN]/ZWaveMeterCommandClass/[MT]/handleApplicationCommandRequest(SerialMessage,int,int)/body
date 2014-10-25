@@ -46,9 +46,7 @@ this.getController().notifyEventListeners(zEvent);
  catch (NumberFormatException e) {
 return;
 }
-if (this.getNode().getNodeStage() != NodeStage.DONE) {
-this.getNode().advanceNodeStage(NodeStage.DONE);
-}
+dynamicDone=true;
 break;
 case METER_SUPPORTED_REPORT:
 logger.trace("Process Meter Supported Report");
@@ -75,7 +73,7 @@ logger.debug("NODE {}: Meter Scale = {} ({})",this.getNode().getNodeId(),scale.g
 if (!this.meterScales.contains(scale)) this.meterScales.add(scale);
 }
 }
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 default :
 logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));

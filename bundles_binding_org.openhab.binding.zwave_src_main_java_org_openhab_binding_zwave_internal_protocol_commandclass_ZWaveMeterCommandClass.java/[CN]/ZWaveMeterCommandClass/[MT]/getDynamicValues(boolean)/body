@@ -1,0 +1,17 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  if (refresh == true || dynamicDone == false) {
+switch (this.getVersion()) {
+case 1:
+      result.add(this.getValueMessage());
+    break;
+case 2:
+case 3:
+  for (  MeterScale scale : this.meterScales) {
+    result.add(this.getMessage(scale));
+  }
+break;
+}
+}
+return result;
+}

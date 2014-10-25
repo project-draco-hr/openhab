@@ -49,6 +49,9 @@ this.msgQueue.add(msg);
 this.controller.enqueue(msg);
 break;
 case DETAILS:
+if (this.node.getManufacturer() != Integer.MAX_VALUE && this.node.getDeviceType() != Integer.MAX_VALUE && this.node.getDeviceId() != Integer.MAX_VALUE) {
+break;
+}
 ZWaveManufacturerSpecificCommandClass manufacturerSpecific=(ZWaveManufacturerSpecificCommandClass)this.node.getCommandClass(CommandClass.MANUFACTURER_SPECIFIC);
 if (manufacturerSpecific != null) {
 msg=manufacturerSpecific.getManufacturerSpecificMessage();

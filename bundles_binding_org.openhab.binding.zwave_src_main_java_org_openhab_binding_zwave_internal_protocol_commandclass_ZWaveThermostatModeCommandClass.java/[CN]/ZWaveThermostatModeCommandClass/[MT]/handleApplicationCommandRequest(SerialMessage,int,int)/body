@@ -18,7 +18,8 @@ int index=((i - (offset + 1)) * 8) + bit;
 if (index >= ModeType.values().length) continue;
 ModeType modeTypeToAdd=ModeType.getModeType(index);
 if (modeTypeToAdd != null) {
-  this.modeTypes.add(modeTypeToAdd);
+  Mode newMode=new Mode(modeTypeToAdd);
+  this.modes.put(modeTypeToAdd,newMode);
   logger.debug("NODE {}: Added mode type {} ({})",this.getNode().getNodeId(),modeTypeToAdd.getLabel(),index);
 }
  else {
@@ -26,12 +27,11 @@ if (modeTypeToAdd != null) {
 }
 }
 }
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 case THERMOSTAT_MODE_REPORT:
 logger.trace("NODE {}: Process Thermostat Mode Report",this.getNode().getNodeId());
 processThermostatModeReport(serialMessage,offset,endpoint);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :
 logger.warn("NODE {}: Unsupported Command {} for command class {} ({}).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey());

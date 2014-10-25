@@ -4,7 +4,7 @@
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case SENSOR_BINARY_GET:
-    logger.warn(String.format("NODE %d: Command 0x%02X not implemented.",this.getNode().getNodeId(),command));
+    logger.warn("NODE {}: Command {} not implemented.",this.getNode().getNodeId(),command);
   return;
 case SENSOR_BINARY_REPORT:
 logger.trace("Process Sensor Binary Report");
@@ -16,10 +16,10 @@ sensorType=SensorType.getSensorType(serialMessage.getMessagePayloadByte(offset +
 logger.debug("Sensor Type is {}",sensorType);
 if (sensorType == null) sensorType=SensorType.UNKNOWN;
 }
-logger.debug(String.format("NODE %d: Sensor Binary report, type=%s, value=0x%02X",this.getNode().getNodeId(),sensorType.getLabel(),value));
+logger.debug("NODE {}: Sensor Binary report, type={}, value={}",this.getNode().getNodeId(),sensorType.getLabel(),value);
 ZWaveBinarySensorValueEvent zEvent=new ZWaveBinarySensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,value);
 this.getController().notifyEventListeners(zEvent);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+dynamicDone=true;
 break;
 default :
 logger.warn(String.format("NODE %d: Unsupported Command 0x%02X for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));

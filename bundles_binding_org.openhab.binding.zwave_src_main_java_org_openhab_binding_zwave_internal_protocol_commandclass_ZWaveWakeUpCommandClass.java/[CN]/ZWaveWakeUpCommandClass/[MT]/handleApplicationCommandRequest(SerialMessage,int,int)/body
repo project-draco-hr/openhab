@@ -23,7 +23,6 @@ logger.debug("NODE {}: Wake up interval set",this.getNode().getNodeId());
 this.initializationComplete=true;
 ZWaveWakeUpEvent event=new ZWaveWakeUpEvent(getNode().getNodeId(),WAKE_UP_INTERVAL_REPORT);
 this.getController().notifyEventListeners(event);
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
 break;
 case WAKE_UP_INTERVAL_CAPABILITIES_REPORT:
 logger.trace("Process Wake Up Interval Capabilities");
@@ -35,9 +34,9 @@ logger.debug("NODE {}: Wake up interval capabilities report",this.getNode().getN
 logger.debug("NODE {}: Minimum interval = {}",this.getNode().getNodeId(),this.minInterval);
 logger.debug("NODE {}: Maximum interval = {}",this.getNode().getNodeId(),this.maxInterval);
 logger.debug("NODE {}: Default interval = {}",this.getNode().getNodeId(),this.defaultInterval);
-logger.debug("NODE {}: Interval step = {}",this.getNode().getNodeId(),this.intervalStep);
+logger.debug("NODE {}: Interval step    = {}",this.getNode().getNodeId(),this.intervalStep);
 this.initializationComplete=true;
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 case WAKE_UP_NOTIFICATION:
 logger.trace("Process Wake Up Notification");
@@ -46,7 +45,6 @@ serialMessage.setTransActionCanceled(true);
 if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().getNodeStage() == NodeStage.DEAD)) {
 logger.info("NODE {}: Got Wake Up Notification from node, continuing initialization.",this.getNode().getNodeId());
 this.getNode().setNodeStage(NodeStage.WAKEUP);
-this.getNode().advanceNodeStage(NodeStage.DETAILS);
 }
 this.setAwake(true);
 break;

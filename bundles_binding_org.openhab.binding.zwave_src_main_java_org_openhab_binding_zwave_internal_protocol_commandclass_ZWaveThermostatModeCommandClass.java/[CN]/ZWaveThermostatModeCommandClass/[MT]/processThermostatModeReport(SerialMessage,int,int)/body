@@ -6,7 +6,12 @@
     logger.error("NODE {}: Unknown Mode Type = {}, ignoring report.",this.getNode().getNodeId(),value);
     return;
   }
-  if (!this.modeTypes.contains(modeType))   this.modeTypes.add(modeType);
+  Mode mode=modes.get(modeType);
+  if (mode == null) {
+    mode=new Mode(modeType);
+    modes.put(modeType,mode);
+  }
+  mode.setInitialised();
   logger.debug("NODE {}: Thermostat Mode Report, value = {}",this.getNode().getNodeId(),modeType.getLabel());
   ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),new BigDecimal(value));
   this.getController().notifyEventListeners(zEvent);

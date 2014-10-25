@@ -6,14 +6,14 @@
       ZWaveCommandClassDynamicState zdds=(ZWaveCommandClassDynamicState)zwaveCommandClass;
       int instances=zwaveCommandClass.getInstances();
       if (instances == 0) {
-        Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
+        Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues(true);
         for (        SerialMessage serialMessage : dynamicQueries) {
           sendData(serialMessage);
         }
       }
  else {
         for (int i=1; i <= instances; i++) {
-          Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
+          Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues(true);
           for (          SerialMessage serialMessage : dynamicQueries) {
             sendData(node.encapsulate(serialMessage,zwaveCommandClass,i));
           }
@@ -28,7 +28,7 @@
           if (endpointCommandClass instanceof ZWaveCommandClassDynamicState) {
             logger.debug("NODE {}: Found dynamic state command class {}",node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
             ZWaveCommandClassDynamicState zdds2=(ZWaveCommandClassDynamicState)endpointCommandClass;
-            Collection<SerialMessage> dynamicQueries=zdds2.getDynamicValues();
+            Collection<SerialMessage> dynamicQueries=zdds2.getDynamicValues(true);
             for (            SerialMessage serialMessage : dynamicQueries) {
               sendData(node.encapsulate(serialMessage,endpointCommandClass,endpoint.getEndpointId()));
             }

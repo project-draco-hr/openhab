@@ -1,5 +1,7 @@
 {
+  logger.debug("Checking transaction complete: {}-|-{} cancelled={}",incomingMessage.getMessageClass(),lastSentMessage.getExpectedReply(),incomingMessage.isTransActionCanceled());
   if (incomingMessage.getMessageClass() == lastSentMessage.getExpectedReply() && !incomingMessage.isTransActionCanceled()) {
     transactionComplete=true;
+    logger.debug("         transaction complete!");
   }
 }
