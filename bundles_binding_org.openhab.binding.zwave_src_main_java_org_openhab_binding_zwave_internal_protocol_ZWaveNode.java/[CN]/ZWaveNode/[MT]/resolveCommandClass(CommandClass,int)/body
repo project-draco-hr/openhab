@@ -1,15 +1,23 @@
 {
-  if (commandClass == null)   return null;
+  if (commandClass == null) {
+    return null;
+  }
   ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)supportedCommandClasses.get(CommandClass.MULTI_INSTANCE);
   if (multiInstanceCommandClass != null && multiInstanceCommandClass.getVersion() == 2) {
     ZWaveEndpoint endpoint=multiInstanceCommandClass.getEndpoint(endpointId);
     if (endpoint != null) {
       ZWaveCommandClass result=endpoint.getCommandClass(commandClass);
-      if (result != null)       return result;
+      if (result != null) {
+        return result;
+      }
     }
   }
   ZWaveCommandClass result=getCommandClass(commandClass);
-  if (result == null)   return result;
-  if (multiInstanceCommandClass != null && multiInstanceCommandClass.getVersion() == 1 && result.getInstances() >= endpointId)   return result;
+  if (result == null) {
+    return result;
+  }
+  if (multiInstanceCommandClass != null && multiInstanceCommandClass.getVersion() == 1 && result.getInstances() >= endpointId) {
+    return result;
+  }
   return endpointId == 1 ? result : null;
 }
