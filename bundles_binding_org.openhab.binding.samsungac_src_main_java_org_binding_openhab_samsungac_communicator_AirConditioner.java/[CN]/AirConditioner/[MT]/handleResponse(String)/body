@@ -24,7 +24,6 @@
     }
     if (ResponseParser.isReadyForTokenResponse(line)) {
       logger.warn("Switch off and on the air conditioner within 30 seconds");
-      Thread.sleep(20);
       return;
     }
     if (ResponseParser.isSuccessfulLoginResponse(line)) {
@@ -32,6 +31,7 @@
       return;
     }
     if (ResponseParser.isDeviceState(line)) {
+      logger.debug("Response is device state '" + line + "'");
       statusMap=ResponseParser.parseStatusResponse(line);
       return;
     }
