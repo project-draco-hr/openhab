@@ -6,34 +6,30 @@
     logger.debug("NODE {}: Message in initialisation queue.",this.node.getNodeId());
     this.msgQueue.remove(incomingMessage);
   }
-  if (!msgQueue.isEmpty()) {
-    return;
-  }
-  currentStage=currentStage.getNextStage();
-  SerialMessage msg;
-  this.node.setQueryStageTimeStamp(Calendar.getInstance().getTime());
+  while (msgQueue.isEmpty()) {
+    currentStage=currentStage.getNextStage();
+    logger.debug("NODE {}: Advancing initialisation to {}.",this.node.getNodeId(),currentStage.getLabel());
+    this.node.setQueryStageTimeStamp(Calendar.getInstance().getTime());
+    SerialMessage msg;
 switch (currentStage) {
 case EMPTYNODE:
-    if (this.node.getManufacturer() != Integer.MAX_VALUE) {
-      this.currentStage=NodeStage.PROTOINFO;
-    }
+      if (this.node.getManufacturer() != Integer.MAX_VALUE) {
+        this.currentStage=NodeStage.PROTOINFO;
+      }
  else {
-      try {
-        this.controller.identifyNode(this.node.getNodeId());
+        try {
+          this.controller.identifyNode(this.node.getNodeId());
+        }
+ catch (        SerialInterfaceException e) {
+          logger.error("NODE {}: Got error {}, while identifying node",this.node.getNodeId(),e.getLocalizedMessage());
+        }
       }
- catch (      SerialInterfaceException e) {
-        logger.error("NODE {}: Got error {}, while identifying node",this.node.getNodeId(),e.getLocalizedMessage());
-      }
-      break;
-    }
-  break;
+    break;
 case PROTOINFO:
-if (this.node.getNodeId() == this.controller.getOwnNodeId()) {
-  logger.debug("NODE {}: Initialisation complete.",this.node.getNodeId());
-  initializationComplete=true;
-  this.currentStage=NodeStage.DONE;
-  break;
-}
+  if (this.node.getNodeId() == this.controller.getOwnNodeId()) {
+    this.currentStage=NodeStage.DONE;
+    break;
+  }
 ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)this.node.getCommandClass(CommandClass.NO_OPERATION);
 if (zwaveCommandClass == null) {
 break;
@@ -60,7 +56,7 @@ this.msgQueue.add(msg);
 this.controller.sendData(msg);
 break;
 }
-logger.warn("NODE {}: does not support MANUFACTURER_SPECIFIC, proceeding to version node stage.",this.node.getNodeId());
+break;
 case MANSPEC01:
 ZWaveVersionCommandClass version=(ZWaveVersionCommandClass)this.node.getCommandClass(CommandClass.VERSION);
 for (ZWaveCommandClass zwaveVersionClass : this.node.getCommandClasses()) {
@@ -73,20 +69,18 @@ this.controller.sendData(msg);
 zwaveVersionClass.setVersion(1);
 }
 }
-if (!this.msgQueue.isEmpty()) break;
-this.currentStage=NodeStage.VERSION;
+break;
 case VERSION:
 ZWaveMultiInstanceCommandClass multiInstance=(ZWaveMultiInstanceCommandClass)this.node.getCommandClass(CommandClass.MULTI_INSTANCE);
 if (multiInstance != null) {
 msg=multiInstance.initEndpoints();
 this.msgQueue.add(msg);
 this.controller.sendData(msg);
-break;
 }
-logger.trace("NODE {}: does not support MULTI_INSTANCE, proceeding to static node stage.",this.node.getNodeId());
-this.currentStage=NodeStage.INSTANCES_ENDPOINTS;
+break;
 case INSTANCES_ENDPOINTS:
 this.currentStage=NodeStage.STATIC_VALUES;
+break;
 case STATIC_VALUES:
 for (ZWaveCommandClass zwaveStaticClass : this.node.getCommandClasses()) {
 logger.trace("NODE {}: Inspecting command class {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
@@ -131,9 +125,7 @@ this.controller.sendData(msg);
 }
 }
 }
-if (!this.msgQueue.isEmpty()) break;
-logger.trace("NODE {}: Done getting static values, proceeding to dynamic node stage.",this.node.getNodeId());
-this.currentStage=NodeStage.DYNAMIC;
+break;
 case DYNAMIC:
 for (ZWaveCommandClass zwaveDynamicClass : this.node.getCommandClasses()) {
 logger.trace("NODE {}: Inspecting command class {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
@@ -178,17 +170,15 @@ this.controller.sendData(msg);
 }
 }
 }
-if (!this.msgQueue.isEmpty()) break;
-logger.trace("NODE {}: Done getting dynamic values, proceeding to done node stage.",this.node.getNodeId());
-this.currentStage=NodeStage.DONE;
-nodeSerializer.SerializeNode(this.node);
-logger.debug("NODE {}: Initialisation complete.",this.node.getNodeId());
-initializationComplete=true;
 break;
 case DONE:
+initializationComplete=true;
 case DEAD:
+nodeSerializer.SerializeNode(this.node);
+logger.debug("NODE {}: Initialisation complete.",this.node.getNodeId());
 break;
 default :
 logger.error("NODE {}: Unknown node state {} encountered.",this.node.getNodeId(),this.node.getNodeStage().getLabel());
+}
 }
 }
