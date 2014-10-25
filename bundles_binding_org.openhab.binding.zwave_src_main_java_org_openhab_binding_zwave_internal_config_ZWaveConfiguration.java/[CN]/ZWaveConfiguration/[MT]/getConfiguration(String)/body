@@ -101,7 +101,7 @@ if (node.getName() == null || node.getName().isEmpty()) {
 record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/","Node " + node.getNodeId());
 }
  else {
-record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/",node.getName());
+record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/",node.getNodeId() + ": " + node.getName());
 }
 if (node.getManufacturer() == Integer.MAX_VALUE) {
 }
@@ -122,6 +122,9 @@ boolean canDelete=false;
 switch (node.getNodeStage()) {
 case DEAD:
 record.state=OpenHABConfigurationRecord.STATE.ERROR;
+break;
+case FAILED:
+record.state=OpenHABConfigurationRecord.STATE.ERROR;
 canDelete=true;
 break;
 case DONE:
@@ -136,7 +139,6 @@ if (node.getDeadCount() > 0 && timeSinceLastDead < 86400000) record.state=OpenHA
 break;
 default :
 record.state=OpenHABConfigurationRecord.STATE.INITIALIZING;
-canDelete=true;
 break;
 }
 record.addAction("Heal","Heal Node");
@@ -272,11 +274,12 @@ record.value=df.format(node.getLastUpdated());
 records.add(record);
 if (networkMonitor != null) {
 record=new OpenHABConfigurationRecord(domain,"LastHeal","Heal Status",true);
-record.value=networkMonitor.getNodeState(nodeId);
+if (node.getHealState() == null) record.value=networkMonitor.getNodeState(nodeId);
+ else record.value=node.getHealState();
 records.add(record);
 }
 record=new OpenHABConfigurationRecord(domain,"NodeStage","Node Stage",true);
-record.value=node.getNodeStage().getLabel() + " @ " + df.format(node.getQueryStageTimeStamp());
+record.value=node.getNodeStage() + " @ " + df.format(node.getQueryStageTimeStamp());
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Packets","Packet Statistics",true);
 record.value=node.getRetryCount() + " / " + node.getSendCount();
@@ -286,7 +289,7 @@ if (node.getDeadCount() == 0) {
 record.value=Boolean.toString(node.isDead());
 }
  else {
-record.value=Boolean.toString(node.isDead()) + " [" + node.getDeadCount()+ " previous - last @ "+ node.getDeadTime().toString()+ "]";
+record.value=Boolean.toString(node.isDead()) + " [" + node.getDeadCount()+ " previous - last @ "+ df.format(node.getDeadTime())+ "]";
 }
 records.add(record);
 }
