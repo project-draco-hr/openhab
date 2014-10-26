@@ -332,7 +332,7 @@ if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDev
 List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
 if (groupList != null) {
 for (ZWaveDbAssociationGroup group : groupList) {
-record=new OpenHABConfigurationRecord(domain,"association" + group.Index + "/",database.getLabel(group.Label),group.SetToController);
+record=new OpenHABConfigurationRecord(domain,"association" + group.Index + "/",database.getLabel(group.Label),true);
 record.description=database.getLabel(group.Help);
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 int memberCnt=0;
