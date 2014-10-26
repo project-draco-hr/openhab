@@ -96,7 +96,7 @@ ZWaveMultiInstanceCommandClass multiInstance=(ZWaveMultiInstanceCommandClass)thi
 if (multiInstance != null) {
 logger.debug("NODE {}: ENDPOINTS - MultiInstance is supported",this.node.getNodeId());
 addCollectionToQueue(multiInstance.initEndpoints(stageAdvanced));
-logger.debug("NODE {}: ENDPOINTS - queued {} frames",this.msgQueue.size());
+logger.debug("NODE {}: ENDPOINTS - queued {} frames",this.node.getNodeId(),this.msgQueue.size());
 }
 break;
 case STATIC_VALUES:
@@ -129,7 +129,9 @@ addCollectionToQueue(zcci2.initialize(stageAdvanced),endpointCommandClass,endpoi
 }
 }
 }
-logger.debug("NODE {}: STATIC_VALUES - queued {} frames",this.msgQueue.size());
+logger.debug("NODE {}: STATIC_VALUES - queued {} frames",this.node.getNodeId(),this.msgQueue.size());
+break;
+case ASSOCIATIONS:
 break;
 case DYNAMIC_VALUES:
 for (ZWaveCommandClass zwaveDynamicClass : this.node.getCommandClasses()) {
@@ -161,7 +163,7 @@ addCollectionToQueue(zdds2.getDynamicValues(stageAdvanced),endpointCommandClass,
 }
 }
 }
-logger.debug("NODE {}: DYNAMIC_VALUES - queued {} frames",this.msgQueue.size());
+logger.debug("NODE {}: DYNAMIC_VALUES - queued {} frames",this.node.getNodeId(),this.msgQueue.size());
 break;
 case DONE:
 initializationComplete=true;
