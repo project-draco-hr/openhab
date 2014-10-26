@@ -4,7 +4,6 @@
   }
   if (event instanceof ZWaveTransactionCompletedEvent) {
     SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
-    logger.debug("NODE {}: Initialisation transaction complete for {}",this.node.getNodeId(),serialMessage.getMessageClass());
     if (serialMessage.getMessageClass() == SerialMessageClass.SendData && serialMessage.getMessageType() == SerialMessageType.Request) {
       byte[] payload=serialMessage.getMessagePayload();
       if (payload.length < 3 || this.node.getNodeId() != (payload[0] & 0xFF)) {
@@ -15,11 +14,19 @@
       return;
     }
     if (serialMessage.getMessageClass() == SerialMessageClass.IdentifyNode) {
+      byte[] payload=serialMessage.getMessagePayload();
+      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
+        return;
+      }
       logger.debug("NODE {}: Initialisation transaction complete event (ApplicationUpdate)",this.node.getNodeId());
       handleNodeQueue(serialMessage);
       return;
     }
     if (serialMessage.getMessageClass() == SerialMessageClass.RequestNodeInfo) {
+      byte[] payload=serialMessage.getMessagePayload();
+      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
+        return;
+      }
       logger.debug("NODE {}: Initialisation transaction complete event (RequestNodeInfo)",this.node.getNodeId());
       handleNodeQueue(serialMessage);
       return;

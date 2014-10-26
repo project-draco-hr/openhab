@@ -43,12 +43,16 @@
       if (data == 0xef) {
         break;
       }
-      logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",this.getNode().getNodeId(),data));
       ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
-      if (commandClass == null)       continue;
+      if (commandClass == null) {
+        continue;
+      }
+      logger.debug("NODE {}: Adding command class {} to the list of supported command classes.",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel());
       endpoint.addCommandClass(commandClass);
       ZWaveCommandClass parentClass=this.getNode().getCommandClass(commandClass.getCommandClass());
-      if (parentClass != null)       commandClass.setVersion(parentClass.getVersion());
+      if (parentClass != null) {
+        commandClass.setVersion(parentClass.getVersion());
+      }
     }
   }
   if (!this.endpointsAreTheSameDeviceClass) {

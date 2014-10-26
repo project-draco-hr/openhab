@@ -7,7 +7,7 @@
     logger.error(String.format("NODE %d: Unsupported command class 0x%02x",this.getNode().getNodeId(),commandClassCode));
     return;
   }
-  logger.debug(String.format("NODE %d: Requested Command Class = %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
+  logger.debug("NODE {}: Requested Command Class = {}",this.getNode().getNodeId(),commandClass.getLabel());
   ZWaveCommandClass zwaveCommandClass=this.getNode().getCommandClass(commandClass);
   if (zwaveCommandClass == null) {
     logger.error(String.format("NODE %d: Unsupported command class %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
@@ -18,5 +18,5 @@
     instances=1;
   }
   zwaveCommandClass.setInstances(instances);
-  logger.debug("NODE {}: Instances = {}, number of instances set.",this.getNode().getNodeId(),instances);
+  logger.debug("NODE {}: Command class {}, has {} instance(s).",this.getNode().getNodeId(),commandClass.getLabel(),instances);
 }
