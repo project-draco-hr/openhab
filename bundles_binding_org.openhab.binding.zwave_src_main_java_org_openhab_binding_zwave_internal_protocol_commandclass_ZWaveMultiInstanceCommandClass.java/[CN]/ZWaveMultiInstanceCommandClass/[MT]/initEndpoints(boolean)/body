@@ -7,7 +7,9 @@ case 1:
       if (commandClass.getCommandClass() == CommandClass.NO_OPERATION) {
         continue;
       }
+      logger.debug("NODE {}: ENDPOINTS - checking {}, Instances {}",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel(),commandClass.getInstances());
       if (commandClass.getInstances() == 0) {
+        logger.debug("NODE {}: ENDPOINTS - found    {}",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel());
         result.add(getMultiInstanceGetMessage(commandClass.getCommandClass()));
       }
     }
