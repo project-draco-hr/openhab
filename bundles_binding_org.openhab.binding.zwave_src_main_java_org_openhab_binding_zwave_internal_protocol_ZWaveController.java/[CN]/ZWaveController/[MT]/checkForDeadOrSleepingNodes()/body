@@ -2,19 +2,24 @@
   int completeCount=0;
   if (zwaveNodes.isEmpty())   return;
   for (  SerialMessage serialMessage : sendQueue) {
-    if (serialMessage.getPriority() == SerialMessagePriority.Low)     return;
+    if (serialMessage.getPriority() == SerialMessagePriority.Low) {
+      return;
+    }
   }
   logger.trace("Checking for Dead or Sleeping Nodes.");
   for (  Map.Entry<Integer,ZWaveNode> entry : zwaveNodes.entrySet()) {
-    if (entry.getValue().getNodeStage() == NodeStage.EMPTYNODE)     continue;
-    logger.debug(String.format("NODE %d: Has been in Stage %s since %s",entry.getKey(),entry.getValue().getNodeStage().getLabel(),entry.getValue().getQueryStageTimeStamp().toString()));
+    if (entry.getValue().getNodeStage() == NodeStage.EMPTYNODE) {
+      continue;
+    }
+    logger.debug("NODE {}: Has been in Stage {} since {}",entry.getKey(),entry.getValue().getNodeStage().getLabel(),entry.getValue().getQueryStageTimeStamp().toString());
     if (entry.getValue().getNodeStage() == NodeStage.DONE || entry.getValue().getNodeStage() == NodeStage.DEAD || (!entry.getValue().isListening() && !entry.getValue().isFrequentlyListening())) {
       completeCount++;
       continue;
     }
-    logger.trace("NODE {}: Checking if {} miliseconds have passed in current stage.",entry.getKey(),QUERY_STAGE_TIMEOUT);
-    if (Calendar.getInstance().getTimeInMillis() < (entry.getValue().getQueryStageTimeStamp().getTime() + QUERY_STAGE_TIMEOUT))     continue;
-    logger.warn(String.format("NODE %d: May be dead, marking node DEAD.",entry.getKey()));
+    if (Calendar.getInstance().getTimeInMillis() < (entry.getValue().getQueryStageTimeStamp().getTime() + QUERY_STAGE_TIMEOUT)) {
+      continue;
+    }
+    logger.warn("NODE {}: May be dead, marking node DEAD.",entry.getKey());
     entry.getValue().setDead();
     completeCount++;
   }

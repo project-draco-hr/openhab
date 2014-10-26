@@ -6,6 +6,7 @@
     SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
     if (serialMessage.getMessageClass() == SerialMessageClass.SendData && serialMessage.getMessageType() == SerialMessageType.Request) {
       byte[] payload=serialMessage.getMessagePayload();
+      logger.debug("====== Node is {}",payload[0] & 0xFF);
       if (payload.length < 3 || this.node.getNodeId() != (payload[0] & 0xFF)) {
         return;
       }
@@ -28,6 +29,15 @@
         return;
       }
       logger.debug("NODE {}: Initialisation transaction complete event (RequestNodeInfo)",this.node.getNodeId());
+      handleNodeQueue(serialMessage);
+      return;
+    }
+    if (serialMessage.getMessageClass() == SerialMessageClass.GetRoutingInfo) {
+      byte[] payload=serialMessage.getMessagePayload();
+      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
+        return;
+      }
+      logger.debug("NODE {}: Initialisation transaction complete event (GetRoutingInfo)",this.node.getNodeId());
       handleNodeQueue(serialMessage);
       return;
     }
