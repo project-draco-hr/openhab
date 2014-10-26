@@ -2,75 +2,74 @@
   if (this.initializationComplete) {
     return;
   }
-  logger.debug("NODE {}: Node advancer - state {}, queue length {}, free to send {}.",this.node.getNodeId(),currentStage.getLabel(),msgQueue.size(),freeToSend);
+  logger.debug("NODE {}: Node advancer - {} - queue length {}, free to send {}.",this.node.getNodeId(),currentStage.getLabel(),msgQueue.size(),freeToSend);
   SerialMessage msg;
-  if (msgQueue.isEmpty() == false) {
-    if (freeToSend == true) {
-      try {
-        msg=this.msgQueue.take();
-        if (msg != null) {
-          freeToSend=false;
-          controller.sendData(msg);
-          logger.debug("NODE {}: Node advancer - queued packet.",this.node.getNodeId());
-        }
-      }
- catch (      InterruptedException e) {
-      }
-    }
+  if (sendMessage() == true) {
     return;
   }
   do {
     queryStageTimeStamp=Calendar.getInstance().getTime();
 switch (currentStage) {
 case EMPTYNODE:
-      if (this.node.getManufacturer() != Integer.MAX_VALUE) {
-        this.currentStage=NodeStage.PROTOINFO;
-      }
- else {
-        try {
-          this.controller.identifyNode(this.node.getNodeId());
-        }
- catch (        SerialInterfaceException e) {
-          logger.error("NODE {}: Got error {}, while identifying node",this.node.getNodeId(),e.getLocalizedMessage());
-        }
-      }
+      logger.debug("NODE {}: Starting initialisation",this.node.getNodeId());
     break;
 case PROTOINFO:
-  if (this.node.getNodeId() == this.controller.getOwnNodeId()) {
-    this.currentStage=NodeStage.DONE;
+  if (eventClass == SerialMessageClass.IdentifyNode) {
     break;
   }
+logger.debug("NODE {}: PROTOINFO - send IdentifyNode",this.node.getNodeId());
+msg=new IdentifyNodeMessageClass().doRequest(this.node.getNodeId());
+this.msgQueue.add(msg);
+break;
+case PING:
+if (this.node.getNodeId() == this.controller.getOwnNodeId()) {
+logger.debug("NODE {}: PING - Controller - terminating initialisation",this.node.getNodeId());
+this.currentStage=NodeStage.DONE;
+break;
+}
+if (eventClass == SerialMessageClass.SendData) {
+break;
+}
 ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)this.node.getCommandClass(CommandClass.NO_OPERATION);
 if (zwaveCommandClass == null) {
 break;
 }
+logger.debug("NODE {}: PING - send NoOperation",this.node.getNodeId());
 msg=zwaveCommandClass.getNoOperationMessage();
 this.msgQueue.add(msg);
 break;
-case PING:
 case WAKEUP:
+break;
+case DETAILS:
 if (this.isRestoredFromConfigfile()) {
-this.currentStage=NodeStage.DYNAMIC;
+logger.debug("NODE {}: Restored from file - skipping static initialisation",this.node.getNodeId());
+this.currentStage=NodeStage.SESSION_START;
 break;
 }
+if (eventClass == SerialMessageClass.RequestNodeInfo) {
+break;
+}
+logger.debug("NODE {}: DETAILS - send RequestNodeInfo",this.node.getNodeId());
 msg=new RequestNodeInfoMessageClass().doRequest(this.node.getNodeId());
 this.msgQueue.add(msg);
 break;
-case DETAILS:
+case MANUFACTURER:
 if (this.node.getManufacturer() != Integer.MAX_VALUE && this.node.getDeviceType() != Integer.MAX_VALUE && this.node.getDeviceId() != Integer.MAX_VALUE) {
 break;
 }
 ZWaveManufacturerSpecificCommandClass manufacturerSpecific=(ZWaveManufacturerSpecificCommandClass)this.node.getCommandClass(CommandClass.MANUFACTURER_SPECIFIC);
 if (manufacturerSpecific != null) {
+logger.debug("NODE {}: MANUFACTURER - send ManufacturerSpecific",this.node.getNodeId());
 msg=manufacturerSpecific.getManufacturerSpecificMessage();
 this.msgQueue.add(msg);
-break;
 }
 break;
-case MANSPEC01:
+case VERSION:
 ZWaveVersionCommandClass version=(ZWaveVersionCommandClass)this.node.getCommandClass(CommandClass.VERSION);
 for (ZWaveCommandClass zwaveVersionClass : this.node.getCommandClasses()) {
-if (version != null && zwaveVersionClass.getMaxVersion() > 1) {
+logger.debug("NODE {}: VERSION - checking {}, version is {}",this.node.getNodeId(),zwaveVersionClass.getClass(),zwaveVersionClass.getVersion());
+if (version != null && zwaveVersionClass.getMaxVersion() > 1 && zwaveVersionClass.getVersion() == 0) {
+logger.debug("NODE {}: VERSION - queued   {}",this.node.getNodeId(),zwaveVersionClass.getClass());
 msg=version.checkVersion(zwaveVersionClass);
 this.msgQueue.add(msg);
 }
@@ -79,17 +78,16 @@ zwaveVersionClass.setVersion(1);
 }
 }
 break;
-case VERSION:
+case ENDPOINTS:
 ZWaveMultiInstanceCommandClass multiInstance=(ZWaveMultiInstanceCommandClass)this.node.getCommandClass(CommandClass.MULTI_INSTANCE);
 if (multiInstance != null) {
+logger.debug("NODE {}: ENDPOINTS - MultiInstance is supported",this.node.getNodeId());
 addCollectionToQueue(multiInstance.initEndpoints(stageAdvanced));
 }
 break;
-case INSTANCES_ENDPOINTS:
-break;
 case STATIC_VALUES:
 for (ZWaveCommandClass zwaveStaticClass : this.node.getCommandClasses()) {
-logger.trace("NODE {}: Inspecting command class {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
+logger.trace("NODE {}: STATIC_VALUES - checking {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
 if (zwaveStaticClass instanceof ZWaveCommandClassInitialization) {
 logger.debug("NODE {}: Found initializable command class {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
 ZWaveCommandClassInitialization zcci=(ZWaveCommandClassInitialization)zwaveStaticClass;
@@ -118,9 +116,9 @@ addCollectionToQueue(zcci2.initialize(stageAdvanced),endpointCommandClass,endpoi
 }
 }
 break;
-case DYNAMIC:
+case DYNAMIC_VALUES:
 for (ZWaveCommandClass zwaveDynamicClass : this.node.getCommandClasses()) {
-logger.trace("NODE {}: Inspecting command class {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
+logger.trace("NODE {}: DYNAMIC_VALUES - checking {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
 if (zwaveDynamicClass instanceof ZWaveCommandClassDynamicState) {
 logger.debug("NODE {}: Found dynamic state command class {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
 ZWaveCommandClassDynamicState zdds=(ZWaveCommandClassDynamicState)zwaveDynamicClass;
@@ -151,27 +149,20 @@ addCollectionToQueue(zdds2.getDynamicValues(stageAdvanced),endpointCommandClass,
 break;
 case DONE:
 initializationComplete=true;
-case DEAD:
-nodeSerializer.SerializeNode(this.node);
 logger.debug("NODE {}: Node advancer - initialisation complete.",this.node.getNodeId());
-break;
+case DEAD:
+case FAILED:
+controller.removeEventListener(this);
+return;
 default :
 logger.error("NODE {}: Unknown node state {} encountered.",this.node.getNodeId(),this.node.getNodeStage().getLabel());
+break;
 }
 stageAdvanced=false;
-if (msgQueue.isEmpty()) {
+if (sendMessage() == false) {
 currentStage=currentStage.getNextStage();
 stageAdvanced=true;
 logger.debug("NODE {}: Node advancer - advancing to {}.",this.node.getNodeId(),currentStage.getLabel());
-}
- else {
-try {
-freeToSend=false;
-controller.sendData(this.msgQueue.take());
-}
- catch (InterruptedException e) {
-}
-logger.debug("NODE {}: Node advancer - queued packet.",this.node.getNodeId());
 }
 }
  while (msgQueue.isEmpty());

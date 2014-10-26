@@ -1,7 +1,7 @@
 {
   logger.trace("Handle Message Application Update Request");
   int nodeId=incomingMessage.getMessagePayloadByte(1);
-  logger.trace("NODE {}: Application Update Request from Node ",nodeId);
+  logger.trace("NODE {}: Application Update Request",nodeId);
   UpdateState updateState=UpdateState.getUpdateState(incomingMessage.getMessagePayloadByte(0));
 switch (updateState) {
 case NODE_INFO_RECEIVED:
@@ -23,7 +23,9 @@ if (data == 0xef) {
 }
 logger.trace(String.format("NODE %d: Command class 0x%02X is supported.",nodeId,data));
 ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,node,zController);
-if (commandClass != null) node.addCommandClass(commandClass);
+if (commandClass != null) {
+  node.addCommandClass(commandClass);
+}
 }
 }
 checkTransactionComplete(lastSentMessage,incomingMessage);

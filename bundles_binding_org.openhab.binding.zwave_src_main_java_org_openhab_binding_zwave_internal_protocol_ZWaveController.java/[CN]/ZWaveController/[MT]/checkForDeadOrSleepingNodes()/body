@@ -14,8 +14,8 @@
     }
     logger.trace("NODE {}: Checking if {} miliseconds have passed in current stage.",entry.getKey(),QUERY_STAGE_TIMEOUT);
     if (Calendar.getInstance().getTimeInMillis() < (entry.getValue().getQueryStageTimeStamp().getTime() + QUERY_STAGE_TIMEOUT))     continue;
-    logger.warn(String.format("NODE %d: May be dead, setting stage to DEAD.",entry.getKey()));
-    entry.getValue().setNodeStage(NodeStage.DEAD);
+    logger.warn(String.format("NODE %d: May be dead, marking node DEAD.",entry.getKey()));
+    entry.getValue().setDead();
     completeCount++;
   }
   if (this.zwaveNodes.size() == completeCount && initializationComplete == false) {

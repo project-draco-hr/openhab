@@ -1,0 +1,19 @@
+{
+  if (msgQueue.isEmpty() == true) {
+    return false;
+  }
+  if (freeToSend == true) {
+    SerialMessage msg=this.msgQueue.peek();
+    if (msg != null) {
+      freeToSend=false;
+      if (msg.getMessageClass() == SerialMessageClass.SendData) {
+        controller.sendData(msg);
+      }
+ else {
+        controller.enqueue(msg);
+      }
+      logger.debug("NODE {}: Node advancer - queued packet. Queue length now {}",this.node.getNodeId(),msgQueue.size());
+    }
+  }
+  return true;
+}

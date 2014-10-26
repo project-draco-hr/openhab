@@ -16,7 +16,7 @@ case IncludeDone:
     }
   ZWaveNode node=new ZWaveNode(this.homeId,incEvent.getNodeId(),this);
 this.zwaveNodes.put(incEvent.getNodeId(),node);
-node.advanceNodeStage();
+node.initialiseNode();
 break;
 case ExcludeDone:
 logger.debug("NODE {}: Excluding node.",incEvent.getNodeId());
@@ -41,8 +41,8 @@ logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNode
 break;
 }
 if (networkEvent.getState() == State.Success) {
-logger.debug("NODE {}: Marking node as failed because its on the controllers failed node list.",networkEvent.getNodeId());
-getNode(networkEvent.getNodeId()).setNodeStage(NodeStage.FAILED);
+logger.warn("NODE {}: Marking node as FAILED because its on the controllers failed node list.",networkEvent.getNodeId());
+getNode(networkEvent.getNodeId()).setFailed();
 ZWaveEvent zEvent=new ZWaveNodeStatusEvent(networkEvent.getNodeId(),ZWaveNodeStatusEvent.State.Failed);
 this.notifyEventListeners(zEvent);
 break;

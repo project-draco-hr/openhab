@@ -79,7 +79,9 @@ break;
 case PINGEND:
 if (healing.nodeId != zController.getOwnNodeId()) {
 ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
-if (zwaveCommandClass == null) break;
+if (zwaveCommandClass == null) {
+break;
+}
 zController.sendData(zwaveCommandClass.getNoOperationMessage());
 healing.stateNext=HealState.SAVE;
 break;

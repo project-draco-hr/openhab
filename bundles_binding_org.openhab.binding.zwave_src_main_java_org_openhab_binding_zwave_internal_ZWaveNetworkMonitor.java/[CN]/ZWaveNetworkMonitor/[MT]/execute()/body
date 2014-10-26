@@ -7,7 +7,9 @@
     pingNodeTime=System.currentTimeMillis() + PING_PERIOD;
     ZWaveNode oldestNode=null;
     for (    ZWaveNode node : zController.getNodes()) {
-      if (node.getNodeId() == zController.getOwnNodeId() || node.isListening() == false)       continue;
+      if (node.getNodeId() == zController.getOwnNodeId() || node.isListening() == false) {
+        continue;
+      }
       if (oldestNode == null) {
         oldestNode=node;
       }
@@ -19,7 +21,9 @@
       logger.debug("NODE {}: Sending periodic PING.",oldestNode.getNodeId());
       oldestNode.resetResendCount();
       ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)oldestNode.getCommandClass(CommandClass.NO_OPERATION);
-      if (zwaveCommandClass != null)       zController.sendData(zwaveCommandClass.getNoOperationMessage());
+      if (zwaveCommandClass != null) {
+        zController.sendData(zwaveCommandClass.getNoOperationMessage());
+      }
     }
     return;
   }
