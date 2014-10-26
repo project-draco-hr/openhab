@@ -1,0 +1,18 @@
+{
+  logger.debug("Querying Ecobee API");
+  for (  String userid : credentialsCache.keySet()) {
+    OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+    Selection selection=createSelection(oauthCredentials);
+    if (selection == null) {
+      logger.debug("Nothing to retrieve for '{}'; skipping thermostat retrieval.",oauthCredentials.userid);
+      continue;
+    }
+    if (oauthCredentials.noAccessToken()) {
+      if (!oauthCredentials.refreshTokens()) {
+        logger.warn("Periodic poll skipped for '{}'.",oauthCredentials.userid);
+        continue;
+      }
+    }
+    readEcobee(oauthCredentials,selection);
+  }
+}

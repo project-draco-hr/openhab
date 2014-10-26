@@ -1,0 +1,10 @@
+{
+  logger.debug("validateItemType called with bindingConfig={}",bindingConfig);
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches() || matcher.groupCount() != 2)   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  String property=matcher.group(2);
+  logger.debug("validateItemType called with property={}",property);
+  if (!EcobeeItemMapping.isValidItemType(item,property)) {
+    throw new BindingConfigParseException("item '" + item.getName() + "' is of type '"+ item.getClass().getSimpleName()+ "'; only items that accept the '"+ EcobeeItemMapping.getStateClass(property).getSimpleName()+ "' state are allowed - please check your *.items configuration.");
+  }
+}

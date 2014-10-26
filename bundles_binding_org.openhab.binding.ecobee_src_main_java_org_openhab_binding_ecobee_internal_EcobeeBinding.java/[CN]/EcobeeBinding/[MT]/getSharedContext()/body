@@ -1,0 +1,63 @@
+{
+  if (this.sharedContext == null) {
+    this.sharedContext=JXPathContext.newContext(null);
+    this.sharedContext.setLenient(true);
+    this.sharedContext.setFactory(new AbstractFactory(){
+      public boolean createObject(      JXPathContext context,      Pointer pointer,      Object parent,      String name,      int index){
+        if (parent instanceof Thermostat) {
+          if (name.equals("settings")) {
+            ((Thermostat)parent).setSettings(new Settings());
+            return true;
+          }
+ else           if (name.equals("location")) {
+            ((Thermostat)parent).setLocation(new Location());
+            return true;
+          }
+ else           if (name.equals("program")) {
+            ((Thermostat)parent).setProgram(new Program());
+            return true;
+          }
+ else           if (name.equals("houseDetails")) {
+            ((Thermostat)parent).setHouseDetails(new HouseDetails());
+            return true;
+          }
+ else           if (name.equals("notificationSettings")) {
+            ((Thermostat)parent).setNotificationSettings(new NotificationSettings());
+            return true;
+          }
+        }
+ else         if (parent instanceof Program) {
+          if (name.equals("schedule")) {
+            ((Program)parent).setSchedule(new ArrayList<List<String>>());
+            return true;
+          }
+          if (name.equals("climates")) {
+            ((Program)parent).setClimates(new ArrayList<Climate>());
+            return true;
+          }
+        }
+ else         if (parent instanceof NotificationSettings) {
+          if (name.equals("emailAddresses")) {
+            ((NotificationSettings)parent).setEmailAddresses(new ArrayList<String>());
+            return true;
+          }
+ else           if (name.equals("equipment")) {
+            ((NotificationSettings)parent).setEquipment(new ArrayList<EquipmentSetting>());
+            return true;
+          }
+ else           if (name.equals("general")) {
+            ((NotificationSettings)parent).setGeneral(new ArrayList<GeneralSetting>());
+            return true;
+          }
+ else           if (name.equals("limit")) {
+            ((NotificationSettings)parent).setLimit(new ArrayList<LimitSetting>());
+            return true;
+          }
+        }
+        return false;
+      }
+    }
+);
+  }
+  return this.sharedContext;
+}

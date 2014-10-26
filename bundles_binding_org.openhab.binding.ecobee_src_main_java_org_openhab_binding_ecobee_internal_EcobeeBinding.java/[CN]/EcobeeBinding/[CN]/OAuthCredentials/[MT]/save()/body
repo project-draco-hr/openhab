@@ -1,0 +1,18 @@
+{
+  try {
+    Dictionary props=new Hashtable();
+    if (this.authToken != null) {
+      props.put(AUTH_TOKEN,this.authToken);
+    }
+    if (this.refreshToken != null) {
+      props.put(REFRESH_TOKEN,this.refreshToken);
+    }
+    if (this.accessToken != null) {
+      props.put(ACCESS_TOKEN,this.accessToken);
+    }
+    config.update(props);
+  }
+ catch (  Exception e) {
+    throw new EcobeeException("Cannot save tokens.",e);
+  }
+}

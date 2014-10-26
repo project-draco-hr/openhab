@@ -1,0 +1,17 @@
+{
+  super("createVacation");
+  if (name == null || coolHoldTemp == null || heatHoldTemp == null) {
+    throw new IllegalArgumentException("name, coolHoldTemp and heatHoldTemp arguments are required.");
+  }
+  makeParams().put("name",name);
+  makeParams().put("coolHoldTemp",coolHoldTemp);
+  makeParams().put("heatHoldTemp",heatHoldTemp);
+  if (startDateTime != null) {
+    makeParams().put("startDate",ymd.format(startDateTime));
+    makeParams().put("startTime",hms.format(startDateTime));
+  }
+  if (endDateTime != null) {
+    makeParams().put("endDate",ymd.format(endDateTime));
+    makeParams().put("endTime",hms.format(endDateTime));
+  }
+}

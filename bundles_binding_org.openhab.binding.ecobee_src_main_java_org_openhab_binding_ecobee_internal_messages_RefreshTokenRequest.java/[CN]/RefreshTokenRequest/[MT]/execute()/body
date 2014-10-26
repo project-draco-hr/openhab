@@ -1,0 +1,12 @@
+{
+  final String url=buildQueryString();
+  String json=null;
+  try {
+    json=executeQuery(url);
+    final TokenResponse response=JSON.readValue(json,TokenResponse.class);
+    return response;
+  }
+ catch (  final Exception e) {
+    throw newException("Could not get refresh token.",e,url,json);
+  }
+}

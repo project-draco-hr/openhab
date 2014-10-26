@@ -1,0 +1,34 @@
+{
+  logger.debug("Processing binding configuration: '{}'",bindingConfig);
+  super.processBindingConfiguration(context,item,bindingConfig);
+  boolean inBound=false;
+  boolean outBound=false;
+  if (bindingConfig.startsWith(IN_BOUND)) {
+    inBound=true;
+  }
+ else   if (bindingConfig.startsWith(OUT_BOUND)) {
+    outBound=true;
+  }
+ else   if (bindingConfig.startsWith(BIDIRECTIONAL)) {
+    inBound=true;
+    outBound=true;
+  }
+ else {
+    throw new BindingConfigParseException("Item \"" + item.getName() + "\" does not start with "+ IN_BOUND+ ", "+ OUT_BOUND+ " or "+ BIDIRECTIONAL+ ".");
+  }
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches() || matcher.groupCount() != 2)   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  String userid=null;
+  String thermostatIdentifier=matcher.group(1);
+  if (thermostatIdentifier.contains(".")) {
+    String[] parts=thermostatIdentifier.split("\\.");
+    userid=parts[0];
+    thermostatIdentifier=parts[1];
+  }
+  if (inBound && !Selection.isThermostatIdentifier(thermostatIdentifier)) {
+    throw new BindingConfigParseException("Only a single thermostat identifier is permitted in an in binding or bidirectional binding.");
+  }
+  String property=matcher.group(2);
+  EcobeeBindingConfig config=new EcobeeBindingConfig(userid,thermostatIdentifier,property,inBound,outBound);
+  addBindingConfig(item,config);
+}

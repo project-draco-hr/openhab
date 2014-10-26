@@ -1,0 +1,58 @@
+{
+  logger.debug("Requesting summaries for {}",selection);
+  ThermostatSummaryRequest request=new ThermostatSummaryRequest(oauthCredentials.accessToken,selection);
+  ThermostatSummaryResponse response=request.execute();
+  if (response.isError()) {
+    final Status status=response.getStatus();
+    if (status.isAccessTokenExpired()) {
+      logger.debug("Access token has expired: {}",status);
+      if (oauthCredentials.refreshTokens())       readEcobee(oauthCredentials,selection);
+    }
+ else {
+      logger.error(status.getMessage());
+    }
+    return;
+  }
+  Map<String,Revision> newRevisionMap=new HashMap<String,Revision>();
+  for (  Revision r : response.getRevisionList()) {
+    newRevisionMap.put(r.getThermostatIdentifier(),r);
+  }
+  Set<String> thermostatIdentifiers=new HashSet<String>();
+  for (  Revision newRevision : newRevisionMap.values()) {
+    Revision lastRevision=this.lastRevisionMap.get(newRevision.getThermostatIdentifier());
+    if (newRevision.hasRuntimeChanged(lastRevision)) {
+      thermostatIdentifiers.add(newRevision.getThermostatIdentifier());
+    }
+  }
+  this.lastRevisionMap=newRevisionMap;
+  if (0 == thermostatIdentifiers.size()) {
+    logger.debug("No changes detected.");
+  }
+ else {
+    logger.debug("Requesting full retrieval for {} thermostat(s).",thermostatIdentifiers.size());
+    selection.setSelectionMatch(thermostatIdentifiers);
+    ThermostatRequest treq=new ThermostatRequest(oauthCredentials.accessToken,selection,null);
+    ThermostatResponse tres=treq.execute();
+    if (tres.isError()) {
+      logger.error("Error retrieving thermostats: {}",tres.getStatus());
+    }
+ else {
+      Map<String,Thermostat> thermostats=new HashMap<String,Thermostat>();
+      for (      Thermostat t : tres.getThermostatList()) {
+        thermostats.put(t.getIdentifier(),t);
+      }
+      for (      final EcobeeBindingProvider provider : this.providers) {
+        for (        final String itemName : provider.getItemNames()) {
+          if (provider.isInBound(itemName)) {
+            final State state=getState(provider,thermostats,itemName);
+            ignoreEventList.add(itemName + state.toString());
+            logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,state.toString());
+            if (state != null) {
+              this.eventPublisher.postUpdate(itemName,state);
+            }
+          }
+        }
+      }
+    }
+  }
+}

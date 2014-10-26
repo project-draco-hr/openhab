@@ -1,0 +1,66 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get(CONFIG_REFRESH);
+    if (isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String tempScaleString=(String)config.get(CONFIG_TEMP_SCALE);
+    if (isNotBlank(tempScaleString)) {
+      try {
+        Temperature.setLocalScale(Temperature.Scale.forValue(tempScaleString));
+      }
+ catch (      IllegalArgumentException iae) {
+        throw new ConfigurationException(CONFIG_TEMP_SCALE,"Unsupported temperature scale '" + tempScaleString + "'.");
+      }
+    }
+    Enumeration<String> configKeys=config.keys();
+    while (configKeys.hasMoreElements()) {
+      String configKey=(String)configKeys.nextElement();
+      if (CONFIG_REFRESH.equals(configKey) || CONFIG_TEMP_SCALE.equals(configKey) || "service.pid".equals(configKey)) {
+        continue;
+      }
+      String userid;
+      String configKeyTail;
+      if (configKey.contains(".")) {
+        String[] keyElements=configKey.split("\\.");
+        userid=keyElements[0];
+        configKeyTail=keyElements[1];
+      }
+ else {
+        userid=DEFAULT_USER_ID;
+        configKeyTail=configKey;
+      }
+      OAuthCredentials credentials=credentialsCache.get(userid);
+      if (credentials == null) {
+        credentials=new OAuthCredentials(configAdmin,userid);
+        credentialsCache.put(userid,credentials);
+      }
+      String value=(String)config.get(configKey);
+      if (CONFIG_APP_KEY.equals(configKeyTail)) {
+        credentials.appKey=value;
+      }
+ else       if (CONFIG_SCOPE.equals(configKeyTail)) {
+        credentials.scope=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    boolean properlyConfigured=true;
+    for (    String userid : credentialsCache.keySet()) {
+      OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+      String userString=(DEFAULT_USER_ID.equals(userid)) ? "" : (userid + ".");
+      if (oauthCredentials.appKey == null) {
+        logger.error("Required ecobee:{}{} is missing.",userString,CONFIG_APP_KEY);
+        properlyConfigured=false;
+        break;
+      }
+      if (oauthCredentials.scope == null) {
+        logger.error("Required ecobee:{}{} is missing.",userString,CONFIG_SCOPE);
+        properlyConfigured=false;
+        break;
+      }
+    }
+    setProperlyConfigured(properlyConfigured);
+  }
+}
