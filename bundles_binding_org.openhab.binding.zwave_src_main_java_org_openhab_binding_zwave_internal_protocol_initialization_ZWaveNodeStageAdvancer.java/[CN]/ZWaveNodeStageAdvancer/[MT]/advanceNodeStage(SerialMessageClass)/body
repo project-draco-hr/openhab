@@ -67,9 +67,9 @@ break;
 case VERSION:
 ZWaveVersionCommandClass version=(ZWaveVersionCommandClass)this.node.getCommandClass(CommandClass.VERSION);
 for (ZWaveCommandClass zwaveVersionClass : this.node.getCommandClasses()) {
-logger.debug("NODE {}: VERSION - checking {}, version is {}",this.node.getNodeId(),zwaveVersionClass.getClass(),zwaveVersionClass.getVersion());
+logger.debug("NODE {}: VERSION - checking {}, version is {}",this.node.getNodeId(),zwaveVersionClass.getCommandClass().getLabel(),zwaveVersionClass.getVersion());
 if (version != null && zwaveVersionClass.getMaxVersion() > 1 && zwaveVersionClass.getVersion() == 0) {
-logger.debug("NODE {}: VERSION - queued   {}",this.node.getNodeId(),zwaveVersionClass.getClass());
+logger.debug("NODE {}: VERSION - queued   {}",this.node.getNodeId(),zwaveVersionClass.getCommandClass().getLabel());
 msg=version.checkVersion(zwaveVersionClass);
 this.msgQueue.add(msg);
 }
@@ -77,19 +77,33 @@ this.msgQueue.add(msg);
 zwaveVersionClass.setVersion(1);
 }
 }
+logger.debug("NODE {}: VERSION - queued {} frames",this.msgQueue.size());
+break;
+case APP_VERSION:
+ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
+if (versionCommandClass == null) {
+break;
+}
+if (versionCommandClass.getLibraryType() != LibraryType.LIB_UNKNOWN) {
+break;
+}
+logger.debug("NODE {}: APP_VERSION - send VersionMessage",this.node.getNodeId());
+msg=versionCommandClass.getVersionMessage();
+this.msgQueue.add(msg);
 break;
 case ENDPOINTS:
 ZWaveMultiInstanceCommandClass multiInstance=(ZWaveMultiInstanceCommandClass)this.node.getCommandClass(CommandClass.MULTI_INSTANCE);
 if (multiInstance != null) {
 logger.debug("NODE {}: ENDPOINTS - MultiInstance is supported",this.node.getNodeId());
 addCollectionToQueue(multiInstance.initEndpoints(stageAdvanced));
+logger.debug("NODE {}: ENDPOINTS - queued {} frames",this.msgQueue.size());
 }
 break;
 case STATIC_VALUES:
 for (ZWaveCommandClass zwaveStaticClass : this.node.getCommandClasses()) {
-logger.trace("NODE {}: STATIC_VALUES - checking {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
+logger.debug("NODE {}: STATIC_VALUES - checking {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
 if (zwaveStaticClass instanceof ZWaveCommandClassInitialization) {
-logger.debug("NODE {}: Found initializable command class {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
+logger.debug("NODE {}: STATIC_VALUES - found    {}",this.node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
 ZWaveCommandClassInitialization zcci=(ZWaveCommandClassInitialization)zwaveStaticClass;
 int instances=zwaveStaticClass.getInstances();
 if (instances == 0) {
@@ -105,9 +119,9 @@ addCollectionToQueue(zcci.initialize(stageAdvanced),zwaveStaticClass,i);
 ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)zwaveStaticClass;
 for (ZWaveEndpoint endpoint : multiInstanceCommandClass.getEndpoints()) {
 for (ZWaveCommandClass endpointCommandClass : endpoint.getCommandClasses()) {
-logger.trace("NODE {}: Inspecting command class {} for endpoint {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
+logger.debug("NODE {}: STATIC_VALUES - checking {} for endpoint {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
 if (endpointCommandClass instanceof ZWaveCommandClassInitialization) {
-logger.debug("NODE {}: Found initializable command class {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
+logger.debug("NODE {}: STATIC_VALUES - found    {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
 ZWaveCommandClassInitialization zcci2=(ZWaveCommandClassInitialization)endpointCommandClass;
 addCollectionToQueue(zcci2.initialize(stageAdvanced),endpointCommandClass,endpoint.getEndpointId());
 }
@@ -115,12 +129,13 @@ addCollectionToQueue(zcci2.initialize(stageAdvanced),endpointCommandClass,endpoi
 }
 }
 }
+logger.debug("NODE {}: STATIC_VALUES - queued {} frames",this.msgQueue.size());
 break;
 case DYNAMIC_VALUES:
 for (ZWaveCommandClass zwaveDynamicClass : this.node.getCommandClasses()) {
-logger.trace("NODE {}: DYNAMIC_VALUES - checking {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
+logger.debug("NODE {}: DYNAMIC_VALUES - checking {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
 if (zwaveDynamicClass instanceof ZWaveCommandClassDynamicState) {
-logger.debug("NODE {}: Found dynamic state command class {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
+logger.debug("NODE {}: DYNAMIC_VALUES - found    {}",this.node.getNodeId(),zwaveDynamicClass.getCommandClass().getLabel());
 ZWaveCommandClassDynamicState zdds=(ZWaveCommandClassDynamicState)zwaveDynamicClass;
 int instances=zwaveDynamicClass.getInstances();
 if (instances == 0) {
@@ -136,9 +151,9 @@ addCollectionToQueue(zdds.getDynamicValues(stageAdvanced),zwaveDynamicClass,i);
 ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)zwaveDynamicClass;
 for (ZWaveEndpoint endpoint : multiInstanceCommandClass.getEndpoints()) {
 for (ZWaveCommandClass endpointCommandClass : endpoint.getCommandClasses()) {
-logger.trace("NODE {}: Inspecting command class {} for endpoint {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
+logger.debug("NODE {}: DYNAMIC_VALUES - checking {} for endpoint {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
 if (endpointCommandClass instanceof ZWaveCommandClassDynamicState) {
-logger.debug("NODE {}: Found dynamic state command class {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
+logger.debug("NODE {}: DYNAMIC_VALUES - found    {}",this.node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
 ZWaveCommandClassDynamicState zdds2=(ZWaveCommandClassDynamicState)endpointCommandClass;
 addCollectionToQueue(zdds2.getDynamicValues(stageAdvanced),endpointCommandClass,endpoint.getEndpointId());
 }
@@ -146,14 +161,17 @@ addCollectionToQueue(zdds2.getDynamicValues(stageAdvanced),endpointCommandClass,
 }
 }
 }
+logger.debug("NODE {}: DYNAMIC_VALUES - queued {} frames",this.msgQueue.size());
 break;
 case DONE:
 initializationComplete=true;
-logger.debug("NODE {}: Node advancer - initialisation complete.",this.node.getNodeId());
+logger.debug("NODE {}: Node advancer - initialisation complete!",this.node.getNodeId());
 case DEAD:
 case FAILED:
 controller.removeEventListener(this);
 return;
+case SESSION_START:
+break;
 default :
 logger.error("NODE {}: Unknown node state {} encountered.",this.node.getNodeId(),this.node.getNodeStage().getLabel());
 break;
