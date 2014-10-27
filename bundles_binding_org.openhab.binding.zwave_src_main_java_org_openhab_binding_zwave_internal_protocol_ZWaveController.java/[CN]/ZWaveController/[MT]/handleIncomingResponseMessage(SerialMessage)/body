@@ -1,10 +1,10 @@
 {
-  logger.trace("Message type = RESPONSE");
+  logger.trace("Incoming Message type = RESPONSE");
   ZWaveCommandProcessor processor=ZWaveCommandProcessor.getMessageDispatcher(incomingMessage.getMessageClass());
   if (processor != null) {
-    processor.handleResponse(this,lastSentMessage,incomingMessage);
+    boolean result=processor.handleResponse(this,lastSentMessage,incomingMessage);
     if (processor.isTransactionComplete()) {
-      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
+      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage,result));
       transactionCompleted.release();
       logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
     }
@@ -24,7 +24,6 @@ break;
 case SerialApiGetInitData:
 this.isConnected=true;
 for (Integer nodeId : ((SerialApiGetInitDataMessageClass)processor).getNodes()) {
-if (nodeId != 10) continue;
 ZWaveNode node=null;
 try {
 ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();

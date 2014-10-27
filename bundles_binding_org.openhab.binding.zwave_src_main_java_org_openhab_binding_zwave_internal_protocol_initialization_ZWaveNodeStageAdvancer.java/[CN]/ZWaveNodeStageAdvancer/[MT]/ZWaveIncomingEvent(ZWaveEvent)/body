@@ -3,43 +3,33 @@
     return;
   }
   if (event instanceof ZWaveTransactionCompletedEvent) {
-    SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
-    if (serialMessage.getMessageClass() == SerialMessageClass.SendData && serialMessage.getMessageType() == SerialMessageType.Request) {
-      byte[] payload=serialMessage.getMessagePayload();
-      logger.debug("====== Node is {}",payload[0] & 0xFF);
-      if (payload.length < 3 || this.node.getNodeId() != (payload[0] & 0xFF)) {
-        return;
-      }
-      logger.debug("NODE {}: Initialisation transaction complete event (SendData)",this.node.getNodeId());
-      handleNodeQueue(serialMessage);
+    ZWaveTransactionCompletedEvent completeEvent=(ZWaveTransactionCompletedEvent)event;
+    SerialMessage serialMessage=completeEvent.getCompletedMessage();
+    byte[] payload=serialMessage.getMessagePayload();
+    if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
       return;
     }
-    if (serialMessage.getMessageClass() == SerialMessageClass.IdentifyNode) {
-      byte[] payload=serialMessage.getMessagePayload();
-      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
-        return;
-      }
-      logger.debug("NODE {}: Initialisation transaction complete event (ApplicationUpdate)",this.node.getNodeId());
+switch (serialMessage.getMessageClass()) {
+case SendData:
+case IdentifyNode:
+case RequestNodeInfo:
+case GetRoutingInfo:
+      logger.debug("NODE {}: Initialisation transaction complete event ({}:{}) {}",this.node.getNodeId(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
+    if (((ZWaveTransactionCompletedEvent)event).getState()) {
       handleNodeQueue(serialMessage);
-      return;
     }
-    if (serialMessage.getMessageClass() == SerialMessageClass.RequestNodeInfo) {
-      byte[] payload=serialMessage.getMessagePayload();
-      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
-        return;
-      }
-      logger.debug("NODE {}: Initialisation transaction complete event (RequestNodeInfo)",this.node.getNodeId());
-      handleNodeQueue(serialMessage);
-      return;
-    }
-    if (serialMessage.getMessageClass() == SerialMessageClass.GetRoutingInfo) {
-      byte[] payload=serialMessage.getMessagePayload();
-      if (payload.length == 0 || this.node.getNodeId() != (payload[0] & 0xFF)) {
-        return;
-      }
-      logger.debug("NODE {}: Initialisation transaction complete event (GetRoutingInfo)",this.node.getNodeId());
-      handleNodeQueue(serialMessage);
-      return;
-    }
-  }
+  break;
+default :
+}
+}
+ else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_NOTIFICATION) {
+return;
+}
+if (this.node.getNodeId() != event.getNodeId()) {
+return;
+}
+logger.debug("NODE {}: Wakeup during initialisation.",this.node.getNodeId());
+advanceNodeStage(null);
+}
 }

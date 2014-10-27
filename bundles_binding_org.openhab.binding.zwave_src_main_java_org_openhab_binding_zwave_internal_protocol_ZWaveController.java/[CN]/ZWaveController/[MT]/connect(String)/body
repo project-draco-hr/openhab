@@ -14,15 +14,15 @@
     logger.info("Serial port is initialized");
   }
  catch (  NoSuchPortException e) {
-    logger.error(String.format("Port %s does not exist",serialPortName));
+    logger.error("Port {} does not exist",serialPortName);
     throw new SerialInterfaceException(String.format("Port %s does not exist",serialPortName),e);
   }
 catch (  PortInUseException e) {
-    logger.error(String.format("Port %s in use.",serialPortName));
+    logger.error("Port {} in use.",serialPortName);
     throw new SerialInterfaceException(String.format("Port %s in use.",serialPortName),e);
   }
 catch (  UnsupportedCommOperationException e) {
-    logger.error(String.format("Unsupported comm operation on Port %s.",serialPortName));
+    logger.error("Unsupported comm operation on Port {}.",serialPortName);
     throw new SerialInterfaceException(String.format("Unsupported comm operation on Port %s.",serialPortName),e);
   }
 }

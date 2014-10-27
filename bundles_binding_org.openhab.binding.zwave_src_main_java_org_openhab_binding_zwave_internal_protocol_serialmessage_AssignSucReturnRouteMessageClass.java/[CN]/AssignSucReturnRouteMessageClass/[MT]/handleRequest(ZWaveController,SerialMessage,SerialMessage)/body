@@ -4,9 +4,10 @@
   if (incomingMessage.getMessagePayloadByte(1) != 0x00) {
     logger.error("NODE {}: Assign SUC return routes failed with error 0x{}.",nodeId,Integer.toHexString(incomingMessage.getMessagePayloadByte(1)));
     zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssignSucReturnRoute,nodeId,ZWaveNetworkEvent.State.Failure));
+    return false;
   }
  else {
     zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.AssignSucReturnRoute,nodeId,ZWaveNetworkEvent.State.Success));
+    return true;
   }
-  return false;
 }

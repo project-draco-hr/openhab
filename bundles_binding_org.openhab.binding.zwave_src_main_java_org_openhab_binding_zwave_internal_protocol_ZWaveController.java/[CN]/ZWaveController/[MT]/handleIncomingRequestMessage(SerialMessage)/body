@@ -1,10 +1,10 @@
 {
-  logger.trace("Message type = REQUEST");
+  logger.trace("Incoming Message type = REQUEST");
   ZWaveCommandProcessor processor=ZWaveCommandProcessor.getMessageDispatcher(incomingMessage.getMessageClass());
   if (processor != null) {
-    processor.handleRequest(this,lastSentMessage,incomingMessage);
+    boolean result=processor.handleRequest(this,lastSentMessage,incomingMessage);
     if (processor.isTransactionComplete()) {
-      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
+      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage,result));
       transactionCompleted.release();
       logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
     }
