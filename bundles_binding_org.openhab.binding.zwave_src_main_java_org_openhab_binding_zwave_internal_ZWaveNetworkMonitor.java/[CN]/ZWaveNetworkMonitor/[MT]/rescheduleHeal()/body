@@ -1,11 +1,15 @@
 {
   for (  ZWaveNode node : zController.getNodes()) {
-    if (node.isInitializationComplete() == false && node.isDead() == false) {
+    if (node.isInitializationComplete() == false && node.isDead() == false && node.isFailed() == false) {
       logger.debug("NODE {}: Initialisation NOT yet complete. Skipping heal.",node.getNodeId());
       continue;
     }
     healNode(node.getNodeId());
   }
   if (healNodes.size() == 0)   return false;
+  if (doSoftReset == true) {
+    logger.debug("HEAL - Performing soft reset!");
+    zController.requestSoftReset();
+  }
   return true;
 }

@@ -28,7 +28,7 @@
       eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
     }
  else     if ((command instanceof PercentType) && !(command instanceof HSBType)) {
-      bulb.setBrightness((255 / 100) * ((PercentType)command).intValue());
+      bulb.setBrightness((int)Math.round((double)255 / (double)100 * ((PercentType)command).intValue()));
     }
   }
   if (deviceConfig.getType().equals(BindingType.colorTemperature)) {
@@ -39,7 +39,7 @@
       bulb.decreaseColorTemperature(deviceConfig.getStepSize());
     }
  else     if (command instanceof PercentType) {
-      bulb.setColorTemperature(((346 / 100) * ((PercentType)command).intValue()) + 154);
+      bulb.setColorTemperature((int)Math.round((((double)346 / (double)100) * ((PercentType)command).intValue()) + 154));
     }
   }
 }

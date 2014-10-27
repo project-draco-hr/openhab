@@ -1,0 +1,22 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (valueSelector.getItemClass() == SwitchItem.class) {
+    if (valueSelector == RFXComValueSelector.COMMAND) {
+switch (command) {
+case OFF:
+        state=OnOffType.OFF;
+      break;
+case ON:
+    state=OnOffType.ON;
+  break;
+default :
+throw new RFXComException("Can't convert value " + command + " to COMMAND SwitchItem");
+}
+}
+ else {
+throw new RFXComException("Can't convert " + valueSelector + " to SwitchItem: not supported");
+}
+return state;
+}
+throw new RFXComException("Can't convert " + valueSelector + " to "+ valueSelector.getItemClass());
+}

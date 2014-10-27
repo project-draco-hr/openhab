@@ -1,0 +1,19 @@
+{
+  ByteBuffer bb=ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
+  DecimalType res=null;
+switch (valueType.getDataSize()) {
+case 1:
+    res=new DecimalType(bb.get(valueType.getDataOffset()));
+  break;
+case 2:
+res=new DecimalType(bb.getShort(valueType.getDataOffset()));
+break;
+case 4:
+res=new DecimalType(bb.getInt(valueType.getDataOffset()));
+break;
+default :
+res=null;
+break;
+}
+return res;
+}
