@@ -16,6 +16,7 @@
     logger.debug("NODE {}: Node has risen from the FAILED. Set stage to {}.",nodeId,node.getNodeStage());
   }
   node.resetResendCount();
+  node.incrementReceiveCount();
   int commandClassCode=incomingMessage.getMessagePayloadByte(3);
   CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
   if (commandClass == null) {
