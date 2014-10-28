@@ -3,7 +3,8 @@
   if (!supportedCommandClasses.containsKey(key)) {
     logger.debug("NODE {}: Adding command class {} to the list of supported command classes.",nodeId,commandClass.getCommandClass().getLabel());
     supportedCommandClasses.put(key,commandClass);
-    if (commandClass instanceof ZWaveEventListener)     this.controller.addEventListener((ZWaveEventListener)commandClass);
-    this.lastUpdated=Calendar.getInstance().getTime();
+    if (commandClass instanceof ZWaveEventListener) {
+      this.controller.addEventListener((ZWaveEventListener)commandClass);
+    }
   }
 }
