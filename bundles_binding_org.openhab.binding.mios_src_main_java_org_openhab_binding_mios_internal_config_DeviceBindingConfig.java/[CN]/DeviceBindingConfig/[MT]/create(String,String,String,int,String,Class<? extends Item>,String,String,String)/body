@@ -52,6 +52,7 @@
         String command;
         Map<String,String> l=new HashMap<String,String>(commandList.length);
         String mapName;
+        String serviceStr;
         String serviceName;
         String serviceAction;
         for (int i=0; i < commandList.length; i++) {
@@ -61,11 +62,17 @@
             mapName=matcher.group("mapName");
             serviceName=matcher.group("serviceName");
             serviceAction=matcher.group("serviceAction");
-            tmp=(String)aliasMap.get(serviceName);
-            if (tmp != null) {
-              serviceName=tmp;
+            if (serviceName != null) {
+              tmp=(String)aliasMap.get(serviceName);
+              if (tmp != null) {
+                serviceName=tmp;
+              }
+              serviceStr=serviceName + '/' + serviceAction;
             }
-            String oldMapName=l.put(mapName,serviceName + '/' + serviceAction);
+ else {
+              serviceStr=null;
+            }
+            String oldMapName=l.put(mapName,serviceStr);
             if (oldMapName != null) {
               throw new BindingConfigParseException(String.format("Duplicate inline Map entry '%s' in command: '%s'",oldMapName,newCommandTransform));
             }
