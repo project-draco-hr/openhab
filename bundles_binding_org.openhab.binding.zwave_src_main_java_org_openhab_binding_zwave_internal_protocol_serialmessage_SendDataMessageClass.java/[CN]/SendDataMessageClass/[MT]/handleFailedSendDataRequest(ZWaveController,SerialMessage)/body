@@ -1,6 +1,6 @@
 {
   ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
-  if (node.getNodeStage() == NodeStage.DEAD || node.getNodeStage() == NodeStage.FAILED) {
+  if (node.isDead()) {
     return false;
   }
   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
