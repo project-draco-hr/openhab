@@ -60,25 +60,7 @@
         if (sAutoReconnectPeriod > 0) {
           sLogger.info("KNX link will be retried in {} seconds",sAutoReconnectPeriod);
           final Timer timer=new Timer();
-          TimerTask timerTask=new TimerTask(){
-            @Override public void run(){
-              if (sShutdown) {
-                timer.cancel();
-              }
- else {
-                sLogger.info("Trying to reconnect to KNX...");
-                connect();
-                if (sLink != null && sLink.isOpen()) {
-                  sLogger.info("Connected to KNX");
-                  timer.cancel();
-                }
- else {
-                  sLogger.info("KNX link will be retried in {} seconds",sAutoReconnectPeriod);
-                }
-              }
-            }
-          }
-;
+          TimerTask timerTask=new ConnectTimerTask(timer);
           timer.schedule(timerTask,sAutoReconnectPeriod * 1000,sAutoReconnectPeriod * 1000);
         }
       }

@@ -1,5 +1,7 @@
 {
   sLogger.trace("Stopping auto refresh scheduler");
+  sLogger.trace("Clearing all items from the refresher queue");
+  mReadQueue.clear();
   sLogger.debug("Terminating schedule executor.");
   mScheduledExecutorService.shutdown();
   try {
@@ -13,8 +15,7 @@
  catch (  InterruptedException e) {
     sLogger.debug("Auto refresh scheduler: interrupted while waiting for termination.");
   }
-  sLogger.trace("Clearing all items from the refresher queue");
-  mReadQueue.clear();
+  sLogger.trace("Stopping reader task");
   mDatapointReaderTask.setInterrupted(true);
   mIsRunning=false;
 }

@@ -15,28 +15,14 @@
     NetworkLinkListener linkListener=new NetworkLinkListener(){
       public void linkClosed(      CloseEvent e){
         if (!(CloseEvent.USER_REQUEST == e.getInitiator()) && !sShutdown) {
-          sLogger.warn("KNX link has been lost (reason: {} on object {}) - reconnecting...",e.getReason(),e.getSource().toString());
+          sLogger.warn("KNX link has been lost (reason: {} on object {})",e.getReason(),e.getSource().toString());
           for (          KNXConnectionListener listener : KNXConnection.sConnectionListeners) {
             listener.connectionLost();
           }
           if (sAutoReconnectPeriod > 0) {
             sLogger.info("KNX link will be retried in " + sAutoReconnectPeriod + " seconds");
             final Timer timer=new Timer();
-            TimerTask timerTask=new TimerTask(){
-              @Override public void run(){
-                if (sShutdown) {
-                  timer.cancel();
-                }
- else {
-                  sLogger.info("Trying to reconnect to KNX...");
-                  connect();
-                  if (sLink.isOpen()) {
-                    timer.cancel();
-                  }
-                }
-              }
-            }
-;
+            TimerTask timerTask=new ConnectTimerTask(timer);
             timer.schedule(timerTask,sAutoReconnectPeriod * 1000,sAutoReconnectPeriod * 1000);
           }
         }
