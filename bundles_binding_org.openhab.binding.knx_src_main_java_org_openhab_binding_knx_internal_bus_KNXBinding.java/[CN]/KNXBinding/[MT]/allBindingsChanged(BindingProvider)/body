@@ -1,9 +1,15 @@
 {
-  logger.trace("allBindingsChanged() msg received. Initializing readable DPs.");
-  if (provider instanceof KNXBindingProvider) {
-    KNXBindingProvider knxProvider=(KNXBindingProvider)provider;
-    for (    Datapoint datapoint : knxProvider.getReadableDatapoints()) {
-      datapointsToInitialize.put(datapoint,0);
+  logger.trace("allBindingsChanged() msg received.");
+  if (mKNXConnectionEstablished) {
+    logger.trace("Initializing readable DPs.");
+    if (provider instanceof KNXBindingProvider) {
+      KNXBindingProvider knxProvider=(KNXBindingProvider)provider;
+      mKNXBusReaderScheduler.clear();
+      for (      Datapoint datapoint : knxProvider.getReadableDatapoints()) {
+        if (!mKNXBusReaderScheduler.scheduleRead(datapoint,knxProvider.getAutoRefreshTime(datapoint))) {
+          logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
+        }
+      }
     }
   }
 }

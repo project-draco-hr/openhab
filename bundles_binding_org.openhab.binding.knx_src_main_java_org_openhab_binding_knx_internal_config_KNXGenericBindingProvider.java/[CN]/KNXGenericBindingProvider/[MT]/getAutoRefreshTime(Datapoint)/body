@@ -1,0 +1,13 @@
+{
+synchronized (bindingConfigs) {
+    for (    BindingConfig config : bindingConfigs.values()) {
+      KNXBindingConfig knxConfig=(KNXBindingConfig)config;
+      for (      KNXBindingConfigItem configItem : knxConfig) {
+        if ((configItem.readableDataPoint != null) && (configItem.readableDataPoint.equals(dataPoint))) {
+          return configItem.autoRefreshInSecs;
+        }
+      }
+    }
+  }
+  return 0;
+}

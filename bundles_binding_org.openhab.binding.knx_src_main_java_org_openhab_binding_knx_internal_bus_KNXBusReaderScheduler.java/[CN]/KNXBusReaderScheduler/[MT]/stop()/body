@@ -1,0 +1,20 @@
+{
+  sLogger.trace("Stopping auto refresh scheduler");
+  sLogger.debug("Terminating schedule executor.");
+  mScheduledExecutorService.shutdown();
+  try {
+    if (mScheduledExecutorService.awaitTermination(SCHEDULED_EXECUTOR_SERVICE_SHUTDOWN_TIMEOUT,TimeUnit.SECONDS)) {
+      sLogger.debug("Auto refresh scheduler successfully terminated");
+    }
+ else {
+      sLogger.debug("Auto refresh scheduler couldn't be terminated and termination timed out.");
+    }
+  }
+ catch (  InterruptedException e) {
+    sLogger.debug("Auto refresh scheduler: interrupted while waiting for termination.");
+  }
+  sLogger.trace("Clearing all items from the refresher queue");
+  mReadQueue.clear();
+  mDatapointReaderTask.setInterrupted(true);
+  mIsRunning=false;
+}

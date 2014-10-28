@@ -1,0 +1,26 @@
+{
+  kNXBindingAutoRefreshScheduler.start();
+  assertTrue(kNXBindingAutoRefreshScheduler.isRunning());
+  Datapoint datapoint=createDP("1.001");
+  assertTrue(kNXBindingAutoRefreshScheduler.scheduleRead(datapoint,0));
+  assertFalse(kNXBindingAutoRefreshScheduler.scheduleRead(null,0));
+  assertFalse(kNXBindingAutoRefreshScheduler.scheduleRead(null,1));
+  assertFalse(kNXBindingAutoRefreshScheduler.scheduleRead(datapoint,-1));
+  assertTrue(kNXBindingAutoRefreshScheduler.scheduleRead(datapoint,2));
+  try {
+    Thread.sleep(5000);
+  }
+ catch (  InterruptedException e) {
+    e.printStackTrace();
+  }
+  assertTrue(kNXBindingAutoRefreshScheduler.scheduleRead(datapoint,3));
+  try {
+    Thread.sleep(7000);
+  }
+ catch (  InterruptedException e) {
+    e.printStackTrace();
+  }
+  kNXBindingAutoRefreshScheduler.clear();
+  kNXBindingAutoRefreshScheduler.stop();
+  assertFalse(kNXBindingAutoRefreshScheduler.isRunning());
+}

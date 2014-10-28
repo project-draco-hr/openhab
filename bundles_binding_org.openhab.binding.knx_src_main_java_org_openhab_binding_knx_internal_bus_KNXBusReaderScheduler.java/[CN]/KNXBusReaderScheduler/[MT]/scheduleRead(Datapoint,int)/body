@@ -1,0 +1,42 @@
+{
+  if (datapoint == null) {
+    sLogger.error("Argument datapoint cannot be null");
+    return false;
+  }
+  if (autoRefreshTimeInSecs < 0) {
+    sLogger.error("AutoRefreshTimeInSecs must be >= 0 for datapoint '{}'",datapoint.getName());
+    return false;
+  }
+  if (autoRefreshTimeInSecs == 0) {
+    return readOnce(datapoint);
+  }
+  if (mReadQueue.size() > MAX_QUEUE_ENTRIES) {
+    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",MAX_QUEUE_ENTRIES);
+    return false;
+  }
+  int oldListNumber=getAutoRefreshTimeInSecs(datapoint);
+  if (oldListNumber > 0) {
+    if (oldListNumber == autoRefreshTimeInSecs) {
+      sLogger.warn("Datapoint '{}' was already in  auto refresh list {}",datapoint.getName(),autoRefreshTimeInSecs);
+      return false;
+    }
+    List<Datapoint> oldList=mScheduleMap.get(oldListNumber);
+synchronized (oldList) {
+      sLogger.debug("Datapoint '{}' already present in different list {}: removing",datapoint.getName(),autoRefreshTimeInSecs);
+      oldList.remove(datapoint);
+    }
+  }
+  if (!mScheduleMap.containsKey(autoRefreshTimeInSecs)) {
+    sLogger.debug("Creating auto refresh list: {}.",autoRefreshTimeInSecs);
+    mScheduleMap.put(autoRefreshTimeInSecs,new LinkedList<Datapoint>());
+    if (mIsRunning) {
+      sLogger.debug("Starting auto refresh cycle {}",autoRefreshTimeInSecs);
+      mScheduledExecutorService.scheduleAtFixedRate(new AutoRefreshTask(autoRefreshTimeInSecs),autoRefreshTimeInSecs,autoRefreshTimeInSecs,TimeUnit.SECONDS);
+    }
+  }
+  List<Datapoint> dpList=mScheduleMap.get(autoRefreshTimeInSecs);
+synchronized (dpList) {
+    sLogger.debug("Adding datapoint '{}' to auto refresh list {}.",datapoint.getName(),autoRefreshTimeInSecs);
+    return dpList.add(datapoint);
+  }
+}

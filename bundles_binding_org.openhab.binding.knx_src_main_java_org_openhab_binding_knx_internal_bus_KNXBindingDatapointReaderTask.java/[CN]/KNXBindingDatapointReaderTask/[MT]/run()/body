@@ -1,0 +1,30 @@
+{
+  try {
+    while (!mInterrupted) {
+      sLogger.debug("Autorefresh: Waiting for new item in reader queue");
+      Datapoint dp=readQueue.take();
+      sLogger.debug("Autorefresh: got new item in reader queue");
+      if (mKNXConnected) {
+        sLogger.debug("Autorefresh: Trying to read form KNX bus: {}",dp);
+        readFromKNXBus(dp);
+        long readingPause=KNXConnection.getReadingPause();
+        if (readingPause > 0) {
+          try {
+            sLogger.debug("Autorefresh: DatapointReaderTask Waiting {} msecs to prevent KNX bus overload",readingPause);
+            Thread.sleep(readingPause);
+          }
+ catch (          InterruptedException e) {
+            sLogger.debug("Autorefresh: DatapointReaderTask KNX reading pause has been interrupted: {}",e.getMessage());
+          }
+        }
+      }
+ else {
+        sLogger.debug("Autorefresh: Not connected. Skipping bus read.");
+      }
+    }
+    sLogger.debug("Autorefresh: DatapointReaderTask interrupted.");
+  }
+ catch (  InterruptedException ex) {
+    sLogger.debug("Autorefresh: DatapointReaderTask wait on blockingqueue interrupted: {}",ex.getMessage());
+  }
+}

@@ -1,0 +1,29 @@
+{
+  sLogger.trace("Clearing all datapoints from auto refresh scheduler");
+  if (mScheduledExecutorService != null) {
+    sLogger.debug("Schedule executor restart.");
+    mScheduledExecutorService.shutdown();
+    try {
+      if (mScheduledExecutorService.awaitTermination(SCHEDULED_EXECUTOR_SERVICE_SHUTDOWN_TIMEOUT,TimeUnit.SECONDS)) {
+        sLogger.debug("Schedule executor restart: successfully terminated old instance");
+      }
+ else {
+        sLogger.debug("Schedule executor restart failed: termination timed out.");
+      }
+    }
+ catch (    InterruptedException e) {
+      sLogger.debug("Schedule executor restart failed: interrupted while waiting for termination.");
+    }
+    mScheduledExecutorService=Executors.newScheduledThreadPool(NUM_THREADS);
+    sLogger.debug("Schedule executor restart: started.");
+  }
+  for (  int autoRefreshTimeInSecs : mScheduleMap.keySet()) {
+    List<Datapoint> dpList=mScheduleMap.get(autoRefreshTimeInSecs);
+synchronized (dpList) {
+      sLogger.debug("Clearing list {}",autoRefreshTimeInSecs);
+      dpList.clear();
+    }
+    sLogger.debug("Removing list {} from scheduler",autoRefreshTimeInSecs);
+    mScheduleMap.remove(autoRefreshTimeInSecs);
+  }
+}

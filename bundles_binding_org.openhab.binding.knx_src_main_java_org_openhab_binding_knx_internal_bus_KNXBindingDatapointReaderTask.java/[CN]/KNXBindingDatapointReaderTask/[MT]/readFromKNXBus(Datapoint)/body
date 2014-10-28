@@ -1,0 +1,21 @@
+{
+  try {
+    ProcessCommunicator pc=KNXConnection.getCommunicator();
+    if (pc != null) {
+      sLogger.debug("Autorefresh: Sending read request to KNX for item '{}'",datapoint.getName());
+      pc.read(datapoint);
+    }
+ else {
+      sLogger.debug("Autorefresh: Couldn't sent read request to KNX for item '{}'. Connection to KNX bus not (yet) established.",datapoint.getName());
+    }
+  }
+ catch (  KNXException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
+  }
+catch (  KNXIllegalArgumentException e) {
+    sLogger.warn("Autorefresh: Error sending KNX read request for '{}': {}",datapoint.getName(),e.getMessage());
+  }
+catch (  InterruptedException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
+  }
+}

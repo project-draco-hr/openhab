@@ -1,8 +1,11 @@
 {
   logger.trace("connectionEstablished() msg received. Initializing readable DPs.");
+  mKNXConnectionEstablished=true;
   for (  KNXBindingProvider knxProvider : providers) {
     for (    Datapoint datapoint : knxProvider.getReadableDatapoints()) {
-      datapointsToInitialize.put(datapoint,0);
+      if (!mKNXBusReaderScheduler.scheduleRead(datapoint,knxProvider.getAutoRefreshTime(datapoint))) {
+        logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
+      }
     }
   }
 }

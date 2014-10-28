@@ -1,0 +1,9 @@
+{
+  sLogger.trace("Starting auto refresh scheduler");
+  sLogger.debug("Starting reader task.");
+  mDatapointReaderTask=new KNXBindingDatapointReaderTask(mReadQueue);
+  mDatapointReaderTask.start();
+  sLogger.debug("Starting schedule executor.");
+  mScheduledExecutorService=Executors.newScheduledThreadPool(NUM_THREADS);
+  mIsRunning=true;
+}

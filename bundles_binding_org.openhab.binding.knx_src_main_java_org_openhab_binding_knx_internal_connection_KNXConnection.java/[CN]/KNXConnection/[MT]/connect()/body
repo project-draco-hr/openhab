@@ -16,10 +16,9 @@
       public void linkClosed(      CloseEvent e){
         if (!(CloseEvent.USER_REQUEST == e.getInitiator()) && !sShutdown) {
           sLogger.warn("KNX link has been lost (reason: {} on object {}) - reconnecting...",e.getReason(),e.getSource().toString());
-          connect();
-        }
-        if (!sLink.isOpen() && !sShutdown) {
-          sLogger.error("KNX link has been lost!");
+          for (          KNXConnectionListener listener : KNXConnection.sConnectionListeners) {
+            listener.connectionLost();
+          }
           if (sAutoReconnectPeriod > 0) {
             sLogger.info("KNX link will be retried in " + sAutoReconnectPeriod + " seconds");
             final Timer timer=new Timer();
@@ -58,10 +57,6 @@
     if (sProcessCommunicationListener != null) {
       sPC.addProcessListener(sProcessCommunicationListener);
     }
-    for (    KNXConnectionListener listener : KNXConnection.sConnectionListeners) {
-      listener.connectionEstablished();
-    }
-    successRetVal=true;
     if (sLogger.isInfoEnabled()) {
       if (sLink instanceof KNXNetworkLinkIP) {
         String ipConnectionTypeString=KNXConnection.sIpConnectionType == KNXNetworkLinkIP.ROUTING ? "ROUTER" : "TUNNEL";
@@ -71,6 +66,10 @@
         sLogger.info("Established connection to KNX bus through FT1.2 on serial port {}.",sSerialPort);
       }
     }
+    for (    KNXConnectionListener listener : KNXConnection.sConnectionListeners) {
+      listener.connectionEstablished();
+    }
+    successRetVal=true;
   }
  catch (  KNXException e) {
     sLogger.error("Error connecting to KNX bus: {}",e.getMessage());

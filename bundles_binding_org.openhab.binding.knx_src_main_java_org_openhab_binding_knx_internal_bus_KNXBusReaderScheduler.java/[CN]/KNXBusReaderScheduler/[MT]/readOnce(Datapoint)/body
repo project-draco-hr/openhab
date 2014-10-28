@@ -1,0 +1,12 @@
+{
+  if (datapoint == null) {
+    sLogger.error("Argument datapoint cannot be null");
+    return false;
+  }
+  if (mReadQueue.size() > MAX_QUEUE_ENTRIES) {
+    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",MAX_QUEUE_ENTRIES);
+    return false;
+  }
+  sLogger.debug("Datapoint '{}':  one time reading scheduled.",datapoint.getName());
+  return mReadQueue.add(datapoint);
+}

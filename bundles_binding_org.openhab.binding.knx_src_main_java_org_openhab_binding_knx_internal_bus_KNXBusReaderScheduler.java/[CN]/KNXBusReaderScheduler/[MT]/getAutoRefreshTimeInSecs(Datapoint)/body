@@ -1,0 +1,13 @@
+{
+  int autoRefreshTimeInSecs=0;
+  for (  int number : mScheduleMap.keySet()) {
+    List<Datapoint> dpList=mScheduleMap.get(number);
+synchronized (dpList) {
+      if (dpList.contains(datapoint)) {
+        autoRefreshTimeInSecs=number;
+        break;
+      }
+    }
+  }
+  return autoRefreshTimeInSecs;
+}
