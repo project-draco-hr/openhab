@@ -33,8 +33,14 @@
         }
         logger.debug("Requesting location for '{}'...",name);
         location=getUserLocation(accessKey,secretKey);
-        openPathsUsers.get(name).setLastLocation(location);
-        logger.debug("New location received for '{}': {}",name,location.toString());
+        if (location != null) {
+          openPathsUsers.get(name).setLastLocation(location);
+          logger.debug("New location received for '{}': {}",name,location.toString());
+        }
+ else {
+          logger.warn("Unable to determine location for '{}'. Skipping.",name);
+          continue;
+        }
       }
  else {
         location=openPathsUsers.get(name).getLastLocation();
