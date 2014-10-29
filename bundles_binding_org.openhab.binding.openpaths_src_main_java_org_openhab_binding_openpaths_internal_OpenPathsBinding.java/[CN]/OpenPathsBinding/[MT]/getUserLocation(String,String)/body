@@ -5,20 +5,23 @@
   request.addQuerystringParameter("num_points","1");
   Response response=request.send();
   if (!response.isSuccessful()) {
-    logger.error("Failed to request the OpenPaths location: " + response.getCode());
+    logger.error("Failed to request the OpenPaths location, response code: " + response.getCode());
     return null;
   }
-  Map<String,String> locationData;
+  Map<String,Object> locationData;
+  String toParse="{}";
   try {
     ObjectMapper jsonReader=new ObjectMapper();
-    locationData=jsonReader.readValue(response.getBody(),Map.class);
+    toParse=response.getBody();
+    toParse=toParse.substring(1,toParse.length() - 2);
+    locationData=jsonReader.readValue(toParse,Map.class);
   }
  catch (  JsonParseException e) {
-    logger.error("Error parsing JSON:\n" + response.getBody());
+    logger.error("Error parsing JSON:\n" + toParse,e);
     return null;
   }
 catch (  JsonMappingException e) {
-    logger.error("Error mapping JSON:\n" + response.getBody());
+    logger.error("Error mapping JSON:\n" + toParse,e);
     return null;
   }
 catch (  IOException e) {
