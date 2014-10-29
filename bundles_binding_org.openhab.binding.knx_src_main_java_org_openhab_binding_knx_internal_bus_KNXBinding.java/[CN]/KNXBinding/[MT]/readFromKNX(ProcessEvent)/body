@@ -12,7 +12,7 @@
           Type type=getType(datapoint,asdu);
           if (type != null) {
             ignoreEventList.add(itemName + type.toString());
-            logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
+            logger.debug("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
             if (type instanceof Command && isCommandGA(destination)) {
               eventPublisher.postCommand(itemName,(Command)type);
             }
@@ -22,7 +22,7 @@
  else {
               throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
             }
-            logger.trace("Processed event (item='{}', type='{}', destination='{}')",itemName,type.toString(),destination.toString());
+            logger.debug("Processed event (item='{}', type='{}', destination='{}')",itemName,type.toString(),destination.toString());
             return;
           }
  else {

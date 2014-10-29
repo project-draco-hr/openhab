@@ -5,7 +5,7 @@
     sLogger.debug("Schedule executor restart.");
     mScheduledExecutorService.shutdown();
     try {
-      if (mScheduledExecutorService.awaitTermination(SCHEDULED_EXECUTOR_SERVICE_SHUTDOWN_TIMEOUT,TimeUnit.SECONDS)) {
+      if (mScheduledExecutorService.awaitTermination(KNXConnection.getScheduledExecutorServiceShutdownTimeout(),TimeUnit.SECONDS)) {
         sLogger.debug("Schedule executor restart: successfully terminated old instance");
       }
  else {
@@ -15,7 +15,7 @@
  catch (    InterruptedException e) {
       sLogger.debug("Schedule executor restart failed: interrupted while waiting for termination.");
     }
-    mScheduledExecutorService=Executors.newScheduledThreadPool(NUM_THREADS);
+    mScheduledExecutorService=Executors.newScheduledThreadPool(KNXConnection.getNumberOfThreads());
     sLogger.debug("Schedule executor restart: started.");
   }
   for (  int autoRefreshTimeInSecs : mScheduleMap.keySet()) {

@@ -3,8 +3,8 @@
     sLogger.error("Argument datapoint cannot be null");
     return false;
   }
-  if (mReadQueue.size() > MAX_QUEUE_ENTRIES) {
-    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",MAX_QUEUE_ENTRIES);
+  if (mReadQueue.size() > KNXConnection.getMaxRefreshQueueEntries()) {
+    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",KNXConnection.getMaxRefreshQueueEntries());
     return false;
   }
   sLogger.debug("Datapoint '{}':  one time reading scheduled.",datapoint.getName());

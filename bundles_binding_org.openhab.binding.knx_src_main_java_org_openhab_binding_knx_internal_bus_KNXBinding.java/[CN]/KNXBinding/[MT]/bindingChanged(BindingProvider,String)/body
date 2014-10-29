@@ -1,11 +1,11 @@
 {
-  logger.trace("bindingChanged() for item {} msg received.",itemName);
+  logger.debug("bindingChanged() for item {} msg received.",itemName);
   if (mKNXConnectionEstablished) {
-    logger.trace("Initializing read of item {}.",itemName);
     if (provider instanceof KNXBindingProvider) {
       KNXBindingProvider knxProvider=(KNXBindingProvider)provider;
       for (      Datapoint datapoint : knxProvider.getReadableDatapoints()) {
         if (datapoint.getName().equals(itemName)) {
+          logger.debug("Initializing read of item {}.",itemName);
           if (!mKNXBusReaderScheduler.scheduleRead(datapoint,knxProvider.getAutoRefreshTime(datapoint))) {
             logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
           }

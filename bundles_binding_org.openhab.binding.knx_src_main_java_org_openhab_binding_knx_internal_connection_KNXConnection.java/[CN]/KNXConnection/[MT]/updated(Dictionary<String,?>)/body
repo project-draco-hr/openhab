@@ -54,6 +54,27 @@
         sAutoReconnectPeriod=autoReconnectPeriodValue;
       }
     }
+    String maxRefreshQueueEntriesString=(String)config.get("maxRefreshQueueEntries");
+    if (StringUtils.isNotBlank(autoReconnectPeriodString)) {
+      int maxRefreshQueueEntriesValue=Integer.parseInt(maxRefreshQueueEntriesString);
+      if (maxRefreshQueueEntriesValue >= 0) {
+        sMaxRefreshQueueEntries=maxRefreshQueueEntriesValue;
+      }
+    }
+    String numberOfThreadsString=(String)config.get("numberOfThreads");
+    if (StringUtils.isNotBlank(autoReconnectPeriodString)) {
+      int numberOfThreadsValue=Integer.parseInt(numberOfThreadsString);
+      if (numberOfThreadsValue >= 0) {
+        sNumberOfThreads=numberOfThreadsValue;
+      }
+    }
+    String scheduledExecutorServiceShutdownTimeoutString=(String)config.get("scheduledExecutorServiceShutdownTimeout");
+    if (StringUtils.isNotBlank(scheduledExecutorServiceShutdownTimeoutString)) {
+      int scheduledExecutorServiceShutdownTimeoutValue=Integer.parseInt(scheduledExecutorServiceShutdownTimeoutString);
+      if (scheduledExecutorServiceShutdownTimeoutValue >= 0) {
+        sScheduledExecutorServiceShutdownTimeout=scheduledExecutorServiceShutdownTimeoutValue;
+      }
+    }
     if (sPC == null) {
       if (!connect()) {
         sLogger.warn("Inital connection to KNX bus failed!");

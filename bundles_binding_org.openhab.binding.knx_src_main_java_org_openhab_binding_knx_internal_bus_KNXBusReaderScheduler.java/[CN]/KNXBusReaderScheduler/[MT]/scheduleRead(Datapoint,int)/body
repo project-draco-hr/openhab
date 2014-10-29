@@ -10,20 +10,24 @@
   if (autoRefreshTimeInSecs == 0) {
     return readOnce(datapoint);
   }
-  if (mReadQueue.size() > MAX_QUEUE_ENTRIES) {
-    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",MAX_QUEUE_ENTRIES);
+  if (mReadQueue.size() > KNXConnection.getMaxRefreshQueueEntries()) {
+    sLogger.error("Maximium number of permissible reading queue entries reached ('{}'). Ignoring new entries.",KNXConnection.getMaxRefreshQueueEntries());
     return false;
   }
   int oldListNumber=getAutoRefreshTimeInSecs(datapoint);
   if (oldListNumber > 0) {
     if (oldListNumber == autoRefreshTimeInSecs) {
-      sLogger.warn("Datapoint '{}' was already in  auto refresh list {}",datapoint.getName(),autoRefreshTimeInSecs);
+      sLogger.debug("Datapoint '{}' was already in  auto refresh list {}",datapoint.getName(),autoRefreshTimeInSecs);
       return false;
     }
     List<Datapoint> oldList=mScheduleMap.get(oldListNumber);
 synchronized (oldList) {
-      sLogger.debug("Datapoint '{}' already present in different list {}: removing",datapoint.getName(),autoRefreshTimeInSecs);
-      oldList.remove(datapoint);
+      sLogger.debug("Datapoint '{}' already present in different list: {}, removing",datapoint.getName(),oldListNumber);
+      for (      Datapoint dp : oldList) {
+        if (dp.toString().equals(datapoint.toString())) {
+          oldList.remove(dp);
+        }
+      }
     }
   }
   if (!mScheduleMap.containsKey(autoRefreshTimeInSecs)) {
