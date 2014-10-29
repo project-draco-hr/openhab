@@ -1,15 +1,15 @@
 {
-  if (speechDispatcherClient == null) {
-    logger.error("SpeechDispatcher TTS is not available");
-    return;
+  SpeechDispatcherConnection connection=null;
+  if (outputDevice != null) {
+    connection=deviceConfigCache.get(outputDevice);
   }
-  if (text == null) {
-    return;
+ else {
+    connection=defaultOutput;
   }
-  try {
-    speechDispatcherClient.say(SSIPPriority.MESSAGE,text);
+  if (connection != null) {
+    connection.say(text,voiceName);
   }
- catch (  SSIPException e) {
-    logger.error("Error sending text to SpeechDispatcher TTS: " + e.getLocalizedMessage(),e);
+ else {
+    logger.error("Output device not configured [{}]",outputDevice);
   }
 }
