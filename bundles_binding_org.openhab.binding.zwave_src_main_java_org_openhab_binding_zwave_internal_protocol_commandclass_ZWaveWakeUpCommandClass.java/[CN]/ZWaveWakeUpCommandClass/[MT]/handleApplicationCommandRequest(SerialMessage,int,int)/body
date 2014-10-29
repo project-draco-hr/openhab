@@ -43,7 +43,7 @@ case WAKE_UP_NOTIFICATION:
 logger.trace("Process Wake Up Notification");
 logger.debug("NODE {}: is awake",this.getNode().getNodeId());
 serialMessage.setTransActionCanceled(true);
-if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().getNodeStage() == NodeStage.DEAD)) {
+if (!this.initializationComplete && (this.wakeUpQueue.isEmpty() || this.getNode().isDead() == true)) {
 logger.info("NODE {}: Got Wake Up Notification from node, continuing initialization.",this.getNode().getNodeId());
 this.getNode().setNodeStage(NodeStage.WAKEUP);
 this.getNode().advanceNodeStage(NodeStage.DETAILS);
