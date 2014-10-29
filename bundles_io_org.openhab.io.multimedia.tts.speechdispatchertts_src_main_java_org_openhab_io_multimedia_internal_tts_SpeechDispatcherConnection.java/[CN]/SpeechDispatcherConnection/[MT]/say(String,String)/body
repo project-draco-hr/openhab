@@ -1,0 +1,17 @@
+{
+  if (speechDispatcherClient == null) {
+    openConnection();
+  }
+  if (text == null) {
+    return;
+  }
+  try {
+    if (voiceName != null) {
+      speechDispatcherClient.setVoice(voiceName);
+    }
+    speechDispatcherClient.say(SSIPPriority.MESSAGE,text);
+  }
+ catch (  SSIPException e) {
+    logger.error("Error sending text to SpeechDispatcher Host {}: {}",host,e.getLocalizedMessage());
+  }
+}
