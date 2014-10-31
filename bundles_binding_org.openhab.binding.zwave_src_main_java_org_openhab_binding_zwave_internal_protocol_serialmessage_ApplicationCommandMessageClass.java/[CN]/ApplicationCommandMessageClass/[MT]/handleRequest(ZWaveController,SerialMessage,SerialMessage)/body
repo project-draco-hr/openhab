@@ -11,11 +11,8 @@
     node.setAlive();
     logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",nodeId,node.getNodeStage());
   }
-  if (node.isFailed()) {
-    node.setAlive();
-    logger.debug("NODE {}: Node has risen from the FAILED. Set stage to {}.",nodeId,node.getNodeStage());
-  }
   node.resetResendCount();
+  node.incrementReceiveCount();
   int commandClassCode=incomingMessage.getMessagePayloadByte(3);
   CommandClass commandClass=CommandClass.getCommandClass(commandClassCode);
   if (commandClass == null) {
@@ -37,7 +34,7 @@
     return false;
   }
   logger.trace("NODE {}: Found Command Class {}, passing to handleApplicationCommandRequest",nodeId,zwaveCommandClass.getCommandClass().getLabel());
-  zwaveCommandClass.handleApplicationCommandRequest(incomingMessage,4,1);
+  zwaveCommandClass.handleApplicationCommandRequest(incomingMessage,4,0);
   checkTransactionComplete(lastSentMessage,incomingMessage);
   return false;
 }

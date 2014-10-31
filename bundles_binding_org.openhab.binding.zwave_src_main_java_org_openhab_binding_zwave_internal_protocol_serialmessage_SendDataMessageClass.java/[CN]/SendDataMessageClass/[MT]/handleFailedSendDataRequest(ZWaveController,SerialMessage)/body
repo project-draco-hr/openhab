@@ -1,6 +1,8 @@
 {
   ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
-  if (node.getNodeStage() == NodeStage.DEAD)   return false;
+  if (node.isDead()) {
+    return false;
+  }
   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
     if (wakeUpCommandClass != null) {
