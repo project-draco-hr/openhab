@@ -5,7 +5,7 @@
   }
   for (  OpenPathsBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      logger.debug("try binding provider item: " + itemName);
+      logger.trace("try binding provider item: " + itemName);
       OpenPathsBindingConfig bindingConfig=provider.getItemConfig(itemName);
       String bindingConfigName=bindingConfig.getName();
       String[] bindingParts=bindingConfigName.split("\\:");
@@ -44,7 +44,7 @@
       }
  else {
         location=openPathsUsers.get(name).getLastLocation();
-        logger.debug("Using cached location for '{}'",openPathsUser.toString());
+        logger.trace("Using cached location for '{}'",openPathsUser.toString());
       }
       String bindingLocationName=bindingParts.length > 1 ? bindingParts[1] : "";
       if (bindingLocationName.startsWith("current")) {
@@ -74,18 +74,18 @@
         }
       }
       Location bindingLocation=locations.get(bindingLocationName);
-      logger.debug("Calculating distance between home ({}) and user location ({}) for '{}'...",new Object[]{bindingLocation.toString(),location.toString(),name});
+      logger.trace("Calculating distance between home ({}) and user location ({}) for '{}'...",new Object[]{bindingLocation.toString(),location.toString(),name});
       double distance=calculateDistance(bindingLocation,location);
       bindingLocation.setDistance(distance);
-      logger.debug("Distance calculated as {} for '{}'@'{}'",distance,name,bindingLocationName);
+      logger.trace("Distance calculated as {} for '{}'@'{}'",distance,name,bindingLocationName);
       if (bindingType.equals(LocationBindingType.on)) {
         float fence=bindingLocation.getGeofence() == 0.0 ? geoFence : bindingLocation.getGeofence();
         if (distance <= fence) {
-          logger.debug("Detected that '{}'@'{}' is inside the geofence ({}m)",name,bindingLocationName,fence);
+          logger.trace("Detected that '{}'@'{}' is inside the geofence ({}m)",name,bindingLocationName,fence);
           eventPublisher.postUpdate(itemName,OnOffType.ON);
         }
  else {
-          logger.debug("Detected that '{}'@'{}' is outside the geofence ({}m)",name,bindingLocationName,fence);
+          logger.trace("Detected that '{}'@'{}' is outside the geofence ({}m)",name,bindingLocationName,fence);
           eventPublisher.postUpdate(itemName,OnOffType.OFF);
         }
       }

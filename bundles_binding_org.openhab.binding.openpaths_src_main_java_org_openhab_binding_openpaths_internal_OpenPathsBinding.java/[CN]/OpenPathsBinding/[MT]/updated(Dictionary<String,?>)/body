@@ -12,13 +12,13 @@
       if ("refresh".equals(key)) {
         if (StringUtils.isNotBlank(value)) {
           refreshInterval=Long.parseLong(value);
-          logger.debug("Config: refresh=" + this.refreshInterval);
+          logger.trace("Config: refresh=" + this.refreshInterval);
         }
       }
  else       if ("geofence".equals(key)) {
         if (StringUtils.isNotBlank(value)) {
           geoFence=Float.parseFloat(value);
-          logger.debug("Config: geofence=" + this.geoFence);
+          logger.trace("Config: geofence=" + this.geoFence);
         }
       }
  else       if (key.endsWith("lat")) {
@@ -31,12 +31,12 @@
           String name=keyParts[0];
           if (locations.containsKey(name)) {
             locations.get(name).setLatitude(lat);
-            logger.debug("Config: new Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: new Location " + name + "("+ locations.get(name)+ ")");
           }
  else {
             Location loc=new Location();
             loc.setLatitude(lat);
-            logger.debug("Config: update Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: update Location " + name + "("+ locations.get(name)+ ")");
             locations.put(name,loc);
           }
         }
@@ -51,12 +51,12 @@
           String name=keyParts[0];
           if (locations.containsKey(name)) {
             locations.get(name).setLongitude(lon);
-            logger.debug("Config: new Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: new Location " + name + "("+ locations.get(name)+ ")");
           }
  else {
             Location loc=new Location();
             loc.setLongitude(lon);
-            logger.debug("Config: update Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: update Location " + name + "("+ locations.get(name)+ ")");
             locations.put(name,loc);
           }
         }
@@ -71,12 +71,12 @@
           String name=keyParts[0];
           if (locations.containsKey(name)) {
             locations.get(name).setGeofence(fence);
-            logger.debug("Config: new Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: new Location " + name + "("+ locations.get(name)+ ")");
           }
  else {
             Location loc=new Location();
             loc.setGeofence(fence);
-            logger.debug("Config: update Location " + name + "("+ locations.get(name)+ ")");
+            logger.trace("Config: update Location " + name + "("+ locations.get(name)+ ")");
             locations.put(name,loc);
           }
         }
