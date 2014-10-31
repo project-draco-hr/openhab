@@ -3,7 +3,7 @@
   try {
     XMPPConnection conn=XMPPConnect.getConnection();
     if (attachmentUrl == null) {
-      ChatManager chatmanager=conn.getChatManager();
+      ChatManager chatmanager=ChatManager.getInstanceFor(conn);
       Chat newChat=chatmanager.createChat(to,new MessageListener(){
         public void processMessage(        Chat chat,        Message message){
           logger.debug("Received message on XMPP: {}",message.getBody());
@@ -16,6 +16,9 @@
         success=true;
       }
  catch (      XMPPException e) {
+        logger.error("Error sending message '{}'",message,e);
+      }
+catch (      NotConnectedException e) {
         logger.error("Error sending message '{}'",message,e);
       }
     }
