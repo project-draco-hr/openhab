@@ -1,0 +1,18 @@
+{
+  this.configuration=configuration;
+  ConnManagerParams.setMaxTotalConnections(globalParams,getConfiguration().getMaxTotalConnections());
+  HttpConnectionParams.setConnectionTimeout(globalParams,getConfiguration().getConnectionTimeoutSeconds() * 1000);
+  HttpConnectionParams.setSoTimeout(globalParams,getConfiguration().getDataReadTimeoutSeconds() * 1000);
+  HttpProtocolParams.setContentCharset(globalParams,getConfiguration().getContentCharset());
+  if (getConfiguration().getSocketBufferSize() != -1) {
+    HttpConnectionParams.setSocketBufferSize(globalParams,getConfiguration().getSocketBufferSize());
+  }
+  HttpConnectionParams.setStaleCheckingEnabled(globalParams,getConfiguration().getStaleCheckingEnabled());
+  SchemeRegistry registry=new SchemeRegistry();
+  registry.register(new Scheme("http",80,PlainSocketFactory.getSocketFactory()));
+  clientConnectionManager=new ThreadSafeClientConnManager(globalParams,registry);
+  httpClient=new DefaultHttpClient(clientConnectionManager,globalParams);
+  if (getConfiguration().getRequestRetryCount() != -1) {
+    httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(getConfiguration().getRequestRetryCount(),false));
+  }
+}
