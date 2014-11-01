@@ -12,7 +12,10 @@
       success=true;
     }
  catch (    XMPPException e) {
-      System.out.println("Error Delivering block");
+      logger.warn("Error Delivering block",e);
+    }
+catch (    NotConnectedException e) {
+      logger.warn("Error Delivering block",e);
     }
   }
  catch (  NotInitializedException e) {

@@ -8,24 +8,26 @@
       config=new ConnectionConfiguration(servername,port);
     }
     if (connection != null && connection.isConnected()) {
-      connection.disconnect();
+      try {
+        connection.disconnect();
+      }
+ catch (      NotConnectedException e) {
+        logger.debug("Already disconnected",e);
+      }
     }
-    connection=new XMPPConnection(config);
+    connection=new XMPPTCPConnection(config);
     try {
       connection.connect();
       connection.login(username,password);
       if (consoleUsers.length > 0) {
-        connection.getChatManager().addChatListener(new XMPPConsole(consoleUsers));
+        ChatManager.getInstanceFor(connection).addChatListener(new XMPPConsole(consoleUsers));
         connection.addConnectionListener(new XMPPConnectionListener());
       }
       logger.info("Connection to XMPP as '{}' has been established.",username);
       initialized=true;
     }
- catch (    XMPPException e) {
+ catch (    Exception e) {
       logger.error("Could not establish connection to XMPP server '" + servername + ":"+ port+ "': {}",e.getMessage());
-    }
-catch (    NullPointerException e) {
-      logger.error("Could not establish connection to XMPP server '" + servername + ":"+ port+ "'");
     }
   }
 }
