@@ -1,72 +1,77 @@
 {
   logger.debug("Starting Z-Wave send thread");
-  while (!interrupted()) {
-    try {
-      lastSentMessage=sendQueue.take();
-      logger.debug("Took message from queue for sending. Queue length = {}",sendQueue.size());
-    }
- catch (    InterruptedException e1) {
-      break;
-    }
-    if (lastSentMessage == null)     continue;
-    if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
-      ZWaveNode node=getNode(lastSentMessage.getMessageNode());
-      if (node != null && !node.isListening() && !node.isFrequentlyListening() && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
-        ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-        if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(lastSentMessage)) {
-          continue;
+  try {
+    while (!interrupted()) {
+      try {
+        lastSentMessage=sendQueue.take();
+        logger.debug("Took message from queue for sending. Queue length = {}",sendQueue.size());
+      }
+ catch (      InterruptedException e1) {
+        break;
+      }
+      if (lastSentMessage == null)       continue;
+      if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+        ZWaveNode node=getNode(lastSentMessage.getMessageNode());
+        if (node != null && !node.isListening() && !node.isFrequentlyListening() && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
+          ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+          if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(lastSentMessage)) {
+            continue;
+          }
         }
       }
-    }
-    transactionCompleted.drainPermits();
-    byte[] buffer=lastSentMessage.getMessageBuffer();
-    logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
-    lastMessageStartTime=System.currentTimeMillis();
-    try {
+      transactionCompleted.drainPermits();
+      byte[] buffer=lastSentMessage.getMessageBuffer();
+      logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+      lastMessageStartTime=System.currentTimeMillis();
+      try {
 synchronized (serialPort.getOutputStream()) {
-        serialPort.getOutputStream().write(buffer);
-        serialPort.getOutputStream().flush();
+          serialPort.getOutputStream().write(buffer);
+          serialPort.getOutputStream().flush();
+        }
       }
-    }
- catch (    IOException e) {
-      logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
-      break;
-    }
-    try {
-      if (!transactionCompleted.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
-        timeOutCount.incrementAndGet();
-        if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
-          buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
-          logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
-          try {
+ catch (      IOException e) {
+        logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
+        break;
+      }
+      try {
+        if (!transactionCompleted.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
+          timeOutCount.incrementAndGet();
+          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+            buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
+            logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+            try {
 synchronized (serialPort.getOutputStream()) {
-              serialPort.getOutputStream().write(buffer);
-              serialPort.getOutputStream().flush();
+                serialPort.getOutputStream().write(buffer);
+                serialPort.getOutputStream().flush();
+              }
+            }
+ catch (            IOException e) {
+              logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
+              break;
             }
           }
- catch (          IOException e) {
-            logger.error("Got I/O exception {} during sending. exiting thread.",e.getLocalizedMessage());
-            break;
+          if (--lastSentMessage.attempts >= 0) {
+            logger.error("NODE {}: Timeout while sending message. Requeueing",lastSentMessage.getMessageNode());
+            if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData)             handleFailedSendDataRequest(lastSentMessage);
+ else             enqueue(lastSentMessage);
           }
-        }
-        if (--lastSentMessage.attempts >= 0) {
-          logger.error("NODE {}: Timeout while sending message. Requeueing",lastSentMessage.getMessageNode());
-          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData)           handleFailedSendDataRequest(lastSentMessage);
- else           enqueue(lastSentMessage);
-        }
  else {
-          logger.warn("NODE {}: Discarding message: {}",lastSentMessage.getMessageNode(),lastSentMessage.toString());
+            logger.warn("NODE {}: Discarding message: {}",lastSentMessage.getMessageNode(),lastSentMessage.toString());
+          }
+          continue;
         }
-        continue;
+        long responseTime=System.currentTimeMillis() - lastMessageStartTime;
+        if (responseTime > longestResponseTime)         longestResponseTime=responseTime;
+        logger.debug("Response processed after {}ms/{}ms.",responseTime,longestResponseTime);
+        logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
       }
-      long responseTime=System.currentTimeMillis() - lastMessageStartTime;
-      if (responseTime > longestResponseTime)       longestResponseTime=responseTime;
-      logger.debug("Response processed after {}ms/{}ms.",responseTime,longestResponseTime);
-      logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
+ catch (      InterruptedException e) {
+        break;
+      }
     }
- catch (    InterruptedException e) {
-      break;
-    }
+  }
+ catch (  Exception e) {
+    logger.error("Got an exception during sending. exiting thread.",e);
   }
   logger.debug("Stopped Z-Wave send thread");
 }

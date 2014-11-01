@@ -32,4 +32,32 @@ default :
 break;
 }
 }
+if (event instanceof ZWaveNetworkEvent) {
+ZWaveNetworkEvent networkEvent=(ZWaveNetworkEvent)event;
+switch (networkEvent.getEvent()) {
+case FailedNode:
+if (getNode(networkEvent.getNodeId()) == null) {
+logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());
+break;
+}
+if (networkEvent.getState() == State.Success) {
+logger.debug("NODE {}: Marking node as failed because its on the controllers failed node list.",networkEvent.getNodeId());
+getNode(networkEvent.getNodeId()).setNodeStage(NodeStage.FAILED);
+ZWaveEvent zEvent=new ZWaveNodeStatusEvent(networkEvent.getNodeId(),ZWaveNodeStatusEvent.State.Failed);
+this.notifyEventListeners(zEvent);
+break;
+}
+case DeleteNode:
+if (getNode(networkEvent.getNodeId()) == null) {
+logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());
+break;
+}
+this.zwaveNodes.remove(networkEvent.getNodeId());
+ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+nodeSerializer.DeleteNode(event.getNodeId());
+break;
+default :
+break;
+}
+}
 }
