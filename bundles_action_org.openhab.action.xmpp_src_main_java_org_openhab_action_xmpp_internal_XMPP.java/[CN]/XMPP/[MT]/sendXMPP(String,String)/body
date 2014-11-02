@@ -2,7 +2,7 @@
   boolean success=false;
   try {
     XMPPConnection conn=XMPPConnect.getConnection();
-    ChatManager chatmanager=conn.getChatManager();
+    ChatManager chatmanager=ChatManager.getInstanceFor(conn);
     Chat newChat=chatmanager.createChat(to,null);
     try {
       while (message.length() >= 2000) {
@@ -14,7 +14,10 @@
       success=true;
     }
  catch (    XMPPException e) {
-      System.out.println("Error Delivering block");
+      logger.warn("Error Delivering block",e);
+    }
+catch (    NotConnectedException e) {
+      logger.warn("Error Delivering block",e);
     }
   }
  catch (  NotInitializedException e) {
