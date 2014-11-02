@@ -1,0 +1,10 @@
+{
+  HmDatapoint dp=new HmDatapoint();
+  dp.setName(name);
+  dp.setValueType(8);
+  dp.setWriteable(false);
+  dp.setValue(value);
+  channel.addDatapoint(dp);
+  DatapointConfig bindingConfig=new DatapointConfig(channel.getDevice().getAddress(),channel.getNumber(),dp.getName());
+  callback.iterate(bindingConfig,dp);
+}
