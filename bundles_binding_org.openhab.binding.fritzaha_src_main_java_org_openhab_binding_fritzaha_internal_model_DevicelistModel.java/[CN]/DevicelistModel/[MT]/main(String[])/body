@@ -1,0 +1,34 @@
+{
+  try {
+    TemperatureModel temp=new TemperatureModel();
+    temp.setCelsius(new BigDecimal("25.5"));
+    temp.setOffset(new BigDecimal("0"));
+    PowerMeterModel meter=new PowerMeterModel();
+    meter.setEnergy(new BigDecimal("7.01"));
+    meter.setPower(new BigDecimal("0.67"));
+    DeviceModel dev=new DeviceModel();
+    dev.setPowermeter(meter);
+    dev.setTemperature(temp);
+    DevicelistModel model=new DevicelistModel();
+    ArrayList<DeviceModel> devlist=new ArrayList<DeviceModel>();
+    devlist.add(dev);
+    model.setDevicelist(devlist);
+    JAXBContext context=JAXBContext.newInstance(DevicelistModel.class);
+    Marshaller m=context.createMarshaller();
+    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+    m.marshal(dev,System.out);
+    System.out.println();
+    System.out.println("Output from our XML File: ");
+    Unmarshaller um=context.createUnmarshaller();
+    InputStream is=DevicelistModel.class.getResourceAsStream("sample.xml");
+    model=(DevicelistModel)um.unmarshal(new InputStreamReader(is));
+    ArrayList<DeviceModel> list=model.getDevicelist();
+    System.out.println("API-Version: " + model.getXmlApiVersion());
+    for (    DeviceModel device : list) {
+      System.out.println(device.toString());
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+  }
+}
