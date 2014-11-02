@@ -1,34 +1,17 @@
 {
-  while (!isInterrupted()) {
-    try {
-      String data=br.readLine();
-      log.debug("Received raw message from CUL: " + data);
-      if ("EOB".equals(data)) {
-        log.warn("(EOB) End of Buffer. Last message lost. Try sending less messages per time slot to the CUL");
-        return;
+  try {
+    while (!isInterrupted()) {
+      processNextLine();
+      try {
+        Thread.sleep(10);
       }
- else       if ("LOVF".equals(data)) {
-        log.warn("(LOVF) Limit Overflow: Last message lost. You are using more than 1% transmitting time. Reduce the number of rf messages");
-        return;
+ catch (      InterruptedException e) {
+        logger.debug("Error while sleeping in ReceiveThread",e);
       }
- else       if (data.matches("^.. *\\d*")) {
-        String[] report=data.split(" ");
-        credit10ms=Integer.parseInt(report[report.length - 1]);
-        log.debug("credit10ms = " + credit10ms);
-        return;
-      }
-      notifyDataReceived(data);
-      requestCreditReport();
     }
- catch (    IOException e) {
-      log.error("Exception while reading from serial port",e);
-      notifyError(e);
-    }
-    try {
-      Thread.sleep(10);
-    }
- catch (    InterruptedException e) {
-      logger.debug("Error while sleeping in ReceiveThread",e);
-    }
+    logger.debug("ReceiveThread exiting.");
+  }
+ catch (  CULCommunicationException e) {
+    log.error("Connection to CUL broken, terminating receive thread for " + deviceName);
   }
 }
