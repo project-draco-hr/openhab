@@ -9,13 +9,22 @@
       sLogger.debug("Autorefresh: Couldn't sent read request to KNX for item '{}'. Connection to KNX bus not (yet) established.",datapoint.getName());
     }
   }
- catch (  KNXException e) {
+ catch (  KNXFormatException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: invalid format",datapoint.getName(),e.getMessage());
+  }
+catch (  KNXInvalidResponseException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: invalid response",datapoint.getName(),e.getMessage());
+  }
+catch (  KNXTimeoutException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: timeout",datapoint.getName(),e.getMessage());
+  }
+catch (  KNXLinkClosedException e) {
+    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: link closed",datapoint.getName(),e.getMessage());
+  }
+catch (  KNXException e) {
     sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
   }
 catch (  KNXIllegalArgumentException e) {
     sLogger.warn("Autorefresh: Error sending KNX read request for '{}': {}",datapoint.getName(),e.getMessage());
-  }
-catch (  InterruptedException e) {
-    sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
   }
 }
