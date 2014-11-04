@@ -3,7 +3,7 @@
   try {
     XMPPConnection conn=XMPPConnect.getConnection();
     if (attachmentUrl == null) {
-      ChatManager chatmanager=conn.getChatManager();
+      ChatManager chatmanager=ChatManager.getInstanceFor(conn);
       Chat newChat=chatmanager.createChat(to,new MessageListener(){
         public void processMessage(        Chat chat,        Message message){
           logger.debug("Received message on XMPP: {}",message.getBody());
@@ -18,21 +18,27 @@
  catch (      XMPPException e) {
         logger.error("Error sending message '{}'",message,e);
       }
+catch (      NotConnectedException e) {
+        logger.error("Error sending message '{}'",message,e);
+      }
     }
  else {
       FileTransferManager manager=new FileTransferManager(conn);
       OutgoingFileTransfer transfer=manager.createOutgoingFileTransfer(to);
+      InputStream is=null;
       try {
         URL url=new URL(attachmentUrl);
-        InputStream is=url.openStream();
+        is=url.openStream();
         OutgoingFileTransfer.setResponseTimeout(10000);
         transfer.sendStream(is,url.getFile(),is.available(),message);
         logger.debug("Sent message '{}' with attachment '{}' to '{}'.",new String[]{message,attachmentUrl,to});
-        is.close();
         success=true;
       }
  catch (      IOException e) {
         logger.error("Could not open url '{}' for sending it via XMPP",attachmentUrl,e);
+      }
+ finally {
+        IOUtils.closeQuietly(is);
       }
     }
   }
