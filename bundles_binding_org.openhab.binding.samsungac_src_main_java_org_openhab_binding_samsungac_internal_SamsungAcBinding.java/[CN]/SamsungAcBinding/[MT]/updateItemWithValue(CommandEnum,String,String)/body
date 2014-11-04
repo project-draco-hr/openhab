@@ -1,0 +1,26 @@
+{
+switch (cmd) {
+case AC_FUN_TEMPNOW:
+case AC_FUN_TEMPSET:
+    postUpdate(item,DecimalType.valueOf(value));
+  break;
+case AC_FUN_POWER:
+postUpdate(item,value.toUpperCase().equals("ON") ? OnOffType.ON : OnOffType.OFF);
+break;
+case AC_FUN_COMODE:
+postUpdate(item,DecimalType.valueOf(Integer.toString(ConvenientModeEnum.valueOf(value).value)));
+break;
+case AC_FUN_OPMODE:
+postUpdate(item,DecimalType.valueOf(Integer.toString(OperationModeEnum.valueOf(value).value)));
+break;
+case AC_FUN_WINDLEVEL:
+postUpdate(item,DecimalType.valueOf(Integer.toString(WindLevelEnum.valueOf(value).value)));
+break;
+case AC_FUN_DIRECTION:
+postUpdate(item,DecimalType.valueOf(Integer.toString(DirectionEnum.valueOf(value).value)));
+break;
+default :
+logger.debug("Not implementation for updating: '" + cmd + "'");
+break;
+}
+}

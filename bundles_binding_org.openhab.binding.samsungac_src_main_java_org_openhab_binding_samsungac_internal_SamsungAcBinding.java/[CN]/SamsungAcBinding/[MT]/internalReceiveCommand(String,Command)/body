@@ -7,33 +7,10 @@
       return;
     }
     CommandEnum property=getProperty(itemName);
-    String cmd=null;
-switch (property) {
-case AC_FUN_POWER:
-      cmd="ON".equals(command.toString()) ? "On" : "Off";
-    break;
-case AC_FUN_WINDLEVEL:
-  cmd=WindLevelEnum.getFromValue(command).toString();
-break;
-case AC_FUN_OPMODE:
-cmd=OperationModeEnum.getFromValue(command).toString();
-break;
-case AC_FUN_COMODE:
-cmd=ConvenientModeEnum.getFromValue(command).toString();
-break;
-case AC_FUN_DIRECTION:
-cmd=DirectionEnum.getFromValue(command).toString();
-break;
-case AC_FUN_TEMPSET:
-cmd=command.toString();
-break;
-default :
-cmd=command.toString();
-break;
-}
-if (cmd != null) {
-sendCommand(host,property,cmd);
-}
- else logger.debug("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
-}
+    String cmd=getCmdStringFromEnumValue(command,property);
+    if (cmd != null) {
+      sendCommand(host,property,cmd);
+    }
+ else     logger.debug("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
+  }
 }
