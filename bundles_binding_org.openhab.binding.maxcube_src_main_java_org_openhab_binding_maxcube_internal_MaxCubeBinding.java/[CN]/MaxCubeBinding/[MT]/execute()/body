@@ -1,14 +1,21 @@
 {
-  Socket socket=null;
-  BufferedReader reader=null;
   if (ip == null) {
     logger.debug("Update prior to completion of interface IP configuration");
     return;
   }
   try {
     String raw=null;
-    socket=new Socket(ip,port);
-    reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    if (socket == null) {
+      socket=new Socket(ip,port);
+      logger.debug("open new connection... to " + ip + " port "+ port);
+      reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+    }
+ else {
+      writer.write("l:");
+      writer.newLine();
+      writer.flush();
+    }
     boolean cont=true;
     while (cont) {
       raw=reader.readLine();
@@ -55,17 +62,7 @@
             }
           }
  else           if (message.getType() == MessageType.L) {
-            Collection<? extends Device> tempDevices=((L_Message)message).getDevices(configurations);
-            for (            Device d : tempDevices) {
-              Device existingDevice=findDevice(d.getSerialNumber(),devices);
-              if (existingDevice == null) {
-                devices.add(d);
-              }
- else {
-                devices.remove(existingDevice);
-                devices.add(d);
-              }
-            }
+            ((L_Message)message).updateDevices(devices,configurations);
             logger.debug("{} devices found.",devices.size());
             cont=false;
           }
@@ -76,7 +73,10 @@
         logger.debug(Utils.getStackTrace(e));
       }
     }
-    socket.close();
+    if (!exclusive) {
+      socket.close();
+      socket=null;
+    }
     for (    MaxCubeBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         String serialNumber=provider.getSerialNumber(itemName);
@@ -94,47 +94,31 @@
           }
           continue;
         }
+        if (provider.getBindingType(itemName) == BindingType.BATTERY && device.isBatteryLowUpdated()) {
+          eventPublisher.postUpdate(itemName,device.getBatteryLow());
+        }
 switch (device.getType()) {
 case HeatingThermostatPlus:
 case HeatingThermostat:
-          if (provider.getBindingType(itemName) == BindingType.VALVE) {
+          if (provider.getBindingType(itemName) == BindingType.VALVE && ((HeatingThermostat)device).isValvePositionUpdated()) {
             eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());
           }
- else           if (provider.getBindingType(itemName) == BindingType.MODE) {
-            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getModeString());
-          }
- else           if (provider.getBindingType(itemName) == BindingType.BATTERY) {
-            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getBatteryLow());
-          }
- else           if (provider.getBindingType(itemName) == BindingType.ACTUAL) {
-            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureActual());
-          }
- else {
-            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
-          }
-        break;
-case ShutterContact:
-      if (provider.getBindingType(itemName) == BindingType.BATTERY) {
-        eventPublisher.postUpdate(itemName,((ShutterContact)device).getBatteryLow());
-      }
- else {
-        eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
-      }
-    break;
 case WallMountedThermostat:
-  if (provider.getBindingType(itemName) == BindingType.ACTUAL) {
-    eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getTemperatureActual());
-  }
- else   if (provider.getBindingType(itemName) == BindingType.MODE) {
-    eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getModeString());
-  }
- else   if (provider.getBindingType(itemName) == BindingType.BATTERY) {
-    eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getBatteryLow());
-  }
- else {
-    eventPublisher.postUpdate(itemName,((WallMountedThermostat)device).getTemperatureSetpoint());
-  }
-break;
+        if (provider.getBindingType(itemName) == BindingType.MODE && ((HeatingThermostat)device).isModeUpdated()) {
+          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getModeString());
+        }
+ else         if (provider.getBindingType(itemName) == BindingType.ACTUAL && ((HeatingThermostat)device).isTemperatureActualUpdated()) {
+          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureActual());
+        }
+ else         if (((HeatingThermostat)device).isTemperatureSetpointUpdated()) {
+          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
+        }
+      break;
+case ShutterContact:
+    if (((ShutterContact)device).isShutterStateUpdated()) {
+      eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+    }
+  break;
 default :
 }
 }
@@ -143,9 +127,11 @@ default :
  catch (UnknownHostException e) {
 logger.info("Cannot establish connection with MAX!Cube lan gateway while connecting to '{}'",ip);
 logger.debug(Utils.getStackTrace(e));
+socket=null;
 }
 catch (IOException e) {
 logger.info("Cannot read data from MAX!Cube lan gateway while connecting to '{}'",ip);
 logger.debug(Utils.getStackTrace(e));
+socket=null;
 }
 }
