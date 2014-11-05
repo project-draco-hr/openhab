@@ -1,0 +1,16 @@
+{
+  String s="addr=" + ((address != null) ? address.toString() : "null_address");
+  s+="|prodKey:" + String.format("%9s",((productKey != null) ? productKey : "null_pkey"));
+  s+="|feature:" + ((feature != null) ? feature : "null_feature");
+  if (params == null) {
+    s+="|null_params";
+  }
+ else {
+    String sepChar="|params:";
+    for (    Entry<String,String> h : params.entrySet()) {
+      s+=sepChar + h.getKey() + "="+ h.getValue();
+      sepChar=",";
+    }
+  }
+  return (s);
+}

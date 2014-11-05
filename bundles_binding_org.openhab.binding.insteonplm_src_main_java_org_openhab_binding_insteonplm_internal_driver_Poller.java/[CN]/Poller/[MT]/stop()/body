@@ -1,0 +1,16 @@
+{
+  logger.debug("stopping poller!");
+synchronized (m_pollQueue) {
+    m_pollQueue.clear();
+    m_keepRunning=false;
+    m_pollQueue.notify();
+  }
+  try {
+    m_pollThread.join();
+    m_keepRunning=true;
+    m_pollThread=null;
+  }
+ catch (  InterruptedException e) {
+    logger.debug("got interrupted on exit: {}",e.getMessage());
+  }
+}

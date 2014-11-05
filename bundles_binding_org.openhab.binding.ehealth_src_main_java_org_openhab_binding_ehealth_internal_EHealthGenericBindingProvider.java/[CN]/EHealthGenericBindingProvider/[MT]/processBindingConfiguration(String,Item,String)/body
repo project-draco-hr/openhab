@@ -1,0 +1,14 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  EHealthBindingConfig config=new EHealthBindingConfig();
+  EHealthSensorPropertyName propertyName;
+  try {
+    propertyName=EHealthSensorPropertyName.getPropertyName(bindingConfig.trim());
+  }
+ catch (  Exception e) {
+    throw new BindingConfigParseException("Invalid sensor property name '" + bindingConfig + "' > please fix your *.items accordingly!");
+  }
+  config.itemType=item.getClass();
+  config.sensorPropertyName=propertyName;
+  addBindingConfig(item,config);
+}

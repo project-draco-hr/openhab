@@ -1,4 +1,6 @@
 {
+  logger.info(String.format("devices: %3d configured, %3d polling, msgs received: %5d",m_devices.size(),Poller.s_instance().getSizeOfQueue(),m_messagesReceived));
+  m_messagesReceived=0;
 synchronized (m_devices) {
     for (    InsteonDevice dev : m_devices.values()) {
       if (dev.isModem())       continue;

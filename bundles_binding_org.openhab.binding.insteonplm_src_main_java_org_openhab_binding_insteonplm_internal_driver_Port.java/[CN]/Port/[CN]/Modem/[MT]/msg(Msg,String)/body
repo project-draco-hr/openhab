@@ -3,22 +3,21 @@
     if (msg.isPureNack())     return;
     if (msg.getByte("Cmd") == 0x60) {
       InsteonAddress a=new InsteonAddress(msg.getAddress("IMAddress"));
-      m_address=a;
-      InsteonDevice dev=InsteonDevice.s_makeDevice(a,m_driver);
-      HashMap<InsteonAddress,InsteonDevice> devices=m_driver.getDeviceList();
-      int devCat=msg.getByte("DeviceCategory");
-      int subCat=msg.getByte("DeviceSubCategory");
-      int vers=msg.getByte("FirmwareVersion");
-      DeviceDescriptor d=DeviceDescriptor.s_getDeviceDescriptor(devCat,subCat,vers);
-      dev.addDescriptor(d);
-      dev.setInitStatus(InitStatus.INITIALIZED);
-      dev.setIsModem(true);
-      dev.addPort(fromPort);
-synchronized (devices) {
-        devices.put(a,dev);
+      String prodKey="0x000045";
+      DeviceType dt=DeviceTypeLoader.s_instance().getDeviceType(prodKey);
+      if (dt == null) {
+        logger.error("unknown modem product key: {} for modem: {}.",prodKey,a);
+      }
+ else {
+        m_device=InsteonDevice.s_makeDevice(dt);
+        m_device.setAddress(a);
+        m_device.setProductKey(prodKey);
+        m_device.setDriver(m_driver);
+        m_device.setIsModem(true);
+        m_device.addPort(fromPort);
+        logger.debug("found modem {} in device_types: {}",a,m_device.toString());
       }
       removeListener(this);
-      logger.debug("modem address: {} ident: {}",a,dev.toString());
     }
   }
  catch (  FieldException e) {

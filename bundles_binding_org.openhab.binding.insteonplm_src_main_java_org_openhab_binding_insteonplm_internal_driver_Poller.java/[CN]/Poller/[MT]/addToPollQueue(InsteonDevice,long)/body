@@ -1,23 +1,6 @@
 {
-  SortedSet<PQEntry> ts=m_pollQueue.tailSet(new PQEntry(d,time - MIN_MSEC_BETWEEN_POLLS));
-  if (ts.isEmpty()) {
-    logger.trace("dev {} time {} added to end of poll queue",d,time);
-    m_pollQueue.add(new PQEntry(d,time));
-    return;
-  }
-  Iterator<PQEntry> pqi=ts.iterator();
-  PQEntry prev=pqi.next();
-  while (pqi.hasNext()) {
-    PQEntry pqe=pqi.next();
-    long tcurr=pqe.getExpirationTime();
-    long tprev=prev.getExpirationTime();
-    if (tcurr - tprev >= 2 * MIN_MSEC_BETWEEN_POLLS) {
-      logger.trace("dev {} time {} found slot between {} and {}",d,time,tprev,tcurr);
-      break;
-    }
-    prev=pqe;
-  }
-  PQEntry ne=new PQEntry(d,prev.getExpirationTime() + MIN_MSEC_BETWEEN_POLLS);
-  logger.trace("entry {} added at time {}",ne,time);
+  long texp=findNextExpirationTime(d,time);
+  PQEntry ne=new PQEntry(d,texp);
+  logger.trace("added entry {} originally aimed at time {}",ne,String.format("%tc",new Date(time)));
   m_pollQueue.add(ne);
 }

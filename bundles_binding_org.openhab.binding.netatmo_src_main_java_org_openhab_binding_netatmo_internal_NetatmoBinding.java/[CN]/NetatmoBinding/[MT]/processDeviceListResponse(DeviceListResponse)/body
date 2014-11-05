@@ -27,7 +27,7 @@
     for (    final String itemName : provider.getItemNames()) {
       final String deviceId=provider.getDeviceId(itemName);
       final String moduleId=provider.getModuleId(itemName);
-      final String measure=provider.getMeasure(itemName);
+      final NetatmoMeasureType measureType=provider.getMeasureType(itemName);
       final Set<String> measurements;
       if (moduleId != null) {
         measurements=moduleMeasurements.get(moduleId);
@@ -36,7 +36,7 @@
         measurements=deviceMeasurements.get(deviceId);
       }
       if (measurements != null) {
-        measurements.remove(measure);
+        measurements.remove(measureType.getMeasure());
       }
     }
   }

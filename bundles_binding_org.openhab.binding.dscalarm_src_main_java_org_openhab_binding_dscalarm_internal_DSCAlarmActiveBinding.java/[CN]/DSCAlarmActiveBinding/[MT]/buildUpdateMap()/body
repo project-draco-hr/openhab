@@ -1,0 +1,15 @@
+{
+  DSCAlarmBindingConfig config;
+  for (  DSCAlarmBindingProvider prov : providers) {
+    if (!prov.getItemNames().isEmpty()) {
+      itemCount=prov.getItemNames().size();
+      dscAlarmUpdateMap.clear();
+      for (      String iName : prov.getItemNames()) {
+        config=prov.getDSCAlarmBindingConfig(iName);
+        if (config != null) {
+          dscAlarmUpdateMap.put(iName,config);
+        }
+      }
+    }
+  }
+}
