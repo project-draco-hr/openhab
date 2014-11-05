@@ -1,0 +1,10 @@
+{
+synchronized (m_pollQueue) {
+    for (Iterator<PQEntry> i=m_pollQueue.iterator(); i.hasNext(); ) {
+      if (i.next().getDevice().getAddress().equals(d.getAddress())) {
+        i.remove();
+        logger.debug("stopped polling device {}",d);
+      }
+    }
+  }
+}

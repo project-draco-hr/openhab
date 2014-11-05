@@ -1,0 +1,19 @@
+{
+  try {
+    HashMap<InsteonAddress,ModemDBEntry> dbes=m_port.getDriver().lockModemDBEntries();
+    InsteonAddress linkAddr=m.getAddress("LinkAddr");
+    ModemDBEntry dbe=dbes.get(linkAddr.toString());
+    if (dbe == null) {
+      dbe=new ModemDBEntry(linkAddr);
+      dbes.put(linkAddr,dbe);
+    }
+    dbe.setPort(m_port);
+    dbe.addLinkRecord(m);
+  }
+ catch (  FieldException e) {
+    logger.error("cannot access field:",e);
+  }
+ finally {
+    m_port.getDriver().unlockModemDBEntries();
+  }
+}

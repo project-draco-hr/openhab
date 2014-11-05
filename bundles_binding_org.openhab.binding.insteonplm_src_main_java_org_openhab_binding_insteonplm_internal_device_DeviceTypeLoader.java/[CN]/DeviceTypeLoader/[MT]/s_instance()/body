@@ -1,0 +1,21 @@
+{
+  if (s_deviceTypeLoader == null) {
+    s_deviceTypeLoader=new DeviceTypeLoader();
+    InputStream input=DeviceTypeLoader.class.getResourceAsStream("/device_types.xml");
+    try {
+      s_deviceTypeLoader.loadDeviceTypesXML(input);
+    }
+ catch (    ParserConfigurationException e) {
+      logger.error("parser config error when reading device types xml file: ",e);
+    }
+catch (    SAXException e) {
+      logger.error("SAX exception when reading device types xml file: ",e);
+    }
+catch (    IOException e) {
+      logger.error("I/O exception when reading device types xml file: ",e);
+    }
+    logger.debug("loaded {} devices: ",s_deviceTypeLoader.getDeviceTypes().size());
+    s_deviceTypeLoader.logDeviceTypes();
+  }
+  return s_deviceTypeLoader;
+}

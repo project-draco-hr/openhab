@@ -1,0 +1,12 @@
+{
+  String cname=MessageHandler.class.getName() + "$" + name;
+  try {
+    Class<?> c=Class.forName(cname);
+    @SuppressWarnings("unchecked") Class<? extends T> dc=(Class<? extends T>)c;
+    return dc.getDeclaredConstructor(DeviceFeature.class).newInstance(f);
+  }
+ catch (  Exception e) {
+    logger.error("error trying to create message handler: {}",name,e);
+  }
+  return null;
+}

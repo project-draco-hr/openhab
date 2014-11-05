@@ -1,0 +1,26 @@
+{
+  String prodKey=aConfig.getProductKey();
+  DeviceType dt=DeviceTypeLoader.s_instance().getDeviceType(prodKey);
+  if (dt == null) {
+    logger.error("unknown product key: {} for config: {}." + " Add definition to xml file and try again",prodKey,aConfig);
+    return null;
+  }
+  InsteonDevice dev=InsteonDevice.s_makeDevice(dt);
+  dev.setAddress(aConfig.getAddress());
+  dev.setDriver(m_driver);
+  dev.addPort(m_driver.getDefaultPort());
+  if (!dev.hasValidPollingInterval()) {
+    dev.setPollInterval(m_devicePollInterval);
+  }
+  if (m_driver.isModemDBComplete() && dev.getStatus() != DeviceStatus.POLLING) {
+    int ndev=checkIfInModemDatabase(dev);
+    if (dev.hasModemDBEntry()) {
+      dev.setStatus(DeviceStatus.POLLING);
+      Poller.s_instance().startPolling(dev,ndev);
+    }
+  }
+synchronized (m_devices) {
+    m_devices.put(aConfig.getAddress(),dev);
+  }
+  return (dev);
+}
