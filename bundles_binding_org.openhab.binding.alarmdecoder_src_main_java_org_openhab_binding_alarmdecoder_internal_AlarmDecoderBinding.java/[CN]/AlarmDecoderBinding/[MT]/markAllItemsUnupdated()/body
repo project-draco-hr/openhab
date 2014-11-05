@@ -6,7 +6,9 @@
     for (Iterator<String> item=items.iterator(); item.hasNext(); ) {
       String s=item.next();
       AlarmDecoderBindingConfig c=provider.getBindingConfig(s);
-      m_unupdatedItems.put(s,c);
+synchronized (m_unupdatedItems) {
+        m_unupdatedItems.put(s,c);
+      }
     }
   }
 }
