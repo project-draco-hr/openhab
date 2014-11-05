@@ -4,12 +4,12 @@
     refreshAccessToken();
   }
   if (this.firstExecution) {
-    final DeviceListRequest request=new DeviceListRequest(this.accessToken);
-    final DeviceListResponse response=request.execute();
-    logger.debug("Request: {}",request);
-    logger.debug("Response: {}",response);
-    if (response.isError()) {
-      final NetatmoError error=response.getError();
+    deviceListRequest=new DeviceListRequest(this.accessToken);
+    deviceListResponse=deviceListRequest.execute();
+    logger.debug("Request: {}",deviceListRequest);
+    logger.debug("Response: {}",deviceListResponse);
+    if (deviceListResponse.isError()) {
+      final NetatmoError error=deviceListResponse.getError();
       if (error.isAccessTokenExpired()) {
         refreshAccessToken();
         execute();
@@ -20,7 +20,7 @@
       return;
     }
  else {
-      processDeviceListResponse(response);
+      processDeviceListResponse(deviceListResponse);
       this.firstExecution=false;
     }
   }
@@ -44,16 +44,62 @@
       processMeasurementResponse(request,response,deviceMeasureValueMap);
     }
   }
+  deviceListResponse=deviceListRequest.execute();
   for (  final NetatmoBindingProvider provider : this.providers) {
     for (    final String itemName : provider.getItemNames()) {
       final String deviceId=provider.getDeviceId(itemName);
       final String moduleId=provider.getModuleId(itemName);
-      final String measure=provider.getMeasure(itemName);
-      final String requestKey=createKey(deviceId,moduleId);
-      final State state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measure));
-      if (state != null) {
-        this.eventPublisher.postUpdate(itemName,state);
-      }
-    }
-  }
+      final NetatmoMeasureType measureType=provider.getMeasureType(itemName);
+      State state=null;
+switch (measureType) {
+case TEMPERATURE:
+case CO2:
+case HUMIDITY:
+case NOISE:
+case PRESSURE:
+        final String requestKey=createKey(deviceId,moduleId);
+      state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure()));
+    break;
+case BATTERYVP:
+case RFSTATUS:
+  for (  Module module : deviceListResponse.getModules()) {
+    if (module.getId().equals(moduleId)) {
+switch (measureType) {
+case BATTERYVP:
+        state=new DecimalType(module.getBatteryVp());
+      break;
+case RFSTATUS:
+    state=new DecimalType(module.getRfStatus());
+  break;
+}
+}
+}
+break;
+case ALTITUDE:
+case LATITUDE:
+case LONGITUDE:
+case WIFISTATUS:
+for (Device device : deviceListResponse.getDevices()) {
+if (device.getId().equals(deviceId)) {
+switch (measureType) {
+case ALTITUDE:
+state=new DecimalType(device.getAltitude());
+break;
+case LATITUDE:
+state=new DecimalType(device.getLatitude());
+break;
+case LONGITUDE:
+state=new DecimalType(device.getLongitude());
+break;
+case WIFISTATUS:
+state=new DecimalType(device.getWifiStatus());
+break;
+}
+}
+}
+break;
+}
+if (state != null) this.eventPublisher.postUpdate(itemName,state);
+}
+}
 }
