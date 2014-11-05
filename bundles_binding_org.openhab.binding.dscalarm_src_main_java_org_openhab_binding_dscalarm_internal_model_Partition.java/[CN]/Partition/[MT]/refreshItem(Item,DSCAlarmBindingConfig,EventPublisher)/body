@@ -1,0 +1,24 @@
+{
+  int state;
+  String strStatus="";
+  logger.debug("refreshItem(): Partition Item Name: {}",item.getName());
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PARTITION_STATUS:
+        state=partitionProperties.getState(StateType.GENERAL_STATE);
+      strStatus=partitionProperties.getStateDescription(StateType.GENERAL_STATE);
+    publisher.postUpdate(item.getName(),new StringType(strStatus));
+  break;
+case PARTITION_ARM_MODE:
+state=partitionProperties.getState(StateType.ARM_STATE);
+strStatus=partitionProperties.getStateDescription(StateType.ARM_STATE);
+publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+default :
+logger.debug("refreshItem(): Partition item not updated.");
+break;
+}
+}
+}
+}

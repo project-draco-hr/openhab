@@ -1,0 +1,499 @@
+{
+  if (apiMessage.length() > 3) {
+    try {
+      if (apiMessage.length() >= 8 && apiMessage.charAt(2) == ':' && apiMessage.charAt(5) == ':') {
+        apiMessage=apiMessage.substring(9,apiMessage.length() - 2);
+      }
+ else {
+        apiMessage=apiMessage.substring(0,apiMessage.length() - 2);
+      }
+      apiCodeReceived=apiMessage.substring(0,3);
+      if (apiMessage.length() >= 4) {
+        data=apiMessage.substring(3);
+      }
+    }
+ catch (    Exception e) {
+      logger.error("parseAPIMessage(): Error processing message - {}",apiMessage);
+      apiCodeReceived="000";
+    }
+    if (APICode.getAPICodeValue(apiCodeReceived) != null) {
+switch (APICode.getAPICodeValue(apiCodeReceived)) {
+case CommandAcknowledge:
+        apiName="Command Acknowledge";
+      apiDescription=apiCodeReceived + ": A command has been received successfully.";
+    break;
+case CommandError:
+  apiName="Command Error";
+apiDescription=apiCodeReceived + ": A command has been received with a bad checksum.";
+break;
+case SystemError:
+apiName="System Error";
+apiDescription=apiCodeReceived + ": An error has been detected.";
+break;
+case LoginResponse:
+apiName="Login Interaction";
+apiDescription=apiCodeReceived + ": Login response (failed=0, success=1, time out=2, password request=3).";
+break;
+case KeypadLEDState:
+apiName="Keypad LED State - Partition 1 Only";
+apiDescription=apiCodeReceived + ": A change of state in the Partition 1 keypad LEDs.";
+apiMessageType=APIMessageType.KEYPAD_EVENT;
+break;
+case KeypadLEDFlashState:
+apiName="Keypad LED Flash State - Partition 1 Only";
+apiDescription=apiCodeReceived + ": A change of state in the Partition 1 keypad LEDs as to whether to flash or not.";
+apiMessageType=APIMessageType.KEYPAD_EVENT;
+break;
+case TimeDateBroadcast:
+apiName="Time-Date Broadcast";
+apiDescription=apiCodeReceived + ": The current security system time.";
+data=apiMessage.substring(4);
+break;
+case RingDetected:
+apiName="Ring Detected";
+apiDescription=apiCodeReceived + ": A ring on the telephone line.";
+break;
+case IndoorTemperatureBroadcast:
+apiName="Indoor Temperature Broadcast";
+apiDescription=apiCodeReceived + ": The interior temperature and the thermostat number.";
+break;
+case OutdoorTemperatureBroadcast:
+apiName="Outdoor Temperature Broadcast";
+apiDescription=apiCodeReceived + ": The exterior temperature and the thermostat number.";
+break;
+case ThermostatSetPoints:
+apiName="Thermostat Set Points";
+apiDescription=apiCodeReceived + ": Cooling and heating set points and the thermostat number.";
+break;
+case BroadcastLabels:
+apiName="Broadcast Labels";
+apiDescription=apiCodeReceived + ": Labels stored in the DSC Alarm.";
+break;
+case BaudRateSet:
+apiName="Baud Rate Set";
+apiDescription=apiCodeReceived + ": Baud Rate of the serial interface.";
+break;
+case ZoneAlarm:
+apiName="Zone Alarm";
+apiDescription=apiCodeReceived + ": A zone has gone into alarm.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+zone=Integer.parseInt(apiMessage.substring(4));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneAlarmRestore:
+apiName="Zone Alarm Restore";
+apiDescription=apiCodeReceived + ": A zone alarm has been restored.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+zone=Integer.parseInt(apiMessage.substring(4));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneTamper:
+apiName="Zone Tamper";
+apiDescription=apiCodeReceived + ": A zone has a tamper condition.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+zone=Integer.parseInt(apiMessage.substring(4));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneTamperRestore:
+apiName="Zone Tamper Restored";
+apiDescription=apiCodeReceived + ": A zone tamper condition has been restored.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+zone=Integer.parseInt(apiMessage.substring(4));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneFault:
+apiName="Zone Fault";
+apiDescription=apiCodeReceived + ": A zone has a fault condition.";
+zone=Integer.parseInt(apiMessage.substring(3));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneFaultRestore:
+apiName="Zone Fault Restored";
+apiDescription=apiCodeReceived + ": A zone fault condition has been restored.";
+zone=Integer.parseInt(apiMessage.substring(3));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case ZoneOpen:
+apiName="Zone Open";
+apiDescription=apiCodeReceived + ": General status of the zone - open.";
+apiMessageType=APIMessageType.ZONE_EVENT;
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case ZoneRestored:
+apiName="Zone Restored";
+apiDescription=apiCodeReceived + ": General status of the zone - restored.";
+zone=Integer.parseInt(apiMessage.substring(3));
+apiMessageType=APIMessageType.ZONE_EVENT;
+break;
+case EnvisalinkZoneTimerDump:
+apiName="Envisalink Zone Timer Dump";
+apiDescription=apiCodeReceived + ": The raw zone timers used inside the Envisalink.";
+break;
+case DuressAlarm:
+apiName="Duress Alarm";
+apiDescription=apiCodeReceived + ": A duress code has been entered on a system keypad.";
+break;
+case FireKeyAlarm:
+apiName="Fire Key Alarm";
+apiDescription=apiCodeReceived + ": A Fire key alarm has been activated.";
+break;
+case FireKeyRestored:
+apiName="Fire Key Alarm Restore";
+apiDescription=apiCodeReceived + ": A Fire key alarm has been restored.";
+break;
+case AuxiliaryKeyAlarm:
+apiName="Auxiliary Key Alarm";
+apiDescription=apiCodeReceived + ": An Auxiliary key alarm has been activated.";
+break;
+case AuxiliaryKeyRestored:
+apiName="Auxiliary Key Alarm Restore";
+apiDescription=apiCodeReceived + ": An Auxiliary key alarm has been restored.";
+break;
+case PanicKeyAlarm:
+apiName="Panic Key Alarm";
+apiDescription=apiCodeReceived + ": A Panic key alarm has been activated.";
+break;
+case PanicKeyRestored:
+apiName="Panic Key Alarm Restore";
+apiDescription=apiCodeReceived + ": A Panic key alarm has been restored.";
+break;
+case AuxiliaryInputAlarm:
+apiName="2-Wire Smoke/Aux Alarm";
+apiDescription=apiCodeReceived + ": A 2-wire smoke/Auxiliary alarm has been activated.";
+break;
+case AuxiliaryInputAlarmRestored:
+apiName="2-Wire Smoke/Aux Restore";
+apiDescription=apiCodeReceived + ": A 2-wire smoke/Auxiliary alarm has been restored.";
+break;
+case PartitionReady:
+apiName="Partition Ready";
+apiDescription=apiCodeReceived + ": Partition can now be armed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionNotReady:
+apiName="Partition Not Ready";
+apiDescription=apiCodeReceived + ": Partition can not be armed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionArmed:
+apiName="Partition Armed (0=Away, 1=Stay, 2=ZEA, 3=ZES)";
+apiDescription=apiCodeReceived + ": Partition has been armed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+mode=apiMessage.substring(4);
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionReadyForceArming:
+apiName="Partition Ready ??? Force Arming Enabled";
+apiDescription=apiCodeReceived + ": Partition can now be armed (Force Arming Enabled).";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionInAlarm:
+apiName="Partition In Alarm";
+apiDescription=apiCodeReceived + ": A partition is in alarm.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionDisarmed:
+apiName="Partition Disarmed";
+apiDescription=apiCodeReceived + ": A partition has been disarmed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case ExitDelayInProgress:
+apiName="Exit Delay in Progress";
+apiDescription=apiCodeReceived + ": A partition is in Exit Delay.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case EntryDelayInProgress:
+apiName="Entry Delay in Progress";
+apiDescription=apiCodeReceived + ": A partition is in Entry Delay.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case KeypadLockout:
+apiName="Keypad Lock-out";
+apiDescription=apiCodeReceived + ": A partition is in Keypad Lockout.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionFailedToArm:
+apiName="Partition Failed to Arm";
+apiDescription=apiCodeReceived + ": An attempt to arm the partition has failed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PGMOutputInProgress:
+apiName="PGM Output is in Progress";
+apiDescription=apiCodeReceived + ": *71, *72, *73, or *74 has been pressed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case ChimeEnabled:
+apiName="Chime Enabled";
+apiDescription=apiCodeReceived + ": The door chime feature has been enabled.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case ChimeDisabled:
+apiName="Chime Disabled";
+apiDescription=apiCodeReceived + ": The door chime feature has been disabled.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case InvalidAccessCode:
+apiName="Invalid Access Code";
+apiDescription=apiCodeReceived + ": An access code that was entered was invalid.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case FunctionNotAvailable:
+apiName="Function Not Available";
+apiDescription=apiCodeReceived + ": A function that was selected is not available.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case FailureToArm:
+apiName="Failure to Arm";
+apiDescription=apiCodeReceived + ": An attempt was made to arm the partition and it failed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartitionBusy:
+apiName="Partition is Busy";
+apiDescription=apiCodeReceived + ": The partition is busy.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case SystemArmingInProgress:
+apiName="System Arming in Progress";
+apiDescription=apiCodeReceived + ": This system is auto-arming and is in arm warning delay.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case SystemInInstallerMode:
+apiName="System in Installers Mode";
+apiDescription=apiCodeReceived + ": The whole system is in installers mode.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+break;
+case UserClosing:
+apiName="User Closing";
+apiDescription=apiCodeReceived + ": A partition has been armed by a user.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+user=apiMessage.substring(4);
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case SpecialClosing:
+apiName="Special Closing";
+apiDescription=apiCodeReceived + ": A partition has been armed by one of the following methods: Quick Arm, Auto Arm, Keyswitch, DLS software, Wireless Key.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PartialClosing:
+apiName="Partial Closing";
+apiDescription=apiCodeReceived + ": A partition has been armed but one or more zones have been bypassed.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case UserOpening:
+apiName="User Opening";
+apiDescription=apiCodeReceived + ": A partition has been disarmed by a user.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+user=apiMessage.substring(4);
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case SpecialOpening:
+apiName="Special Opening";
+apiDescription=apiCodeReceived + ": A partition has been disarmed by one of the following methods: Quick Arm, Auto Arm, Keyswitch, DLS software, Wireless Key.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+apiMessageType=APIMessageType.PARTITION_EVENT;
+break;
+case PanelBatteryTrouble:
+apiName="Panel Battery Trouble";
+apiDescription=apiCodeReceived + ": The panel has a low battery.";
+break;
+case PanelBatteryTroubleRestore:
+apiName="Panel Battery Trouble Restore";
+apiDescription=apiCodeReceived + ": The panel???s low battery has been restored.";
+break;
+case PanelACTrouble:
+apiName="Panel AC Trouble";
+apiDescription=apiCodeReceived + ": AC power to the panel has been removed.";
+break;
+case PanelACRestore:
+apiName="Panel AC Restore";
+apiDescription=apiCodeReceived + ": AC power to the panel has been restored.";
+break;
+case SystemBellTrouble:
+apiName="System Bell Trouble";
+apiDescription=apiCodeReceived + ": An open circuit has been detected across the bell terminals.";
+break;
+case SystemBellTroubleRestore:
+apiName="System Bell Trouble Restore";
+apiDescription=apiCodeReceived + ": The bell trouble has been restored.";
+break;
+case TLMLine1Trouble:
+apiName="TML Line 1 Trouble";
+apiDescription=apiCodeReceived + ": The phone line is a open or shorted condition.";
+break;
+case TLMLine1TroubleRestore:
+apiName="TML Line 1 Trouble Restore";
+apiDescription=apiCodeReceived + ": The phone line trouble condition has been restored.";
+break;
+case TLMLine2Trouble:
+apiName="TML Line 2 Trouble";
+apiDescription=apiCodeReceived + ": The phone line is a open or shorted condition.";
+break;
+case TLMLine2TroubleRestore:
+apiName="TML Line 2 Trouble Restore";
+apiDescription=apiCodeReceived + ": The phone line trouble condition has been restored.";
+break;
+case FTCTrouble:
+apiName="FTC Trouble";
+apiDescription=apiCodeReceived + ": The panel has failed to communicate successfully to the monitoring station.";
+break;
+case BufferNearFull:
+apiName="Buffer Near Full";
+apiDescription=apiCodeReceived + ": The panel event buffer is 75% full from when it was last uploaded to DLS.";
+break;
+case GeneralDeviceLowBattery:
+apiName="General Device Low Battery";
+apiDescription=apiCodeReceived + ": A wireless zone has a low battery.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case GeneralDeviceLowBatteryRestore:
+apiName="General Device Low Battery Restore";
+apiDescription=apiCodeReceived + ": A wireless zone has a low battery.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case WirelessKeyLowBatteryTrouble:
+apiName="Wireless Key Low Battery Trouble";
+apiDescription=apiCodeReceived + ": A wireless key has a low battery.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case WirelessKeyLowBatteryTroubleRestore:
+apiName="Wireless Key Low Battery Trouble Restore";
+apiDescription=apiCodeReceived + ": A wireless key low battery condition has been restored.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case HandheldKeypadLowBatteryTrouble:
+apiName="Handheld Keypad Low Battery Trouble";
+apiDescription=apiCodeReceived + ": A handhekd keypad has a low battery.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case HandheldKeypadLowBatteryTroubleRestore:
+apiName="Handheld Keypad Low Battery Trouble Restore";
+apiDescription=apiCodeReceived + ": A handhekd keypad low battery condition has been restored.";
+zone=Integer.parseInt(apiMessage.substring(3));
+break;
+case GeneralSystemTamper:
+apiName="General System Tamper";
+apiDescription=apiCodeReceived + ": A tamper has occurred with a system module.";
+break;
+case GeneralSystemTamperRestore:
+apiName="General System Tamper Restore";
+apiDescription=apiCodeReceived + ": A general system Tamper has been restored.";
+break;
+case HomeAutomationTrouble:
+apiName="Home Automation Trouble";
+apiDescription=apiCodeReceived + ": A Escort 5580 module trouble.";
+break;
+case HomeAutomationTroubleRestore:
+apiName="Home Automation Trouble Restore";
+apiDescription=apiCodeReceived + ": A Escort 5580 module trouble has been restored.";
+break;
+case TroubleLEDOn:
+apiName="Trouble LED ON";
+apiDescription=apiCodeReceived + ": The trouble LED on a keypad is ON.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+break;
+case TroubleLEDOff:
+apiName="Trouble LED OFF";
+apiDescription=apiCodeReceived + ": The trouble LED on a keypad is OFF.";
+partition=Integer.parseInt(apiMessage.substring(3,4));
+break;
+case FireTroubleAlarm:
+apiName="Fire Trouble Alarm";
+apiDescription=apiCodeReceived + ": Fire trouble alarm.";
+break;
+case FireTroubleAlarmRestore:
+apiName="Fire Trouble Alarm Restore";
+apiDescription=apiCodeReceived + ": Fire trouble alarm restored.";
+break;
+case VerboseTroubleStatus:
+apiName="Verbose Trouble Status";
+apiDescription=apiCodeReceived + ": a trouble appears on the system and roughly every 5 minutes until the trouble is cleared.";
+break;
+case KeybusFault:
+apiName="Keybus Fault";
+apiDescription=apiCodeReceived + ": Keybus fault condition.";
+break;
+case KeybusFaultRestore:
+apiName="Keybus Fault Restore";
+apiDescription=apiCodeReceived + ": Keybus fault has been restored.";
+break;
+case CodeRequired:
+apiName="Code Required";
+apiDescription=apiCodeReceived + ": Tells the API to enter an access code.";
+break;
+case LCDUpdate:
+apiName="LCD Update";
+apiDescription=apiCodeReceived + ": Text of the IT-100 menu has changed.";
+break;
+case LCDCursor:
+apiName="LCD Cursor";
+apiDescription=apiCodeReceived + ": Cursor position has changed.";
+break;
+case LEDStatus:
+apiName="LED Status";
+apiDescription=apiCodeReceived + ": LED Status has changed.";
+apiMessageType=APIMessageType.KEYPAD_EVENT;
+break;
+case BeepStatus:
+apiName="Beep Status";
+apiDescription=apiCodeReceived + ": Beep status sent.";
+break;
+case ToneStatus:
+apiName="Tone Status";
+apiDescription=apiCodeReceived + ": Tone status sent.";
+break;
+case BuzzerStatus:
+apiName="Buzzer Status";
+apiDescription=apiCodeReceived + ": Buzzer status sent.";
+break;
+case DoorChimeStatus:
+apiName="Door Chime Status";
+apiDescription=apiCodeReceived + ": Door Chime status sent.";
+break;
+case SoftwareVersion:
+apiName="Software Version";
+apiDescription=apiCodeReceived + ": Current software version.";
+break;
+case CommandOutputPressed:
+apiName="Command Output Pressed";
+apiDescription=apiCodeReceived + ": Tells the API to enter an access code.";
+break;
+case MasterCodeRequired:
+apiName="Master Code Required";
+apiDescription=apiCodeReceived + ": Tells the API to enter a master access code.";
+break;
+case InstallersCodeRequired:
+apiName="Installers Code Required";
+apiDescription=apiCodeReceived + ": Tells the API to enter an installers access code.";
+break;
+default :
+apiName="Unknown Code";
+apiDescription="Unknown code received: " + apiCodeReceived;
+data="";
+break;
+}
+logger.debug("parseAPIMessage(): Message Received ({}) - Code: {}, Name: {}, Description: {}, Data: {}",apiMessage,apiCodeReceived,apiName,apiDescription,data);
+}
+ else {
+logger.debug("parseAPIMessage(): Invalid Message Received");
+}
+}
+}

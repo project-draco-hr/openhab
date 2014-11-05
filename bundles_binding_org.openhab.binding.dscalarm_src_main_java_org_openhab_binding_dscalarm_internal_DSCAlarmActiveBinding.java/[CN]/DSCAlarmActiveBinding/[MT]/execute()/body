@@ -1,0 +1,33 @@
+{
+  logger.debug("DSC Alarm Execute");
+  if (api != null) {
+    connected=api.isConnected();
+  }
+  if (connected) {
+    if (pollPeriod == 0) {
+      pollPeriod=System.currentTimeMillis();
+    }
+    pollTime=((System.currentTimeMillis() - pollPeriod) / 1000) / 60;
+    if (pollTime >= 1) {
+      api.sendCommand(APICode.Poll);
+      pollPeriod=0;
+      logger.debug("execute(): Poll Command Sent to DSC Alarm.");
+    }
+  }
+ else {
+    closeConnection();
+    logger.error("execute(): Not Connected to the DSC Alarm!");
+    reconnect();
+  }
+  if (itemHasChanged) {
+    if (processUpdates) {
+      processUpdateMap();
+      itemHasChanged=false;
+      processUpdates=false;
+      if (connected) {
+        api.sendCommand(APICode.StatusReport);
+      }
+    }
+ else     processUpdates=true;
+  }
+}

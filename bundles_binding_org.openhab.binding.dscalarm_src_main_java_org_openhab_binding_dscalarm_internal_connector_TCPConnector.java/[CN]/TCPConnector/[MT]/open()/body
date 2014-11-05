@@ -1,0 +1,28 @@
+{
+  try {
+    tcpSocket=new Socket();
+    SocketAddress TPIsocketAddress=new InetSocketAddress(ipAddress,tcpPort);
+    tcpSocket.connect(TPIsocketAddress,connectTimeout);
+    tcpOutput=new OutputStreamWriter(tcpSocket.getOutputStream(),"US-ASCII");
+    tcpInput=new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
+    connected=true;
+    TCPListener=new TCPListener();
+    TCPListener.start();
+  }
+ catch (  UnknownHostException exception) {
+    logger.error("open(): Unknown Host Exception: ",exception);
+    connected=false;
+  }
+catch (  SocketException socketException) {
+    logger.error("open(): Socket Exception: ",socketException);
+    connected=false;
+  }
+catch (  IOException ioException) {
+    logger.error("open(): IO Exception: ",ioException);
+    connected=false;
+  }
+catch (  Exception exception) {
+    logger.error("open(): Exception: ",exception);
+    connected=false;
+  }
+}

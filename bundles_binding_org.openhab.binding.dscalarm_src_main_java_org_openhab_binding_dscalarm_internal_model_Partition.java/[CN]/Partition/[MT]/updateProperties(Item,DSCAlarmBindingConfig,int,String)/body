@@ -1,0 +1,18 @@
+{
+  logger.debug("updateProperties(): Partition Item Name: {}",item.getName());
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PARTITION_STATUS:
+        partitionProperties.setState(StateType.GENERAL_STATE,state,description);
+      break;
+case PARTITION_ARM_MODE:
+    partitionProperties.setState(StateType.ARM_STATE,state,description);
+  break;
+default :
+logger.debug("updateProperties(): Partition property not updated.");
+break;
+}
+}
+}
+}

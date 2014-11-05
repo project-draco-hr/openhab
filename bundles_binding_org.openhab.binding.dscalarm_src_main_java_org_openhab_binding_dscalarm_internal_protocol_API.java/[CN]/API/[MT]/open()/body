@@ -1,0 +1,32 @@
+{
+switch (connectorType) {
+case SERIAL:
+    if (dscAlarmConnector == null) {
+      dscAlarmConnector=new SerialConnector(apiSerialPort,baudRate);
+    }
+  break;
+case TCP:
+if (StringUtils.isNotBlank(apiIP)) {
+  if (dscAlarmConnector == null) {
+    dscAlarmConnector=new TCPConnector(apiIP,DEFAULT_TCP_PORT,CONNECTION_TIMEOUT);
+  }
+}
+ else {
+  logger.error("open(): Unable to Make API TCP Connection!");
+  connected=false;
+  return connected;
+}
+break;
+default :
+break;
+}
+dscAlarmConnector.open();
+connected=dscAlarmConnector.isConnected();
+if (connected) {
+if (connectorType == DSCAlarmConnectorType.TCP) sendCommand(APICode.NetworkLogin);
+connected=dscAlarmConnector.isConnected();
+}
+if (!connected) logger.error("open(): Unable to Make API Connection!");
+logger.debug("open(): Connected = {}, Connection Type: {}",connected ? true : false,connectorType);
+return connected;
+}
