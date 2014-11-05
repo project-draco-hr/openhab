@@ -1,0 +1,16 @@
+{
+  try {
+    if (socket == null) {
+      socket=new DatagramSocket(receivePort);
+    }
+    final DatagramPacket packet=new DatagramPacket(new byte[MAX_PACKET_SIZE],MAX_PACKET_SIZE);
+    socket.receive(packet);
+    return Arrays.copyOfRange(packet.getData(),0,packet.getLength() - 1);
+  }
+ catch (  SocketException e) {
+    throw new Exception(e);
+  }
+catch (  IOException e) {
+    throw new Exception(e);
+  }
+}
