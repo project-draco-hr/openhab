@@ -1,0 +1,18 @@
+{
+  boolean setupOK=false;
+  if (this.projectorSocket == null) {
+    String[] deviceIdParts=connectionParams.split(":");
+    if (deviceIdParts.length == 2) {
+      this.networkHost=deviceIdParts[0];
+      this.networkPort=Integer.parseInt(deviceIdParts[1]);
+    }
+ else {
+      return false;
+    }
+    setupOK=this.networkConnect();
+  }
+ else {
+    logger.debug("Socket is already setup");
+  }
+  return setupOK;
+}
