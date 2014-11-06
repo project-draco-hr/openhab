@@ -1,6 +1,7 @@
 {
   logger.debug("Storing item: " + item.getName());
   if (item.getState() instanceof UnDefType) {
+    logger.debug("This item is of undefined type. Cannot perist it!");
     return;
   }
   if (!JpaConfiguration.isInitialized) {
@@ -13,8 +14,7 @@
     pItem.setValue(StateHelper.toString(item.getState()));
   }
  catch (  Exception e1) {
-    logger.error("Error on converting state value to string!");
-    logger.error(e1.getMessage(),e1);
+    logger.error("Error on converting state value to string: {}",e1.getMessage());
     return;
   }
   pItem.setName(name);
