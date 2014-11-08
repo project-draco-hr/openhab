@@ -1,0 +1,9 @@
+{
+  logger.debug("start polling device {}",d);
+synchronized (m_pollQueue) {
+    int n=m_pollQueue.size();
+    long pollDelay=n * d.getPollInterval() / (aNumDev > 0 ? aNumDev : 1);
+    addToPollQueue(d,System.currentTimeMillis() + pollDelay);
+    m_pollQueue.notify();
+  }
+}

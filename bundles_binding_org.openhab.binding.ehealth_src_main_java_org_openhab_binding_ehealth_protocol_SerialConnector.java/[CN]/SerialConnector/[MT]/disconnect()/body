@@ -1,0 +1,12 @@
+{
+  logger.debug("Disconnecting from serial port '{}'",portName);
+  if (serialPort != null) {
+    serialPort.removeEventListener();
+  }
+  IOUtils.closeQuietly(inputStream);
+  IOUtils.closeQuietly(outputStream);
+  if (serialPort != null) {
+    serialPort.close();
+  }
+  logger.debug("Serial port '{}' closed",portName);
+}

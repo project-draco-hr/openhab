@@ -1,0 +1,16 @@
+{
+  if (upnpMessage.getBodyType().equals(UpnpMessage.BodyType.BYTES)) {
+    log.fine("Preparing HTTP request entity as byte[]");
+    return new ByteArrayEntity(upnpMessage.getBodyBytes());
+  }
+ else {
+    log.fine("Preparing HTTP request entity as string");
+    try {
+      String charset=upnpMessage.getContentTypeCharset();
+      return new StringEntity(upnpMessage.getBodyString(),charset != null ? charset : "UTF-8");
+    }
+ catch (    Exception ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+}

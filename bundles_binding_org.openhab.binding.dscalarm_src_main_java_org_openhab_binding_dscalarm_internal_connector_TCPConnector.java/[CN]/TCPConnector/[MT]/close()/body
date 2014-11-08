@@ -1,0 +1,24 @@
+{
+  try {
+    if (tcpSocket != null) {
+      tcpSocket.close();
+      tcpSocket=null;
+    }
+    if (tcpInput != null) {
+      tcpInput.close();
+      tcpInput=null;
+    }
+    if (tcpOutput != null) {
+      tcpOutput.close();
+      tcpOutput=null;
+    }
+    connected=false;
+    logger.debug("close(): Closed TCP Connection!");
+  }
+ catch (  IOException ioException) {
+    logger.error("close(): Unable to close connection - " + ioException.getMessage());
+  }
+catch (  Exception exception) {
+    logger.error("close(): Error closing connection - " + exception.getMessage());
+  }
+}

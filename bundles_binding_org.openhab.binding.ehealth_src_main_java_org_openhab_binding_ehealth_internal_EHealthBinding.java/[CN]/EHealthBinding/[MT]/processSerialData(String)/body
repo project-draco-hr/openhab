@@ -1,0 +1,23 @@
+{
+  logger.trace("Received raw datatagram '{}'",data);
+  String[] dataElements=data.split("@");
+  if (dataElements.length == 11) {
+    int airFlow=Integer.valueOf(defaultIfBlank(dataElements[0],"0"));
+    float temperature=Float.valueOf(defaultIfBlank(dataElements[1],"0"));
+    float skinConductance=Float.valueOf(defaultIfBlank(dataElements[2],"0"));
+    float skinResistance=Float.valueOf(defaultIfBlank(dataElements[3],"0"));
+    float skinConductanceVoltage=Float.valueOf(defaultIfBlank(dataElements[4],"0"));
+    int bpm=Integer.valueOf(defaultIfBlank(dataElements[5],"0"));
+    int oxygenSaturation=Integer.valueOf(defaultIfBlank(dataElements[6],"0"));
+    int bodyPosition=Integer.valueOf(defaultIfBlank(dataElements[7],"0"));
+    float ecg=Float.valueOf(defaultIfBlank(dataElements[8],"0"));
+    int emg=Integer.valueOf(defaultIfBlank(dataElements[9],"0"));
+    int glucose=Integer.valueOf(defaultIfBlank(dataElements[10],"0"));
+    EHealthDatagram datagram=new EHealthDatagram(airFlow,temperature,skinConductance,skinResistance,skinConductanceVoltage,bpm,oxygenSaturation,bodyPosition,ecg,emg,glucose);
+    logger.trace("new datagram '{}'",datagram);
+    postUpdate(datagram);
+  }
+ else {
+    logger.debug("The datagram '{}' doesn't match the protocol syntax",data);
+  }
+}

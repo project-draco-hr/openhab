@@ -1,0 +1,16 @@
+{
+  String itemName="";
+  DSCAlarmBindingConfig config=null;
+  for (  DSCAlarmBindingProvider prov : providers) {
+    for (    String iName : prov.getItemNames()) {
+      config=prov.getDSCAlarmBindingConfig(iName);
+      if (config.getDSCAlarmItemType() == dscAlarmItemType) {
+        if ((config.getPartitionId() == partitionId) && (config.getZoneId() == zoneId)) {
+          itemName=iName;
+          break;
+        }
+      }
+    }
+  }
+  return itemName;
+}

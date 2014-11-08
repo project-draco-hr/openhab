@@ -1,0 +1,145 @@
+{
+  boolean successful=false;
+  boolean validCommand=false;
+  String command=apiCode.getCode();
+  String data="";
+switch (apiCode) {
+case Poll:
+case StatusReport:
+    validCommand=true;
+  break;
+case LabelsRequest:
+if (!connectorType.equals(DSCAlarmConnectorType.SERIAL)) {
+  break;
+}
+validCommand=true;
+break;
+case NetworkLogin:
+if (!connectorType.equals(DSCAlarmConnectorType.TCP)) {
+break;
+}
+if (password == null || password.length() < 1 || password.length() > 6) {
+logger.error("sendCommand(): Password is invalid, must be between 1 and 6 chars",password);
+break;
+}
+data=password;
+validCommand=true;
+break;
+case DumpZoneTimers:
+if (!connectorType.equals(DSCAlarmConnectorType.TCP)) {
+break;
+}
+validCommand=true;
+break;
+case SetTimeDate:
+Date date=new Date();
+SimpleDateFormat dateTime=new SimpleDateFormat("HHmmMMddYY");
+data=dateTime.format(date);
+validCommand=true;
+break;
+case CommandOutputControl:
+if (apiData[0] == null || !apiData[0].matches("[1-8]")) {
+logger.error("sendCommand(): Partition number must be a single character string from 1 to 8, it was: " + apiData[0]);
+break;
+}
+if (apiData[1] == null || !apiData[1].matches("[1-4]")) {
+logger.error("sendCommand(): Output number must be a single character string from 1 to 4, it was: " + apiData[1]);
+break;
+}
+data=apiData[0];
+validCommand=true;
+break;
+case KeepAlive:
+if (!connectorType.equals(DSCAlarmConnectorType.TCP)) {
+break;
+}
+case PartitionArmControlAway:
+case PartitionArmControlStay:
+case PartitionArmControlZeroEntryDelay:
+if (apiData[0] == null || !apiData[0].matches("[1-8]")) {
+logger.error("sendCommand(): Partition number must be a single character string from 1 to 8, it was: {}",apiData[0]);
+break;
+}
+data=apiData[0];
+validCommand=true;
+break;
+case PartitionArmControlWithUserCode:
+case PartitionDisarmControl:
+if (apiData[0] == null || !apiData[0].matches("[1-8]")) {
+logger.error("sendCommand(): Partition number must be a single character string from 1 to 8, it was: {}",apiData[0]);
+break;
+}
+if (dscAlarmUserCode == null || dscAlarmUserCode.length() < 4 || dscAlarmUserCode.length() > 6) {
+logger.error("sendCommand(): User Code is invalid, must be between 4 and 6 chars: {}",dscAlarmUserCode);
+break;
+}
+data=apiData[0] + dscAlarmUserCode;
+validCommand=true;
+break;
+case VirtualKeypadControl:
+if (!connectorType.equals(DSCAlarmConnectorType.SERIAL)) {
+break;
+}
+case TimeStampControl:
+case TimeDateBroadcastControl:
+case TemperatureBroadcastControl:
+if (apiData[0] == null || !apiData[0].matches("[0-1]")) {
+logger.error("sendCommand(): Value must be a single character string of 0 or 1: {}",apiData[0]);
+break;
+}
+data=apiData[0];
+validCommand=true;
+break;
+case TriggerPanicAlarm:
+if (apiData[0] == null || !apiData[0].matches("[1-8]")) {
+logger.error("sendCommand(): Partition number must be a single character string from 1 to 8, it was: {}",apiData[0]);
+break;
+}
+if (apiData[1] == null || !apiData[1].matches("[1-3]")) {
+logger.error("sendCommand(): FAPcode must be a single character string from 1 to 3, it was: {}",apiData[1]);
+break;
+}
+data=apiData[0] + apiData[1];
+validCommand=true;
+break;
+case KeyStroke:
+if (apiData[0] == null || apiData[0].length() != 1 || !apiData[0].matches("[0-9]|A|#|\\*")) {
+logger.error("sendCommand(): \'keystroke\' must be a single character string from 0 to 9, *, #, or A, it was: {}",apiData[0]);
+break;
+}
+data=apiData[0];
+validCommand=true;
+break;
+case KeySequence:
+if (!connectorType.equals(DSCAlarmConnectorType.TCP)) {
+break;
+}
+if (apiData[0] == null || apiData[0].length() > 6 || !apiData[0].matches("(\\d|#|\\*)+")) {
+logger.error("sendCommand(): \'keysequence\' must be a string of up to 6 characters consiting of 0 to 9, *, or #, it was: {}",apiData[0]);
+break;
+}
+data=apiData[0];
+validCommand=true;
+break;
+case CodeSend:
+if (dscAlarmUserCode == null || dscAlarmUserCode.length() < 4 || dscAlarmUserCode.length() > 6) {
+logger.error("sendCommand(): Access Code is invalid, must be between 4 and 6 chars: {}",apiData[0]);
+break;
+}
+data=dscAlarmUserCode;
+validCommand=true;
+break;
+default :
+validCommand=false;
+break;
+}
+if (validCommand) {
+APICommand apiCommand=new APICommand();
+apiCommand.setAPICommand(command,data);
+dscAlarmConnector.write(apiCommand.toString());
+successful=true;
+logger.debug("sendCommand(): Command Sent - {}",apiCommand.toString());
+}
+ else logger.error("sendCommand(): Command Not Sent - Invalid!");
+return successful;
+}

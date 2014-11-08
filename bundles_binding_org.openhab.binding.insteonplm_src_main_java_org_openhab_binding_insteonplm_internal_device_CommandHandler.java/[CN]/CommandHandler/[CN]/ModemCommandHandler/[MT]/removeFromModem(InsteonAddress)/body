@@ -1,0 +1,36 @@
+{
+  boolean removed=false;
+  Driver driver=m_feature.getDevice().getDriver();
+  try {
+    HashMap<InsteonAddress,ModemDBEntry> dbes=driver.lockModemDBEntries();
+    ModemDBEntry dbe=dbes.get(aAddr);
+    if (dbe != null) {
+      for (      Msg lr : dbe.getLinkRecords()) {
+        Msg m=Msg.s_makeMessage("ManageALLLinkRecord");
+        m.setByte("controlCode",(byte)0x80);
+        m.setByte("recordFlags",(byte)0x00);
+        m.setByte("ALLLinkGroup",lr.getByte("ALLLinkGroup"));
+        m.setAddress("linkAddress",aAddr);
+        m.setByte("linkData1",(byte)0x00);
+        m.setByte("linkData2",(byte)0x00);
+        m.setByte("linkData3",(byte)0x00);
+        dbe.getPort().writeMessage(m);
+        removed=true;
+        logger.info("wrote erase message: {}",m);
+      }
+    }
+ else {
+      logger.warn("address {} not found in modem database!",aAddr);
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("field exception: ",e);
+  }
+catch (  IOException e) {
+    logger.error("i/o exception: ",e);
+  }
+ finally {
+    driver.unlockModemDBEntries();
+  }
+  return removed;
+}

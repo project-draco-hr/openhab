@@ -1,0 +1,13 @@
+{
+  boolean listenerRemoved=false;
+synchronized (m_listeners) {
+    for (Iterator<DeviceFeatureListener> it=m_listeners.iterator(); it.hasNext(); ) {
+      DeviceFeatureListener fl=it.next();
+      if (fl.getItemName().equals(aItemName)) {
+        it.remove();
+        listenerRemoved=true;
+      }
+    }
+  }
+  return listenerRemoved;
+}
