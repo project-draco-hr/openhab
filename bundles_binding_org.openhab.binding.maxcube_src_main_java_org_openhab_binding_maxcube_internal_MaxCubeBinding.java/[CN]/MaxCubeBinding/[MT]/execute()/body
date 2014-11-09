@@ -9,11 +9,11 @@
       socket=new Socket(ip,port);
       logger.debug("open new connection... to " + ip + " port "+ port);
       reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+      writer=new OutputStreamWriter(socket.getOutputStream());
     }
  else {
-      writer.write("l:");
-      writer.newLine();
+      logger.debug("Writing state request to Maxcube");
+      writer.write("l:" + '\r' + '\n');
       writer.flush();
     }
     boolean cont=true;
