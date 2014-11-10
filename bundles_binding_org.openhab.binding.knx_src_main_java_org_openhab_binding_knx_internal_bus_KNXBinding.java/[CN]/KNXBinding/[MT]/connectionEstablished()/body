@@ -3,8 +3,12 @@
   mKNXConnectionEstablished=true;
   for (  KNXBindingProvider knxProvider : providers) {
     for (    Datapoint datapoint : knxProvider.getReadableDatapoints()) {
-      if (!mKNXBusReaderScheduler.scheduleRead(datapoint,knxProvider.getAutoRefreshTime(datapoint))) {
-        logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
+      mKNXBusReaderScheduler.readOnce(datapoint);
+      int autoRefreshTimeInSecs=knxProvider.getAutoRefreshTime(datapoint);
+      if (autoRefreshTimeInSecs > 0) {
+        if (!mKNXBusReaderScheduler.scheduleRead(datapoint,autoRefreshTimeInSecs)) {
+          logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
+        }
       }
     }
   }

@@ -55,27 +55,43 @@
       }
     }
     String maxRefreshQueueEntriesString=(String)config.get("maxRefreshQueueEntries");
-    if (StringUtils.isNotBlank(autoReconnectPeriodString)) {
-      int maxRefreshQueueEntriesValue=Integer.parseInt(maxRefreshQueueEntriesString);
-      if (maxRefreshQueueEntriesValue >= 0) {
-        sMaxRefreshQueueEntries=maxRefreshQueueEntriesValue;
+    if (StringUtils.isNotBlank(maxRefreshQueueEntriesString)) {
+      try {
+        int maxRefreshQueueEntriesValue=Integer.parseInt(maxRefreshQueueEntriesString);
+        if (maxRefreshQueueEntriesValue >= 0) {
+          sMaxRefreshQueueEntries=maxRefreshQueueEntriesValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'maxRefreshQueueEntries' from configuration. '{}' is not a number: using default.",maxRefreshQueueEntriesString);
       }
     }
     String numberOfThreadsString=(String)config.get("numberOfThreads");
-    if (StringUtils.isNotBlank(autoReconnectPeriodString)) {
-      int numberOfThreadsValue=Integer.parseInt(numberOfThreadsString);
-      if (numberOfThreadsValue >= 0) {
-        sNumberOfThreads=numberOfThreadsValue;
+    if (StringUtils.isNotBlank(numberOfThreadsString)) {
+      try {
+        int numberOfThreadsValue=Integer.parseInt(numberOfThreadsString);
+        if (numberOfThreadsValue >= 0) {
+          sNumberOfThreads=numberOfThreadsValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'numberOfThreads' from configuration. '{}' is not a number: using default.",numberOfThreadsString);
       }
     }
     String scheduledExecutorServiceShutdownTimeoutString=(String)config.get("scheduledExecutorServiceShutdownTimeout");
     if (StringUtils.isNotBlank(scheduledExecutorServiceShutdownTimeoutString)) {
-      int scheduledExecutorServiceShutdownTimeoutValue=Integer.parseInt(scheduledExecutorServiceShutdownTimeoutString);
-      if (scheduledExecutorServiceShutdownTimeoutValue >= 0) {
-        sScheduledExecutorServiceShutdownTimeout=scheduledExecutorServiceShutdownTimeoutValue;
+      try {
+        int scheduledExecutorServiceShutdownTimeoutValue=Integer.parseInt(scheduledExecutorServiceShutdownTimeoutString);
+        if (scheduledExecutorServiceShutdownTimeoutValue >= 0) {
+          sScheduledExecutorServiceShutdownTimeout=scheduledExecutorServiceShutdownTimeoutValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'scheduledExecutorServiceShutdownTimeout' from configuration. '{}' is not a number: using default.",scheduledExecutorServiceShutdownTimeoutString);
       }
     }
     if (sPC == null) {
+      sLogger.debug("Not connected yet. Trying to connect.");
       if (!connect()) {
         sLogger.warn("Inital connection to KNX bus failed!");
         if (sAutoReconnectPeriod > 0) {
@@ -84,6 +100,9 @@
           TimerTask timerTask=new ConnectTimerTask(timer);
           timer.schedule(timerTask,sAutoReconnectPeriod * 1000,sAutoReconnectPeriod * 1000);
         }
+      }
+ else {
+        sLogger.debug("Success: connected.");
       }
     }
   }
