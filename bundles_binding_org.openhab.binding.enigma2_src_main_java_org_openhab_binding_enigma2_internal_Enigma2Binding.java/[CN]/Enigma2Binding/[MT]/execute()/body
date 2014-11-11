@@ -1,0 +1,33 @@
+{
+  logger.debug("execute() called");
+  for (  Enigma2BindingProvider provider : providers) {
+    Collection<String> names=provider.getItemNames();
+    for (    String name : names) {
+      logger.debug("Name {}",name);
+      Enigma2BindingConfig bindingConfig=provider.getBindingConfigFor(name);
+      String deviceId=bindingConfig.getDeviceId();
+      if (enigmaNodes.containsKey(deviceId)) {
+        Enigma2Node node=enigmaNodes.get(deviceId);
+        String value=null;
+switch (bindingConfig.getCmdId()) {
+case VOLUME:
+          value=node.getVolume();
+        break;
+case CHANNEL:
+      value=node.getChannel();
+    break;
+case POWERSTATE:
+  value=node.getOnOff();
+break;
+default :
+}
+if (!bindingConfig.isInbound() && value != null) {
+postUpdate(provider,name,value);
+}
+}
+ else {
+logger.error("Unknown deviceId \"{}\"",deviceId);
+}
+}
+}
+}

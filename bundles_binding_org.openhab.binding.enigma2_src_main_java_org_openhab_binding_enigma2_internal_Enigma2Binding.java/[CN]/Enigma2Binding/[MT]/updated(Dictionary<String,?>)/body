@@ -1,0 +1,34 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String[] keyElements=key.split(":");
+      String deviceId=keyElements[0];
+      if (keyElements.length >= 2) {
+        Enigma2Node node=enigmaNodes.get(deviceId);
+        if (node == null) {
+          node=new Enigma2Node();
+          enigmaNodes.put(deviceId,node);
+        }
+        String option=keyElements[1];
+switch (option) {
+case "hostname":
+          node.setHostName((String)config.get(key));
+        break;
+case "username":
+      node.setUserName((String)config.get(key));
+    break;
+case "password":
+  node.setPassword((String)config.get(key));
+break;
+}
+}
+}
+setProperlyConfigured(checkProperlyConfigured());
+}
+}

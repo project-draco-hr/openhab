@@ -1,0 +1,11 @@
+{
+  if (commandValue == null) {
+    logger.error("Error in item configuration. No remote control code provided (third part of item config)");
+  }
+  try {
+    HttpUtils.getGetResponse(hostName,SUFFIX_REMOTE_CONTROL + commandValue,userName,password);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}
