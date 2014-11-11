@@ -1,0 +1,15 @@
+{
+  if (m_queueThread != null) {
+synchronized (m_requestQueues) {
+      m_keepRunning=false;
+      m_requestQueues.notify();
+    }
+    try {
+      m_queueThread.join();
+    }
+ catch (    InterruptedException e) {
+      logger.error("got interrupted waiting for thread exit ",e);
+    }
+    m_queueThread=null;
+  }
+}

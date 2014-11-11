@@ -1,0 +1,139 @@
+{
+  DSCAlarmBindingConfig dscAlarmBindingConfig=null;
+  Item item=null;
+  for (  DSCAlarmBindingProvider prov : providers) {
+    dscAlarmBindingConfig=prov.getDSCAlarmBindingConfig(itemName);
+    item=prov.getItem(itemName);
+    if (dscAlarmBindingConfig != null) {
+      DSCAlarmDeviceType dscAlarmDeviceType=dscAlarmBindingConfig.getDeviceType();
+      int partitionId;
+      int zoneId;
+      logger.debug("internalReceiveCommand():  Item Name: {} Command: {} Item Device Type: {}",itemName,command,dscAlarmDeviceType);
+      if (connected) {
+switch (dscAlarmDeviceType) {
+case PANEL:
+switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
+case PANEL_CONNECTION:
+            if (command.toString() == "0") {
+              closeConnection();
+              if (!connected) {
+                dscAlarmItemUpdate.setConnected(false);
+                dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Disconnected");
+              }
+            }
+          break;
+case PANEL_COMMAND:
+        int cmd=Integer.parseInt(command.toString());
+switch (cmd) {
+case 0:
+        api.sendCommand(APICode.Poll);
+      break;
+case 1:
+    api.sendCommand(APICode.StatusReport);
+  break;
+case 2:
+api.sendCommand(APICode.LabelsRequest);
+break;
+case 8:
+api.sendCommand(APICode.DumpZoneTimers);
+break;
+case 10:
+api.sendCommand(APICode.SetTimeDate);
+break;
+case 200:
+api.sendCommand(APICode.CodeSend);
+break;
+default :
+break;
+}
+itemName=getItemName(DSCAlarmItemType.PANEL_COMMAND,0,0);
+if (itemName != "") {
+updateDeviceProperties(itemName,-1,"");
+updateItem(itemName);
+}
+break;
+default :
+break;
+}
+break;
+case PARTITION:
+partitionId=dscAlarmBindingConfig.getPartitionId();
+switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
+case PARTITION_ARM_MODE:
+if (command.toString().equals("0")) {
+if (api.sendCommand(APICode.PartitionDisarmControl,String.valueOf(partitionId))) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Partition Disarmed");
+}
+}
+ else if (command.toString().equals("1")) {
+if (api.sendCommand(APICode.PartitionArmControlAway,String.valueOf(partitionId))) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Partition Armed (Away)");
+}
+}
+ else if (command.toString().equals("2")) {
+if (api.sendCommand(APICode.PartitionArmControlStay,String.valueOf(partitionId))) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,2,"Partition Armed (Stay)");
+}
+}
+ else if (command.toString().equals("3")) {
+if (api.sendCommand(APICode.PartitionArmControlZeroEntryDelay,String.valueOf(partitionId))) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,3,"Partition Armed (Zero Entry Delay)");
+}
+}
+ else if (command.toString().equals("4")) {
+if (api.sendCommand(APICode.PartitionArmControlWithUserCode,String.valueOf(partitionId))) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,4,"Partition Armed (With User Code)");
+}
+}
+break;
+default :
+break;
+}
+dscAlarmUpdateMap.put(itemName,dscAlarmBindingConfig);
+processUpdateMap();
+break;
+case ZONE:
+partitionId=dscAlarmBindingConfig.getPartitionId();
+zoneId=dscAlarmBindingConfig.getZoneId();
+switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
+case ZONE_BYPASS_MODE:
+if (command.toString().equals("0")) {
+String data=String.valueOf(partitionId) + "*1" + String.format("%02d",zoneId)+ "#";
+if (api.sendCommand(APICode.KeySequence,data)) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Zone Armed");
+}
+}
+ else if (command.toString().equals("1")) {
+String data=String.valueOf(partitionId) + "*1" + String.format("%02d",zoneId)+ "#";
+if (api.sendCommand(APICode.KeySequence,data)) {
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Zone Bypassed");
+}
+}
+break;
+default :
+break;
+}
+break;
+default :
+logger.debug("internalReceiveCommand(): No Command Sent.");
+break;
+}
+}
+ else {
+if (dscAlarmDeviceType == DSCAlarmDeviceType.PANEL) {
+if (dscAlarmBindingConfig.getDSCAlarmItemType() == DSCAlarmItemType.PANEL_CONNECTION) {
+if (command.toString().equals("1")) {
+if (api != null) {
+openConnection();
+if (connected) {
+dscAlarmItemUpdate.setConnected(true);
+dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Connected");
+}
+}
+}
+}
+}
+}
+}
+}
+}

@@ -1,0 +1,22 @@
+{
+  String itemName;
+  logger.debug("reconnect(): API Reconnection!");
+  openConnection();
+  if (connected) {
+    dscAlarmItemUpdate.setConnected(true);
+    itemName=getItemName(DSCAlarmItemType.PANEL_CONNECTION,0,0);
+    if (itemName != "") {
+      updateItem(itemName);
+    }
+    buildUpdateMap();
+    itemHasChanged=true;
+  }
+ else {
+    dscAlarmItemUpdate.setSysMessage("PANEL DISCONNECTED!!!");
+    itemName=getItemName(DSCAlarmItemType.PANEL_MESSAGE,0,0);
+    if (itemName != "") {
+      updateItem(itemName);
+    }
+    logger.error("reconnect(): API reconnection failed!");
+  }
+}

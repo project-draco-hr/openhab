@@ -1,10 +1,15 @@
 {
-  if (bc.getMsgType() != ADMsgType.KPM) {
-    logger.debug("updating item: {} to state {}",bc.getItemName(),state);
-  }
+synchronized (m_unupdatedItems) {
+    m_unupdatedItems.remove(bc.getItemName());
+    if (!bc.getState().equals(state)) {
+      if (bc.getMsgType() != ADMsgType.KPM) {
+        logger.debug("updating item: {} to state {}",bc.getItemName(),state);
+      }
  else {
-    logger.trace("updating item: {} to state {}",bc.getItemName(),state);
+        logger.trace("updating item: {} to state {}",bc.getItemName(),state);
+      }
+      eventPublisher.postUpdate(bc.getItemName(),state);
+      bc.setState(state);
+    }
   }
-  m_unupdatedItems.remove(bc.getItemName());
-  eventPublisher.postUpdate(bc.getItemName(),state);
 }

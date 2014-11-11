@@ -1,15 +1,15 @@
 {
   DeviceFeature f=new DeviceFeature(m_name);
   f.setStatusFeature(m_isStatus);
-  if (m_dispatcher != null)   f.setMessageDispatcher((DeviceFeature.MessageDispatcher)DeviceFeature.s_makeHandler(m_dispatcher,f));
-  if (m_pollHandler != null)   f.setPollHandler((DeviceFeature.PollHandler)DeviceFeature.s_makeHandler(m_pollHandler,f));
-  if (m_defaultCmdHandler != null)   f.setDefaultCommandHandler((DeviceFeature.CommandHandler)DeviceFeature.s_makeHandler(m_defaultCmdHandler,f));
-  if (m_defaultMsgHandler != null)   f.setDefaultMsgHandler((DeviceFeature.MessageHandler)DeviceFeature.s_makeHandler(m_defaultMsgHandler,f));
+  if (m_dispatcher != null)   f.setMessageDispatcher(MessageDispatcher.s_makeMessageDispatcher(m_dispatcher,f));
+  if (m_pollHandler != null)   f.setPollHandler(PollHandler.s_makeHandler(m_pollHandler,f));
+  if (m_defaultCmdHandler != null)   f.setDefaultCommandHandler(CommandHandler.s_makeHandler(m_defaultCmdHandler,f));
+  if (m_defaultMsgHandler != null)   f.setDefaultMsgHandler(MessageHandler.s_makeHandler(m_defaultMsgHandler,f));
   for (  Entry<Integer,String> mH : m_messageHandlers.entrySet()) {
-    f.addMessageHandler(mH.getKey(),(DeviceFeature.MessageHandler)DeviceFeature.s_makeHandler(mH.getValue(),f));
+    f.addMessageHandler(mH.getKey(),MessageHandler.s_makeHandler(mH.getValue(),f));
   }
   for (  Entry<Class<? extends Command>,String> cH : m_commandHandlers.entrySet()) {
-    f.addCommandHandler(cH.getKey(),(DeviceFeature.CommandHandler)DeviceFeature.s_makeHandler(cH.getValue(),f));
+    f.addCommandHandler(cH.getKey(),CommandHandler.s_makeHandler(cH.getValue(),f));
   }
   return f;
 }
