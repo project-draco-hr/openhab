@@ -18,6 +18,10 @@
     if (StringUtils.isNotBlank(exclusiveString)) {
       exclusive=Boolean.parseBoolean(exclusiveString);
     }
+    String maxRequestsPerConnectionString=(String)config.get("maxRequestsPerConnection");
+    if (maxRequestsPerConnectionString != null && !maxRequestsPerConnectionString.isEmpty()) {
+      maxRequestsPerConnection=Integer.parseInt(maxRequestsPerConnectionString);
+    }
   }
  else {
     ip=discoveryGatewayIp();

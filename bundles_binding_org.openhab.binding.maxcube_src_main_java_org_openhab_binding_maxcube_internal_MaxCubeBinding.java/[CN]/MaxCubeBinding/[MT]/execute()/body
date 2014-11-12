@@ -6,15 +6,19 @@
   try {
     String raw=null;
     if (socket == null) {
-      socket=new Socket(ip,port);
-      logger.debug("open new connection... to " + ip + " port "+ port);
-      reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-      writer=new OutputStreamWriter(socket.getOutputStream());
+      this.socketConnect();
+    }
+    if (maxRequestsPerConnection > 0 && requestCount >= maxRequestsPerConnection) {
+      logger.debug("maxRequestsPerConnection reached, reconnecting.");
+      socket.close();
+      this.socketConnect();
+      requestCount=0;
     }
  else {
-      logger.debug("Writing state request to Maxcube");
+      logger.info("Writing state request to Maxcube");
       writer.write("l:" + '\r' + '\n');
       writer.flush();
+      requestCount++;
     }
     boolean cont=true;
     while (cont) {
@@ -60,6 +64,9 @@
  else {
               c.setValues((C_Message)message);
             }
+          }
+ else           if (message.getType() == MessageType.S) {
+            cont=false;
           }
  else           if (message.getType() == MessageType.L) {
             ((L_Message)message).updateDevices(devices,configurations);
