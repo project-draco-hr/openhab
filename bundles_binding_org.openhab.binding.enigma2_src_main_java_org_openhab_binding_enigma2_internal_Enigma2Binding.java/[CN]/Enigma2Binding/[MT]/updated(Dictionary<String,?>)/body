@@ -16,19 +16,17 @@
           enigmaNodes.put(deviceId,node);
         }
         String option=keyElements[1];
-switch (option) {
-case "hostname":
+        if (option.equals("hostname")) {
           node.setHostName((String)config.get(key));
-        break;
-case "username":
-      node.setUserName((String)config.get(key));
-    break;
-case "password":
-  node.setPassword((String)config.get(key));
-break;
-}
-}
-}
-setProperlyConfigured(checkProperlyConfigured());
-}
+        }
+ else         if (option.equals("username")) {
+          node.setUserName((String)config.get(key));
+        }
+ else         if (option.equals("password")) {
+          node.setPassword((String)config.get(key));
+        }
+      }
+    }
+    setProperlyConfigured(checkProperlyConfigured());
+  }
 }
