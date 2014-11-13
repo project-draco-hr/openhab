@@ -1,0 +1,18 @@
+{
+  InsteonAddress addr=dev.getAddress();
+  HashMap<InsteonAddress,ModemDBEntry> dbes=m_driver.lockModemDBEntries();
+  if (dbes.containsKey(addr)) {
+    if (!dev.hasModemDBEntry()) {
+      logger.info("device {} found in the modem database!",addr);
+      dev.setHasModemDBEntry(true);
+    }
+  }
+ else {
+    if (m_driver.isModemDBComplete()) {
+      logger.warn("device {} not found in the modem database. Did you forget to link?",addr);
+    }
+  }
+  int ndev=dbes.size();
+  m_driver.unlockModemDBEntries();
+  return ndev;
+}

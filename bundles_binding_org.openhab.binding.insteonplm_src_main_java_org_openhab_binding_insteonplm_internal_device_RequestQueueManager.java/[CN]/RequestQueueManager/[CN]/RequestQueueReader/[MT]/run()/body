@@ -1,7 +1,7 @@
 {
-  logger.info("starting request queue thread");
+  logger.debug("starting request queue thread");
 synchronized (m_requestQueues) {
-    while (true) {
+    while (m_keepRunning) {
       try {
         while (!m_requestQueues.isEmpty()) {
           RequestQueue q=m_requestQueues.poll();
@@ -30,4 +30,5 @@ synchronized (m_requestQueues) {
       }
     }
   }
+  logger.debug("exiting request queue thread!");
 }

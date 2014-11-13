@@ -1,0 +1,13 @@
+{
+  for (  EHealthBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      EHealthSensorPropertyName propertyName=provider.getSensorPropertyName(itemName);
+      if (datagram.hasChanged(previousDatagram,propertyName)) {
+        Number sensorValue=datagram.getRawData().get(propertyName);
+        State newState=new DecimalType(sensorValue.toString());
+        eventPublisher.postUpdate(itemName,newState);
+      }
+    }
+  }
+  this.previousDatagram=datagram;
+}

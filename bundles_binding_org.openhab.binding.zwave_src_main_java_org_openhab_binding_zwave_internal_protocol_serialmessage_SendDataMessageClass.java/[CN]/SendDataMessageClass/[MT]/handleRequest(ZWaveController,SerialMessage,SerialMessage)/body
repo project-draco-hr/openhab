@@ -19,14 +19,17 @@
   }
 switch (status) {
 case COMPLETE_OK:
-    if (node.isDead()) {
-      node.setAlive();
-      logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",node.getNodeId(),node.getNodeStage());
-    }
+    ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
+  if (node == null)   break;
+node.incrementReceiveCount();
+if (node.isDead()) {
+node.setAlive();
+logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",node.getNodeId(),node.getNodeStage());
+}
  else {
-      node.resetResendCount();
-    }
-  checkTransactionComplete(lastSentMessage,incomingMessage);
+node.resetResendCount();
+}
+checkTransactionComplete(lastSentMessage,incomingMessage);
 return true;
 case COMPLETE_NO_ACK:
 case COMPLETE_FAIL:

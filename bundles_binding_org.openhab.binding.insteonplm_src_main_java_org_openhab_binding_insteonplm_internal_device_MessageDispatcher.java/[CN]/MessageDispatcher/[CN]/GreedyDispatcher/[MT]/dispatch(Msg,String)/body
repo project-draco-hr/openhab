@@ -1,0 +1,17 @@
+{
+  byte cmd1=0x00;
+  boolean isConsumed=false;
+  try {
+    cmd1=msg.getByte("command1");
+  }
+ catch (  FieldException e) {
+    logger.debug("no cmd1 found, dropping msg {}",msg);
+    return isConsumed;
+  }
+  int key=(cmd1 & 0xFF);
+  MessageHandler h=m_feature.getMsgHandlers().get(key);
+  if (h == null)   h=m_feature.getDefaultMsgHandler();
+  logger.trace("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
+  h.handleMessage(cmd1,msg,m_feature,port);
+  return isConsumed;
+}

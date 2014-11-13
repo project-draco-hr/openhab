@@ -1,0 +1,17 @@
+{
+  if (dscAlarmUpdateMap.size() == 0) {
+    logger.debug("processUpdateMap(): Nothing to update.");
+    return;
+  }
+  Map<String,DSCAlarmBindingConfig> itemsMap=new HashMap<String,DSCAlarmBindingConfig>(dscAlarmUpdateMap);
+  for (  String itemName : itemsMap.keySet()) {
+    DSCAlarmBindingConfig dscAlarmBindingConfig=itemsMap.get(itemName);
+    dscAlarmUpdateMap.remove(itemName);
+    Item item=null;
+    for (    DSCAlarmBindingProvider provider : providers) {
+      item=provider.getItem(itemName);
+    }
+    dscAlarmItemUpdate.updateDeviceItem(item,dscAlarmBindingConfig,eventPublisher,null);
+    logger.debug("processUpdateMap(): Updated item: {}",itemName);
+  }
+}

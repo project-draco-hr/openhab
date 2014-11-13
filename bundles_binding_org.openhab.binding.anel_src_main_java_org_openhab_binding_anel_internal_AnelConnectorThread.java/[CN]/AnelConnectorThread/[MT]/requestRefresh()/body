@@ -1,0 +1,10 @@
+{
+  if (interrupted || isInterrupted())   return;
+  logger.debug("Sending to " + state.host + ": "+ UDP_STATE_REQUEST);
+  try {
+    connector.sendDatagram(UDP_STATE_REQUEST.getBytes());
+  }
+ catch (  Exception e) {
+    logger.error("Error occured when sending UDP data to Anel device: '" + UDP_STATE_REQUEST + "'",e);
+  }
+}

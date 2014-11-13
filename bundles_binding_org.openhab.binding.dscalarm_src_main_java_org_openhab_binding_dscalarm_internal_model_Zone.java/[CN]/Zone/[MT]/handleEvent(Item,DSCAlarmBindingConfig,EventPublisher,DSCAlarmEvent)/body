@@ -1,0 +1,36 @@
+{
+  int tpiCode=-1;
+  APIMessage tpiMessage=null;
+  String strStatus="Status Unknown!";
+  if (event != null) {
+    tpiMessage=event.getAPIMessage();
+    tpiCode=Integer.parseInt(tpiMessage.getAPICode());
+    strStatus=tpiMessage.getAPIName();
+    logger.debug("handleEvent(): Zone Item Name: {}",item.getName());
+    if (config != null) {
+      if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case ZONE_ALARM_STATUS:
+          zoneProperties.setState(StateType.ALARM_STATE,(tpiCode == 601) ? 1 : 0,strStatus);
+        publisher.postUpdate(item.getName(),new StringType(strStatus));
+      break;
+case ZONE_TAMPER_STATUS:
+    zoneProperties.setState(StateType.TAMPER_STATE,(tpiCode == 603) ? 1 : 0,strStatus);
+  publisher.postUpdate(item.getName(),new StringType(strStatus));
+break;
+case ZONE_FAULT_STATUS:
+zoneProperties.setState(StateType.FAULT_STATE,(tpiCode == 605) ? 1 : 0,strStatus);
+publisher.postUpdate(item.getName(),new StringType(strStatus));
+break;
+case ZONE_GENERAL_STATUS:
+zoneProperties.setState(StateType.GENERAL_STATE,(tpiCode == 609) ? 1 : 0,strStatus);
+publisher.postUpdate(item.getName(),(zoneProperties.getState(StateType.GENERAL_STATE) == 1) ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+break;
+default :
+logger.debug("handleEvent(): Zone item not updated.");
+break;
+}
+}
+}
+}
+}
