@@ -1,0 +1,21 @@
+{
+  try {
+    zibase=new Zibase(zibaseIp);
+    logger.info("connected to zibase for command sending");
+  }
+ catch (  Throwable th) {
+    logger.info("Error connecting to zibase using specified ip address");
+  }
+  try {
+    logger.info("Starting zibase listener thread...");
+    zibaseListener=new ZibaseListener();
+    zibaseListener.setZibase(zibase);
+    zibaseListener.setEventPubisher(eventPublisher);
+    zibaseListener.setListenerHost(listenerHost);
+    zibaseListener.setListenerPort(listenerPort);
+    zibaseListener.start();
+  }
+ catch (  Throwable th) {
+    logger.info("Error connecting to zibase for listening");
+  }
+}
