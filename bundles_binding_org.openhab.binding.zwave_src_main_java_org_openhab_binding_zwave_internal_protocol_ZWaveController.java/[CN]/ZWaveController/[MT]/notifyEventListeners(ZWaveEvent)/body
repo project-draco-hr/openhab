@@ -42,7 +42,7 @@ break;
 }
 if (networkEvent.getState() == State.Success) {
 logger.warn("NODE {}: Marking node as FAILED because its on the controllers failed node list.",networkEvent.getNodeId());
-getNode(networkEvent.getNodeId()).setFailed();
+getNode(networkEvent.getNodeId()).setNodeStage(NodeStage.FAILED);
 ZWaveEvent zEvent=new ZWaveNodeStatusEvent(networkEvent.getNodeId(),ZWaveNodeStatusEvent.State.Failed);
 this.notifyEventListeners(zEvent);
 break;
