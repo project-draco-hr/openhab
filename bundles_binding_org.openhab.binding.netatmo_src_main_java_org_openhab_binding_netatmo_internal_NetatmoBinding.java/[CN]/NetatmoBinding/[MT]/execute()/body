@@ -4,8 +4,6 @@
     refreshAccessToken();
   }
   if (this.firstExecution) {
-    deviceListRequest=new DeviceListRequest(this.accessToken);
-    deviceListResponse=deviceListRequest.execute();
     logger.debug("Request: {}",deviceListRequest);
     logger.debug("Response: {}",deviceListResponse);
     if (deviceListResponse.isError()) {
@@ -44,7 +42,6 @@
       processMeasurementResponse(request,response,deviceMeasureValueMap);
     }
   }
-  deviceListResponse=deviceListRequest.execute();
   for (  final NetatmoBindingProvider provider : this.providers) {
     for (    final String itemName : provider.getItemNames()) {
       final String deviceId=provider.getDeviceId(itemName);
