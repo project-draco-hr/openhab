@@ -1,5 +1,7 @@
 {
-  String id=XmlSimpleParse.getTagValue("id",zbResponse.getMessage());
+  String zbResponseStr=zbResponse.getMessage();
+  String id=this.extractIdFromZbResponse(zbResponseStr);
+  logger.debug("Found event from ID " + id);
   if (id == null)   return;
   Vector<String> listOfItemNames=zibaseBinding.getBindingProvider().getItemNamesById(id);
   if (listOfItemNames == null)   return;
@@ -8,7 +10,7 @@
     zibaseBindingConfig config=zibaseBinding.getBindingProvider().getItemConfig(itemName);
     logger.debug("Getting config for " + itemName);
     if (config != null) {
-      org.openhab.core.types.State value=config.getOpenhabStateFromZibaseValue(zbResponse);
+      org.openhab.core.types.State value=config.getOpenhabStateFromZibaseValue(zbResponseStr);
       logger.debug("publishing update for " + itemName + " : "+ value);
       eventPubisher.postUpdate(itemName,value);
     }

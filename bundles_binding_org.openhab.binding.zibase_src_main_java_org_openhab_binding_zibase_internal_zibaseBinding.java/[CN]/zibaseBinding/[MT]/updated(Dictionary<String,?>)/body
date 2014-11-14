@@ -1,12 +1,13 @@
 {
   if (config != null) {
+    logger.debug("Loading zibase configuration");
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
     String ip=(String)config.get("ip");
     if (StringUtils.isNotBlank(ip)) {
-      zibaseIp=ip;
+      this.ip=ip;
     }
     String tmpListenerIp=(String)config.get("listenerHost");
     if (StringUtils.isNotBlank(tmpListenerIp)) {
@@ -17,5 +18,6 @@
       listenerPort=Integer.parseInt(tmpListenerPort);
     }
     setProperlyConfigured(true);
+    this.launch();
   }
 }

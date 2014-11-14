@@ -9,9 +9,10 @@
       while (running) {
         serverSocket.receive(receivePacket);
         ZbResponse zbResponse=new ZbResponse(receivePacket.getData());
-        publishEvents(zbResponse);
         logger.debug("ZIBASE MESSAGE: " + zbResponse.getMessage());
+        publishEvents(zbResponse);
       }
+      zibase.hostUnregistering(listenerHost,listenerPort);
     }
  catch (    SocketException ex) {
       logger.error("Could not open socket to zibase : " + ex);
