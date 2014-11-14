@@ -1,13 +1,36 @@
 {
+  if (configFile.isDirectory() || !configFile.getName().endsWith(".cfg")) {
+    logger.debug("Ignoring file '{}'",configFile.getName());
+    return;
+  }
+  logger.debug("Processing config file '{}'",configFile.getName());
   ConfigurationAdmin configurationAdmin=(ConfigurationAdmin)ConfigActivator.configurationAdminTracker.getService();
   if (configurationAdmin != null) {
     Map<Configuration,Dictionary> configsToUpdate=new HashMap<Configuration,Dictionary>();
     Map<Configuration,Dictionary> configMap=new HashMap<Configuration,Dictionary>();
+    String pid;
+    String filenameWithoutExt=StringUtils.substringBeforeLast(configFile.getName(),".");
+    if (filenameWithoutExt.contains(".")) {
+      pid=filenameWithoutExt;
+    }
+ else {
+      pid=getServicePidNamespace() + "." + filenameWithoutExt;
+    }
     List<String> lines=IOUtils.readLines(new FileInputStream(configFile));
+    if (lines.size() > 0 && lines.get(0).startsWith(PID_MARKER)) {
+      pid=lines.get(0).substring(PID_MARKER.length()).trim();
+    }
     for (    String line : lines) {
       String[] contents=parseLine(configFile.getPath(),line);
-      if (contents == null)       continue;
-      String pid=contents[0];
+      if (contents == null) {
+        continue;
+      }
+      if (contents[0] != null) {
+        pid=contents[0];
+        if (!pid.contains(".")) {
+          pid=getServicePidNamespace() + "." + pid;
+        }
+      }
       String property=contents[1];
       String value=contents[2];
       Configuration configuration=configurationAdmin.getConfiguration(pid,null);
