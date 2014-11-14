@@ -1,0 +1,21 @@
+{
+  final DeviceListRequest request=new DeviceListRequest(oauthCredentials.accessToken);
+  final DeviceListResponse response=request.execute();
+  logger.debug("Request: {}",request);
+  logger.debug("Response: {}",response);
+  if (response.isError()) {
+    final NetatmoError error=response.getError();
+    if (error.isAccessTokenExpired()) {
+      oauthCredentials.refreshAccessToken();
+      execute();
+    }
+ else {
+      throw new NetatmoException(error.getMessage());
+    }
+    return;
+  }
+ else {
+    processDeviceListResponse(response);
+    oauthCredentials.firstExecution=false;
+  }
+}

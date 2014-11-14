@@ -1,0 +1,15 @@
+{
+  SpeechDispatcherConnection connection=null;
+  if (outputDevice != null) {
+    connection=deviceConfigCache.get(outputDevice);
+  }
+ else {
+    connection=defaultOutput;
+  }
+  if (connection != null) {
+    connection.say(text,voiceName);
+  }
+ else {
+    logger.error("Output device not configured [{}]",outputDevice);
+  }
+}

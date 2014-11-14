@@ -1,0 +1,34 @@
+{
+  try {
+    for (; ; ) {
+      WatchKey key=null;
+      try {
+        key=watchService.take();
+      }
+ catch (      InterruptedException e) {
+        return;
+      }
+      for (      WatchEvent<?> event : key.pollEvents()) {
+        WatchEvent.Kind<?> kind=event.kind();
+        if (kind == OVERFLOW) {
+          continue;
+        }
+        WatchEvent<Path> ev=cast(event);
+        Path name=ev.context();
+        if (kind == ENTRY_CREATE || kind == ENTRY_MODIFY) {
+          try {
+            processConfigFile(new File(getServiceConfigFolder() + File.separator + name.toString()));
+          }
+ catch (          IOException e) {
+            logger.warn("Could not process config file '{}': {}",name,e);
+          }
+        }
+      }
+      key.reset();
+    }
+  }
+ catch (  ClosedWatchServiceException ecx) {
+    logger.debug("Terminated thread {}",Thread.currentThread().getName());
+    return;
+  }
+}

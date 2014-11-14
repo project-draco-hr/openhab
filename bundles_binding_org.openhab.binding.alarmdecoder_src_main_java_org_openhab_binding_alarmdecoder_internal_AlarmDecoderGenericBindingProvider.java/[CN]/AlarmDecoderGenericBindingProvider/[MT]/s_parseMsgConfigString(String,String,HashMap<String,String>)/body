@@ -1,0 +1,19 @@
+{
+  String shouldBe="should be MSGType:ADDRESS#feature,param=foo e.g. RFX:0923844#data,bit=5";
+  String[] segments=bindingConfig.split("#");
+  String[] dev=segments[0].split(":");
+  if (dev.length != 2) {
+    throw new BindingConfigParseException("missing colon in item format: " + bindingConfig + ", "+ shouldBe);
+  }
+  String type=dev[0];
+  String addr=dev[1];
+  ADMsgType mt=ADMsgType.s_fromString(type);
+  if (!mt.isValid() || !s_isValidAddress(mt,addr)) {
+    throw new BindingConfigParseException("invalid device address for " + type + ": "+ addr+ " in items file.");
+  }
+  String[] params=segments[1].split(",");
+  String feature=params[0];
+  s_parseParameters(itemName,params,1,map);
+  String[] retval={type,addr,feature};
+  return retval;
+}
