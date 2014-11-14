@@ -1,10 +1,6 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  boolean inbound=false;
-  if (bindingConfig.startsWith("<")) {
-    inbound=true;
-  }
-  String strippedBindingConfig=bindingConfig.replace(inbound ? "<" : ">","").replace("[","").replace("]","");
+  String strippedBindingConfig=bindingConfig.replace("[","").replace("]","").trim();
   String[] elements=strippedBindingConfig.split(":");
   Enigma2BindingConfig config=null;
   Enigma2Command cmdId=null;
@@ -15,14 +11,14 @@
     throw new BindingConfigParseException("Unknown command: " + elements[1]);
   }
   if (elements.length == 2) {
-    config=new Enigma2BindingConfig(item,inbound,elements[0],cmdId,null);
+    config=new Enigma2BindingConfig(item,elements[0],cmdId,null);
   }
  else   if (elements.length == 3) {
-    config=new Enigma2BindingConfig(item,inbound,elements[0],cmdId,elements[2]);
+    config=new Enigma2BindingConfig(item,elements[0],cmdId,elements[2]);
   }
  else {
     throw new BindingConfigParseException("Configuration must have at at least 2 or 3 elements separated by ':'");
   }
-  logger.debug("Found \"{}\" binding config for deviceId \"{}\". Command is \"{}\" and value is \"{}\"",inbound ? "inbound" : "outbund",elements[0],elements[1],elements.length > 2 ? elements[2] : "-");
+  logger.debug("Found \"{}\" binding config for deviceId \"{}\". Command is \"{}\" and value is \"{}\"",elements[0],elements[1],elements.length > 2 ? elements[2] : "-");
   addBindingConfig(item,config);
 }

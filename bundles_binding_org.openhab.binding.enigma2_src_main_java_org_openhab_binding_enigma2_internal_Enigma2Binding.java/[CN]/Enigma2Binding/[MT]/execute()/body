@@ -19,10 +19,17 @@ case CHANNEL:
 case POWERSTATE:
   value=node.getOnOff();
 break;
+case PAUSE:
+logger.debug("Querying the player state (Play/Pause) is currently not supported");
+break;
+case MUTE:
+value=node.getMuteUnmute();
+break;
 default :
+break;
 }
-if (!bindingConfig.isInbound() && value != null) {
-postUpdate(provider,name,value);
+if (value != null) {
+postUpdate(provider,bindingConfig.getItem(),value);
 }
 }
  else {
