@@ -32,4 +32,19 @@ return;
 logger.debug("NODE {}: Wakeup during initialisation.",this.node.getNodeId());
 advanceNodeStage(null);
 }
+ else if (event instanceof ZWaveNodeStatusEvent) {
+ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
+if (this.node.getNodeId() != event.getNodeId()) {
+return;
+}
+logger.debug("NODE {}: Node Status event during initialisation - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+switch (statusEvent.getState()) {
+case Dead:
+case Failed:
+break;
+case Alive:
+advanceNodeStage(null);
+break;
+}
+}
 }

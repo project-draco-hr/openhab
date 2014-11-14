@@ -3,6 +3,9 @@
     return;
   }
   logger.debug("NODE {}: Node advancer - {} - queue length {} - free to send {}.",this.node.getNodeId(),currentStage.getLabel(),msgQueue.size(),freeToSend);
+  if (eventClass == null) {
+    freeToSend=true;
+  }
   if (sendMessage() == true) {
     return;
   }
@@ -34,8 +37,6 @@ break;
 }
 logger.debug("NODE {}: PING - send NoOperation",this.node.getNodeId());
 addToQueue(zwaveCommandClass.getNoOperationMessage());
-break;
-case WAKEUP:
 break;
 case DETAILS:
 if (this.isRestoredFromConfigfile()) {
