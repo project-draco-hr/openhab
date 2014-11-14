@@ -1,0 +1,13 @@
+{
+  if (parts.length != 3) {
+    throw new ConfigurationException("alarmdecoder:connect","need hostname and port separated by :");
+  }
+  m_tcpHostName=parts[1];
+  try {
+    m_tcpPort=Integer.parseInt(parts[2]);
+  }
+ catch (  NumberFormatException e) {
+    throw new ConfigurationException("alarmdecoder:connect","tcp port not numeric!");
+  }
+  logger.debug("got tcp configuration: {}:{}",m_tcpHostName,m_tcpPort);
+}

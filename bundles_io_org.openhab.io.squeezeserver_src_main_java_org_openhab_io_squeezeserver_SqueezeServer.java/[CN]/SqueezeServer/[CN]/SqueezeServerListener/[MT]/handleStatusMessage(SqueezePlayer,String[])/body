@@ -12,6 +12,30 @@
       String value=messagePart.substring("mode%3A".length());
       player.setMode(Mode.valueOf(value));
     }
+ else     if (messagePart.startsWith("time%3A")) {
+      String value=messagePart.substring("time%3A".length());
+      player.setCurrentPlayingTime((int)Double.parseDouble(value));
+    }
+ else     if (messagePart.startsWith("playlist_cur_index%3A")) {
+      String value=messagePart.substring("playlist_cur_index%3A".length());
+      player.setCurrentPlaylistIndex((int)Integer.parseInt(value));
+    }
+ else     if (messagePart.startsWith("playlist_tracks%3A")) {
+      String value=messagePart.substring("playlist_tracks%3A".length());
+      player.setNumberPlaylistTracks((int)Integer.parseInt(value));
+    }
+ else     if (messagePart.startsWith("playlist%20repeat%3A")) {
+      String value=messagePart.substring("playlist%20repeat%3A".length());
+      player.setCurrentPlaylistRepeat((int)Integer.parseInt(value));
+    }
+ else     if (messagePart.startsWith("playlist%20shuffle%3A")) {
+      String value=messagePart.substring("playlist%20shuffle%3A".length());
+      player.setCurrentPlaylistShuffle((int)Integer.parseInt(value));
+    }
+ else     if (messagePart.startsWith("playlist_tracks%3A")) {
+      String value=messagePart.substring("playlist_tracks%3A".length());
+      player.setNumberPlaylistTracks((int)Integer.parseInt(value));
+    }
  else     if (messagePart.startsWith("title%3A")) {
       String value=messagePart.substring("title%3A".length());
       player.setTitle(decode(value));

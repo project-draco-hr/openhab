@@ -1,0 +1,16 @@
+{
+  final StringBuilder result=new StringBuilder();
+  for (  String param : queryParams.keySet()) {
+    String name=URLEncoder.encode(param,ENCODING);
+    String value=URLEncoder.encode(queryParams.get(param),ENCODING);
+    if (result.length() > 0) {
+      result.append("&");
+    }
+    result.append(name);
+    if (value != null) {
+      result.append("=");
+      result.append(value);
+    }
+  }
+  return result.toString();
+}

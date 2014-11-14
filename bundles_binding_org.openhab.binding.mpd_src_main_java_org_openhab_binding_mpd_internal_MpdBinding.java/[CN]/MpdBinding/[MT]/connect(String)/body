@@ -8,6 +8,13 @@
       mpdStandAloneMonitor.addVolumeChangeListener(this);
       mpdStandAloneMonitor.addPlayerChangeListener(this);
       mpdStandAloneMonitor.addTrackPositionChangeListener(this);
+      final MpdBinding self=this;
+      mpdStandAloneMonitor.addOutputChangeListener(new OutputChangeListener(){
+        @Override public void outputChanged(        OutputChangeEvent e){
+          self.outputChanged(playerId,e);
+        }
+      }
+);
       Thread monitorThread=new Thread(mpdStandAloneMonitor,"MPD Monitor (player:" + playerId + ")");
       monitorThread.start();
       config.instance=mpd;

@@ -1,6 +1,9 @@
 {
   int sceneId=serialMessage.getMessagePayloadByte(offset + 1);
-  int sceneTime=serialMessage.getMessagePayloadByte(offset + 2);
+  int sceneTime=0;
+  if (serialMessage.getMessagePayload().length > (offset + 2)) {
+    sceneTime=serialMessage.getMessagePayloadByte(offset + 2);
+  }
   logger.debug(String.format("Scene activation node from node %d: Scene %d, Time %d",this.getNode().getNodeId(),sceneId,sceneTime));
   ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),sceneId);
   this.getController().notifyEventListeners(zEvent);

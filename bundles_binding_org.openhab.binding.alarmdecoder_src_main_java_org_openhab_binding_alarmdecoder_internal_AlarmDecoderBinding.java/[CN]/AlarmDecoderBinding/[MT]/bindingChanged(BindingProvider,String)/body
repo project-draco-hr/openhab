@@ -1,0 +1,8 @@
+{
+  super.bindingChanged(provider,itemName);
+  logger.trace("binding changed for {}",itemName);
+  AlarmDecoderBindingConfig c=((AlarmDecoderBindingProvider)provider).getBindingConfig(itemName);
+synchronized (m_unupdatedItems) {
+    m_unupdatedItems.put(itemName,c);
+  }
+}

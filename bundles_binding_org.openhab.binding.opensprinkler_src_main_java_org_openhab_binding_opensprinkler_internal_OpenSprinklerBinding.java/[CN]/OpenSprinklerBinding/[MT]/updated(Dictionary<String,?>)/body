@@ -11,11 +11,16 @@
     }
     url=(String)config.get("httpUrl");
     password=(String)config.get("httpPassword");
+    String rsRefreshRate=(String)config.get("refreshInterval");
+    if (StringUtils.isNotBlank(rsRefreshRate)) {
+      refreshInterval=Long.parseLong(rsRefreshRate);
+    }
     String numberOfStationsString=(String)config.get("numberOfStations");
     if (StringUtils.isNotBlank(numberOfStationsString)) {
       numberOfStations=Integer.parseInt(numberOfStationsString);
       openSprinkler.setNumberOfStations(numberOfStations);
     }
+    setProperlyConfigured(true);
     updateBinding();
   }
 }

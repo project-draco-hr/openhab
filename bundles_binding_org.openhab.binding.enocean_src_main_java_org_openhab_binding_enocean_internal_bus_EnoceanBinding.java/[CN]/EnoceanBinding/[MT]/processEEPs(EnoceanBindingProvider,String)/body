@@ -20,7 +20,7 @@
       logger.error("Could not create class for profile " + customProfileClass,e);
     }
   }
- else   if (EEPId.EEP_F6_02_01.equals(eep) || EEPId.EEP_F6_02_01.equals(eep)) {
+ else   if (EEPId.EEP_F6_02_01.equals(eep) || EEPId.EEP_F6_10_00.equals(eep)) {
     if (item.getClass().equals(RollershutterItem.class)) {
       RollershutterProfile profile=new RollershutterProfile(item,eventPublisher);
       addProfile(item,parameterAddress,profile);
@@ -31,6 +31,10 @@
     }
     if (item.getClass().equals(SwitchItem.class) && parameterAddress.getParameterId() == null) {
       SwitchOnOffProfile profile=new SwitchOnOffProfile(item,eventPublisher);
+      addProfile(item,parameterAddress,profile);
+    }
+    if (item.getClass().equals(StringItem.class) && EEPId.EEP_F6_10_00.equals(eep)) {
+      WindowHandleProfile profile=new WindowHandleProfile(item,eventPublisher);
       addProfile(item,parameterAddress,profile);
     }
   }

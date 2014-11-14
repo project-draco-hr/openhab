@@ -16,6 +16,10 @@
   }
   String playerCommand=provider.getPlayerCommand(itemName,matchingPlayerCommand);
   if (StringUtils.isNotBlank(playerCommand)) {
+    String playerCommandParam=provider.getPlayerCommandParam(itemName,matchingPlayerCommand);
+    if (playerCommandParam != null) {
+      params=playerCommandParam;
+    }
     executePlayerCommand(playerCommand,params);
   }
 }

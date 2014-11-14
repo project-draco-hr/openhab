@@ -1,0 +1,18 @@
+{
+  if ("BOOL".equals(type) || "ACTION".equals(type)) {
+    valueItem.setValueType(2);
+  }
+ else   if ("INTEGER".equals(type) || "ENUM".equals(type)) {
+    valueItem.setValueType(8);
+  }
+ else   if ("FLOAT".equals(type)) {
+    valueItem.setValueType(4);
+  }
+ else   if ("STRING".equals(type)) {
+    valueItem.setValueType(20);
+  }
+ else {
+    logger.warn("Unknown value type '{}', guessing type!",type);
+    valueItem.setValueType(guessType(value));
+  }
+}

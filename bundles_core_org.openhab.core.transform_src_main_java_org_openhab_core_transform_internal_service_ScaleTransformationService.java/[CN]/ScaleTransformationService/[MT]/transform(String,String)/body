@@ -1,0 +1,48 @@
+{
+  if (filename == null || source == null) {
+    throw new TransformationException("the given parameters 'filename' and 'source' must not be null");
+  }
+  String result="not found";
+  String basename=FilenameUtils.getBaseName(filename);
+  String extension=FilenameUtils.getExtension(filename);
+  String locale=Locale.getDefault().getLanguage();
+  String basePath=ConfigDispatcher.getConfigFolder() + File.separator + TransformationActivator.TRANSFORM_FOLDER_NAME+ File.separator;
+  String path=basePath + filename;
+  String alternatePath=basePath + basename + "_"+ locale+ "."+ extension;
+  File f=new File(alternatePath);
+  if (f.exists()) {
+    path=alternatePath;
+  }
+  logger.debug("Using scale file '{}'",path);
+  try {
+    double value=Double.parseDouble(source);
+    FileInputStream fstream=new FileInputStream(path);
+    DataInputStream in=new DataInputStream(fstream);
+    BufferedReader br=new BufferedReader(new InputStreamReader(in));
+    String strLine;
+    while ((strLine=br.readLine()) != null) {
+      Matcher matcher=limits_pattern.matcher(strLine);
+      if (matcher.matches() && (matcher.groupCount() == 5)) {
+        double minLimit=Double.parseDouble(matcher.group(2));
+        double maxLimit=Double.parseDouble(matcher.group(3));
+        if (matcher.group(1).equals(']'))         minLimit=minLimit - 0.0000000001;
+        if (matcher.group(1).equals('['))         minLimit=minLimit + 0.0000000001;
+        if ((minLimit < value) && (value < maxLimit)) {
+          result=matcher.group(5);
+          break;
+        }
+      }
+ else {
+        logger.warn("Line '{}' does not match scale pattern in the file '{}'.",strLine,path);
+      }
+    }
+    in.close();
+  }
+ catch (  NumberFormatException e) {
+    logger.warn("Scale transform can only work with numeric values, '{}' is not ",source);
+  }
+catch (  IOException e) {
+    throw new TransformationException("An error occured while scaling value ",e);
+  }
+  return result;
+}

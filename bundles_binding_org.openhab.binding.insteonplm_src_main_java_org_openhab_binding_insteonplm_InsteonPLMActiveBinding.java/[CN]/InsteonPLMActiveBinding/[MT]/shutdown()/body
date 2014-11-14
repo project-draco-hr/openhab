@@ -1,4 +1,7 @@
 {
+  logger.debug("shutting down binding");
   m_driver.stopAllPorts();
   m_devices.clear();
+  RequestQueueManager.s_destroyInstance();
+  Poller.s_instance().stop();
 }

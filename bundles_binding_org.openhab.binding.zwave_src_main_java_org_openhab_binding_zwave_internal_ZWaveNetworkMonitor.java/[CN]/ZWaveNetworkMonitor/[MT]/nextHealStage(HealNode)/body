@@ -8,6 +8,9 @@
     healing.failState=healing.state;
     healing.state=HealState.FAILED;
     networkHealNextTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD;
+    healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));
+    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+    nodeSerializer.SerializeNode(healing.node);
     return;
   }
   networkHealNextTime=System.currentTimeMillis() + HEAL_TIMEOUT_PERIOD;
@@ -19,10 +22,11 @@ case PING:
 if (healing.nodeId != zController.getOwnNodeId()) {
   healing.state=HealState.PING;
   ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
-  if (zwaveCommandClass == null)   break;
-  zController.sendData(zwaveCommandClass.getNoOperationMessage());
-  healing.stateNext=HealState.SETSUCROUTE;
-  break;
+  if (zwaveCommandClass != null) {
+    zController.sendData(zwaveCommandClass.getNoOperationMessage());
+    healing.stateNext=HealState.SETSUCROUTE;
+    break;
+  }
 }
 healing.state=HealState.SETSUCROUTE;
 case SETSUCROUTE:
@@ -82,12 +86,14 @@ break;
 }
 case SAVE:
 logger.debug("NODE {}: Heal is complete - saving XML.",healing.nodeId);
-ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
-nodeSerializer.SerializeNode(healing.node);
 healing.state=HealState.DONE;
 networkHealNextTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD;
+healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));
+ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+nodeSerializer.SerializeNode(healing.node);
 break;
 default :
 break;
 }
+healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));
 }

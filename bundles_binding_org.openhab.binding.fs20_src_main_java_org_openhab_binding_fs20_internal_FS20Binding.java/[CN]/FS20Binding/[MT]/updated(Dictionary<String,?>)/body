@@ -1,6 +1,17 @@
 {
   logger.debug("Received new config");
   if (config != null) {
+    Boolean configChanged=false;
+    String baudRateString=(String)config.get(KEY_BAUD_RATE);
+    if (StringUtils.isNotBlank(baudRateString)) {
+      properties.put(KEY_BAUD_RATE,Integer.parseInt(baudRateString));
+      configChanged=true;
+    }
+    String parityString=(String)config.get(KEY_PARITY);
+    if (StringUtils.isNotBlank(parityString)) {
+      properties.put(KEY_PARITY,Integer.parseInt(parityString));
+      configChanged=true;
+    }
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
@@ -12,7 +23,11 @@
       throw new ConfigurationException(KEY_DEVICE_NAME,"The device name can't be empty");
     }
  else {
-      setNewDeviceName(deviceName);
+      this.deviceName=deviceName;
+      configChanged=true;
+    }
+    if (configChanged) {
+      updateDeviceSettings();
     }
     setProperlyConfigured(true);
   }

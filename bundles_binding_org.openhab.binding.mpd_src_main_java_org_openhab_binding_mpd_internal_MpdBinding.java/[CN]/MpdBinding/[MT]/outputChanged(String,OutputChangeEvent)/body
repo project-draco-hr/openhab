@@ -1,0 +1,9 @@
+{
+  MPDOutput output=(MPDOutput)event.getSource();
+  logger.debug("Output {} changed on player {}, enabled = {}",output.getId(),playerId,output.isEnabled());
+  PlayerCommandTypeMapping playerCommand=output.isEnabled() ? PlayerCommandTypeMapping.ENABLE : PlayerCommandTypeMapping.DISABLE;
+  String[] itemNames=getItemsByPlayerCommandAndOutput(playerId,playerCommand,output);
+  for (  String itemName : itemNames) {
+    eventPublisher.postUpdate(itemName,(State)playerCommand.type);
+  }
+}

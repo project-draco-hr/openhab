@@ -1,0 +1,20 @@
+{
+  String parts[]=splitMessage(msg);
+  if (parts.length != 3) {
+    throw new MessageParseException("need 3 comma separated fields in msg");
+  }
+  String addr=parts[0] + "," + parts[1];
+  try {
+    int numeric=Integer.parseInt(parts[2]);
+    if ((numeric & ~0x1) != 0) {
+      throw new MessageParseException("zone status should only be 0 or 1");
+    }
+    ArrayList<AlarmDecoderBindingConfig> bcl=getItems(mt,addr,"contact");
+    for (    AlarmDecoderBindingConfig c : bcl) {
+      updateItem(c,numeric == 0 ? OpenClosedType.CLOSED : OpenClosedType.OPEN);
+    }
+  }
+ catch (  NumberFormatException e) {
+    throw new MessageParseException("msg contains invalid state number" + e.getMessage());
+  }
+}

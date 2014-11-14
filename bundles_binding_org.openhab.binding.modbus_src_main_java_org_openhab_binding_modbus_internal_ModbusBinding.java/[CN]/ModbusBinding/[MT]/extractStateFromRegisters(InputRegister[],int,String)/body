@@ -1,0 +1,41 @@
+{
+  if (type.equals(ModbusBindingProvider.VALUE_TYPE_BIT)) {
+    return new DecimalType((registers[index / 16].toUnsignedShort() >> (index % 16)) & 1);
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_INT8)) {
+    return new DecimalType(registers[index / 2].toBytes()[1 - (index % 2)]);
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_UINT8)) {
+    return new DecimalType((registers[index / 2].toUnsignedShort() >> (8 * (index % 2))) & 0xff);
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_INT16)) {
+    ByteBuffer buff=ByteBuffer.allocate(2);
+    buff.put(registers[index].toBytes());
+    return new DecimalType(buff.order(ByteOrder.BIG_ENDIAN).getShort(0));
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_UINT16)) {
+    return new DecimalType(registers[index].toUnsignedShort());
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_INT32)) {
+    ByteBuffer buff=ByteBuffer.allocate(4);
+    buff.put(registers[index * 2 + 0].toBytes());
+    buff.put(registers[index * 2 + 1].toBytes());
+    return new DecimalType(buff.order(ByteOrder.BIG_ENDIAN).getInt(0));
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_UINT32)) {
+    ByteBuffer buff=ByteBuffer.allocate(8);
+    buff.position(4);
+    buff.put(registers[index * 2 + 0].toBytes());
+    buff.put(registers[index * 2 + 1].toBytes());
+    return new DecimalType(buff.order(ByteOrder.BIG_ENDIAN).getLong(0));
+  }
+ else   if (type.equals(ModbusBindingProvider.VALUE_TYPE_FLOAT32)) {
+    ByteBuffer buff=ByteBuffer.allocate(4);
+    buff.put(registers[index * 2 + 0].toBytes());
+    buff.put(registers[index * 2 + 1].toBytes());
+    return new DecimalType(buff.order(ByteOrder.BIG_ENDIAN).getFloat(0));
+  }
+ else {
+    throw new IllegalArgumentException();
+  }
+}

@@ -1,3 +1,7 @@
 {
-  return enoughCredit(requiredCredit,fastSend,false);
+  int availableCredit=cul.getCredit10ms();
+  int preambleCredit=fastSend ? 0 : 100;
+  boolean result=(availableCredit >= (requiredCredit + preambleCredit));
+  logger.debug("Fast Send? " + fastSend + ", preambleCredit = "+ preambleCredit+ ", requiredCredit = "+ requiredCredit+ ", availableCredit = "+ availableCredit+ ", enoughCredit? "+ result);
+  return result;
 }

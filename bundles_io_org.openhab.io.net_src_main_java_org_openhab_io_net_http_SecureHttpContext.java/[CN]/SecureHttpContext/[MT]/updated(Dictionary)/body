@@ -13,16 +13,17 @@
  else {
       SecureHttpContext.securityOptions=SecurityOptions.OFF;
     }
-    String netmask=(String)config.get("netmask");
-    if (StringUtils.isNotBlank(netmask)) {
-      SubnetUtils utils=new SubnetUtils(netmask);
-      if (utils != null) {
-        SecureHttpContext.subnetUtils=utils.getInfo();
+    String netmaskVal=(String)config.get("netmask");
+    ipAddressMatchers.clear();
+    if (StringUtils.isNotBlank(netmaskVal)) {
+      String[] netmasks=netmaskVal.split(",");
+      for (      String netmask : netmasks) {
+        ipAddressMatchers.add(new IpAddressMatcher(netmask));
       }
     }
-    if (SecureHttpContext.subnetUtils == null) {
-      SecureHttpContext.subnetUtils=new SubnetUtils("192.168.1.0/24").getInfo();
-      logger.debug("couldn't find netmask configuration -> using '{}' instead",SecureHttpContext.subnetUtils.getCidrSignature());
+    if (ipAddressMatchers.size() == 0) {
+      ipAddressMatchers.add(new IpAddressMatcher("192.168.1.0/24"));
+      logger.debug("couldn't find netmask configuration -> using '192.168.1.0/24' instead");
     }
   }
 }

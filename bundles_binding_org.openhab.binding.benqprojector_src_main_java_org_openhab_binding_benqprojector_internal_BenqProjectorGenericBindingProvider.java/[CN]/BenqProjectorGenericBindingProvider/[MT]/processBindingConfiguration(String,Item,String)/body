@@ -1,0 +1,27 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  BenqProjectorBindingConfig config=new BenqProjectorBindingConfig();
+  if (bindingConfig.equalsIgnoreCase("power")) {
+    config.mode=BenqProjectorItemMode.POWER;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("mute")) {
+    config.mode=BenqProjectorItemMode.MUTE;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("volume")) {
+    config.mode=BenqProjectorItemMode.VOLUME;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("lamp_hours")) {
+    config.mode=BenqProjectorItemMode.LAMP_HOURS;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("source_number")) {
+    config.mode=BenqProjectorItemMode.SOURCE_NUMBER;
+  }
+ else   if (bindingConfig.equalsIgnoreCase("source_string")) {
+    config.mode=BenqProjectorItemMode.SOURCE_STRING;
+  }
+ else {
+    throw new BindingConfigParseException("Unable to parse '" + bindingConfig + "' to create a valid item binding.");
+  }
+  logger.debug("Adding " + item.getName() + " as "+ config.mode);
+  addBindingConfig(item,config);
+}

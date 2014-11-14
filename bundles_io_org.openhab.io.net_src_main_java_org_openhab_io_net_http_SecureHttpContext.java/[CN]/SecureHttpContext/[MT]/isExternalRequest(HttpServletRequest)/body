@@ -2,13 +2,7 @@
   long startTime=System.currentTimeMillis();
   String remoteAddr=request.getRemoteAddr();
   try {
-    InetAddress remoteIp=InetAddress.getByName(remoteAddr);
-    if (remoteIp.isLoopbackAddress()) {
-      return false;
-    }
-    boolean isExternal=!subnetUtils.isInRange(remoteAddr);
-    logger.trace("http request is originated by '{}' which is identified as '{}'",remoteAddr,isExternal ? "external" : "internal");
-    return isExternal;
+    return isExternalIp(remoteAddr);
   }
  catch (  UnknownHostException uhe) {
     logger.error(uhe.getLocalizedMessage());

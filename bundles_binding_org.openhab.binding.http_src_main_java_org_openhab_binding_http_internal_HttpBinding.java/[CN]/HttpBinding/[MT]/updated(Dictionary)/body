@@ -32,7 +32,12 @@ synchronized (itemCacheLock) {
         String configKey=matcher.group(2);
         String value=(String)config.get(key);
         if ("url".equals(configKey)) {
-          cacheConfig.url=value;
+          matcher=EXTRACT_CACHE_CONFIG_URL.matcher(value);
+          if (!matcher.matches()) {
+            throw new ConfigurationException(configKey,"given config url '" + configKey + "' does not follow the expected pattern '<id>.url[{<headers>}]'");
+          }
+          cacheConfig.url=matcher.group(1);
+          cacheConfig.headers=parseHttpHeaders(matcher.group(2));
         }
  else         if ("updateInterval".equals(configKey)) {
           cacheConfig.updateInterval=Integer.valueOf(value);

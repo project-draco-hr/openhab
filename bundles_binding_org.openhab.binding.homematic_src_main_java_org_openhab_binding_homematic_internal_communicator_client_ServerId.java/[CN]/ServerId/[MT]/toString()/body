@@ -1,3 +1,7 @@
 {
-  return new ToStringBuilder(this,ToStringStyle.SHORT_PREFIX_STYLE).append("name",name).append("version",version).toString();
+  ToStringBuilder tsb=new ToStringBuilder(this,ToStringStyle.SHORT_PREFIX_STYLE).append("name",name).append("version",StringUtils.defaultIfBlank(version,"unknown"));
+  if (address != null) {
+    tsb.append("address",address);
+  }
+  return tsb.toString();
 }

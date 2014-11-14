@@ -1,13 +1,13 @@
 {
-  shutdown=true;
-  if (pc != null) {
-    KNXNetworkLink link=pc.detach();
-    if (listener != null) {
-      pc.removeProcessListener(listener);
-      listener=null;
+  sShutdown=true;
+  if (sPC != null) {
+    KNXNetworkLink link=sPC.detach();
+    if (sProcessCommunicationListener != null) {
+      sPC.removeProcessListener(sProcessCommunicationListener);
+      sProcessCommunicationListener=null;
     }
     if (link != null) {
-      logger.info("Closing KNX connection");
+      sLogger.info("Closing KNX connection");
       link.close();
     }
   }

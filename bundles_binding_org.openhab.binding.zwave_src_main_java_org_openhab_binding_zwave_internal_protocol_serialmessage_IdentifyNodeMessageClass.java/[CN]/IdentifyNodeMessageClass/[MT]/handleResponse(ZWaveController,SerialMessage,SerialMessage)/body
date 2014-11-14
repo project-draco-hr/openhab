@@ -37,15 +37,13 @@
   deviceClass.setBasicDeviceClass(basic);
   deviceClass.setGenericDeviceClass(generic);
   deviceClass.setSpecificDeviceClass(specific);
-  if (!node.restoreFromConfig()) {
-    for (    CommandClass commandClass : generic.getMandatoryCommandClasses()) {
-      ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,zController);
-      if (zwaveCommandClass != null)       zController.getNode(nodeId).addCommandClass(zwaveCommandClass);
-    }
-    for (    CommandClass commandClass : specific.getMandatoryCommandClasses()) {
-      ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,zController);
-      if (zwaveCommandClass != null)       node.addCommandClass(zwaveCommandClass);
-    }
+  for (  CommandClass commandClass : generic.getMandatoryCommandClasses()) {
+    ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,zController);
+    if (zwaveCommandClass != null)     zController.getNode(nodeId).addCommandClass(zwaveCommandClass);
+  }
+  for (  CommandClass commandClass : specific.getMandatoryCommandClasses()) {
+    ZWaveCommandClass zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),node,zController);
+    if (zwaveCommandClass != null)     node.addCommandClass(zwaveCommandClass);
   }
   node.advanceNodeStage(NodeStage.PING);
   checkTransactionComplete(lastSentMessage,incomingMessage);

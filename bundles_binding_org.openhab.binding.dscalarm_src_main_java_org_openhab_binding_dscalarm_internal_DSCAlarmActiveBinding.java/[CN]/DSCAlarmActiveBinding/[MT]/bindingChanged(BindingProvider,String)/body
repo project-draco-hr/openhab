@@ -1,0 +1,22 @@
+{
+  logger.debug("bindingChanged(): Item Name: {}",itemName);
+  boolean itemRemoved=false;
+  int icount=provider.getItemNames().size();
+  if (icount < itemCount) {
+    itemRemoved=true;
+  }
+  if (itemRemoved) {
+    dscAlarmUpdateMap.clear();
+  }
+ else {
+    DSCAlarmBindingProvider dscAlarmBindingProvider=(DSCAlarmBindingProvider)provider;
+    if (dscAlarmBindingProvider != null) {
+      DSCAlarmBindingConfig dscAlarmBindingConfig=dscAlarmBindingProvider.getDSCAlarmBindingConfig(itemName);
+      if (dscAlarmBindingConfig != null) {
+        dscAlarmUpdateMap.put(itemName,dscAlarmBindingConfig);
+      }
+    }
+  }
+  itemCount=provider.getItemNames().size();
+  itemHasChanged=true;
+}

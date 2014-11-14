@@ -66,6 +66,22 @@
     if (!StringUtils.isEmpty(sound)) {
       addEncodedParameter(data,MESSAGE_KEY_SOUND,sound);
     }
+    if (isValueInList(API_HIGH_PRIORITY_LIST,priority)) {
+      if (retry >= API_MIN_RETRY_SECONDS) {
+        addEncodedParameter(data,MESSAGE_KEY_RETRY,String.valueOf(retry));
+      }
+ else {
+        logger.warn("Retry value of " + retry + " is too small. Using default value of "+ API_MIN_RETRY_SECONDS+ ".");
+        addEncodedParameter(data,MESSAGE_KEY_RETRY,String.valueOf(API_MIN_RETRY_SECONDS));
+      }
+      if (expire <= API_MAX_EXPIRE_SECONDS) {
+        addEncodedParameter(data,MESSAGE_KEY_EXPIRE,String.valueOf(expire));
+      }
+ else {
+        logger.warn("Expire value of " + expire + " is too large. Using default value of "+ API_MAX_EXPIRE_SECONDS+ ".");
+        addEncodedParameter(data,MESSAGE_KEY_EXPIRE,String.valueOf(API_MAX_EXPIRE_SECONDS));
+      }
+    }
     String content=data.toString();
     logger.debug("Executing post to " + API_URL + " with the following content: "+ content);
     String response=HttpUtil.executeUrl("POST",API_URL,IOUtils.toInputStream(content),CONTENT_TYPE,timeout);

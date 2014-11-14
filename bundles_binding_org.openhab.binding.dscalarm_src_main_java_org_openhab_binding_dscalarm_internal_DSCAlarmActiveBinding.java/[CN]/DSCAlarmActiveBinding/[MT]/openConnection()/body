@@ -1,0 +1,22 @@
+{
+switch (connectorType) {
+case SERIAL:
+    if (api == null) {
+      api=new API(serialPort,baudRate);
+    }
+  break;
+case TCP:
+if (api == null) {
+  api=new API(ipAddress,password,userCode);
+}
+break;
+default :
+connected=false;
+logger.debug("openConnection(): Unable to make a connection!");
+return;
+}
+connected=api.open();
+if (connected) {
+api.addEventListener(this);
+}
+}

@@ -1,0 +1,40 @@
+{
+  logger.debug("Storing item: " + item.getName());
+  if (item.getState() instanceof UnDefType) {
+    logger.debug("This item is of undefined type. Cannot perist it!");
+    return;
+  }
+  if (!JpaConfiguration.isInitialized) {
+    logger.warn("Trying to create EntityManagerFactory but we don't have configuration yet!");
+    return;
+  }
+  String name=(alias != null) ? alias : item.getName();
+  JpaPersistentItem pItem=new JpaPersistentItem();
+  try {
+    pItem.setValue(StateHelper.toString(item.getState()));
+  }
+ catch (  Exception e1) {
+    logger.error("Error on converting state value to string: {}",e1.getMessage());
+    return;
+  }
+  pItem.setName(name);
+  pItem.setRealName(item.getName());
+  pItem.setTimestamp(new Date());
+  EntityManager em=getEntityManagerFactory().createEntityManager();
+  try {
+    logger.debug("Persisting item...");
+    em.getTransaction().begin();
+    em.persist(pItem);
+    em.getTransaction().commit();
+    logger.debug("Persisting item...done");
+  }
+ catch (  Exception e) {
+    logger.error("Error on persisting item! Rolling back!");
+    logger.error(e.getMessage(),e);
+    em.getTransaction().rollback();
+  }
+ finally {
+    em.close();
+  }
+  logger.debug("Storing item...done");
+}

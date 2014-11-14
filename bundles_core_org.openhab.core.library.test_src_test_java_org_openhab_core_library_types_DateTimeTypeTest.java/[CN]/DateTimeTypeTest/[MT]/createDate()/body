@@ -1,4 +1,23 @@
 {
-  DateTimeType dt=DateTimeType.valueOf(inputNoTz);
-  assertEquals(expectedHourLocalTimezone,dt.getCalendar().get(HOUR_OF_DAY));
+  String inputTimeString;
+  TimeZone.setDefault(parameterSet.defaultTimeZone);
+  if (parameterSet.inputTimeString == null) {
+    final Calendar calendar=Calendar.getInstance(parameterSet.inputTimeZone);
+    calendar.set(parameterSet.inputTimeMap.get("year"),parameterSet.inputTimeMap.get("month"),parameterSet.inputTimeMap.get("date"),parameterSet.inputTimeMap.get("hourOfDay"),parameterSet.inputTimeMap.get("minute"),parameterSet.inputTimeMap.get("second"));
+    inputTimeString=DateTimeType.DATE_FORMATTER.format(calendar.getTime());
+  }
+ else {
+    inputTimeString=parameterSet.inputTimeString;
+  }
+  DateTimeType dt=DateTimeType.valueOf(inputTimeString);
+  System.out.println("createDate (Default TimeZone: " + parameterSet.defaultTimeZone.getDisplayName(false,TimeZone.SHORT,Locale.ROOT) + "):");
+  if (parameterSet.inputTimeZone == null) {
+    System.out.println("\tInput: " + inputTimeString);
+  }
+ else {
+    System.out.println("\tInput: " + inputTimeString + parameterSet.inputTimeZone.getDisplayName(false,TimeZone.SHORT,Locale.ROOT));
+  }
+  System.out.println("\tExpected: " + parameterSet.expectedResult);
+  System.out.println("\tResult  : " + dt.toString());
+  assertEquals(parameterSet.expectedResult,dt.toString());
 }

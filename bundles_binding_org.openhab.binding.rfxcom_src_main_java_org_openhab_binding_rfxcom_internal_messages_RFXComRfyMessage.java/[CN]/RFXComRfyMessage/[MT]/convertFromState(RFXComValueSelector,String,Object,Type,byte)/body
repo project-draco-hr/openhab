@@ -1,0 +1,27 @@
+{
+  this.subType=(RFXComRfyMessage.SubType)subType;
+  this.seqNbr=seqNumber;
+  String[] ids=id.split("\\.");
+  this.id1=(byte)Short.parseShort(ids[0]);
+  this.id2=(byte)Short.parseShort(ids[1]);
+  this.id3=(byte)Short.parseShort(ids[2]);
+  this.unitCode=Byte.parseByte(ids[3]);
+switch (valueSelector) {
+case SHUTTER:
+    if (type instanceof OpenClosedType) {
+      this.command=(type == OpenClosedType.CLOSED ? Commands.CLOSE : Commands.OPEN);
+    }
+ else     if (type instanceof UpDownType) {
+      this.command=(type == UpDownType.UP ? Commands.OPEN : Commands.CLOSE);
+    }
+ else     if (type instanceof StopMoveType) {
+      this.command=RFXComRfyMessage.Commands.STOP;
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + type + " to Command");
+    }
+  break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
+}

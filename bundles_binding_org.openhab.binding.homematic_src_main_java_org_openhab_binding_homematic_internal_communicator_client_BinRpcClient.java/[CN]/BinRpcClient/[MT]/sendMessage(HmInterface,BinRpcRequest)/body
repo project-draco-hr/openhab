@@ -4,7 +4,7 @@
     if (TRACE_ENABLED) {
       logger.trace("Client BinRpcRequest {}",request);
     }
-    socket=new Socket(config.getHost(),hmInterface.getPort());
+    socket=new Socket(context.getConfig().getHost(),hmInterface.getPort());
     socket.setSoTimeout(5000);
     socket.getOutputStream().write(request.createMessage());
     BinRpcResponse resp=new BinRpcResponse(socket.getInputStream(),false);

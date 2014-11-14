@@ -1,0 +1,32 @@
+{
+  try {
+    if (cmd == OnOffType.ON) {
+      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x11,(byte)0xff);
+      dev.enqueueMessage(m,m_feature);
+      logger.info("IOLincOnOffCommandHandler: sent msg to switch {} on",dev.getAddress());
+    }
+ else     if (cmd == OnOffType.OFF) {
+      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x13,(byte)0x00);
+      dev.enqueueMessage(m,m_feature);
+      logger.info("IOLincOnOffCommandHandler: sent msg to switch {} off",dev.getAddress());
+    }
+    int delay=2000;
+    delay=Math.max(1000,delay);
+    delay=Math.min(10000,delay);
+    Timer timer=new Timer();
+    timer.schedule(new TimerTask(){
+      @Override public void run(){
+        Msg m=m_feature.makePollMsg();
+        InsteonDevice dev=m_feature.getDevice();
+        if (m != null)         dev.enqueueMessage(m,m_feature);
+      }
+    }
+,delay);
+  }
+ catch (  IOException e) {
+    logger.error("command send i/o error: ",e);
+  }
+catch (  FieldException e) {
+    logger.error("command send message creation error: ",e);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  super.encodeMessage(data);
+  subType=SubType.values()[super.subType];
+  id3=data[6];
+  unitCode=data[7];
+  command=Commands.STOP;
+  for (  Commands loCmd : Commands.values()) {
+    if (loCmd.toByte() == data[8]) {
+      command=loCmd;
+      break;
+    }
+  }
+  signalLevel=(byte)((data[12] & 0xF0) >> 4);
+}

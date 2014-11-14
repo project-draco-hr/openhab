@@ -1,0 +1,86 @@
+{
+  Boolean cmdSent=false;
+  String response="";
+switch (cfg.mode) {
+case POWER:
+case MUTE:
+    if (c instanceof OnOffType) {
+      if ((OnOffType)c == OnOffType.ON) {
+        response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("ON"));
+        cmdSent=true;
+      }
+ else       if ((OnOffType)c == OnOffType.OFF) {
+        response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("OFF"));
+        cmdSent=true;
+      }
+    }
+  break;
+case VOLUME:
+if (c instanceof DecimalType) {
+  State currentVolState=queryProjector(cfg);
+  int currentVol=((DecimalType)currentVolState).intValue();
+  int volLevel=((DecimalType)c).intValue();
+  if (volLevel > this.MAX_VOLUME) {
+    volLevel=this.MAX_VOLUME;
+  }
+ else   if (volLevel < this.MIN_VOLUME) {
+    volLevel=this.MIN_VOLUME;
+  }
+  if (currentVol == volLevel)   cmdSent=true;
+  while (currentVol != volLevel) {
+    if (currentVol < volLevel) {
+      transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+      currentVol++;
+      cmdSent=true;
+    }
+ else {
+      transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+      currentVol--;
+      cmdSent=true;
+    }
+  }
+}
+ else if (c instanceof IncreaseDecreaseType) {
+  if ((IncreaseDecreaseType)c == IncreaseDecreaseType.INCREASE) {
+    transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));
+    cmdSent=true;
+  }
+ else   if ((IncreaseDecreaseType)c == IncreaseDecreaseType.DECREASE) {
+    transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("-"));
+    cmdSent=true;
+  }
+}
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandQueryString());
+break;
+case LAMP_HOURS:
+logger.warn("Cannot send command to set lamp hours - not a valid operation!");
+break;
+case SOURCE_NUMBER:
+if (c instanceof DecimalType) {
+DecimalType sourceIdx=(DecimalType)c;
+String cmd=BenqProjectorSourceMapping.getStringFromMapping(sourceIdx.intValue());
+if (cmd.isEmpty() == false) {
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(cmd));
+cmdSent=true;
+}
+}
+break;
+case SOURCE_STRING:
+if (c instanceof StringType) {
+StringType sourceStr=(StringType)c;
+int mappingIdx=BenqProjectorSourceMapping.getMappingFromString(sourceStr.toString());
+if (mappingIdx != -1) {
+response=transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString(sourceStr.toString()));
+cmdSent=true;
+}
+}
+break;
+default :
+logger.error("Unexpected Item Mode!");
+break;
+}
+if (cmdSent == false) {
+logger.error("Unable to convert item command to projector state: Command=" + c);
+}
+return response;
+}

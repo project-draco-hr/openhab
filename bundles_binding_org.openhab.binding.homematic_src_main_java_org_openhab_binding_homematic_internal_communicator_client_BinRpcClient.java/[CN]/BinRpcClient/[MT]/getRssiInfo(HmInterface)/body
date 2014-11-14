@@ -1,0 +1,20 @@
+{
+  BinRpcRequest request=new BinRpcRequest("rssiInfo");
+  Map<String,HmRssiInfo> rssiList=new HashMap<String,HmRssiInfo>();
+  Object[] result=sendMessage(hmInterface,request);
+  if (result != null && result.length > 0 && result[0] instanceof Map) {
+    Map<String,?> devices=(Map<String,?>)result[0];
+    for (    String sourceDevice : devices.keySet()) {
+      Map<String,Object[]> targetDevices=(Map<String,Object[]>)devices.get(sourceDevice);
+      for (      String targetDevice : targetDevices.keySet()) {
+        if (targetDevice.equals(context.getServerId().getAddress())) {
+          Integer rssiDevice=(Integer)targetDevices.get(targetDevice)[0];
+          Integer rssiPeer=(Integer)targetDevices.get(targetDevice)[1];
+          HmRssiInfo rssiInfo=new HmRssiInfo(sourceDevice,rssiDevice,rssiPeer);
+          rssiList.put(rssiInfo.getAddress(),rssiInfo);
+        }
+      }
+    }
+  }
+  return rssiList;
+}

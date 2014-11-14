@@ -1,0 +1,39 @@
+{
+  logger.debug("msg reader thread started");
+  String msg;
+  try {
+    while ((msg=m_reader.readLine()) != null && m_keepRunning) {
+      logger.debug("got msg: {}",msg);
+      ADMsgType mt=s_getMsgType(msg);
+      try {
+switch (mt) {
+case KPM:
+          parseKeypadMessage(msg);
+        break;
+case REL:
+case EXP:
+      parseRelayOrExpanderMessage(mt,msg);
+    break;
+case RFX:
+  parseRFMessage(msg);
+break;
+case INVALID:
+default :
+break;
+}
+}
+ catch (MessageParseException e) {
+logger.error("{} while parsing message {}",e.getMessage(),msg);
+}
+}
+if (msg == null) {
+logger.error("null read from input stream!");
+}
+}
+ catch (IOException e) {
+logger.error("I/O error while reading from stream: {}",e.getMessage());
+m_socket=null;
+m_port=null;
+}
+logger.debug("msg reader thread exited");
+}

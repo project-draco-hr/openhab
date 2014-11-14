@@ -1,0 +1,40 @@
+{
+  logger.debug("NODE {}: Application Status message",getNode());
+  int status=serialMessage.getMessagePayloadByte(offset++);
+switch (status) {
+case ApplicationStatusBusy:
+    logger.trace("NODE {}: Process Application Status Busy status",getNode());
+  int busyStatus=serialMessage.getMessagePayloadByte(offset++);
+int retry=DEFAULT_RETRY;
+switch (busyStatus) {
+case StatusBusyTryAgainLaterInSeconds:
+int seconds=serialMessage.getMessagePayloadByte(offset++);
+logger.debug("NODE {}: is busy and wants us to try again in {} seconds",getNode(),seconds);
+retry=seconds * 1000;
+case StatusBusyTryAgainLater:
+logger.debug("NODE {}: is busy and wants us to try again later",getNode());
+final ZWaveNode node=this.getNode();
+final ZWaveController controller=this.getController();
+scheduler.schedule(new Runnable(){
+@Override public void run(){
+if (node == null || node.getNodeStage() != NodeStage.DONE) return;
+controller.pollNode(node);
+}
+}
+,retry,TimeUnit.MILLISECONDS);
+break;
+case StatusBusyQueued:
+logger.warn("NODE {}: is busy and has queued the request",getNode());
+break;
+default :
+logger.warn("NODE {}: unknown busy status {} ",getNode(),busyStatus);
+break;
+}
+break;
+case ApplicationStatusRejected:
+logger.warn("NODE {}: has rejected the request",getNode());
+break;
+default :
+logger.warn(String.format("Unsupported status 0x%02X for command class %s (0x%02X).",status,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

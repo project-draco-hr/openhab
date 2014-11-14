@@ -1,0 +1,12 @@
+{
+  try {
+    theManager=xPL_Manager.getManager();
+    theManager.createAndStartNetworkHandler();
+    loggerDevice=theManager.getDeviceManager().createDevice(vendor,device,getInstance());
+    loggerDevice.setEnabled(true);
+    logger.info("xPL transport has been started");
+  }
+ catch (  xPL_MediaHandlerException startError) {
+    logger.error("Unable to start xPL transport" + startError.getMessage());
+  }
+}

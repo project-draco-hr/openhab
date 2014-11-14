@@ -8,6 +8,12 @@
   String command=StringUtils.trim(configParts[0]);
   String playerId=StringUtils.trim(configParts[1]);
   String playerCommand=StringUtils.trim(configParts[2]);
+  String[] playerCommandParts=playerCommand.split("=");
+  if (playerCommandParts.length == 2) {
+    playerCommand=StringUtils.trim(playerCommandParts[0]);
+    String playerCommandParam=StringUtils.trim(playerCommandParts[1]);
+    config.put(command + PARAM_SUFFIX,playerCommandParam);
+  }
   if (StringUtils.isNotBlank(bindingConfigTail)) {
     parseBindingConfig(bindingConfigTail,config);
   }

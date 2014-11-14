@@ -10,7 +10,7 @@
       throw new CULDeviceException("The device " + deviceName + " is not a serial port");
     }
     serialPort=(SerialPort)port;
-    serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_EVEN);
+    serialPort.setSerialPortParams(baudRate,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,parityMode);
     is=serialPort.getInputStream();
     os=serialPort.getOutputStream();
     br=new BufferedReader(new InputStreamReader(is));

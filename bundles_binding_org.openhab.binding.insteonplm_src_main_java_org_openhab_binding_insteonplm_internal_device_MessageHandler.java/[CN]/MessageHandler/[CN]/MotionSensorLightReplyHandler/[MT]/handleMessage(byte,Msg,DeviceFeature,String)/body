@@ -1,0 +1,23 @@
+{
+  InsteonDevice dev=f.getDevice();
+  if (!msg.isExtended()) {
+    logger.trace("device {} ignoring non-extended msg {}",dev.getAddress(),msg);
+    return;
+  }
+  try {
+    int cmd2=(int)(msg.getByte("command2") & 0xff);
+switch (cmd2) {
+case 0x00:
+      int lightLevel=msg.getByte("userData11") & 0xff;
+    logger.debug("{} got light level {}",dev.getAddress(),lightLevel);
+  m_feature.publishAll(new DecimalType(lightLevel));
+break;
+default :
+logger.warn("unknown cmd2 = {} in info reply message {}",cmd2,msg);
+break;
+}
+}
+ catch (FieldException e) {
+logger.error("error parsing {}: ",msg,e);
+}
+}

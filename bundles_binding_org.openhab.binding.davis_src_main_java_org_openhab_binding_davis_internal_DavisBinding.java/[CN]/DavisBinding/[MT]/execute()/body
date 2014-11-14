@@ -1,0 +1,16 @@
+{
+  if (isProperlyConfigured()) {
+    for (    DavisBindingProvider provider : providers) {
+      Collection<DavisCommand> commands=DavisValueType.getReadCommandsByKeys(provider.getConfiguredKeys());
+      try {
+        wakeup();
+        for (        DavisCommand command : commands) {
+          sendCommand(command);
+        }
+      }
+ catch (      IOException e) {
+        logger.error("Wakeup failed!");
+      }
+    }
+  }
+}

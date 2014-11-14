@@ -12,7 +12,11 @@
       itemNames.add(itemName);
     }
  else     if (mpdConfig.containsKey(playerCommand.type.toString())) {
-      itemNames.add(itemName);
+      String actual=mpdConfig.get(playerCommand.type.toString());
+      String expected=playerId + ":" + playerCommand.toString().toLowerCase();
+      if (StringUtils.equals(actual,expected)) {
+        itemNames.add(itemName);
+      }
     }
   }
   return itemNames.toArray(new String[itemNames.size()]);

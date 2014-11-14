@@ -1,0 +1,13 @@
+{
+  String messageLine;
+  try {
+    while (connected) {
+      if ((messageLine=read()) != null) {
+        handleIncomingMessage(messageLine);
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("TCPListener(): Unable to read message: ",e);
+  }
+}

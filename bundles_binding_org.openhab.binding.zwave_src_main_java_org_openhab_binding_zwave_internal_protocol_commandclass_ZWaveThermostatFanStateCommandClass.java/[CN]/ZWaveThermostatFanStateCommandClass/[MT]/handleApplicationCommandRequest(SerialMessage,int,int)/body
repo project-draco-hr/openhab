@@ -1,0 +1,13 @@
+{
+  logger.debug("NODE {}: Received Thermostat Fan State Request",this.getNode().getNodeId());
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case THERMOSTAT_FAN_STATE_REPORT:
+    logger.trace("NODE {}: Process Thermostat Fan State Report",this.getNode().getNodeId());
+  processThermostatFanStateReport(serialMessage,offset,endpoint);
+if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
+break;
+default :
+logger.warn("NODE {}: Unsupported Command {} for command class {} ({}).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey());
+}
+}

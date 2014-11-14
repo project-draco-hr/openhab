@@ -1,3 +1,41 @@
 {
-  throw new EpsonProjectorException("The TCP connector is not yet implemented");
+  try {
+    if (in.markSupported()) {
+      in.reset();
+    }
+ else {
+      while (in.available() > 0) {
+        int availableBytes=in.available();
+        if (availableBytes > 0) {
+          byte[] tmpData=new byte[availableBytes];
+          in.read(tmpData,0,availableBytes);
+        }
+      }
+    }
+    out.write(data.getBytes());
+    out.write("\r\n".getBytes());
+    out.flush();
+    String resp="";
+    long startTime=System.currentTimeMillis();
+    long elapsedTime=0;
+    while (elapsedTime < timeout) {
+      int availableBytes=in.available();
+      if (availableBytes > 0) {
+        byte[] tmpData=new byte[availableBytes];
+        int readBytes=in.read(tmpData,0,availableBytes);
+        resp=resp.concat(new String(tmpData,0,readBytes));
+        if (resp.contains(":")) {
+          return resp;
+        }
+      }
+ else {
+        Thread.sleep(100);
+      }
+      elapsedTime=Math.abs((new Date()).getTime() - startTime);
+    }
+  }
+ catch (  Exception e) {
+    throw new EpsonProjectorException(e);
+  }
+  return null;
 }
