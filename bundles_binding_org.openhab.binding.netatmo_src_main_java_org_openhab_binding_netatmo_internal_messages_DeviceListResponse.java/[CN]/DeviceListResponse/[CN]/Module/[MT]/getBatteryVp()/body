@@ -1,0 +1,17 @@
+{
+  int value;
+  int minima;
+  int spread;
+  if (this.type.equalsIgnoreCase(TYPE_MODULE_1)) {
+    value=Math.min(this.batteryVp,BATTERY_MODULE_1_THRESHOLD_0);
+    minima=BATTERY_MODULE_1_THRESHOLD_3 + BATTERY_MODULE_1_THRESHOLD_2 - BATTERY_MODULE_1_THRESHOLD_1;
+    spread=BATTERY_MODULE_1_THRESHOLD_0 - minima;
+  }
+ else {
+    value=Math.min(this.batteryVp,BATTERY_MODULE_4_THRESHOLD_0);
+    minima=BATTERY_MODULE_4_THRESHOLD_3 + BATTERY_MODULE_4_THRESHOLD_2 - BATTERY_MODULE_4_THRESHOLD_1;
+    spread=BATTERY_MODULE_4_THRESHOLD_0 - minima;
+  }
+  double percent=100 * (value - minima) / spread;
+  return new Double(percent);
+}

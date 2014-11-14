@@ -1,0 +1,13 @@
+{
+  byte[] buf=new byte[length];
+  for (int i=0; i < length; i++) {
+    int c=inputStream.read();
+    if (c != -1) {
+      buf[i]=(byte)(c & 0xff);
+    }
+ else {
+      throw new IOException("Unexpected EOF");
+    }
+  }
+  return buf;
+}

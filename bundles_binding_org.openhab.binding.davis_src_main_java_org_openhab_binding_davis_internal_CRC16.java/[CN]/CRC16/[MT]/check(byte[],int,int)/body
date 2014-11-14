@@ -1,0 +1,10 @@
+{
+  if ((offset + length) > data.length) {
+    throw new IllegalArgumentException("Invalid offset of length");
+  }
+  CRC16 instance=new CRC16();
+  for (int i=offset; i < (offset + length); i++) {
+    instance.add(data[i]);
+  }
+  return instance.isValid();
+}

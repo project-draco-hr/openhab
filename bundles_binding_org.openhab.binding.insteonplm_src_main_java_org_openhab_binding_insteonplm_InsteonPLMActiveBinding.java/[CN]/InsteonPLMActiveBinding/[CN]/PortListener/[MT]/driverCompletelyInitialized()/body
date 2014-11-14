@@ -1,13 +1,28 @@
 {
-  logger.info("driver is completely initialized");
-  for (  InsteonDevice dev : m_devices.values()) {
-    if (!dev.hasValidDescriptors()) {
-      logger.warn("device {} has invalid modem db entry, probably caused by houselinc",dev.getAddress());
-      logger.warn("will attempt to query device {}, if that fails consider re-linking",dev.getAddress());
+  HashMap<InsteonAddress,ModemDBEntry> dbes=m_driver.lockModemDBEntries();
+  logger.info("modem database has {} entries!",dbes.size());
+  if (dbes.isEmpty()) {
+    logger.warn("the modem link database is empty!");
+  }
+  for (  InsteonAddress k : dbes.keySet()) {
+    logger.debug("modem db entry: {}",k);
+  }
+synchronized (m_devices) {
+    for (    InsteonDevice dev : m_devices.values()) {
+      InsteonAddress a=dev.getAddress();
+      if (!dbes.containsKey(a)) {
+        logger.warn("device {} not found in the modem database. Did you forget to link?",a);
+      }
+ else {
+        if (!dev.hasModemDBEntry()) {
+          logger.info("device {}     found in the modem database!",a);
+          dev.setHasModemDBEntry(true);
+        }
+        if (dev.getStatus() != DeviceStatus.POLLING) {
+          Poller.s_instance().startPolling(dev,dbes.size());
+        }
+      }
     }
   }
-  applyConfigurationToDevices();
-  m_deviceQuerier.start();
-  dumpAllDevices();
-  logDeviceProblems();
+  m_driver.unlockModemDBEntries();
 }

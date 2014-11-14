@@ -1,0 +1,56 @@
+{
+  if (activeBridge != null) {
+    HueSettings settings=activeBridge.getSettings();
+    for (int i=1; i <= settings.getCount(); i++) {
+      HueBulb bulb=bulbCache.get(i);
+      if (bulb == null) {
+        bulb=new HueBulb(activeBridge,i);
+        bulbCache.put(i,bulb);
+      }
+      bulb.getStatus(settings);
+    }
+    for (    HueBindingProvider provider : this.providers) {
+      for (      String hueItemName : provider.getInBindingItemNames()) {
+        HueBindingConfig deviceConfig=getConfigForItemName(hueItemName);
+        if (deviceConfig != null) {
+          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+          if (bulb != null) {
+            if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+              if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.ON) == false)) {
+                eventPublisher.postUpdate(hueItemName,OnOffType.ON);
+                deviceConfig.itemStateOnOffType=OnOffType.ON;
+              }
+            }
+ else {
+              if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.OFF) == false)) {
+                eventPublisher.postUpdate(hueItemName,OnOffType.OFF);
+                deviceConfig.itemStateOnOffType=OnOffType.OFF;
+              }
+            }
+            if (deviceConfig.getType().equals(BindingType.brightness)) {
+              if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+                PercentType newPercent=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
+                if ((deviceConfig.itemStatePercentType == null) || (deviceConfig.itemStatePercentType.equals(newPercent) == false)) {
+                  eventPublisher.postUpdate(hueItemName,newPercent);
+                  deviceConfig.itemStatePercentType=newPercent;
+                }
+              }
+            }
+ else             if (deviceConfig.getType().equals(BindingType.rgb)) {
+              if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
+                DecimalType decimalHue=new DecimalType(bulb.getHue() / (double)182);
+                PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
+                PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)255));
+                HSBType newHsb=new HSBType(decimalHue,percentSaturation,percentBrightness);
+                if ((deviceConfig.itemStateHSBType == null) || (deviceConfig.itemStateHSBType.equals(newHsb) == false)) {
+                  eventPublisher.postUpdate(hueItemName,newHsb);
+                  deviceConfig.itemStateHSBType=newHsb;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

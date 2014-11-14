@@ -1,0 +1,29 @@
+{
+  DSCAlarmEvent dscAlarmEvent=(DSCAlarmEvent)event;
+  APIMessage apiMessage=dscAlarmEvent.getAPIMessage();
+  DSCAlarmItemType[] dscAlarmItemTypes={DSCAlarmItemType.KEYPAD_READY_LED,DSCAlarmItemType.KEYPAD_ARMED_LED,DSCAlarmItemType.KEYPAD_MEMORY_LED,DSCAlarmItemType.KEYPAD_BYPASS_LED,DSCAlarmItemType.KEYPAD_TROUBLE_LED,DSCAlarmItemType.KEYPAD_PROGRAM_LED,DSCAlarmItemType.KEYPAD_FIRE_LED,DSCAlarmItemType.KEYPAD_BACKLIGHT_LED};
+  String itemName;
+  APICode apiCode=APICode.getAPICodeValue(apiMessage.getAPICode());
+  int bitField=Integer.decode("0x" + apiMessage.getAPIData());
+  int[] masks={1,2,4,8,16,32,64,128};
+  int[] bits=new int[8];
+  for (int i=0; i < 8; i++) {
+    bits[i]=bitField & masks[i];
+    itemName=getItemName(dscAlarmItemTypes[i],0,0);
+    if (itemName != "") {
+switch (apiCode) {
+case KeypadLEDState:
+        updateDeviceProperties(itemName,bits[i] != 0 ? 1 : 0,"");
+      break;
+case KeypadLEDFlashState:
+    if (bits[i] != 0) {
+      updateDeviceProperties(itemName,2,"");
+    }
+  break;
+default :
+break;
+}
+updateItem(itemName);
+}
+}
+}

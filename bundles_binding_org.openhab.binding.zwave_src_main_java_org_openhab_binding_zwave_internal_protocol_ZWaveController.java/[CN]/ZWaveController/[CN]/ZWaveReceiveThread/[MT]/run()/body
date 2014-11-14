@@ -1,28 +1,29 @@
 {
   logger.debug("Starting Z-Wave receive thread");
-  sendResponse(NAK);
-  while (!interrupted()) {
-    int nextByte;
-    try {
-      nextByte=serialPort.getInputStream().read();
-      if (nextByte == -1)       continue;
-    }
- catch (    IOException e) {
-      logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
-      break;
-    }
+  try {
+    sendResponse(NAK);
+    while (!interrupted()) {
+      int nextByte;
+      try {
+        nextByte=serialPort.getInputStream().read();
+        if (nextByte == -1)         continue;
+      }
+ catch (      IOException e) {
+        logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+        break;
+      }
 switch (nextByte) {
 case SOF:
-      int messageLength;
-    try {
-      messageLength=serialPort.getInputStream().read();
-    }
- catch (    IOException e) {
-      logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
-      break;
-    }
-  byte[] buffer=new byte[messageLength + 2];
-buffer[0]=SOF;
+        int messageLength;
+      try {
+        messageLength=serialPort.getInputStream().read();
+      }
+ catch (      IOException e) {
+        logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+        break;
+      }
+    byte[] buffer=new byte[messageLength + 2];
+  buffer[0]=SOF;
 buffer[1]=(byte)messageLength;
 int total=0;
 while (total < messageLength) {
@@ -69,6 +70,10 @@ sendResponse(NAK);
 OOFCount++;
 break;
 }
+}
+}
+ catch (Exception e) {
+logger.error("Got an exception during receiving. exiting thread.",e);
 }
 logger.debug("Stopped Z-Wave receive thread");
 }

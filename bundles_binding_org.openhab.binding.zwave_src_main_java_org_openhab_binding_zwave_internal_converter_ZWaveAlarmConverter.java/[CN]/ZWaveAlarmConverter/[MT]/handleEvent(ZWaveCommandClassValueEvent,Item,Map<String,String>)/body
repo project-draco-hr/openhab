@@ -1,0 +1,12 @@
+{
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
+  String alarmType=arguments.get("alarm_type");
+  ZWaveAlarmValueEvent alarmEvent=(ZWaveAlarmValueEvent)event;
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    return;
+  }
+  if (alarmType != null && AlarmType.getAlarmType(Integer.parseInt(alarmType)) != alarmEvent.getAlarmType())   return;
+  State state=converter.convertFromValueToState(event.getValue());
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

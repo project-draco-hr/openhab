@@ -1,0 +1,15 @@
+{
+  int checkSum;
+  int runningTotal=0;
+  apiChecksum="ZZ";
+  for (  byte s : apiCommand.getBytes()) {
+    runningTotal=s + runningTotal;
+  }
+  for (  byte s : apiData.getBytes()) {
+    runningTotal=s + runningTotal;
+  }
+  checkSum=runningTotal;
+  String hexCheckSum=Integer.toHexString(checkSum);
+  hexCheckSum=hexCheckSum.substring(hexCheckSum.length() - 2).toUpperCase();
+  apiChecksum=hexCheckSum;
+}

@@ -1,0 +1,11 @@
+{
+  for (  Entry<String,String> fe : dt.getFeatures().entrySet()) {
+    DeviceFeature f=DeviceFeature.s_makeDeviceFeature(fe.getValue());
+    if (f == null) {
+      logger.error("device type {} references unknown feature: {}",dt,fe.getValue());
+    }
+ else {
+      addFeature(fe.getKey(),f);
+    }
+  }
+}

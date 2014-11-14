@@ -5,19 +5,20 @@
       if (pc != null) {
         logger.debug("Sending read request to KNX for item {}",datapoint.getName());
         pc.read(datapoint);
+        logger.debug("Removing item {} from initialization queue",datapoint.getName());
+        datapointsToInitialize.remove(datapoint);
       }
-      datapointsToInitialize.remove(datapoint);
     }
  catch (    KNXException e) {
-      logger.warn("Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
+      logger.warn("Cannot read value for item '{}' from KNX bus: {}",new Object[]{datapoint.getName(),e.getMessage()});
       increaseReadLimitCounter(datapoint);
     }
 catch (    KNXIllegalArgumentException e) {
-      logger.warn("Error sending KNX read request for '{}': {}",datapoint.getName(),e.getMessage());
+      logger.warn("Error sending KNX read request for '{}': {}",new Object[]{datapoint.getName(),e.getMessage()});
       increaseReadLimitCounter(datapoint);
     }
 catch (    InterruptedException e) {
-      logger.warn("Cannot read value for item '{}' from KNX bus: {}",datapoint.getName(),e.getMessage());
+      logger.warn("Cannot read value for item '{}' from KNX bus: {}",new Object[]{datapoint.getName(),e.getMessage()});
       increaseReadLimitCounter(datapoint);
     }
     int retriesLimit=KNXConnection.getReadRetriesLimit();
@@ -35,7 +36,7 @@ catch (    InterruptedException e) {
         logger.debug("KNX reading pause has been interrupted: {}",e.getMessage());
       }
     }
-    if (KNXConnection.shutdown) {
+    if (KNXConnection.sShutdown) {
       return;
     }
   }

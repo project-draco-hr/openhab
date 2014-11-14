@@ -8,7 +8,19 @@
     return;
   }
   logger.debug(String.format("NODE %d: Requested Command Class = %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
-  ZWaveCommandClass zwaveCommandClass=this.getNode().getCommandClass(commandClass);
+  ZWaveCommandClass zwaveCommandClass=null;
+  if (this.getVersion() >= 2) {
+    ZWaveEndpoint endpoint=this.endpoints.get(instance);
+    if (endpoint != null) {
+      zwaveCommandClass=endpoint.getCommandClass(commandClass);
+      if (zwaveCommandClass == null) {
+        logger.warn(String.format("NODE %d: CommandClass %s (0x%02x) not implemented by endpoint %d, fallback to main node.",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode,instance));
+      }
+    }
+  }
+  if (zwaveCommandClass == null) {
+    zwaveCommandClass=this.getNode().getCommandClass(commandClass);
+  }
   if (zwaveCommandClass == null) {
     logger.error(String.format("NODE %d: Unsupported command class %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
     return;

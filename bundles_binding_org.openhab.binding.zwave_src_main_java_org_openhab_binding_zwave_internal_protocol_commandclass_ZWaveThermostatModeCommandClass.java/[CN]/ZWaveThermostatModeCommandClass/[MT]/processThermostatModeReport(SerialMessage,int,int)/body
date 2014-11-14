@@ -1,13 +1,13 @@
 {
   int value=serialMessage.getMessagePayloadByte(offset + 1);
-  logger.debug(String.format("Thermostat Mode report from nodeId = %d,  value = 0x%02X",this.getNode().getNodeId(),value));
+  logger.debug("NODE {}: Thermostat Mode report, value = {}",this.getNode().getNodeId(),value);
   ModeType modeType=ModeType.getModeType(value);
   if (modeType == null) {
-    logger.error(String.format("Unknown Mode Type = 0x%02x, ignoring report.",value));
+    logger.error("NODE {}: Unknown Mode Type = {}, ignoring report.",this.getNode().getNodeId(),value);
     return;
   }
   if (!this.modeTypes.contains(modeType))   this.modeTypes.add(modeType);
-  logger.debug(String.format("Thermostat Mode Report from Node ID = %d, value = %s",this.getNode().getNodeId(),modeType.getLabel()));
+  logger.debug("NODE {}: Thermostat Mode Report, value = {}",this.getNode().getNodeId(),modeType.getLabel());
   ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),new BigDecimal(value));
   this.getController().notifyEventListeners(zEvent);
 }

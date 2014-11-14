@@ -9,11 +9,16 @@
     pid=StringUtils.substringBefore(key,":");
     trimmedLine=trimmedLine.substring(pid.length() + 1);
     pid=pid.trim();
+    if (!pid.contains(".")) {
+      pid="org.openhab." + pid;
+    }
   }
   if (!trimmedLine.isEmpty() && trimmedLine.substring(1).contains("=")) {
     String property=StringUtils.substringBefore(trimmedLine,"=");
     String value=trimmedLine.substring(property.length() + 1);
-    return new String[]{pid,property.trim(),value.trim()};
+    String[] parsedLine={pid,property.trim(),value.trim()};
+    logger.debug("Parsed configuration line {}:{}={}",(Object[])parsedLine);
+    return parsedLine;
   }
  else {
     logger.warn("Could not parse line '{}'",line);

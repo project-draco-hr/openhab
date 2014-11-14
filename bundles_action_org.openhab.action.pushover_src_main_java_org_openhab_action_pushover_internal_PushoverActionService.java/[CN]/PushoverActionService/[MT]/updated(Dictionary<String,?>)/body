@@ -31,6 +31,24 @@
         logger.warn("Can't parse the default priority value, falling back to default value.");
       }
     }
+    String retry=(String)config.get(PARAM_KEY_RETRY);
+    if (!StringUtils.isEmpty(retry)) {
+      try {
+        Pushover.retry=Integer.parseInt((String)config.get(PARAM_KEY_RETRY));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the retry value, falling back to default value");
+      }
+    }
+    String expire=(String)config.get(PARAM_KEY_EXPIRE);
+    if (!StringUtils.isEmpty(expire)) {
+      try {
+        Pushover.expire=Integer.parseInt((String)config.get(PARAM_KEY_EXPIRE));
+      }
+ catch (      NumberFormatException e) {
+        logger.warn("Can't parse the expire message value, falling back to default value");
+      }
+    }
     String timeOut=(String)config.get(PARAM_KEY_TIMEOUT);
     if (!StringUtils.isEmpty(timeOut)) {
       try {

@@ -27,6 +27,11 @@
     if (reconn != null && reconn.trim().length() > 0) {
       refreshInterval=Long.parseLong(reconn);
     }
+    String acceptCommands=(String)config.get("send_commands_and_compromise_security");
+    if (acceptCommands != null && acceptCommands.equalsIgnoreCase("true")) {
+      logger.info("accepting commands!");
+      m_acceptCommands=true;
+    }
     setProperlyConfigured(true);
   }
  catch (  ConfigurationException e) {

@@ -1,9 +1,24 @@
 {
   int nodeId=lastSentMessage.getMessagePayloadByte(0);
   logger.debug("NODE {}: Got RemoveFailedNode request.",nodeId);
-  if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
-    logger.error("NODE {}: Remove failed node failed with error 0x{}.",nodeId,Integer.toHexString(incomingMessage.getMessagePayloadByte(0)));
-  }
+switch (incomingMessage.getMessagePayloadByte(0)) {
+case FAILED_NODE_OK:
+    logger.error("NODE {}: Unable to remove failed node as it is not a failed node!",nodeId);
   transactionComplete=true;
-  return true;
+break;
+case FAILED_NODE_REMOVED:
+logger.debug("NODE {}: Successfully removed node from controller database!",nodeId);
+zController.notifyEventListeners(new ZWaveNetworkEvent(Type.DeleteNode,nodeId,State.Success));
+transactionComplete=true;
+break;
+case FAILED_NODE_NOT_REMOVED:
+logger.error("NODE {}: Unable to remove failed node!",nodeId);
+transactionComplete=true;
+break;
+default :
+logger.error("NODE {}: Remove failed node failed with error 0x{}.",nodeId,Integer.toHexString(incomingMessage.getMessagePayloadByte(0)));
+transactionComplete=true;
+break;
+}
+return true;
 }
