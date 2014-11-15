@@ -5,7 +5,7 @@
     FilterCriteria filter=new FilterCriteria();
     filter.setItemName(item.getName());
     filter.setOrdering(Ordering.DESCENDING);
-    filter.setPageSize(1000);
+    filter.setPageSize(skipEqual ? 1000 : 1);
     int startPage=0;
     filter.setPageNumber(startPage);
     Iterable<HistoricItem> items=qService.query(filter);
@@ -15,7 +15,7 @@
       while (itemIterator.hasNext()) {
         HistoricItem historicItem=itemIterator.next();
         itemCount++;
-        if (!historicItem.getState().equals(item.getState())) {
+        if (!skipEqual || (skipEqual && !historicItem.getState().equals(item.getState()))) {
           return historicItem;
         }
       }
