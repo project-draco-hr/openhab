@@ -30,6 +30,9 @@ if (this.node.getNodeId() != event.getNodeId()) {
 return;
 }
 logger.debug("NODE {}: Wakeup during initialisation.",this.node.getNodeId());
+if (currentStage == NodeStage.PING) {
+currentStage=currentStage.getNextStage();
+}
 advanceNodeStage(null);
 }
  else if (event instanceof ZWaveNodeStatusEvent) {
