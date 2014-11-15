@@ -12,7 +12,6 @@
   stageAdvanced=false;
   do {
     logger.debug("NODE {}: Node advancer loop - {}: stageAdvanced({})",this.node.getNodeId(),currentStage.toString(),stageAdvanced);
-    queryStageTimeStamp=Calendar.getInstance().getTime();
 switch (currentStage) {
 case EMPTYNODE:
       logger.debug("NODE {}: Starting initialisation",this.node.getNodeId());
@@ -184,6 +183,7 @@ if (sendMessage() == false) {
 currentStage=currentStage.getNextStage();
 stageAdvanced=true;
 logger.debug("NODE {}: Node advancer - advancing to {}.",this.node.getNodeId(),currentStage.toString());
+queryStageTimeStamp=Calendar.getInstance().getTime();
 }
 }
  while (msgQueue.isEmpty());
