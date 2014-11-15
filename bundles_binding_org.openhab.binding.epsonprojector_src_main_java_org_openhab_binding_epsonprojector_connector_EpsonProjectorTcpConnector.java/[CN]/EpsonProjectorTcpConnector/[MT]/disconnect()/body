@@ -1,3 +1,23 @@
 {
-  throw new EpsonProjectorException("The TCP connector is not yet implemented");
+  if (out != null) {
+    logger.debug("Close tcp out stream");
+    IOUtils.closeQuietly(out);
+  }
+  if (in != null) {
+    logger.debug("Close tcp in stream");
+    IOUtils.closeQuietly(in);
+  }
+  if (socket != null) {
+    logger.debug("Closing socket");
+    try {
+      socket.close();
+    }
+ catch (    IOException e) {
+      logger.warn("Error occured when closing tcp socket",e);
+    }
+  }
+  socket=null;
+  out=null;
+  in=null;
+  logger.debug("Closed");
 }

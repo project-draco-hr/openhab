@@ -41,7 +41,6 @@
     }
   }
   final StringBuilder message=new StringBuilder();
-  message.append("The following Netatmo measurements are not yet configured:\n");
   for (  Entry<String,Set<String>> entry : deviceMeasurements.entrySet()) {
     final String deviceId=entry.getKey();
     final Device device=deviceMap.get(deviceId);
@@ -56,5 +55,8 @@
       message.append("\t" + module.getMainDevice() + "#"+ moduleId+ "#"+ measurement+ " ("+ module.getModuleName()+ ")\n");
     }
   }
-  logger.info(message.toString());
+  if (message.length() > 0) {
+    message.insert(0,"The following Netatmo measurements are not yet configured:\n");
+    logger.info(message.toString());
+  }
 }
