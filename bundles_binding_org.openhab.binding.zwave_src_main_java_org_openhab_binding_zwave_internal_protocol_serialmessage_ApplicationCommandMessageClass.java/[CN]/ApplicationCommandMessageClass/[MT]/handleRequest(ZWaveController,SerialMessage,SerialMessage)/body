@@ -6,10 +6,10 @@
     logger.warn("NODE {}: Not initialized yet, ignoring message.",nodeId);
     return false;
   }
-  logger.debug("NODE {}: Application Command Request (Stage {})",nodeId,node.getNodeStage().getLabel());
+  logger.debug("NODE {}: Application Command Request (Stage: {})",nodeId,node.getNodeStage().toString());
   if (node.isDead()) {
     node.setAlive();
-    logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",nodeId,node.getNodeStage());
+    logger.debug("NODE {}: Node has risen from the DEAD. Set stage to {}.",nodeId,node.getNodeStage().toString());
   }
   node.resetResendCount();
   node.incrementReceiveCount();
