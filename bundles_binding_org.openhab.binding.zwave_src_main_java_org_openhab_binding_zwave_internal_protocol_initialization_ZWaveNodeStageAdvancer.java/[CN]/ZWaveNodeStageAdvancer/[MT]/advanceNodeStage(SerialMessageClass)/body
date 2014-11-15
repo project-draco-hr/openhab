@@ -2,14 +2,16 @@
   if (this.initializationComplete) {
     return;
   }
-  logger.debug("NODE {}: Node advancer - {} - queue length {} - free to send {}.",this.node.getNodeId(),currentStage.getLabel(),msgQueue.size(),freeToSend);
+  logger.debug("NODE {}: Node advancer - {}: queue length({}), free to send ({})",this.node.getNodeId(),currentStage.toString(),msgQueue.size(),freeToSend);
   if (eventClass == null) {
     freeToSend=true;
   }
   if (sendMessage() == true) {
     return;
   }
+  stageAdvanced=false;
   do {
+    logger.debug("NODE {}: Node advancer loop - {}: stageAdvanced ({})",this.node.getNodeId(),currentStage.toString(),stageAdvanced);
     queryStageTimeStamp=Calendar.getInstance().getTime();
 switch (currentStage) {
 case EMPTYNODE:
@@ -178,7 +180,6 @@ default :
 logger.error("NODE {}: Unknown node state {} encountered.",this.node.getNodeId(),this.node.getNodeStage().getLabel());
 break;
 }
-stageAdvanced=false;
 if (sendMessage() == false) {
 currentStage=currentStage.getNextStage();
 stageAdvanced=true;
