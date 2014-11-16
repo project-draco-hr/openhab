@@ -3,7 +3,7 @@
     return false;
   }
   if (freeToSend == true) {
-    SerialMessage msg=this.msgQueue.peek();
+    SerialMessage msg=msgQueue.peek();
     if (msg != null) {
       freeToSend=false;
       if (msg.getMessageClass() == SerialMessageClass.SendData) {
@@ -12,7 +12,7 @@
  else {
         controller.enqueue(msg);
       }
-      logger.debug("NODE {}: Node advancer - queued packet. Queue length is {}",this.node.getNodeId(),msgQueue.size());
+      logger.debug("NODE {}: Node advancer - queued packet. Queue length is {}",node.getNodeId(),msgQueue.size());
     }
   }
   return true;

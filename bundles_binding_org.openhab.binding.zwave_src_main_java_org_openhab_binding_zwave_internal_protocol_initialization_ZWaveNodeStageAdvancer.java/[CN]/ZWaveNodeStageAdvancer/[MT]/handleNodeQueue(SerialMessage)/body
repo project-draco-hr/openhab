@@ -1,11 +1,11 @@
 {
-  if (this.initializationComplete) {
+  if (initializationComplete) {
     return;
   }
-  logger.debug("NODE {}: Node advancer - checking initialisation queue.",this.node.getNodeId());
-  if (this.msgQueue.contains(incomingMessage)) {
-    this.msgQueue.remove(incomingMessage);
-    logger.debug("NODE {}: Node advancer - message removed from queue. Queue size now {}.",this.node.getNodeId(),this.msgQueue.size());
+  logger.debug("NODE {}: Node advancer - checking initialisation queue.",node.getNodeId());
+  if (msgQueue.contains(incomingMessage)) {
+    msgQueue.remove(incomingMessage);
+    logger.debug("NODE {}: Node advancer - message removed from queue. Queue size now {}.",node.getNodeId(),msgQueue.size());
     freeToSend=true;
     advanceNodeStage(incomingMessage.getMessageClass());
   }
