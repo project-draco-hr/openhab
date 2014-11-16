@@ -8,6 +8,7 @@
     byte[] payload=serialMessage.getMessagePayload();
     if (payload.length == 0 || node.getNodeId() != (payload[0] & 0xFF)) {
       if (controller.getTxQueueLength() < 2 && currentStage == NodeStage.WAIT) {
+        logger.debug("NODE {}: Node advancer - WAIT: The WAIT is over!",node.getNodeId());
         currentStage=currentStage.getNextStage();
         handleNodeQueue(null);
       }
