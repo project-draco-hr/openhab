@@ -14,7 +14,7 @@ case SendData:
 case IdentifyNode:
 case RequestNodeInfo:
 case GetRoutingInfo:
-      logger.debug("NODE {}: Initialisation transaction complete event ({}:{}) success({})",this.node.getNodeId(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
+      logger.debug("NODE {}: Node advancer event - {}: transaction complete ({}:{}) success({})",this.node.getNodeId(),currentStage.toString(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
     if (((ZWaveTransactionCompletedEvent)event).getState()) {
       handleNodeQueue(serialMessage);
     }

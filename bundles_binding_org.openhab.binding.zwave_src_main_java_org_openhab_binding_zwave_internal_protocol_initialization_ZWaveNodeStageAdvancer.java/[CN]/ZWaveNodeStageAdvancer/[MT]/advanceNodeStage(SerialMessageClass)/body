@@ -37,7 +37,11 @@ if (zwaveCommandClass == null) {
 break;
 }
 logger.debug("NODE {}: PING - send NoOperation",this.node.getNodeId());
-addToQueue(zwaveCommandClass.getNoOperationMessage());
+SerialMessage msg=zwaveCommandClass.getNoOperationMessage();
+if (msg != null) {
+msg.attempts=1;
+addToQueue(msg);
+}
 break;
 case DETAILS:
 if (this.isRestoredFromConfigfile()) {
