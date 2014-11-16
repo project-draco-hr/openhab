@@ -21,7 +21,7 @@
       }
       transactionCompleted.drainPermits();
       byte[] buffer=lastSentMessage.getMessageBuffer();
-      logger.debug("NODE {}: Sending Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
+      logger.debug("NODE {}: Sending REQUEST Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
       lastMessageStartTime=System.currentTimeMillis();
       try {
 synchronized (serialPort.getOutputStream()) {
@@ -34,11 +34,13 @@ synchronized (serialPort.getOutputStream()) {
         break;
       }
       try {
+        logger.debug("NODE {}: Wait for response",lastSentMessage.getMessageNode());
         if (!transactionCompleted.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
+          logger.debug("NODE {}: NO response = {}",lastSentMessage.getMessageNode());
           timeOutCount.incrementAndGet();
           if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
             buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
-            logger.debug("NODE {}: Sending Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
+            logger.debug("NODE {}: Sending ABORT Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
             try {
 synchronized (serialPort.getOutputStream()) {
                 serialPort.getOutputStream().write(buffer);

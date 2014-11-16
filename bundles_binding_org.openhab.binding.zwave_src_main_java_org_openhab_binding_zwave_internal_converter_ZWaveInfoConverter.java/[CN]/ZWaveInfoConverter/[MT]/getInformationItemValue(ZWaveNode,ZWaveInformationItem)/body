@@ -30,6 +30,8 @@ case REPORT_LISTENING:
 return node.isListening();
 case REPORT_DEAD:
 return node.isDead();
+case REPORT_LASTUPDATE:
+return node.getLastReceived();
 case REPORT_NAK:
 return this.getController().getNAKCount();
 case REPORT_SOF:
@@ -42,8 +44,8 @@ case REPORT_OOF:
 return this.getController().getOOFCount();
 case REPORT_TIME_OUT:
 return this.getController().getTimeOutCount();
-case REPORT_LASTUPDATE:
-return node.getLastReceived();
+case REPORT_TX_QUEUE:
+return this.getController().getTxQueueLength();
 }
 return null;
 }
