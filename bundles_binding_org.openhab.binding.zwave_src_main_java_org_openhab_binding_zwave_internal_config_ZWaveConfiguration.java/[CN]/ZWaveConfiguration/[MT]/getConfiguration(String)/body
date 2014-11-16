@@ -247,10 +247,6 @@ record=new OpenHABConfigurationRecord(domain,"Routing","Routing",true);
 record.value=Boolean.toString(node.isRouting());
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Power","Power",true);
-if (node.getNodeStage().getStage() <= NodeStage.DETAILS.getStage()) {
-record.value="UNKNOWN";
-}
- else {
 ZWaveBatteryCommandClass batteryCommandClass=(ZWaveBatteryCommandClass)node.getCommandClass(CommandClass.BATTERY);
 if (batteryCommandClass != null) {
 if (batteryCommandClass.getBatteryLevel() == null) {
@@ -260,9 +256,11 @@ record.value="BATTERY " + "UNKNOWN";
 record.value="BATTERY " + batteryCommandClass.getBatteryLevel() + "%";
 }
 }
+ else if (node.getNodeStage().getStage() <= NodeStage.DETAILS.getStage()) {
+record.value="UNKNOWN";
+}
  else {
 record.value="MAINS";
-}
 }
 records.add(record);
 ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
