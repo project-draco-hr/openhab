@@ -5,14 +5,23 @@
   }
   ObjectMapper mapper=new ObjectMapper();
   try {
+    ConcurrentMap<String,Object> resources=ResourceStateChangeListener.getMap();
+    for (    String uuid : resources.keySet()) {
+      AtmosphereResource resource=AtmosphereResourceFactory.getDefault().find(uuid);
+      if (resource == null) {
+        logger.trace("removing {} from duplicate cache",uuid);
+        resources.remove(uuid);
+      }
+    }
     String firedResponse=mapper.writeValueAsString(ResourceStateChangeListener.getMap().put(clientId,responseEntity));
     String responseValue=mapper.writeValueAsString(responseEntity);
     if (responseValue.equals(firedResponse)) {
+      logger.trace("Duplicate message for uuid {}",clientId);
       return true;
     }
   }
  catch (  Exception e) {
-    logger.error(e.getMessage());
+    logger.error("Could not check if double broadcast",e);
   }
   return false;
 }

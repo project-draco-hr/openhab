@@ -1,0 +1,12 @@
+{
+  try {
+    Iterator<IhcEventListener> iterator=eventListeners.iterator();
+    IhcErrorEvent event=new IhcErrorEvent(this);
+    while (iterator.hasNext()) {
+      ((IhcEventListener)iterator.next()).errorOccured(event,err);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Event listener invoking error",e);
+  }
+}

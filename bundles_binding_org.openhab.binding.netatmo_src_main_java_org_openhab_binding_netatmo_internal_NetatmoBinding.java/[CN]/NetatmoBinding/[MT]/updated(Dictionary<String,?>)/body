@@ -4,17 +4,41 @@
     if (isNotBlank(refreshIntervalString)) {
       this.refreshInterval=Long.parseLong(refreshIntervalString);
     }
-    this.clientId=(String)config.get(CONFIG_CLIENT_ID);
-    if (isBlank(this.clientId)) {
-      throw new ConfigurationException("netatmo:clientid","Parameter 'netatmo:clientid' must be set!");
-    }
-    this.clientSecret=(String)config.get(CONFIG_CLIENT_SECRET);
-    if (isBlank(this.clientSecret)) {
-      throw new ConfigurationException("netatmo:clientsecret","Parameter 'netatmo:clientsecret' must be set!");
-    }
-    this.refreshToken=(String)config.get(CONFIG_REFRESH_TOKEN);
-    if (isBlank(this.refreshToken)) {
-      throw new ConfigurationException("netatmo:refreshToken","Parameter 'netatmo:refreshToken' must be set!");
+    Enumeration<String> configKeys=config.keys();
+    while (configKeys.hasMoreElements()) {
+      String configKey=(String)configKeys.nextElement();
+      if (CONFIG_REFRESH.equals(configKey) || "service.pid".equals(configKey)) {
+        continue;
+      }
+      String userid;
+      String configKeyTail;
+      if (configKey.contains(".")) {
+        String[] keyElements=configKey.split("\\.");
+        userid=keyElements[0];
+        configKeyTail=keyElements[1];
+      }
+ else {
+        userid=DEFAULT_USER_ID;
+        configKeyTail=configKey;
+      }
+      OAuthCredentials credentials=credentialsCache.get(userid);
+      if (credentials == null) {
+        credentials=new OAuthCredentials();
+        credentialsCache.put(userid,credentials);
+      }
+      String value=(String)config.get(configKeyTail);
+      if (CONFIG_CLIENT_ID.equals(configKeyTail)) {
+        credentials.clientId=value;
+      }
+ else       if (CONFIG_CLIENT_SECRET.equals(configKeyTail)) {
+        credentials.clientSecret=value;
+      }
+ else       if (CONFIG_REFRESH_TOKEN.equals(configKeyTail)) {
+        credentials.refreshToken=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
     }
     setProperlyConfigured(true);
   }
