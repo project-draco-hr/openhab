@@ -1,10 +1,4 @@
 {
-  try {
-    String content=HttpUtils.getGetResponse(this.getHostName(),SUFFIX_VOLUME,this.getUserName(),this.getPassword());
-    return XmlUtils.getContentOfElement(content,"e2current");
-  }
- catch (  IOException e) {
-    logger.error("getVolume failed with IOException",e);
-    return null;
-  }
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_VOLUME,this.timeOut);
+  return XmlUtils.getContentOfElement(content,"e2current");
 }

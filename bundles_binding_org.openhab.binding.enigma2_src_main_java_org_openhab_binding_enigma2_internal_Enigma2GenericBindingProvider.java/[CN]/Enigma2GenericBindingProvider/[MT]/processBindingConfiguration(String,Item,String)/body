@@ -1,5 +1,9 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig == null || item == null) {
+    logger.error("invalid input for processBindingConfiguration, item={}, bindingConfig={}",item,bindingConfig);
+    return;
+  }
   String strippedBindingConfig=bindingConfig.replace("[","").replace("]","").trim();
   String[] elements=strippedBindingConfig.split(":");
   Enigma2BindingConfig config=null;

@@ -1,11 +1,5 @@
 {
-  try {
-    String content=HttpUtils.getGetResponse(this.getHostName(),SUFFIX_VOLUME,this.getUserName(),this.getPassword());
-    content=XmlUtils.getContentOfElement(content,"e2ismuted");
-    return content.toLowerCase().equals("True") ? OnOffType.ON.name() : OnOffType.OFF.name();
-  }
- catch (  IOException e) {
-    logger.error("getMuteUnmute failed with IOException",e);
-    return null;
-  }
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_VOLUME,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,"e2ismuted");
+  return content.toLowerCase().equals("True") ? OnOffType.ON.name() : OnOffType.OFF.name();
 }

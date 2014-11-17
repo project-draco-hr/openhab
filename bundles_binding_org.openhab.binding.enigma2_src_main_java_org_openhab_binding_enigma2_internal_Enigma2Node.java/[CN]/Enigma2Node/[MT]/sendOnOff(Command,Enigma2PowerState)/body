@@ -1,11 +1,6 @@
 {
   if (command instanceof OnOffType) {
-    try {
-      HttpUtils.getGetResponse(hostName,SUFFIX_POWERSTATE + "?newstate=" + powerState.getValue(),userName,password);
-    }
- catch (    IOException e) {
-      e.printStackTrace();
-    }
+    HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_POWERSTATE + "?newstate="+ powerState.getValue(),this.timeOut);
   }
  else {
     logger.error("Unsupported command type: {}",command.getClass().getName());

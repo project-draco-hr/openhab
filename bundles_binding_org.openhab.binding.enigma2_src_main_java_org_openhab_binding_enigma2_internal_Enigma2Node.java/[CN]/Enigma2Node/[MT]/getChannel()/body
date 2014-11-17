@@ -1,10 +1,4 @@
 {
-  try {
-    String content=HttpUtils.getGetResponse(this.getHostName(),SUFFIX_CHANNEL,this.getUserName(),this.getPassword());
-    return XmlUtils.getContentOfElement(content,"e2servicename");
-  }
- catch (  IOException e) {
-    logger.error("getChannel failed with IOException",e);
-    return null;
-  }
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_CHANNEL,this.timeOut);
+  return XmlUtils.getContentOfElement(content,"e2servicename");
 }

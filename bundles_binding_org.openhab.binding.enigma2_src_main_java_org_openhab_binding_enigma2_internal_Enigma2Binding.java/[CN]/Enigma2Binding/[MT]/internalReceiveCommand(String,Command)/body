@@ -1,7 +1,5 @@
 {
-  logger.debug("internalReceiveCommand() called");
-  logger.debug("itemName={}",itemName);
-  logger.debug("command={}",command);
+  logger.debug("internalReceiveCommand() called, itemName={}, command={}",itemName,command);
   if (providesBindingFor(itemName)) {
     for (    Enigma2BindingProvider provider : providers) {
       Enigma2BindingConfig bindingConfig=provider.getBindingConfigFor(itemName);
@@ -25,7 +23,7 @@ break;
 case MUTE:
 node.sendMuteUnmute(command);
 break;
-case REMOTE_CONTROL:
+case REMOTECONTROL:
 node.sendRcCommand(command,bindingConfig.getCmdValue());
 break;
 case POWERSTATE:

@@ -1,6 +1,6 @@
 {
-  if (command instanceof IncreaseDecreaseType) {
-    sendRcCommand(command,((IncreaseDecreaseType)command) == IncreaseDecreaseType.INCREASE ? RC_CHANNEL_UP : RC_CHANNEL_DOWN);
+  if (command instanceof StringType || command instanceof IncreaseDecreaseType) {
+    sendRcCommand(command,command.toString().equals(IncreaseDecreaseType.INCREASE.toString()) ? RC_CHANNEL_UP : RC_CHANNEL_DOWN);
   }
  else {
     logger.error("Unsupported command type: {}",command.getClass().getName());

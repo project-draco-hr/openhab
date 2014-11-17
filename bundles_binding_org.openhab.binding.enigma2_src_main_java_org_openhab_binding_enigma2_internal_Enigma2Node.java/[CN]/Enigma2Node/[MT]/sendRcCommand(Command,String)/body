@@ -2,10 +2,5 @@
   if (commandValue == null) {
     logger.error("Error in item configuration. No remote control code provided (third part of item config)");
   }
-  try {
-    HttpUtils.getGetResponse(hostName,SUFFIX_REMOTE_CONTROL + commandValue,userName,password);
-  }
- catch (  IOException e) {
-    logger.error("sendRcCommand failed with IOException",e);
-  }
+  HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_REMOTE_CONTROL + commandValue,this.timeOut);
 }
