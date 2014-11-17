@@ -1,0 +1,11 @@
+{
+  logger.debug("Activate");
+  Runnable checkalivetask=new Runnable(){
+    public void run(){
+      checkalive();
+    }
+  }
+;
+  executor=Executors.newScheduledThreadPool(1);
+  executor.scheduleAtFixedRate(checkalivetask,0,10,TimeUnit.SECONDS);
+}

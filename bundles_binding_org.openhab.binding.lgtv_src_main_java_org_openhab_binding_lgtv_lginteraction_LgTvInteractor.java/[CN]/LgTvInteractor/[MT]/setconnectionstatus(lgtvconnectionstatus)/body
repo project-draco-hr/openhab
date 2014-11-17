@@ -1,0 +1,20 @@
+{
+  if (s != connectionstatus) {
+    logger.info("lgtv connectionstatus of ip=" + lgip + " changed from "+ connectionstatus+ " to "+ s);
+    connectionstatus=s;
+    if (associatedreader != null) {
+      String status="CONNECTION_STATUS=" + ((s == lgtvconnectionstatus.CS_PAIRED) ? "1" : "0");
+      LgtvStatusUpdateEvent event=new LgtvStatusUpdateEvent(this);
+      associatedreader.sendtohandlers(event,lgip,status);
+      if (s == lgtvconnectionstatus.CS_NOTCONNECTED) {
+        associatedreader.sendtohandlers(event,lgip,status);
+        String name="CHANNEL_CURRENTNAME=0";
+        String number="CHANNEL_CURRENTNUMBER=0";
+        String vol="VOLUME_CURRENT=0";
+        associatedreader.sendtohandlers(event,lgip,name);
+        associatedreader.sendtohandlers(event,lgip,number);
+        associatedreader.sendtohandlers(event,lgip,vol);
+      }
+    }
+  }
+}
