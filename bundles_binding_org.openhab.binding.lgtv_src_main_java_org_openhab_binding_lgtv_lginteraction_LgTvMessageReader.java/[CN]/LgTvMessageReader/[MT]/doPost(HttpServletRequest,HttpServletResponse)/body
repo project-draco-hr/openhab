@@ -1,0 +1,51 @@
+{
+  BufferedReader rd=null;
+  StringBuilder sb=null;
+  if (1 == 1) {
+    res.setContentType("text/plain");
+    res.setStatus(200);
+    OutputStream responseBody=res.getOutputStream();
+    LgtvStatusUpdateEvent event=new LgtvStatusUpdateEvent(this);
+    rd=new BufferedReader(new InputStreamReader(req.getInputStream()));
+    sb=new StringBuilder();
+    String line;
+    while ((line=rd.readLine()) != null) {
+      sb.append(line + '\n');
+    }
+    String remoteaddr=req.getRemoteAddr();
+    int start=remoteaddr.indexOf(":");
+    String t;
+    if (start > -1)     t=remoteaddr.substring(0,start);
+ else     t=remoteaddr;
+    remoteaddr=t;
+    start=remoteaddr.indexOf("/");
+    if (start > -1)     t=remoteaddr.substring(start + 1,remoteaddr.length());
+ else     t=remoteaddr;
+    remoteaddr=t;
+    logger.debug("httphandler called from remoteaddr=" + remoteaddr + " result="+ sb.toString());
+    LgTvEventChannelChanged myevent=new LgTvEventChannelChanged();
+    String result="";
+    try {
+      result=myevent.readevent(sb.toString());
+    }
+ catch (    JAXBException e) {
+      logger.error("error in httphandler",e);
+    }
+    logger.debug("eventresult=" + result);
+    LgTvEventChannelChanged.envelope envel=myevent.getenvel();
+    String eventname=envel.getchannel().geteventname();
+    if (eventname.equals("ChannelChanged")) {
+      String name="CHANNEL_CURRENTNAME=" + envel.getchannel().getchname();
+      String number="CHANNEL_CURRENTNUMBER=" + envel.getchannel().getmajor();
+      String set="CHANNEL_SET=" + envel.getchannel().getmajor();
+      sendtohandlers(event,remoteaddr,name);
+      sendtohandlers(event,remoteaddr,number);
+      sendtohandlers(event,remoteaddr,set);
+    }
+ else     if (eventname.equals("byebye")) {
+      sendtohandlers(event,remoteaddr,"BYEBYE_SEEN=1");
+    }
+ else     logger.debug("warning - unhandled event");
+    responseBody.close();
+  }
+}

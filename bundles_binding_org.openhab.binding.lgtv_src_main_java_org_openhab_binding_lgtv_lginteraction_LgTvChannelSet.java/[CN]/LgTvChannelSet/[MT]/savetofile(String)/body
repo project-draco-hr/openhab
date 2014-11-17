@@ -1,0 +1,27 @@
+{
+  Writer writer=null;
+  JAXBContext jc;
+  try {
+    jc=JAXBContext.newInstance(envelope.class);
+    Marshaller marshaller=jc.createMarshaller();
+    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+    writer=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f),"utf-8"));
+    marshaller.marshal(envel,writer);
+  }
+ catch (  PropertyException e) {
+    logger.error("error in savetofile",e);
+  }
+catch (  JAXBException e) {
+    logger.error("error in savetofile",e);
+  }
+catch (  IOException ex) {
+    logger.error("error in savetofile",ex);
+  }
+ finally {
+    try {
+      writer.close();
+    }
+ catch (    Exception ex) {
+    }
+  }
+}

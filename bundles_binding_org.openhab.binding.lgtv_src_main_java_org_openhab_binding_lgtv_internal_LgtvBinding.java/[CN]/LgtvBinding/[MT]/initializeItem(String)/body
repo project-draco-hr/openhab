@@ -1,0 +1,49 @@
+{
+  for (  LgtvBindingProvider provider : providers) {
+    String initCmd=provider.getItemInitCommand(itemName);
+    if (initCmd != null) {
+      String[] commandParts=initCmd.split(":");
+      String deviceId=commandParts[0];
+      String deviceCmd=commandParts[1];
+      LgtvConnection remoteController=null;
+      DeviceConfig device=deviceConfigCache.get(deviceId);
+      if (device == null) {
+        logger.error("cannot find device " + deviceId);
+      }
+ else {
+        remoteController=device.getConnection();
+      }
+      if (remoteController == null) {
+        logger.debug("Initialize item {} canceled - remotecontroller not initialized",itemName);
+        return;
+      }
+      if (remoteController.ispaired() == false) {
+        logger.debug("Initialize item {} canceled - not paired",itemName);
+        return;
+      }
+      logger.debug("Initialize item {}",itemName);
+      if (device != null && remoteController != null) {
+        if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
+          deviceCmd=deviceCmd.replace(ADVANCED_COMMAND_KEY,"");
+        }
+ else {
+          LgTvCommand cmd=LgTvCommand.valueOf(deviceCmd);
+          deviceCmd=cmd.getCommand();
+        }
+        String result="";
+        if (remoteController != null) {
+          result=remoteController.send(deviceCmd,"");
+        }
+        logger.debug("send result=" + result);
+        if (!result.startsWith("#")) {
+          Class<? extends Item> itemType=provider.getItemType(itemName);
+          State v=convertDeviceValueToOpenHabState(itemType,result);
+          eventPublisher.postUpdate(itemName,v);
+        }
+      }
+ else {
+        logger.warn("Cannot find connection details for device id '{}'",deviceId);
+      }
+    }
+  }
+}

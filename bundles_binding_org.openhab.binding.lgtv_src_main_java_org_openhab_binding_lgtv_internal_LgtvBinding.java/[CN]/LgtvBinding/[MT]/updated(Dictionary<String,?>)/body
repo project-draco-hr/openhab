@@ -1,0 +1,56 @@
+{
+  logger.debug("Configuration updated, config {}",config != null ? true : false);
+  if (config != null) {
+    Enumeration<String> keys=config.keys();
+    if (deviceConfigCache == null) {
+      deviceConfigCache=new HashMap<String,DeviceConfig>();
+    }
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String deviceId=matcher.group(1);
+      DeviceConfig deviceConfig=deviceConfigCache.get(deviceId);
+      if (deviceConfig == null) {
+        deviceConfig=new DeviceConfig(deviceId);
+        deviceConfigCache.put(deviceId,deviceConfig);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)config.get(key);
+      if ("host".equals(configKey)) {
+        deviceConfig.host=value;
+      }
+ else       if ("port".equals(configKey)) {
+        deviceConfig.port=Integer.valueOf(value);
+      }
+ else       if ("serverport".equals(configKey)) {
+        deviceConfig.localport=Integer.valueOf(value);
+      }
+ else       if ("pairkey".equals(configKey)) {
+        deviceConfig.pairkey=value;
+      }
+ else       if ("xmldatafiles".equals(configKey)) {
+        deviceConfig.xmldatafiles=value;
+      }
+ else       if ("checkalive".equals(configKey)) {
+        deviceConfig.checkalive=Integer.valueOf(value);
+      }
+ else       throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+    }
+  }
+  for (  String device : deviceConfigCache.keySet()) {
+    LgtvConnection connection=deviceConfigCache.get(device).getConnection();
+    if (connection != null) {
+      connection.addEventListener(this);
+      connection.openConnection();
+    }
+  }
+}
