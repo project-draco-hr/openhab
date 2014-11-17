@@ -1,0 +1,14 @@
+{
+  logger.debug("execute() method is called!");
+  Collection<ZibaseBindingConfig> configs=(Collection<ZibaseBindingConfig>)ZibaseGenericBindingProvider.itemMap.values();
+  for (  ZibaseBindingConfig config : configs) {
+    if (config.getClass() == ZibaseBindingConfigReceiver.class) {
+      State state=config.getOpenhabStateFromZibaseValue(zibase,null);
+      eventPublisher.postUpdate(bindingProvider.getItemNamesById(config.getId()).firstElement(),state);
+    }
+ else     if (config.getClass() == ZibaseBindingConfigVariable.class) {
+      State state=config.getOpenhabStateFromZibaseValue(zibase,null);
+      eventPublisher.postUpdate(bindingProvider.getItemNamesById(config.getId()).firstElement(),state);
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  logger.debug("read item : " + item);
+  logger.debug("read config : " + bindingConfig);
+  String[] itemConfig=StringUtils.split(bindingConfig,ZibaseBindingConfig.CONFIG_SEPARATOR);
+  ZibaseBindingConfig config=ZibaseBindingConfig.factory(itemConfig);
+  itemMap.put(item.getName(),config);
+  String id=config.getId();
+  if (idMap.containsKey(id)) {
+    idMap.get(id).add(item.getName());
+  }
+ else {
+    Vector<String> vector=new Vector<String>();
+    vector.add(item.getName());
+    idMap.put(id,vector);
+  }
+  logger.info("Added " + item.getName() + " (id="+ id+ ")");
+  addBindingConfig(item,config);
+}
