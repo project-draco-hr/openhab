@@ -1,0 +1,16 @@
+{
+  String resp;
+  try {
+    logger.debug("Will wait");
+    wait(sendTimeout);
+  }
+ catch (  InterruptedException e) {
+  }
+  resp=globalResponse;
+  if (globalResponse == null) {
+    logger.debug("Cannot receive response");
+    resp="";
+  }
+  globalResponse=null;
+  return resp;
+}

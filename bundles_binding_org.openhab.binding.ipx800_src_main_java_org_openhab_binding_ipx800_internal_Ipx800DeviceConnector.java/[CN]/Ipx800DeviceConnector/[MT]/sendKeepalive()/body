@@ -1,0 +1,13 @@
+{
+  if (waitingKeepaliveResponse) {
+    failedKeepalive++;
+    logger.debug("Sending keepalive, attempt {}",failedKeepalive);
+  }
+ else {
+    failedKeepalive=0;
+    logger.trace("Sending keepalive");
+  }
+  out.println("GetIn01");
+  out.flush();
+  waitingKeepaliveResponse=true;
+}

@@ -1,0 +1,19 @@
+{
+  boolean continu=false;
+  for (  Ipx800Item item : items.values()) {
+    if (class1.isInstance(item)) {
+      if (item instanceof Ipx800AstableSwitch) {
+        Ipx800AstableSwitch i=(Ipx800AstableSwitch)item;
+        i.switchState(true);
+      }
+ else       if (item instanceof Ipx800Dimmer) {
+        Ipx800Dimmer i=(Ipx800Dimmer)item;
+        i.increment(true);
+        if (i.getState() != PercentType.HUNDRED) {
+          continu=true;
+        }
+      }
+    }
+  }
+  return continu;
+}

@@ -1,0 +1,17 @@
+{
+  timer.cancel();
+  if (lastTimestamp == 0) {
+    return;
+  }
+  long delay=Math.max(MIN_VIRTUAL_UPDATE_DELAY,(currentTimestamp - lastTimestamp) * VIRTUAL_UPDATE_MULTIPLIER_DELAY);
+  logger.debug("Restarting timer with delay={}",delay);
+  logger.debug("lastTimestamp={}, currentTimestamp={}, ",lastTimestamp,currentTimestamp);
+  timer=new Timer();
+  timer.scheduleAtFixedRate(new TimerTask(){
+    @Override public void run(){
+      isVirtualUpdate=true;
+      postState();
+    }
+  }
+,delay,delay);
+}

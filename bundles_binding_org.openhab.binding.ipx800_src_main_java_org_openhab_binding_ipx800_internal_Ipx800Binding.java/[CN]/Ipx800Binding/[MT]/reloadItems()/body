@@ -1,0 +1,13 @@
+{
+  logger.trace("Size of providers : {}",providers.size());
+  for (  Ipx800BindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      try {
+        createInternalItem(itemName,provider);
+      }
+ catch (      Ipx800UnknownDeviceException e) {
+        logger.error("Item {} will be ignored",itemName);
+      }
+    }
+  }
+}
