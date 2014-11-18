@@ -1,9 +1,8 @@
 {
   logger.trace("Initializing ZWaveNodeSerializer.");
-  this.versionedFolderName=String.format("%s/%d.%d/",FOLDER_NAME,ZWaveActivator.getVersion().getMajor(),ZWaveActivator.getVersion().getMinor());
-  File folder=new File(versionedFolderName);
+  File folder=new File(folderName);
   if (!folder.exists()) {
-    logger.debug("Creating directory {}",versionedFolderName);
+    logger.debug("Creating directory {}",folderName);
     folder.mkdirs();
   }
   stream.processAnnotations(ZWaveNode.class);

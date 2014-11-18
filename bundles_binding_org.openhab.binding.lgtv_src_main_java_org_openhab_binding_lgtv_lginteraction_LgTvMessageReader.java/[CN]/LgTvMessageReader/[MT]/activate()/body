@@ -1,0 +1,31 @@
+{
+  try {
+    bundleContext=FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+    if (bundleContext != null) {
+      ServiceReference<?> serviceReference1=bundleContext.getServiceReference(LgtvBindingProvider.class.getName());
+      if (serviceReference1 != null) {
+        bindingprovider=(LgtvBindingProvider)bundleContext.getService(serviceReference1);
+      }
+ else       logger.error("lgtvbindungprovider=null");
+      ServiceReference<?> serviceReference2=bundleContext.getServiceReference(ItemRegistry.class.getName());
+      if (serviceReference2 != null) {
+        itemregistry=(ItemRegistry)bundleContext.getService(serviceReference2);
+      }
+ else       logger.error("itemregistry=null");
+    }
+ else     logger.error("bundleContext=null");
+    logger.info("lgtv servlet activate called");
+    Hashtable<String,String> props=new Hashtable<String,String>();
+    httpService.registerServlet(WEBAPP_ALIAS + SERVLET_NAME,this,props,createHttpContext());
+    logger.info("Started LgTv Servlet at " + WEBAPP_ALIAS + SERVLET_NAME);
+  }
+ catch (  NamespaceException e) {
+    logger.error("Error during servlet startup",e);
+  }
+catch (  ServletException e) {
+    logger.error("Error during servlet startup",e);
+  }
+catch (  Exception e) {
+    logger.error("error during servlet startup",e);
+  }
+}

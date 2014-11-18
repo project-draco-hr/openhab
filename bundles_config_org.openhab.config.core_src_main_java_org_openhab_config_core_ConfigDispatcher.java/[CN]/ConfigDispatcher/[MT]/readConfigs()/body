@@ -1,0 +1,17 @@
+{
+  File dir=new File(getServiceConfigFolder());
+  if (dir.exists()) {
+    File[] files=dir.listFiles();
+    for (    File file : files) {
+      try {
+        processConfigFile(file);
+      }
+ catch (      IOException e) {
+        logger.warn("Could not process config file '{}': {}",file.getName(),e);
+      }
+    }
+  }
+ else {
+    logger.debug("Configuration folder '{}' does not exist.",dir.toString());
+  }
+}

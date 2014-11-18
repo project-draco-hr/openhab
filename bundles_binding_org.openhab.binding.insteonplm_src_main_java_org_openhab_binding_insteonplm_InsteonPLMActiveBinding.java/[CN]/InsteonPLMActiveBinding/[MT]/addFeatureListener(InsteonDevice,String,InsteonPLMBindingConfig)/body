@@ -1,0 +1,13 @@
+{
+  if (aDev == null) {
+    return;
+  }
+  DeviceFeature f=aDev.getFeature(aConfig.getFeature());
+  if (f == null) {
+    logger.error("item {} references unknown feature: {}, item disabled!",aItemName,aConfig.getFeature());
+    return;
+  }
+  DeviceFeatureListener fl=new DeviceFeatureListener(aItemName,eventPublisher);
+  fl.setParameters(aConfig.getParameters());
+  f.addListener(fl);
+}

@@ -1,0 +1,16 @@
+{
+  DSCAlarmBindingConfig config=null;
+  Item item=null;
+  for (  DSCAlarmBindingProvider prov : providers) {
+    for (    String iName : prov.getItemNames()) {
+      if (itemName == iName) {
+        config=prov.getDSCAlarmBindingConfig(iName);
+        if (config != null) {
+          item=prov.getItem(itemName);
+          dscAlarmItemUpdate.updateDeviceProperties(item,config,state,description);
+          break;
+        }
+      }
+    }
+  }
+}

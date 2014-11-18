@@ -1,0 +1,35 @@
+{
+switch (upnpRequestOperation.getMethod()) {
+case GET:
+    return new HttpGet(upnpRequestOperation.getURI());
+case SUBSCRIBE:
+  return new HttpGet(upnpRequestOperation.getURI()){
+    @Override public String getMethod(){
+      return UpnpRequest.Method.SUBSCRIBE.getHttpName();
+    }
+  }
+;
+case UNSUBSCRIBE:
+return new HttpGet(upnpRequestOperation.getURI()){
+  @Override public String getMethod(){
+    return UpnpRequest.Method.UNSUBSCRIBE.getHttpName();
+  }
+}
+;
+case POST:
+HttpEntityEnclosingRequest post=new HttpPost(upnpRequestOperation.getURI());
+post.setEntity(createHttpRequestEntity(upnpMessage));
+return (HttpUriRequest)post;
+case NOTIFY:
+HttpEntityEnclosingRequest notify=new HttpPost(upnpRequestOperation.getURI()){
+@Override public String getMethod(){
+return UpnpRequest.Method.NOTIFY.getHttpName();
+}
+}
+;
+notify.setEntity(createHttpRequestEntity(upnpMessage));
+return (HttpUriRequest)notify;
+default :
+throw new MethodNotSupportedException(upnpRequestOperation.getHttpMethodName());
+}
+}

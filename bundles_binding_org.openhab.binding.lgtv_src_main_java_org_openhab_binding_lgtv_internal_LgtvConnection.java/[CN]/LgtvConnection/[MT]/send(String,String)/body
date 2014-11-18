@@ -1,0 +1,100 @@
+{
+  String result="#error";
+  connection.checkpairing();
+{
+    try {
+      LgTvCommand lgcmd=LgTvCommand.valueOf(cmd);
+      logger.debug("send to tv ip=" + ip + " command="+ cmd+ " type="+ lgcmd.getCommandType()+ " val="+ val+ " lgsendparam="+ lgcmd.getLgSendCommand());
+switch (lgcmd.getCommandType()) {
+case 0:
+        result=connection.handlekeyinput(lgcmd.getLgSendCommand());
+      break;
+case 1:
+    result=connection.requestpairkey();
+  break;
+case 2:
+connection.setpairkey(val);
+result=connection.sendpairkey();
+break;
+case 3:
+result=connection.handlechannelchangeeasy(val);
+break;
+case 4:
+{
+String answer=connection.getvolumeinfo(0);
+String ismuted=quickfind(answer,"mute");
+if (ismuted == "true") ismuted="1";
+ else ismuted="0";
+String level=quickfind(answer,"level");
+logger.debug("getvolume answer=" + answer + " ismuted="+ ismuted+ " level="+ level);
+String setter="#nothing";
+setter=(lgcmd.getLgSendCommand() == "LEVEL") ? level : setter;
+setter=(lgcmd.getLgSendCommand() == "ISMUTED") ? ismuted : setter;
+result=setter;
+}
+;
+break;
+case 5:
+{
+String answer=connection.getcurrentchannel();
+String displaymajor=quickfind(answer,"displayMajor");
+String chname=quickfind(answer,"chname");
+String progname=quickfind(answer,"progName");
+logger.debug("getcurrentchannel answer=" + answer + " displayMajor="+ displaymajor+ " chname="+ chname+ " progname="+ progname);
+String setter="#nothing";
+setter=(lgcmd.getLgSendCommand() == "NUMBER") ? displaymajor : setter;
+setter=(lgcmd.getLgSendCommand() == "PROG") ? progname : setter;
+setter=(lgcmd.getLgSendCommand() == "NAME") ? chname : setter;
+result=setter;
+}
+;
+break;
+case 6:
+{
+String answer=connection.getallchannels();
+result=answer;
+}
+;
+break;
+case 7:
+{
+String answer=connection.getallapps();
+result=answer;
+}
+;
+break;
+case 8:
+{
+String answer=connection.appexecuteeasy(val);
+result=answer;
+}
+;
+break;
+case 9:
+{
+String answer=connection.appterminateeasy(val);
+result=answer;
+}
+;
+break;
+case 11:
+{
+String answer=connection.handlevolchangeeasy(val);
+result=answer;
+}
+;
+break;
+case 12:
+{
+result="";
+}
+;
+break;
+}
+}
+ catch (Exception e) {
+logger.error("Could not send command to device on {} : {}",ip + ":" + port,e);
+}
+}
+return new String(result);
+}

@@ -1,0 +1,25 @@
+{
+  String message="";
+  message="";
+  String answer="#notpaired";
+  if (ispaired()) {
+    answer=sendtotv("GET","udap/api/data?target=channel_list",message);
+    try {
+      channelset.loadchannels(answer);
+      int i=channelset.getsize();
+      String s=String.valueOf(i);
+      answer=s;
+      if (this.xmldatafiles.length() > 0) {
+        String filename=this.xmldatafiles + lgip + "_lgtvallchannels.xml";
+        logger.debug("xmldatafiles is set - writing file=" + filename);
+        channelset.savetofile(filename);
+      }
+    }
+ catch (    JAXBException e) {
+      logger.error("exception in getallchannels: ",e);
+      org.xml.sax.SAXParseException f=(org.xml.sax.SAXParseException)e.getLinkedException();
+      logger.error("parse exception e=" + e.toString() + " line="+ f.getLineNumber()+ " columns="+ f.getColumnNumber()+ " local="+ f.getLocalizedMessage());
+    }
+  }
+  return new String(answer);
+}

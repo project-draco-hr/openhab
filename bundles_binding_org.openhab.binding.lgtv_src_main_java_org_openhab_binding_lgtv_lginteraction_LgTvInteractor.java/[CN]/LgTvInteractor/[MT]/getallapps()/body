@@ -1,0 +1,26 @@
+{
+  String message="";
+  message="";
+  String answer="#notpaired";
+  if (ispaired()) {
+    answer=sendtotv("GET","udap/api/data?target=applist_get&type=1&index=1&number=1024",message);
+    logger.debug("answer: " + answer);
+    try {
+      appset.loadapps(answer);
+      int i=appset.getsize();
+      String s=String.valueOf(i);
+      answer=s;
+      if (this.xmldatafiles.length() > 0) {
+        String filename=this.xmldatafiles + lgip + "_lgtvallapps.xml";
+        logger.debug("xmldatafiles is set - writing file=" + filename);
+        appset.savetofile(filename);
+      }
+    }
+ catch (    JAXBException e) {
+      logger.error("error in getallapps",e);
+      org.xml.sax.SAXParseException f=(org.xml.sax.SAXParseException)e.getLinkedException();
+      logger.error("parse exception e=" + e.toString() + " line="+ f.getLineNumber()+ " columns="+ f.getColumnNumber()+ " local="+ f.getLocalizedMessage());
+    }
+  }
+  return new String(answer);
+}

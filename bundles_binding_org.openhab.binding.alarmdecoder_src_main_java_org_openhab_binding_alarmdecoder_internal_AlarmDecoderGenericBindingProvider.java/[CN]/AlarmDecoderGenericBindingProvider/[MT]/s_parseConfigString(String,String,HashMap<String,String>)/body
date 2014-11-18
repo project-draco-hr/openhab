@@ -1,0 +1,14 @@
+{
+  String shouldBe="should be MSGType:ADDRESS#feature,param=foo or SEND#sendstring";
+  String[] segments=bindingConfig.split("#");
+  if (segments.length != 2)   throw new BindingConfigParseException("invalid item format: " + bindingConfig + ", "+ shouldBe);
+  if (segments[0].equals("SEND")) {
+    String[] params=segments[1].split(",");
+    s_parseParameters(itemName,params,0,map);
+    return (segments);
+  }
+ else   if (ADMsgType.s_containsValidMsgType(segments[0])) {
+    return s_parseMsgConfigString(itemName,bindingConfig,map);
+  }
+  throw new BindingConfigParseException("invalid item format: " + bindingConfig + ", "+ shouldBe);
+}

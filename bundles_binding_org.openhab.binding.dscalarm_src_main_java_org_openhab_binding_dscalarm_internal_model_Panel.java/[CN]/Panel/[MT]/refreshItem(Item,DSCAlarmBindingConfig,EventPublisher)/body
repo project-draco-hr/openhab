@@ -1,0 +1,34 @@
+{
+  int state;
+  String str="";
+  logger.debug("refreshItem(): Panel Item Name: {}",item.getName());
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PANEL_CONNECTION:
+        state=panelProperties.getSystemConnection();
+      publisher.postUpdate(item.getName(),new DecimalType(state));
+    break;
+case PANEL_MESSAGE:
+  str=panelProperties.getSystemMessage();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_SYSTEM_ERROR:
+str=String.format("%03d",panelProperties.getSystemErrorCode()) + ": " + panelProperties.getSystemErrorDescription();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_TIME_DATE:
+str=panelProperties.getTimeDate();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_COMMAND:
+state=panelProperties.getSystemCommand();
+publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+default :
+logger.debug("refreshItem(): Panel item not updated.");
+break;
+}
+}
+}
+}
