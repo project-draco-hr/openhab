@@ -1,0 +1,9 @@
+{
+  String message="<?xml version=\"1.0\" encoding=\"utf-8\"?><envelope><api type=\"command\"><name>HandleChannelChange</name><major>" + major + "</major><minor>"+ minor+ "</minor><sourceIndex>"+ sourceindex+ "</sourceIndex>"+ "<physicalNum>"+ String.valueOf(phys)+ "</physicalNum>"+ "</api></envelope>";
+  String answer="#notpaired";
+  if (ispaired()) {
+    answer=sendtotv("POST","udap/api/command",message);
+    logger.debug("answer: " + answer);
+  }
+  return new String(answer);
+}

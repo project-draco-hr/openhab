@@ -1,0 +1,35 @@
+{
+  String res="#notpaired";
+  int val;
+  int pos=sval.indexOf(".");
+  if (pos > 0) {
+    String ns=sval.substring(0,pos);
+    val=Integer.parseInt(ns);
+  }
+ else   val=Integer.parseInt(sval);
+  if (ispaired()) {
+    res=getvolumeinfo(0);
+    String currentvol=quickfind(res,"level");
+    int cvol=Integer.parseInt(currentvol);
+    int todo=val - cvol;
+    logger.debug("currentvolume=" + cvol + " newvolume="+ val+ " todo="+ todo);
+    LgTvCommand volup=LgTvCommand.valueOf("VOLUME_UP");
+    LgTvCommand voldown=LgTvCommand.valueOf("VOLUME_DOWN");
+    String usecommand=todo > 0 ? volup.getLgSendCommand() : voldown.getLgSendCommand();
+    if (todo < 0)     todo=todo * -1;
+    for (int i=0; i < todo; i++) {
+      handlekeyinput(usecommand);
+    }
+    logger.debug("currentvolume=" + cvol + " newvolume="+ val+ " todo="+ todo+ " usecommand="+ usecommand);
+    if (todo != 0) {
+      res=getvolumeinfo(0);
+      currentvol=quickfind(res,"level");
+      if (associatedreader != null) {
+        String volume="VOLUME_CURRENT=" + val;
+        LgtvStatusUpdateEvent event=new LgtvStatusUpdateEvent(this);
+        associatedreader.sendtohandlers(event,lgip,volume);
+      }
+    }
+  }
+  return new String(res);
+}

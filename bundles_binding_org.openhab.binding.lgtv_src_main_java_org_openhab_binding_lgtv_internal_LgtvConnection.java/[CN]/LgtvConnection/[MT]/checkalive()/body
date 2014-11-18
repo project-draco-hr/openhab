@@ -1,0 +1,30 @@
+{
+  if (checkalive > 0 && connection != null) {
+    long millis=System.currentTimeMillis();
+    if (connection.getconnectionstatus() == LgTvInteractor.lgtvconnectionstatus.CS_PAIRED && connection.getlastsuccessfulinteraction() < (millis - checkalive * 1000)) {
+      String res=connection.getvolumeinfo(1);
+      String currentvol=quickfind(res,"level");
+      int cvol=Integer.parseInt(currentvol);
+      if (lastvolume != cvol && reader != null) {
+        String volume="VOLUME_CURRENT=" + cvol;
+        LgtvStatusUpdateEvent event=new LgtvStatusUpdateEvent(this);
+        reader.sendtohandlers(event,ip,volume);
+      }
+    }
+ else     if (connection.getconnectionstatus() == LgTvInteractor.lgtvconnectionstatus.CS_NOTCONNECTED) {
+      InetAddress inet;
+      try {
+        inet=InetAddress.getByName(ip);
+        if (inet.isReachable(5000)) {
+          logger.debug("checkalive host reachable");
+          connection.checkpairing();
+        }
+      }
+ catch (      UnknownHostException e) {
+        logger.error("checkalive - host name=" + ip + " is unknown");
+      }
+catch (      IOException e) {
+      }
+    }
+  }
+}

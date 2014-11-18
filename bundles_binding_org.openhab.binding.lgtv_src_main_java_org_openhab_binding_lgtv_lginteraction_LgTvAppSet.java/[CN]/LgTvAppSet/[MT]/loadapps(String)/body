@@ -1,0 +1,11 @@
+{
+  JAXBContext jc;
+  jc=JAXBContext.newInstance(envelope.class);
+  Unmarshaller unmarshaller=jc.createUnmarshaller();
+  int start=s.indexOf("<envelope>");
+  int stop=s.indexOf("</envelope>") + "</envelope>".length();
+  String t=s.substring(start,stop);
+  StringReader reader=new StringReader(t);
+  envel=null;
+  envel=(envelope)unmarshaller.unmarshal(reader);
+}
