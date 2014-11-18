@@ -214,13 +214,28 @@ records.add(record);
 }
 }
 record=new OpenHABConfigurationRecord(domain,"ManufacturerID","Manufacturer ID",true);
+if (node.getDeviceId() == Integer.MAX_VALUE) {
+record.value="UNKNOWN";
+}
+ else {
 record.value=Integer.toHexString(node.getManufacturer());
+}
 records.add(record);
-record=new OpenHABConfigurationRecord(domain,"DeviceId","Device ID",true);
+record=new OpenHABConfigurationRecord(domain,"DeviceID","Device ID",true);
+if (node.getDeviceId() == Integer.MAX_VALUE) {
+record.value="UNKNOWN";
+}
+ else {
 record.value=Integer.toHexString(node.getDeviceId());
+}
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"DeviceType","Device Type",true);
+if (node.getDeviceId() == Integer.MAX_VALUE) {
+record.value="UNKNOWN";
+}
+ else {
 record.value=Integer.toHexString(node.getDeviceType());
+}
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Version","Version",true);
 record.value=Integer.toString(node.getVersion());
@@ -234,10 +249,15 @@ records.add(record);
 record=new OpenHABConfigurationRecord(domain,"Power","Power",true);
 ZWaveBatteryCommandClass batteryCommandClass=(ZWaveBatteryCommandClass)node.getCommandClass(CommandClass.BATTERY);
 if (batteryCommandClass != null) {
-record.value="Battery " + batteryCommandClass.getBatteryLevel() + "%";
+if (batteryCommandClass.getBatteryLevel() == null) {
+record.value="BATTERY " + "UNKNOWN";
 }
  else {
-record.value="Mains";
+record.value="BATTERY " + batteryCommandClass.getBatteryLevel() + "%";
+}
+}
+ else {
+record.value="MAINS";
 }
 records.add(record);
 ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
