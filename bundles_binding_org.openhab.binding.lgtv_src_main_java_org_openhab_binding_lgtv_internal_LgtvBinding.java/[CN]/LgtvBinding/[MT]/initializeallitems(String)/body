@@ -1,0 +1,14 @@
+{
+  for (  LgtvBindingProvider provider : this.providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String initCmd=provider.getItemInitCommand(itemName);
+      if (initCmd != null) {
+        String[] commandParts=initCmd.split(":");
+        String deviceId=commandParts[0];
+        if (currentdeviceid == "" || deviceId.equals(currentdeviceid)) {
+          initializeItem(itemName);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing Samsung AC binding configuration => refresh cycle aborted!");
+    return;
+  }
+  if (nameHostMapper == null) {
+    logger.debug("Name host mapper not yet set. Aborted refresh");
+    return;
+  }
+  for (  Map.Entry<String,AirConditioner> entry : nameHostMapper.entrySet()) {
+    AirConditioner host=entry.getValue();
+    if (host.isConnected()) {
+      getAndUpdateStatusForAirConditioner(host);
+    }
+ else {
+      reconnectToAirConditioner(entry.getKey(),host);
+    }
+  }
+}

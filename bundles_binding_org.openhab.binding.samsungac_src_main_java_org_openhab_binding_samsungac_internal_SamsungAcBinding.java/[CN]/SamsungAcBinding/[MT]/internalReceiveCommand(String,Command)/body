@@ -1,0 +1,16 @@
+{
+  if (itemName != null && command != null) {
+    logger.debug("InternalReceiveCommand +'" + itemName + "':'"+ command+ "'");
+    String hostName=getAirConditionerInstance(itemName);
+    AirConditioner host=nameHostMapper.get(hostName);
+    if (host == null) {
+      return;
+    }
+    CommandEnum property=getProperty(itemName);
+    String cmd=getCmdStringFromEnumValue(command,property);
+    if (cmd != null) {
+      sendCommand(host,property,cmd);
+    }
+ else     logger.debug("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
+  }
+}

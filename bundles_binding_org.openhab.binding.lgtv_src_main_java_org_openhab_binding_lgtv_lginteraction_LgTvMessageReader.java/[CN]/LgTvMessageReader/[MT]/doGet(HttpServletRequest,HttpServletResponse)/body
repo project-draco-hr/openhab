@@ -1,0 +1,75 @@
+{
+  String remoteaddr=req.getRemoteAddr();
+  int start=remoteaddr.indexOf(":");
+  String t;
+  if (start > -1)   t=remoteaddr.substring(0,start);
+ else   t=remoteaddr;
+  remoteaddr=t;
+  start=remoteaddr.indexOf("/");
+  if (start > -1)   t=remoteaddr.substring(start + 1,remoteaddr.length());
+ else   t=remoteaddr;
+  remoteaddr=t;
+  PrintWriter out=res.getWriter();
+  res.setStatus(200);
+  String devicename=req.getParameter("devicename");
+  String value=req.getParameter("command");
+  if (value != null && !value.equals("")) {
+    res.setContentType("text/plain");
+    if (value.equals("geturl")) {
+      if (bindingprovider != null && itemregistry != null) {
+        for (        String itemName : bindingprovider.getItemNames()) {
+          HashMap<String,String> values=bindingprovider.getDeviceCommands(itemName);
+          for (          String cmd : values.keySet()) {
+            String[] commandParts=values.get(cmd).split(":");
+            String deviceCmd=commandParts[1];
+            String deviceId=commandParts[0];
+            if (deviceId.equals(devicename) && deviceCmd.equals("BROWSER_URL")) {
+              try {
+                Item i=itemregistry.getItem(itemName);
+                State state=i.getState();
+                String va=state.toString();
+                out.print(va);
+              }
+ catch (              ItemNotFoundException e) {
+                logger.error("item not found");
+              }
+            }
+          }
+        }
+      }
+ else       logger.error("itemregistry=null or bindingprovider=null");
+    }
+ else     out.println("command: " + value);
+  }
+ else {
+    String url=req.getRequestURL().toString();
+    res.setContentType("text/html");
+    out.println("<HTML>");
+    out.println("<HEAD>");
+    out.println("<TITLE>LgTv Binding</TITLE>");
+    out.println("<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js\"></script>");
+    out.println("<script type=\"text/javascript\">");
+    out.println("var serviceaddress;");
+    out.println("var oldpage;");
+    out.println("function CallRegular(){");
+    out.println("$.ajax({ type:\'Get\', url: serviceaddress, success:function(data) ");
+    out.println(" { ");
+    out.println("   if (data!=\"Uninitialized\"&&data!=oldpage) {document.getElementById(\'content1\').src=data;oldpage=data;} ");
+    out.println(" } })");
+    out.println("}");
+    out.println("function LoadPage(){");
+    out.println(" serviceaddress=\'" + url + "?command=geturl&devicename="+ devicename+ "\'");
+    out.println(" CallRegular(); ");
+    out.println(" setInterval(CallRegular,10000);");
+    out.println("}");
+    out.println(" </script>");
+    out.println("</HEAD>");
+    out.println("<frameset rows=\"100%,*\" onload=\"LoadPage();\">");
+    out.println("<frame src=\"#\" id=\"content1\">");
+    out.println("</frameset>");
+    out.println("<BODY>");
+    out.println("<BIG>Hello World</BIG>");
+    out.println("</BODY></HTML>");
+  }
+  out.close();
+}
