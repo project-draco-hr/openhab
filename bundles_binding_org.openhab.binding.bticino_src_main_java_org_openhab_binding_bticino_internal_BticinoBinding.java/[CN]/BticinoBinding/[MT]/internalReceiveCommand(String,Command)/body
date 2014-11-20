@@ -1,0 +1,12 @@
+{
+  super.internalReceiveCommand(itemName,command);
+  BticinoBindingConfig l_item_binding=getBticinoBindingConfigForItem(itemName);
+  String l_interface_id=l_item_binding.gatewayID;
+  if (m_bticino_devices.containsKey(l_interface_id)) {
+    BticinoDevice l_bticino_device=m_bticino_devices.get(l_interface_id);
+    l_bticino_device.receiveCommand(itemName,command,l_item_binding);
+  }
+ else {
+    logger.error("Item [" + itemName + "] uses Bticino interface with ID ["+ l_interface_id+ "] but this gateway doesn't exist : check items.cfg and openhab.cfg!");
+  }
+}
