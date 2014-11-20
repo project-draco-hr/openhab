@@ -1,0 +1,18 @@
+{
+  PilightBindingProvider pilightProvider=(PilightBindingProvider)provider;
+  final PilightBindingConfig config=pilightProvider.getBindingConfig(itemName);
+  if (config != null) {
+    PilightConnection connection=connections.get(config.getInstance());
+    if (connection.isConnected()) {
+      connection.getListener().refreshConfig(new IPilightConfigReceivedCallback(){
+        @Override public void configReceived(        PilightConnection connection){
+          State state=getStateFromConfig(connection.getConfig(),config.getLocation(),config.getDevice());
+          if (state != null) {
+            eventPublisher.postUpdate(itemName,state);
+          }
+        }
+      }
+);
+    }
+  }
+}

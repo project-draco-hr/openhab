@@ -1,0 +1,18 @@
+{
+  try {
+    Socket socket=new Socket(getHostname(),getPort());
+    Identification id=new Identification(Identification.CLIENT_GUI);
+    outputMapper.writeValue(socket.getOutputStream(),id);
+    Identification response=inputMapper.readValue(socket.getInputStream(),Identification.class);
+    if (response.getMessage().equals(Identification.ACCEPTED))     setSocket(socket);
+ else {
+      logger.error("pilight client not accepted: {}",response.getMessage());
+      return false;
+    }
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage(),e);
+    return false;
+  }
+  return true;
+}
