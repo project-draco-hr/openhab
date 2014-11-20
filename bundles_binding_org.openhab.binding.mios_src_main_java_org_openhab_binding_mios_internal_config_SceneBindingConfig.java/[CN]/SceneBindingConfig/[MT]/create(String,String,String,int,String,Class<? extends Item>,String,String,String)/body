@@ -1,5 +1,24 @@
 {
-  MiosBindingConfig c=new SceneBindingConfig(context,itemName,unitName,id,stuff,itemType,commandThing,inTransform,outTransform);
+  ParameterDefaults pd=paramDefaults.get(stuff);
+  if (pd != null) {
+    logger.trace("Scene ParameterDefaults FOUND '{}' for '{}', '{}'",itemName,stuff,pd);
+    if (commandTransform == null) {
+      commandTransform=pd.getCommandTransform();
+      logger.trace("Scene ParameterDefaults '{}' defaulted command: to '{}'",itemName,commandTransform);
+    }
+    if (inTransform == null) {
+      inTransform=pd.getInTransform();
+      logger.trace("Scene ParameterDefaults '{}' defaulted in: to '{}'",itemName,inTransform);
+    }
+    if (outTransform == null) {
+      outTransform=pd.getOutTransform();
+      logger.trace("Scene ParameterDefaults '{}' defaulted out: to '{}'",itemName,outTransform);
+    }
+  }
+ else {
+    logger.trace("Scene ParameterDefaults NOT FOUND '{}' for '{}'",itemName,stuff);
+  }
+  MiosBindingConfig c=new SceneBindingConfig(context,itemName,unitName,id,stuff,itemType,commandTransform,inTransform,outTransform);
   c.initialize();
   return c;
 }

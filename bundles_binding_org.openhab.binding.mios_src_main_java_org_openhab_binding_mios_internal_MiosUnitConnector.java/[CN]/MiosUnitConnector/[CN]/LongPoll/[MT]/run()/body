@@ -1,16 +1,20 @@
 {
-  int loopCount=0;
+  long loopCount=0;
   do {
     try {
       String uri=getUri(loopCount == 0);
       logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
-      loopCount=((loopCount + 1) % MAX_FULL_REFRESH_COUNT);
       Future<Response> f=getAsyncHttpClient().prepareGet(uri).execute();
       Response r=(Response)f.get();
       Map<String,Object> json=readJson(r.getResponseBody());
       if (json.containsKey("error"))       throw new IOException(json.get("error").toString());
       connected=true;
       processResponse(json);
+      int c=getMiosUnit().getRefreshCount();
+      loopCount=loopCount + 1;
+      if (c != 0) {
+        loopCount=(loopCount % c);
+      }
     }
  catch (    Exception e) {
       connected=false;
