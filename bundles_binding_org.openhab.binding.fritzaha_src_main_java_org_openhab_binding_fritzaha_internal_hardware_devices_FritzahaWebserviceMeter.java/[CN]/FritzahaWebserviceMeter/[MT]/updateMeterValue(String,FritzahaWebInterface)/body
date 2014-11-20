@@ -1,14 +1,22 @@
 {
   String valueType;
   if (type == MeterType.POWER) {
-    valueType="power";
+    valueType="getswitchpower";
   }
  else   if (type == MeterType.ENERGY) {
-    valueType="energy";
+    valueType="getswitchenergy";
+  }
+ else   if (type == MeterType.TEMPERATURE) {
+    valueType="getdevicelistinfos";
   }
  else   return;
   logger.debug("Getting " + valueType + " value for AIN "+ id);
   String path="webservices/homeautoswitch.lua";
-  String args="switchcmd=getswitch" + valueType + "&ain="+ id;
-  webIface.asyncGet(path,args,new FritzahaWebserviceUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+  String args="switchcmd=" + valueType + "&ain="+ id;
+  if (type.equals(MeterType.TEMPERATURE)) {
+    webIface.asyncGet(path,args,new FritzahaWebserviceUpdateXmlCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName,id));
+  }
+ else {
+    webIface.asyncGet(path,args,new FritzahaWebserviceUpdateNumberCallback(path,args,type,webIface,FritzahaReauthCallback.Method.GET,1,itemName));
+  }
 }
