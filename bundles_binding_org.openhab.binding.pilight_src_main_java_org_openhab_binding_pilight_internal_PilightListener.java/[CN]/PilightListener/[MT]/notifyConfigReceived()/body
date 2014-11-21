@@ -1,0 +1,8 @@
+{
+  logger.info("Config for pilight received");
+  updatingConfig=false;
+  lastConfigUpdate=new Date();
+  for (  IPilightConfigReceivedCallback callback : configReceivedCallbacks) {
+    callback.configReceived(connection);
+  }
+}

@@ -1,0 +1,30 @@
+{
+  this.ip=ip;
+  this.port=port;
+  this.checkalive=checkalive;
+  bundleContext=FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+  try {
+    connection=new LgTvInteractor(ip,port,localport,xmldf);
+    connection.setpairkey(pkey);
+  }
+ catch (  InterruptedException e) {
+    logger.error("cannot create Interactor",e);
+  }
+  if (localport != 0 && reader == null) {
+    reader=new LgTvMessageReader(localport);
+    HttpService h=null;
+    if (bundleContext != null) {
+      ServiceReference<?> serviceReference=bundleContext.getServiceReference(HttpService.class.getName());
+      if (serviceReference != null) {
+        h=(HttpService)bundleContext.getService(serviceReference);
+        reader.setHttpService(h);
+      }
+ else       logger.error("serviceRefeerence=null");
+    }
+ else     logger.error("bundleContext=null");
+  }
+  if (connection != null)   addEventListener(connection);
+  if (reader != null) {
+    connection.associatereader(reader);
+  }
+}

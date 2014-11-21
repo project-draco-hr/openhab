@@ -1,0 +1,5 @@
+{
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_VOLUME,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,"e2ismuted");
+  return content.toLowerCase().equals("True") ? OnOffType.ON.name() : OnOffType.OFF.name();
+}

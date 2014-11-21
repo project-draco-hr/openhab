@@ -1,6 +1,7 @@
 {
   State cmd=null;
-  if (event.getDataType() == DataType.TEMPERATURE) {
+switch (event.getDataType()) {
+case TEMPERATURE:
 switch (selector) {
 case MOTION:
       cmd=OnOffType.ON;
@@ -8,8 +9,8 @@ case MOTION:
 default :
   cmd=new DecimalType(dValue);
 }
-}
- else if (event.getDataType() == DataType.HUMIDITY) {
+break;
+case HUMIDITY:
 switch (selector) {
 case BATTERY_LEVEL:
 cmd=new DecimalType(dValue);
@@ -19,6 +20,14 @@ default :
 double val=Math.min(100,dValue);
 cmd=new PercentType((int)val);
 }
+break;
+case WINDAVERAGE:
+case WINDDIRECTION:
+case WINDGUST:
+cmd=new DecimalType(dValue);
+break;
+default :
+logger.warn("Event of type " + event.getDataType() + " does not have a mapping");
 }
 return cmd;
 }

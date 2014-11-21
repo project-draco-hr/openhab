@@ -1,0 +1,33 @@
+{
+  DeviceConfig deviceConfig=findDevice(ip);
+  if (deviceConfig != null) {
+    logger.debug("Received status update '{}' from ip {} for deviceId {}",data,ip,deviceConfig.deviceId);
+    if (data.startsWith("CONNECTION_STATUS=1")) {
+      initializeallitems(deviceConfig.deviceId);
+    }
+    String[] dataparts=data.split("=");
+    String cmdname=dataparts[0];
+    String cmdval=dataparts[1];
+    for (    LgtvBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        HashMap<String,String> values=provider.getDeviceCommands(itemName);
+        for (        String cmd : values.keySet()) {
+          String[] commandParts=values.get(cmd).split(":");
+          String deviceCmd=commandParts[1];
+          String deviceId=commandParts[0];
+          boolean match=false;
+          if (deviceCmd.equals(cmdname) && deviceId.equals(deviceConfig.deviceId)) {
+            match=true;
+          }
+          if (match) {
+            logger.debug("statusupdaterec match found itemname=" + itemName + " cmd="+ cmdname+ " deviceId="+ deviceConfig.deviceId+ " value="+ cmdval);
+            Class<? extends Item> itemType=provider.getItemType(itemName);
+            State v=convertDeviceValueToOpenHabState(itemType,cmdval);
+            eventPublisher.postUpdate(itemName,v);
+            match=false;
+          }
+        }
+      }
+    }
+  }
+}
