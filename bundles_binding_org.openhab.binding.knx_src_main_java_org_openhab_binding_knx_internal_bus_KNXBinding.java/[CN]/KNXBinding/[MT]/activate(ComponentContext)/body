@@ -1,6 +1,6 @@
 {
+  logger.info("Calimero library version {}",Settings.getLibraryVersion());
   logger.trace("KNXBinding: activating");
-  KNXConnection.addConnectionEstablishedListener(this);
-  initializer=new DatapointInitializer();
-  initializer.start();
+  KNXConnection.addConnectionListener(this);
+  mKNXBusReaderScheduler.start();
 }
