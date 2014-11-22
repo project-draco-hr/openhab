@@ -1,0 +1,9 @@
+{
+  String answer="#notpaired";
+  String message="<?xml version=\"1.0\" encoding=\"utf-8\"?><envelope><api type=\"command\"><name>HandleKeyInput</name><value>" + key + "</value></api></envelope>";
+  if (ispaired()) {
+    answer=sendtotv("POST","udap/api/command",message);
+    logger.debug("answer: " + answer);
+  }
+  return new String(answer);
+}

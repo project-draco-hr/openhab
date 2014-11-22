@@ -25,7 +25,12 @@
     config.setUsageSelector(TellstickValueSelector.getValueSelector(configParts[2].trim()));
   }
   if (configParts.length > 3) {
-    config.setResend(Integer.parseInt(configParts[3]));
+    if (isIntegerRegex(configParts[3])) {
+      config.setResend(Integer.parseInt(configParts[3]));
+    }
+ else {
+      config.setProtocol(configParts[3]);
+    }
   }
   logger.debug("Context:" + context + " Item "+ item+ " Conf:"+ config);
   addBindingConfig(item,config);

@@ -1,0 +1,16 @@
+{
+  long delayBetweenUpdates=connection.getDelay();
+  if (connection.getLastUpdate() != null) {
+    long diff=new Date().getTime() - connection.getLastUpdate().getTime();
+    if (diff < delayBetweenUpdates) {
+      long delay=delayBetweenUpdates - diff;
+      try {
+        Thread.sleep(delay);
+      }
+ catch (      InterruptedException e) {
+        logger.error("Error while processing pilight throttling delay");
+      }
+    }
+  }
+  doUpdateCall(update,connection);
+}

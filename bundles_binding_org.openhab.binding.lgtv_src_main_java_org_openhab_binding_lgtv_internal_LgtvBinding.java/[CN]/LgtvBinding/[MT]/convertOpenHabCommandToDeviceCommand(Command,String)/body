@@ -1,0 +1,16 @@
+{
+  String deviceCmd=null;
+  if (command instanceof OnOffType) {
+    deviceCmd=String.format(cmdTemplate,command == OnOffType.ON ? 1 : 0);
+  }
+ else   if (command instanceof StringType) {
+    deviceCmd=String.format(cmdTemplate,command);
+  }
+ else   if (command instanceof DecimalType) {
+    deviceCmd=String.format(cmdTemplate,((DecimalType)command).intValue());
+  }
+ else   if (command instanceof PercentType) {
+    deviceCmd=String.format(cmdTemplate,((DecimalType)command).intValue());
+  }
+  return deviceCmd;
+}
