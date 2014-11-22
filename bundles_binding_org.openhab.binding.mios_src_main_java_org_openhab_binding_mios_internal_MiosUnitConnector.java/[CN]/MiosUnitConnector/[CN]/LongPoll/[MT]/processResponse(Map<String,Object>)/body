@@ -1,0 +1,25 @@
+{
+  Integer lt=(Integer)response.get("LoadTime");
+  Integer dv=(Integer)response.get("DataVersion");
+  if (lt != null && dv != null) {
+    connected=true;
+    List<Object> devices=getList(response,"devices");
+    List<Object> scenes=getList(response,"scenes");
+    List<Object> rooms=getList(response,"rooms");
+    List<Object> sections=getList(response,"sections");
+    logger.debug("processResponse: success! loadTime={}, dataVersion={} devices({}) scenes({}) rooms({}) sections({})",new Object[]{lt,dv,Integer.toString(devices.size()),Integer.toString(scenes.size()),Integer.toString(rooms.size()),Integer.toString(sections.size())});
+    processDevices(devices);
+    processScenes(scenes);
+    processRooms(rooms);
+    processSections(sections);
+    processSystem(response);
+    this.loadTime=lt;
+    this.dataVersion=dv;
+    this.failures=0;
+  }
+ else {
+    connected=false;
+    this.failures++;
+    logger.debug("processResponse: failed!  Total failures ({})",Integer.toString(failures));
+  }
+}
