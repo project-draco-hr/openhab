@@ -1,8 +1,10 @@
 {
   try {
     ArrayList<FeatureTemplate> features=FeatureTemplateLoader.s_readTemplates(input);
-    for (    FeatureTemplate f : features) {
-      s_features.put(f.getName(),f);
+synchronized (s_features) {
+      for (      FeatureTemplate f : features) {
+        s_features.put(f.getName(),f);
+      }
     }
   }
  catch (  IOException e) {
