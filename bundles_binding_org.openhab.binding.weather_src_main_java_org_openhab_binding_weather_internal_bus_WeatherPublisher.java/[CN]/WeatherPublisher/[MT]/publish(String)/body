@@ -1,0 +1,40 @@
+{
+  final Weather weather=context.getWeather(locationId);
+  if (weather != null) {
+    new ItemIterator().iterate(new ItemIteratorCallback(){
+      @Override public void next(      WeatherBindingConfig bindingConfig,      String itemName){
+        if (bindingConfig.getLocationId().equals(locationId)) {
+          try {
+            Weather instance=getInstance(weather,bindingConfig);
+            if (instance != null) {
+              String weatherProperty=bindingConfig.getWeatherProperty();
+              Object value=null;
+              if (Weather.isVirtualProperty(weatherProperty)) {
+                Temperature temp=instance.getTemperature();
+                if (Weather.VIRTUAL_TEMP_MINMAX.equals(weatherProperty)) {
+                  Double min=UnitUtils.convertUnit(temp.getMin(),bindingConfig);
+                  Double max=UnitUtils.convertUnit(temp.getMax(),bindingConfig);
+                  value=getMinMax(min,max,bindingConfig);
+                }
+              }
+ else {
+                value=PropertyUtils.getPropertyValue(instance,weatherProperty);
+                if (bindingConfig.hasUnit()) {
+                  value=UnitUtils.convertUnit((Double)value,bindingConfig);
+                }
+              }
+              if (!equalsCachedValue(value,itemName)) {
+                publishValue(itemName,value,bindingConfig);
+                itemCache.put(itemName,value);
+              }
+            }
+          }
+ catch (          Exception ex) {
+            logger.warn(ex.getMessage(),ex);
+          }
+        }
+      }
+    }
+);
+  }
+}
