@@ -4,10 +4,12 @@
 switch (this.getVersion()) {
 case 1:
     for (    ZWaveCommandClass commandClass : this.getNode().getCommandClasses()) {
-      if (commandClass.getCommandClass() == CommandClass.NO_OPERATION) {
+      if (singleInstanceClasses.contains(commandClass.getCommandClass())) {
+        commandClass.setInstances(1);
+        logger.debug("NODE {}: ENDPOINTS - skipping {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString());
         continue;
       }
-      logger.debug("NODE {}: ENDPOINTS - checking {}, Instances {}",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel(),commandClass.getInstances());
+      logger.debug("NODE {}: ENDPOINTS - checking {}, Instances {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString(),commandClass.getInstances());
       if (commandClass.getInstances() == 0) {
         logger.debug("NODE {}: ENDPOINTS - found    {}",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel());
         result.add(getMultiInstanceGetMessage(commandClass.getCommandClass()));
@@ -27,7 +29,7 @@ if (refresh == true || this.endpoints.size() == 0) {
 }
 break;
 default :
-logger.warn(String.format("NODE %d: Unknown version %d for command class %s (0x%02x)",this.getNode().getNodeId(),this.getVersion(),this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+logger.warn(String.format("NODE %d: Unknown version %d for command class %s (0x%02x)",this.getNode().getNodeId(),this.getVersion(),this.getCommandClass().toString(),this.getCommandClass().getKey()));
 break;
 }
 return result;
