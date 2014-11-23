@@ -1,0 +1,18 @@
+{
+  if (KNXConnection.sShutdown) {
+    return;
+  }
+  List<Datapoint> dpList=null;
+synchronized (mScheduleMap) {
+    dpList=mScheduleMap.get(autoRefreshTimeInSecs);
+    if (dpList == null) {
+      sLogger.debug("Autorefresh: List {} was deleted. Terminating thread.",autoRefreshTimeInSecs);
+    }
+ else {
+      sLogger.debug("Autorefresh: Adding {} item(s) with refresh time {} to reader queue.",dpList.size(),autoRefreshTimeInSecs);
+synchronized (dpList) {
+        mReadQueue.addAll(dpList);
+      }
+    }
+  }
+}

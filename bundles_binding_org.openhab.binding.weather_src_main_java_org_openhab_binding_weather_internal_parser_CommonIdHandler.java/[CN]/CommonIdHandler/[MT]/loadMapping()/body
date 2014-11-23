@@ -1,0 +1,16 @@
+{
+  Unmarshaller um=JAXBContext.newInstance(CommonIdList.class).createUnmarshaller();
+  InputStream stream=Thread.currentThread().getContextClassLoader().getResourceAsStream("weather/common-id-mappings.xml");
+  CommonIdList mappings=(CommonIdList)um.unmarshal(stream);
+  for (  CommonId commonId : mappings.getCommonIds()) {
+    for (    CommonIdProvider commonIdProvider : commonId.getProviders()) {
+      Map<String,CommonId> commonIds=providerCommonIds.get(commonIdProvider.getName());
+      if (commonIds == null) {
+        commonIds=new HashMap<String,CommonId>();
+        providerCommonIds.put(commonIdProvider.getName(),commonIds);
+      }
+      addCommonId(commonIdProvider.getIds(),"id",commonIdProvider,commonIds,commonId);
+      addCommonId(commonIdProvider.getIcons(),"icon",commonIdProvider,commonIds,commonId);
+    }
+  }
+}

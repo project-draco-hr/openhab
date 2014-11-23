@@ -1,0 +1,39 @@
+{
+  super.execute(status,response);
+  if (validRequest) {
+    logger.trace("Received State response " + response + " for item "+ itemName);
+    try {
+      JAXBContext jaxbContext=JAXBContext.newInstance(DevicelistModel.class);
+      Unmarshaller jaxbUM=jaxbContext.createUnmarshaller();
+      DevicelistModel model=(DevicelistModel)jaxbUM.unmarshal(new StringReader(response));
+      ArrayList<DeviceModel> list=model.getDevicelist();
+      for (      DeviceModel device : list) {
+        if (device.getIdentifier().equals(this.deviceAin)) {
+          BigDecimal meterValueScaled=new BigDecimal(0);
+switch (type) {
+case POWER:
+            meterValueScaled=device.getPowermeter().getPower().scaleByPowerOfTen(-3);
+          break;
+case ENERGY:
+        meterValueScaled=device.getPowermeter().getEnergy();
+      break;
+case TEMPERATURE:
+    meterValueScaled=device.getTemperature().getCelsius().scaleByPowerOfTen(-1);
+  break;
+default :
+logger.warn("unknown meter type: " + type);
+break;
+}
+logger.debug(device.toString());
+webIface.postUpdate(itemName,new DecimalType(meterValueScaled));
+}
+ else {
+logger.trace("device " + device.getIdentifier() + " was not requested");
+}
+}
+}
+ catch (JAXBException e) {
+logger.error(e.getLocalizedMessage(),e);
+}
+}
+}

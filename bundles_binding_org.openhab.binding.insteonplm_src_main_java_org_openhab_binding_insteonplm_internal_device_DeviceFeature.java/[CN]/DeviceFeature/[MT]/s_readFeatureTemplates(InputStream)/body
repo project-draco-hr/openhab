@@ -1,0 +1,16 @@
+{
+  try {
+    ArrayList<FeatureTemplate> features=FeatureTemplateLoader.s_readTemplates(input);
+synchronized (s_features) {
+      for (      FeatureTemplate f : features) {
+        s_features.put(f.getName(),f);
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.error("IOException while reading device features",e);
+  }
+catch (  ParsingException e) {
+    logger.error("Parsing exception while reading device features",e);
+  }
+}

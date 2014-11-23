@@ -1,0 +1,5 @@
+{
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_POWERSTATE,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,"e2instandby");
+  return content.equals("true") ? OnOffType.OFF.name() : OnOffType.ON.name();
+}

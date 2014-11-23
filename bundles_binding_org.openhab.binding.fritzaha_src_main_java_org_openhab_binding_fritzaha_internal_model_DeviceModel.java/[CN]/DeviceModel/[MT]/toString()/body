@@ -1,0 +1,35 @@
+{
+  StringBuilder out=new StringBuilder("device");
+  out.append("(ain=").append(this.getIdentifier());
+  out.append(",bitmask=").append(this.bitmask).append('(');
+  StringBuilder types=new StringBuilder();
+  if (this.isDectRepeater()) {
+    types.append("DECT Repeater");
+  }
+  if (this.isPowermeter()) {
+    if (!types.toString().isEmpty()) {
+      types.append(", ");
+    }
+    types.append("Powermeter");
+  }
+  if (this.isSwitchableOutlet()) {
+    if (!types.toString().isEmpty()) {
+      types.append(", ");
+    }
+    types.append("SwitchableOutlet");
+  }
+  if (this.isTempSensor()) {
+    if (!types.toString().isEmpty()) {
+      types.append(", ");
+    }
+    types.append("TemperatureSensor");
+  }
+  out.append(types.toString());
+  out.append("), id=").append(this.deviceId);
+  out.append(", manufacturer=").append(this.deviceManufacturer);
+  out.append(", productname=").append(this.productName);
+  out.append(", fwversion=").append(this.firmwareVersion);
+  out.append(") [").append(this.getPowermeter()).append(',');
+  out.append(this.getTemperature()).append(']');
+  return out.toString();
+}
