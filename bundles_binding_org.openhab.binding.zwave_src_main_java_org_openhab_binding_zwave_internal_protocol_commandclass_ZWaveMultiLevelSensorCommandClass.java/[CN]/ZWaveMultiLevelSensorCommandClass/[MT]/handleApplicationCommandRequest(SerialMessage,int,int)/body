@@ -23,8 +23,7 @@ logger.debug("NODE {}: Added sensor type {} ({})",this.getNode().getNodeId(),sen
 initialiseDone=true;
 break;
 case SENSOR_MULTI_LEVEL_REPORT:
-logger.trace("Process Multi Level Sensor Report");
-logger.debug("NODE {}: Sensor Multi Level report received",this.getNode().getNodeId());
+logger.debug("NODE {}: Sensor Multi Level REPORT received",this.getNode().getNodeId());
 int sensorTypeCode=serialMessage.getMessagePayloadByte(offset + 1);
 int sensorScale=(serialMessage.getMessagePayloadByte(offset + 2) >> 3) & 0x03;
 logger.debug("NODE {}: Sensor Type = ({}), Scale = {}",this.getNode().getNodeId(),sensorTypeCode,sensorScale);
@@ -39,9 +38,10 @@ sensor=new Sensor(sensorType);
 this.sensors.put(sensorType,sensor);
 }
 sensor.setInitialised();
+dynamicDone=true;
 try {
 BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
-logger.debug(String.format("NODE %d: Sensor Value = (%f)",this.getNode().getNodeId(),value));
+logger.debug("NODE %d: Sensor Value = ({})",this.getNode().getNodeId(),value);
 ZWaveMultiLevelSensorValueEvent zEvent=new ZWaveMultiLevelSensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,sensorScale,value);
 this.getController().notifyEventListeners(zEvent);
 }
