@@ -1,13 +1,7 @@
 {
   double value=command.doubleValue();
-  if (value == 0 && dev instanceof DeviceIntf) {
-    ((DeviceIntf)dev).off();
-  }
- else   if (value == 100 && dev instanceof DeviceIntf) {
-    ((DeviceIntf)dev).on();
-  }
- else   if (dev instanceof DimmableDeviceIntf) {
-    long tdVal=Math.round((value / 100) * 255);
+  double tdVal=(value / 100) * 255;
+  if (dev instanceof DimmableDeviceIntf) {
     ((DimmableDeviceIntf)dev).dim((int)tdVal);
   }
  else {
