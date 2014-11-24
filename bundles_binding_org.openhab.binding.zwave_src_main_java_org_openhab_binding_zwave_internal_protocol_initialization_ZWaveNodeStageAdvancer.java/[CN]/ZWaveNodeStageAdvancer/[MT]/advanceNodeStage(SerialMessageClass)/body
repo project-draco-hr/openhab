@@ -193,7 +193,7 @@ default :
 logger.error("NODE {}: Node advancer: Unknown node state {} encountered.",node.getNodeId(),node.getNodeStage().toString());
 break;
 }
-if (sendMessage() == false) {
+if (currentStage != NodeStage.DONE && sendMessage() == false) {
 currentStage=currentStage.getNextStage();
 stageAdvanced=true;
 logger.debug("NODE {}: Node advancer - advancing to {}.",node.getNodeId(),currentStage.toString());
