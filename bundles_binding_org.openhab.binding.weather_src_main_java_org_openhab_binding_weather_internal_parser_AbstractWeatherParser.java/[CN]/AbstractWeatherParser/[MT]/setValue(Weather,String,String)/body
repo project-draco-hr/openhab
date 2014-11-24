@@ -1,0 +1,23 @@
+{
+  ProviderMappingInfo providerMappingInfo=metadataHandler.getProviderMappingInfo(weather.getProvider(),propertyName);
+  if (providerMappingInfo != null) {
+    logger.trace("Setting property '{} ({})' with value '{}'",providerMappingInfo.getTarget(),propertyName,value);
+    try {
+      String targetProperty=providerMappingInfo.getTarget();
+      Object target=PropertyUtils.getNestedObject(weather,targetProperty);
+      String objectProperty=PropertyResolver.last(targetProperty);
+      String preparedValue=stripEmptyValues(value);
+      Converter<?> converter=providerMappingInfo.getConverter();
+      Object valueToSet=preparedValue == null ? null : converter.convert(preparedValue);
+      if (valueToSet != null) {
+        FieldUtils.writeField(target,objectProperty,valueToSet,true);
+      }
+    }
+ catch (    Exception ex) {
+      logger.warn("{}: Error setting property '{}' with value '{}' and converter {}",weather.getProvider(),propertyName,value,providerMappingInfo.getConverter().getType());
+    }
+  }
+ else {
+    logger.trace("Property not mapped: '{}' with value '{}'",propertyName,value);
+  }
+}

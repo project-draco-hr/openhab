@@ -1,0 +1,20 @@
+{
+  String provider=PropertyResolver.last(key);
+  ProviderName providerName=getProviderName(provider);
+  ProviderConfig pConfig=providerConfigs.get(providerName);
+  if (pConfig == null) {
+    pConfig=new ProviderConfig();
+    pConfig.setProviderName(providerName);
+    providerConfigs.put(providerName,pConfig);
+  }
+  String keyId=PropertyResolver.first(key);
+  if (StringUtils.equalsIgnoreCase(keyId,"apikey")) {
+    pConfig.setApiKey(value);
+  }
+ else   if (StringUtils.equalsIgnoreCase(keyId,"apikey2")) {
+    pConfig.setApiKey2(value);
+  }
+ else {
+    throw new ConfigurationException("weather","Unknown configuration key '" + key + "', please check your openhab.cfg!");
+  }
+}
