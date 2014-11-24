@@ -41,13 +41,17 @@
       commandString=cmd.getCommandString();
     }
     if (commandString != null) {
-      Socket socket=null;
       try {
-        socket=new Socket(ip,port);
-        DataOutputStream stream=new DataOutputStream(socket.getOutputStream());
-        byte[] b=commandString.getBytes();
-        stream.write(b);
-        socket.close();
+        if (socket == null) {
+          this.socketConnect();
+        }
+        writer.write(commandString);
+        logger.debug(commandString);
+        writer.flush();
+        if (!exclusive) {
+          socket.close();
+          socket=null;
+        }
       }
  catch (      UnknownHostException e) {
         logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);

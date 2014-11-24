@@ -1,0 +1,9 @@
+{
+  String message="";
+  message="<?xml version=\"1.0\" encoding=\"utf-8\"?><envelope><api type=\"pairing\"><name>showKey</name></api></envelope>";
+  String answer=sendtotv("POST","udap/api/pairing",message);
+  logger.debug("answer: " + answer);
+  if (answer.startsWith("200"))   setconnectionstatus(lgtvconnectionstatus.CS_WAITFORPAIRKEY);
+ else   setconnectionstatus(lgtvconnectionstatus.CS_NOTCONNECTED);
+  return new String(answer);
+}

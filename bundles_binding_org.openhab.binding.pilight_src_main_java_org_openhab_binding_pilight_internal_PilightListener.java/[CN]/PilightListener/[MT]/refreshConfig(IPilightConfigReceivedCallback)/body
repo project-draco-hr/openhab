@@ -1,0 +1,13 @@
+{
+  try {
+    if (lastConfigUpdate == null || (new Date().getTime() - lastConfigUpdate.getTime()) > CONFIG_VALID_TIME) {
+      configAction(ConfigModifyAction.AddListener,callback);
+    }
+ else {
+      callback.configReceived(connection);
+    }
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}

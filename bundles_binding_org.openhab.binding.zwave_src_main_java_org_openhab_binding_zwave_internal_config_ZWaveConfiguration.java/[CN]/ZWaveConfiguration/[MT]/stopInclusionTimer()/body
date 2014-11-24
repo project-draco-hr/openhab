@@ -1,0 +1,18 @@
+{
+  logger.debug("Stopping inclusion timer.");
+  if (inclusion) {
+    zController.requestAddNodesStop();
+  }
+ else   if (exclusion) {
+    zController.requestRemoveNodesStop();
+  }
+ else {
+    logger.error("Neither inclusion nor exclusion was active!");
+  }
+  inclusion=false;
+  exclusion=false;
+  if (timerTask != null) {
+    timerTask.cancel();
+    timerTask=null;
+  }
+}

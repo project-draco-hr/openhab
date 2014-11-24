@@ -1,0 +1,9 @@
+{
+  String message="<?xml version=\"1.0\" encoding=\"utf-8\"?><envelope><api type=\"command\"><name>AppTerminate</name><auid>" + id + "</auid><appname>"+ appname+ "</appname></api></envelope>";
+  String answer="#notpaired";
+  if (ispaired()) {
+    answer=sendtotv("POST","udap/api/command",message);
+    logger.debug("answer: " + answer);
+  }
+  return new String(answer);
+}

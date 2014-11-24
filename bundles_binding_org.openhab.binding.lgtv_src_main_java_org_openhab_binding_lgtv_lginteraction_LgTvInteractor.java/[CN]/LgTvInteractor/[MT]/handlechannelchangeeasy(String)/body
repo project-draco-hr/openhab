@@ -1,0 +1,33 @@
+{
+  String minor="";
+  String sourceindex="";
+  String c=major;
+  int phys=-1;
+  String res="#error";
+  int pos=major.indexOf(".");
+  if (pos > 0) {
+    String ns=major.substring(0,pos);
+    c=ns;
+  }
+  LgTvChannelSet.envelope env=null;
+  if (channelset == null) {
+    logger.error("channelset=null");
+  }
+ else {
+    env=channelset.getenvel();
+  }
+  if (env == null)   logger.error("envelope=null maybe not connected");
+ else {
+    onechannel e=channelset.getenvel().find(Integer.parseInt(c));
+    if (e != null) {
+      minor=String.valueOf(e.getminor());
+      phys=e.getphysicalnum();
+      sourceindex=String.valueOf(e.getsourceindex());
+      res=handlechannelchange(c,minor,sourceindex,phys);
+    }
+ else {
+      minor="";
+    }
+  }
+  return new String(res);
+}
