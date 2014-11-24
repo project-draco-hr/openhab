@@ -1,0 +1,22 @@
+{
+  Item item=itemUIRegistry.getItem(token.itemName);
+  if (SUFFIX_ITEM_VALUE.equals(token.itemSuffix)) {
+    return item.getState().toString();
+  }
+  Widget w=SitemapFactory.eINSTANCE.createText();
+  w.setLabel(itemUIRegistry.getLabel(token.itemName));
+  w.setItem(token.itemName);
+  String label=itemUIRegistry.getLabel(w);
+  if (SUFFIX_ITEM_STATE.equals(token.itemSuffix)) {
+    return StringUtils.substringBetween(label,"[","]");
+  }
+ else   if (SUFFIX_ITEM_FULL.equals(token.itemSuffix)) {
+    return StringUtils.remove(StringUtils.remove(label,"["),"]");
+  }
+ else   if (SUFFIX_ITEM_LABEL.equals(token.itemSuffix)) {
+    return StringUtils.substringBefore(label,"[");
+  }
+ else {
+    throw new RuntimeException("Invalid weather token: " + token.itemName);
+  }
+}

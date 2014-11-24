@@ -1,0 +1,15 @@
+{
+  String name=getOutTransformName();
+  if (name == null || name.equals("")) {
+    return null;
+  }
+  if (outTransformationService != null) {
+    return outTransformationService;
+  }
+  BundleContext context=MiosActivator.getContext();
+  outTransformationService=TransformationHelper.getTransformationService(context,name);
+  if (outTransformationService == null) {
+    logger.warn("Transformation Service (out) '{}' not found for declaration '{}'.",name,getOutTransform());
+  }
+  return outTransformationService;
+}
