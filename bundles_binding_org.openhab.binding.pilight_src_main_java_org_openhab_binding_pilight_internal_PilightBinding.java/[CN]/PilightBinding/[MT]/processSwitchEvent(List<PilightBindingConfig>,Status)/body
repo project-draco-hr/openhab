@@ -1,0 +1,15 @@
+{
+  String type=status.getType();
+  State state=OnOffType.valueOf(status.getValues().get("state").toUpperCase());
+  if (type.equals(DeviceType.SWITCH)) {
+  }
+ else   if (type.equals(DeviceType.DIMMER)) {
+    BigDecimal dimLevel=BigDecimal.ZERO;
+    if (status.getValues().get("dimlevel") != null)     dimLevel=getPercentageFromDimLevel(status.getValues().get("dimlevel"));
+ else {
+      dimLevel=state.equals(OnOffType.ON) ? new BigDecimal("100") : BigDecimal.ZERO;
+    }
+    state=new PercentType(dimLevel);
+  }
+  for (  PilightBindingConfig config : configs)   eventPublisher.postUpdate(config.getItemName(),state);
+}

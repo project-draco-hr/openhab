@@ -1,24 +1,18 @@
 {
   String type=status.getType();
-  if (type.equals(Status.SWITCH_EVENT) || type.equals(Status.DIMMER_EVENT)) {
+  if (!type.equals(DeviceType.SERVER)) {
     Entry<String,List<String>> objectInfo=status.getDevices().entrySet().iterator().next();
     String instance=connection.getInstance();
     String location=objectInfo.getKey();
     String device=objectInfo.getValue().get(0);
-    PilightBindingConfig config=getConfig(instance,location,device);
-    if (config != null) {
-      State state=OnOffType.valueOf(status.getValues().get("state").toUpperCase());
-      if (type.equals(Status.SWITCH_EVENT)) {
+    List<PilightBindingConfig> configs=getConfig(instance,location,device);
+    if (!configs.isEmpty()) {
+      if (type.equals(DeviceType.SWITCH) || type.equals(DeviceType.DIMMER)) {
+        processSwitchEvent(configs,status);
       }
- else       if (type.equals(Status.DIMMER_EVENT)) {
-        BigDecimal dimLevel=BigDecimal.ZERO;
-        if (status.getValues().get("dimlevel") != null)         dimLevel=getPercentageFromDimLevel(status.getValues().get("dimlevel"));
- else {
-          dimLevel=state.equals(OnOffType.ON) ? new BigDecimal("100") : BigDecimal.ZERO;
-        }
-        state=new PercentType(dimLevel);
+ else       if (type.equals(DeviceType.VALUE)) {
+        processValueEvent(configs,status);
       }
-      eventPublisher.postUpdate(config.getItemName(),state);
     }
   }
 }

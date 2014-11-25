@@ -1,7 +1,7 @@
 {
   for (  PilightBindingProvider provider : providers) {
-    PilightBindingConfig config=provider.getBindingConfig(instance,location,device);
-    if (config != null)     return config;
+    List<PilightBindingConfig> configs=provider.getBindingConfig(instance,location,device);
+    if (!configs.isEmpty())     return configs;
   }
-  return null;
+  return new ArrayList<PilightBindingConfig>();
 }

@@ -1,0 +1,26 @@
+{
+  Location loc=pilightConfig.getConfig().get(bindingConfig.getLocation());
+  if (loc != null) {
+    Device dev=loc.getDevices().get(bindingConfig.getDevice());
+    if (dev != null) {
+      String devType=dev.getType().toString();
+      if (devType.equals(DeviceType.SWITCH) || devType.equals(DeviceType.DIMMER)) {
+        OnOffType state=OnOffType.valueOf(dev.getState().toUpperCase());
+        if (dev.getDimlevel() != null && dev.getDimlevel() > 0) {
+          if (state.equals(OnOffType.ON))           return new PercentType(getPercentageFromDimLevel(dev.getDimlevel().toString()));
+ else           return new PercentType(0);
+        }
+        return state;
+      }
+ else       if (devType.equals(DeviceType.VALUE)) {
+        bindingConfig.setDecimals(dev.getDeviceDecimals());
+        String property=bindingConfig.getProperty();
+        if (dev.getProperties().containsKey(property)) {
+          String value=dev.getProperties().get(property);
+          return getStateFromProperty(value,bindingConfig);
+        }
+      }
+    }
+  }
+  return null;
+}

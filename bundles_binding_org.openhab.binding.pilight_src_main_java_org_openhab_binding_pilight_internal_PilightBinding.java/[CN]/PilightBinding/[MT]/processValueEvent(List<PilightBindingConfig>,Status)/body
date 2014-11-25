@@ -1,0 +1,10 @@
+{
+  for (  PilightBindingConfig config : configs) {
+    String property=config.getProperty();
+    if (status.getValues().containsKey(property)) {
+      String value=status.getValues().get(property);
+      State state=getStateFromProperty(value,config);
+      eventPublisher.postUpdate(config.getItemName(),state);
+    }
+  }
+}
