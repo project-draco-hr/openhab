@@ -1,0 +1,27 @@
+{
+  try {
+    Token token=parseTokenName(tokenName);
+    if (PREFIX_TOKEN_WEATHER.equals(token.prefix)) {
+      return replaceWeather(token,weather);
+    }
+ else     if (PREFIX_TOKEN_FORECAST.equals(token.prefix)) {
+      return replaceForecast(token);
+    }
+ else     if (PREFIX_TOKEN_ITEM.equals(token.prefix)) {
+      return replaceItem(token);
+    }
+ else     if (PREFIX_TOKEN_CONFIG.equals(token.prefix)) {
+      return replaceConfig(token);
+    }
+ else     if (PREFIX_TOKEN_PARAM.equals(token.prefix)) {
+      return replaceParameter(token);
+    }
+ else {
+      throw new RuntimeException("Invalid weather token: " + tokenName);
+    }
+  }
+ catch (  Exception ex) {
+    logger.error(ex.getMessage(),ex);
+    return null;
+  }
+}

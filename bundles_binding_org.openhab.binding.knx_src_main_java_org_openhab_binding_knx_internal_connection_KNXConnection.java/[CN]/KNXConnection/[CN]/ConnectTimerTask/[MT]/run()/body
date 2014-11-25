@@ -1,0 +1,15 @@
+{
+  if (sShutdown) {
+    timer.cancel();
+  }
+ else {
+    sLogger.info("Trying to (re-)connect to KNX...");
+    if (connect()) {
+      sLogger.info("Connected to KNX");
+      timer.cancel();
+    }
+ else {
+      sLogger.info("KNX link will be retried in {} seconds",sAutoReconnectPeriod);
+    }
+  }
+}

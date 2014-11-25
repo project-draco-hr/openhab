@@ -1,0 +1,38 @@
+{
+  try {
+    logger.debug("internalReceiveCommand: itemName '{}', command '{}'",itemName,command);
+    String unitName=getMiosUnitName(itemName);
+    MiosUnitConnector connector=getMiosConnector(unitName);
+    if (connector == null) {
+      logger.warn("Received command ({}) for item '{}' but no connector found for MiOS Unit '{}', ignoring",new Object[]{command.toString(),itemName,unitName});
+      return;
+    }
+    if (!connector.isConnected()) {
+      logger.warn("Received command ({}) for item '{}' but the connection to the MiOS Unit '{}' is down, ignoring",new Object[]{command.toString(),itemName,unitName});
+      return;
+    }
+    for (    BindingProvider provider : providers) {
+      if (provider instanceof MiosBindingProvider) {
+        MiosBindingProviderImpl miosProvider=(MiosBindingProviderImpl)provider;
+        MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
+        if (config != null) {
+          ItemRegistry reg=miosProvider.getItemRegistry();
+          if (reg != null) {
+            Item item=reg.getItem(config.getItemName());
+            State state=item.getState();
+            connector.invokeCommand(config,command,state);
+          }
+ else {
+            logger.warn("internalReceiveCommand: Missing ItemRegistry for item '{}' command '{}'",itemName,command);
+          }
+        }
+ else {
+          logger.trace("internalReceiveCommand: Missing BindingConfig for item '{}' command '{}'",itemName,command);
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error handling command",e);
+  }
+}

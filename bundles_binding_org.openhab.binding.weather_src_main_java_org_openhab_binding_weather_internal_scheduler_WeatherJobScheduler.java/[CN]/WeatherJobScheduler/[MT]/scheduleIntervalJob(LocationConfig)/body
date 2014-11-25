@@ -1,0 +1,15 @@
+{
+  String jobName="weatherJob-" + locationConfig.getLocationId();
+  int interval=locationConfig.getUpdateInterval() * 60;
+  JobDataMap jobDataMap=new JobDataMap();
+  jobDataMap.put("locationId",locationConfig.getLocationId());
+  try {
+    Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(interval)).build();
+    JobDetail jobDetail=newJob(WeatherJob.class).withIdentity(jobName,JOB_GROUP).usingJobData(jobDataMap).build();
+    scheduler.scheduleJob(jobDetail,trigger);
+    logger.info("Starting and scheduling {} with interval of {} minutes",jobName,locationConfig.getUpdateInterval());
+  }
+ catch (  SchedulerException ex) {
+    logger.error(ex.getMessage(),ex);
+  }
+}

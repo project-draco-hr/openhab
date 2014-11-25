@@ -1,0 +1,27 @@
+{
+  if (bindingConfig.hasUnit()) {
+switch (bindingConfig.getUnit()) {
+case FAHRENHEIT:
+      return celsiusToFahrenheit(value);
+case MPH:
+    return kmhToMph(value);
+case INCHES:
+  if ("athmosphere.pressure".equals(bindingConfig.getWeatherProperty())) {
+    return millibarToInches(value);
+  }
+ else   if ("precipitation.snow".equals(bindingConfig.getWeatherProperty())) {
+    return millimetersToInches(centimeterToMillimeter(value));
+  }
+ else {
+    return millimetersToInches(value);
+  }
+case BEAUFORT:
+return kmhToBeaufort(value);
+case KNOTS:
+return kmhToKnots(value);
+case MPS:
+return kmhToMps(value);
+}
+}
+return value;
+}

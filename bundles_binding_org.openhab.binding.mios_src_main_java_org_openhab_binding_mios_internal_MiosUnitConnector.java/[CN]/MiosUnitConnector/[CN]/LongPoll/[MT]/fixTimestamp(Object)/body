@@ -1,0 +1,18 @@
+{
+  if (value == null) {
+    return value;
+  }
+ else   if (value instanceof Integer) {
+    Calendar cal=Calendar.getInstance();
+    cal.setTimeInMillis(((Integer)value).intValue() * 1000l);
+    return cal;
+  }
+ else   if (value instanceof String && !value.equals("")) {
+    Calendar cal=Calendar.getInstance();
+    cal.setTimeInMillis(Integer.parseInt((String)value) * 1000l);
+    return cal;
+  }
+ else {
+    return value;
+  }
+}

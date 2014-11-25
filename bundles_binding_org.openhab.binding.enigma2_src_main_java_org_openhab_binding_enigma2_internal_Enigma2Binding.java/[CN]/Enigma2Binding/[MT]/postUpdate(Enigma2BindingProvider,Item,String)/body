@@ -1,0 +1,10 @@
+{
+  Class<? extends Item> itemType=provider.getItemType(item.getName());
+  State state=createState(itemType,value);
+  if (state != null) {
+    if (item instanceof GenericItem) {
+      ((GenericItem)item).setState(state);
+    }
+    eventPublisher.postUpdate(item.getName(),state);
+  }
+}

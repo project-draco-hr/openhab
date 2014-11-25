@@ -1,0 +1,18 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  bindingConfig=bindingConfig.trim();
+  if (CONFIG_PATTERN.matcher(bindingConfig).matches()) {
+    PilightBindingConfig config=new PilightBindingConfig();
+    String[] parts=bindingConfig.split("#");
+    String[] deviceInfo=parts[1].split(":");
+    config.setItemName(item.getName());
+    config.setInstance(parts[0]);
+    config.setLocation(deviceInfo[0]);
+    config.setDevice(deviceInfo[1]);
+    logger.info("pilight:{} item '{}' bound to device '{}' in location '{}'",config.getInstance(),config.getItemName(),config.getDevice(),config.getLocation());
+    addBindingConfig(item,config);
+  }
+ else {
+    logger.error("Item config {} does not match instance#location:device pattern",bindingConfig);
+  }
+}
