@@ -105,6 +105,12 @@ logger.debug("NODE {}: Node advancer: ENDPOINTS - MultiInstance is supported",no
 addToQueue(multiInstance.initEndpoints(stageAdvanced));
 logger.debug("NODE {}: Node advancer: ENDPOINTS - queued {} frames",node.getNodeId(),msgQueue.size());
 }
+ else {
+logger.debug("NODE {}: Node advancer: ENDPOINTS - MultiInstance not supported.",node.getNodeId());
+for (ZWaveCommandClass commandClass : node.getCommandClasses()) {
+commandClass.setInstances(1);
+}
+}
 break;
 case STATIC_VALUES:
 for (ZWaveCommandClass zwaveStaticClass : node.getCommandClasses()) {

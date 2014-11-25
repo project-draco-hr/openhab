@@ -4,14 +4,14 @@
 switch (this.getVersion()) {
 case 1:
     for (    ZWaveCommandClass commandClass : this.getNode().getCommandClasses()) {
+      logger.debug("NODE {}: ENDPOINTS - checking {}, Instances {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString(),commandClass.getInstances());
       if (singleInstanceClasses.contains(commandClass.getCommandClass())) {
         commandClass.setInstances(1);
         logger.debug("NODE {}: ENDPOINTS - skipping {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString());
         continue;
       }
-      logger.debug("NODE {}: ENDPOINTS - checking {}, Instances {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString(),commandClass.getInstances());
       if (commandClass.getInstances() == 0) {
-        logger.debug("NODE {}: ENDPOINTS - found    {}",this.getNode().getNodeId(),commandClass.getCommandClass().getLabel());
+        logger.debug("NODE {}: ENDPOINTS - found    {}",this.getNode().getNodeId(),commandClass.getCommandClass().toString());
         result.add(getMultiInstanceGetMessage(commandClass.getCommandClass()));
       }
     }
