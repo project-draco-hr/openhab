@@ -200,10 +200,9 @@ logger.error("NODE {}: Node advancer: Unknown node state {} encountered.",node.g
 break;
 }
 if (currentStage != NodeStage.DONE && sendMessage() == false) {
-currentStage=currentStage.getNextStage();
+setCurrentStage(currentStage.getNextStage());
 stageAdvanced=true;
 logger.debug("NODE {}: Node advancer - advancing to {}.",node.getNodeId(),currentStage.toString());
-queryStageTimeStamp=Calendar.getInstance().getTime();
 }
 }
  while (msgQueue.isEmpty());
