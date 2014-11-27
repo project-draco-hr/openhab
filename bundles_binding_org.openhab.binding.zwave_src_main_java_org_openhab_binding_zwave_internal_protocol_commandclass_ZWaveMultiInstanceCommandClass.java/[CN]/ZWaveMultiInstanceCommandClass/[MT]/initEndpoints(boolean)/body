@@ -17,15 +17,18 @@ case 1:
     }
   break;
 case 2:
+for (ZWaveCommandClass commandClass : this.getNode().getCommandClasses()) {
+  commandClass.setInstances(1);
+}
 if (refresh == true || this.endpoints.size() == 0) {
-  result.add(getMultiChannelEndpointGetMessage());
+result.add(getMultiChannelEndpointGetMessage());
 }
  else {
-  for (  Map.Entry<Integer,ZWaveEndpoint> entry : this.endpoints.entrySet()) {
-    if (refresh == true || entry.getValue().getCommandClasses().size() == 0) {
-      result.add(this.getMultiChannelCapabilityGetMessage(entry.getValue()));
-    }
+for (Map.Entry<Integer,ZWaveEndpoint> entry : this.endpoints.entrySet()) {
+  if (refresh == true || entry.getValue().getCommandClasses().size() == 0) {
+    result.add(this.getMultiChannelCapabilityGetMessage(entry.getValue()));
   }
+}
 }
 break;
 default :
