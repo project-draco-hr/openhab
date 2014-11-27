@@ -51,7 +51,7 @@ synchronized (serialPort.getOutputStream()) {
             }
           }
           if (--lastSentMessage.attempts >= 0) {
-            logger.error("NODE {}: Timeout while sending message. Requeueing!",lastSentMessage.getMessageNode());
+            logger.error("NODE {}: Timeout while sending message. Requeueing - {} attempts left!",lastSentMessage.getMessageNode(),lastSentMessage.attempts);
             if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
               handleFailedSendDataRequest(lastSentMessage);
             }

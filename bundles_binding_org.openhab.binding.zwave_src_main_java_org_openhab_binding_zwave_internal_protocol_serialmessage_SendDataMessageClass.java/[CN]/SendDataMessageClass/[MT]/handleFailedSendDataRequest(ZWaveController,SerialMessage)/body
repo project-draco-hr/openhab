@@ -1,6 +1,9 @@
 {
   ZWaveNode node=zController.getNode(originalMessage.getMessageNode());
+  logger.trace("NODE {}: handling failed message.",node.getNodeId());
+  node.incrementResendCount();
   if (node.isDead()) {
+    logger.error("NODE {}: Node is DEAD. Dropping message.",node.getNodeId());
     return false;
   }
   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
@@ -11,8 +14,9 @@
       return false;
     }
   }
- else   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() == SerialMessagePriority.Low)   return false;
-  node.incrementResendCount();
+ else   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() == SerialMessagePriority.Low) {
+    return false;
+  }
   logger.error("NODE {}: Got an error while sending data. Resending message.",node.getNodeId());
   zController.sendData(originalMessage);
   return true;
