@@ -2,6 +2,19 @@
   logger.debug("Starting Z-Wave receive thread");
   try {
     sendResponse(NAK);
+    if (softReset == true) {
+      try {
+synchronized (serialPort.getOutputStream()) {
+          SerialMessage resetMsg=new SerialApiSoftResetMessageClass().doRequest();
+          byte[] buffer=resetMsg.getMessageBuffer();
+          serialPort.getOutputStream().write(buffer);
+          serialPort.getOutputStream().flush();
+        }
+      }
+ catch (      IOException e) {
+        logger.error("Error sending soft reset on initialisation: {}",e.getMessage());
+      }
+    }
     while (!interrupted()) {
       int nextByte;
       try {
