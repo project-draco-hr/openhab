@@ -1,0 +1,8 @@
+{
+  if (!updatingConfig) {
+    updatingConfig=true;
+    logger.info("Updating pilight config");
+    Socket socket=connection.getSocket();
+    getOutputMapper().writeValue(socket.getOutputStream(),new Identification(Identification.REQUEST_CONFIG));
+  }
+}

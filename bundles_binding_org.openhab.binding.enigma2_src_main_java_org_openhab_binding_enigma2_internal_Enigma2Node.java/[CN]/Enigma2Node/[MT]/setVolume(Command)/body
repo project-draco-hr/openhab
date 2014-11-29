@@ -1,0 +1,12 @@
+{
+  if (command instanceof IncreaseDecreaseType) {
+    sendRcCommand(command,((IncreaseDecreaseType)command) == IncreaseDecreaseType.INCREASE ? RC_VOLUME_UP : RC_VOLUME_DOWN);
+  }
+ else   if (command instanceof DecimalType) {
+    int value=((DecimalType)command).intValue();
+    HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_VOLUME + SUFFIX_VOLUME_SET+ value,this.timeOut);
+  }
+ else {
+    logger.error("Unsupported command type");
+  }
+}

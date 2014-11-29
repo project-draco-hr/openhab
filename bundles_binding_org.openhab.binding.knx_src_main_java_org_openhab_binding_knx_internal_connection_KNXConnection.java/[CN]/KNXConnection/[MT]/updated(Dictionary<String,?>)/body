@@ -54,33 +54,55 @@
         sAutoReconnectPeriod=autoReconnectPeriodValue;
       }
     }
+    String maxRefreshQueueEntriesString=(String)config.get("maxRefreshQueueEntries");
+    if (StringUtils.isNotBlank(maxRefreshQueueEntriesString)) {
+      try {
+        int maxRefreshQueueEntriesValue=Integer.parseInt(maxRefreshQueueEntriesString);
+        if (maxRefreshQueueEntriesValue >= 0) {
+          sMaxRefreshQueueEntries=maxRefreshQueueEntriesValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'maxRefreshQueueEntries' from configuration. '{}' is not a number: using default.",maxRefreshQueueEntriesString);
+      }
+    }
+    String numberOfThreadsString=(String)config.get("numberOfThreads");
+    if (StringUtils.isNotBlank(numberOfThreadsString)) {
+      try {
+        int numberOfThreadsValue=Integer.parseInt(numberOfThreadsString);
+        if (numberOfThreadsValue >= 0) {
+          sNumberOfThreads=numberOfThreadsValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'numberOfThreads' from configuration. '{}' is not a number: using default.",numberOfThreadsString);
+      }
+    }
+    String scheduledExecutorServiceShutdownTimeoutString=(String)config.get("scheduledExecutorServiceShutdownTimeout");
+    if (StringUtils.isNotBlank(scheduledExecutorServiceShutdownTimeoutString)) {
+      try {
+        int scheduledExecutorServiceShutdownTimeoutValue=Integer.parseInt(scheduledExecutorServiceShutdownTimeoutString);
+        if (scheduledExecutorServiceShutdownTimeoutValue >= 0) {
+          sScheduledExecutorServiceShutdownTimeout=scheduledExecutorServiceShutdownTimeoutValue;
+        }
+      }
+ catch (      NumberFormatException e) {
+        sLogger.warn("Error when trying to read parameter 'scheduledExecutorServiceShutdownTimeout' from configuration. '{}' is not a number: using default.",scheduledExecutorServiceShutdownTimeoutString);
+      }
+    }
     if (sPC == null) {
+      sLogger.debug("Not connected yet. Trying to connect.");
       if (!connect()) {
         sLogger.warn("Inital connection to KNX bus failed!");
         if (sAutoReconnectPeriod > 0) {
           sLogger.info("KNX link will be retried in {} seconds",sAutoReconnectPeriod);
           final Timer timer=new Timer();
-          TimerTask timerTask=new TimerTask(){
-            @Override public void run(){
-              if (sShutdown) {
-                timer.cancel();
-              }
- else {
-                sLogger.info("Trying to reconnect to KNX...");
-                connect();
-                if (sLink != null && sLink.isOpen()) {
-                  sLogger.info("Connected to KNX");
-                  timer.cancel();
-                }
- else {
-                  sLogger.info("KNX link will be retried in {} seconds",sAutoReconnectPeriod);
-                }
-              }
-            }
-          }
-;
+          TimerTask timerTask=new ConnectTimerTask(timer);
           timer.schedule(timerTask,sAutoReconnectPeriod * 1000,sAutoReconnectPeriod * 1000);
         }
+      }
+ else {
+        sLogger.debug("Success: connected.");
       }
     }
   }

@@ -1,0 +1,27 @@
+{
+  Map<String,PilightConnection> connections=new HashMap<String,PilightConnection>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if ("service.pid".equals(key))     continue;
+    String[] parts=key.split("\\.");
+    String instance=parts[0];
+    PilightConnection connection=connections.get(instance);
+    if (connection == null) {
+      connection=new PilightConnection();
+      connection.setInstance(instance);
+    }
+    String value=((String)config.get(key)).trim();
+    if ("host".equals(parts[1])) {
+      connection.setHostname(value);
+    }
+    if ("port".equals(parts[1])) {
+      connection.setPort(Integer.valueOf(value));
+    }
+    if ("delay".equals(parts[1])) {
+      connection.setDelay(Long.valueOf(value));
+    }
+    connections.put(instance,connection);
+  }
+  return connections;
+}

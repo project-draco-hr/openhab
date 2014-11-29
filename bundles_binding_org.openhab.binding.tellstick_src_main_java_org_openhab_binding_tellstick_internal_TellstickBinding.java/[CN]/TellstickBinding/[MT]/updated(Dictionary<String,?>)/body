@@ -1,16 +1,26 @@
 {
-  this.updateFromTellstickInterval=UPDATE_FROM_TELLSTICK_INTERVAL;
   this.restartTimeout=MAX_IDLE_BEFORE_RESTART;
+  String libraryPath=null;
+  if (Platform.isWindows()) {
+    libraryPath="C:/Program Files/Telldus/;C:/Program Files (x86)/Telldus/";
+  }
   logger.info("Called with config " + config);
   if (config != null) {
     String maxIdle=(String)config.get("max_idle");
-    String updateInterval=(String)config.get("update_interval");
+    String confLibraryPath=(String)config.get("library_path");
     if (maxIdle != null) {
       this.restartTimeout=Integer.valueOf(maxIdle);
     }
-    if (updateInterval != null) {
-      this.updateFromTellstickInterval=Integer.valueOf(updateInterval);
+    if (confLibraryPath != null) {
+      libraryPath=confLibraryPath;
     }
+  }
+  if (libraryPath != null) {
+    logger.info("Loading " + JNA.library + " from "+ libraryPath);
+    System.setProperty("jna.library.path",libraryPath);
+  }
+ else {
+    logger.info("Loading " + JNA.library + " from system default paths");
   }
   resetTellstick();
   setProperlyConfigured(true);
