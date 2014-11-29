@@ -25,11 +25,15 @@ if (commandClass == null) {
 logger.error(String.format("NODE %d: Unsupported command class 0x%02x",this.getNode().getNodeId(),commandClassCode));
 return;
 }
-logger.debug("NODE {}: Requested Command Class = {}, Version = {}",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode,commandClassVersion);
+logger.debug("NODE {}: Requested Command Class = {}, Version = {}",this.getNode().getNodeId(),commandClass.getLabel(),commandClassVersion);
 ZWaveCommandClass zwaveCommandClass=this.getNode().getCommandClass(commandClass);
 if (zwaveCommandClass == null) {
 logger.error(String.format("NODE %d: Unsupported command class %s (0x%02x)",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
 return;
+}
+if (commandClassVersion == 0) {
+logger.info("NODE {}: Command Class {} has version 0!",this.getNode().getNodeId(),commandClass.getLabel());
+commandClassVersion=1;
 }
 if (commandClassVersion > zwaveCommandClass.getMaxVersion()) {
 zwaveCommandClass.setVersion(zwaveCommandClass.getMaxVersion());
@@ -38,9 +42,6 @@ logger.debug("NODE {}: Version = {}, version set to maximum supported by the bin
  else {
 zwaveCommandClass.setVersion(commandClassVersion);
 logger.debug("NODE {}: Version = {}, version set. Enabling extra functionality.",this.getNode().getNodeId(),commandClassVersion);
-}
-for (ZWaveCommandClass zCC : this.getNode().getCommandClasses()) {
-if (zCC.getVersion() == 0) return;
 }
 break;
 default :
