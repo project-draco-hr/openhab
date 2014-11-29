@@ -1,7 +1,9 @@
 {
+  logger.debug("refreshItem(): Zone Item Name: {}",item.getName());
   int state;
   String strStatus="";
-  logger.debug("refreshItem(): Zone Item Name: {}",item.getName());
+  boolean trigger;
+  OnOffType onOffType;
   if (config != null) {
     if (config.getDSCAlarmItemType() != null) {
 switch (config.getDSCAlarmItemType()) {
@@ -27,6 +29,26 @@ break;
 case ZONE_BYPASS_MODE:
 state=zoneProperties.getState(StateType.ARM_STATE);
 publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+case ZONE_IN_ALARM:
+trigger=zoneProperties.getTrigger(TriggerType.ALARMED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case ZONE_TAMPER:
+trigger=zoneProperties.getTrigger(TriggerType.TAMPERED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case ZONE_FAULT:
+trigger=zoneProperties.getTrigger(TriggerType.FAULTED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case ZONE_TRIPPED:
+trigger=zoneProperties.getTrigger(TriggerType.TRIPPED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
 break;
 default :
 logger.debug("refreshItem(): Zone item not updated.");
