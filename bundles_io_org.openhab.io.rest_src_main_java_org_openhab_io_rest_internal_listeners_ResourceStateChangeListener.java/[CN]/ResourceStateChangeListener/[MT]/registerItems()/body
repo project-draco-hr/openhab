@@ -27,16 +27,6 @@
   broadcaster.getBroadcasterConfig().addFilter(new SendPageUpdateFilter());
   broadcaster.getBroadcasterConfig().addFilter(new DuplicateBroadcastProtectionFilter());
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
-  broadcaster.getBroadcasterConfig().addFilter(new PerRequestBroadcastFilter(){
-    @Override public BroadcastAction filter(    Object originalMessage,    Object message){
-      return new BroadcastAction(ACTION.CONTINUE,message);
-    }
-    @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
-      uuidCache.retrieveFromCache(null,resource);
-      return new BroadcastAction(ACTION.CONTINUE,message);
-    }
-  }
-);
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
       broadcaster.broadcast(item);
