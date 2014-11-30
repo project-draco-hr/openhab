@@ -4,15 +4,16 @@
   logger.debug("read config : " + bindingConfig);
   String[] itemConfig=StringUtils.split(bindingConfig,ZibaseBindingConfig.CONFIG_SEPARATOR);
   ZibaseBindingConfig config=ZibaseBindingConfig.factory(itemConfig);
-  itemMap.put(item.getName(),config);
   String id=config.getId();
-  if (idMap.containsKey(id)) {
-    idMap.get(id).add(item.getName());
+  itemNameMap.put(item.getName(),config);
+  itemUniqueIdMap.put(item.getName() + "_" + id,config);
+  if (itemIdNameMap.containsKey(id)) {
+    itemIdNameMap.get(id).add(item.getName());
   }
  else {
     Vector<String> vector=new Vector<String>();
     vector.add(item.getName());
-    idMap.put(id,vector);
+    itemIdNameMap.put(id,vector);
   }
   logger.info("Added " + item.getName() + " (id="+ id+ ")");
   addBindingConfig(item,config);
