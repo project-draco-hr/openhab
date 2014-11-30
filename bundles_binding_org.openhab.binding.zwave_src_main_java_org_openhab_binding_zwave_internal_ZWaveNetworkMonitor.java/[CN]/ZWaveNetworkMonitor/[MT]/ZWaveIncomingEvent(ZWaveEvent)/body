@@ -3,8 +3,12 @@
     ZWaveNetworkEvent nwEvent=(ZWaveNetworkEvent)event;
     logger.debug("NODE {}: Network heal EVENT",nwEvent.getNodeId());
     HealNode node=healNodes.get(nwEvent.getNodeId());
-    if (node == null)     return;
-    if (nwEvent.getEvent() != node.event)     return;
+    if (node == null) {
+      return;
+    }
+    if (nwEvent.getEvent() != node.event) {
+      return;
+    }
 switch (nwEvent.getState()) {
 case Success:
       node.retryCnt=0;
@@ -14,16 +18,24 @@ case Failure:
 logger.debug("NODE {}: Network heal received FAILURE event",node.nodeId);
 break;
 }
-if (node.retryCnt == 0 && node.routeList != null && node.routeList.size() > 0) node.routeList.remove(0);
+if (node.retryCnt == 0 && node.routeList != null && node.routeList.size() > 0) {
+node.routeList.remove(0);
+}
 nextHealStage(node);
 }
  else if (event instanceof ZWaveTransactionCompletedEvent) {
 SerialMessage serialMessage=((ZWaveTransactionCompletedEvent)event).getCompletedMessage();
-if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request) return;
+if (serialMessage.getMessageClass() != SerialMessageClass.SendData && serialMessage.getMessageType() != SerialMessageType.Request) {
+return;
+}
 byte[] payload=serialMessage.getMessagePayload();
-if (payload.length < 3) return;
+if (payload.length < 3) {
+return;
+}
 HealNode node=healNodes.get(payload[0] & 0xFF);
-if (node == null) return;
+if (node == null) {
+return;
+}
 if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
 node.state=node.stateNext;
 node.retryCnt=0;
@@ -32,10 +44,16 @@ return;
 }
 }
  else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
-if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_NOTIFICATION) return;
+if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_NOTIFICATION) {
+return;
+}
 HealNode node=healNodes.get(event.getNodeId());
-if (node == null) return;
-if (!node.state.isActive()) return;
+if (node == null) {
+return;
+}
+if (!node.state.isActive()) {
+return;
+}
 logger.debug("NODE {}: Heal WakeUp EVENT {}",node.nodeId,node.state);
 nextHealStage(node);
 }

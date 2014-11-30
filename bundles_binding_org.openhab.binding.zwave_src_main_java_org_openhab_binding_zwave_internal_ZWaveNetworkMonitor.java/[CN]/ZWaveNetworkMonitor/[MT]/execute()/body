@@ -1,6 +1,6 @@
 {
   if (zController.getSendQueueLength() > 1) {
-    logger.debug("Queue length is {} - deferring HEAL.",zController.getSendQueueLength());
+    logger.debug("Network Monitor: Queue length is {} - deferring network monitor functions.",zController.getSendQueueLength());
     return;
   }
   if (pingNodeTime < System.currentTimeMillis()) {
@@ -21,7 +21,12 @@
       logger.debug("NODE {}: Sending periodic PING.",oldestNode.getNodeId());
       oldestNode.resetResendCount();
       ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)oldestNode.getCommandClass(CommandClass.NO_OPERATION);
-      if (zwaveCommandClass != null)       zController.sendData(zwaveCommandClass.getNoOperationMessage());
+      if (zwaveCommandClass != null) {
+        zController.sendData(zwaveCommandClass.getNoOperationMessage());
+      }
+    }
+ else {
+      logger.debug("Network Monitor: No nodes to ping!");
     }
     return;
   }
