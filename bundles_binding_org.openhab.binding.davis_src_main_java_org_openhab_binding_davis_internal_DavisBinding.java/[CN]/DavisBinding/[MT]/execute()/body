@@ -1,16 +1,23 @@
 {
-  if (isProperlyConfigured()) {
+  logger.debug("execute() method is called!");
+  try {
+    openPort();
     for (    DavisBindingProvider provider : providers) {
       Collection<DavisCommand> commands=DavisValueType.getReadCommandsByKeys(provider.getConfiguredKeys());
-      try {
-        wakeup();
-        for (        DavisCommand command : commands) {
+      for (      DavisCommand command : commands) {
+        if (wakeup()) {
           sendCommand(command);
         }
-      }
- catch (      IOException e) {
-        logger.error("Wakeup failed!");
+ else {
+          logger.warn("Wakeup failed, trying reset sequence!");
+          resetAfterError();
+        }
       }
     }
+    closePort();
   }
+ catch (  InitializationException e) {
+    logger.error(e.getMessage());
+  }
+  logger.debug("execute() method is finished!");
 }

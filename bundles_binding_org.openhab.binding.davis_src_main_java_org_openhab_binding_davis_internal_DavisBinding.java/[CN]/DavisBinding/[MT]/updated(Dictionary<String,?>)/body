@@ -1,4 +1,5 @@
 {
+  logger.debug("update() method is called!");
   if (config != null) {
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
@@ -6,14 +7,8 @@
     }
     String newPort=(String)config.get("port");
     if (StringUtils.isNotBlank(newPort) && !newPort.equals(port)) {
-      try {
-        openPort(newPort);
-        setProperlyConfigured(true);
-      }
- catch (      InitializationException e) {
-        logger.error(e.getMessage());
-        setProperlyConfigured(false);
-      }
+      port=newPort;
+      setProperlyConfigured(true);
     }
   }
 }
