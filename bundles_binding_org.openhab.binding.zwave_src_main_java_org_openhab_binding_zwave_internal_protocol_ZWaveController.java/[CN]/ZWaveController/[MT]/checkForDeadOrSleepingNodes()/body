@@ -8,12 +8,12 @@
       return;
     }
   }
-  logger.debug("------ Checking for Dead or Sleeping Nodes.");
+  logger.debug("------ Checking for Dead or Sleeping Nodes ({} nodes).",this.zwaveNodes.size());
   for (  Map.Entry<Integer,ZWaveNode> entry : zwaveNodes.entrySet()) {
+    logger.debug("NODE {}: In Stage {} since {} ({}s), listening={}, FLiRS={}",entry.getKey(),entry.getValue().getNodeStage().toString(),entry.getValue().getQueryStageTimeStamp().toString(),(Calendar.getInstance().getTimeInMillis() - entry.getValue().getQueryStageTimeStamp().getTime()) / 1000,entry.getValue().isListening(),entry.getValue().isFrequentlyListening());
     if (entry.getValue().getNodeStage() == NodeStage.EMPTYNODE) {
       continue;
     }
-    logger.debug("NODE {}: In Stage {} since {} ({}s), listening={}, FLiRS={}",entry.getKey(),entry.getValue().getNodeStage().toString(),entry.getValue().getQueryStageTimeStamp().toString(),(Calendar.getInstance().getTimeInMillis() - entry.getValue().getQueryStageTimeStamp().getTime()) / 1000,entry.getValue().isListening(),entry.getValue().isFrequentlyListening());
     if (entry.getValue().getNodeStage() == NodeStage.DONE || entry.getValue().isDead() == true || (!entry.getValue().isListening() && !entry.getValue().isFrequentlyListening())) {
       completeCount++;
       continue;
