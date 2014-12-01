@@ -14,6 +14,14 @@
     if (refreshIntervalString != null && !refreshIntervalString.isEmpty()) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
+    String exclusiveString=(String)config.get("exclusive");
+    if (StringUtils.isNotBlank(exclusiveString)) {
+      exclusive=Boolean.parseBoolean(exclusiveString);
+    }
+    String maxRequestsPerConnectionString=(String)config.get("maxRequestsPerConnection");
+    if (maxRequestsPerConnectionString != null && !maxRequestsPerConnectionString.isEmpty()) {
+      maxRequestsPerConnection=Integer.parseInt(maxRequestsPerConnectionString);
+    }
   }
  else {
     ip=discoveryGatewayIp();

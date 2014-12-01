@@ -1,4 +1,5 @@
 {
+  boolean endInclusion=false;
 switch (event.getEvent()) {
 case IncludeStart:
     break;
@@ -7,8 +8,10 @@ case IncludeSlaveFound:
 case IncludeControllerFound:
 break;
 case IncludeFail:
+endInclusion=true;
 break;
 case IncludeDone:
+endInclusion=true;
 break;
 case ExcludeStart:
 break;
@@ -17,8 +20,13 @@ break;
 case ExcludeControllerFound:
 break;
 case ExcludeFail:
+endInclusion=true;
 break;
 case ExcludeDone:
+endInclusion=true;
 break;
+}
+if (endInclusion) {
+stopInclusionTimer();
 }
 }

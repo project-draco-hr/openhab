@@ -1,0 +1,23 @@
+{
+  Token token=new Token();
+  token.full=tokenName;
+  if (StringUtils.contains(token.full,"(")) {
+    token.prefix=StringUtils.substringBefore(token.full,"(");
+    token.qualifier=StringUtils.substringBetween(token.full,"(",")");
+  }
+ else {
+    token.prefix=StringUtils.substringBefore(token.full,":");
+  }
+  token.name=StringUtils.substringAfter(token.full,":");
+  if (!token.isValid()) {
+    throw new RuntimeException("Invalid weather token: " + token.full);
+  }
+  if (PREFIX_TOKEN_ITEM.equals(token.prefix)) {
+    token.itemName=StringUtils.substringBefore(token.name,".");
+    token.itemSuffix=StringUtils.substringAfter(token.name,".");
+    if (StringUtils.isBlank(token.itemSuffix)) {
+      token.itemSuffix=SUFFIX_ITEM_STATE;
+    }
+  }
+  return token;
+}

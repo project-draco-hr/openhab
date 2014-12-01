@@ -1,0 +1,32 @@
+{
+  if (tokenValue != null) {
+    if (tokenValueIndex < tokenValue.length()) {
+      return tokenValue.charAt(tokenValueIndex++);
+    }
+    if (tokenValueIndex == tokenValue.length()) {
+      tokenValue=null;
+      tokenValueIndex=0;
+    }
+  }
+  int data=pushbackReader.read();
+  if (data != '$')   return data;
+  data=pushbackReader.read();
+  if (data != '{') {
+    pushbackReader.unread(data);
+    return '$';
+  }
+  tokenNameBuffer.delete(0,tokenNameBuffer.length());
+  data=pushbackReader.read();
+  while (data != '}') {
+    tokenNameBuffer.append((char)data);
+    data=pushbackReader.read();
+  }
+  tokenValue=tokenResolver.resolveToken(tokenNameBuffer.toString());
+  if (tokenValue == null) {
+    tokenValue="${" + tokenNameBuffer.toString() + "}";
+  }
+  if (tokenValue.length() == 0) {
+    return read();
+  }
+  return tokenValue.charAt(tokenValueIndex++);
+}

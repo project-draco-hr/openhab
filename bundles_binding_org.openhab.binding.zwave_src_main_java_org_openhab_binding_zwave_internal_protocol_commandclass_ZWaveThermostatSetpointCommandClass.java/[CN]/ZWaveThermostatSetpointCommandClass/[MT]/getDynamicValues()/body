@@ -1,7 +1,12 @@
 {
   ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
   for (  SetpointType setpointType : this.setpointTypes) {
-    result.add(getMessage(setpointType));
+    if (setpointType == null) {
+      logger.warn("NODE {}: Ignoring null setpointType in setpointTypes",this.getNode().getNodeId());
+    }
+ else {
+      result.add(getMessage(setpointType));
+    }
   }
   return result;
 }

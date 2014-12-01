@@ -1,0 +1,41 @@
+{
+  if (clazz == null) {
+    return;
+  }
+  for (  Field field : clazz.getDeclaredFields()) {
+    if (field.getType().getName().startsWith(PACKAGE_TO_SCAN) && !field.isEnumConstant()) {
+      generate(field.getType());
+    }
+ else {
+      for (      Annotation annotation : field.getAnnotations()) {
+        if (annotation.annotationType().equals(ProviderMappings.class)) {
+          ProviderMappings providerAnnotations=(ProviderMappings)annotation;
+          for (          Provider provider : providerAnnotations.value()) {
+            Map<String,ProviderMappingInfo> mappings=providerMappings.get(provider.name());
+            if (mappings == null) {
+              mappings=new HashMap<String,ProviderMappingInfo>();
+              providerMappings.put(provider.name(),mappings);
+            }
+            Converter<?> converter=(Converter<?>)getConverter(field,provider.converter());
+            String target=clazz.getSimpleName().toLowerCase() + "." + field.getName();
+            ProviderMappingInfo pm=new ProviderMappingInfo(provider.property(),target,converter);
+            mappings.put(pm.getSource(),pm);
+            logger.trace("Added provider mapping {}: {}",provider.name(),pm);
+          }
+        }
+ else         if (annotation.annotationType().equals(ForecastMappings.class)) {
+          ForecastMappings forecastsAnnotations=(ForecastMappings)annotation;
+          for (          Forecast forecast : forecastsAnnotations.value()) {
+            List<String> forecastProperties=forecastMappings.get(forecast.provider());
+            if (forecastProperties == null) {
+              forecastProperties=new ArrayList<String>();
+              forecastMappings.put(forecast.provider(),forecastProperties);
+            }
+            forecastProperties.add(forecast.property());
+            logger.trace("Added forecast mapping {}: {}",forecast.provider(),forecast.property());
+          }
+        }
+      }
+    }
+  }
+}
