@@ -8,7 +8,9 @@
   itemNameMap.put(item.getName(),config);
   itemUniqueIdMap.put(item.getName() + "_" + id,config);
   if (itemIdNameMap.containsKey(id)) {
-    itemIdNameMap.get(id).add(item.getName());
+    if (!itemIdNameMap.get(id).contains(item.getName())) {
+      itemIdNameMap.get(id).add(item.getName());
+    }
   }
  else {
     Vector<String> vector=new Vector<String>();
