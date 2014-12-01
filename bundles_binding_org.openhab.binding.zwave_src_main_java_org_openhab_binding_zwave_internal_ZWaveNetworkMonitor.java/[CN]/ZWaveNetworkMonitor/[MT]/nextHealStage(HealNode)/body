@@ -1,5 +1,5 @@
 {
-  logger.debug("NODE {}: Heal advancing - state {}, retries {}",healing.state,healing.retryCnt);
+  logger.debug("NODE {}: Heal advancing - state {}, retries {}",healing.nodeId,healing.state,healing.retryCnt);
   if (healing.state == HealState.FAILED) {
     return;
   }
@@ -10,6 +10,7 @@
   if (healing.retryCnt >= HEAL_MAX_RETRIES) {
     logger.debug("NODE {}: Maximum retries in state {}",healing.nodeId,healing.state);
     if (healing.state == HealState.UPDATENEIGHBORS) {
+      healing.retryCnt=0;
       healing.state=healing.stateNext;
       logger.debug("NODE {}: Heal - continuing to state {}",healing.nodeId,healing.stateNext);
     }
