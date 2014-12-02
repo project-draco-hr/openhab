@@ -1,30 +1,37 @@
 {
   final String thermostatIdentifier=provider.getThermostatIdentifier(itemName);
   final String property=provider.getProperty(itemName);
-  final Thermostat t=thermostats.get(thermostatIdentifier);
-  JXPathContext context=JXPathContext.newContext(getSharedContext(),t);
-  Object o=context.getValue(property);
-  if (o instanceof String) {
-    return StringType.valueOf((String)o);
-  }
- else   if (o instanceof Integer) {
-    return new DecimalType((Integer)o);
-  }
- else   if (o instanceof Boolean) {
-    return o.equals(Boolean.TRUE) ? OnOffType.ON : OnOffType.OFF;
-  }
- else   if (o instanceof Date) {
-    Calendar c=Calendar.getInstance();
-    c.setTime((Date)o);
-    return new DateTimeType(c);
-  }
- else   if (o instanceof Temperature) {
-    return new DecimalType(((Temperature)o).toLocalTemperature());
-  }
- else   if (o != null) {
-    return StringType.valueOf(o.toString());
+  final Thermostat thermostat=thermostats.get(thermostatIdentifier);
+  if (thermostat == null) {
+    logger.error("Did not receive thermostat '{}' for item '{}'; skipping.",thermostatIdentifier,itemName);
   }
  else {
-    return UnDefType.NULL;
+    try {
+      Object o=thermostat.getProperty(property);
+      if (o instanceof String) {
+        return StringType.valueOf((String)o);
+      }
+ else       if (o instanceof Integer) {
+        return new DecimalType((Integer)o);
+      }
+ else       if (o instanceof Boolean) {
+        return o.equals(Boolean.TRUE) ? OnOffType.ON : OnOffType.OFF;
+      }
+ else       if (o instanceof Date) {
+        Calendar c=Calendar.getInstance();
+        c.setTime((Date)o);
+        return new DateTimeType(c);
+      }
+ else       if (o instanceof Temperature) {
+        return new DecimalType(((Temperature)o).toLocalTemperature());
+      }
+ else       if (o != null) {
+        return StringType.valueOf(o.toString());
+      }
+    }
+ catch (    Exception e) {
+      logger.error("Unable to get state from thermostat",e);
+    }
   }
+  return UnDefType.NULL;
 }

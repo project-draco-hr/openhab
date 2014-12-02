@@ -17,31 +17,35 @@
     List<AbstractFunction> functions=null;
     logger.debug("Selection for update: {}",selection);
     String property=provider.getProperty(itemName);
-    final Thermostat thermostat=new Thermostat(null);
-    JXPathContext context=JXPathContext.newContext(getSharedContext(),thermostat);
-    context.createPathAndSetValue(property,newState.toString());
-    logger.debug("Thermostat for update: {}",thermostat);
-    OAuthCredentials oauthCredentials=getOAuthCredentials(provider.getUserid(itemName));
-    if (oauthCredentials == null) {
-      logger.warn("Unable to locate credentials for item {}; aborting update.",itemName);
-      return;
-    }
-    if (oauthCredentials.noAccessToken()) {
-      if (!oauthCredentials.refreshTokens()) {
-        logger.warn("Sending updated skipped.");
+    try {
+      final Thermostat thermostat=new Thermostat(null);
+      thermostat.setProperty(property,newState);
+      logger.debug("Thermostat for update: {}",thermostat);
+      OAuthCredentials oauthCredentials=getOAuthCredentials(provider.getUserid(itemName));
+      if (oauthCredentials == null) {
+        logger.warn("Unable to locate credentials for item {}; aborting update.",itemName);
         return;
       }
-    }
-    UpdateThermostatRequest request=new UpdateThermostatRequest(oauthCredentials.accessToken,selection,functions,thermostat);
-    ApiResponse response=request.execute();
-    if (response.isError()) {
-      final Status status=response.getStatus();
-      if (status.isAccessTokenExpired()) {
-        oauthCredentials.refreshTokens();
+      if (oauthCredentials.noAccessToken()) {
+        if (!oauthCredentials.refreshTokens()) {
+          logger.warn("Sending updated skipped.");
+          return;
+        }
       }
+      UpdateThermostatRequest request=new UpdateThermostatRequest(oauthCredentials.accessToken,selection,functions,thermostat);
+      ApiResponse response=request.execute();
+      if (response.isError()) {
+        final Status status=response.getStatus();
+        if (status.isAccessTokenExpired()) {
+          oauthCredentials.refreshTokens();
+        }
  else {
-        logger.error("Error updating thermostat(s): {}",response);
+          logger.error("Error updating thermostat(s): {}",response);
+        }
       }
+    }
+ catch (    Exception e) {
+      logger.error("Unable to update thermostat(s)",e);
     }
   }
 }
