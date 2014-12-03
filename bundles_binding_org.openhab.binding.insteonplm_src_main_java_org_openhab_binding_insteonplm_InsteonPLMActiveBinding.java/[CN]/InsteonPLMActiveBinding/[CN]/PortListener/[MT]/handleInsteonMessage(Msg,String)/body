@@ -1,0 +1,12 @@
+{
+  InsteonAddress toAddr=msg.getAddr("toAddress");
+  if (!msg.isBroadcast() && !m_driver.isMsgForUs(toAddr)) {
+    return;
+  }
+  InsteonAddress fromAddr=msg.getAddr("fromAddress");
+  if (fromAddr == null) {
+    logger.debug("invalid fromAddress, ignoring msg {}",msg);
+    return;
+  }
+  handleMessage(fromPort,fromAddr,msg);
+}
