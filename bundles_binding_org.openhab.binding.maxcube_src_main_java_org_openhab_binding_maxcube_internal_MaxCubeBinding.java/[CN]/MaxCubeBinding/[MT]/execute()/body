@@ -104,29 +104,31 @@
         if (provider.getBindingType(itemName) == BindingType.BATTERY && device.isBatteryLowUpdated()) {
           eventPublisher.postUpdate(itemName,device.getBatteryLow());
         }
+ else {
 switch (device.getType()) {
 case HeatingThermostatPlus:
 case HeatingThermostat:
-          if (provider.getBindingType(itemName) == BindingType.VALVE && ((HeatingThermostat)device).isValvePositionUpdated()) {
-            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());
-          }
+            if (provider.getBindingType(itemName) == BindingType.VALVE && ((HeatingThermostat)device).isValvePositionUpdated()) {
+              eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getValvePosition());
+            }
 case WallMountedThermostat:
-        if (provider.getBindingType(itemName) == BindingType.MODE && ((HeatingThermostat)device).isModeUpdated()) {
-          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getModeString());
-        }
- else         if (provider.getBindingType(itemName) == BindingType.ACTUAL && ((HeatingThermostat)device).isTemperatureActualUpdated()) {
-          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureActual());
-        }
- else         if (((HeatingThermostat)device).isTemperatureSetpointUpdated()) {
-          eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
-        }
-      break;
+          if (provider.getBindingType(itemName) == BindingType.MODE && ((HeatingThermostat)device).isModeUpdated()) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getModeString());
+          }
+ else           if (provider.getBindingType(itemName) == BindingType.ACTUAL && ((HeatingThermostat)device).isTemperatureActualUpdated()) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureActual());
+          }
+ else           if (((HeatingThermostat)device).isTemperatureSetpointUpdated()) {
+            eventPublisher.postUpdate(itemName,((HeatingThermostat)device).getTemperatureSetpoint());
+          }
+        break;
 case ShutterContact:
-    if (((ShutterContact)device).isShutterStateUpdated()) {
-      eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
-    }
-  break;
+      if (((ShutterContact)device).isShutterStateUpdated()) {
+        eventPublisher.postUpdate(itemName,((ShutterContact)device).getShutterState());
+      }
+    break;
 default :
+}
 }
 }
 }
