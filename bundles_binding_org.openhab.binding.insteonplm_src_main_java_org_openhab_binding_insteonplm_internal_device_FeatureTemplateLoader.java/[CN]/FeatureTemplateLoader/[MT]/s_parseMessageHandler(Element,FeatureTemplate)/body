@@ -5,7 +5,8 @@
     f.setDefaultMessageHandler(handler);
   }
  else {
-    int command=Utils.from0xHexString(e.getAttribute("cmd"));
+    String attr=e.getAttribute("cmd");
+    int command=(attr == null) ? 0 : Utils.from0xHexString(attr);
     f.addMessageHandler(command,handler);
   }
 }
