@@ -13,11 +13,11 @@
       if (oldestNode == null) {
         oldestNode=node;
       }
- else       if (node.getLastSent().getTime() < oldestNode.getLastSent().getTime()) {
+ else       if (node.getLastSent() == null || node.getLastSent().getTime() < oldestNode.getLastSent().getTime()) {
         oldestNode=node;
       }
     }
-    if (oldestNode != null && oldestNode.getLastReceived() != null && oldestNode.getLastReceived().getTime() < System.currentTimeMillis() - pollPeriod) {
+    if (oldestNode != null) {
       logger.debug("NODE {}: Sending periodic PING.",oldestNode.getNodeId());
       oldestNode.resetResendCount();
       ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)oldestNode.getCommandClass(CommandClass.NO_OPERATION);
