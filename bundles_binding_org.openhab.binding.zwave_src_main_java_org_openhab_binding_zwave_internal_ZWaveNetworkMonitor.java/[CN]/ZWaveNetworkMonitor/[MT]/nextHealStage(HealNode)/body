@@ -7,14 +7,21 @@
   networkHealNextTime=System.currentTimeMillis() + HEAL_TIMEOUT_PERIOD;
   healing.retryCnt++;
   if (healing.retryCnt >= HEAL_MAX_RETRIES) {
-    logger.debug("NODE {}: Network heal has exceeded maximum retries",healing.nodeId);
-    healing.failState=healing.state;
-    healing.state=HealState.FAILED;
-    networkHealNextTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD;
-    healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));
-    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
-    nodeSerializer.SerializeNode(healing.node);
-    return;
+    logger.debug("NODE {}: Maximum retries in state {}",healing.nodeId,healing.state);
+    if (healing.state == HealState.GETNEIGHBORS) {
+      healing.state=healing.stateNext;
+      healing.retryCnt=0;
+      logger.debug("NODE {}: Heal - continuing to state {}",healing.nodeId,healing.stateNext);
+    }
+ else {
+      logger.debug("NODE {}: Network heal has exceeded maximum retries!",healing.nodeId);
+      healing.failState=healing.state;
+      healing.state=HealState.FAILED;
+      healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));
+      ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+      nodeSerializer.SerializeNode(healing.node);
+      return;
+    }
   }
   networkHealNextTime=System.currentTimeMillis() + HEAL_TIMEOUT_PERIOD;
 switch (healing.state) {
