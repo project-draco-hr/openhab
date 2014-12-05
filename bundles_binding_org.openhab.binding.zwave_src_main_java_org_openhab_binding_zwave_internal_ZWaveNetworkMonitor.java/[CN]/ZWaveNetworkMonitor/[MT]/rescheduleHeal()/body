@@ -6,5 +6,12 @@
     }
     healNode(node.getNodeId());
   }
-  if (healNodes.size() == 0)   return false;
+  if (healNodes.size() == 0) {
+    return false;
+  }
+  if (doSoftReset == true) {
+    logger.debug("HEAL - Performing soft reset!");
+    zController.requestSoftReset();
+  }
+  return true;
 }
