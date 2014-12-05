@@ -5,7 +5,19 @@
     for (    String iName : prov.getItemNames()) {
       config=prov.getDSCAlarmBindingConfig(iName);
       if (config.getDSCAlarmItemType() == dscAlarmItemType) {
-        if ((config.getPartitionId() == partitionId) && (config.getZoneId() == zoneId)) {
+        if (partitionId == -1) {
+          if (config.getZoneId() == zoneId) {
+            itemName=iName;
+            break;
+          }
+        }
+ else         if (zoneId == -1) {
+          if (config.getPartitionId() == partitionId) {
+            itemName=iName;
+            break;
+          }
+        }
+ else         if ((config.getPartitionId() == partitionId) && (config.getZoneId() == zoneId)) {
           itemName=iName;
           break;
         }

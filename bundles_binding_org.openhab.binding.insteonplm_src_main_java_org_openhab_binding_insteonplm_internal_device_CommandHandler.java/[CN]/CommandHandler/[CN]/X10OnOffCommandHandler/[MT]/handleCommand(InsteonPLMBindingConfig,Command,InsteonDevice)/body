@@ -1,0 +1,21 @@
+{
+  try {
+    byte houseCode=dev.getX10HouseCode();
+    byte houseUnitCode=(byte)(houseCode << 4 | dev.getX10UnitCode());
+    if (cmd == OnOffType.ON || cmd == OnOffType.OFF) {
+      byte houseCommandCode=(byte)(houseCode << 4 | (cmd == OnOffType.ON ? X10.Command.ON.code() : X10.Command.OFF.code()));
+      Msg munit=dev.makeX10Message(houseUnitCode,(byte)0x00);
+      dev.enqueueMessage(munit,m_feature);
+      Msg mcmd=dev.makeX10Message(houseCommandCode,(byte)0x80);
+      dev.enqueueMessage(mcmd,m_feature);
+      String onOff=cmd == OnOffType.ON ? "ON" : "OFF";
+      logger.info("X10OnOffCommandHandler: sent msg to switch {} {}",dev.getAddress(),onOff);
+    }
+  }
+ catch (  IOException e) {
+    logger.error("command send i/o error: ",e);
+  }
+catch (  FieldException e) {
+    logger.error("command send message creation error ",e);
+  }
+}

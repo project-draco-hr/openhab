@@ -1,7 +1,9 @@
 {
+  logger.debug("refreshItem(): Panel Item Name: {}",item.getName());
   int state;
   String str="";
-  logger.debug("refreshItem(): Panel Item Name: {}",item.getName());
+  boolean trigger;
+  OnOffType onOffType;
   if (config != null) {
     if (config.getDSCAlarmItemType() != null) {
 switch (config.getDSCAlarmItemType()) {
@@ -24,6 +26,26 @@ break;
 case PANEL_COMMAND:
 state=panelProperties.getSystemCommand();
 publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+case PANEL_FIRE_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.FIRE_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_PANIC_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.PANIC_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_AUX_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.AUX_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_AUX_INPUT_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.AUX_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
 break;
 default :
 logger.debug("refreshItem(): Panel item not updated.");
