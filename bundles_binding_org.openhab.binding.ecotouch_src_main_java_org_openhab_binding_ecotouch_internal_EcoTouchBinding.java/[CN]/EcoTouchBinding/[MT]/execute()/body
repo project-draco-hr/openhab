@@ -32,12 +32,20 @@
           handleEventType(new DecimalType(decimal),item);
         }
  else         if (item.getType() == EcoTouchTags.Type.Word) {
-          handleEventType(new DecimalType(heatpumpValue),item);
+          if (item.getItemClass() == NumberItem.class)           handleEventType(new DecimalType(heatpumpValue),item);
+ else {
+            if (heatpumpValue == 0)             handleEventType(OnOffType.OFF,item);
+ else             handleEventType(OnOffType.ON,item);
+          }
         }
  else {
           heatpumpValue>>=item.getBitNum();
           heatpumpValue&=1;
-          handleEventType(new DecimalType(heatpumpValue),item);
+          if (item.getItemClass() == NumberItem.class)           handleEventType(new DecimalType(heatpumpValue),item);
+ else {
+            if (heatpumpValue == 0)             handleEventType(OnOffType.OFF,item);
+ else             handleEventType(OnOffType.ON,item);
+          }
         }
       }
     }
