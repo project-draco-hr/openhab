@@ -1,0 +1,31 @@
+{
+  serialPort=null;
+  baudRate=DEFAULT_BAUD_RATE;
+  serialTimeout=DEFAULT_SERIAL_TIMEOUT;
+  logger.debug("Loading stiebelheatpump binding configuration.");
+  if (config == null || config.isEmpty()) {
+    logger.warn("Empty or null configuration. Ignoring.");
+    return;
+  }
+  if (config != null) {
+    if (StringUtils.isNotBlank((String)config.get("refresh"))) {
+      refreshInterval=Long.parseLong((String)config.get("refresh"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("serialPort"))) {
+      serialPort=(String)config.get("serialPort");
+    }
+    if (StringUtils.isNotBlank((String)config.get("baudRate"))) {
+      baudRate=Integer.parseInt((String)config.get("baudRate"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("serialTimeout"))) {
+      serialTimeout=Integer.parseInt((String)config.get("serialTimeout"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("version"))) {
+      version=(String)config.get("version");
+    }
+    boolean isInitialized=getInitialHeatPumpSettings();
+    setTime();
+    logger.info("Created heatpump configuration with  serialport:{}, baudrate:{}, version:{} ",serialPort,baudRate,version);
+    setProperlyConfigured(isInitialized);
+  }
+}

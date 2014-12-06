@@ -1,0 +1,9 @@
+{
+  int posByte=position / 8;
+  int posBit=position % 8;
+  byte oldByte=data[posByte];
+  oldByte=(byte)(((0xFF7F >> posBit) & oldByte) & 0x00FF);
+  byte newByte=(byte)((value << (8 - (posBit + 1))) | oldByte);
+  data[posByte]=newByte;
+  return data;
+}

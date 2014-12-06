@@ -1,0 +1,12 @@
+{
+  short checkSum;
+  byte[] requestMessage=new byte[]{DataParser.HEADERSTART,DataParser.GET,(byte)0x00,request.getRequestByte(),DataParser.ESCAPE,DataParser.END};
+  try {
+    checkSum=parser.calculateChecksum(requestMessage);
+    requestMessage[2]=parser.shortToByte(checkSum)[0];
+    requestMessage=parser.addDuplicatedBytes(requestMessage);
+  }
+ catch (  StiebelHeatPumpException e) {
+  }
+  return requestMessage;
+}

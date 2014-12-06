@@ -1,0 +1,14 @@
+{
+  if (!establishRequest(request)) {
+    return new byte[0];
+  }
+  try {
+    connector.write(DataParser.ESCAPE);
+    byte[] response=receiveData();
+    return response;
+  }
+ catch (  Exception e) {
+    logger.error("Could not get data from heat pump! {}",e.toString());
+    return buffer;
+  }
+}

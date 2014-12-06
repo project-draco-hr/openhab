@@ -1,0 +1,14 @@
+{
+  if (response.length < 4) {
+    throw new StiebelHeatPumpException("invalide response length on request of data " + new String(response));
+  }
+  if (response[0] != HEADERSTART) {
+    throw new StiebelHeatPumpException("invalid response on request of data, found no header start: " + new String(response));
+  }
+  if (response[1] != GET & response[1] != SET) {
+    throw new StiebelHeatPumpException("invalid response on request of data, response is neither get nor set: " + new String(response));
+  }
+  if (response[2] != calculateChecksum(response)) {
+    throw new StiebelHeatPumpException("invalid checksum on request of data " + new String(response));
+  }
+}

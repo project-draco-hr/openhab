@@ -1,0 +1,22 @@
+{
+  ByteBuffer byteBuffer=ByteBuffer.allocate(data.length * 2);
+  for (int i=0; i < 2; i++) {
+    byteBuffer.put(data[i]);
+  }
+  for (int i=2; i < data.length - 2; i++) {
+    byteBuffer.put(data[i]);
+    if (data[i] == (byte)0x10) {
+      byteBuffer.put(data[i]);
+    }
+    if (data[i] == (byte)0x2b) {
+      byteBuffer.put((byte)0x18);
+    }
+  }
+  for (int i=data.length - 2; i < data.length; i++) {
+    byteBuffer.put(data[i]);
+  }
+  byte[] newdata=new byte[byteBuffer.position()];
+  byteBuffer.rewind();
+  byteBuffer.get(newdata);
+  return newdata;
+}

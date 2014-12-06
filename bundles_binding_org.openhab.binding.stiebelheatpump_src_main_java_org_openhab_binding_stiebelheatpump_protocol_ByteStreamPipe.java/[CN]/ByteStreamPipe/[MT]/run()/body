@@ -1,0 +1,13 @@
+{
+  while (!Thread.interrupted())   try {
+    if (in.available() > 0) {
+      byte readByte=(byte)in.read();
+      logger.debug(String.format("Received %02X",readByte));
+      buffer.put(readByte);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error while reading from COM port. Stopping.",e);
+    throw new RuntimeException(e);
+  }
+}

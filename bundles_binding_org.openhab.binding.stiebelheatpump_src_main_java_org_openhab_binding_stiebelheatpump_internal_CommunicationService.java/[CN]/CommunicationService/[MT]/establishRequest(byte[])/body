@@ -1,0 +1,40 @@
+{
+  int numBytesReadTotal=0;
+  boolean dataAvailable=false;
+  int requestRetry=0;
+  int retry=0;
+  try {
+    while (requestRetry < MAXRETRIES) {
+      connector.write(request);
+      retry=0;
+      byte singleByte;
+      while ((!dataAvailable) & (retry < MAXRETRIES)) {
+        try {
+          singleByte=connector.get();
+        }
+ catch (        Exception e) {
+          retry++;
+          continue;
+        }
+        buffer[numBytesReadTotal]=singleByte;
+        numBytesReadTotal++;
+        if (buffer[0] != DataParser.DATAAVAILABLE[0] || buffer[1] != DataParser.DATAAVAILABLE[1]) {
+          continue;
+        }
+        dataAvailable=true;
+        return true;
+      }
+      logger.debug("retry request!");
+      startCommunication();
+    }
+    if (!dataAvailable) {
+      logger.warn("heat pump has no data available for request!");
+      return false;
+    }
+  }
+ catch (  Exception e1) {
+    logger.error("Could not get data from heat pump! {}",e1.toString());
+    return false;
+  }
+  return true;
+}

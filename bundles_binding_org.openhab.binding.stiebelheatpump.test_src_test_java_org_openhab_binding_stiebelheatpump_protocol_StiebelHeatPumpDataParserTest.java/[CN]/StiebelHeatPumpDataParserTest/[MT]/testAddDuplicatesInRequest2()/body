@@ -1,0 +1,9 @@
+{
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x11,(byte)0x10,(byte)0x10,(byte)0x03};
+  byte[] newResponse=parser.addDuplicatedBytes(response);
+  byte[] resultingBytes=new byte[]{(byte)0x01,(byte)0x00,(byte)0x11,(byte)0x10,(byte)0x10,(byte)0x10,(byte)0x03};
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  for (int i=0; i < newResponse.length; i++) {
+    Assert.assertEquals(resultingBytes[i],newResponse[i]);
+  }
+}

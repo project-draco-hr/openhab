@@ -1,0 +1,25 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName() == "SettingsHeating2";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x7c,(byte)0x05,(byte)0x00,(byte)0x04,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x05,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x1e,(byte)0x00,(byte)0x64,(byte)0x02,(byte)0x26,(byte)0x00,(byte)0x32,(byte)0x01,(byte)0x5e,(byte)0x00,(byte)0x32,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("0.4",data.get("P13IncreaseHeatingHC1"));
+  Assert.assertEquals("0.0",data.get("P14LowEndPointHeatingHC1"));
+  Assert.assertEquals("0.0",data.get("P15RoomInfluenceHeatingHC1"));
+  Assert.assertEquals("0.5",data.get("P16IncreaseHeatingHC2"));
+  Assert.assertEquals("0.0",data.get("P17LowEndPointHeatingHC2"));
+  Assert.assertEquals("0.0",data.get("P18RoomInfluenceHeatingHC2"));
+  Assert.assertEquals("30",data.get("P19TemperatureCaptureReturnFlowHC1"));
+  Assert.assertEquals("100",data.get("P20TemperatureCaptureReturnFlowHC2"));
+  Assert.assertEquals("55.0",data.get("MaxSetHeatingCircuitTemperatureHC1"));
+  Assert.assertEquals("5.0",data.get("MinSetHeatingCircuitTemperatureHC1"));
+  Assert.assertEquals("35.0",data.get("MaxSetHeatingCircuitTemperatureHC2"));
+  Assert.assertEquals("5.0",data.get("MinSetHeatingCircuitTemperatureHC2"));
+}

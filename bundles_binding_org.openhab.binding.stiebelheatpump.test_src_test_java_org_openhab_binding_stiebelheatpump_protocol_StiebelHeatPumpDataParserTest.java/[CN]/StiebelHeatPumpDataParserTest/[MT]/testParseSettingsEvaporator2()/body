@@ -1,0 +1,17 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName() == "SettingsEvaporator2";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x04,(byte)0x3c,(byte)0x00,(byte)0x64,(byte)0x00,(byte)0x5a,(byte)0x01,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("60",data.get("MaxDefrostDurationAAExchanger"));
+  Assert.assertEquals("10.0",data.get("DefrostStartThreshold"));
+  Assert.assertEquals("90",data.get("VolumeFlowFilterReplacement"));
+  Assert.assertEquals("1",data.get("P85DefrostModeAAHE"));
+}

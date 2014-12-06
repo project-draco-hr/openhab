@@ -1,0 +1,29 @@
+{
+  try {
+    int retry=0;
+    while (communicationInUse) {
+      try {
+        Thread.sleep(CommunicationService.WAITING_TIME_BETWEEN_REQUESTS);
+        retry++;
+        if (retry > DEFAULT_SERIAL_TIMEOUT) {
+          return false;
+        }
+      }
+ catch (      InterruptedException e) {
+        logger.error("could not access Heat pump for has version {}",version);
+      }
+    }
+    communicationInUse=true;
+    CommunicationService communicationService=new CommunicationService(serialPort,baudRate,heatPumpConfiguration);
+    communicationService.setTime();
+    communicationService.finalizer();
+    return true;
+  }
+ catch (  StiebelHeatPumpException e) {
+    logger.error("Stiebel heatpump time could not be set on heat pump! " + e.toString());
+  }
+ finally {
+    communicationInUse=false;
+  }
+  return false;
+}

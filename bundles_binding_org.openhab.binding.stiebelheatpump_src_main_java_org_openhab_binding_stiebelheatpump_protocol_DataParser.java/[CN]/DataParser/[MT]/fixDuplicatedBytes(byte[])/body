@@ -1,0 +1,10 @@
+{
+  byte[] bytesToBeAnalyzed=new byte[data.length - 2];
+  System.arraycopy(data,0,bytesToBeAnalyzed,0,data.length - 2);
+  byte[] fixedData=findReplace(bytesToBeAnalyzed,new byte[]{(byte)0x10,(byte)0x10},new byte[]{(byte)0x10});
+  fixedData=findReplace(fixedData,new byte[]{(byte)0x2b,(byte)0x18},new byte[]{(byte)0x2b});
+  byte[] result=new byte[fixedData.length + FOOTER.length];
+  System.arraycopy(fixedData,0,result,0,fixedData.length);
+  System.arraycopy(FOOTER,0,result,fixedData.length,FOOTER.length);
+  return result;
+}

@@ -1,0 +1,12 @@
+{
+  if (response.length == 0 || response.length > 2) {
+    throw new StiebelHeatPumpException("invalid response length on request of data " + new String(response));
+  }
+  if (response[0] != ESCAPE) {
+    throw new StiebelHeatPumpException("invalid response on request of data " + new String(response));
+  }
+  if (response.length == 2 && response[1] == DATAAVAILABLE[1]) {
+    return true;
+  }
+  return false;
+}

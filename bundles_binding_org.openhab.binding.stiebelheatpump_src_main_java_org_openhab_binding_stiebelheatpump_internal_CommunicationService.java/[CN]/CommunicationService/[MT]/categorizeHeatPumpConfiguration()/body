@@ -1,0 +1,26 @@
+{
+  for (  Request request : heatPumpConfiguration) {
+    logger.debug("Request : Name -> {}, Description -> {} , RequestByte -> {}",request.getName(),request.getDescription(),DatatypeConverter.printHexBinary(new byte[]{request.getRequestByte()}));
+    if (request.getName().equalsIgnoreCase("Version")) {
+      versionRequest=request;
+      logger.debug("Loaded Request : " + versionRequest.getDescription());
+      continue;
+    }
+    for (    RecordDefinition record : request.getRecordDefinitions()) {
+      if (record.getDataType() == Type.Settings && !heatPumpSettingConfiguration.contains(request)) {
+        heatPumpSettingConfiguration.add(request);
+      }
+      if (record.getDataType() == Type.Status && !heatPumpStatusConfiguration.contains(request)) {
+        heatPumpStatusConfiguration.add(request);
+      }
+      if (record.getDataType() == Type.Sensor && !heatPumpSensorConfiguration.contains(request)) {
+        heatPumpSensorConfiguration.add(request);
+      }
+    }
+  }
+  if (versionRequest == null) {
+    logger.debug("version request could not be found in configuration");
+    return false;
+  }
+  return true;
+}

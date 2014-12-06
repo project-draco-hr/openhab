@@ -1,0 +1,19 @@
+{
+  Map<String,String> map=new HashMap<String,String>();
+  logger.debug("Parse bytes: {}",DataParser.bytesToHex(response));
+  if (response.length < 2) {
+    logger.error("response does not have a valid length ogf bytes: {}",DataParser.bytesToHex(response));
+    return map;
+  }
+  for (  RecordDefinition recordDefinition : request.getRecordDefinitions()) {
+    try {
+      String value=parseRecord(response,recordDefinition);
+      logger.debug("Parsed value {} -> {} with pos: {} , len: {}",recordDefinition.getName(),value,recordDefinition.getPosition(),recordDefinition.getLength());
+      map.put(recordDefinition.getName(),value);
+    }
+ catch (    StiebelHeatPumpException e) {
+      continue;
+    }
+  }
+  return map;
+}

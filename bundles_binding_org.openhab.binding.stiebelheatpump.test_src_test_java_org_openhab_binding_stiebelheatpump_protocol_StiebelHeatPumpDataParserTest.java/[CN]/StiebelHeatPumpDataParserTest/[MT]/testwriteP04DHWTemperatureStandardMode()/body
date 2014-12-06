@@ -1,0 +1,26 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName().equals("SettingsNominalValues");
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0xf0,(byte)0x17,(byte)0x00,(byte)0xa2,(byte)0x00,(byte)0xa5,(byte)0x00,(byte)0x64,(byte)0x01,(byte)0xc2,(byte)0x01,(byte)0xe0,(byte)0x00,(byte)0x64,(byte)0x01,(byte)0x01,(byte)0x00,(byte)0x01,(byte)0x5e,(byte)0x01,(byte)0xc2,(byte)0x01,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("45.0",data.get("P04DHWTemperatureStandardMode"));
+  Request request=result.get(0);
+  RecordDefinition recordDefinition=null;
+  for (  RecordDefinition record : request.getRecordDefinitions()) {
+    if (record.getName().equals("P04DHWTemperatureStandardMode")) {
+      recordDefinition=record;
+      break;
+    }
+  }
+  byte[] newResponse=parser.composeRecord("45.5",response,recordDefinition);
+  newResponse[2]=parser.calculateChecksum(newResponse);
+  data=parser.parseRecords(newResponse,request);
+  Assert.assertEquals("45.5",data.get("P04DHWTemperatureStandardMode"));
+}

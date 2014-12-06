@@ -1,0 +1,13 @@
+{
+  ConfigLocator configLocator=new ConfigLocator(configFile);
+  heatPumpConfiguration=configLocator.getConfig();
+  if (heatPumpConfiguration != null && !heatPumpConfiguration.isEmpty()) {
+    logger.info("Loaded heat pump configuration {} .",configFile);
+    logger.info("Configuration file contains {} requests.",heatPumpConfiguration.size());
+    if (categorizeHeatPumpConfiguration()) {
+      return heatPumpConfiguration;
+    }
+  }
+  logger.warn("Could not load heat pump configuration file for {}!",configFile);
+  return null;
+}

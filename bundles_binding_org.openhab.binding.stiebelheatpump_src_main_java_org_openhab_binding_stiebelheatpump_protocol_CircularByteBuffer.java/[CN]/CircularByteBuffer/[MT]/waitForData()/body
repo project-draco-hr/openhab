@@ -1,0 +1,16 @@
+{
+  int timeOut=0;
+  while (isEmpty() && timeOut < retry && running) {
+    try {
+      Thread.sleep(WAIT_MS);
+      timeOut++;
+    }
+ catch (    Exception e) {
+      logger.error("Error while waiting for new data",e);
+    }
+  }
+  if (timeOut == retry) {
+    return false;
+  }
+  return true;
+}

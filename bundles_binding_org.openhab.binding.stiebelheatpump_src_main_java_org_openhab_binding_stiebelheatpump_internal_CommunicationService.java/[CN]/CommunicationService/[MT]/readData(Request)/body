@@ -1,0 +1,27 @@
+{
+  Map<String,String> data=new HashMap<String,String>();
+  logger.debug("Request : Name -> {}, Description -> {} , RequestByte -> {}",request.getName(),request.getDescription(),DatatypeConverter.printHexBinary(new byte[]{request.getRequestByte()}));
+  startCommunication();
+  byte responseAvailable[]=new byte[0];
+  byte requestMessage[]=createRequestMessage(request);
+  boolean validData=false;
+  try {
+    while (!validData) {
+      responseAvailable=getData(requestMessage);
+      responseAvailable=parser.fixDuplicatedBytes(responseAvailable);
+      validData=parser.headerCheck(responseAvailable);
+      if (validData) {
+        data=parser.parseRecords(responseAvailable,request);
+        continue;
+      }
+      Thread.sleep(WAITING_TIME_BETWEEN_REQUESTS);
+      startCommunication();
+    }
+  }
+ catch (  StiebelHeatPumpException e) {
+    logger.error("Error reading data : {}",e.toString());
+  }
+catch (  InterruptedException e) {
+  }
+  return data;
+}

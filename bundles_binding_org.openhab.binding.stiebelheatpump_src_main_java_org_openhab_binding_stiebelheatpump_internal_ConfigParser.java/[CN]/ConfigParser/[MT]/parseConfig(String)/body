@@ -1,0 +1,15 @@
+{
+  logger.debug("Parsing  heat pump configuration file {}.",fileName);
+  try {
+    JAXBContext context=JAXBContext.newInstance(Requests.class);
+    Unmarshaller unmarshaller=context.createUnmarshaller();
+    InputStream stream=Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+    Requests configuration=(Requests)unmarshaller.unmarshal(stream);
+    List<Request> requests=configuration.getRequests();
+    return requests;
+  }
+ catch (  JAXBException e) {
+    logger.debug("Parsing  failed {}. " + e.toString(),fileName);
+    throw new RuntimeException(e);
+  }
+}

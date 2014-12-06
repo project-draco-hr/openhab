@@ -1,0 +1,12 @@
+{
+  try {
+    startCommunication();
+    establishRequest(request);
+    connector.write(DataParser.ESCAPE);
+  }
+ catch (  Exception e) {
+    logger.error("Could not set data to heat pump! {}",e.toString());
+    return new byte[0];
+  }
+  return receiveData();
+}

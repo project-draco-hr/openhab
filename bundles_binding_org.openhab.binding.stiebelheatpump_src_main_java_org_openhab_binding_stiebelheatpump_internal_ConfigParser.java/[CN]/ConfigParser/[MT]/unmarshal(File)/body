@@ -1,0 +1,13 @@
+{
+  Requests requests=new Requests();
+  JAXBContext context;
+  try {
+    context=JAXBContext.newInstance(Requests.class);
+    Unmarshaller um=context.createUnmarshaller();
+    requests=(Requests)um.unmarshal(importFile);
+  }
+ catch (  JAXBException e) {
+    new StiebelHeatPumpException(e.toString());
+  }
+  return requests.getRequests();
+}

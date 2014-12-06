@@ -1,0 +1,33 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName() == "SettingsHeatingProgram";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x39,(byte)0x0b,(byte)0x08,(byte)0x98,(byte)0x02,(byte)0x58,(byte)0x7f,(byte)0x00,(byte)0x03,(byte)0xe8,(byte)0x06,(byte)0xa4,(byte)0x1f,(byte)0x00,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("2200",data.get("HP1StartTime"));
+  Assert.assertEquals("600",data.get("HP1StopTime"));
+  Assert.assertEquals("1",data.get("HP1Monday"));
+  Assert.assertEquals("1",data.get("HP1Tuesday"));
+  Assert.assertEquals("1",data.get("HP1Wednesday"));
+  Assert.assertEquals("1",data.get("HP1Thusday"));
+  Assert.assertEquals("1",data.get("HP1Friday"));
+  Assert.assertEquals("1",data.get("HP1Saturday"));
+  Assert.assertEquals("1",data.get("HP1Sunday"));
+  Assert.assertEquals("0",data.get("HP1Enabled"));
+  Assert.assertEquals("1000",data.get("HP2StartTime"));
+  Assert.assertEquals("1700",data.get("HP2StopTime"));
+  Assert.assertEquals("1",data.get("HP2Monday"));
+  Assert.assertEquals("1",data.get("HP2Tuesday"));
+  Assert.assertEquals("1",data.get("HP2Wednesday"));
+  Assert.assertEquals("1",data.get("HP2Thusday"));
+  Assert.assertEquals("1",data.get("HP2Friday"));
+  Assert.assertEquals("0",data.get("HP2Saturday"));
+  Assert.assertEquals("0",data.get("HP2Sunday"));
+  Assert.assertEquals("0",data.get("HP2Enabled"));
+}

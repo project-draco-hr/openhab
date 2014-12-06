@@ -1,0 +1,31 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName() == "SettingsHeating1";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0xac,(byte)0x06,(byte)0x28,(byte)0x1e,(byte)0x1e,(byte)0x14,(byte)0x0a,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x02,(byte)0x00,(byte)0x64,(byte)0x03,(byte)0x02,(byte)0xee,(byte)0x00,(byte)0xc8,(byte)0x00,(byte)0x0a,(byte)0x00,(byte)0x01,(byte)0xff,(byte)0xce,(byte)0x10,(byte)0x10,(byte)0x1a,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("4.0",data.get("P21HysteresisHeating1"));
+  Assert.assertEquals("3.0",data.get("P22HysteresisHeating2"));
+  Assert.assertEquals("3.0",data.get("P23HysteresisHeating3"));
+  Assert.assertEquals("2.0",data.get("P24HysteresisHeating4"));
+  Assert.assertEquals("1.0",data.get("P25HysteresisHeating5"));
+  Assert.assertEquals("0.0",data.get("P26HysteresisHeating6"));
+  Assert.assertEquals("0.0",data.get("P27HysteresisHeating7"));
+  Assert.assertEquals("0.0",data.get("P28HysteresisHeating8"));
+  Assert.assertEquals("2",data.get("P29SwitchingHysteresisAsymmetry"));
+  Assert.assertEquals("100",data.get("P30SwitchingValueIntegralPortionHeating"));
+  Assert.assertEquals("3",data.get("P31AmountOfUnlockedElectricalBoosterStages"));
+  Assert.assertEquals("75.0",data.get("MaximumFlowTemperatureHeatingMode"));
+  Assert.assertEquals("20.0",data.get("P49ChangeoverTemperatureSummerWinter"));
+  Assert.assertEquals("1.0",data.get("P50HysteresisChangeoverTemperatureSummerWinter"));
+  Assert.assertEquals("1",data.get("P77OutsideTemperatureAdjustment"));
+  Assert.assertEquals("-5.0",data.get("P78BivalencePoint"));
+  Assert.assertEquals("16",data.get("P79DelayedEnableReheating"));
+  Assert.assertEquals("2.6",data.get("OutputElectricalHeatingStage1"));
+}

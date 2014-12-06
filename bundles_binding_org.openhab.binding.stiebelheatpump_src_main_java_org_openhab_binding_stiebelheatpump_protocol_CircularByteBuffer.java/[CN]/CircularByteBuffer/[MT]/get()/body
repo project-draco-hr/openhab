@@ -1,0 +1,15 @@
+{
+  if (!waitForData()) {
+    throw new StiebelHeatPumpException("no data availabel!");
+  }
+  byte result;
+synchronized (buffer) {
+    result=buffer[readPos];
+    currentSize--;
+    readPos++;
+    if (readPos >= buffer.length) {
+      readPos=0;
+    }
+  }
+  return result;
+}

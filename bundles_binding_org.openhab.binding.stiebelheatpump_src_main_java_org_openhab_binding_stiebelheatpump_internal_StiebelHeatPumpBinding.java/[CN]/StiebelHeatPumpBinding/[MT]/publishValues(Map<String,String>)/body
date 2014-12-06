@@ -1,0 +1,18 @@
+{
+  for (  StiebelHeatPumpBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String parameter=provider.getParameter(itemName);
+      if (parameter != null && heatPumpData.containsKey(parameter)) {
+        String heatpumpValue=heatPumpData.get(parameter);
+        Class<? extends Item> itemType=provider.getItemType(itemName);
+        if (itemType.isAssignableFrom(NumberItem.class)) {
+          eventPublisher.postUpdate(itemName,new DecimalType(heatpumpValue));
+        }
+        if (itemType.isAssignableFrom(StringItem.class)) {
+          String value=heatpumpValue;
+          eventPublisher.postUpdate(itemName,new StringType(value));
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    public boolean matches(    Request r){
+      return r.getName() == "SettingsVentilation";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x2f,(byte)0x01,(byte)0x00,(byte)0x73,(byte)0x00,(byte)0x77,(byte)0x00,(byte)0xa6,(byte)0x00,(byte)0x73,(byte)0x00,(byte)0x86,(byte)0x00,(byte)0xc4,(byte)0x00,(byte)0x38,(byte)0x00,(byte)0x38,(byte)0x00,(byte)0x38,(byte)0x00,(byte)0x38,(byte)0x00,(byte)0x00,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("115",data.get("P37FanStageSupplyAir1"));
+  Assert.assertEquals("119",data.get("P38FanStageSupplyAir2"));
+  Assert.assertEquals("166",data.get("P39FanStageSupplyAir3"));
+  Assert.assertEquals("115",data.get("P40FanStageExtractyAir1"));
+  Assert.assertEquals("134",data.get("P41FanStageExtractyAir2"));
+  Assert.assertEquals("196",data.get("P42FanStageExtractyAir3"));
+  Assert.assertEquals("56",data.get("P43VentilationTimeUnscheduledStage3"));
+  Assert.assertEquals("56",data.get("P44VentilationTimeUnscheduledStage2"));
+  Assert.assertEquals("56",data.get("P45VentilationTimeUnscheduledStage1"));
+  Assert.assertEquals("56",data.get("P46VentilationTimeUnscheduledStage0"));
+  Assert.assertEquals("0",data.get("P75OperatingModePassiveCooling"));
+  Assert.assertEquals("0",data.get("StoveFireplaceOperation"));
+}
