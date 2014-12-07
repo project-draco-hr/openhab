@@ -1,4 +1,12 @@
 {
-  String s=Utils.getHexString(highByte) + "." + Utils.getHexString(middleByte)+ "."+ Utils.getHexString(lowByte);
+  String s=null;
+  if (isX10()) {
+    byte house=(byte)(((getLowByte() & 0xf0) >> 4) & 0xff);
+    byte unit=(byte)((getLowByte() & 0x0f) & 0xff);
+    s=X10.s_houseToString(house) + "." + X10.s_unitToInt(unit);
+  }
+ else {
+    s=Utils.getHexString(highByte) + "." + Utils.getHexString(middleByte)+ "."+ Utils.getHexString(lowByte);
+  }
   return s;
 }

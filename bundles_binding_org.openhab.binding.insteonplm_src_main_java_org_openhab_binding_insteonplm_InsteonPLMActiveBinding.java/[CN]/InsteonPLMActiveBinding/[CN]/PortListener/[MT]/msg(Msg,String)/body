@@ -2,22 +2,10 @@
   if (msg.isEcho() || msg.isPureNack())   return;
   m_messagesReceived++;
   logger.debug("got msg: {}",msg);
-  InsteonAddress toAddr=msg.getAddr("toAddress");
-  if (!msg.isBroadcast() && !m_driver.isMsgForUs(toAddr)) {
-    return;
+  if (msg.isX10()) {
+    handleX10Message(msg,fromPort);
   }
-  InsteonAddress fromAddr=msg.getAddr("fromAddress");
-  if (fromAddr == null) {
-    logger.debug("invalid fromAddress, ignoring msg {}",msg);
-    return;
-  }
-synchronized (m_devices) {
-    InsteonDevice dev=getDevice(fromAddr);
-    if (dev == null) {
-      logger.debug("dropping message from unknown device with address {}",fromAddr);
-    }
  else {
-      dev.handleMessage(fromPort,msg);
-    }
+    handleInsteonMessage(msg,fromPort);
   }
 }

@@ -2,13 +2,13 @@
 switch (connectorType) {
 case SERIAL:
     if (dscAlarmConnector == null) {
-      dscAlarmConnector=new SerialConnector(apiSerialPort,baudRate);
+      dscAlarmConnector=new SerialConnector(serialPort,baudRate);
     }
   break;
 case TCP:
-if (StringUtils.isNotBlank(apiIP)) {
+if (StringUtils.isNotBlank(ipAddress)) {
   if (dscAlarmConnector == null) {
-    dscAlarmConnector=new TCPConnector(apiIP,DEFAULT_TCP_PORT,CONNECTION_TIMEOUT);
+    dscAlarmConnector=new TCPConnector(ipAddress,DEFAULT_TCP_PORT,TCP_CONNECTION_TIMEOUT);
   }
 }
  else {

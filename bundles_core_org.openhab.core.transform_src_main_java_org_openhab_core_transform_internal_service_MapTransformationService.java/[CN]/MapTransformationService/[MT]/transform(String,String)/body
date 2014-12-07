@@ -2,17 +2,7 @@
   if (filename == null || source == null) {
     throw new TransformationException("the given parameters 'filename' and 'source' must not be null");
   }
-  String basename=FilenameUtils.getBaseName(filename);
-  String extension=FilenameUtils.getExtension(filename);
-  String locale=Locale.getDefault().getLanguage();
-  String basePath=ConfigDispatcher.getConfigFolder() + File.separator + TransformationActivator.TRANSFORM_FOLDER_NAME+ File.separator;
-  String path=basePath + filename;
-  String alternatePath=basePath + basename + "_"+ locale+ "."+ extension;
-  File f=new File(alternatePath);
-  if (f.exists()) {
-    path=alternatePath;
-  }
-  logger.debug("Transformation file found '{}'",path);
+  String path=getLocalizedProposedFilename(filename);
   Reader reader=null;
   try {
     Properties properties=new Properties();
