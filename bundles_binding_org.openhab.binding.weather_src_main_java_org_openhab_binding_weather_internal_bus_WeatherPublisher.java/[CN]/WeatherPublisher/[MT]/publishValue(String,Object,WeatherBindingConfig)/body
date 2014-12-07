@@ -1,0 +1,24 @@
+{
+  if (value == null) {
+    context.getEventPublisher().postUpdate(itemName,UnDefType.UNDEF);
+  }
+ else   if (value instanceof Calendar) {
+    Calendar calendar=(Calendar)value;
+    context.getEventPublisher().postUpdate(itemName,new DateTimeType(calendar));
+  }
+ else   if (value instanceof Number) {
+    context.getEventPublisher().postUpdate(itemName,new DecimalType(round(value.toString(),bindingConfig)));
+  }
+ else   if (value instanceof String || value instanceof Enum) {
+    if (value instanceof Enum) {
+      String enumValue=WordUtils.capitalizeFully(StringUtils.replace(value.toString(),"_"," "));
+      context.getEventPublisher().postUpdate(itemName,new StringType(enumValue));
+    }
+ else {
+      context.getEventPublisher().postUpdate(itemName,new StringType(value.toString()));
+    }
+  }
+ else {
+    logger.warn("Unsupported value type {}",value.getClass().getSimpleName());
+  }
+}

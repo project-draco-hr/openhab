@@ -1,0 +1,30 @@
+{
+  valid=false;
+  if (properties != null) {
+    Enumeration<String> keys=properties.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      String value=StringUtils.trimToNull((String)properties.get(key));
+      if (StringUtils.startsWithIgnoreCase(key,"apikey")) {
+        parseApiKey(key,value);
+      }
+ else       if (StringUtils.startsWithIgnoreCase(key,"location")) {
+        parseLocation(key,value);
+      }
+    }
+    for (    LocationConfig lc : locationConfigs.values()) {
+      if (!lc.isValid()) {
+        throw new ConfigurationException("weather","Incomplete location config for locationId '" + lc.getLocationId() + "', please check your openhab.cfg!");
+      }
+      if (lc.getProviderName() != ProviderName.YAHOO && !providerConfigs.containsKey(lc.getProviderName())) {
+        throw new ConfigurationException("weather","No apikey found for provider '" + lc.getProviderName() + "', please check your openhab.cfg!");
+      }
+    }
+    for (    ProviderConfig pc : providerConfigs.values()) {
+      if (!pc.isValid()) {
+        throw new ConfigurationException("weather","Invalid apikey config for provider '" + pc.getProviderName() + "', please check your openhab.cfg!");
+      }
+    }
+    valid=locationConfigs.size() > 0;
+  }
+}
