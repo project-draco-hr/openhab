@@ -1,0 +1,11 @@
+{
+  String handler=e.getTextContent();
+  if (handler == null)   throw new ParsingException("Could not find Handler for: " + e.getTextContent());
+  NamedNodeMap attributes=e.getAttributes();
+  HashMap<String,String> params=new HashMap<String,String>();
+  for (int i=0; i < attributes.getLength(); i++) {
+    Node n=attributes.item(i);
+    params.put(n.getNodeName(),n.getNodeValue());
+  }
+  return new HandlerEntry(handler,params);
+}
