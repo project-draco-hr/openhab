@@ -28,12 +28,12 @@
     }
   }
   if (lastFileNames.get(foldername) != null) {
-    ;
     for (    String fileName : lastFileNames.get(foldername)) {
       if (!currentFileNames.contains(fileName)) {
         logger.info("File '{}' has been deleted",fileName);
         if (modelRepo != null) {
           modelRepo.removeModel(fileName);
+          lastCheckedMap.remove(fileName);
         }
       }
     }
