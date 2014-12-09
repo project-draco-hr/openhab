@@ -8,7 +8,7 @@
   healing.retryCnt++;
   if (healing.retryCnt >= HEAL_MAX_RETRIES) {
     logger.debug("NODE {}: Maximum retries in state {}",healing.nodeId,healing.state);
-    if (healing.state == HealState.GETNEIGHBORS) {
+    if (healing.state == HealState.UPDATENEIGHBORS) {
       healing.state=healing.stateNext;
       healing.retryCnt=0;
       logger.debug("NODE {}: Heal - continuing to state {}",healing.nodeId,healing.stateNext);
