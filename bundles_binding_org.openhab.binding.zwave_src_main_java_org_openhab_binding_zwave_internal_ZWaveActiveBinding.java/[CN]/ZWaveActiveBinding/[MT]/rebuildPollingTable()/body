@@ -1,5 +1,9 @@
 {
   pollingList.clear();
+  if (converterHandler == null) {
+    logger.debug("ConverterHandler not initialised. Polling disabled.");
+    return;
+  }
   for (  ZWaveBindingProvider eachProvider : providers) {
     for (    String name : eachProvider.getItemNames()) {
       logger.trace("Polling list: Checking {} == {}",name,converterHandler.getRefreshInterval(eachProvider,name));
