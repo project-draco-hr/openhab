@@ -35,9 +35,6 @@
       String var=(String)state.get("service") + "/" + (String)state.get("variable");
       String property="device:" + deviceId + "/service/"+ var;
       Object value=(Object)state.get("value");
-      if (datetimeMap.containsKey(var)) {
-        value=fixTimestamp(value);
-      }
       publish(property,value);
     }
   }
