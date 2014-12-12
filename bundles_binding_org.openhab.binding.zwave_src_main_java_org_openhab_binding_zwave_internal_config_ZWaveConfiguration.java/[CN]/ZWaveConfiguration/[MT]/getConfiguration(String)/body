@@ -202,7 +202,7 @@ records.add(record);
 }
  else if (arg.equals("info/")) {
 record=new OpenHABConfigurationRecord(domain,"NodeID","Node ID",true);
-record.value=Integer.toString(node.getDeviceId());
+record.value=Integer.toString(node.getNodeId());
 records.add(record);
 if (node.getManufacturer() != Integer.MAX_VALUE) {
 if (database.FindManufacturer(node.getManufacturer()) == true) {
@@ -379,7 +379,9 @@ record.description=database.getLabel(group.Help);
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 int memberCnt=0;
 List<Integer> members=associationCommandClass.getGroupMembers(group.Index);
-if (members != null) memberCnt=members.size();
+if (members != null) {
+memberCnt=members.size();
+}
 record.value=memberCnt + " of " + group.Maximum+ " group members";
 record.addAction("Refresh","Refresh");
 records.add(record);
@@ -425,22 +427,22 @@ List<Integer> members=associationCommandClass.getGroupMembers(groupId);
 for (int i=0; i < nodes.size(); i++) {
 int nodeNum=nodes.get(i);
 ZWaveNode nodeList=zController.getNode(nodeNum);
-if (nodeList.getName() == null || nodeList.getName().isEmpty()) {
-record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),"Node " + nodeList.getNodeId(),false);
+if (nodeList == null || nodeList.getName() == null || nodeList.getName().isEmpty()) {
+record=new OpenHABConfigurationRecord(domain,"node" + nodeNum,"Node " + nodeNum,false);
 }
  else {
-record=new OpenHABConfigurationRecord(domain,"node" + nodeList.getNodeId(),nodeList.getName(),false);
+record=new OpenHABConfigurationRecord(domain,"node" + nodeNum,nodeList.getName(),false);
 }
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
 record.addValue("true","Member");
 record.addValue("false","Non-Member");
-if (members != null && members.contains(nodeList.getNodeId())) {
+if (members != null && members.contains(nodeNum)) {
 record.value="true";
 }
  else {
 record.value="false";
 }
-Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,groupId,nodeList.getNodeId());
+Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey(),nodeId,groupId,nodeNum);
 if (pendingValue != null) {
 if (pendingValue == 1) {
 record.value="true";

@@ -179,6 +179,33 @@ addToQueue(zdds2.getDynamicValues(stageAdvanced),endpointCommandClass,endpoint.g
 }
 logger.debug("NODE {}: Node advancer: DYNAMIC_VALUES - queued {} frames",node.getNodeId(),msgQueue.size());
 break;
+case ASSOCIATIONS:
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+if (associationCommandClass == null) {
+break;
+}
+if (stageAdvanced == false) {
+break;
+}
+ZWaveProductDatabase database=new ZWaveProductDatabase();
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
+if (groupList == null) {
+logger.debug("NODE {}: Node advancer: ASSOCIATIONS - none in database",node.getNodeId());
+break;
+}
+for (ZWaveDbAssociationGroup group : groupList) {
+logger.debug("NODE {}: Node advancer: ASSOCIATIONS request group {}",node.getNodeId(),group.Index);
+addToQueue(associationCommandClass.getAssociationMessage(group.Index));
+}
+}
+ else {
+for (int group=1; group <= associationCommandClass.getMaxGroups(); group++) {
+logger.debug("NODE {}: Node advancer: ASSOCIATIONS request group {}",node.getNodeId(),group);
+addToQueue(associationCommandClass.getAssociationMessage(group));
+}
+}
+break;
 case NEIGHBORS:
 if (eventClass == SerialMessageClass.GetRoutingInfo) {
 break;
