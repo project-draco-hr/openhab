@@ -1,0 +1,23 @@
+{
+  try {
+    logger.debug("MDB ------- start of modem link records ------------------");
+    HashMap<InsteonAddress,ModemDBEntry> dbes=m_port.getDriver().lockModemDBEntries();
+    for (    Entry<InsteonAddress,ModemDBEntry> db : dbes.entrySet()) {
+      ArrayList<Msg> lrs=db.getValue().getLinkRecords();
+      for (      Msg m : lrs) {
+        int recordFlags=m.getByte("RecordFlags") & 0xff;
+        String ms=((recordFlags & (0x1 << 6)) != 0) ? "CTRL" : "RESP";
+        int group=m.getByte("ALLLinkGroup") & 0xff;
+        logger.debug("MDB {}: {} group: {} data1: {} data2: {} data3: {}",db.getKey(),ms,toHex(m.getByte("ALLLinkGroup")),toHex(m.getByte("LinkData1")),toHex(m.getByte("LinkData2")),toHex(m.getByte("LinkData2")));
+      }
+      logger.debug("MDB -----");
+    }
+    logger.debug("MDB ---------------- end of modem link records -----------");
+  }
+ catch (  FieldException e) {
+    logger.error("cannot access field:",e);
+  }
+ finally {
+    m_port.getDriver().unlockModemDBEntries();
+  }
+}
