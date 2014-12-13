@@ -1,0 +1,29 @@
+{
+  logger.info("Executing GoogleTTS for text '{}' in language {}",text,ttsLanguage);
+  BufferedInputStream stream=null;
+  try {
+    List<String> sentences=textProcessor.splitIntoChunks(text);
+    InputStream completeStream=getSpeechForText(sentences);
+    Player playMP3=new Player(completeStream);
+    playMP3.play();
+  }
+ catch (  IOException e) {
+    logger.warn("Error while connecting to Google translate service",e);
+    if (e instanceof FileNotFoundException) {
+      logger.warn("Possibly unsupported language '{}'?",ttsLanguage);
+    }
+  }
+catch (  JavaLayerException e) {
+    logger.warn("Unable to play InputStream for text " + text,e);
+  }
+ finally {
+    if (stream != null) {
+      try {
+        stream.close();
+      }
+ catch (      IOException e) {
+        logger.debug("Error while closing InputStream",e);
+      }
+    }
+  }
+}
