@@ -27,7 +27,12 @@ case WAIT:
 if (node.isListening() == true || node.isFrequentlyListening() == true) {
 break;
 }
-logger.debug("NODE {}: Node advancer: WAIT - send IdentifyNode",node.getNodeId());
+ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+if (wakeUpCommandClass != null && wakeUpCommandClass.isAwake() == true) {
+logger.debug("NODE {}: Node advancer: WAIT - Node is awake",node.getNodeId());
+break;
+}
+logger.debug("NODE {}: Node advancer: WAIT - Still waiting!",node.getNodeId());
 return;
 case PING:
 if (node.getNodeId() == controller.getOwnNodeId()) {
@@ -38,12 +43,12 @@ break;
 if (eventClass == SerialMessageClass.SendData) {
 break;
 }
-ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)node.getCommandClass(CommandClass.NO_OPERATION);
-if (zwaveCommandClass == null) {
+ZWaveNoOperationCommandClass noOpCommandClass=(ZWaveNoOperationCommandClass)node.getCommandClass(CommandClass.NO_OPERATION);
+if (noOpCommandClass == null) {
 break;
 }
 logger.debug("NODE {}: Node advancer: PING - send NoOperation",node.getNodeId());
-SerialMessage msg=zwaveCommandClass.getNoOperationMessage();
+SerialMessage msg=noOpCommandClass.getNoOperationMessage();
 if (msg != null) {
 msg.attempts=1;
 addToQueue(msg);
