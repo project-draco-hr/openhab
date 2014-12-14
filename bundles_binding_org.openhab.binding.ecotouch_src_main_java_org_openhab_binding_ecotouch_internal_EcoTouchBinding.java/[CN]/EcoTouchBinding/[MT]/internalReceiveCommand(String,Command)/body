@@ -8,6 +8,13 @@
  catch (    Exception e) {
     }
   }
+  if (tag == EcoTouchTags.TYPE_ADAPT_HEATING) {
+    double adapt=Double.parseDouble(command.toString());
+    adapt=(adapt + 2) * 2;
+    adapt=Math.max(0,adapt);
+    adapt=Math.min(8,adapt);
+    command=new DecimalType((int)adapt);
+  }
   EcoTouchConnector connector=new EcoTouchConnector(ip,username,password,cookies);
   int value=0;
 switch (tag.getType()) {
