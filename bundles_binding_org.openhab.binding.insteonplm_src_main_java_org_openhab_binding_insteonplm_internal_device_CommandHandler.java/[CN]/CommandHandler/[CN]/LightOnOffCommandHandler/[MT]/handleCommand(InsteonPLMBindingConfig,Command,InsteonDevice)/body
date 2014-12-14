@@ -1,12 +1,12 @@
 {
   try {
     if (cmd == OnOffType.ON) {
-      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x11,(byte)0xff);
+      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x11,(byte)0xff,s_getGroup(conf));
       dev.enqueueMessage(m,m_feature);
       logger.info("LightOnOffCommandHandler: sent msg to switch {} on",dev.getAddress());
     }
  else     if (cmd == OnOffType.OFF) {
-      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x13,(byte)0x00);
+      Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x13,(byte)0x00,s_getGroup(conf));
       dev.enqueueMessage(m,m_feature);
       logger.info("LightOnOffCommandHandler: sent msg to switch {} off",dev.getAddress());
     }
