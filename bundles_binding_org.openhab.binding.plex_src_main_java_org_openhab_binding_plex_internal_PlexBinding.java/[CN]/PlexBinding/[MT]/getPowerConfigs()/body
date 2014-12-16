@@ -1,0 +1,11 @@
+{
+  List<PlexBindingConfig> configs=new ArrayList<PlexBindingConfig>();
+  for (  PlexBindingProvider provider : providers) {
+    Collection<String> itemNames=provider.getItemNames();
+    for (    String itemName : itemNames) {
+      PlexBindingConfig config=getConfig(itemName);
+      if (config.getProperty().equals(PlexBindingConstants.PROPERTY_POWER))       configs.add(config);
+    }
+  }
+  return configs;
+}
