@@ -1,0 +1,24 @@
+{
+  if (msg.isPureNack())   return;
+  try {
+    if (msg.getByte("Cmd") == 0x69 || msg.getByte("Cmd") == 0x6a) {
+      if (msg.getByte("ACK/NACK") == 0x15) {
+        logger.debug("got all link records.");
+        done();
+      }
+    }
+ else     if (msg.getByte("Cmd") == 0x57) {
+      updateModemDB(msg);
+      m_port.writeMessage(Msg.s_makeMessage("GetNextALLLinkRecord"));
+    }
+  }
+ catch (  FieldException e) {
+    logger.debug("bad field handling link records {}",e);
+  }
+catch (  IOException e) {
+    logger.debug("got IO exception handling link records {}",e);
+  }
+catch (  IllegalStateException e) {
+    logger.debug("got exception requesting link records {}",e);
+  }
+}

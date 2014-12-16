@@ -1,0 +1,40 @@
+{
+  logger.debug("internalReceiveCommand() called, itemName={}, command={}",itemName,command);
+  if (providesBindingFor(itemName)) {
+    for (    Enigma2BindingProvider provider : providers) {
+      Enigma2BindingConfig bindingConfig=provider.getBindingConfigFor(itemName);
+      if (bindingConfig == null) {
+        continue;
+      }
+      Enigma2Node node=enigmaNodes.get(bindingConfig.getDeviceId());
+      if (node == null) {
+        logger.error("Invalid deviceId {}",bindingConfig.getDeviceId());
+      }
+switch (bindingConfig.getCmdId()) {
+case VOLUME:
+        node.setVolume(command);
+      break;
+case CHANNEL:
+    node.setChannel(command);
+  break;
+case PAUSE:
+node.sendPlayPause(command);
+break;
+case MUTE:
+node.sendMuteUnmute(command);
+break;
+case REMOTECONTROL:
+node.sendRcCommand(command,bindingConfig.getCmdValue());
+break;
+case POWERSTATE:
+node.sendOnOff(command,Enigma2PowerState.STANDBY);
+break;
+default :
+logger.error("Unknown cmdId \"{}\"",bindingConfig.getCmdId());
+}
+}
+}
+ else {
+logger.trace("No provider found for this item");
+}
+}

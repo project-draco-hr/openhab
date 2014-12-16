@@ -1,0 +1,46 @@
+{
+  logger.debug("refreshItem(): Partition Item Name: {}",item.getName());
+  int state;
+  String strStatus="";
+  boolean trigger;
+  OnOffType onOffType;
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PARTITION_STATUS:
+        state=partitionProperties.getState(StateType.GENERAL_STATE);
+      strStatus=partitionProperties.getStateDescription(StateType.GENERAL_STATE);
+    publisher.postUpdate(item.getName(),new StringType(strStatus));
+  break;
+case PARTITION_ARM_MODE:
+state=partitionProperties.getState(StateType.ARM_STATE);
+strStatus=partitionProperties.getStateDescription(StateType.ARM_STATE);
+publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+case PARTITION_ARMED:
+trigger=partitionProperties.getTrigger(TriggerType.ARMED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PARTITION_ENTRY_DELAY:
+trigger=partitionProperties.getTrigger(TriggerType.ENTRY_DELAY);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PARTITION_EXIT_DELAY:
+trigger=partitionProperties.getTrigger(TriggerType.EXIT_DELAY);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PARTITION_IN_ALARM:
+trigger=partitionProperties.getTrigger(TriggerType.ALARMED);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+default :
+logger.debug("refreshItem(): Partition item not updated.");
+break;
+}
+}
+}
+}

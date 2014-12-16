@@ -1,0 +1,40 @@
+{
+  logger.debug("updateProperties(): Zone Item Name: {}",item.getName());
+  boolean trigger=state != 0 ? true : false;
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case ZONE_ALARM_STATUS:
+        zoneProperties.setState(StateType.ALARM_STATE,state,description);
+      break;
+case ZONE_TAMPER_STATUS:
+    zoneProperties.setState(StateType.TAMPER_STATE,state,description);
+  break;
+case ZONE_FAULT_STATUS:
+zoneProperties.setState(StateType.FAULT_STATE,state,description);
+break;
+case ZONE_GENERAL_STATUS:
+zoneProperties.setState(StateType.GENERAL_STATE,state,description);
+break;
+case ZONE_BYPASS_MODE:
+zoneProperties.setState(StateType.ARM_STATE,state,description);
+break;
+case ZONE_IN_ALARM:
+zoneProperties.setTrigger(TriggerType.ALARMED,trigger);
+break;
+case ZONE_TAMPER:
+zoneProperties.setTrigger(TriggerType.TAMPERED,trigger);
+break;
+case ZONE_FAULT:
+zoneProperties.setTrigger(TriggerType.FAULTED,trigger);
+break;
+case ZONE_TRIPPED:
+zoneProperties.setTrigger(TriggerType.TRIPPED,trigger);
+break;
+default :
+logger.debug("updateProperties():: Zone property not updated.");
+break;
+}
+}
+}
+}

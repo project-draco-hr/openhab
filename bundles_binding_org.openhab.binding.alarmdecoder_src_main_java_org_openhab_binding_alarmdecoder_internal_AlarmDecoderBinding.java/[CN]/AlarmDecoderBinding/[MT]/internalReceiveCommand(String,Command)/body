@@ -1,3 +1,35 @@
 {
-  logger.warn("binding does not support sending commands yet!");
+  if (!m_acceptCommands) {
+    logger.warn("sending commands is disabled, enable it in openhab.cfg!");
+    return;
+  }
+  String param="INVALID";
+  if (command instanceof OnOffType) {
+    OnOffType cmd=(OnOffType)command;
+    param=cmd.equals(OnOffType.ON) ? "ON" : "OFF";
+  }
+ else   if (command instanceof DecimalType) {
+    param=((DecimalType)command).toString();
+  }
+ else {
+    logger.error("item {} only accepts DecimalType and OnOffType",itemName);
+    return;
+  }
+  try {
+    ArrayList<AlarmDecoderBindingConfig> bcl=getItems(itemName);
+    for (    AlarmDecoderBindingConfig bc : bcl) {
+      String sendStr=bc.getParameters().get(param);
+      if (sendStr == null) {
+        logger.error("{} has no mapping for command {}!",itemName,param);
+      }
+ else {
+        String s=sendStr.replace("POUND","#");
+        m_writer.write(s);
+        m_writer.flush();
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.error("write to serial port failed: ",e);
+  }
 }

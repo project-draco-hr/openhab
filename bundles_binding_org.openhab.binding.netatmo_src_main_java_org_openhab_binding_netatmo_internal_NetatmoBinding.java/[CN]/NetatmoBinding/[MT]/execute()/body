@@ -1,59 +1,78 @@
 {
   logger.debug("Querying Netatmo API");
-  if (this.accessToken == null) {
-    refreshAccessToken();
+  for (  String userid : credentialsCache.keySet()) {
+    OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+    if (oauthCredentials.noAccessToken()) {
+      oauthCredentials.refreshAccessToken();
+    }
+    try {
+      if (oauthCredentials.firstExecution) {
+        processDeviceList(oauthCredentials);
+      }
+      Map<String,Map<String,BigDecimal>> deviceMeasureValueMap=processMeasurements(oauthCredentials);
+      for (      final NetatmoBindingProvider provider : this.providers) {
+        for (        final String itemName : provider.getItemNames()) {
+          final String deviceId=provider.getDeviceId(itemName);
+          final String moduleId=provider.getModuleId(itemName);
+          final NetatmoMeasureType measureType=provider.getMeasureType(itemName);
+          State state=null;
+switch (measureType) {
+case TEMPERATURE:
+case CO2:
+case HUMIDITY:
+case NOISE:
+case PRESSURE:
+case RAIN:
+            final String requestKey=createKey(deviceId,moduleId);
+          state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure()));
+        break;
+case BATTERYVP:
+case RFSTATUS:
+      for (      Module module : oauthCredentials.deviceListResponse.getModules()) {
+        if (module.getId().equals(moduleId)) {
+switch (measureType) {
+case BATTERYVP:
+            state=new DecimalType(module.getBatteryVp());
+          break;
+case RFSTATUS:
+        state=new DecimalType(module.getRfStatus());
+      break;
   }
-  if (this.firstExecution) {
-    final DeviceListRequest request=new DeviceListRequest(this.accessToken);
-    final DeviceListResponse response=request.execute();
-    logger.debug("Request: {}",request);
-    logger.debug("Response: {}",response);
-    if (response.isError()) {
-      final NetatmoError error=response.getError();
-      if (error.isAccessTokenExpired()) {
-        refreshAccessToken();
-        execute();
-      }
- else {
-        logger.error(error.getMessage());
-      }
-      return;
-    }
- else {
-      processDeviceListResponse(response);
-      this.firstExecution=false;
-    }
-  }
-  final Map<String,Map<String,BigDecimal>> deviceMeasureValueMap=new HashMap<String,Map<String,BigDecimal>>();
-  for (  final MeasurementRequest request : createMeasurementRequests()) {
-    final MeasurementResponse response=request.execute();
-    logger.debug("Request: {}",request);
-    logger.debug("Response: {}",response);
-    if (response.isError()) {
-      final NetatmoError error=response.getError();
-      if (error.isAccessTokenExpired()) {
-        refreshAccessToken();
-        execute();
-      }
- else {
-        logger.error(error.getMessage());
-      }
-      return;
-    }
- else {
-      processMeasurementResponse(request,response,deviceMeasureValueMap);
-    }
-  }
-  for (  final NetatmoBindingProvider provider : this.providers) {
-    for (    final String itemName : provider.getItemNames()) {
-      final String deviceId=provider.getDeviceId(itemName);
-      final String moduleId=provider.getModuleId(itemName);
-      final String measure=provider.getMeasure(itemName);
-      final String requestKey=createKey(deviceId,moduleId);
-      final State state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measure));
-      if (state != null) {
-        this.eventPublisher.postUpdate(itemName,state);
-      }
-    }
-  }
+}
+}
+break;
+case ALTITUDE:
+case LATITUDE:
+case LONGITUDE:
+case WIFISTATUS:
+for (Device device : oauthCredentials.deviceListResponse.getDevices()) {
+if (device.getId().equals(deviceId)) {
+switch (measureType) {
+case ALTITUDE:
+state=new DecimalType(device.getAltitude());
+break;
+case LATITUDE:
+state=new DecimalType(device.getLatitude());
+break;
+case LONGITUDE:
+state=new DecimalType(device.getLongitude());
+break;
+case WIFISTATUS:
+state=new DecimalType(device.getWifiStatus());
+break;
+}
+}
+}
+break;
+}
+if (state != null) {
+this.eventPublisher.postUpdate(itemName,state);
+}
+}
+}
+}
+ catch (NetatmoException ne) {
+logger.error(ne.getMessage());
+}
+}
 }

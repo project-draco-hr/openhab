@@ -1,0 +1,13 @@
+{
+  logger.debug("sending pairkey key=" + pairkey);
+  String message="<?xml version=\"1.0\" encoding=\"utf-8\"?><envelope><api type=\"pairing\"><name>hello</name><value>" + pairkey + "</value><port>"+ Integer.toString(lglocalport)+ "</port></api></envelope>";
+  String answer=sendtotv("POST","udap/api/pairing",message);
+  logger.debug("answer: " + answer);
+  String success="";
+  if (answer.startsWith("200")) {
+    success="success";
+    setconnectionstatus(lgtvconnectionstatus.CS_PAIRED);
+  }
+  logger.info("sendpairkey with result=" + answer + " "+ success+ "connectionstatus="+ connectionstatus.name());
+  return new String(answer);
+}

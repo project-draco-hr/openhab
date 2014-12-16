@@ -1,0 +1,31 @@
+{
+  logger.debug("updateProperties(): Partition Item Name: {}",item.getName());
+  boolean trigger=state != 0 ? true : false;
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PARTITION_STATUS:
+        partitionProperties.setState(StateType.GENERAL_STATE,state,description);
+      break;
+case PARTITION_ARM_MODE:
+    partitionProperties.setState(StateType.ARM_STATE,state,description);
+  break;
+case PARTITION_ARMED:
+partitionProperties.setTrigger(TriggerType.ARMED,trigger);
+break;
+case PARTITION_ENTRY_DELAY:
+partitionProperties.setTrigger(TriggerType.ENTRY_DELAY,trigger);
+break;
+case PARTITION_EXIT_DELAY:
+partitionProperties.setTrigger(TriggerType.EXIT_DELAY,trigger);
+break;
+case PARTITION_IN_ALARM:
+partitionProperties.setTrigger(TriggerType.ALARMED,trigger);
+break;
+default :
+logger.debug("updateProperties(): Partition property not updated.");
+break;
+}
+}
+}
+}

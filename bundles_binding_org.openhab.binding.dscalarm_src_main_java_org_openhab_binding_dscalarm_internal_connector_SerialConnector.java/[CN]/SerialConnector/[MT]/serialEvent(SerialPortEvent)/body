@@ -1,0 +1,11 @@
+{
+  if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+    try {
+      String messageLine=serialInput.readLine();
+      handleIncomingMessage(messageLine);
+    }
+ catch (    IOException ioException) {
+      logger.error("serialEvent(): IO Exception: ",ioException);
+    }
+  }
+}

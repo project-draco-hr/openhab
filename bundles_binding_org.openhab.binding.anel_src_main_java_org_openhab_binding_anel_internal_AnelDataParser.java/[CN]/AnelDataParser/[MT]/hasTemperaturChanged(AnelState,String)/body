@@ -1,0 +1,10 @@
+{
+  if (state == null || state.temperature == null || state.temperature.isEmpty())   return true;
+  if (temperature.equals(state.temperature))   return false;
+  if (TEMPERATURE_PATTERN.matcher(temperature).matches() && TEMPERATURE_PATTERN.matcher(state.temperature).matches()) {
+    final int intTemperature=Integer.parseInt(temperature.replace(".",""));
+    final int stateTemperature=Integer.parseInt(state.temperature.replace(".",""));
+    return !(intTemperature + 1 == stateTemperature || intTemperature - 1 == stateTemperature);
+  }
+  return true;
+}

@@ -1,0 +1,15 @@
+{
+  if (dscAlarmUpdateMap.isEmpty() && itemHasChanged == false) {
+    buildUpdateMap();
+    itemHasChanged=true;
+  }
+  openConnection();
+  if (!connected) {
+    dscAlarmItemUpdate.setConnected(false);
+  }
+ else {
+    dscAlarmItemUpdate.setConnected(true);
+  }
+  this.setProperlyConfigured(true);
+  logger.debug("initialize(): Binding initialized!");
+}

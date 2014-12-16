@@ -1,0 +1,56 @@
+{
+  logger.debug("refreshItem(): Panel Item Name: {}",item.getName());
+  int state;
+  String str="";
+  boolean trigger;
+  OnOffType onOffType;
+  if (config != null) {
+    if (config.getDSCAlarmItemType() != null) {
+switch (config.getDSCAlarmItemType()) {
+case PANEL_CONNECTION:
+        state=panelProperties.getSystemConnection();
+      publisher.postUpdate(item.getName(),new DecimalType(state));
+    break;
+case PANEL_MESSAGE:
+  str=panelProperties.getSystemMessage();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_SYSTEM_ERROR:
+str=String.format("%03d",panelProperties.getSystemErrorCode()) + ": " + panelProperties.getSystemErrorDescription();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_TIME_DATE:
+str=panelProperties.getTimeDate();
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_COMMAND:
+state=panelProperties.getSystemCommand();
+publisher.postUpdate(item.getName(),new DecimalType(state));
+break;
+case PANEL_FIRE_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.FIRE_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_PANIC_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.PANIC_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_AUX_KEY_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.AUX_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_AUX_INPUT_ALARM:
+trigger=panelProperties.getTrigger(TriggerType.AUX_KEY_ALARM);
+onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+default :
+logger.debug("refreshItem(): Panel item not updated.");
+break;
+}
+}
+}
+}

@@ -17,20 +17,22 @@
       if (action.equals("Heal")) {
         if (networkMonitor != null)         networkMonitor.rescheduleHeal();
       }
-      if (inclusion == false && exclusion == false) {
-        if (action.equals("Include")) {
-          inclusion=true;
-          zController.requestAddNodesStart();
-          setInclusionTimer();
+      if (action.equals("Include") || action.equals("Exclude")) {
+        if (inclusion == false && exclusion == false) {
+          if (action.equals("Include")) {
+            inclusion=true;
+            zController.requestAddNodesStart();
+            setInclusionTimer();
+          }
+          if (action.equals("Exclude")) {
+            exclusion=true;
+            zController.requestRemoveNodesStart();
+            setInclusionTimer();
+          }
         }
-        if (action.equals("Exclude")) {
-          exclusion=true;
-          zController.requestRemoveNodesStart();
-          setInclusionTimer();
-        }
-      }
  else {
-        logger.debug("Exclusion/Inclusion already in progress.");
+          logger.debug("Exclusion/Inclusion already in progress.");
+        }
       }
     }
   }
@@ -54,8 +56,6 @@
       if (action.equals("Delete")) {
         logger.debug("NODE {}: Delete node",nodeId);
         this.zController.requestRemoveFailedNode(nodeId);
-        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
-        nodeSerializer.DeleteNode(nodeId);
       }
       if (action.equals("Version")) {
         logger.debug("NODE {}: Get node version",nodeId);

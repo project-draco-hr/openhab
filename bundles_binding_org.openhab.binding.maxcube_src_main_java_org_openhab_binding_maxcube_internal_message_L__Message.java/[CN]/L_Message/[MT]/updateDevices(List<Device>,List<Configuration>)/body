@@ -1,0 +1,24 @@
+{
+  byte[] decodedRawMessage=Base64.decodeBase64(getPayload().getBytes());
+  MaxTokenizer tokenizer=new MaxTokenizer(decodedRawMessage);
+  while (tokenizer.hasMoreElements()) {
+    byte[] token=tokenizer.nextElement();
+    String rfAddress=Utils.toHex(token[0] & 0xFF,token[1] & 0xFF,token[2] & 0xFF);
+    Device foundDevice=null;
+    for (    Device device : devices) {
+      if (device.getRFAddress().toUpperCase().equals(rfAddress)) {
+        foundDevice=device;
+      }
+    }
+    if (foundDevice != null) {
+      foundDevice=Device.update(token,configurations,foundDevice);
+    }
+ else {
+      Device tempDevice=Device.create(token,configurations);
+      if (tempDevice != null) {
+        devices.add(tempDevice);
+      }
+    }
+  }
+  return devices;
+}

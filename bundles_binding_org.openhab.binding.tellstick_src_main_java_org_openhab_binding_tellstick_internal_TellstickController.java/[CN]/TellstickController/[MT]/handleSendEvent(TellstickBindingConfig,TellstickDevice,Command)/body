@@ -1,14 +1,15 @@
 {
   int resend=config.getResend();
+  long resendInterval=config.getResendInterval();
   for (int i=0; i < resend; i++) {
-    checkLastAndWait();
+    checkLastAndWait(resendInterval);
     logger.info("Send " + command + " to "+ dev+ " time="+ i+ " conf "+ config);
 switch (config.getValueSelector()) {
 case COMMAND:
       if (command == OnOffType.ON) {
         if (config.getUsageSelector() == TellstickValueSelector.DIMMABLE) {
           turnOff(dev);
-          checkLastAndWait();
+          checkLastAndWait(resendInterval);
         }
         turnOn(config,dev);
       }
