@@ -1,0 +1,13 @@
+{
+  String a=f.getDevice().getAddress().toString();
+  int b=hasButton() ? getButtonInfo(msg,f) : -1;
+  String key=a + "b" + b;
+  long currentTime=System.currentTimeMillis();
+  long lastTime=m_lastReceived.containsKey(key) ? m_lastReceived.get(key) : 0;
+  m_lastReceived.put(key,currentTime);
+  if ((currentTime - lastTime) < 2000) {
+    logger.debug("ignoring duplicate message for device {}|{}command1:{}|gap {} ms",a,(b == -1 ? "" : "button:" + b + "|"),Utils.getHexByte(cmd1),(currentTime - lastTime));
+    return true;
+  }
+  return false;
+}
