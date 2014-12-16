@@ -11,9 +11,13 @@ logger.debug("NODE {}: Process Multi Level Supported Sensor Report",this.getNode
 int payloadLength=serialMessage.getMessagePayload().length;
 for (int i=offset + 1; i < payloadLength; ++i) {
 for (int bit=0; bit < 8; ++bit) {
-if (((serialMessage.getMessagePayloadByte(i)) & (1 << bit)) == 0) continue;
+if (((serialMessage.getMessagePayloadByte(i)) & (1 << bit)) == 0) {
+  continue;
+}
 int index=((i - (offset + 1)) * 8) + bit + 1;
-if (index >= SensorType.values().length) continue;
+if (index >= SensorType.values().length) {
+  continue;
+}
 SensorType sensorTypeToAdd=SensorType.getSensorType(index);
 Sensor newSensor=new Sensor(sensorTypeToAdd);
 this.sensors.put(sensorTypeToAdd,newSensor);
