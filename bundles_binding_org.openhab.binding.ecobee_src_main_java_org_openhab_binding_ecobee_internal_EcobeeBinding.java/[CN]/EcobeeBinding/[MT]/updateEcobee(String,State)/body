@@ -28,7 +28,7 @@
       }
       if (oauthCredentials.noAccessToken()) {
         if (!oauthCredentials.refreshTokens()) {
-          logger.warn("Sending updated skipped.");
+          logger.warn("Sending update skipped.");
           return;
         }
       }
@@ -37,7 +37,9 @@
       if (response.isError()) {
         final Status status=response.getStatus();
         if (status.isAccessTokenExpired()) {
-          oauthCredentials.refreshTokens();
+          if (oauthCredentials.refreshTokens()) {
+            updateEcobee(itemName,newState);
+          }
         }
  else {
           logger.error("Error updating thermostat(s): {}",response);
