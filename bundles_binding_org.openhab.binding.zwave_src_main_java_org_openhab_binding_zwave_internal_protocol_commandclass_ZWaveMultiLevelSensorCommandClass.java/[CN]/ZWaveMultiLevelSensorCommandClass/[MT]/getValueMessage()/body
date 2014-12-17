@@ -1,4 +1,8 @@
 {
+  if (isGetSupported == false) {
+    logger.debug("NODE {}: Node doesn't support get requests",this.getNode().getNodeId());
+    return null;
+  }
   if (this.getVersion() > 4) {
     for (    Map.Entry<SensorType,Sensor> entry : this.sensors.entrySet()) {
       return this.getMessage(entry.getValue().getSensorType());

@@ -1,4 +1,8 @@
 {
+  if (isGetSupported == false) {
+    logger.debug("NODE {}: Node doesn't support get requests",this.getNode().getNodeId());
+    return null;
+  }
   logger.debug("NODE {}: Creating new message for command SWITCH_MULTILEVEL_GET",this.getNode().getNodeId());
   SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
   byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)getCommandClass().getKey(),(byte)SWITCH_MULTILEVEL_GET};

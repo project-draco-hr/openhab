@@ -118,6 +118,23 @@ commandClass.setInstances(1);
 }
 }
 break;
+case UPDATE_DATABASE:
+logger.debug("NODE {}: Node advancer: UPDATE_DATABASE",node.getNodeId());
+ZWaveProductDatabase database=new ZWaveProductDatabase();
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+List<ZWaveDbCommandClass> classList=database.getProductCommandClasses();
+if (classList != null) {
+for (ZWaveDbCommandClass dbClass : classList) {
+if (dbClass.isGetSupported != null) {
+ZWaveCommandClass zwaveClass=node.getCommandClass(CommandClass.getCommandClass(dbClass.Id));
+if (zwaveClass instanceof ZWaveGetCommands) {
+((ZWaveGetCommands)zwaveClass).setGetSupported(dbClass.isGetSupported);
+}
+}
+}
+}
+}
+break;
 case STATIC_VALUES:
 for (ZWaveCommandClass zwaveStaticClass : node.getCommandClasses()) {
 logger.debug("NODE {}: Node advancer: STATIC_VALUES - checking {}",node.getNodeId(),zwaveStaticClass.getCommandClass().getLabel());
@@ -192,9 +209,9 @@ break;
 if (stageAdvanced == false) {
 break;
 }
-ZWaveProductDatabase database=new ZWaveProductDatabase();
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
-List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
+ZWaveProductDatabase associations=new ZWaveProductDatabase();
+if (associations.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+List<ZWaveDbAssociationGroup> groupList=associations.getProductAssociationGroups();
 if (groupList == null) {
 logger.debug("NODE {}: Node advancer: ASSOCIATIONS - none in database",node.getNodeId());
 break;
