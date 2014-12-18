@@ -241,11 +241,16 @@ break;
 }
 ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
 if (wakeupCommandClass == null) {
-logger.error("NODE {}: Error getting wakeupCommandClass",node.getNodeId());
+logger.debug("NODE {}: Node advancer: WAKEUP - Wakeup command class not supported",node.getNodeId());
 break;
 }
-logger.debug("NODE {}: Node advancer: NEIGHBORS - Set wakeup node",node.getNodeId());
-controller.sendData(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
+if (wakeupCommandClass.getTargetNodeId() == controller.getOwnNodeId()) {
+logger.debug("NODE {}: Node advancer: WAKEUP - TargetNode is set to controller",node.getNodeId());
+break;
+}
+logger.debug("NODE {}: Node advancer: WAKEUP - Set wakeup node to controller ({})",node.getNodeId(),controller.getOwnNodeId());
+addToQueue(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
+addToQueue(wakeupCommandClass.getIntervalMessage());
 break;
 case DONE:
 initializationComplete=true;
