@@ -74,5 +74,15 @@
       logger.error("Error parsing 'softReset'. This must be boolean.");
     }
   }
+  if (StringUtils.isNotBlank((String)config.get("masterController"))) {
+    try {
+      masterController=Boolean.parseBoolean((String)config.get("masterController"));
+      logger.info("Update config, masterController = {}",masterController);
+    }
+ catch (    NumberFormatException e) {
+      masterController=false;
+      logger.error("Error parsing 'masterController'. This must be boolean.");
+    }
+  }
   initialise();
 }
