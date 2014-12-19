@@ -2,16 +2,19 @@
   try {
     InsteonAddress a=f.getDevice().getAddress();
     int cmd2=(int)(msg.getByte("command2") & 0xff);
-    if (cmd2 == 0) {
-      logger.info("LightStateSwitchHandler: set device {} to OFF",a);
-      m_feature.publishAll(OnOffType.OFF);
-    }
- else     if (cmd2 == 0xff) {
-      logger.info("LightStateSwitchHandler: set device {} to ON",a);
-      m_feature.publishAll(OnOffType.ON);
+    int button=this.getIntParameter("button",-1);
+    if (button < 0) {
+      handleNoButtons(cmd2,a,msg);
     }
  else {
-      logger.warn("LightStateSwitchHandler: {} ignoring unexpected" + " cmd2 in msg: {}",a,msg);
+      if (cmd1 == 0) {
+        boolean isOn=isLEDLit(cmd2,button);
+        logger.info("LightStateSwitchHandler: dev {} button {} switched to {}",a,button,isOn ? "ON" : "OFF");
+        m_feature.publishAll(isOn ? OnOffType.ON : OnOffType.OFF);
+      }
+ else {
+        logger.debug("dropping status reply with cmd {}",Utils.getHexString(cmd1));
+      }
     }
   }
  catch (  FieldException e) {
