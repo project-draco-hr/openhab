@@ -19,7 +19,6 @@ targetNodeId=serialMessage.getMessagePayloadByte(offset + 4);
 int receivedInterval=((serialMessage.getMessagePayloadByte(offset + 1)) << 16) | ((serialMessage.getMessagePayloadByte(offset + 2)) << 8) | (serialMessage.getMessagePayloadByte(offset + 3));
 logger.debug("NODE {}: Wake up interval report, value = {} seconds, targetNodeId = {}",this.getNode().getNodeId(),receivedInterval,targetNodeId);
 this.interval=receivedInterval;
-logger.debug("NODE {}: Wake up interval set",this.getNode().getNodeId());
 ZWaveWakeUpEvent event=new ZWaveWakeUpEvent(getNode().getNodeId(),WAKE_UP_INTERVAL_REPORT);
 this.getController().notifyEventListeners(event);
 break;
