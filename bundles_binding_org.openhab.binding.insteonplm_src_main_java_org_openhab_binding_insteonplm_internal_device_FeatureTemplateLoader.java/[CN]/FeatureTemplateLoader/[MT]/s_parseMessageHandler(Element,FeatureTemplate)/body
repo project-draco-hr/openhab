@@ -1,12 +1,11 @@
 {
-  String handler=e.getTextContent();
-  if (handler == null)   throw new ParsingException("Could not find MessageHandler for: " + e.getTextContent());
+  HandlerEntry he=s_makeHandlerEntry(e);
   if (e.getAttribute("default").equals("true")) {
-    f.setDefaultMessageHandler(handler);
+    f.setDefaultMessageHandler(he);
   }
  else {
     String attr=e.getAttribute("cmd");
     int command=(attr == null) ? 0 : Utils.from0xHexString(attr);
-    f.addMessageHandler(command,handler);
+    f.addMessageHandler(command,he);
   }
 }
