@@ -9,6 +9,9 @@ case NODE_INFO_RECEIVED:
 ZWaveNode node=zController.getNode(nodeId);
 if (node == null) {
 logger.debug("NODE {}: Application update request, node not known!",nodeId);
+if (nodeId > 0 && nodeId <= 232) {
+  zController.notifyEventListeners(new ZWaveInclusionEvent(ZWaveInclusionEvent.Type.IncludeDone,incomingMessage.getMessagePayloadByte(2)));
+}
 break;
 }
 node.resetResendCount();
