@@ -2,13 +2,18 @@
   logger.trace("processBindingConfiguration({}, {})",item.getName(),bindingConfig);
   super.processBindingConfiguration(context,item,bindingConfig);
   String[] segments=bindingConfig.split(":");
-  if (segments.length < 1 || segments.length > 3)   throw new BindingConfigParseException("invalid number of segments in binding: " + bindingConfig);
+  if (segments.length < 1 || segments.length > 3) {
+    throw new BindingConfigParseException("Invalid number of segments in binding: " + bindingConfig);
+  }
   int nodeId;
   try {
     nodeId=Integer.parseInt(segments[0]);
   }
  catch (  Exception e) {
     throw new BindingConfigParseException(segments[1] + " is not a valid node id.");
+  }
+  if (nodeId <= 0 || nodeId > 232) {
+    throw new BindingConfigParseException(nodeId + " is not a valid node number.");
   }
   int endpoint=0;
   Integer refreshInterval=null;
@@ -19,8 +24,17 @@
         for (        String keyValuePairString : segments[i].split(",")) {
           String[] pair=keyValuePairString.split("=");
           String key=pair[0].trim().toLowerCase();
-          if (key.equals("refresh_interval"))           refreshInterval=Integer.parseInt(pair[1].trim());
- else           arguments.put(key,pair[1].trim().toLowerCase());
+          if (key.equals("refresh_interval")) {
+            refreshInterval=Integer.parseInt(pair[1].trim());
+          }
+ else {
+            arguments.put(key,pair[1].trim().toLowerCase());
+          }
+          if (key.equals("command")) {
+            if (ZWaveCommandClass.CommandClass.getCommandClass(key) == null) {
+              throw new BindingConfigParseException("Invalid command class " + key);
+            }
+          }
         }
       }
  else {
