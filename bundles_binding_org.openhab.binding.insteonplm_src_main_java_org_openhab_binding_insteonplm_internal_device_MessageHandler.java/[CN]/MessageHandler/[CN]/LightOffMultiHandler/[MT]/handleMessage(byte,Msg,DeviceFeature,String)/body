@@ -1,6 +1,7 @@
 {
-  int button=this.getButtonInfo(msg,f);
-  if (button != -1) {
-    f.publishFiltered(OnOffType.OFF,"button",button);
+  int button=getButtonInfo(msg,f);
+  int myButton=this.getIntParameter("button",-1);
+  if (button != -1 && myButton == button) {
+    f.publishAll(OnOffType.OFF);
   }
 }
