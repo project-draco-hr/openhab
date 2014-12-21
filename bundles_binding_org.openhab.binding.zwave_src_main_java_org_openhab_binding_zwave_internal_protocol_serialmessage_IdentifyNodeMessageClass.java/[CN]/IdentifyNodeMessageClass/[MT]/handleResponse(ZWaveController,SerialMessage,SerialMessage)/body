@@ -1,5 +1,9 @@
 {
   logger.trace("Handle Message Get Node ProtocolInfo Response");
+  if (lastSentMessage.getMessageClass() != SerialMessageClass.IdentifyNode) {
+    logger.warn("Got IdentifyNodeMessage without request, ignoring. Last message was {}.",lastSentMessage.getMessageClass());
+    return false;
+  }
   int nodeId=lastSentMessage.getMessagePayloadByte(0);
   logger.debug("NODE {}: ProtocolInfo",nodeId);
   ZWaveNode node=zController.getNode(nodeId);
