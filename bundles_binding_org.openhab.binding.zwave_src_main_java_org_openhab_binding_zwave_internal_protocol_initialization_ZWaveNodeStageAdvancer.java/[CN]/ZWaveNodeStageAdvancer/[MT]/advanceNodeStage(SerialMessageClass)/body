@@ -11,7 +11,18 @@
   }
   stageAdvanced=false;
   do {
-    logger.debug("NODE {}: Node advancer: loop - {}: stageAdvanced({})",node.getNodeId(),currentStage.toString(),stageAdvanced);
+    if (stageAdvanced == true) {
+      retryCount=0;
+    }
+ else {
+      retryCount++;
+      if (retryCount > MAX_RETRIES) {
+        logger.error("NODE {}: Node advancer: Retries exceeded at {}. Node is DEAD!",node.getNodeId(),currentStage.toString());
+        currentStage=NodeStage.DEAD;
+        break;
+      }
+    }
+    logger.debug("NODE {}: Node advancer: loop - {} try {}: stageAdvanced({})",node.getNodeId(),currentStage.toString(),retryCount,stageAdvanced);
 switch (currentStage) {
 case EMPTYNODE:
       logger.debug("NODE {}: Node advancer: Initialisation starting",node.getNodeId());
@@ -24,7 +35,9 @@ logger.debug("NODE {}: Node advancer: PROTOINFO - send IdentifyNode",node.getNod
 addToQueue(new IdentifyNodeMessageClass().doRequest(node.getNodeId()));
 break;
 case WAIT:
+logger.debug("NODE {}: Node advancer: WAIT - Listening={}, FrequentlyListening={}",node.getNodeId(),node.isListening(),node.isFrequentlyListening());
 if (node.isListening() == true || node.isFrequentlyListening() == true) {
+logger.debug("NODE {}: Node advancer: WAIT - Advancing",node.getNodeId());
 break;
 }
 ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);

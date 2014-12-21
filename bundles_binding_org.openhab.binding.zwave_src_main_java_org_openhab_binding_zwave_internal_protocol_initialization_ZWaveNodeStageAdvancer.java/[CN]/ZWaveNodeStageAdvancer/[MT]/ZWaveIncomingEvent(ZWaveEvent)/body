@@ -20,7 +20,7 @@ case IdentifyNode:
 case RequestNodeInfo:
 case GetRoutingInfo:
       logger.debug("NODE {}: Node advancer - {}: Transaction complete ({}:{}) success({})",node.getNodeId(),currentStage.toString(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
-    if (((ZWaveTransactionCompletedEvent)event).getState()) {
+    if (((ZWaveTransactionCompletedEvent)event).getState() == true) {
       handleNodeQueue(serialMessage);
     }
   break;
