@@ -261,6 +261,10 @@ if (wakeupCommandClass.getTargetNodeId() == controller.getOwnNodeId()) {
 logger.debug("NODE {}: Node advancer: WAKEUP - TargetNode is set to controller",node.getNodeId());
 break;
 }
+if (wakeupCommandClass.getInterval() == 0) {
+logger.debug("NODE {}: Node advancer: WAKEUP - Interval is currently 0. Skipping stage.",node.getNodeId(),controller.getOwnNodeId());
+break;
+}
 logger.debug("NODE {}: Node advancer: WAKEUP - Set wakeup node to controller ({})",node.getNodeId(),controller.getOwnNodeId());
 addToQueue(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
 addToQueue(wakeupCommandClass.getIntervalMessage());
