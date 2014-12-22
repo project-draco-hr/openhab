@@ -1,3 +1,7 @@
 {
-  schedule(season.getNextSeason(),"Season",new JobDataMap());
+  Calendar nextSeason=season.getNextSeason();
+  if (nextSeason == null) {
+    nextSeason=DateTimeUtils.getFirstDayOfNextYear();
+  }
+  schedule(nextSeason,"Season",new JobDataMap());
 }
