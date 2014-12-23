@@ -2,32 +2,12 @@
   if (isDuplicate(msg) || (hasButton() && !isMybutton(msg,f))) {
     return;
   }
-  try {
-    InsteonAddress a=f.getDevice().getAddress();
-    if (msg.isAckOfDirect()) {
-      int cmd2=(int)(msg.getByte("command2") & 0xff);
-      if (cmd2 > 0) {
-        if (cmd2 == 0xff) {
-          logger.info("{}: device {} was turned fully on",nm(),a);
-          m_feature.publish(OnOffType.ON,StateChangeType.CHANGED);
-        }
- else {
-          int level=Math.max(1,(cmd2 * 100) / 255);
-          logger.info("{}: device {} was set to level {}",nm(),a,level);
-          m_feature.publish(new PercentType(level),StateChangeType.CHANGED);
-        }
-      }
- else {
-        logger.info("{}: device {} was turned fully off",nm(),a);
-        m_feature.publish(OnOffType.OFF,StateChangeType.CHANGED);
-      }
-    }
- else {
-      logger.info("{}: device {} was turned fully on.",nm(),a);
-      m_feature.publish(OnOffType.ON,StateChangeType.CHANGED);
-    }
+  InsteonAddress a=f.getDevice().getAddress();
+  if (msg.isAckOfDirect()) {
+    logger.error("{}: device {}: ignoring ack of direct.",nm(),a);
   }
- catch (  FieldException e) {
-    logger.error("error parsing {}: ",msg,e);
+ else {
+    logger.info("{}: device {} was turned fully on.",nm(),a);
+    m_feature.publish(OnOffType.ON,StateChangeType.ALWAYS);
   }
 }
