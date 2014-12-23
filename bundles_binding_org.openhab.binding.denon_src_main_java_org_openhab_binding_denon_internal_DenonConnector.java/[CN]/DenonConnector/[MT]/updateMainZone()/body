@@ -1,0 +1,13 @@
+{
+  String url=statusUrl + URL_ZONE_MAIN;
+  logger.trace("Refreshing URL: {}",url);
+  ZoneStatus mainZone=getDocument(url,ZoneStatus.class);
+  if (mainZone != null) {
+    stateCache.put(DenonProperty.INPUT.getCode(),new StringType(mainZone.getInputFuncSelect().getValue()));
+    stateCache.put("SI" + mainZone.getInputFuncSelect().getValue(),OnOffType.ON);
+    stateCache.put(DenonProperty.MASTER_VOLUME.getCode(),new PercentType(mainZone.getMasterVolume().getValue()));
+    stateCache.put(DenonProperty.POWER_MAINZONE.getCode(),mainZone.getPower().getValue() ? OnOffType.ON : OnOffType.OFF);
+    stateCache.put(DenonProperty.MUTE.getCode(),mainZone.getMute().getValue() ? OnOffType.ON : OnOffType.OFF);
+    stateCache.put(DenonProperty.SURROUND_MODE.getCode(),new StringType(mainZone.getSurrMode().getValue()));
+  }
+}

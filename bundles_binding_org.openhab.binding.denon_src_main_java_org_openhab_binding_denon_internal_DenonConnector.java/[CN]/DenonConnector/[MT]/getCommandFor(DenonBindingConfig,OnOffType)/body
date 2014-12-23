@@ -1,0 +1,23 @@
+{
+  String commandToSend=null;
+  String property=config.getActualProperty();
+  if (config.isOnOffProperty()) {
+    if (property.equals(DenonProperty.POWER.getCode())) {
+      if (OnOffType.ON.equals(onOff)) {
+        commandToSend="PWON";
+      }
+ else {
+        commandToSend="PWSTANDBY";
+      }
+    }
+ else {
+      commandToSend=property + onOff.name();
+    }
+  }
+ else {
+    if (onOff.equals(OnOffType.ON)) {
+      commandToSend=property;
+    }
+  }
+  return commandToSend;
+}

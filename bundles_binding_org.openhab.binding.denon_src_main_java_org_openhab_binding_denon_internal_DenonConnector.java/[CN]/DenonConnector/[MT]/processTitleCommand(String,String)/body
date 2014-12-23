@@ -1,0 +1,21 @@
+{
+  if (DISPLAY_PATTERN.matcher(value).matches()) {
+    Integer commandNo=Integer.valueOf(value.substring(1,2));
+    String titleValue=value.substring(2);
+    if (commandNo == 0) {
+      displayNowplaying=titleValue.contains("Now Playing");
+    }
+    State state=displayNowplaying ? new StringType(cleanupDisplayInfo(titleValue)) : UnDefType.UNDEF;
+switch (commandNo) {
+case 1:
+      sendUpdate(DenonProperty.TRACK.getCode(),state);
+    break;
+case 2:
+  sendUpdate(DenonProperty.ARTIST.getCode(),state);
+break;
+case 4:
+sendUpdate(DenonProperty.ALBUM.getCode(),state);
+break;
+}
+}
+}
