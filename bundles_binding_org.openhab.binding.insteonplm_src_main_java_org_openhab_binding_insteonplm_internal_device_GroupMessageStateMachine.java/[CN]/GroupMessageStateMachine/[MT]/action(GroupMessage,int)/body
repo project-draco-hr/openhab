@@ -1,6 +1,5 @@
 {
   boolean publish=false;
-  boolean isNew=hops > m_lastHops;
 switch (m_state) {
 case EXPECT_BCAST:
 switch (a) {
@@ -11,14 +10,14 @@ case CLEAN:
   publish=true;
 break;
 case SUCCESS:
-publish=isNew;
+publish=false;
 break;
 }
 break;
 case EXPECT_CLEAN:
 switch (a) {
 case BCAST:
-publish=isNew;
+publish=false;
 break;
 case CLEAN:
 publish=false;
@@ -34,7 +33,7 @@ case BCAST:
 publish=true;
 break;
 case CLEAN:
-publish=isNew;
+publish=false;
 break;
 case SUCCESS:
 publish=false;
@@ -43,7 +42,6 @@ break;
 break;
 }
 State oldState=m_state;
-m_lastHops=hops;
 switch (a) {
 case BCAST:
 m_state=State.EXPECT_CLEAN;
@@ -55,6 +53,6 @@ case SUCCESS:
 m_state=State.EXPECT_BCAST;
 break;
 }
-logger.trace("group state: {} --{}--> {}, isnew: {} publish: {}",oldState,a,m_state,isNew,publish);
+logger.trace("group state: {} --{}--> {}, publish: {}",oldState,a,m_state,publish);
 return (publish);
 }
