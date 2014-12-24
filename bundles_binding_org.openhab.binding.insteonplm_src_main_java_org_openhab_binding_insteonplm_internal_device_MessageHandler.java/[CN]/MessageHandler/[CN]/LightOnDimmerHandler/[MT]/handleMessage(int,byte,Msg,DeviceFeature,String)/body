@@ -1,5 +1,5 @@
 {
-  if (isDuplicate(msg) || (hasButton() && !isMybutton(msg,f))) {
+  if (isDuplicate(msg) || !isMybutton(msg,f)) {
     return;
   }
   InsteonAddress a=f.getDevice().getAddress();
@@ -7,7 +7,9 @@
     logger.error("{}: device {}: ignoring ack of direct.",nm(),a);
   }
  else {
-    logger.info("{}: device {} was turned fully on.",nm(),a);
+    logger.info("{}: device {} was turned on.",nm(),a);
     m_feature.publish(OnOffType.ON,StateChangeType.ALWAYS);
+    Msg m=f.makePollMsg();
+    if (m != null)     f.getDevice().enqueueMessage(m,f);
   }
 }
