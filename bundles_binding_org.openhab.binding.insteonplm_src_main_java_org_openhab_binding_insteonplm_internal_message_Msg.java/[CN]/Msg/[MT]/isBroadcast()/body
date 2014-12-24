@@ -1,12 +1,3 @@
 {
-  try {
-    MsgType t=MsgType.s_fromValue(getByte("messageFlags"));
-    if (t == MsgType.ALL_LINK_BROADCAST || t == MsgType.BROADCAST) {
-      return true;
-    }
-  }
- catch (  FieldException e) {
-    return false;
-  }
-  return true;
+  return isOfType(MsgType.ALL_LINK_BROADCAST) || isOfType(MsgType.BROADCAST);
 }
