@@ -20,6 +20,10 @@
         if (client == null) {
           client=new TelnetClient();
           client.connect(ip);
+          if (username != null) {
+            receive(client);
+            send(client,username);
+          }
           receive(client);
           send(client,password);
           receive(client);
