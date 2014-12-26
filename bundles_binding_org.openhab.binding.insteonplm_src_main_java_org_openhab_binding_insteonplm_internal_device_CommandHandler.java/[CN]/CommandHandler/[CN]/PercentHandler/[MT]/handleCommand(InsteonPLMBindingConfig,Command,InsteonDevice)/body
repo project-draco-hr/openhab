@@ -2,8 +2,9 @@
   try {
     PercentType pc=(PercentType)cmd;
     logger.debug("changing level of {} to {}",dev.getAddress(),pc.intValue());
-    int level=(pc.intValue() * 255) / 100;
+    int level=(int)Math.ceil((pc.intValue() * 255.0) / 100);
     if (level > 0) {
+      level=getMaxLightLevel(conf,level);
       Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x11,(byte)level);
       dev.enqueueMessage(m,m_feature);
       logger.info("PercentHandler: sent msg to set {} to {}",dev.getAddress(),level);

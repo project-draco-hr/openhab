@@ -5,7 +5,7 @@
     MessageHandler h=m_feature.getMsgHandlers().get(cmd);
     if (h == null)     h=m_feature.getDefaultMsgHandler();
     logger.debug("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
-    h.handleMessage((byte)cmd,msg,m_feature,port);
+    h.handleMessage(-1,(byte)cmd,msg,m_feature,port);
   }
  catch (  FieldException e) {
     logger.error("error parsing {}: ",msg,e);
