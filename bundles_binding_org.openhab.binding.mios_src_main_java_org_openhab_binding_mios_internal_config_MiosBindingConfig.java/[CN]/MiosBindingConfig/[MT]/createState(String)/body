@@ -3,7 +3,12 @@
   State result;
   try {
     if (itemType.isAssignableFrom(NumberItem.class)) {
-      result=DecimalType.valueOf(value);
+      if ("".equals(value)) {
+        result=UnDefType.NULL;
+      }
+ else {
+        result=DecimalType.valueOf(value);
+      }
     }
  else     if (itemType.isAssignableFrom(ContactItem.class)) {
       result=OpenClosedType.valueOf(value);
@@ -19,10 +24,15 @@
     }
  else     if (itemType.isAssignableFrom(DateTimeItem.class)) {
       try {
-        long l=Long.parseLong(value) * 1000;
-        Calendar c=Calendar.getInstance();
-        c.setTimeInMillis(l);
-        result=new DateTimeType(c);
+        if ("".equals(value)) {
+          result=UnDefType.NULL;
+        }
+ else {
+          long l=Long.parseLong(value) * 1000;
+          Calendar c=Calendar.getInstance();
+          c.setTimeInMillis(l);
+          result=new DateTimeType(c);
+        }
       }
  catch (      NumberFormatException nfe) {
         result=DateTimeType.valueOf(value);
