@@ -18,7 +18,15 @@
       result=PercentType.valueOf(value);
     }
  else     if (itemType.isAssignableFrom(DateTimeItem.class)) {
-      result=DateTimeType.valueOf(value);
+      try {
+        long l=Long.parseLong(value) * 1000;
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(l);
+        result=new DateTimeType(c);
+      }
+ catch (      NumberFormatException nfe) {
+        result=DateTimeType.valueOf(value);
+      }
     }
  else {
       result=StringType.valueOf(value);

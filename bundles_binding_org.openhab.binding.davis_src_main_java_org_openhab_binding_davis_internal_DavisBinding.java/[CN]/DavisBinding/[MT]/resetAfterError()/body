@@ -1,0 +1,20 @@
+{
+  try {
+    logger.warn("error, dropping remaining data!");
+    readResponse();
+    wakeup();
+    writeString("RXTEST\n");
+    byte[] buf=readResponse();
+    expectString(buf,"\n\rOK\n\r");
+  }
+ catch (  IOException e1) {
+    logger.warn("IO Exception reset after Error: " + e1);
+    closePort();
+    try {
+      openPort();
+    }
+ catch (    InitializationException e) {
+      logger.error("reopening port failed!");
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  if (cmd1 != 0x11)   return;
+  try {
+    byte cmd2=msg.getByte("command2");
+switch (cmd2) {
+case 0x02:
+      m_feature.publish(OpenClosedType.CLOSED,StateChangeType.CHANGED);
+    break;
+case 0x01:
+  m_feature.publish(OpenClosedType.OPEN,StateChangeType.CHANGED);
+break;
+default :
+break;
+}
+}
+ catch (FieldException e) {
+logger.debug("no cmd2 found, dropping msg {}",msg);
+return;
+}
+}

@@ -1,0 +1,26 @@
+{
+  InsteonDevice dev=f.getDevice();
+  try {
+    int cmd2=(int)(msg.getByte("command2") & 0xff);
+    if (cmd2 == 0xfe) {
+      cmd2=0xff;
+    }
+    int level=cmd2 * 100 / 255;
+    if (level == 0 && cmd2 > 0)     level=1;
+    if (cmd2 == 0) {
+      logger.info("{}: set device {} to OFF",nm(),dev.getAddress());
+      m_feature.publish(OnOffType.OFF,StateChangeType.CHANGED);
+    }
+ else     if (cmd2 == 0xff) {
+      logger.info("{}: set device {} to ON",nm(),dev.getAddress());
+      m_feature.publish(OnOffType.ON,StateChangeType.CHANGED);
+    }
+ else {
+      logger.info("{}: set device {} to level {}",nm(),dev.getAddress(),level);
+      m_feature.publish(new PercentType(level),StateChangeType.CHANGED);
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("{}: error parsing {}: ",nm(),msg,e);
+  }
+}
