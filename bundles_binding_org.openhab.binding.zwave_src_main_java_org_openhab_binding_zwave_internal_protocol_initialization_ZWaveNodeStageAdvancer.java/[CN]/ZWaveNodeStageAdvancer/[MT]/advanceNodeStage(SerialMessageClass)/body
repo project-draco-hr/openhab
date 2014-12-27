@@ -35,6 +35,11 @@ logger.debug("NODE {}: Node advancer: PROTOINFO - send IdentifyNode",node.getNod
 addToQueue(new IdentifyNodeMessageClass().doRequest(node.getNodeId()));
 break;
 case WAIT:
+if (node.getNodeId() == controller.getOwnNodeId()) {
+logger.debug("NODE {}: Node advancer: WAIT - Controller - terminating initialisation",node.getNodeId());
+currentStage=NodeStage.DONE;
+break;
+}
 logger.debug("NODE {}: Node advancer: WAIT - Listening={}, FrequentlyListening={}",node.getNodeId(),node.isListening(),node.isFrequentlyListening());
 if (node.isListening() == true || node.isFrequentlyListening() == true) {
 logger.debug("NODE {}: Node advancer: WAIT - Advancing",node.getNodeId());
@@ -48,11 +53,6 @@ break;
 logger.debug("NODE {}: Node advancer: WAIT - Still waiting!",node.getNodeId());
 return;
 case PING:
-if (node.getNodeId() == controller.getOwnNodeId()) {
-logger.debug("NODE {}: Node advancer: PING - Controller - terminating initialisation",node.getNodeId());
-currentStage=NodeStage.DONE;
-break;
-}
 if (eventClass == SerialMessageClass.SendData) {
 break;
 }
