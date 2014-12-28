@@ -4,7 +4,7 @@
   String sensorScale=arguments.get("sensor_scale");
   ZWaveMultiLevelSensorValueEvent sensorEvent=(ZWaveMultiLevelSensorValueEvent)event;
   if (converter == null) {
-    logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
     return;
   }
   if (sensorType != null && SensorType.getSensorType(Integer.parseInt(sensorType)) != sensorEvent.getSensorType()) {
@@ -12,7 +12,8 @@
   }
   Object val=event.getValue();
   if (sensorScale != null && Integer.parseInt(sensorScale) != sensorEvent.getSensorScale()) {
-switch (SensorType.getSensorType(Integer.parseInt(sensorType))) {
+    int scale=Integer.parseInt(sensorScale);
+switch (SensorType.getSensorType(scale)) {
 case TEMPERATURE:
       if (sensorEvent.getSensorScale() == 0) {
         double c=((BigDecimal)val).doubleValue();
@@ -26,6 +27,7 @@ case TEMPERATURE:
 default :
   break;
 }
+logger.debug("NODE {}: Sensor is reporting scale {}, requiring conversion to {}. Value is now {}.",event.getNodeId(),sensorEvent.getSensorScale(),scale,val);
 }
 State state=converter.convertFromValueToState(val);
 this.getEventPublisher().postUpdate(item.getName(),state);
