@@ -1,0 +1,14 @@
+{
+  AlarmType alarmType=AlarmType.getAlarmType(alarmTypeCode);
+  if (alarmType == null) {
+    logger.error("NODE {}: Unknown Alarm Type = {}, ignoring report.",this.getNode().getNodeId(),alarmTypeCode);
+    return null;
+  }
+  Alarm alarm=alarms.get(alarmType);
+  if (alarm == null) {
+    logger.debug("NODE {}: Adding new alarm type {}({})",this.getNode().getNodeId(),alarmType.getLabel(),alarmTypeCode);
+    alarm=new Alarm(alarmType);
+    this.alarms.put(alarmType,alarm);
+  }
+  return alarm;
+}

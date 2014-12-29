@@ -1,11 +1,10 @@
 {
-  logger.trace("Handle Message Sensor Alarm Request");
-  logger.debug(String.format("Received Sensor Alarm Request for Node ID = %d",this.getNode().getNodeId()));
+  logger.debug("NODE {}: Received Sensor Alarm Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
 case SENSOR_ALARM_GET:
 case SENSOR_ALARM_SUPPORTED_GET:
-    logger.warn(String.format("Command 0x%02X not implemented.",command));
+    logger.warn("Command {} not implemented.",command);
   return;
 case SENSOR_ALARM_REPORT:
 logger.trace("Process Sensor Alarm Report");
@@ -13,20 +12,13 @@ int sourceNode=serialMessage.getMessagePayloadByte(offset + 1);
 int alarmTypeCode=serialMessage.getMessagePayloadByte(offset + 2);
 int value=serialMessage.getMessagePayloadByte(offset + 3);
 logger.debug("NODE {}: Sensor Alarm report, source {}, value {}",this.getNode().getNodeId(),sourceNode,value);
-AlarmType alarmType=AlarmType.getAlarmType(alarmTypeCode);
-if (alarmType == null) {
-logger.error("NODE {}: Unknown Alarm Type = {}, ignoring report.",this.getNode().getNodeId(),alarmTypeCode);
-return;
-}
-Alarm alarm=alarms.get(alarmType);
-if (alarm == null) {
-alarm=new Alarm(alarmType);
-this.alarms.put(alarmType,alarm);
-}
+Alarm alarm=getAlarm(alarmTypeCode);
+if (alarm != null) {
 alarm.setInitialised();
-logger.debug("NODE {}: Alarm Report, Type = {} ({}), Value = {}",this.getNode().getNodeId(),alarmType.getLabel(),alarmTypeCode,value);
-ZWaveAlarmSensorValueEvent zEvent=new ZWaveAlarmSensorValueEvent(this.getNode().getNodeId(),endpoint,alarmType,value);
+logger.debug("NODE {}: Alarm Report, Type = {}({}), Value = {}",this.getNode().getNodeId(),alarm.getAlarmType().getLabel(),alarmTypeCode,value);
+ZWaveAlarmSensorValueEvent zEvent=new ZWaveAlarmSensorValueEvent(this.getNode().getNodeId(),endpoint,alarm.getAlarmType(),value);
 this.getController().notifyEventListeners(zEvent);
+}
 break;
 case SENSOR_ALARM_SUPPORTED_REPORT:
 logger.debug("NODE {}: Process Sensor Supported Alarm Report",this.getNode().getNodeId());
@@ -37,11 +29,10 @@ if (manufacturerId == 0x010F && deviceType == 0x0700) {
 logger.warn("Detected Fibaro FGK - 101 Door / Window sensor, activating workaround for incorrect encoding of supported alarm bitmap.");
 for (int i=0; i < numBytes; ++i) {
 int index=serialMessage.getMessagePayloadByte(offset + i + 2);
-if (index >= AlarmType.values().length) continue;
-AlarmType alarmTypeToAdd=AlarmType.getAlarmType(index);
-Alarm newAlarm=new Alarm(alarmTypeToAdd);
-this.alarms.put(alarmTypeToAdd,newAlarm);
-logger.debug("NODE {}: Added alarm type {} ({})",this.getNode().getNodeId(),alarmTypeToAdd.getLabel(),index);
+if (index >= AlarmType.values().length) {
+continue;
+}
+getAlarm(index);
 }
 }
  else {
@@ -54,10 +45,7 @@ int index=(i << 3) + bit;
 if (index >= AlarmType.values().length) {
 continue;
 }
-AlarmType alarmTypeToAdd=AlarmType.getAlarmType(index);
-Alarm newAlarm=new Alarm(alarmTypeToAdd);
-this.alarms.put(alarmTypeToAdd,newAlarm);
-logger.debug("NODE {}: Added alarm type {} ({})",this.getNode().getNodeId(),alarmTypeToAdd.getLabel(),index);
+getAlarm(index);
 }
 }
 }
