@@ -34,6 +34,13 @@ case PROTOINFO:
 logger.debug("NODE {}: Node advancer: PROTOINFO - send IdentifyNode",node.getNodeId());
 addToQueue(new IdentifyNodeMessageClass().doRequest(node.getNodeId()));
 break;
+case NEIGHBORS:
+if (eventClass == SerialMessageClass.GetRoutingInfo) {
+break;
+}
+logger.debug("NODE {}: Node advancer: NEIGHBORS - send RoutingInfo",node.getNodeId());
+addToQueue(new GetRoutingInfoMessageClass().doRequest(node.getNodeId()));
+break;
 case WAIT:
 if (node.getNodeId() == controller.getOwnNodeId()) {
 logger.debug("NODE {}: Node advancer: WAIT - Controller - terminating initialisation",node.getNodeId());
@@ -240,13 +247,6 @@ logger.debug("NODE {}: Node advancer: ASSOCIATIONS request group {}",node.getNod
 addToQueue(associationCommandClass.getAssociationMessage(group));
 }
 }
-break;
-case NEIGHBORS:
-if (eventClass == SerialMessageClass.GetRoutingInfo) {
-break;
-}
-logger.debug("NODE {}: Node advancer: NEIGHBORS - send RoutingInfo",node.getNodeId());
-addToQueue(new GetRoutingInfoMessageClass().doRequest(node.getNodeId()));
 break;
 case WAKEUP:
 if (controller.isMasterController() == false) {
