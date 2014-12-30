@@ -15,8 +15,21 @@
             logger.trace("internalPropertyUpdate: transformation performed, from '{}' to '{}'",value,newValue);
             value=newValue;
           }
-          logger.debug("internalPropertyUpdate: About to update itemName '{}' with value '{}'",itemName,value);
-          eventPublisher.postUpdate(itemName,value);
+          if (incremental) {
+            logger.debug("internalPropertyUpdate: Updating (Incremental) itemName '{}' with value '{}'",itemName,value);
+            eventPublisher.postUpdate(itemName,value);
+          }
+ else {
+            ItemRegistry reg=miosProvider.getItemRegistry();
+            State oldValue=reg.getItem(itemName).getState();
+            if ((oldValue == null && value != null) || (UnDefType.UNDEF.equals(oldValue) && !UnDefType.UNDEF.equals(value)) || !oldValue.equals(value)) {
+              logger.debug("internalPropertyUpdate: Updating (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+              eventPublisher.postUpdate(itemName,value);
+            }
+ else {
+              logger.trace("internalPropertyUpdate: Ignoring (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+            }
+          }
           bound++;
         }
  else {
