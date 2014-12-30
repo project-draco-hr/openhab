@@ -5,14 +5,13 @@
   }
   try {
     String raw=null;
-    if (socket == null) {
-      this.socketConnect();
-    }
     if (maxRequestsPerConnection > 0 && requestCount >= maxRequestsPerConnection) {
       logger.debug("maxRequestsPerConnection reached, reconnecting.");
       socket.close();
       this.socketConnect();
-      requestCount=0;
+    }
+    if (socket == null) {
+      this.socketConnect();
     }
  else {
       logger.debug("Sending state request #" + this.requestCount + " to Maxcube");
