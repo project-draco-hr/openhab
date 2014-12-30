@@ -4,8 +4,8 @@
     state=new StringType(value);
   }
  else   if (config.getItemType().equals(NumberItem.class)) {
-    BigDecimal numberValue=new BigDecimal(value).setScale(config.getDecimals());
-    numberValue=numberValue.divide(new BigDecimal(config.getDecimals() * 10),config.getDecimals(),RoundingMode.HALF_UP);
+    BigDecimal numberValue=new BigDecimal(value).setScale(config.getScale());
+    numberValue=numberValue.divide(new BigDecimal(config.getScale() * 10),config.getScale(),RoundingMode.HALF_UP);
     state=new DecimalType(numberValue);
   }
   return state;
