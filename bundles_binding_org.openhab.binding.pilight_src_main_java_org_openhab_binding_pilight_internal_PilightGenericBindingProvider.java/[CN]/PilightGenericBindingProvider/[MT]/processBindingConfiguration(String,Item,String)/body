@@ -1,18 +1,39 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  bindingConfig=bindingConfig.trim();
-  if (CONFIG_PATTERN.matcher(bindingConfig).matches()) {
+  bindingConfig=bindingConfig.replace(" ","");
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (matcher.matches()) {
     PilightBindingConfig config=new PilightBindingConfig();
-    String[] parts=bindingConfig.split("#");
-    String[] deviceInfo=parts[1].split(":");
+    String instance=matcher.group("instance");
+    String location=matcher.group("location");
+    String device=matcher.group("device");
     config.setItemName(item.getName());
-    config.setInstance(parts[0]);
-    config.setLocation(deviceInfo[0]);
-    config.setDevice(deviceInfo[1]);
-    logger.info("pilight:{} item '{}' bound to device '{}' in location '{}'",config.getInstance(),config.getItemName(),config.getDevice(),config.getLocation());
-    addBindingConfig(item,config);
+    config.setItemType(item.getClass());
+    config.setInstance(instance);
+    config.setLocation(location);
+    config.setDevice(device);
+    String values=matcher.group("properties");
+    if (!StringUtils.isEmpty(values)) {
+      String[] pairs=values.split(",");
+      for (      String pair : pairs) {
+        String[] kv=pair.split("=");
+        String key=kv[0];
+        String value=kv[1];
+        if (key.equals("property")) {
+          config.setProperty(value);
+        }
+      }
+    }
+    boolean isValueItem=item.getClass().equals(NumberItem.class) || item.getClass().equals(StringItem.class);
+    if (isValueItem && StringUtils.isEmpty(config.getProperty())) {
+      logger.error("No property specified for item {}",config.getItemName());
+    }
+ else {
+      logger.info("pilight:{} item {} bound to device {} in location {}{}",config.getInstance(),config.getItemName(),config.getDevice(),config.getLocation(),config.getProperty() != null ? ", property " + config.getProperty() : "");
+      addBindingConfig(item,config);
+    }
   }
  else {
-    logger.error("Item config {} does not match instance#location:device pattern",bindingConfig);
+    logger.error("Item config {} does not match instance#location:device,property=optional pattern",bindingConfig);
   }
 }

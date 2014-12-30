@@ -6,7 +6,7 @@
     if (connection.isConnected()) {
       connection.getListener().refreshConfig(new IPilightConfigReceivedCallback(){
         @Override public void configReceived(        PilightConnection connection){
-          State state=getStateFromConfig(connection.getConfig(),config.getLocation(),config.getDevice());
+          State state=getStateFromConfig(connection.getConfig(),config);
           if (state != null) {
             eventPublisher.postUpdate(itemName,state);
           }
