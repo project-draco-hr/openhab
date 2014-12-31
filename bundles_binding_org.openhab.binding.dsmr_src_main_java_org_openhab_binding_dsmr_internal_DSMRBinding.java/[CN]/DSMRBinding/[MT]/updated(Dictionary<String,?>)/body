@@ -1,0 +1,24 @@
+{
+  logger.debug("updated() is called!");
+  if (config != null) {
+    String portString=(String)config.get("port");
+    logger.debug("Set port:" + portString);
+    if (StringUtils.isNotBlank(portString)) {
+      port=portString;
+    }
+ else {
+      logger.warn("DSMR setting is empty");
+    }
+    String versionString=(String)config.get("version");
+    logger.debug("Version:" + versionString);
+    version=DSMRVersion.getDSMRVersion(versionString);
+    if (version != DSMRVersion.NONE && port.length() > 0) {
+      logger.debug("Configuration succeeded");
+      setProperlyConfigured(true);
+    }
+ else {
+      logger.debug("Configuration failed");
+      setProperlyConfigured(false);
+    }
+  }
+}

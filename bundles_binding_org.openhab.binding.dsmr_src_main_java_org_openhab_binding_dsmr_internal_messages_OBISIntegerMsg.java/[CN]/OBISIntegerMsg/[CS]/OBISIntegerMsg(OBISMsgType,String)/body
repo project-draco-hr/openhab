@@ -1,0 +1,12 @@
+{
+  super(type);
+  if (type.unit.length() > 0) {
+    value=value.substring(0,value.indexOf('*'));
+  }
+  try {
+    super.openHabValue=new DecimalType(Integer.parseInt(value));
+  }
+ catch (  NumberFormatException nfe) {
+    throw new ParseException("value:" + value + " is not a integer number",0);
+  }
+}

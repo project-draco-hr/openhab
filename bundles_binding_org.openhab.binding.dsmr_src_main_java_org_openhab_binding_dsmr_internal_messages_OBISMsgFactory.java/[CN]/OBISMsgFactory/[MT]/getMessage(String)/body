@@ -1,0 +1,21 @@
+{
+  OBISMessage<? extends State> msg=null;
+  if (obisStr != null) {
+    Matcher m=obisPattern.matcher(obisStr);
+    if (m.matches()) {
+      logger.debug("Received valid OBIS String:" + obisStr);
+      OBISMsgType msgType=getOBISMsgType(m.group(1));
+      String msgValue=m.group(2);
+      logger.debug("OBIS message type:" + msgType + ", value:"+ msgValue);
+      try {
+        Constructor<? extends OBISMessage<? extends State>> c=msgType.clazz.getConstructor(new Class[]{OBISMsgType.class,String.class});
+        msg=c.newInstance(msgType,msgValue);
+      }
+ catch (      ReflectiveOperationException roe) {
+        logger.error("Internal error instantiating OBISMSG",roe);
+      }
+    }
+  }
+  logger.trace("Converted to:" + msg);
+  return msg;
+}

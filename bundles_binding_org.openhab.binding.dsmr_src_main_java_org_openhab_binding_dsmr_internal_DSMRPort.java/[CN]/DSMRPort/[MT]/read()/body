@@ -1,0 +1,68 @@
+{
+  List<OBISMessage<? extends State>> messages=new ArrayList<OBISMessage<? extends State>>();
+  long startTime=System.currentTimeMillis();
+  if (!openPort()) {
+    logger.warn("Could not open DSMRPort, no values will be read");
+    closePort();
+    return messages;
+  }
+  readerState=ReadState.WAIT_FOR_START;
+  try {
+    while (readerState != ReadState.END && ((System.currentTimeMillis() - startTime) < (2 * timeoutMSec))) {
+      String line=reader.readLine();
+      logger.trace(line);
+      logger.debug("Reader state: " + readerState);
+switch (readerState) {
+case WAIT_FOR_START:
+        if (line.startsWith("/")) {
+          readerState=ReadState.IDENTIFICATION;
+        }
+      break;
+case IDENTIFICATION:
+    if (line.length() == 0) {
+      readerState=ReadState.DATA;
+    }
+  break;
+case DATA:
+if (line.equals("!")) {
+  readerState=ReadState.END;
+}
+ else {
+  OBISMessage<? extends State> msg=factory.getMessage(line);
+  if (msg != null) {
+    messages.add(msg);
+  }
+}
+break;
+case END:
+break;
+default :
+logger.warn("Unsupported state:" + readerState);
+break;
+}
+}
+if (readerState != ReadState.END) {
+logger.error("Reading took too long and is aborted (readingtime: " + (System.currentTimeMillis() - startTime) + " ms)");
+}
+}
+ catch (IOException ioe) {
+if (!isOpen) {
+logger.info("Read aborted: DSMRPort is closed");
+}
+ else {
+logger.warn("DSMRPort is not available anymore, closing port");
+logger.debug("Caused by:",ioe);
+closePort();
+}
+}
+catch (NullPointerException npe) {
+if (!isOpen) {
+logger.info("Read aborted: DSMRPort is closed");
+}
+ else {
+logger.error("Unexpected problem occured",npe);
+closePort();
+}
+}
+return messages;
+}
