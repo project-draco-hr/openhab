@@ -1,0 +1,44 @@
+{
+  if (!m_binding_initialized) {
+    m_bticino_devices_config.clear();
+    m_bticino_devices.clear();
+    Enumeration<String> keys=properties.keys();
+    while (keys.hasMoreElements()) {
+      String key=keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_BTICINO_GATEWAY_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        logger.debug("given bticino gateway-config-key '" + key + "' does not follow the expected pattern '<gateway_name>.<host|port>'");
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String l_gw_if_id=matcher.group(1);
+      BticinoConfig l_bticino_config=m_bticino_devices_config.get(l_gw_if_id);
+      if (l_bticino_config == null) {
+        l_bticino_config=new BticinoConfig();
+        l_bticino_config.id=l_gw_if_id;
+        m_bticino_devices_config.put(l_gw_if_id,l_bticino_config);
+      }
+      String configKey=matcher.group(2);
+      String value=(String)properties.get(key);
+      if ("host".equals(configKey)) {
+        l_bticino_config.host=value;
+      }
+ else       if ("port".equals(configKey)) {
+        l_bticino_config.port=Integer.valueOf(value);
+      }
+ else       if ("rescan_secs".equals(configKey)) {
+        l_bticino_config.rescan_secs=Integer.valueOf(value);
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' with value '"+ value+ "' is unknown");
+      }
+    }
+    connectAllBticinoDevices();
+    startAllBticinoDevices();
+    m_binding_initialized=true;
+  }
+}

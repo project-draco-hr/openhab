@@ -1,0 +1,49 @@
+{
+  logger.debug("Gateway [" + m_gateway_id + "], Bticino WHO ["+ p_protocol_read.getProperty("who")+ "], WHAT ["+ p_protocol_read.getProperty("what")+ "], WHERE ["+ p_protocol_read.getProperty("where")+ "]");
+  List<BticinoBindingConfig> l_binding_configs=m_bticino_binding.getItemForBticinoBindingConfig(p_protocol_read.getProperty("who"),p_protocol_read.getProperty("where"));
+  if (l_binding_configs.isEmpty()) {
+    logger.debug("Gateway [" + m_gateway_id + "], No Item found for bticino event, WHO ["+ p_protocol_read.getProperty("who")+ "], WHAT ["+ p_protocol_read.getProperty("what")+ "], WHERE ["+ p_protocol_read.getProperty("where")+ "]");
+  }
+  for (  BticinoBindingConfig l_binding_config : l_binding_configs) {
+    Item l_item=l_binding_config.getItem();
+    if (l_item instanceof SwitchItem) {
+      if (p_protocol_read.getProperty("messageType").equalsIgnoreCase("lighting")) {
+        logger.debug("Gateway [" + m_gateway_id + "], RECEIVED EVENT FOR SwitchItem ["+ l_item.getName()+ "], TRANSLATE TO OPENHAB BUS EVENT");
+        if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Light ON")) {
+          eventPublisher.postUpdate(l_item.getName(),OnOffType.ON);
+        }
+ else         if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Light OFF")) {
+          eventPublisher.postUpdate(l_item.getName(),OnOffType.OFF);
+        }
+      }
+ else       if (p_protocol_read.getProperty("messageType").equalsIgnoreCase("CEN Basic and Evolved")) {
+        if (l_binding_config.what.equalsIgnoreCase(p_protocol_read.getProperty("what"))) {
+          logger.debug("Gateway [" + m_gateway_id + "], RECEIVED EVENT FOR SwitchItem ["+ l_item.getName()+ "], TRANSLATE TO OPENHAB BUS EVENT");
+          if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Virtual pressure")) {
+            eventPublisher.sendCommand(l_item.getName(),OnOffType.ON);
+          }
+ else           if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Virtual release after short pressure")) {
+            eventPublisher.sendCommand(l_item.getName(),OnOffType.ON);
+          }
+ else           if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Virtual release after an extended pressure")) {
+            eventPublisher.sendCommand(l_item.getName(),OnOffType.ON);
+          }
+ else           if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Virtual extended pressure")) {
+            eventPublisher.sendCommand(l_item.getName(),OnOffType.ON);
+          }
+        }
+      }
+    }
+ else     if (l_item instanceof RollershutterItem) {
+      logger.debug("Gateway [" + m_gateway_id + "], RECEIVED EVENT FOR RollershutterItem ["+ l_item.getName()+ "], TRANSLATE TO OPENHAB BUS EVENT");
+      if (p_protocol_read.getProperty("messageType").equalsIgnoreCase("automation")) {
+        if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Automation UP")) {
+          eventPublisher.postUpdate(l_item.getName(),UpDownType.UP);
+        }
+ else         if (p_protocol_read.getProperty("messageDescription").equalsIgnoreCase("Automation DOWN")) {
+          eventPublisher.postUpdate(l_item.getName(),UpDownType.DOWN);
+        }
+      }
+    }
+  }
+}

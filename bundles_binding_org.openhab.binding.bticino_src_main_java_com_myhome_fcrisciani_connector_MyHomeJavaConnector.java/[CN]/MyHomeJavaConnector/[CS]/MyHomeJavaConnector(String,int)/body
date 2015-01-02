@@ -1,0 +1,9 @@
+{
+  super();
+  this.ip=ip;
+  this.port=port;
+  this.commandMutex=new Semaphore(1,true);
+  this.commandQueue=new PriorityCommandQueue();
+  this.commandQueueThread=new Thread(new PriorityQueueThread(this,commandQueue),"TailThread");
+  this.commandQueueThread.start();
+}
