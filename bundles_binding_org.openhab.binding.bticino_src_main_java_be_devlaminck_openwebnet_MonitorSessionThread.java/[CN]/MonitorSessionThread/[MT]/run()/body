@@ -1,0 +1,19 @@
+{
+  pluginReference.myPlant=new MyHomeJavaConnector(ipAddress,port);
+  try {
+    pluginReference.myPlant.startMonitoring();
+    while (!Thread.interrupted()) {
+      try {
+        String readFrame=pluginReference.myPlant.readMonitoring();
+        buildEventFromFrame(readFrame);
+      }
+ catch (      InterruptedException ex) {
+        logger.error("MonitorSessionThread.run, exception : " + ex.getMessage());
+      }
+    }
+  }
+ catch (  IOException ex) {
+    logger.error("MonitorSessionThread.run, exception : " + ex.getMessage());
+  }
+  logger.info("Stopped MonitorSessionThread thread");
+}

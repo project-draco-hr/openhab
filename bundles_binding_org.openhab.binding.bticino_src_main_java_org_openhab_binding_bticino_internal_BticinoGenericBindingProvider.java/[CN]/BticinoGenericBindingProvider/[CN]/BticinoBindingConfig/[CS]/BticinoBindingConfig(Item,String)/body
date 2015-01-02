@@ -1,0 +1,30 @@
+{
+  this.item=item;
+  try {
+    HashMap<String,String> l_decom_config=bticinoBindingConfigDecompose(config);
+    String gateway="default";
+    if (l_decom_config.containsKey("if"))     gateway=l_decom_config.get("if");
+    gatewayID=gateway;
+    if (l_decom_config.containsKey("who")) {
+      who=l_decom_config.get("who");
+    }
+ else {
+      throw new Exception("who is missing in the configuration : " + config);
+    }
+    if (l_decom_config.containsKey("what")) {
+      what=l_decom_config.get("what");
+    }
+ else {
+      throw new Exception("what is missing in the configuration : " + config);
+    }
+    if (l_decom_config.containsKey("where")) {
+      where=l_decom_config.get("where");
+    }
+ else {
+      throw new Exception("where is missing in the configuration : " + config);
+    }
+  }
+ catch (  Exception e) {
+    throw new BindingConfigParseException(e.getMessage());
+  }
+}

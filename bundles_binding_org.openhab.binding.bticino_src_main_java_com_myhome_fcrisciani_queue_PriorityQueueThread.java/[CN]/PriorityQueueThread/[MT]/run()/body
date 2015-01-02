@@ -1,0 +1,45 @@
+{
+  String tosend=null;
+  do {
+    try {
+      tosend=list.getCommand();
+      logger.info("OpenWebNet CMD [" + tosend + "]");
+      if (sk == null) {
+        try {
+          sk=MyHomeSocketFactory.openCommandSession(myConnector.ip,myConnector.port);
+        }
+ catch (        IOException e) {
+          System.err.println("PriorityQueueThread: Problem during socket monitor opening - " + e.toString());
+          continue;
+        }
+      }
+      try {
+        if (output == null) {
+          output=new PrintWriter(sk.getOutputStream());
+        }
+        output.write(tosend);
+        output.flush();
+      }
+ catch (      IOException e) {
+        System.err.println("PriorityQueueThread: Problem during command sending - " + e.toString());
+        closeSocket();
+        continue;
+      }
+      try {
+        Thread.sleep(300);
+      }
+ catch (      InterruptedException e) {
+        System.err.println("PriorityQueueThread: Problem during suspension - " + e.toString());
+        continue;
+      }
+      if (list.numCommands() == 0) {
+        closeSocket();
+      }
+    }
+ catch (    Exception e) {
+      System.err.println("PriorityQueueThread: Not handled exception - " + e.toString());
+      closeSocket();
+    }
+  }
+ while (true);
+}
