@@ -1,0 +1,19 @@
+{
+  try {
+    while (!Thread.interrupted()) {
+      checkForBusScan();
+      Thread.sleep(1000);
+    }
+  }
+ catch (  InterruptedException p_i_ex) {
+    logger.error("Openwebnet.run, InterruptedException : " + p_i_ex.getMessage());
+  }
+catch (  Exception p_i_ex) {
+    logger.error("Openwebnet.run, Exception : " + p_i_ex.getMessage());
+  }
+ finally {
+    monitorSessionThread.interrupt();
+    logger.info("Stopped monitorSessionThread thread");
+  }
+  logger.info("Stopped OpenWebNet thread");
+}
