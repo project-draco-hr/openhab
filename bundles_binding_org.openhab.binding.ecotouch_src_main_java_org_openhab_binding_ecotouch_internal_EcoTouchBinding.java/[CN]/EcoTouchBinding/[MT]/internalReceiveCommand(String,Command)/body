@@ -36,7 +36,7 @@ value=value & ~bitmask;
  else value=value | bitmask;
 }
  catch (Exception e1) {
-e1.printStackTrace();
+logger.warn("cannot send command '" + command + "' to item '"+ itemName+ "'");
 return;
 }
 }
@@ -44,6 +44,6 @@ try {
 connector.setValue(tag.getTagName(),value);
 }
  catch (Exception e) {
-e.printStackTrace();
+logger.warn("cannot send command '" + command + "' to item '"+ itemName+ "'");
 }
 }
