@@ -1,16 +1,6 @@
 {
   if (++resendCount >= 3) {
-    this.nodeStageAdvancer.setCurrentStage(ZWaveNodeInitStage.DEAD);
-    this.deadCount++;
-    this.deadTime=Calendar.getInstance().getTime();
-    logger.debug("NODE {}: Retry count exceeded. Node is DEAD.",this.nodeId);
-    if (nodeStageAdvancer.isInitializationComplete() == true) {
-      ZWaveEvent zEvent=new ZWaveNodeStatusEvent(this.getNodeId(),ZWaveNodeState.DEAD);
-      controller.notifyEventListeners(zEvent);
-    }
- else {
-      logger.debug("NODE {}: Initialisation incomplete, not signalling DEAD node.",this.nodeId);
-    }
+    setNodeState(ZWaveNodeState.DEAD);
   }
   this.retryCount++;
 }

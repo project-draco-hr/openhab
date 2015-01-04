@@ -35,18 +35,6 @@ break;
  else if (event instanceof ZWaveNetworkEvent) {
 ZWaveNetworkEvent networkEvent=(ZWaveNetworkEvent)event;
 switch (networkEvent.getEvent()) {
-case FailedNode:
-if (getNode(networkEvent.getNodeId()) == null) {
-logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());
-break;
-}
-if (networkEvent.getState() == State.Success) {
-logger.warn("NODE {}: Marking node as FAILED because its on the controllers failed node list.",networkEvent.getNodeId());
-getNode(networkEvent.getNodeId()).setNodeStage(ZWaveNodeInitStage.FAILED);
-ZWaveEvent zEvent=new ZWaveNodeStatusEvent(networkEvent.getNodeId(),ZWaveNodeState.FAILED);
-this.notifyEventListeners(zEvent);
-break;
-}
 case DeleteNode:
 if (getNode(networkEvent.getNodeId()) == null) {
 logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());

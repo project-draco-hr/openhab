@@ -1,5 +1,5 @@
 {
-  if (initializationComplete == true) {
+  if (currentStage == ZWaveNodeInitStage.DONE) {
     return;
   }
   if (event instanceof ZWaveTransactionCompletedEvent) {
@@ -19,6 +19,7 @@ case SendData:
 case IdentifyNode:
 case RequestNodeInfo:
 case GetRoutingInfo:
+case IsFailedNodeID:
       logger.debug("NODE {}: Node advancer - {}: Transaction complete ({}:{}) success({})",node.getNodeId(),currentStage.toString(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
     if (((ZWaveTransactionCompletedEvent)event).getState() == true) {
       handleNodeQueue(serialMessage);

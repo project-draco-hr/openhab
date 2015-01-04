@@ -10,7 +10,7 @@
       infoConverter.executeRefresh(provider.getItem(itemName),node,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
       return;
     }
-    if (node.getNodeState() != ZWaveNodeState.ALIVE) {
+    if (node.getNodeState() != ZWaveNodeState.ALIVE || node.isInitializationComplete() == false) {
       return;
     }
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());

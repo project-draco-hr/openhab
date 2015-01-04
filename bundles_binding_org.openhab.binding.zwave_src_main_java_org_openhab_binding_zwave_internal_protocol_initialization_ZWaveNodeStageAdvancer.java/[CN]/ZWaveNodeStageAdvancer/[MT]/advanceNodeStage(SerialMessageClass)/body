@@ -1,5 +1,5 @@
 {
-  if (initializationComplete) {
+  if (currentStage == ZWaveNodeInitStage.DONE) {
     return;
   }
   logger.debug("NODE {}: Node advancer - {}: queue length({}), free to send({})",node.getNodeId(),currentStage.toString(),msgQueue.size(),freeToSend);
@@ -18,7 +18,7 @@
       retryCount++;
       if (retryCount > MAX_RETRIES) {
         logger.error("NODE {}: Node advancer: Retries exceeded at {}. Node is DEAD!",node.getNodeId(),currentStage.toString());
-        currentStage=ZWaveNodeInitStage.DEAD;
+        node.setNodeState(ZWaveNodeState.DEAD);
         break;
       }
     }
@@ -42,7 +42,7 @@ logger.debug("NODE {}: Node advancer: NEIGHBORS - send RoutingInfo",node.getNode
 addToQueue(new GetRoutingInfoMessageClass().doRequest(node.getNodeId()));
 break;
 case FAILED_CHECK:
-if (node.getNodeId() == controller.getOwnNodeId()) {
+if (node.getDeviceClass().getSpecificDeviceClass() == Specific.PC_CONTROLLER) {
 logger.debug("NODE {}: Node advancer: FAILED_CHECK - Controller - terminating initialisation",node.getNodeId());
 currentStage=ZWaveNodeInitStage.DONE;
 break;
@@ -50,6 +50,7 @@ break;
 if (eventClass == SerialMessageClass.IsFailedNodeID) {
 break;
 }
+addToQueue(new IsFailedNodeMessageClass().doRequest(node.getNodeId()));
 break;
 case WAIT:
 logger.debug("NODE {}: Node advancer: WAIT - Listening={}, FrequentlyListening={}",node.getNodeId(),node.isListening(),node.isFrequentlyListening());
@@ -275,10 +276,7 @@ addToQueue(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
 addToQueue(wakeupCommandClass.getIntervalMessage());
 break;
 case DONE:
-initializationComplete=true;
 logger.debug("NODE {}: Node advancer: Initialisation complete!",node.getNodeId());
-case DEAD:
-case FAILED:
 nodeSerializer.SerializeNode(node);
 controller.removeEventListener(this);
 return;

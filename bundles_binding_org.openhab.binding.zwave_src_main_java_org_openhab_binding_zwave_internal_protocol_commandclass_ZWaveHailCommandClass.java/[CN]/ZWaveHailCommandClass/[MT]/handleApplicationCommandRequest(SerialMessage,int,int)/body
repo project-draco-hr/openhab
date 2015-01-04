@@ -6,7 +6,7 @@ switch (command) {
 case HAIL:
     logger.trace("Process Hail command");
   logger.debug("NODE {}: Request an update of the dynamic values",this.getNode().getNodeId());
-if (this.getNode().getNodeState() != ZWaveNodeState.ALIVE) {
+if (this.getNode().getNodeState() != ZWaveNodeState.ALIVE || this.getNode().isInitializationComplete() == false) {
   return;
 }
 getController().pollNode(getNode());
