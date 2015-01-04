@@ -10,7 +10,9 @@
       infoConverter.executeRefresh(provider.getItem(itemName),node,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
       return;
     }
-    if (node.getNodeStage() != NodeStage.DONE)     return;
+    if (node.getNodeState() != ZWaveNodeState.ALIVE) {
+      return;
+    }
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
     if (commandClass == null) {
       logger.warn("No command class found for item = {}, command class name = {}, ignoring execute refresh.",itemName,commandClassName);

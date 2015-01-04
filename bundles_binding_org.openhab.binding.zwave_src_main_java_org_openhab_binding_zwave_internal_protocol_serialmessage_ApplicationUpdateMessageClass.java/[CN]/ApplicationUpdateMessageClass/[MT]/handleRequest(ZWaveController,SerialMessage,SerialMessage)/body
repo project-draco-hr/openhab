@@ -17,7 +17,7 @@ break;
 }
 node.resetResendCount();
 node.setApplicationUpdateReceived(true);
-if (node.getNodeStage() == NodeStage.DONE) {
+if (node.getNodeState() == ZWaveNodeState.ALIVE) {
 if (node.getCommandClass(CommandClass.ASSOCIATION) == null) {
 logger.debug("NODE {}: Application update request. Requesting node state.",nodeId);
 zController.pollNode(node);

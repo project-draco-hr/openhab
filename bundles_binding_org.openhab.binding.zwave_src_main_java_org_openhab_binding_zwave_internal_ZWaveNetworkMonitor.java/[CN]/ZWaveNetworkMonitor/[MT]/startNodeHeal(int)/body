@@ -4,6 +4,10 @@
     logger.error("NODE {}: Heal node - can't be found.",nodeId);
     return false;
   }
+  if (isNodeHealing(nodeId)) {
+    logger.debug("NODE {}: Node is already healing.",node.getNodeId());
+    return false;
+  }
   HealNode heal=new HealNode();
   heal.node=node;
   heal.nodeId=nodeId;

@@ -7,7 +7,7 @@
     SerialMessage serialMessage=completeEvent.getCompletedMessage();
     byte[] payload=serialMessage.getMessagePayload();
     if (payload.length == 0 || node.getNodeId() != (payload[0] & 0xFF)) {
-      if (controller.getTxQueueLength() < 2 && currentStage == NodeStage.WAIT) {
+      if (controller.getTxQueueLength() < 2 && currentStage == ZWaveNodeInitStage.WAIT) {
         logger.debug("NODE {}: Node advancer - WAIT: The WAIT is over!",node.getNodeId());
         currentStage=currentStage.getNextStage();
         handleNodeQueue(null);
@@ -45,10 +45,10 @@ return;
 }
 logger.debug("NODE {}: Node Status event during initialisation - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
 switch (statusEvent.getState()) {
-case Dead:
-case Failed:
+case DEAD:
+case FAILED:
 break;
-case Alive:
+case ALIVE:
 advanceNodeStage(null);
 break;
 }
