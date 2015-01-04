@@ -1,0 +1,29 @@
+{
+  if (checkCommandFormat(command)) {
+    try {
+      commandMutex.acquire();
+    }
+ catch (    InterruptedException e1) {
+      e1.printStackTrace();
+    }
+    String[] result=null;
+    try {
+      commandSk=MyHomeSocketFactory.openCommandSession(ip,port);
+      sendCommandOPEN(commandSk,command);
+      result=receiveCommandOPEN(commandSk);
+      Thread.sleep(300);
+      MyHomeSocketFactory.disconnect(commandSk);
+    }
+ catch (    IOException e) {
+      e.printStackTrace();
+    }
+catch (    InterruptedException e) {
+      e.printStackTrace();
+    }
+    commandMutex.release();
+    return result;
+  }
+ else {
+    throw new MalformedCommandOPEN(command);
+  }
+}

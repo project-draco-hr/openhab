@@ -1,0 +1,20 @@
+{
+  for (  String l_gw_if_id : m_bticino_devices_config.keySet()) {
+    BticinoConfig l_current_device_config=m_bticino_devices_config.get(l_gw_if_id);
+    BticinoDevice l_bticino_device=new BticinoDevice(l_current_device_config.id,this);
+    l_bticino_device.setEventPublisher(eventPublisher);
+    l_bticino_device.setHost(l_current_device_config.host);
+    l_bticino_device.setPort(l_current_device_config.port);
+    l_bticino_device.setRescanInterval(l_current_device_config.rescan_secs);
+    try {
+      l_bticino_device.initialize();
+    }
+ catch (    InitializationException e) {
+      throw new ConfigurationException(l_gw_if_id,"Could not open create BTicino interface with ID [" + l_gw_if_id + "], Exception : "+ e.getMessage());
+    }
+catch (    Throwable e) {
+      throw new ConfigurationException(l_gw_if_id,"Could not open create BTicino interface with ID [" + l_gw_if_id + "], Exception : "+ e.getMessage());
+    }
+    m_bticino_devices.put(l_gw_if_id,l_bticino_device);
+  }
+}
