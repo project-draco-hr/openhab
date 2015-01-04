@@ -1,0 +1,19 @@
+{
+  if (disconnect()) {
+    if (!connect()) {
+      if (reConnectCounter < 50) {
+        reConnectCounter++;
+      }
+ else {
+        logger.error("Stop eBus connector after 50 tries, please check eBus adapter and restart eBus binding.");
+        reConnectCounter=-1;
+      }
+      int sleepTime=reConnectCounter > 24 ? 30 : 5;
+      logger.warn("Unable to connector to eBus, retry in {} seconds ...",sleepTime);
+      Thread.sleep(sleepTime * 1000);
+    }
+ else {
+      reConnectCounter=0;
+    }
+  }
+}

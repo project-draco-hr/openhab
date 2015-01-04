@@ -1,0 +1,12 @@
+{
+  final ScriptEngineManager mgr=new ScriptEngineManager();
+  if (mgr != null) {
+    final ScriptEngine engine=mgr.getEngineByName("JavaScript");
+    if (engine == null) {
+      logger.warn("Unable to load \"JavaScript\" engine! Skip every eBus value calculated by JavaScript.");
+    }
+ else     if (engine instanceof Compilable) {
+      compEngine=(Compilable)engine;
+    }
+  }
+}

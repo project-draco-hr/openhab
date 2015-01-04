@@ -1,0 +1,88 @@
+{
+  if (configurationProvider == null) {
+    logger.error("Configuration not loaded, can't parse telegram!");
+    return null;
+  }
+  if (telegram == null) {
+    return null;
+  }
+  final Map<String,Object> valueRegistry=new HashMap<String,Object>();
+  final Map<String,Object> valueRegistryShortKeys=new HashMap<String,Object>();
+  final ByteBuffer byteBuffer=telegram.getBuffer();
+  final String bufferString=EBusUtils.toHexDumpString(byteBuffer).toString();
+  final List<Map<String,Object>> matchedTelegramRegistry=configurationProvider.getCommandsByFilter(bufferString);
+  loggerAnalyses.debug(bufferString);
+  if (matchedTelegramRegistry.isEmpty()) {
+    loggerAnalyses.debug("  >>> Unknown ----------------------------------------");
+    if (loggerBrutforce.isTraceEnabled()) {
+      loggerBrutforce.trace(bufferString);
+      bruteforceEBusTelegram(telegram);
+    }
+    return null;
+  }
+  for (  Map<String,Object> registryEntry : matchedTelegramRegistry) {
+    int debugLevel=0;
+    String classKey=registryEntry.containsKey("class") ? (String)registryEntry.get("class") : "";
+    if (registryEntry.containsKey("debug")) {
+      debugLevel=((Integer)registryEntry.get("debug"));
+    }
+    @SuppressWarnings("unchecked") Map<String,Map<String,Object>> values=(Map<String,Map<String,Object>>)registryEntry.get("values");
+    loggerAnalyses.debug("  >>> {}",registryEntry.containsKey("comment") ? registryEntry.get("comment") : "<No comment available>");
+    for (    Entry<String,Map<String,Object>> entry : values.entrySet()) {
+      String uniqueKey=(classKey != "" ? classKey + "." : "") + entry.getKey();
+      settings=entry.getValue();
+      String type=((String)settings.get("type")).toLowerCase();
+      int pos=settings.containsKey("pos") ? ((Integer)settings.get("pos")).intValue() : -1;
+      BigDecimal valueMin=NumberUtils.toBigDecimal(settings.get("min"));
+      BigDecimal valueMax=NumberUtils.toBigDecimal(settings.get("max"));
+      BigDecimal replaceValue=NumberUtils.toBigDecimal(settings.get("replaceValue"));
+      BigDecimal factor=NumberUtils.toBigDecimal(settings.get("factor"));
+      Object value=getValue(byteBuffer,type,pos,valueMin,valueMax,replaceValue,factor);
+      if (settings.containsKey("cscript")) {
+        try {
+          HashMap<String,Object> bindings=new HashMap<String,Object>();
+          bindings.put(entry.getKey(),value);
+          bindings.put(uniqueKey,value);
+          bindings.put("thisValue",value);
+          value=evaluateScript(entry,bindings);
+        }
+ catch (        ScriptException e) {
+          logger.error("Error on evaluating JavaScript!",e);
+          break;
+        }
+      }
+      String label=(String)(settings.containsKey("label") ? settings.get("label") : "");
+      String format=String.format("%-35s%-10s%s",uniqueKey,value,label);
+      if (debugLevel >= 2) {
+        loggerAnalyses.debug("    >>> " + format);
+      }
+ else {
+        loggerAnalyses.trace("    >>> " + format);
+      }
+      valueRegistry.put(uniqueKey,value);
+      valueRegistryShortKeys.put(entry.getKey(),value);
+    }
+    if (!registryEntry.containsKey("computed_values"))     continue;
+    @SuppressWarnings("unchecked") Map<String,Map<String,Object>> cvalues=(Map<String,Map<String,Object>>)registryEntry.get("computed_values");
+    for (    Entry<String,Map<String,Object>> entry : cvalues.entrySet()) {
+      String uniqueKey=(classKey != "" ? classKey + "." : "") + entry.getKey();
+      HashMap<String,Object> bindings=new HashMap<String,Object>();
+      bindings.putAll(valueRegistryShortKeys);
+      bindings.putAll(valueRegistry);
+      Object value;
+      try {
+        value=evaluateScript(entry,bindings);
+        valueRegistry.put(entry.getKey(),value);
+        if (debugLevel >= 2) {
+          String label=(String)(settings.containsKey("label") ? settings.get("label") : "");
+          String format=String.format("%-35s%-10s%s",uniqueKey,value,label);
+          loggerAnalyses.debug("    >>> " + format);
+        }
+      }
+ catch (      ScriptException e) {
+        logger.error("Error on evaluating JavaScript!",e);
+      }
+    }
+  }
+  return valueRegistry;
+}
