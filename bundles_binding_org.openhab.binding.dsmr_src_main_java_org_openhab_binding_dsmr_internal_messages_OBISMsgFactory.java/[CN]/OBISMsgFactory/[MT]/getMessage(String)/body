@@ -1,21 +1,31 @@
 {
-  OBISMessage<? extends State> msg=null;
+  OBISMessage msg=null;
   if (obisStr != null) {
     Matcher m=obisPattern.matcher(obisStr);
     if (m.matches()) {
       logger.debug("Received valid OBIS String:" + obisStr);
+      List<String> cosemStringValues=new ArrayList<>();
       OBISMsgType msgType=getOBISMsgType(m.group(1));
-      String msgValue=m.group(2);
-      logger.debug("OBIS message type:" + msgType + ", value:"+ msgValue);
-      try {
-        Constructor<? extends OBISMessage<? extends State>> c=msgType.clazz.getConstructor(new Class[]{OBISMsgType.class,String.class});
-        msg=c.newInstance(msgType,msgValue);
+      if (msgType != OBISMsgType.UNKNOWN) {
+        String allCosemStringValues=m.group(2);
+        Matcher valueMatcher=obisValuePattern.matcher(allCosemStringValues);
+        while (valueMatcher.find()) {
+          cosemStringValues.add(valueMatcher.group(1));
+        }
+        logger.debug("OBIS message type:" + msgType + ", values:"+ cosemStringValues);
+        msg=new OBISMessage(msgType);
+        try {
+          msg.parseCosemValues(cosemStringValues);
+        }
+ catch (        ParseException pe) {
+          logger.error("Failed to parse " + obisStr,pe);
+        }
       }
- catch (      ReflectiveOperationException roe) {
-        logger.error("Internal error instantiating OBISMSG",roe);
+ else {
+        logger.warn("Received OBIS unknown message:" + obisStr);
       }
     }
   }
-  logger.trace("Converted to:" + msg);
+  logger.debug("Converted to:" + msg);
   return msg;
 }

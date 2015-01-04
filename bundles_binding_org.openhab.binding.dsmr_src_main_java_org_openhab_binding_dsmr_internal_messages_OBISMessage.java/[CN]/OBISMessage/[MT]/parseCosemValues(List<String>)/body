@@ -1,0 +1,25 @@
+{
+  logger.debug("Received items:" + cosemStringValues.size() + ", Needed items:"+ msgType.cosemValueDescriptors.size());
+  if (cosemStringValues.size() <= msgType.cosemValueDescriptors.size()) {
+    for (int i=0; i < cosemStringValues.size(); i++) {
+      CosemValue<? extends State> cosemValue=getCosemValue(msgType.cosemValueDescriptors.get(i));
+      if (cosemValue != null) {
+        cosemValue.setValue(cosemStringValues.get(i));
+        cosemValues.add(cosemValue);
+      }
+ else {
+        logger.error("Failed to parse:" + cosemStringValues.get(i)," for OBISMsgType:" + msgType);
+      }
+    }
+  }
+ else {
+    throw new ParseException("Received items:" + cosemStringValues.size() + ", Needed items:"+ msgType.cosemValueDescriptors.size(),0);
+  }
+switch (msgType) {
+case EMETER_POWER_FAILURE_LOG:
+    postProcessKaifaE0003();
+  break;
+default :
+break;
+}
+}

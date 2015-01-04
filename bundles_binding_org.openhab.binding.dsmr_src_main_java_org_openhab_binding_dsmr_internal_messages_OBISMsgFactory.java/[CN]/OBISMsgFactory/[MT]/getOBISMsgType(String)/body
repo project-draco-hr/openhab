@@ -1,10 +1,8 @@
 {
-  if (obisId.length() > 0) {
-    for (    OBISMsgType t : OBISMsgType.values()) {
-      if (t.obisReference.equals(obisId) && t.applicableVersions.contains(version)) {
-        return t;
-      }
-    }
+  if (obisLookupTable.containsKey(obisId)) {
+    return obisLookupTable.get(obisId);
   }
-  return OBISMsgType.UNKNOWN;
+ else {
+    return OBISMsgType.UNKNOWN;
+  }
 }
