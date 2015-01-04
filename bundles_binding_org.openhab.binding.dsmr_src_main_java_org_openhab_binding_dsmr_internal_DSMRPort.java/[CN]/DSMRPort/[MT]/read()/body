@@ -1,9 +1,9 @@
 {
-  List<OBISMessage<? extends State>> messages=new ArrayList<OBISMessage<? extends State>>();
+  List<OBISMessage> messages=new ArrayList<OBISMessage>();
   long startTime=System.currentTimeMillis();
-  if (!openPort()) {
+  if (!open()) {
     logger.warn("Could not open DSMRPort, no values will be read");
-    closePort();
+    close();
     return messages;
   }
   readerState=ReadState.WAIT_FOR_START;
@@ -24,11 +24,11 @@ case IDENTIFICATION:
     }
   break;
 case DATA:
-if (line.equals("!")) {
+if (line.startsWith("!")) {
   readerState=ReadState.END;
 }
  else {
-  OBISMessage<? extends State> msg=factory.getMessage(line);
+  OBISMessage msg=factory.getMessage(line);
   if (msg != null) {
     messages.add(msg);
   }
@@ -52,7 +52,7 @@ logger.info("Read aborted: DSMRPort is closed");
  else {
 logger.warn("DSMRPort is not available anymore, closing port");
 logger.debug("Caused by:",ioe);
-closePort();
+close();
 }
 }
 catch (NullPointerException npe) {
@@ -61,7 +61,7 @@ logger.info("Read aborted: DSMRPort is closed");
 }
  else {
 logger.error("Unexpected problem occured",npe);
-closePort();
+close();
 }
 }
 return messages;
