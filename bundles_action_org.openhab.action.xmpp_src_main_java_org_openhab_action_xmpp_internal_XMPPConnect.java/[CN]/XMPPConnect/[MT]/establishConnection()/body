@@ -1,34 +1,35 @@
 {
-  if (servername != null) {
-    ConnectionConfiguration config;
-    if (proxy != null) {
-      config=new ConnectionConfiguration(servername,port,proxy);
-    }
+  if (servername == null) {
+    return;
+  }
+  ConnectionConfiguration config;
+  if (proxy != null) {
+    config=new ConnectionConfiguration(servername,port,proxy);
+  }
  else {
-      config=new ConnectionConfiguration(servername,port);
-    }
-    config.setSecurityMode(securityMode);
-    if (connection != null && connection.isConnected()) {
-      try {
-        connection.disconnect();
-      }
- catch (      NotConnectedException e) {
-        logger.debug("Already disconnected",e);
-      }
-    }
-    connection=new XMPPTCPConnection(config);
+    config=new ConnectionConfiguration(servername,port);
+  }
+  config.setSecurityMode(securityMode);
+  if (connection != null && connection.isConnected()) {
     try {
-      connection.connect();
-      connection.login(username,password);
-      if (consoleUsers.length > 0) {
-        ChatManager.getInstanceFor(connection).addChatListener(new XMPPConsole(consoleUsers));
-        connection.addConnectionListener(new XMPPConnectionListener());
-      }
-      logger.info("Connection to XMPP as '{}' has been established.",username);
-      initialized=true;
+      connection.disconnect();
     }
- catch (    Exception e) {
-      logger.error("Could not establish connection to XMPP server '" + servername + ":"+ port+ "': {}",e.getMessage());
+ catch (    NotConnectedException e) {
+      logger.debug("Already disconnected",e);
     }
+  }
+  connection=new XMPPTCPConnection(config);
+  try {
+    connection.connect();
+    connection.login(username,password);
+    if (consoleUsers.length > 0) {
+      ChatManager.getInstanceFor(connection).addChatListener(new XMPPConsole(consoleUsers));
+      connection.addConnectionListener(new XMPPConnectionListener());
+    }
+    logger.info("Connection to XMPP as '{}' has been established.",username);
+    initialized=true;
+  }
+ catch (  Exception e) {
+    logger.error("Could not establish connection to XMPP server '" + servername + ":"+ port+ "': {}",e.getMessage());
   }
 }
