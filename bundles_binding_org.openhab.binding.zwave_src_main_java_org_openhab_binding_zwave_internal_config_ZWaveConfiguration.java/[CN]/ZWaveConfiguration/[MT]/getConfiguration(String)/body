@@ -133,12 +133,18 @@ Long timeSinceLastDead=Long.MAX_VALUE;
 if (lastDead != null) {
 timeSinceLastDead=System.currentTimeMillis() - lastDead.getTime();
 }
-if (node.getDeadCount() > 0 && timeSinceLastDead < 86400000) record.state=OpenHABConfigurationRecord.STATE.WARNING;
- else if (node.getSendCount() > 0 && (node.getRetryCount() * 100 / node.getSendCount()) > 5) record.state=OpenHABConfigurationRecord.STATE.WARNING;
- else record.state=OpenHABConfigurationRecord.STATE.OK;
-break;
-default :
+if (node.getNodeInitializationStage() != ZWaveNodeInitStage.DONE) {
 record.state=OpenHABConfigurationRecord.STATE.INITIALIZING;
+}
+ else if (node.getDeadCount() > 0 && timeSinceLastDead < 86400000) {
+record.state=OpenHABConfigurationRecord.STATE.WARNING;
+}
+ else if (node.getSendCount() > 0 && (node.getRetryCount() * 100 / node.getSendCount()) > 5) {
+record.state=OpenHABConfigurationRecord.STATE.WARNING;
+}
+ else {
+record.state=OpenHABConfigurationRecord.STATE.OK;
+}
 break;
 }
 record.addAction("Heal","Heal Node");
