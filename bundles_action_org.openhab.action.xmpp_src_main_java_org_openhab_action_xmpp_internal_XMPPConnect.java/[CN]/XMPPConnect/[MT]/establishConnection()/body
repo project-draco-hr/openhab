@@ -10,6 +10,15 @@
     config=new ConnectionConfiguration(servername,port);
   }
   config.setSecurityMode(securityMode);
+  if (tlsPin != null) {
+    try {
+      SSLContext sc=JavaPinning.forPin(tlsPin);
+      config.setCustomSSLContext(sc);
+    }
+ catch (    KeyManagementException|NoSuchAlgorithmException e) {
+      logger.error("Could not create TLS Pin for XMPP connection",e);
+    }
+  }
   if (connection != null && connection.isConnected()) {
     try {
       connection.disconnect();
