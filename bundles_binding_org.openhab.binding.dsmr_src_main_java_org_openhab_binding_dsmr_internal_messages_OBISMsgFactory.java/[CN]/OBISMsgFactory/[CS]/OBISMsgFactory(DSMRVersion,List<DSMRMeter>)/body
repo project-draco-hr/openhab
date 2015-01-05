@@ -2,8 +2,8 @@
   obisPattern=Pattern.compile(OBIS_REGEX);
   obisValuePattern=Pattern.compile(OBIS_VALUE_REGEX);
   obisChannelPattern=Pattern.compile(OBIS_CONFIGURABLE_CHANNEL_PATTERN);
-  obisLookupTable=new HashMap<>();
-  Map<DSMRMeterType,Integer> meterChannelMapping=new HashMap<>();
+  obisLookupTable=new HashMap<String,OBISMsgType>();
+  Map<DSMRMeterType,Integer> meterChannelMapping=new HashMap<DSMRMeterType,Integer>();
   for (  DSMRMeter meter : dsmrMeters) {
     meterChannelMapping.put(meter.getMeterType(),meter.getChannel());
   }
