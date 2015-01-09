@@ -1,0 +1,13 @@
+{
+  Class<? extends CosemValue<? extends State>> cosemValueClass=cosemValueDescriptor.getCosemValueClass();
+  String unit=cosemValueDescriptor.getUnit();
+  String dsmrItemId=cosemValueDescriptor.getDsmrItemId();
+  try {
+    Constructor<? extends CosemValue<? extends State>> c=cosemValueClass.getConstructor(String.class,String.class);
+    return c.newInstance(unit,dsmrItemId);
+  }
+ catch (  ReflectiveOperationException roe) {
+    logger.error("Failed to create " + msgType.obisId + " message",roe);
+  }
+  return null;
+}

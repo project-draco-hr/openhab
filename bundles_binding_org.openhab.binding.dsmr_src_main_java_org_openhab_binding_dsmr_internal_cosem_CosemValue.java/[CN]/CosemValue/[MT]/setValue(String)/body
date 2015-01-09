@@ -1,0 +1,15 @@
+{
+  if (unit.length() > 0) {
+    Pattern p=Pattern.compile("(.*)\\*" + unit);
+    Matcher m=p.matcher(cosemValue);
+    if (m.matches()) {
+      value=parse(m.group(1));
+    }
+ else {
+      throw new ParseException("Unit of " + cosemValue + " is not "+ unit,0);
+    }
+  }
+ else {
+    value=parse(cosemValue);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  logger.debug("postProcessKaifaE0003");
+  CosemDate powerFailureDate=(CosemDate)cosemValues.get(1);
+  CosemInteger powerFailureDuration=(CosemInteger)cosemValues.get(2);
+  Calendar epoch=Calendar.getInstance();
+  epoch.setTime(new Date(0));
+  if (powerFailureDate.getValue().getCalendar().before(epoch) && powerFailureDuration.getValue().intValue() == Integer.MAX_VALUE) {
+    logger.debug("Filter invalid power failure entry");
+    cosemValues.remove(2);
+    cosemValues.remove(1);
+  }
+}
