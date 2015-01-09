@@ -11,6 +11,8 @@
     this.receiveThread.start();
     this.sendThread=new ZWaveSendThread();
     this.sendThread.start();
+    serialPort.addEventListener(this.receiveThread);
+    serialPort.notifyOnDataAvailable(true);
     logger.info("Serial port is initialized");
   }
  catch (  NoSuchPortException e) {
@@ -24,5 +26,9 @@ catch (  PortInUseException e) {
 catch (  UnsupportedCommOperationException e) {
     logger.error("Unsupported comm operation on Port {}.",serialPortName);
     throw new SerialInterfaceException(String.format("Unsupported comm operation on Port %s.",serialPortName),e);
+  }
+catch (  TooManyListenersException e) {
+    logger.error("Too many listeners on Port {}.",serialPortName);
+    e.printStackTrace();
   }
 }
