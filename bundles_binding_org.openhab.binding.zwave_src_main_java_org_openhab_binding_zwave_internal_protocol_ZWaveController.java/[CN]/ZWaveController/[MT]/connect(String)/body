@@ -11,6 +11,8 @@
     this.receiveThread.start();
     this.sendThread=new ZWaveSendThread();
     this.sendThread.start();
+    this.inputThread=new ZWaveInputThread();
+    this.inputThread.start();
     serialPort.addEventListener(this.receiveThread);
     serialPort.notifyOnDataAvailable(true);
     logger.info("Serial port is initialized");

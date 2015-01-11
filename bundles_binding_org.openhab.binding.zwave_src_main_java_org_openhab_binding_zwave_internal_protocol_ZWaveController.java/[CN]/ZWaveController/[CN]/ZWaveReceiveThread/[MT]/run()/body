@@ -1,5 +1,5 @@
 {
-  logger.debug("Starting Z-Wave receive thread");
+  logger.debug("Starting Z-Wave thread: Receive");
   try {
     sendResponse(NAK);
     if (softReset == true) {
@@ -19,7 +19,9 @@ synchronized (serialPort.getOutputStream()) {
       int nextByte;
       try {
         nextByte=serialPort.getInputStream().read();
-        if (nextByte == -1)         continue;
+        if (nextByte == -1) {
+          continue;
+        }
       }
  catch (      IOException e) {
         logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
@@ -60,7 +62,7 @@ logger.trace("Received ACK");
 break;
 case NAK:
 NAKCount++;
-logger.error("Message not acklowledged by controller (NAK), discarding");
+logger.error("Message not acknowledged by controller (NAK), discarding");
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
 break;
@@ -88,6 +90,6 @@ break;
  catch (Exception e) {
 logger.error("Got an exception during receiving. exiting thread.",e);
 }
-logger.debug("Stopped Z-Wave receive thread");
+logger.debug("Stopped Z-Wave thread: Receive");
 serialPort.removeEventListener();
 }
