@@ -57,6 +57,13 @@
         writer.write(commandString);
         logger.debug(commandString);
         writer.flush();
+        String raw=reader.readLine();
+        Message message=processRawMessage(raw);
+        if (message != null) {
+          if (message.getType() == MessageType.S) {
+            sMessageProcessing((S_Message)message);
+          }
+        }
         if (!exclusive) {
           socket.close();
           socket=null;
