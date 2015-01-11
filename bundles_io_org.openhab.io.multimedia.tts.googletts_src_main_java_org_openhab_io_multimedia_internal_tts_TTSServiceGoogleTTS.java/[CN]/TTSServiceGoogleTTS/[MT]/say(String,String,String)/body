@@ -17,13 +17,6 @@ catch (  JavaLayerException e) {
     logger.warn("Unable to play InputStream for text " + text,e);
   }
  finally {
-    if (stream != null) {
-      try {
-        stream.close();
-      }
- catch (      IOException e) {
-        logger.debug("Error while closing InputStream",e);
-      }
-    }
+    IOUtils.closeQuietly(stream);
   }
 }
