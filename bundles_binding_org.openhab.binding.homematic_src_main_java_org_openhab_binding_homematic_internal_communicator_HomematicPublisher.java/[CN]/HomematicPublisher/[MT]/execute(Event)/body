@@ -1,0 +1,29 @@
+{
+  double delay=event.getDelay();
+  if (delay > 0.0) {
+synchronized (this) {
+      logger.debug("Delaying event for {} seconds: {}",delay,event.getHmValueItem());
+      Timer timer=delayedEvents.get(event.getBindingConfig());
+      if (timer != null) {
+        timer.cancel();
+      }
+      timer=new Timer();
+      delayedEvents.put(event.getBindingConfig(),timer);
+      timer.schedule(new TimerTask(){
+        @Override public void run(){
+          try {
+            delayedEvents.remove(event.getBindingConfig());
+            sendToClient(event);
+          }
+ catch (          Exception ex) {
+            logger.error(ex.getMessage(),ex);
+          }
+        }
+      }
+,(long)(delay * 1000));
+    }
+  }
+ else {
+    sendToClient(event);
+  }
+}
