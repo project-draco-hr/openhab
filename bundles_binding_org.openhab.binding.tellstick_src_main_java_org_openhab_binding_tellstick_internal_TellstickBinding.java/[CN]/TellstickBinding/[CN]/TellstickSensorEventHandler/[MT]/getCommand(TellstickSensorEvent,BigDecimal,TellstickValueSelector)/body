@@ -1,0 +1,34 @@
+{
+  State cmd=null;
+switch (event.getDataType()) {
+case TEMPERATURE:
+switch (selector) {
+case MOTION:
+      cmd=OnOffType.ON;
+    break;
+default :
+  cmd=new DecimalType(dValue);
+}
+break;
+case HUMIDITY:
+switch (selector) {
+case BATTERY_LEVEL:
+cmd=new DecimalType(dValue);
+break;
+case HUMIDITY:
+default :
+cmd=new PercentType(HUNDRED.min(dValue));
+}
+break;
+case WINDAVERAGE:
+case WINDDIRECTION:
+case WINDGUST:
+case RAINRATE:
+case RAINTOTAL:
+cmd=new DecimalType(dValue);
+break;
+default :
+logger.warn("Event of type " + event.getDataType() + " does not have a mapping");
+}
+return cmd;
+}

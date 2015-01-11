@@ -1,0 +1,13 @@
+{
+  if (cmd2 == 0) {
+    logger.info("{}: set device {} to OFF",nm(),a);
+    m_feature.publish(OnOffType.OFF,StateChangeType.CHANGED);
+  }
+ else   if (cmd2 == 0xff) {
+    logger.info("{}: set device {} to ON",nm(),a);
+    m_feature.publish(OnOffType.ON,StateChangeType.CHANGED);
+  }
+ else {
+    logger.warn("{}: {} ignoring unexpected cmd2 in msg: {}",nm(),a,msg);
+  }
+}

@@ -1,0 +1,35 @@
+{
+  try {
+synchronized (m_lock) {
+      logger.debug("Gateway [" + m_gateway_id + "], Command '{}' received for item {}",(Object[])new String[]{command.toString(),itemName});
+      ProtocolRead l_pr=new ProtocolRead(itemBindingConfig.who + "*" + itemBindingConfig.where);
+      l_pr.addProperty("who",itemBindingConfig.who);
+      l_pr.addProperty("address",itemBindingConfig.where);
+      int l_who=Integer.parseInt(itemBindingConfig.who);
+switch (l_who) {
+case 1:
+{
+          if (OnOffType.ON.equals(command))           l_pr.addProperty("what","1");
+ else           l_pr.addProperty("what","0");
+          break;
+        }
+case 2:
+{
+        if (UpDownType.UP.equals(command))         l_pr.addProperty("what","1");
+ else         if (UpDownType.DOWN.equals(command))         l_pr.addProperty("what","2");
+ else         if (StopMoveType.STOP.equals(command))         l_pr.addProperty("what","0");
+        break;
+      }
+case 15:
+{
+      if (OnOffType.ON.equals(command))       l_pr.addProperty("what",itemBindingConfig.what);
+      break;
+    }
+}
+m_open_web_net.onCommand(l_pr);
+}
+}
+ catch (Exception e) {
+logger.error("Gateway [" + m_gateway_id + "], Error processing receiveCommand '{}'",(Object[])new String[]{e.getMessage()});
+}
+}

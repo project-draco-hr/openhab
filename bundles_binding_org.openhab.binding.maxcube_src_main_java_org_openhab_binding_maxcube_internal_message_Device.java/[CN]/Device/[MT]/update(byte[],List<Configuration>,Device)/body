@@ -10,7 +10,7 @@
   device.setGatewayKnown(bits2[4]);
   device.setPanelLocked(bits2[5]);
   device.setLinkStatusError(bits2[6]);
-  device.setBatteryLow(bits2[7]);
+  device.battery().setCharge(bits2[7] ? Charge.LOW : Charge.OK);
   logger.trace("Device {} L Message length: {} content: {}",rfAddress,raw.length,Utils.getHex(raw));
 switch (device.getType()) {
 case WallMountedThermostat:

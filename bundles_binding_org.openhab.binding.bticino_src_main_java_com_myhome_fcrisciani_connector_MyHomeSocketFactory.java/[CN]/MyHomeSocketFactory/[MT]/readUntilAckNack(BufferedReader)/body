@@ -1,0 +1,10 @@
+{
+  ArrayList<String> result=new ArrayList<String>();
+  String commandReceived=null;
+  do {
+    commandReceived=readUntilDelimiter(inputStream);
+    result.add(commandReceived);
+  }
+ while (commandReceived != null && isACK(commandReceived) != true && isNACK(commandReceived) != true);
+  return result.toArray(new String[result.size()]);
+}

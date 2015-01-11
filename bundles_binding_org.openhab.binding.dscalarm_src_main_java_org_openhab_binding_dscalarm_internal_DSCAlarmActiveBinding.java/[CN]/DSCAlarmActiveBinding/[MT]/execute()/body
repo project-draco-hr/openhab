@@ -4,13 +4,13 @@
     connected=api.isConnected();
   }
   if (connected) {
-    if (pollPeriod == 0) {
-      pollPeriod=System.currentTimeMillis();
+    if (pollTimeStart == 0) {
+      pollTimeStart=System.currentTimeMillis();
     }
-    pollTime=((System.currentTimeMillis() - pollPeriod) / 1000) / 60;
-    if (pollTime >= 1) {
+    pollTime=((System.currentTimeMillis() - pollTimeStart) / 1000) / 60;
+    if (pollTime >= pollPeriod) {
       api.sendCommand(APICode.Poll);
-      pollPeriod=0;
+      pollTimeStart=0;
       logger.debug("execute(): Poll Command Sent to DSC Alarm.");
     }
   }

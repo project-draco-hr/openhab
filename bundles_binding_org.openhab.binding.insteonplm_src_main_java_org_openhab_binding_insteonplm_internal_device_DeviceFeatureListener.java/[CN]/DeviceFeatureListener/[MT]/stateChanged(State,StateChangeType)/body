@@ -1,0 +1,14 @@
+{
+  State oldState=m_state.get(state.getClass());
+  if (oldState == null) {
+    logger.trace("new state: {}:{}",state.getClass().getSimpleName(),state);
+    m_eventPublisher.postUpdate(m_itemName,state);
+  }
+ else {
+    logger.trace("old state: {}:{}=?{}",state.getClass().getSimpleName(),oldState,state);
+    if (changeType == StateChangeType.ALWAYS || oldState != state) {
+      m_eventPublisher.postUpdate(m_itemName,state);
+    }
+  }
+  m_state.put(state.getClass(),state);
+}

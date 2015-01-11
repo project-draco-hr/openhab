@@ -1,0 +1,19 @@
+{
+  try {
+    int x10Flag=msg.getByte("X10Flag") & 0xff;
+    int rawX10=msg.getByte("rawX10") & 0xff;
+    if (x10Flag == 0x80) {
+      if (m_x10HouseUnit != -1) {
+        InsteonAddress fromAddr=new InsteonAddress((byte)m_x10HouseUnit);
+        handleMessage(fromPort,fromAddr,msg);
+      }
+    }
+ else     if (x10Flag == 0) {
+      m_x10HouseUnit=rawX10 & 0xFF;
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("got bad X10 message: {}",msg,e);
+    return;
+  }
+}

@@ -9,7 +9,7 @@
       if (oauthCredentials.firstExecution) {
         processDeviceList(oauthCredentials);
       }
-      Map<String,Map<String,BigDecimal>> deviceMeasureValueMap=processMeasurements(oauthCredentials);
+      DeviceMeasureValueMap deviceMeasureValueMap=processMeasurements(oauthCredentials);
       for (      final NetatmoBindingProvider provider : this.providers) {
         for (        final String itemName : provider.getItemNames()) {
           final String deviceId=provider.getDeviceId(itemName);
@@ -17,26 +17,30 @@
           final NetatmoMeasureType measureType=provider.getMeasureType(itemName);
           State state=null;
 switch (measureType) {
+case TIMESTAMP:
+            state=deviceMeasureValueMap.timeStamp;
+          break;
 case TEMPERATURE:
 case CO2:
 case HUMIDITY:
 case NOISE:
 case PRESSURE:
-            final String requestKey=createKey(deviceId,moduleId);
-          state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure()));
-        break;
+case RAIN:
+        final String requestKey=createKey(deviceId,moduleId);
+      state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure()));
+    break;
 case BATTERYVP:
 case RFSTATUS:
-      for (      Module module : oauthCredentials.deviceListResponse.getModules()) {
-        if (module.getId().equals(moduleId)) {
+  for (  Module module : oauthCredentials.deviceListResponse.getModules()) {
+    if (module.getId().equals(moduleId)) {
 switch (measureType) {
 case BATTERYVP:
-            state=new DecimalType(module.getBatteryVp());
-          break;
-case RFSTATUS:
-        state=new DecimalType(module.getRfStatus());
+        state=new DecimalType(module.getBatteryVp());
       break;
-  }
+case RFSTATUS:
+    state=new DecimalType(module.getRfStatus());
+  break;
+}
 }
 }
 break;

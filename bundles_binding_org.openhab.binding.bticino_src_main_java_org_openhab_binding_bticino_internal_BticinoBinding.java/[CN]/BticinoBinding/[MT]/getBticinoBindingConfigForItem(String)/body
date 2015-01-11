@@ -1,0 +1,11 @@
+{
+  BticinoBindingConfig l_item_binding=null;
+  for (  BticinoBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      l_item_binding=provider.getConfig(itemName);
+      break;
+    }
+  }
+  if (l_item_binding == null)   throw new RuntimeException("BindingConfig not found for item [" + itemName + "]");
+  return l_item_binding;
+}

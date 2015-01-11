@@ -2,14 +2,20 @@
   boolean awake=false;
   int i=0;
   while (awake == false && i++ < 3) {
-    writeString("\n");
     try {
-      expectString("\n\r");
+      logger.debug("sending wakeup sequence");
+      writeString("\n");
+      sleep(100);
+      logger.debug("waiting for wakeup response");
+      byte[] buf=readResponse();
+      expectString(buf,"\n\r");
       awake=true;
+      return awake;
     }
  catch (    IOException e) {
+      logger.warn("wakeup failed, retry");
     }
-    sleep(i * 400);
+    sleep(1200);
   }
   return awake;
 }

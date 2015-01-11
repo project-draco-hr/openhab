@@ -1,0 +1,24 @@
+{
+  HashMap<String,String> params=conf.getParameters();
+  if (conf.getFeature().contains("dimmer") && params.containsKey("dimmermax")) {
+    String item=conf.getItemName();
+    String dimmerMax=params.get("dimmermax");
+    try {
+      int i=Integer.parseInt(dimmerMax);
+      if (i > 1 && i <= 99) {
+        int level=(int)Math.ceil((i * 255.0) / 100);
+        if (level < defaultLevel) {
+          logger.info("item {}: using dimmermax value of {}",item,dimmerMax);
+          return level;
+        }
+      }
+ else {
+        logger.error("item {}: dimmermax must be between 1-99 inclusive: {}",item,dimmerMax);
+      }
+    }
+ catch (    NumberFormatException e) {
+      logger.error("item {}: invalid int value for dimmermax: {}",item,dimmerMax);
+    }
+  }
+  return defaultLevel;
+}

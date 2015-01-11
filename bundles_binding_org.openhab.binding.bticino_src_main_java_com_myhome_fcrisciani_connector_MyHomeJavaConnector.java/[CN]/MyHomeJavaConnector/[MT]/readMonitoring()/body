@@ -1,0 +1,27 @@
+{
+  String result=null;
+  int retry=0;
+  do {
+    try {
+      result=receiveMonitorOPEN(monitorSk);
+    }
+ catch (    IOException e) {
+      try {
+        MyHomeSocketFactory.disconnect(monitorSk);
+      }
+ catch (      IOException e1) {
+      }
+      retry++;
+      Thread.sleep(1000);
+      System.err.println("Monitor connection problem retry temptative: " + retry);
+      try {
+        startMonitoring();
+      }
+ catch (      IOException e1) {
+      }
+      continue;
+    }
+  }
+ while (result == null);
+  return result;
+}

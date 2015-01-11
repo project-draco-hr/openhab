@@ -14,6 +14,7 @@
           throw new IllegalArgumentException("The pin with number '" + pinNumber + "' is already registered");
         }
         Files.write(Paths.get(SYSFS_CLASS_GPIO + "export"),pinNumber.toString().getBytes());
+        Thread.sleep(500);
         pin=new GPIOPinLinux(pinNumber,SYSFS_CLASS_GPIO + "gpio" + pinNumber,defaultDebounceInterval);
         gpioRegistry.put(pin,pinNumber);
       }

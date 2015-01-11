@@ -1,0 +1,18 @@
+{
+  ArrayList<CommandOPEN> commandList=action.getCommandList();
+  for (  CommandOPEN command : commandList) {
+    if (command != null) {
+      if (command instanceof DelayInterval && ((DelayInterval)command).getDelayInMillisecond() > 0) {
+        try {
+          Thread.sleep(((DelayInterval)command).getDelayInMillisecond());
+        }
+ catch (        InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+ else {
+        sendCommandAsync(command,priority);
+      }
+    }
+  }
+}

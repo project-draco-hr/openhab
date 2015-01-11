@@ -1,5 +1,6 @@
 {
-  double dValue=Double.valueOf(event.getData());
+  BigDecimal dValue=new BigDecimal(String.valueOf(event.getData()));
+  dValue.setScale(1,BigDecimal.ROUND_HALF_UP);
   TellstickValueSelector selector=device.getUsageSelector();
   if (selector == null) {
     selector=device.getValueSelector();
