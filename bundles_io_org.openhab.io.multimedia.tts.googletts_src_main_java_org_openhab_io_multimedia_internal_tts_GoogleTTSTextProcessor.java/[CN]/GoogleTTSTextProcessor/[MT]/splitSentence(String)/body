@@ -1,0 +1,21 @@
+{
+  List<String> parts=new ArrayList<String>();
+  StringBuilder sentencePart=new StringBuilder();
+  Iterator<String> wordIterator=Arrays.asList(StringUtils.split(sentence,' ')).iterator();
+  while (wordIterator.hasNext()) {
+    String nextWord=wordIterator.next().trim();
+    if (wordLengthWithinLimits(nextWord)) {
+      if (sentencePart.length() + nextWord.length() <= maxSentenceLength) {
+        sentencePart.append(nextWord).append(' ');
+      }
+ else {
+        parts.add(sentencePart.toString().trim());
+        sentencePart=new StringBuilder(nextWord).append(' ');
+      }
+    }
+  }
+  if (sentencePart.length() > 0) {
+    parts.add(sentencePart.toString().trim());
+  }
+  return parts;
+}
