@@ -1,0 +1,29 @@
+{
+  String emptySentence="";
+  List<String> splitSentences=textProcessor.splitIntoChunks(emptySentence);
+  Assert.assertTrue(splitSentences.isEmpty());
+  String oneWord="One";
+  splitSentences=textProcessor.splitIntoChunks(oneWord);
+  Assert.assertEquals(1,splitSentences.size());
+  Assert.assertEquals(oneWord,splitSentences.get(0));
+  String oneSentence="This is a normal sentence";
+  splitSentences=textProcessor.splitIntoChunks(oneSentence);
+  Assert.assertEquals(1,splitSentences.size());
+  Assert.assertEquals(oneSentence,splitSentences.get(0));
+  splitSentences=textProcessor.splitIntoChunks(oneSentence + ".");
+  Assert.assertEquals(1,splitSentences.size());
+  Assert.assertEquals(oneSentence,splitSentences.get(0));
+  String threeSentences="This is the first Sentence. But there are more! In fact, there are three...";
+  splitSentences=textProcessor.splitIntoChunks(threeSentences);
+  Assert.assertEquals(3,splitSentences.size());
+  Assert.assertEquals("This is the first Sentence",splitSentences.get(0));
+  Assert.assertEquals("But there are more",splitSentences.get(1));
+  Assert.assertEquals("In fact, there are three",splitSentences.get(2));
+  String longSentence="The method should split sentences which are longer than a given limit, " + "as the Google Translation Service can only handle up to 100 characters at a time";
+  Assert.assertTrue(longSentence.length() > MAX_SENTENCE_LENGTH && longSentence.length() < MAX_SENTENCE_LENGTH * 2);
+  int splitIndex=longSentence.substring(0,MAX_SENTENCE_LENGTH).lastIndexOf(" ");
+  splitSentences=textProcessor.splitIntoChunks(longSentence);
+  Assert.assertEquals(2,splitSentences.size());
+  Assert.assertEquals(longSentence.substring(0,splitIndex),splitSentences.get(0));
+  Assert.assertEquals(longSentence.substring(splitIndex + 1),splitSentences.get(1));
+}

@@ -1,0 +1,25 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing DSMR binding configuration => refresh cycle aborted!");
+    return;
+  }
+  if (dsmrPort == null || !dsmrPort.isOpen()) {
+    logger.debug("Creating DSMR Port:" + port);
+    dsmrPort=new DSMRPort(port,version,dsmrMeters,DSMR_UPDATE_INTERVAL);
+  }
+  List<OBISMessage> messages=dsmrPort.read();
+  for (  OBISMessage msg : messages) {
+    logger.debug("Read message:" + msg);
+    for (    DSMRBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String dsmrItemId=provider.getDSMRItemID(itemName);
+        for (        CosemValue<? extends State> openHABValue : msg.getOpenHABValues()) {
+          if (dsmrItemId.equals(openHABValue.getDsmrItemId())) {
+            logger.debug("Publish data(" + dsmrItemId + ") to "+ itemName);
+            eventPublisher.postUpdate(itemName,openHABValue.getValue());
+          }
+        }
+      }
+    }
+  }
+}
