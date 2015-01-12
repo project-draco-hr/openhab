@@ -1,0 +1,13 @@
+{
+  String encodedSentence="";
+  try {
+    logger.trace("Encoding sentence to URL format: {}",sentence);
+    encodedSentence=URLEncoder.encode(sentence,"UTF-8");
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.warn("Failed to encode sentence '" + sentence + "'",e);
+  }
+  encodedSentence=encodedSentence.replace("+","%20");
+  logger.debug("Encoded sentence: " + encodedSentence);
+  return encodedSentence;
+}
