@@ -1,0 +1,30 @@
+{
+  if (zibase != null && eventPubisher != null) {
+    try {
+      zibase.hostRegistering(listenerHost,listenerPort);
+      DatagramSocket serverSocket=new DatagramSocket(listenerPort);
+      byte[] receiveData=new byte[470];
+      DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
+      running=true;
+      while (running) {
+        serverSocket.receive(receivePacket);
+        ZbResponse zbResponse=new ZbResponse(receivePacket.getData());
+        logger.debug("ZIBASE MESSAGE: " + zbResponse.getMessage());
+        publishEvents(zbResponse);
+      }
+      zibase.hostUnregistering(listenerHost,listenerPort);
+    }
+ catch (    SocketException ex) {
+      logger.error("Could not open socket to zibase : " + ex);
+    }
+catch (    UnknownHostException ex) {
+      logger.error("Given Zibase host not reachable : " + ex);
+    }
+catch (    IOException ex) {
+      logger.error("IO eror reading Zibase soket : " + ex);
+    }
+  }
+ else {
+    logger.error("Zibase listener thread launched with no associated zibase and/or eventPublisher !");
+  }
+}
