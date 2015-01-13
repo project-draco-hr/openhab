@@ -1,0 +1,35 @@
+{
+  try {
+    URL url=new URL("ftp://" + username + ":"+ password+ "@"+ ip+ ":"+ ftpPort+ "/etc/EA-config.xml;type=i");
+    URLConnection urlc=url.openConnection();
+    InputStream is=urlc.getInputStream();
+    DocumentBuilderFactory dbFactory=DocumentBuilderFactory.newInstance();
+    DocumentBuilder dBuilder=dbFactory.newDocumentBuilder();
+    Document doc=dBuilder.parse(is);
+    doc.getDocumentElement().normalize();
+    NodeList moduleList=doc.getElementsByTagName("Module");
+    modules=new Module[moduleList.getLength()];
+    for (int i=0; i < moduleList.getLength(); i++) {
+      Node moduleXML=moduleList.item(i);
+      NamedNodeMap attributes=moduleXML.getAttributes();
+      String article=attributes.getNamedItem("ARTIKELNR").getNodeValue();
+      String type=attributes.getNamedItem("MODULETYPE").getNodeValue();
+      int channelcount=Integer.parseInt(attributes.getNamedItem("CHANNELCOUNT").getNodeValue());
+      int DOOffset=DOStart;
+      int OROffset=ORStart;
+      if (type.equals("DO")) {
+        modules[i]=new DOModule(article,DOOffset,channelcount);
+        DOOffset+=channelcount;
+      }
+ else       if (type.equals("COMPLEX")) {
+        if (article.equals("750-511/000-000")) {
+          modules[i]=new PWMModule(article,OROffset);
+          OROffset+=4;
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.warn("wago-coupler setup failed.");
+  }
+}

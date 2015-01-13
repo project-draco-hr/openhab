@@ -1,0 +1,17 @@
+{
+  if (!connect()) {
+    logger.warn("coupler not connected.");
+    return;
+  }
+  try {
+    if (translateCommand2Boolean(command)) {
+      switchON(channel);
+    }
+ else {
+      switchOFF(channel);
+    }
+  }
+ catch (  IllegalArgumentException e) {
+    e.printStackTrace();
+  }
+}
