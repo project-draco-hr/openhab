@@ -1,0 +1,25 @@
+{
+  try {
+    if (connection == null) {
+      connection=new TCPMasterConnection(InetAddress.getByName(ip));
+    }
+  }
+ catch (  UnknownHostException e) {
+    logger.warn("unable to connect to wago-coupler.");
+    return false;
+  }
+  if (!connection.isConnected()) {
+    try {
+      connection.setPort(modbusPort);
+      connection.connect();
+      if (transaction == null)       transaction=new ModbusTCPTransaction();
+      transaction.setConnection(connection);
+      transaction.setReconnecting(false);
+    }
+ catch (    Exception e) {
+      logger.warn("unable to connect to wago-coupler: " + e.getMessage());
+      return false;
+    }
+  }
+  return true;
+}

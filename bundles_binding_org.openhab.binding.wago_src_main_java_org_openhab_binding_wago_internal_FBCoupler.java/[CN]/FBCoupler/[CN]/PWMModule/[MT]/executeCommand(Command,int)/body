@@ -1,0 +1,32 @@
+{
+  if (!connect()) {
+    logger.warn("coupler not connected.");
+    return;
+  }
+  if (command instanceof IncreaseDecreaseType || command instanceof UpDownType) {
+    int value=(int)((float)values[channel] / 1023 * 100);
+    if (command.equals(command.equals(IncreaseDecreaseType.INCREASE)) || command.equals(UpDownType.UP)) {
+      value+=1;
+    }
+ else     if (command.equals(IncreaseDecreaseType.DECREASE) || command.equals(UpDownType.DOWN)) {
+      value-=1;
+    }
+    value=(int)((float)value / 100 * 1023);
+    if (value > 1023)     value=1023;
+ else     if (value < 0)     value=0;
+    setValue(channel,value);
+  }
+ else   if (command instanceof OnOffType) {
+    if (command.equals(OnOffType.ON)) {
+      setValue(channel,1023);
+    }
+ else     if (command.equals(OnOffType.OFF)) {
+      setValue(channel,0);
+    }
+  }
+ else   if (command instanceof DecimalType) {
+    DecimalType percentage=(DecimalType)command;
+    int value=(int)((float)percentage.intValue() / 100 * 1023);
+    setValue(channel,value);
+  }
+}
