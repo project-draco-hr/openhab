@@ -1,0 +1,15 @@
+{
+  values[channel]=value;
+  Register reg[]=new SimpleRegister[2];
+  reg[0]=new SimpleRegister(0);
+  reg[1]=new SimpleRegister(value << 4);
+  ModbusRequest request=new WriteMultipleRegistersRequest(offset + channel * 2,reg);
+  transaction.setRequest(request);
+  try {
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("can't set channel " + channel + " of PWM module.");
+    return;
+  }
+}

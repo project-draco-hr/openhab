@@ -1,0 +1,11 @@
+{
+  logger.debug("Sending to Homematic server {}",event.getHmValueItem());
+  HomematicClient client=context.getHomematicClient();
+  if (event.isVariable()) {
+    client.setVariable(event.getHmValueItem(),event.getNewValue());
+  }
+ else {
+    client.setDatapointValue((HmDatapoint)event.getHmValueItem(),event.getHmValueItem().getName(),event.getNewValue());
+  }
+  event.getHmValueItem().setValue(event.getNewValue());
+}

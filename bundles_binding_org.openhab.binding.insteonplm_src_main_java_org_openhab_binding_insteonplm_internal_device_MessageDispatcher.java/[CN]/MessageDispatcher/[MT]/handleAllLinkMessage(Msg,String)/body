@@ -1,0 +1,23 @@
+{
+  if (!msg.isAllLink()) {
+    return false;
+  }
+  try {
+    InsteonAddress a=msg.getAddress("toAddress");
+    byte cmd1=msg.getByte("command1");
+    if (!msg.isCleanup() && cmd1 == 0x06) {
+      cmd1=a.getHighByte();
+    }
+    int group=(msg.isCleanup() ? msg.getByte("command2") : a.getLowByte()) & 0xff;
+    MessageHandler h=m_feature.getMsgHandlers().get(cmd1 & 0xFF);
+    if (h == null)     h=m_feature.getDefaultMsgHandler();
+    logger.debug("{}:{}->{} cmd1:{} group {}/{}:{}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),Utils.getHexByte(cmd1),group,h.getGroup(),msg);
+    if (h.getGroup() == group) {
+      h.handleMessage(group,cmd1,msg,m_feature,port);
+    }
+  }
+ catch (  FieldException e) {
+    logger.error("couldn't parse ALL_LINK message: {}",msg,e);
+  }
+  return true;
+}

@@ -1,17 +1,20 @@
 {
   logger.debug("updated(): Configuration updated, config {}",config != null ? true : false);
   if (config != null) {
-    serialPort=(String)config.get("serialPort");
-    ipAddress=(String)config.get("ip");
+    if (StringUtils.isNotBlank((String)config.get("serialPort"))) {
+      serialPort=(String)config.get("serialPort");
+    }
+    if (StringUtils.isNotBlank((String)config.get("ip"))) {
+      ipAddress=(String)config.get("ip");
+    }
     if (serialPort != null && ipAddress != null) {
       logger.error("updated(): Can only configure one connection type at a time: Serial Port or Ip Address!");
       return;
     }
     if (serialPort != null) {
       connectorType=DSCAlarmConnectorType.SERIAL;
-      String baud=(String)config.get("baud");
       try {
-        if (baud != null && StringUtils.isNotBlank(baud))         baudRate=Integer.parseInt((String)config.get("baud"));
+        if (StringUtils.isNotBlank((String)config.get("baud")))         baudRate=Integer.parseInt((String)config.get("baud"));
       }
  catch (      NumberFormatException numberFormatException) {
         logger.error("updated(): Baud Rate not configured correctly!");
@@ -22,8 +25,30 @@
       connectorType=DSCAlarmConnectorType.TCP;
     }
     logger.debug("updated(): Connector Type: {}",connectorType);
-    password=(String)config.get("password");
-    userCode=(String)config.get("usercode");
+    if (StringUtils.isNotBlank((String)config.get("password"))) {
+      password=(String)config.get("password");
+    }
+    if (StringUtils.isNotBlank((String)config.get("usercode"))) {
+      userCode=(String)config.get("usercode");
+    }
+    if (StringUtils.isNotBlank((String)config.get("pollPeriod"))) {
+      try {
+        pollPeriod=Integer.parseInt((String)config.get("pollperiod"));
+      }
+ catch (      NumberFormatException numberFormatException) {
+        logger.error("updated(): Poll Period not configured correctly!");
+        return;
+      }
+      if (pollPeriod > 15) {
+        pollPeriod=15;
+      }
+ else       if (pollPeriod < 1) {
+        pollPeriod=1;
+      }
+    }
+ else {
+      pollPeriod=DEFAULT_POLL_PERIOD;
+    }
   }
  else {
     logger.debug("updated(): No Configuration!");

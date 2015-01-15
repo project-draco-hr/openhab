@@ -1,0 +1,18 @@
+{
+  String zbResponseStr=zbResponse.getMessage();
+  String id=this.extractIdFromZbResponse(zbResponseStr);
+  logger.debug("Found event from ID " + id);
+  if (id == null)   return;
+  Vector<String> listOfItemNames=ZibaseBinding.getBindingProvider().getItemNamesById(id);
+  if (listOfItemNames == null)   return;
+  logger.debug("trying to publish events for " + id);
+  for (  String itemName : listOfItemNames) {
+    ZibaseBindingConfig config=ZibaseBinding.getBindingProvider().getItemConfigByUniqueId(itemName + "_" + id);
+    logger.debug("Getting config for " + itemName + " (id = "+ id+ ") ");
+    if (config != null) {
+      org.openhab.core.types.State value=config.getOpenhabStateFromZibaseValue(zibase,zbResponseStr);
+      logger.debug("publishing update for " + itemName + " : "+ value);
+      eventPubisher.postUpdate(itemName,value);
+    }
+  }
+}

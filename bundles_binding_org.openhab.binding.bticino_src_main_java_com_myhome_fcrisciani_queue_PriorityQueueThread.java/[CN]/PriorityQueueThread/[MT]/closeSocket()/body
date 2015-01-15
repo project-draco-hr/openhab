@@ -1,0 +1,16 @@
+{
+  if (output != null) {
+    output.close();
+    output=null;
+  }
+  if (sk != null) {
+    try {
+      MyHomeSocketFactory.disconnect(sk);
+    }
+ catch (    IOException e) {
+      System.err.println("PriorityQueueThread: Problem during connection closure - " + e.toString());
+      e.printStackTrace();
+    }
+    sk=null;
+  }
+}

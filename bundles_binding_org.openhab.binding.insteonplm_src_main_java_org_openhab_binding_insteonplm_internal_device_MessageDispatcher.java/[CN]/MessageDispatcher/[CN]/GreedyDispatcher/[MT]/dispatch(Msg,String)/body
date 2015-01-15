@@ -2,6 +2,9 @@
   byte cmd1=0x00;
   boolean isConsumed=false;
   try {
+    if (handleAllLinkMessage(msg,port)) {
+      return isConsumed;
+    }
     cmd1=msg.getByte("command1");
   }
  catch (  FieldException e) {
@@ -12,6 +15,6 @@
   MessageHandler h=m_feature.getMsgHandlers().get(key);
   if (h == null)   h=m_feature.getDefaultMsgHandler();
   logger.trace("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
-  h.handleMessage(cmd1,msg,m_feature,port);
+  h.handleMessage(-1,cmd1,msg,m_feature,port);
   return isConsumed;
 }

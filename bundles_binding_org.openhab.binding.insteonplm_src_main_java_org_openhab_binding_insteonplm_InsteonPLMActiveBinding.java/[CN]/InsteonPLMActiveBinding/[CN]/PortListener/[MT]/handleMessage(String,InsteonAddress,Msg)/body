@@ -1,0 +1,11 @@
+{
+synchronized (m_devices) {
+    InsteonDevice dev=getDevice(fromAddr);
+    if (dev == null) {
+      logger.debug("dropping message from unknown device with address {}",fromAddr);
+    }
+ else {
+      dev.handleMessage(fromPort,msg);
+    }
+  }
+}
