@@ -1,0 +1,18 @@
+{
+  logger.debug("Starting Z-Wave thread: Input");
+  SerialMessage recvMessage;
+  while (!interrupted()) {
+    try {
+      recvMessage=recvQueue.take();
+      logger.debug("Receive queue TAKE: Length={}",recvQueue.size());
+      handleIncomingMessage(recvMessage);
+    }
+ catch (    InterruptedException e) {
+      break;
+    }
+catch (    Exception e) {
+      logger.error("Exception during Z-Wave thread: Input.",e);
+    }
+  }
+  logger.debug("Stopped Z-Wave thread: Input");
+}

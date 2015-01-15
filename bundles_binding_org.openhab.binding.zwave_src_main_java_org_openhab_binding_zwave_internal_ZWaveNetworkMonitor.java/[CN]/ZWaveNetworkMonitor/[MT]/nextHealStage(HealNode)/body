@@ -28,18 +28,21 @@ switch (healing.state) {
 case WAITING:
     logger.debug("NODE {}: NETWORK HEAL - STARTING",healing.nodeId);
   healing.node.resetResendCount();
+healing.state=HealState.PING;
 case PING:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 if (healing.nodeId != zController.getOwnNodeId()) {
-  healing.state=HealState.PING;
-  ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
-  if (zwaveCommandClass != null) {
-    zController.sendData(zwaveCommandClass.getNoOperationMessage());
-    healing.stateNext=HealState.SETSUCROUTE;
-    break;
-  }
+healing.state=HealState.PING;
+ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
+if (zwaveCommandClass != null) {
+zController.sendData(zwaveCommandClass.getNoOperationMessage());
+healing.stateNext=HealState.SETSUCROUTE;
+break;
+}
 }
 healing.state=HealState.SETSUCROUTE;
 case SETSUCROUTE:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 if (healing.nodeId != zController.getOwnNodeId() && zController.getSucId() != 0) {
 logger.debug("NODE {}: Heal is setting SUC route.",healing.nodeId);
 healing.event=ZWaveNetworkEvent.Type.AssignSucReturnRoute;
@@ -49,12 +52,13 @@ break;
 }
 healing.state=HealState.UPDATENEIGHBORS;
 case UPDATENEIGHBORS:
-logger.debug("NODE {}: Heal is updating node neighbors.",healing.nodeId);
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.event=ZWaveNetworkEvent.Type.NodeNeighborUpdate;
 healing.stateNext=HealState.GETASSOCIATIONS;
 zController.requestNodeNeighborUpdate(healing.nodeId);
 break;
 case GETASSOCIATIONS:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)healing.node.getCommandClass(CommandClass.ASSOCIATION);
 if (associationCommandClass != null) {
 logger.debug("NODE {}: Heal is requesting device associations.",healing.nodeId);
@@ -63,7 +67,9 @@ healing.event=ZWaveNetworkEvent.Type.AssociationUpdate;
 associationCommandClass.getAllAssociations();
 break;
 }
+healing.stateNext=HealState.UPDATEROUTES;
 case UPDATEROUTES:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.routeList=healing.node.getRoutingList();
 if (healing.routeList != null && healing.routeList.size() != 0) {
 logger.debug("NODE {}: Heal is deleting routes.",healing.nodeId);
@@ -72,7 +78,9 @@ healing.stateNext=HealState.UPDATEROUTESNEXT;
 zController.requestDeleteAllReturnRoutes(healing.nodeId);
 break;
 }
+healing.stateNext=HealState.UPDATEROUTESNEXT;
 case UPDATEROUTESNEXT:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 if (healing.routeList != null && healing.routeList.size() != 0) {
 logger.debug("NODE {}: Adding return route to {}",healing.nodeId,healing.routeList.get(0));
 healing.stateNext=HealState.GETNEIGHBORS;
@@ -80,13 +88,16 @@ healing.event=ZWaveNetworkEvent.Type.AssignReturnRoute;
 zController.requestAssignReturnRoute(healing.nodeId,healing.routeList.get(0));
 break;
 }
+healing.stateNext=HealState.GETNEIGHBORS;
 case GETNEIGHBORS:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.event=ZWaveNetworkEvent.Type.NodeRoutingInfo;
 healing.stateNext=HealState.PINGEND;
 logger.debug("NODE {}: Heal is requesting node neighbor info.",healing.nodeId);
 zController.requestNodeRoutingInfo(healing.nodeId);
 break;
 case PINGEND:
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 if (healing.nodeId != zController.getOwnNodeId()) {
 ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
 if (zwaveCommandClass == null) {
@@ -96,8 +107,9 @@ zController.sendData(zwaveCommandClass.getNoOperationMessage());
 healing.stateNext=HealState.SAVE;
 break;
 }
+healing.stateNext=HealState.SAVE;
 case SAVE:
-logger.debug("NODE {}: Heal is complete - saving XML.",healing.nodeId);
+logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.state=HealState.DONE;
 networkHealNextTime=System.currentTimeMillis() + HEAL_DELAY_PERIOD;
 healing.node.setHealState(this.getNodeState(healing.node.getNodeId()));

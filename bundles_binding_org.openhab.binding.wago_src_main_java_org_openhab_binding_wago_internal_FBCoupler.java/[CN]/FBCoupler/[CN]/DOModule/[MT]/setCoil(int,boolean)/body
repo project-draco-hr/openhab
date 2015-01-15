@@ -1,0 +1,11 @@
+{
+  ModbusRequest request=new WriteCoilRequest(offset + channel,state);
+  transaction.setRequest(request);
+  try {
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("can't set channel " + channel + " of digital output.");
+    return;
+  }
+}

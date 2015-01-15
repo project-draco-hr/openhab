@@ -1,0 +1,15 @@
+{
+  Matcher matcher=ZibaseListener.X10CHACONPATTERN.matcher(zbResponseStr);
+  if (matcher.find()) {
+    return matcher.group(1);
+  }
+  matcher=ZibaseListener.SCENARIOPATTERN.matcher(zbResponseStr);
+  if (matcher.find()) {
+    return matcher.group(1);
+  }
+  matcher=ZibaseListener.RADIODIDPATTERM.matcher(zbResponseStr);
+  if (matcher.find()) {
+    return matcher.group(2);
+  }
+  return null;
+}

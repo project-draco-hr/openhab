@@ -10,7 +10,7 @@
       if (node.getNodeId() == zController.getOwnNodeId() || node.isListening() == false) {
         continue;
       }
-      if (oldestNode == null) {
+      if (oldestNode == null || oldestNode.getLastSent() == null) {
         oldestNode=node;
       }
  else       if (node.getLastSent() == null || node.getLastSent().getTime() < oldestNode.getLastSent().getTime()) {

@@ -1,0 +1,57 @@
+{
+synchronized (portLock) {
+    if (isOpen) {
+      return true;
+    }
+    try {
+      logger.debug("Creating CommPortIdentifier");
+      CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
+      logger.debug("Opening CommPortIdentifier");
+      CommPort commPort=portIdentifier.open("org.openhab.binding.dsmr",2000);
+      logger.debug("Configure serial port");
+      serialPort=(SerialPort)commPort;
+      serialPort.enableReceiveThreshold(1);
+      serialPort.enableReceiveTimeout(timeoutMSec);
+      logger.debug("Configure serial port based on version " + version);
+switch (version) {
+case V21:
+case V22:
+case V30:
+        serialPort.setSerialPortParams(9600,SerialPort.DATABITS_7,SerialPort.STOPBITS_1,SerialPort.PARITY_EVEN);
+      serialPort.setDTR(false);
+    serialPort.setRTS(true);
+  break;
+case V40:
+case V404:
+serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+break;
+default :
+logger.error("Invalid version, closing port");
+return false;
+}
+}
+ catch (NoSuchPortException nspe) {
+logger.error("Could not open port: " + portName,nspe);
+return false;
+}
+catch (PortInUseException piue) {
+logger.error("Port already in use: " + portName,piue);
+return false;
+}
+catch (UnsupportedCommOperationException ucoe) {
+logger.error("Port is not suitable: " + portName,ucoe);
+return false;
+}
+logger.info("SerialPort opened successful");
+try {
+reader=new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+}
+ catch (IOException ioe) {
+logger.error("Failed to get inputstream for serialPort. Closing port",ioe);
+return false;
+}
+logger.info("DSMR Port opened successful");
+isOpen=true;
+return isOpen;
+}
+}

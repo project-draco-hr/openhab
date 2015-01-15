@@ -1,0 +1,52 @@
+{
+  logger.debug("updated() is called!");
+  if (config != null) {
+    String portString=(String)config.get("port");
+    logger.debug("dsmr:port=" + portString);
+    if (StringUtils.isNotBlank(portString)) {
+      port=portString;
+    }
+ else {
+      logger.warn("dsmr:port setting is empty");
+    }
+    String versionString=(String)config.get("version");
+    logger.debug("dsmr:version=" + versionString);
+    if (StringUtils.isNotBlank(versionString)) {
+      version=DSMRVersion.getDSMRVersion(versionString);
+    }
+ else {
+      logger.warn("dsmr:version setting is empty");
+    }
+    dsmrMeters.clear();
+    for (    DSMRMeterType meterType : DSMRMeterType.values()) {
+      String channelConfigValue=(String)config.get(meterType.channelConfigKey);
+      logger.debug("dsmr:" + meterType.channelConfigKey + "="+ channelConfigValue);
+      if (StringUtils.isNotBlank(channelConfigValue)) {
+        try {
+          dsmrMeters.add(new DSMRMeter(meterType,Integer.parseInt(channelConfigValue)));
+        }
+ catch (        NumberFormatException nfe) {
+          logger.warn("Invalid value " + channelConfigValue + " for dsmr:"+ meterType.channelConfigKey+ ". Ignore mapping!",nfe);
+        }
+      }
+ else {
+switch (meterType) {
+case NA:
+          break;
+case ELECTRICITY:
+        break;
+default :
+      logger.info("dsmr:" + meterType.channelConfigKey + " setting is empty");
+  }
+}
+}
+if (version != DSMRVersion.NONE && port.length() > 0) {
+logger.debug("Configuration succeeded");
+setProperlyConfigured(true);
+}
+ else {
+logger.debug("Configuration failed");
+setProperlyConfigured(false);
+}
+}
+}

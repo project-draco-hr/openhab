@@ -1,0 +1,14 @@
+{
+  if (zibaseListener != null) {
+    zibaseListener.shutdown();
+  }
+  zibase=new Zibase(ip);
+  logger.info("connected to zibase for command sending");
+  logger.info("Starting zibase listener thread...");
+  zibaseListener=new ZibaseListener();
+  zibaseListener.setZibase(zibase);
+  zibaseListener.setEventPubisher(eventPublisher);
+  zibaseListener.setListenerHost(listenerHost);
+  zibaseListener.setListenerPort(listenerPort);
+  zibaseListener.start();
+}

@@ -27,10 +27,10 @@
   Converter<?> converter=null;
   BindingAction bindingAction=getBindingAction(item,helper.action);
   if (helper.isValidDatapoint()) {
-    return new DatapointConfig(helper.address,helper.channel,helper.parameter,converter,bindingAction,helper.isForceUpdate());
+    return new DatapointConfig(helper.address,helper.channel,helper.parameter,converter,bindingAction,helper.isForceUpdate(),NumberUtils.toDouble(helper.delay));
   }
  else   if (helper.isValidVariable()) {
-    return new VariableConfig(helper.variable,converter,bindingAction,helper.isForceUpdate());
+    return new VariableConfig(helper.variable,converter,bindingAction,helper.isForceUpdate(),NumberUtils.toDouble(helper.delay));
   }
  else   if (helper.isValidProgram()) {
     if (!acceptsOnOffType(item)) {

@@ -11,6 +11,10 @@
     XMPPConnect.chatroom=(String)config.get("chatroom");
     XMPPConnect.chatnickname=(String)config.get("chatnickname");
     XMPPConnect.chatpassword=(String)config.get("chatpassword");
+    String securityModeString=(String)config.get("securitymode");
+    if (securityModeString != null) {
+      securityMode=SecurityMode.valueOf(securityModeString);
+    }
     String users=(String)config.get("consoleusers");
     if (!StringUtils.isEmpty(users)) {
       XMPPConnect.consoleUsers=users.split(",");
