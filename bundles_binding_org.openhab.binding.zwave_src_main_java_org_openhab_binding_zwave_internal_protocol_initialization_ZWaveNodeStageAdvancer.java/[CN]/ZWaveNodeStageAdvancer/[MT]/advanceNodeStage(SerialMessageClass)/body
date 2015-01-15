@@ -19,8 +19,7 @@
       if (retryCount > MAX_RETRIES) {
         retryCount=0;
         logger.error("NODE {}: Node advancer: Retries exceeded at {}",node.getNodeId(),currentStage.toString());
-        if (currentStage != NodeStage.DYNAMIC_VALUES) {
-          currentStage=NodeStage.DEAD;
+        if (currentStage != ZWaveNodeInitStage.DYNAMIC_VALUES) {
           break;
         }
       }
