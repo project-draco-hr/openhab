@@ -1,11 +1,11 @@
 {
   logger.debug("got a query");
   if (!isProperlyConfigured) {
-    logger.error("Configuration for influxdb not yet loaded or broken.");
+    logger.warn("Configuration for influxdb not yet loaded or broken.");
     return Collections.emptyList();
   }
   if (!isConnected()) {
-    logger.error("InfluxDB is not yet connected");
+    logger.warn("InfluxDB is not yet connected");
     return Collections.emptyList();
   }
   List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
