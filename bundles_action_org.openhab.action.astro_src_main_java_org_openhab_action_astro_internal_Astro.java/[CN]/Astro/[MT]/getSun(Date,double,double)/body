@@ -1,0 +1,14 @@
+{
+  if (date == null) {
+    logger.warn("Unknown date: {}, using current date",date);
+    date=new Date();
+  }
+  AstroConfig config=new AstroConfig(date,latitude,longitude);
+  if (lastConfig == null || !lastConfig.equals(config)) {
+    Calendar cal=Calendar.getInstance();
+    cal.setTime(date);
+    lastSun=sunCalc.getSunInfo(cal,latitude,longitude);
+    lastConfig=config;
+  }
+  return lastSun;
+}
