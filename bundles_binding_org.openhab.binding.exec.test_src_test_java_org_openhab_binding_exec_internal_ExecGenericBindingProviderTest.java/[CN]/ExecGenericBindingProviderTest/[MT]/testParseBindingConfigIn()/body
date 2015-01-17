@@ -1,0 +1,14 @@
+{
+  String cmdLine="/usr/bin/uptime";
+  String itemName="Switch";
+  SwitchItem item=new SwitchItem(itemName);
+  String bindingConfig="<[" + cmdLine + ":60000:]";
+  provider.processBindingConfiguration("New",item,bindingConfig);
+  Assert.assertTrue(provider.providesBinding());
+  Assert.assertTrue(provider.providesBindingFor(itemName));
+  Assert.assertEquals(cmdLine,provider.getCommandLine(itemName));
+  Assert.assertEquals(60000,provider.getRefreshInterval(itemName));
+  Assert.assertEquals("",provider.getTransformation(itemName));
+  List<String> itemNames=provider.getInBindingItemNames();
+  Assert.assertEquals(itemName,itemNames.get(0));
+}
