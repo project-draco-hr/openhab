@@ -1,0 +1,9 @@
+{
+  logger.info("Checking config for Command item " + this.getId());
+  if (Arrays.binarySearch(ZibaseBindingConfigReceiver.authorizedProtocols,this.getProtocol()) < 0) {
+    logger.error("Unsupported command protocol for item " + this.getId());
+    return false;
+  }
+  logger.info("Config OK for Command item " + this.getId());
+  return true;
+}

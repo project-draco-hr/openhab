@@ -1,0 +1,40 @@
+{
+  if (config != null) {
+    Enumeration keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Matcher matcher=EXTRACT_CONFIG_WAGO_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        if ("refresh".equals(key)) {
+          refreshInterval=Integer.valueOf((String)config.get(key));
+        }
+ else {
+          logger.debug("unexpected configuration given. \"" + key + "\" does not follow the expected pattern.");
+        }
+        continue;
+      }
+      matcher.reset();
+      matcher.find();
+      String couplerName=matcher.group(1);
+      FBCoupler coupler=Collections.synchronizedMap(couplers).get(couplerName);
+      if (coupler == null) {
+        coupler=new FBCoupler(couplerName);
+        Collections.synchronizedMap(couplers).put(couplerName,coupler);
+      }
+      String attrName=matcher.group(2);
+      String value=(String)config.get(key);
+      if (attrName.equals("ip"))       coupler.setIp(value);
+ else       if (attrName.equals("modbus"))       coupler.setModbus(Integer.parseInt(value));
+ else       if (attrName.equals("ftp"))       coupler.setFTP(Integer.parseInt(value));
+ else       if (attrName.equals("username"))       coupler.setUsername(value);
+ else       if (attrName.equals("password"))       coupler.setPassword(value);
+    }
+    for (    FBCoupler coupler : Collections.synchronizedMap(couplers).values()) {
+      coupler.setup();
+    }
+    setProperlyConfigured(true);
+  }
+}

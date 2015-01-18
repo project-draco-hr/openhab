@@ -1,0 +1,10 @@
+{
+  String bindingConfig=">[*:GET:http://192.168.0.2/RGB/%2$s] >[TWINKLE:PUT:http://192.168.0.2/PROGRAM/TWINKLE]";
+  testItem=new StringTestItem("StringTestItem");
+  provider.processBindingConfiguration("test",testItem,bindingConfig);
+  Assert.assertEquals(provider.getUrl("StringTestItem",new StringType("0000FF")),"http://192.168.0.2/RGB/%2$s");
+  Assert.assertEquals(provider.getHttpMethod("StringTestItem",new StringType("0000FF")),"GET");
+  Assert.assertEquals(provider.getUrl("StringTestItem",new StringType("TWINKLE")),"http://192.168.0.2/PROGRAM/TWINKLE");
+  Assert.assertEquals(provider.getHttpMethod("StringTestItem",new StringType("TWINKLE")),"PUT");
+  Assert.assertEquals(provider.getUrl("StringTestItem",StringType.valueOf("CHANGED")),null);
+}
