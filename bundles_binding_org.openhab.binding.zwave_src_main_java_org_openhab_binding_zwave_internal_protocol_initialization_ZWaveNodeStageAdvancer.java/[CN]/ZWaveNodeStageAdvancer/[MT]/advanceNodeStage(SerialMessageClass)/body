@@ -150,12 +150,11 @@ if (classList != null) {
 for (ZWaveDbCommandClass dbClass : classList) {
 if (dbClass.remove == true) {
 node.removeCommandClass(CommandClass.getCommandClass(dbClass.Id));
+continue;
 }
-if (dbClass.isGetSupported != null) {
-ZWaveCommandClass zwaveClass=node.getCommandClass(CommandClass.getCommandClass(dbClass.Id));
-if (zwaveClass instanceof ZWaveGetCommands) {
-((ZWaveGetCommands)zwaveClass).setGetSupported(dbClass.isGetSupported);
-}
+ZWaveCommandClass zwaveClass=node.resolveCommandClass(CommandClass.getCommandClass(dbClass.Id),dbClass.endpoint);
+if (zwaveClass != null) {
+zwaveClass.setOptions(dbClass);
 }
 }
 }
