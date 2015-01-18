@@ -1,0 +1,11 @@
+{
+  ZbAction action=ZbAction.valueOf(command.toString());
+  ZbProtocol protocol=ZbProtocol.valueOf(this.getProtocol());
+  if (dim >= 0) {
+    zibase.sendCommand(this.getId(),action,protocol,dim,1);
+  }
+ else {
+    zibase.sendCommand(this.getId(),action,protocol);
+  }
+  logger.debug("Send command to " + this.getId() + " : "+ action.toString()+ " / "+ protocol.toString());
+}

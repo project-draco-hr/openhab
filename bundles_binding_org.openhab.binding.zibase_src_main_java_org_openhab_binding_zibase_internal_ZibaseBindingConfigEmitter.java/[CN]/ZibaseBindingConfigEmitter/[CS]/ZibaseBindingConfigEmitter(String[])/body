@@ -1,0 +1,9 @@
+{
+  super(configParameters);
+  try {
+    constructor=valueStateMap.get(configParameters[ZibaseBindingConfig.POS_VALUES]).getConstructor(String.class);
+  }
+ catch (  Exception ex) {
+    logger.debug("unsupported value " + configParameters[ZibaseBindingConfig.POS_VALUES] + " for item ID "+ this.getId()+ " => value will be passed as is...");
+  }
+}

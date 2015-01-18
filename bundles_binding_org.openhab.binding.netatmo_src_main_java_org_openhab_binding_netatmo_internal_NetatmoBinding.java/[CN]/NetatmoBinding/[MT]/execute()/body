@@ -27,19 +27,22 @@ case NOISE:
 case PRESSURE:
 case RAIN:
         final String requestKey=createKey(deviceId,moduleId);
-      state=new DecimalType(deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure()));
-    break;
+      final BigDecimal value=deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure());
+    if (value != null) {
+      state=new DecimalType(value);
+    }
+  break;
 case BATTERYVP:
 case RFSTATUS:
-  for (  Module module : oauthCredentials.deviceListResponse.getModules()) {
-    if (module.getId().equals(moduleId)) {
+for (Module module : oauthCredentials.deviceListResponse.getModules()) {
+  if (module.getId().equals(moduleId)) {
 switch (measureType) {
 case BATTERYVP:
-        state=new DecimalType(module.getBatteryVp());
-      break;
+      state=new DecimalType(module.getBatteryVp());
+    break;
 case RFSTATUS:
-    state=new DecimalType(module.getRfStatus());
-  break;
+  state=new DecimalType(module.getRfStatus());
+break;
 }
 }
 }

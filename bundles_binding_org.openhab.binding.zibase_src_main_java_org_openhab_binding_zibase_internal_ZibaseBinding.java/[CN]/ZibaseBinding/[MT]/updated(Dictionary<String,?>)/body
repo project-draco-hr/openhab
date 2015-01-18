@@ -1,0 +1,23 @@
+{
+  if (config != null) {
+    logger.debug("Loading zibase configuration");
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String ip=(String)config.get("ip");
+    if (StringUtils.isNotBlank(ip)) {
+      ZibaseBinding.ip=ip;
+    }
+    String tmpListenerIp=(String)config.get("listenerHost");
+    if (StringUtils.isNotBlank(tmpListenerIp)) {
+      ZibaseBinding.listenerHost=tmpListenerIp;
+    }
+    String tmpListenerPort=(String)config.get("listenerPort");
+    if (StringUtils.isNotBlank(tmpListenerPort)) {
+      ZibaseBinding.listenerPort=Integer.parseInt(tmpListenerPort);
+    }
+    setProperlyConfigured(true);
+    this.launch();
+  }
+}
