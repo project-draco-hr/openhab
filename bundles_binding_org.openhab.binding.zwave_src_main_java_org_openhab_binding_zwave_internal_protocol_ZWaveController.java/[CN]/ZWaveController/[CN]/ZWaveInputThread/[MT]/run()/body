@@ -3,9 +3,13 @@
   SerialMessage recvMessage;
   while (!interrupted()) {
     try {
+      if (recvQueue.size() == 0) {
+        sendAllowed.release();
+      }
       recvMessage=recvQueue.take();
       logger.debug("Receive queue TAKE: Length={}",recvQueue.size());
       handleIncomingMessage(recvMessage);
+      sendAllowed.tryAcquire();
     }
  catch (    InterruptedException e) {
       break;
