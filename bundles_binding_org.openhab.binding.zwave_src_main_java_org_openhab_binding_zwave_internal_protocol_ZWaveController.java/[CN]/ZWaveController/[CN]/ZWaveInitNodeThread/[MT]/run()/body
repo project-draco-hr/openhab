@@ -10,7 +10,7 @@
     node=nodeSerializer.DeserializeNode(nodeId);
   }
  catch (  Exception e) {
-    logger.error("NODE {}: Error deserialising XML file. {}",nodeId,e.toString());
+    logger.error("NODE {}: Restore from config: Error deserialising XML file. {}",nodeId,e.toString());
     node=null;
   }
   String name=null;
@@ -19,11 +19,11 @@
     name=node.getName();
     location=node.getLocation();
     if (node.getManufacturer() == Integer.MAX_VALUE || node.getHomeId() != controller.homeId || node.getNodeId() != nodeId) {
-      logger.warn("NODE {}: Config file data is invalid, ignoring config.",nodeId);
+      logger.warn("NODE {}: Restore from config: Error. Data invalid, ignoring config.",nodeId);
       node=null;
     }
  else {
-      logger.debug("NODE {}: Restored from config.",nodeId);
+      logger.debug("NODE {}: Restore from config: Ok.",nodeId);
       node.setRestoredFromConfigfile(controller);
       for (      ZWaveCommandClass commandClass : node.getCommandClasses()) {
         commandClass.setController(controller);
