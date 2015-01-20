@@ -1,26 +1,27 @@
 {
-  if (chatroom != null) {
+  if (chatroom == null) {
+    return;
+  }
+  if (!initialized) {
+    establishConnection();
     if (!initialized) {
-      establishConnection();
-      if (!initialized) {
-        throw new NotInitializedException();
-      }
+      throw new NotInitializedException();
     }
-    chat=new MultiUserChat(connection,chatroom);
-    try {
-      if (chatpassword != null) {
-        chat.join(chatnickname,chatpassword);
-      }
+  }
+  chat=new MultiUserChat(connection,chatroom);
+  try {
+    if (chatpassword != null) {
+      chat.join(chatnickname,chatpassword);
+    }
  else {
-        chat.join(chatnickname);
-      }
-      logger.info("Successfuly joined chat '{}' with nickname '{}'.",chatroom,chatnickname);
+      chat.join(chatnickname);
     }
- catch (    XMPPException e) {
-      logger.error("Could not join chat '{}' with nickname '{}': {}",chatroom,chatnickname,e.getMessage());
-    }
-catch (    SmackException e) {
-      logger.error("Could not join chat '{}' with nickname '{}': {}",chatroom,chatnickname,e.getMessage());
-    }
+    logger.info("Successfuly joined chat '{}' with nickname '{}'.",chatroom,chatnickname);
+  }
+ catch (  XMPPException e) {
+    logger.error("Could not join chat '{}' with nickname '{}': {}",chatroom,chatnickname,e.getMessage());
+  }
+catch (  SmackException e) {
+    logger.error("Could not join chat '{}' with nickname '{}': {}",chatroom,chatnickname,e.getMessage());
   }
 }
