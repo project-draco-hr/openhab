@@ -50,6 +50,28 @@
               }
             }
           }
+ else           if (command instanceof PercentType) {
+            PercentType cmd=(PercentType)command;
+            logger.debug("{} percent command {}",itemName,cmd);
+          }
+ else           if (command instanceof UpDownType) {
+            UpDownType cmd=(UpDownType)command;
+            logger.debug("{} UpDownType command {}",itemName,cmd);
+            if (mDevice instanceof MoveActor) {
+              ((MoveActor)mDevice).move((UpDownType)command,provider.getDeviceOptions(itemName));
+            }
+          }
+ else           if (command instanceof StopMoveType) {
+            StopMoveType cmd=(StopMoveType)command;
+            if (mDevice instanceof MoveActor) {
+              ((MoveActor)mDevice).stop();
+            }
+            logger.debug("{} StopMoveType command {}",itemName,cmd);
+          }
+ else           if (command instanceof IncreaseDecreaseType) {
+            IncreaseDecreaseType cmd=(IncreaseDecreaseType)command;
+            logger.debug("{} IncreaseDecreaseType command {}",itemName,cmd);
+          }
  else {
             logger.error("{} got unknown command type: {}",LoggerConstants.COMMAND,command.toString());
           }

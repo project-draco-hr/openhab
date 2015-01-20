@@ -1,0 +1,66 @@
+{
+  Integer itemacceleration=acceleration;
+  Short itemdrivemode=null;
+  Integer pwm=pwmFrequency;
+  Short speed=null;
+  if (opts != null) {
+    if (opts.containsKey(ConfigOptsMove.ACCELERATION.toString().toLowerCase())) {
+      itemacceleration=Integer.valueOf(opts.getOption(ConfigOptsMove.ACCELERATION.toString().toLowerCase()));
+    }
+    if (opts.containsKey(ConfigOptsMove.DRIVEMODE.toString().toLowerCase())) {
+      String drivemodestr=opts.getOption(ConfigOptsMove.DRIVEMODE.toString().toLowerCase());
+      if (drivemodestr.equals(DCDriveMode.BRAKE.toString().toLowerCase())) {
+        itemdrivemode=BrickDC.DRIVE_MODE_DRIVE_BRAKE;
+      }
+ else       if (drivemodestr.equals(DCDriveMode.COAST.toString().toLowerCase())) {
+        itemdrivemode=BrickDC.DRIVE_MODE_DRIVE_COAST;
+      }
+ else {
+        if (driveMode == DCDriveMode.BRAKE) {
+          itemdrivemode=BrickDC.DRIVE_MODE_DRIVE_BRAKE;
+        }
+ else         if (driveMode == DCDriveMode.COAST) {
+          itemdrivemode=BrickDC.DRIVE_MODE_DRIVE_COAST;
+        }
+      }
+    }
+  }
+  if (direction.equals(UpDownType.DOWN)) {
+    if (opts != null) {
+      if (opts.containsKey(ConfigOptsMove.RIGHTSPEED.toString().toLowerCase())) {
+        speed=Short.valueOf(opts.getOption(ConfigOptsMove.RIGHTSPEED.toString().toLowerCase()));
+      }
+ else {
+        logger.error("\"rightspeed\" option missing or empty, items configuration has to be fixed!");
+        return;
+      }
+    }
+  }
+ else   if (direction.equals(UpDownType.UP)) {
+    if (opts != null) {
+      if (opts.containsKey(ConfigOptsMove.LEFTSPEED.toString().toLowerCase())) {
+        speed=Short.valueOf(opts.getOption(ConfigOptsMove.LEFTSPEED.toString().toLowerCase()));
+      }
+ else {
+        logger.error("\"leftspeed\" option missing or empty, items configuration has to be fixed!");
+        return;
+      }
+    }
+  }
+ else {
+    logger.error("\"direction\" option missconfigured, items configuration has to be fixed!");
+    return;
+  }
+  try {
+    tinkerforgeDevice.setAcceleration(itemacceleration);
+    tinkerforgeDevice.setPWMFrequency(pwm);
+    tinkerforgeDevice.setDriveMode(itemdrivemode);
+    tinkerforgeDevice.setVelocity(speed);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

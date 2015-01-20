@@ -171,6 +171,7 @@ T result=caseMBrickDC(mBrickDC);
 if (result == null) result=caseMInSwitchActor(mBrickDC);
 if (result == null) result=caseMDevice(mBrickDC);
 if (result == null) result=caseMTFConfigConsumer(mBrickDC);
+if (result == null) result=caseMoveActor(mBrickDC);
 if (result == null) result=caseMSwitchActor(mBrickDC);
 if (result == null) result=caseMBaseDevice(mBrickDC);
 if (result == null) result=defaultCase(theEObject);
@@ -277,6 +278,13 @@ case ModelPackage.COLOR_ACTOR:
 {
 ColorActor colorActor=(ColorActor)theEObject;
 T result=caseColorActor(colorActor);
+if (result == null) result=defaultCase(theEObject);
+return result;
+}
+case ModelPackage.MOVE_ACTOR:
+{
+MoveActor moveActor=(MoveActor)theEObject;
+T result=caseMoveActor(moveActor);
 if (result == null) result=defaultCase(theEObject);
 return result;
 }
