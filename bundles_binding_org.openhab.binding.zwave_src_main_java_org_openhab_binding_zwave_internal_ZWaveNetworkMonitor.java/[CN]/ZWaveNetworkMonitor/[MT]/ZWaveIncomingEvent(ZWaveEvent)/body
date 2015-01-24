@@ -35,7 +35,7 @@ HealNode node=healNodes.get(payload[0] & 0xFF);
 if (node == null) {
 return;
 }
-if ((node.state == HealState.PING || node.state == HealState.PINGEND) && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
+if (node.state == HealState.PING && payload.length >= 3 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.NO_OPERATION.getKey()) {
 node.state=node.stateNext;
 node.retryCnt=0;
 nextHealStage(node);

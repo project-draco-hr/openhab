@@ -92,22 +92,10 @@ healing.stateNext=HealState.GETNEIGHBORS;
 case GETNEIGHBORS:
 logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.event=ZWaveNetworkEvent.Type.NodeRoutingInfo;
-healing.stateNext=HealState.PINGEND;
+healing.stateNext=HealState.SAVE;
 logger.debug("NODE {}: Heal is requesting node neighbor info.",healing.nodeId);
 zController.requestNodeRoutingInfo(healing.nodeId);
 break;
-case PINGEND:
-logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
-if (healing.nodeId != zController.getOwnNodeId()) {
-ZWaveNoOperationCommandClass zwaveCommandClass=(ZWaveNoOperationCommandClass)healing.node.getCommandClass(CommandClass.NO_OPERATION);
-if (zwaveCommandClass == null) {
-break;
-}
-zController.sendData(zwaveCommandClass.getNoOperationMessage());
-healing.stateNext=HealState.SAVE;
-break;
-}
-healing.stateNext=HealState.SAVE;
 case SAVE:
 logger.debug("NODE {}: NETWORK HEAL - {}",healing.nodeId,healing.state);
 healing.state=HealState.DONE;
