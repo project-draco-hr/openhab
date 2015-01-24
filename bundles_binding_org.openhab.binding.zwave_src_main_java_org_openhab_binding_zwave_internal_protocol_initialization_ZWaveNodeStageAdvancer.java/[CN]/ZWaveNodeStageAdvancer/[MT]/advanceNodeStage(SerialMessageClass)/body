@@ -153,11 +153,14 @@ if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDev
 List<ZWaveDbCommandClass> classList=database.getProductCommandClasses();
 if (classList != null) {
 for (ZWaveDbCommandClass dbClass : classList) {
-if (dbClass.isGetSupported != null) {
-ZWaveCommandClass zwaveClass=node.getCommandClass(CommandClass.getCommandClass(dbClass.Id));
-if (zwaveClass instanceof ZWaveGetCommands) {
-((ZWaveGetCommands)zwaveClass).setGetSupported(dbClass.isGetSupported);
+if (dbClass.remove != null && dbClass.remove == true) {
+node.removeCommandClass(CommandClass.getCommandClass(dbClass.Id));
+continue;
 }
+int endpoint=dbClass.endpoint == null ? 0 : dbClass.endpoint;
+ZWaveCommandClass zwaveClass=node.resolveCommandClass(CommandClass.getCommandClass(dbClass.Id),endpoint);
+if (zwaveClass != null) {
+zwaveClass.setOptions(dbClass);
 }
 }
 }

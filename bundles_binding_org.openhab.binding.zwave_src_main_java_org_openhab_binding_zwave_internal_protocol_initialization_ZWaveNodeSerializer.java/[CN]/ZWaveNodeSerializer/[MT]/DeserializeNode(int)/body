@@ -2,9 +2,9 @@
 synchronized (stream) {
     File file=new File(this.folderName,String.format("node%d.xml",nodeId));
     BufferedReader reader=null;
-    logger.debug("NODE {}: Deserializing from file {}",nodeId,file.getPath());
+    logger.debug("NODE {}: Serializing from file {}",nodeId,file.getPath());
     if (!file.exists()) {
-      logger.debug("NODE {}: Error deserializing from file, file does not exist.",nodeId);
+      logger.debug("NODE {}: Error serializing from file: file does not exist.",nodeId);
       return null;
     }
     try {
@@ -12,7 +12,7 @@ synchronized (stream) {
       return (ZWaveNode)stream.fromXML(reader);
     }
  catch (    IOException e) {
-      logger.error("NODE {}: Error deserializing from file: {}",nodeId,e.getMessage());
+      logger.error("NODE {}: Error serializing from file: {}",nodeId,e.getMessage());
     }
  finally {
       if (reader != null)       try {

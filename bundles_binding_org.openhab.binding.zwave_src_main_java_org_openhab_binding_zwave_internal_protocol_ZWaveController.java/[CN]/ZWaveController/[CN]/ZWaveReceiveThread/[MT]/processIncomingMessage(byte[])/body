@@ -9,6 +9,7 @@
     sendResponse(NAK);
     return;
   }
+  sendAllowed.acquire();
   recvQueue.add(recvMessage);
-  logger.debug("Receive queue ADD: Length={}",recvQueue.size());
+  logger.trace("Receive queue ADD: Length={}",recvQueue.size());
 }

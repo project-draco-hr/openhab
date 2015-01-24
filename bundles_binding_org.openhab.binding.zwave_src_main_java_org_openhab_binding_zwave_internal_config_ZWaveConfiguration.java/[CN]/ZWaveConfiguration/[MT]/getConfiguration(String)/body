@@ -57,7 +57,9 @@ logger.error("Error with parameter type for {} - Set {} - assuming LONG",paramet
 record.type=OpenHABConfigurationRecord.TYPE.LONG;
 }
 if (parameter.Item != null) {
-for (ZWaveDbConfigurationListItem item : parameter.Item) record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
+for (ZWaveDbConfigurationListItem item : parameter.Item) {
+record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
+}
 }
 record.description=database.getLabel(parameter.Help);
 records.add(record);
@@ -77,7 +79,9 @@ if (splitDomain[4].equals("classes")) {
 List<ZWaveDbCommandClass> classList=database.getProductCommandClasses();
 if (classList != null) {
 for (ZWaveDbCommandClass iClass : classList) {
-if (ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id) == null) continue;
+if (ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id) == null) {
+continue;
+}
 record=new OpenHABConfigurationRecord(domain,"class" + iClass.Id,ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id).getLabel(),true);
 if (ZWaveCommandClass.CommandClass.getCommandClass(iClass.Id).getCommandClassClass() == null) {
 record.state=OpenHABConfigurationRecord.STATE.WARNING;

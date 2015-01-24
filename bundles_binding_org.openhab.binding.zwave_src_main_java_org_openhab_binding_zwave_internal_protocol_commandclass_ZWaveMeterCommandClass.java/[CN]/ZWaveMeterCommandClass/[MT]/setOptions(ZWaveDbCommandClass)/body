@@ -1,0 +1,26 @@
+{
+  if (options.isGetSupported != null) {
+    isGetSupported=options.isGetSupported;
+  }
+  if (options.meterCanReset != null) {
+    canReset=options.meterCanReset;
+  }
+  if (options.meterType != null && options.meterScale != null) {
+    meterType=MeterType.valueOf(options.meterType);
+    logger.debug("NODE {}: Set meter type {}",this.getNode().getNodeId(),meterType.getLabel());
+    List<String> scaleList=Arrays.asList(options.meterScale.split(","));
+    for (    String name : scaleList) {
+      MeterScale scale=MeterScale.valueOf(name);
+      if (scale == null) {
+        logger.warn("NODE {}: Invalid meter scale {}",this.getNode().getNodeId(),name);
+        continue;
+      }
+      logger.debug("NODE {}: Meter Scale {} = {}",this.getNode().getNodeId(),meterType.getLabel(),scale.getUnit());
+      if (!this.meterScales.contains(scale)) {
+        this.meterScales.add(scale);
+      }
+    }
+    isSupportRequestSupported=false;
+  }
+  return true;
+}

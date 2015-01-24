@@ -11,6 +11,7 @@
     logger.error("Only request messages can be sent");
     return;
   }
+  serialMessage.setAckRequired();
   serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE | TRANSMIT_OPTION_EXPLORE);
   serialMessage.setCallbackId(getCallbackId());
   this.enqueue(serialMessage);

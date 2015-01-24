@@ -14,9 +14,7 @@ case IncludeDone:
       logger.debug("NODE {}: Newly included node already exists - not initialising.",incEvent.getNodeId());
       break;
     }
-  ZWaveNode node=new ZWaveNode(this.homeId,incEvent.getNodeId(),this);
-this.zwaveNodes.put(incEvent.getNodeId(),node);
-node.initialiseNode();
+  addNode(incEvent.getNodeId());
 break;
 case ExcludeDone:
 logger.debug("NODE {}: Excluding node.",incEvent.getNodeId());

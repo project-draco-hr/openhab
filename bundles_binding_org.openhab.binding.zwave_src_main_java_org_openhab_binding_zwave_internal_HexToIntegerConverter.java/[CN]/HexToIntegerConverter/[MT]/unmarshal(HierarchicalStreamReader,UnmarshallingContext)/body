@@ -1,5 +1,11 @@
 {
   String value=reader.getValue();
-  if (value.startsWith("0x"))   return Integer.decode(value);
- else   return Integer.parseInt(value,16);
+  long lVal;
+  if (value.startsWith("0x")) {
+    lVal=Long.decode(value);
+  }
+ else {
+    lVal=Long.parseLong(value,16);
+  }
+  return (int)lVal;
 }
