@@ -14,14 +14,26 @@
     if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("driveMode"))) {
       setDriveMode(DCDriveMode.get(tfConfig.getDriveMode()));
     }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("threshold"))) {
+      setThreshold(tfConfig.getThreshold());
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
   }
   try {
-    tinkerforgeDevice.setAcceleration(acceleration);
     tinkerforgeDevice.setPWMFrequency(pwmFrequency);
-    if (driveMode == DCDriveMode.BRAKE)     tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_BRAKE);
- else     if (driveMode == DCDriveMode.COAST)     tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_COAST);
+    if (driveMode == DCDriveMode.BRAKE) {
+      tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_BRAKE);
+    }
+ else     if (driveMode == DCDriveMode.COAST) {
+      tinkerforgeDevice.setDriveMode(BrickDC.DRIVE_MODE_DRIVE_COAST);
+    }
+    tinkerforgeDevice.setCurrentVelocityPeriod((int)callbackPeriod);
+    listener=new VelocityListener();
+    tinkerforgeDevice.addCurrentVelocityListener(listener);
     tinkerforgeDevice.enable();
-    setVelocity(getCurrentVelocity());
+    fetchSensorValue();
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

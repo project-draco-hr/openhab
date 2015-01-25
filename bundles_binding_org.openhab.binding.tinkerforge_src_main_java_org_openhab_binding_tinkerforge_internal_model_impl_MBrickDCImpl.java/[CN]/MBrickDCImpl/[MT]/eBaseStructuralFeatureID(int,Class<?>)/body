@@ -1,12 +1,26 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == MSwitchActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__SWITCH_STATE:
+      return ModelPackage.MSWITCH_ACTOR__SWITCH_STATE;
+default :
+    return -1;
+}
+}
+if (baseClass == MInSwitchActor.class) {
+switch (derivedFeatureID) {
+default :
+  return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (derivedFeatureID) {
 case ModelPackage.MBRICK_DC__LOGGER:
-      return ModelPackage.MBASE_DEVICE__LOGGER;
+return ModelPackage.MBASE_DEVICE__LOGGER;
 case ModelPackage.MBRICK_DC__UID:
-    return ModelPackage.MBASE_DEVICE__UID;
+return ModelPackage.MBASE_DEVICE__UID;
 case ModelPackage.MBRICK_DC__POLL:
-  return ModelPackage.MBASE_DEVICE__POLL;
+return ModelPackage.MBASE_DEVICE__POLL;
 case ModelPackage.MBRICK_DC__ENABLED_A:
 return ModelPackage.MBASE_DEVICE__ENABLED_A;
 default :
@@ -45,6 +59,14 @@ if (baseClass == MoveActor.class) {
 switch (derivedFeatureID) {
 case ModelPackage.MBRICK_DC__DIRECTION:
 return ModelPackage.MOVE_ACTOR__DIRECTION;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__CALLBACK_PERIOD:
+return ModelPackage.CALLBACK_LISTENER__CALLBACK_PERIOD;
 default :
 return -1;
 }

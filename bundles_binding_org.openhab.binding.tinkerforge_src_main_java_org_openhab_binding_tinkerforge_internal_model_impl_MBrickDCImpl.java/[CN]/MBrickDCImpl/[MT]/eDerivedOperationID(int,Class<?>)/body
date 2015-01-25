@@ -1,12 +1,28 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == MSwitchActor.class) {
+switch (baseOperationID) {
+case ModelPackage.MSWITCH_ACTOR___TURN_SWITCH__ONOFFVALUE:
+      return ModelPackage.MBRICK_DC___TURN_SWITCH__ONOFFVALUE;
+case ModelPackage.MSWITCH_ACTOR___FETCH_SWITCH_STATE:
+    return ModelPackage.MBRICK_DC___FETCH_SWITCH_STATE;
+default :
+  return -1;
+}
+}
+if (baseClass == MInSwitchActor.class) {
+switch (baseOperationID) {
+default :
+return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (baseOperationID) {
 case ModelPackage.MBASE_DEVICE___INIT:
-      return ModelPackage.MBRICK_DC___INIT;
+return ModelPackage.MBRICK_DC___INIT;
 case ModelPackage.MBASE_DEVICE___ENABLE:
-    return ModelPackage.MBRICK_DC___ENABLE;
+return ModelPackage.MBRICK_DC___ENABLE;
 case ModelPackage.MBASE_DEVICE___DISABLE:
-  return ModelPackage.MBRICK_DC___DISABLE;
+return ModelPackage.MBRICK_DC___DISABLE;
 default :
 return -1;
 }
@@ -31,6 +47,12 @@ case ModelPackage.MOVE_ACTOR___STOP:
 return ModelPackage.MBRICK_DC___STOP;
 case ModelPackage.MOVE_ACTOR___MOVEON__DEVICEOPTIONS:
 return ModelPackage.MBRICK_DC___MOVEON__DEVICEOPTIONS;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
+switch (baseOperationID) {
 default :
 return -1;
 }

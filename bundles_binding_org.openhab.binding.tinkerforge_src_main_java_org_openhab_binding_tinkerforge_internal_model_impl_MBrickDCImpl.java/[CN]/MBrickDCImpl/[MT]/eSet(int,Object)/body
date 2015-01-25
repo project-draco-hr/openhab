@@ -1,8 +1,11 @@
 {
 switch (featureID) {
-case ModelPackage.MBRICK_DC__SWITCH_STATE:
-    setSwitchState((OnOffValue)newValue);
+case ModelPackage.MBRICK_DC__SENSOR_VALUE:
+    setSensorValue((DecimalValue)newValue);
   return;
+case ModelPackage.MBRICK_DC__SWITCH_STATE:
+setSwitchState((OnOffValue)newValue);
+return;
 case ModelPackage.MBRICK_DC__LOGGER:
 setLogger((Logger)newValue);
 return;
@@ -41,6 +44,12 @@ setTfConfig((TFBrickDCConfiguration)newValue);
 return;
 case ModelPackage.MBRICK_DC__DIRECTION:
 setDirection((Direction)newValue);
+return;
+case ModelPackage.MBRICK_DC__CALLBACK_PERIOD:
+setCallbackPeriod((Long)newValue);
+return;
+case ModelPackage.MBRICK_DC__THRESHOLD:
+setThreshold((BigDecimal)newValue);
 return;
 case ModelPackage.MBRICK_DC__VELOCITY:
 setVelocity((Short)newValue);
