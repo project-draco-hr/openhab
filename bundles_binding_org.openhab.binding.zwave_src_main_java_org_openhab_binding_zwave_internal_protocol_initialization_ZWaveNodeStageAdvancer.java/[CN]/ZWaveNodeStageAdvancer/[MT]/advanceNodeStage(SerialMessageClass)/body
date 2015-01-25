@@ -19,7 +19,10 @@
       if (retryCount > MAX_RETRIES) {
         retryCount=0;
         logger.error("NODE {}: Node advancer: Retries exceeded at {}",node.getNodeId(),currentStage.toString());
-        if (currentStage != ZWaveNodeInitStage.DYNAMIC_VALUES) {
+        if (currentStage.isStaticComplete()) {
+          setCurrentStage(currentStage.getNextStage());
+        }
+ else {
           break;
         }
       }
@@ -280,9 +283,13 @@ logger.debug("NODE {}: Node advancer: WAKEUP - Set wakeup node to controller ({}
 addToQueue(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
 addToQueue(wakeupCommandClass.getIntervalMessage());
 break;
+case STATIC_END:
 case DONE:
-logger.debug("NODE {}: Node advancer: Initialisation complete!",node.getNodeId());
 nodeSerializer.SerializeNode(node);
+if (currentStage != ZWaveNodeInitStage.DONE) {
+break;
+}
+logger.debug("NODE {}: Node advancer: Initialisation complete!",node.getNodeId());
 controller.removeEventListener(this);
 return;
 case SESSION_START:
