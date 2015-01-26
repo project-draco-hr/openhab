@@ -291,6 +291,8 @@ break;
 }
 logger.debug("NODE {}: Node advancer: Initialisation complete!",node.getNodeId());
 controller.removeEventListener(this);
+ZWaveEvent zEvent=new ZWaveInitializationCompletedEvent(node.getNodeId());
+controller.notifyEventListeners(zEvent);
 return;
 case SESSION_START:
 break;

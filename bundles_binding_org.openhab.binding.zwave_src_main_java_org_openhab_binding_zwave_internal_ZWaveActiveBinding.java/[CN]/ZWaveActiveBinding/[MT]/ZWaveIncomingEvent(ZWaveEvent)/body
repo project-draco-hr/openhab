@@ -1,5 +1,12 @@
 {
-  if (!this.isProperlyConfigured())   return;
+  if (!this.isProperlyConfigured()) {
+    return;
+  }
+  if (event instanceof ZWaveInitializationCompletedEvent) {
+    logger.debug("NODE {}: ZWaveIncomingEvent Called, Network Event, Init Done. Setting device ready.",event.getNodeId());
+    rebuildPollingTable();
+    return;
+  }
   logger.debug("ZwaveIncomingEvent");
   if (event instanceof ZWaveCommandClassValueEvent) {
     handleZWaveCommandClassValueEvent((ZWaveCommandClassValueEvent)event);
