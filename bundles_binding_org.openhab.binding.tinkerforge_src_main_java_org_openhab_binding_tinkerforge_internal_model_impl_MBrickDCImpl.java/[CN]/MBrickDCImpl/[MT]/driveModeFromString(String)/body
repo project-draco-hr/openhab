@@ -1,0 +1,23 @@
+{
+  Short drivemode=null;
+  if (drivemodestr != null) {
+    if (drivemodestr.equals(DCDriveMode.BRAKE.toString().toLowerCase())) {
+      drivemode=BrickDC.DRIVE_MODE_DRIVE_BRAKE;
+    }
+ else     if (drivemodestr.equals(DCDriveMode.COAST.toString().toLowerCase())) {
+      drivemode=BrickDC.DRIVE_MODE_DRIVE_COAST;
+    }
+ else {
+      logger.error("invalid drivemode {}",drivemodestr);
+    }
+  }
+ else {
+    if (driveMode == DCDriveMode.BRAKE) {
+      drivemode=BrickDC.DRIVE_MODE_DRIVE_BRAKE;
+    }
+ else     if (driveMode == DCDriveMode.COAST) {
+      drivemode=BrickDC.DRIVE_MODE_DRIVE_COAST;
+    }
+  }
+  return drivemode;
+}

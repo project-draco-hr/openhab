@@ -47,6 +47,14 @@ default :
 return -1;
 }
 }
+if (baseClass == MoveActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__DIRECTION:
+return ModelPackage.MOVE_ACTOR__DIRECTION;
+default :
+return -1;
+}
+}
 if (baseClass == MTFConfigConsumer.class) {
 switch (derivedFeatureID) {
 case ModelPackage.MBRICK_DC__TF_CONFIG:
@@ -55,10 +63,18 @@ default :
 return -1;
 }
 }
-if (baseClass == MoveActor.class) {
+if (baseClass == DimmableActor.class) {
 switch (derivedFeatureID) {
-case ModelPackage.MBRICK_DC__DIRECTION:
-return ModelPackage.MOVE_ACTOR__DIRECTION;
+case ModelPackage.MBRICK_DC__MIN_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MIN_VALUE;
+case ModelPackage.MBRICK_DC__MAX_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MAX_VALUE;
+default :
+return -1;
+}
+}
+if (baseClass == SetPointActor.class) {
+switch (derivedFeatureID) {
 default :
 return -1;
 }

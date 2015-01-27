@@ -10,6 +10,8 @@
   ETypeParameter mSubDeviceHolderEClass_S=addETypeParameter(mSubDeviceHolderEClass,"S");
   ETypeParameter mSubDeviceEClass_B=addETypeParameter(mSubDeviceEClass,"B");
   ETypeParameter mSensorEClass_DeviceValue=addETypeParameter(mSensorEClass,"DeviceValue");
+  ETypeParameter dimmableActorEClass_TC=addETypeParameter(dimmableActorEClass,"TC");
+  ETypeParameter setPointActorEClass_C=addETypeParameter(setPointActorEClass,"C");
   ETypeParameter ohtfDeviceEClass_TFC=addETypeParameter(ohtfDeviceEClass,"TFC");
   ETypeParameter ohtfDeviceEClass_IDS=addETypeParameter(ohtfDeviceEClass,"IDS");
   ETypeParameter ohtfSubDeviceAdminDeviceEClass_TFC=addETypeParameter(ohtfSubDeviceAdminDeviceEClass,"TFC");
@@ -26,6 +28,10 @@
   mSubDeviceEClass_B.getEBounds().add(g1);
   g1=createEGenericType(this.getMTinkerforgeValue());
   mSensorEClass_DeviceValue.getEBounds().add(g1);
+  g1=createEGenericType(this.getDimmableConfiguration());
+  dimmableActorEClass_TC.getEBounds().add(g1);
+  g1=createEGenericType(this.getDimmableConfiguration());
+  setPointActorEClass_C.getEBounds().add(g1);
   g1=createEGenericType(this.getTFConfig());
   ohtfDeviceEClass_TFC.getEBounds().add(g1);
   g1=createEGenericType(this.getEnum());
@@ -48,6 +54,14 @@
   g2=createEGenericType(this.getMBrickletLCD20x4());
   g1.getETypeArguments().add(g2);
   mlcdSubDeviceEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMTFConfigConsumer());
+  g2=createEGenericType(dimmableActorEClass_TC);
+  g1.getETypeArguments().add(g2);
+  dimmableActorEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getDimmableActor());
+  g2=createEGenericType(setPointActorEClass_C);
+  g1.getETypeArguments().add(g2);
+  setPointActorEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMDevice());
   g2=createEGenericType(this.getMTinkerBrickServo());
   g1.getETypeArguments().add(g2);
@@ -76,11 +90,11 @@
   g2=createEGenericType(this.getMTinkerBrickDC());
   g1.getETypeArguments().add(g2);
   mBrickDCEClass.getEGenericSuperTypes().add(g1);
-  g1=createEGenericType(this.getMTFConfigConsumer());
+  g1=createEGenericType(this.getMoveActor());
+  mBrickDCEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getSetPointActor());
   g2=createEGenericType(this.getTFBrickDCConfiguration());
   g1.getETypeArguments().add(g2);
-  mBrickDCEClass.getEGenericSuperTypes().add(g1);
-  g1=createEGenericType(this.getMoveActor());
   mBrickDCEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getCallbackListener());
   mBrickDCEClass.getEGenericSuperTypes().add(g1);
@@ -534,6 +548,7 @@
   tfMoistureBrickletConfigurationEClass.getESuperTypes().add(this.getTFBaseConfiguration());
   tfDistanceUSBrickletConfigurationEClass.getESuperTypes().add(this.getTFBaseConfiguration());
   tfVoltageCurrentConfigurationEClass.getESuperTypes().add(this.getTFConfig());
+  tfBrickDCConfigurationEClass.getESuperTypes().add(this.getDimmableConfiguration());
   tfBrickDCConfigurationEClass.getESuperTypes().add(this.getTFBaseConfiguration());
   tfioActorConfigurationEClass.getESuperTypes().add(this.getTFConfig());
   tfInterruptListenerConfigurationEClass.getESuperTypes().add(this.getTFConfig());
@@ -545,6 +560,7 @@
   remoteSwitchCConfigurationEClass.getESuperTypes().add(this.getTFConfig());
   multiTouchDeviceConfigurationEClass.getESuperTypes().add(this.getTFConfig());
   brickletMultiTouchConfigurationEClass.getESuperTypes().add(this.getTFConfig());
+  dimmableConfigurationEClass.getESuperTypes().add(this.getTFConfig());
   initEClass(ecosystemEClass,Ecosystem.class,"Ecosystem",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getEcosystem_Logger(),this.getMLogger(),"logger",null,0,1,Ecosystem.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEReference(getEcosystem_Mbrickds(),this.getMBrickd(),this.getMBrickd_Ecosystem(),"mbrickds",null,0,-1,Ecosystem.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,IS_COMPOSITE,!IS_RESOLVE_PROXIES,!IS_UNSETTABLE,IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
@@ -656,8 +672,17 @@
   op=initEOperation(getMoveActor__Moveon__DeviceOptions(),null,"moveon",0,1,!IS_UNIQUE,IS_ORDERED);
   addEParameter(op,this.getDeviceOptions(),"opts",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(dimmableActorEClass,DimmableActor.class,"DimmableActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
-  initEOperation(getDimmableActor__Increase(),null,"increase",0,1,!IS_UNIQUE,IS_ORDERED);
-  initEOperation(getDimmableActor__Decrease(),null,"decrease",0,1,!IS_UNIQUE,IS_ORDERED);
+  initEAttribute(getDimmableActor_MinValue(),theEcorePackage.getEBigDecimal(),"minValue",null,0,1,DimmableActor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getDimmableActor_MaxValue(),theEcorePackage.getEBigDecimal(),"maxValue",null,0,1,DimmableActor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  op=initEOperation(getDimmableActor__Increase__BigDecimal(),null,"increase",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,theEcorePackage.getEBigDecimal(),"step",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getDimmableActor__Decrease__BigDecimal(),null,"decrease",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,theEcorePackage.getEBigDecimal(),"step",0,1,!IS_UNIQUE,IS_ORDERED);
+  initEClass(setPointActorEClass,SetPointActor.class,"SetPointActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  op=initEOperation(getSetPointActor__SetValue__BigDecimal(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,theEcorePackage.getEBigDecimal(),"newValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getSetPointActor__SetValue__PercentType(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getPercentType(),"newValue",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mBrickServoEClass,MBrickServo.class,"MBrickServo",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMBrickServo_DeviceType(),theEcorePackage.getEString(),"deviceType","brick_servo",0,1,MBrickServo.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEOperation(getMBrickServo__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
@@ -673,8 +698,8 @@
   initEAttribute(getMServo_ServoDestinationPosition(),theEcorePackage.getEShort(),"servoDestinationPosition",null,0,1,MServo.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEOperation(getMServo__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mBrickDCEClass,MBrickDC.class,"MBrickDC",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
-  initEAttribute(getMBrickDC_Threshold(),theEcorePackage.getEBigDecimal(),"threshold","10",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_DeviceType(),theEcorePackage.getEString(),"deviceType","brick_dc",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getMBrickDC_Threshold(),theEcorePackage.getEBigDecimal(),"threshold","10",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_Velocity(),theEcorePackage.getEShort(),"velocity",null,0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_CurrentVelocity(),theEcorePackage.getEShort(),"currentVelocity",null,0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_Acceleration(),theEcorePackage.getEInt(),"acceleration","10000",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
@@ -936,6 +961,9 @@
   initEClass(brickletMultiTouchConfigurationEClass,BrickletMultiTouchConfiguration.class,"BrickletMultiTouchConfiguration",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getBrickletMultiTouchConfiguration_Recalibrate(),theEcorePackage.getEBooleanObject(),"recalibrate",null,0,1,BrickletMultiTouchConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getBrickletMultiTouchConfiguration_Sensitivity(),theEcorePackage.getEShortObject(),"sensitivity",null,0,1,BrickletMultiTouchConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEClass(dimmableConfigurationEClass,DimmableConfiguration.class,"DimmableConfiguration",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
+  initEAttribute(getDimmableConfiguration_MinValue(),theEcorePackage.getEBigDecimal(),"minValue",null,0,1,DimmableConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getDimmableConfiguration_MaxValue(),theEcorePackage.getEBigDecimal(),"maxValue",null,0,1,DimmableConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEEnum(noSubIdsEEnum,NoSubIds.class,"NoSubIds");
   initEEnum(industrialDigitalInSubIDsEEnum,IndustrialDigitalInSubIDs.class,"IndustrialDigitalInSubIDs");
   addEEnumLiteral(industrialDigitalInSubIDsEEnum,IndustrialDigitalInSubIDs.IN0);
@@ -1081,6 +1109,7 @@
   initEDataType(hsbTypeEDataType,HSBType.class,"HSBType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(upDownTypeEDataType,UpDownType.class,"UpDownType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(deviceOptionsEDataType,DeviceOptions.class,"DeviceOptions",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
+  initEDataType(percentTypeEDataType,PercentType.class,"PercentType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(enumEDataType,Enum.class,"Enum",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   createResource(eNS_URI);
 }

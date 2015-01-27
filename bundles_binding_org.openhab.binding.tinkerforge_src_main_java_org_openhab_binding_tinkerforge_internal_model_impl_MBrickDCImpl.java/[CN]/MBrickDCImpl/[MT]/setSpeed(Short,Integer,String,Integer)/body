@@ -1,0 +1,30 @@
+{
+  Short xdrivemode=driveModeFromString(drivemode);
+  Integer xacceleration=acceleration != null ? acceleration : this.acceleration;
+  Integer xpwm=pwm != null ? pwm : this.pwmFrequency;
+  short xspeed=0;
+  if (speed == null) {
+    logger.warn("Brick DC got speed null, setting speed to 0");
+  }
+ else {
+    xspeed=speed;
+  }
+  try {
+    if (xdrivemode != null) {
+      tinkerforgeDevice.setDriveMode(xdrivemode);
+    }
+    if (xacceleration != null) {
+      tinkerforgeDevice.setAcceleration(xacceleration);
+    }
+    if (xpwm != null) {
+      tinkerforgeDevice.setPWMFrequency(xpwm);
+    }
+    tinkerforgeDevice.setVelocity(xspeed);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

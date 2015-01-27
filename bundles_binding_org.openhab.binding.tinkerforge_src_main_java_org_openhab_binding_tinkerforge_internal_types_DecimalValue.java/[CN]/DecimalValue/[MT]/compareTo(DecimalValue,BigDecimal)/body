@@ -1,7 +1,17 @@
 {
-  BigDecimal difference=value.subtract(o.toBigDecimal()).abs();
-  if (difference.compareTo(threshold) < 0) {
-    return 0;
+  System.out.println(" value " + value + " newValue "+ o+ " threshold "+ threshold);
+  if (o == null) {
+    return 1;
   }
-  return value.compareTo(o.toBigDecimal());
+ else   if (threshold == null) {
+    return value.compareTo(o.toBigDecimal().abs());
+  }
+ else   if (o != null && threshold != null) {
+    BigDecimal difference=value.subtract(o.toBigDecimal()).abs();
+    if (difference.compareTo(threshold) < 0) {
+      return 0;
+    }
+    return value.compareTo(o.toBigDecimal().abs());
+  }
+  return 0;
 }

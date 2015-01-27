@@ -83,8 +83,13 @@
   createEOperation(moveActorEClass,MOVE_ACTOR___STOP);
   createEOperation(moveActorEClass,MOVE_ACTOR___MOVEON__DEVICEOPTIONS);
   dimmableActorEClass=createEClass(DIMMABLE_ACTOR);
-  createEOperation(dimmableActorEClass,DIMMABLE_ACTOR___INCREASE);
-  createEOperation(dimmableActorEClass,DIMMABLE_ACTOR___DECREASE);
+  createEAttribute(dimmableActorEClass,DIMMABLE_ACTOR__MIN_VALUE);
+  createEAttribute(dimmableActorEClass,DIMMABLE_ACTOR__MAX_VALUE);
+  createEOperation(dimmableActorEClass,DIMMABLE_ACTOR___INCREASE__BIGDECIMAL);
+  createEOperation(dimmableActorEClass,DIMMABLE_ACTOR___DECREASE__BIGDECIMAL);
+  setPointActorEClass=createEClass(SET_POINT_ACTOR);
+  createEOperation(setPointActorEClass,SET_POINT_ACTOR___SET_VALUE__BIGDECIMAL);
+  createEOperation(setPointActorEClass,SET_POINT_ACTOR___SET_VALUE__PERCENTTYPE);
   mBrickServoEClass=createEClass(MBRICK_SERVO);
   createEAttribute(mBrickServoEClass,MBRICK_SERVO__DEVICE_TYPE);
   createEOperation(mBrickServoEClass,MBRICK_SERVO___INIT);
@@ -100,8 +105,8 @@
   createEAttribute(mServoEClass,MSERVO__SERVO_DESTINATION_POSITION);
   createEOperation(mServoEClass,MSERVO___INIT);
   mBrickDCEClass=createEClass(MBRICK_DC);
-  createEAttribute(mBrickDCEClass,MBRICK_DC__THRESHOLD);
   createEAttribute(mBrickDCEClass,MBRICK_DC__DEVICE_TYPE);
+  createEAttribute(mBrickDCEClass,MBRICK_DC__THRESHOLD);
   createEAttribute(mBrickDCEClass,MBRICK_DC__VELOCITY);
   createEAttribute(mBrickDCEClass,MBRICK_DC__CURRENT_VELOCITY);
   createEAttribute(mBrickDCEClass,MBRICK_DC__ACCELERATION);
@@ -337,6 +342,9 @@
   brickletMultiTouchConfigurationEClass=createEClass(BRICKLET_MULTI_TOUCH_CONFIGURATION);
   createEAttribute(brickletMultiTouchConfigurationEClass,BRICKLET_MULTI_TOUCH_CONFIGURATION__RECALIBRATE);
   createEAttribute(brickletMultiTouchConfigurationEClass,BRICKLET_MULTI_TOUCH_CONFIGURATION__SENSITIVITY);
+  dimmableConfigurationEClass=createEClass(DIMMABLE_CONFIGURATION);
+  createEAttribute(dimmableConfigurationEClass,DIMMABLE_CONFIGURATION__MIN_VALUE);
+  createEAttribute(dimmableConfigurationEClass,DIMMABLE_CONFIGURATION__MAX_VALUE);
   noSubIdsEEnum=createEEnum(NO_SUB_IDS);
   industrialDigitalInSubIDsEEnum=createEEnum(INDUSTRIAL_DIGITAL_IN_SUB_IDS);
   industrialQuadRelayIDsEEnum=createEEnum(INDUSTRIAL_QUAD_RELAY_IDS);
@@ -391,5 +399,6 @@
   hsbTypeEDataType=createEDataType(HSB_TYPE);
   upDownTypeEDataType=createEDataType(UP_DOWN_TYPE);
   deviceOptionsEDataType=createEDataType(DEVICE_OPTIONS);
+  percentTypeEDataType=createEDataType(PERCENT_TYPE);
   enumEDataType=createEDataType(ENUM);
 }
