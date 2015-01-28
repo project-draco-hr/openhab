@@ -75,6 +75,9 @@
           }
  else           if (command instanceof IncreaseDecreaseType) {
             IncreaseDecreaseType cmd=(IncreaseDecreaseType)command;
+            if (mDevice instanceof DimmableActor) {
+              ((DimmableActor<?>)mDevice).dimm((IncreaseDecreaseType)command,provider.getDeviceOptions(itemName));
+            }
             logger.debug("{} IncreaseDecreaseType command {}",itemName,cmd);
           }
  else {

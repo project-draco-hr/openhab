@@ -1,0 +1,60 @@
+{
+  logger.trace("====== dimmer increase increaseDecrease {} opts {}",increaseDecrease,opts);
+  if (opts == null) {
+    logger.error("Brick DC options are missing");
+    return;
+  }
+  if (increaseDecrease == null) {
+    logger.error("Brick DC increaseDecrease may not be null!");
+    return;
+  }
+  Integer itemacceleration=Tools.getIntOpt(ConfigOptsMove.ACCELERATION.toString(),opts);
+  String drivemodestr=Tools.getStringOpt(ConfigOptsMove.DRIVEMODE.toString(),opts);
+  Short step=Tools.getShortOpt(ConfigOptsDimmable.STEP.toString(),opts);
+  if (step == null) {
+    logger.error("BrickDC dimmer option step is missing, items configuration has to be fixed!");
+  }
+  Short speed=null;
+  if (increaseDecrease.equals(IncreaseDecreaseType.INCREASE)) {
+    Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts);
+    if (max == null) {
+      logger.error("BrickDC dimmer option max is missing, items configuration has to be fixed!");
+      return;
+    }
+ else {
+      logger.debug("Brick DC max {}",max);
+      Short newVelocity=(short)(this.targetvelocity + step);
+      logger.debug("Brick DC newVelocity {}",newVelocity);
+      if (newVelocity < max) {
+        speed=newVelocity;
+      }
+ else       if (this.velocity < max) {
+        speed=max;
+      }
+ else {
+        logger.debug("max velocity already reached {}",max);
+      }
+    }
+  }
+ else   if (increaseDecrease.equals(IncreaseDecreaseType.DECREASE)) {
+    Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts);
+    logger.debug("Brick DC min {}",min);
+    if (min == null) {
+      logger.error("BrickDC dimmer option min is missing, items configuration has to be fixed!");
+      return;
+    }
+ else {
+      Short newVelocity=(short)(this.targetvelocity - step);
+      if (newVelocity > min) {
+        speed=newVelocity;
+      }
+ else       if (this.velocity > min) {
+        speed=min;
+      }
+ else {
+        logger.debug("min velocity already reached {}",min);
+      }
+    }
+  }
+  setSpeed(speed,itemacceleration,drivemodestr,this.pwmFrequency);
+}

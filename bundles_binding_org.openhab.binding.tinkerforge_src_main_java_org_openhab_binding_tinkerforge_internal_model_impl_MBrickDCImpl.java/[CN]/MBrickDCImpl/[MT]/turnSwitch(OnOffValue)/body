@@ -2,9 +2,11 @@
   logger.trace("turnSwitch called");
   try {
     if (state == OnOffValue.OFF) {
+      setTargetvelocity((short)0);
       tinkerforgeDevice.setVelocity((short)0);
     }
  else     if (state == OnOffValue.ON) {
+      setTargetvelocity(switchOnVelocity);
       tinkerforgeDevice.setVelocity(switchOnVelocity);
     }
  else {

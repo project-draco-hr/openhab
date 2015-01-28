@@ -33,8 +33,7 @@
     listener=new VelocityListener();
     tinkerforgeDevice.addCurrentVelocityListener(listener);
     tinkerforgeDevice.enable();
-    setSensorValue(Tools.calculate(tinkerforgeDevice.getVelocity()));
-    fetchSensorValue();
+    handleVelocity(tinkerforgeDevice.getVelocity(),false);
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

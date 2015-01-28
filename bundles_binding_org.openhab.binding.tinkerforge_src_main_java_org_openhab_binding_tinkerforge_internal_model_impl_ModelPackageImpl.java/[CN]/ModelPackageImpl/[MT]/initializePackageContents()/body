@@ -674,15 +674,16 @@
   initEClass(dimmableActorEClass,DimmableActor.class,"DimmableActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getDimmableActor_MinValue(),theEcorePackage.getEBigDecimal(),"minValue",null,0,1,DimmableActor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getDimmableActor_MaxValue(),theEcorePackage.getEBigDecimal(),"maxValue",null,0,1,DimmableActor.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
-  op=initEOperation(getDimmableActor__Increase__BigDecimal(),null,"increase",0,1,!IS_UNIQUE,IS_ORDERED);
-  addEParameter(op,theEcorePackage.getEBigDecimal(),"step",0,1,!IS_UNIQUE,IS_ORDERED);
-  op=initEOperation(getDimmableActor__Decrease__BigDecimal(),null,"decrease",0,1,!IS_UNIQUE,IS_ORDERED);
-  addEParameter(op,theEcorePackage.getEBigDecimal(),"step",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getDimmableActor__Dimm__IncreaseDecreaseType_DeviceOptions(),null,"dimm",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getIncreaseDecreaseType(),"increaseDecrease",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getDeviceOptions(),"opts",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(setPointActorEClass,SetPointActor.class,"SetPointActor",IS_ABSTRACT,IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
-  op=initEOperation(getSetPointActor__SetValue__BigDecimal(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getSetPointActor__SetValue__BigDecimal_DeviceOptions(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
   addEParameter(op,theEcorePackage.getEBigDecimal(),"newValue",0,1,!IS_UNIQUE,IS_ORDERED);
-  op=initEOperation(getSetPointActor__SetValue__PercentType(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getDeviceOptions(),"opts",0,1,!IS_UNIQUE,IS_ORDERED);
+  op=initEOperation(getSetPointActor__SetValue__PercentType_DeviceOptions(),null,"setValue",0,1,!IS_UNIQUE,IS_ORDERED);
   addEParameter(op,this.getPercentType(),"newValue",0,1,!IS_UNIQUE,IS_ORDERED);
+  addEParameter(op,this.getDeviceOptions(),"opts",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mBrickServoEClass,MBrickServo.class,"MBrickServo",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getMBrickServo_DeviceType(),theEcorePackage.getEString(),"deviceType","brick_servo",0,1,MBrickServo.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEOperation(getMBrickServo__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
@@ -701,10 +702,11 @@
   initEAttribute(getMBrickDC_DeviceType(),theEcorePackage.getEString(),"deviceType","brick_dc",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,!IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_Threshold(),theEcorePackage.getEBigDecimal(),"threshold","10",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_Velocity(),theEcorePackage.getEShort(),"velocity",null,0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getMBrickDC_Targetvelocity(),theEcorePackage.getEShort(),"targetvelocity","0",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_CurrentVelocity(),theEcorePackage.getEShort(),"currentVelocity",null,0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_Acceleration(),theEcorePackage.getEInt(),"acceleration","10000",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_PwmFrequency(),theEcorePackage.getEInt(),"pwmFrequency","15000",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
-  initEAttribute(getMBrickDC_DriveMode(),this.getDCDriveMode(),"driveMode","Break",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getMBrickDC_DriveMode(),this.getDCDriveMode(),"driveMode","BRAKE",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getMBrickDC_SwitchOnVelocity(),theEcorePackage.getEShort(),"switchOnVelocity","10000",0,1,MBrickDC.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEOperation(getMBrickDC__Init(),null,"init",0,1,!IS_UNIQUE,IS_ORDERED);
   initEClass(mDualRelayBrickletEClass,MDualRelayBricklet.class,"MDualRelayBricklet",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
@@ -923,7 +925,7 @@
   initEAttribute(getTFBrickDCConfiguration_Velocity(),theEcorePackage.getEShort(),"velocity",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getTFBrickDCConfiguration_Acceleration(),theEcorePackage.getEInt(),"acceleration",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getTFBrickDCConfiguration_PwmFrequency(),theEcorePackage.getEInt(),"pwmFrequency",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
-  initEAttribute(getTFBrickDCConfiguration_DriveMode(),theEcorePackage.getEInt(),"driveMode",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
+  initEAttribute(getTFBrickDCConfiguration_DriveMode(),theEcorePackage.getEString(),"driveMode",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEAttribute(getTFBrickDCConfiguration_SwitchOnVelocity(),theEcorePackage.getEShort(),"switchOnVelocity",null,0,1,TFBrickDCConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
   initEClass(tfioActorConfigurationEClass,TFIOActorConfiguration.class,"TFIOActorConfiguration",!IS_ABSTRACT,!IS_INTERFACE,IS_GENERATED_INSTANCE_CLASS);
   initEAttribute(getTFIOActorConfiguration_DefaultState(),theEcorePackage.getEString(),"defaultState",null,0,1,TFIOActorConfiguration.class,!IS_TRANSIENT,!IS_VOLATILE,IS_CHANGEABLE,!IS_UNSETTABLE,!IS_ID,!IS_UNIQUE,!IS_DERIVED,IS_ORDERED);
@@ -1064,6 +1066,13 @@
   addEEnumLiteral(configOptsMoveEEnum,ConfigOptsMove.ACCELERATION);
   addEEnumLiteral(configOptsMoveEEnum,ConfigOptsMove.DRIVEMODE);
   addEEnumLiteral(configOptsMoveEEnum,ConfigOptsMove.PWM);
+  initEEnum(configOptsDimmableEEnum,ConfigOptsDimmable.class,"ConfigOptsDimmable");
+  addEEnumLiteral(configOptsDimmableEEnum,ConfigOptsDimmable.MAX);
+  addEEnumLiteral(configOptsDimmableEEnum,ConfigOptsDimmable.MIN);
+  addEEnumLiteral(configOptsDimmableEEnum,ConfigOptsDimmable.STEP);
+  initEEnum(configOptsSetPointEEnum,ConfigOptsSetPoint.class,"ConfigOptsSetPoint");
+  addEEnumLiteral(configOptsSetPointEEnum,ConfigOptsSetPoint.MAX);
+  addEEnumLiteral(configOptsSetPointEEnum,ConfigOptsSetPoint.MIN);
   initEEnum(directionEEnum,Direction.class,"Direction");
   addEEnumLiteral(directionEEnum,Direction.UNDEF);
   addEEnumLiteral(directionEEnum,Direction.LEFT);
@@ -1110,6 +1119,7 @@
   initEDataType(upDownTypeEDataType,UpDownType.class,"UpDownType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(deviceOptionsEDataType,DeviceOptions.class,"DeviceOptions",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(percentTypeEDataType,PercentType.class,"PercentType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
+  initEDataType(increaseDecreaseTypeEDataType,IncreaseDecreaseType.class,"IncreaseDecreaseType",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(enumEDataType,Enum.class,"Enum",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   createResource(eNS_URI);
 }
