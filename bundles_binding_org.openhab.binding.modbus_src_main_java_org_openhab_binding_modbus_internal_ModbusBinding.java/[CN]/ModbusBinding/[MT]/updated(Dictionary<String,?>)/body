@@ -39,6 +39,7 @@
  else {
           throw new ConfigurationException(slave,"the given slave type '" + slave + "' is unknown");
         }
+        logger.debug("modbusSlave '" + slave + "' instanciated");
         modbusSlaves.put(slave,modbusSlave);
       }
       String configKey=matcher.group(3);
@@ -62,8 +63,11 @@
           if (chunks.length >= 4) {
             ((ModbusSerialSlave)modbusSlave).setParity(chunks[3]);
           }
-          if (chunks.length == 5) {
+          if (chunks.length >= 5) {
             ((ModbusSerialSlave)modbusSlave).setStopbits(Integer.valueOf(chunks[4]));
+          }
+          if (chunks.length == 6) {
+            ((ModbusSerialSlave)modbusSlave).setEncoding(chunks[5]);
           }
         }
       }
