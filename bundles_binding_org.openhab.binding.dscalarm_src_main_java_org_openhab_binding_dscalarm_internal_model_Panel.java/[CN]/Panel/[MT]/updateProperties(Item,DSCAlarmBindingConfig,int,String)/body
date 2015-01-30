@@ -1,5 +1,6 @@
 {
   logger.debug("updateProperties(): Panel Item Name: {}",item.getName());
+  boolean trigger=state != 0 ? true : false;
   if (config != null) {
     if (config.getDSCAlarmItemType() != null) {
 switch (config.getDSCAlarmItemType()) {
@@ -11,6 +12,18 @@ case PANEL_MESSAGE:
   break;
 case PANEL_COMMAND:
 panelProperties.setSystemCommand(state);
+break;
+case PANEL_FIRE_KEY_ALARM:
+panelProperties.setTrigger(TriggerType.FIRE_KEY_ALARM,trigger);
+break;
+case PANEL_PANIC_KEY_ALARM:
+panelProperties.setTrigger(TriggerType.PANIC_KEY_ALARM,trigger);
+break;
+case PANEL_AUX_KEY_ALARM:
+panelProperties.setTrigger(TriggerType.AUX_KEY_ALARM,trigger);
+break;
+case PANEL_AUX_INPUT_ALARM:
+panelProperties.setTrigger(TriggerType.AUX_INPUT_ALARM,trigger);
 break;
 default :
 logger.debug("updateProperties(): Panel property not updated.");

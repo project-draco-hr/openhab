@@ -1,0 +1,27 @@
+{
+  if (!connect()) {
+    logger.warn("coupler not connected.");
+    return;
+  }
+  ModbusRequest request=new ReadCoilsRequest(offset,chancount);
+  transaction.setRequest(request);
+  try {
+    transaction.execute();
+  }
+ catch (  Exception e) {
+    logger.debug("update of channels failed: " + e.getMessage());
+    return;
+  }
+  ReadCoilsResponse response=(ReadCoilsResponse)transaction.getResponse();
+  if ((response.getTransactionID() != transaction.getTransactionID()) && !response.isHeadless()) {
+    logger.debug("update of channels failed: invalid response.");
+    return;
+  }
+  for (int i=0; i < chancount; i++) {
+    state[i]=response.getCoils().getBit(i);
+  }
+  Collection<String> itemNames=binding.getItemNames();
+  for (  String itemName : itemNames) {
+    binding.updateItem(itemName,couplerName,module,state);
+  }
+}

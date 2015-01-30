@@ -1,0 +1,12 @@
+{
+  List<BticinoBindingConfig> l_item_bindings=new LinkedList<BticinoBindingConfig>();
+  for (  BticinoBindingProvider provider : providers) {
+    for (    String l_item_name : provider.getItemNames()) {
+      BticinoBindingConfig l_binding_config=provider.getConfig(l_item_name);
+      if (l_binding_config.who.equals(who) && l_binding_config.where.equals(where)) {
+        l_item_bindings.add(l_binding_config);
+      }
+    }
+  }
+  return l_item_bindings;
+}

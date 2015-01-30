@@ -1,0 +1,22 @@
+{
+  byte[] responseBlock=new byte[0];
+  byte[] readBuffer=new byte[BUF_LENGTH];
+  do {
+    while (inputStream.available() > 0) {
+      int bytes=inputStream.read(readBuffer);
+      byte[] mergedBytes=new byte[responseBlock.length + bytes];
+      System.arraycopy(responseBlock,0,mergedBytes,0,responseBlock.length);
+      System.arraycopy(readBuffer,0,mergedBytes,responseBlock.length,bytes);
+      responseBlock=mergedBytes;
+    }
+    try {
+      Thread.sleep(200);
+    }
+ catch (    InterruptedException e) {
+    }
+  }
+ while (inputStream.available() > 0);
+  String string=new String(responseBlock);
+  logger.debug("RX: " + escape(string));
+  return responseBlock;
+}

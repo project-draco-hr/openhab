@@ -1,0 +1,22 @@
+{
+  for (  OBISMsgType t : OBISMsgType.values()) {
+    if (t.applicableVersions.contains(version)) {
+      Matcher m=obisChannelPattern.matcher(t.obisId);
+      if (m.matches()) {
+        DSMRMeterType meterType=t.meterType;
+        if (mapping.containsKey(meterType)) {
+          Integer channel=mapping.get(t.meterType);
+          logger.debug("Change OBIS-identifier " + t.obisId + " for meter "+ t.meterType+ " on channel "+ channel);
+          String obisSpecificIdentifier=m.replaceFirst("$1-" + channel + ":$3.$4.$5");
+          obisLookupTable.put(obisSpecificIdentifier,t);
+        }
+ else {
+          logger.debug("Mapping does not contain a channel for " + meterType);
+        }
+      }
+ else {
+        obisLookupTable.put(t.obisId,t);
+      }
+    }
+  }
+}

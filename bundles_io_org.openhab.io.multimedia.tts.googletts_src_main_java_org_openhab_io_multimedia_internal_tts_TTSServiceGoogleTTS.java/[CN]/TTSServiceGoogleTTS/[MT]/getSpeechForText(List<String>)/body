@@ -1,0 +1,9 @@
+{
+  Vector<InputStream> inputStreams=new Vector<InputStream>(sentences.size());
+  for (  String sentence : sentences) {
+    String encodedSentence=GoogleTTSTextProcessor.urlEncodeSentence(sentence);
+    URL url=new URL(String.format(translateUrl,ttsLanguage,encodedSentence));
+    inputStreams.add(getInputStreamFromUrl(url));
+  }
+  return new SequenceInputStream(inputStreams.elements());
+}

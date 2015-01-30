@@ -1,0 +1,9 @@
+{
+  for (  WagoBindingProvider provider : providers) {
+    if (provider.providesBindingFor(itemName)) {
+      WagoBindingConfig conf=provider.getConfig(itemName);
+      FBCoupler coupler=getCoupler(conf.couplerName);
+      coupler.executeCommand(command,conf);
+    }
+  }
+}

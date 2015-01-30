@@ -1,6 +1,7 @@
 {
   controller.setLastSend(System.currentTimeMillis());
-  String thisMsg=sensorEvent.getProtocol() + sensorEvent.getModel() + sensorEvent.getSensorId()+ sensorEvent.getData();
+  Calendar cal=Calendar.getInstance();
+  String thisMsg=cal.get(Calendar.MINUTE) + sensorEvent.getProtocol() + sensorEvent.getModel()+ sensorEvent.getSensorId()+ sensorEvent.getData();
   String prevMessage=prevMessages.get(sensorEvent.getDataType());
   if (!thisMsg.equals(prevMessage)) {
     prevMessages.put(sensorEvent.getDataType(),thisMsg);

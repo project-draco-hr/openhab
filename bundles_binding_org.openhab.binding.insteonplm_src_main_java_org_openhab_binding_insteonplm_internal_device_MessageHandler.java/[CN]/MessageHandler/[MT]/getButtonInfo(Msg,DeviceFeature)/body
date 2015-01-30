@@ -3,7 +3,7 @@
     int bclean=(int)(msg.getByte("command2") & 0xff);
     int bbcast=(int)(msg.getAddress("toAddress").getLowByte() & 0xff);
     int button=msg.isCleanup() ? bclean : bbcast;
-    logger.debug("{} button: {} bclean: {} bbcast: {}",f.getDevice().getAddress(),button,bclean,bbcast);
+    logger.trace("{} button: {} bclean: {} bbcast: {}",f.getDevice().getAddress(),button,bclean,bbcast);
     return button;
   }
  catch (  FieldException e) {

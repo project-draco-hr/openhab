@@ -1,0 +1,42 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    Map<String,NutConfig> newUpses=new HashMap<String,NutConfig>();
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=keys.nextElement();
+      if ("refresh".equals(key) || "service.pid".equals(key)) {
+        continue;
+      }
+      String[] parts=key.split("\\.");
+      String name=parts[0];
+      String prop=parts[1];
+      String value=(String)config.get(key);
+      NutConfig nutConfig=newUpses.get(name);
+      if (nutConfig == null) {
+        nutConfig=new NutConfig();
+        newUpses.put(name,nutConfig);
+      }
+      if ("device".equalsIgnoreCase(prop)) {
+        nutConfig.device=value;
+      }
+ else       if ("host".equalsIgnoreCase(prop)) {
+        nutConfig.host=value;
+      }
+ else       if ("login".equalsIgnoreCase(prop)) {
+        nutConfig.login=value;
+      }
+ else       if ("pass".equalsIgnoreCase(prop)) {
+        nutConfig.pass=value;
+      }
+ else       if ("port".equalsIgnoreCase(prop)) {
+        nutConfig.port=Integer.parseInt(value);
+      }
+    }
+    upses=newUpses;
+    setProperlyConfigured(true);
+  }
+}

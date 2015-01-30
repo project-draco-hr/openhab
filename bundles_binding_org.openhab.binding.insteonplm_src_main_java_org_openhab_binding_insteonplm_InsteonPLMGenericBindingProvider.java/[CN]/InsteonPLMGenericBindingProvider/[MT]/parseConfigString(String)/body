@@ -9,7 +9,9 @@
   String addr=dev[0];
   String[] retval={addr,dev[1],segments[1]};
   if (!InsteonAddress.s_isValid(addr)) {
-    throw new BindingConfigParseException("invalid insteon device address: " + addr + " in items file. Must have format AB.CD.EF");
+    String errstr="invalid insteon or X10 device address: " + addr + " in items file. Must have format AB.CD.EF or (for X10): H.U";
+    logger.error(errstr);
+    throw new BindingConfigParseException(errstr);
   }
   return retval;
 }

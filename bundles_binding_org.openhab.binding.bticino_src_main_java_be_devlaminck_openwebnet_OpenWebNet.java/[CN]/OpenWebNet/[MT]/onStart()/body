@@ -1,0 +1,7 @@
+{
+  monitorSessionThread=new MonitorSessionThread(this,host,port);
+  m_last_bus_scan=new Date((new Date()).getTime() - (1000 * m_bus_scan_interval_secs) + (1000 * m_first_scan_delay_secs));
+  monitorSessionThread.start();
+  logger.info("Connected to [" + host + ":"+ port+ "], Rescan bus every ["+ m_bus_scan_interval_secs+ "] seconds, first scan over ["+ (((new Date()).getTime() - m_last_bus_scan.getTime()) / 1000)+ "] seconds.");
+  start();
+}
