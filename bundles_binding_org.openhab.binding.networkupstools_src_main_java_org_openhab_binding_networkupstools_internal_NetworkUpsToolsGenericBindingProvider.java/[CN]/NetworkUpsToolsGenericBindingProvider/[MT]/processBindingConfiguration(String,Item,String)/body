@@ -1,0 +1,12 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length > 2) {
+    throw new BindingConfigParseException("NetworkHealth configuration can contain three parts at max");
+  }
+  NetworkUpsToolsBindingConfig config=new NetworkUpsToolsBindingConfig();
+  config.ups=configParts[0];
+  config.property=configParts[1];
+  config.itemType=item.getClass();
+  addBindingConfig(item,config);
+}
