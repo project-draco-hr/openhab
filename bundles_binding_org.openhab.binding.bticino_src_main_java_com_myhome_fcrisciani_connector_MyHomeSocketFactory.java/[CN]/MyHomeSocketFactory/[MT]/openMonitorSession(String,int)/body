@@ -1,0 +1,14 @@
+{
+  Socket sk=new Socket(ip,port);
+  sk.setSoTimeout(45 * 1000);
+  BufferedReader inputStream=new BufferedReader(new InputStreamReader(sk.getInputStream()));
+  PrintWriter outputStream=new PrintWriter(sk.getOutputStream(),true);
+  String response=readUntilDelimiter(inputStream);
+  outputStream.write(socketMonitor);
+  outputStream.flush();
+  response=readUntilDelimiter(inputStream);
+  if (isACK(response) != true) {
+    throw new IOException();
+  }
+  return sk;
+}

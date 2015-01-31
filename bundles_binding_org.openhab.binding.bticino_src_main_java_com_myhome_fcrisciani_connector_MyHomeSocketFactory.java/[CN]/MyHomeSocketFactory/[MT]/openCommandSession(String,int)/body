@@ -1,0 +1,13 @@
+{
+  Socket sk=new Socket(ip,port);
+  BufferedReader inputStream=new BufferedReader(new InputStreamReader(sk.getInputStream()));
+  PrintWriter outputStream=new PrintWriter(sk.getOutputStream(),true);
+  String response=readUntilDelimiter(inputStream);
+  outputStream.write(socketCommand);
+  outputStream.flush();
+  response=readUntilDelimiter(inputStream);
+  if (isACK(response) != true) {
+    throw new IOException();
+  }
+  return sk;
+}

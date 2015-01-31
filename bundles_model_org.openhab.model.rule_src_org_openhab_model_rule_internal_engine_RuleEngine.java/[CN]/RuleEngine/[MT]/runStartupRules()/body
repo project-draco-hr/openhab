@@ -12,10 +12,12 @@
         executedRules.add(rule);
       }
  catch (      ScriptExecutionException e) {
-        if (e.getCause() instanceof ItemNotFoundException || e.getCause().getMessage().contains("cannot be resolved to an item or type")) {
+        String causeMessage=getCauseMessage(e);
+        if (e.getCause() instanceof ItemNotFoundException || causeMessage.contains("cannot be resolved to an item or type")) {
+          logger.debug("Not all required items in place yet for rule {}, trying again later: {}",new Object[]{rule.getName(),causeMessage});
         }
  else {
-          logger.error("Error during the execution of startup rule '{}': {}",new String[]{rule.getName(),e.getCause().getMessage()});
+          logger.error("Error during the execution of startup rule '{}': {}",new Object[]{rule.getName(),causeMessage});
           executedRules.add(rule);
         }
       }

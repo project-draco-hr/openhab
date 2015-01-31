@@ -1,0 +1,47 @@
+{
+  int bound=0;
+  if (value == null) {
+    logger.trace("internalPropertyUpdate: Value is null for Property '{}', ignored.",property);
+    return;
+  }
+  for (  BindingProvider provider : providers) {
+    if (provider instanceof MiosBindingProvider) {
+      MiosBindingProviderImpl miosProvider=(MiosBindingProviderImpl)provider;
+      for (      String itemName : miosProvider.getItemNamesForProperty(property)) {
+        MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
+        if (config != null) {
+          State newValue=config.transformIn(value);
+          if (newValue != value) {
+            logger.trace("internalPropertyUpdate: transformation performed, from '{}' to '{}'",value,newValue);
+            value=newValue;
+          }
+          if (incremental) {
+            logger.debug("internalPropertyUpdate: Updating (Incremental) itemName '{}' with value '{}'",itemName,value);
+            eventPublisher.postUpdate(itemName,value);
+          }
+ else {
+            ItemRegistry reg=miosProvider.getItemRegistry();
+            State oldValue=reg.getItem(itemName).getState();
+            if ((oldValue == null && value != null) || (UnDefType.UNDEF.equals(oldValue) && !UnDefType.UNDEF.equals(value)) || !oldValue.equals(value)) {
+              logger.debug("internalPropertyUpdate: Updating (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+              eventPublisher.postUpdate(itemName,value);
+            }
+ else {
+              logger.trace("internalPropertyUpdate: Ignoring (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+            }
+          }
+          bound++;
+        }
+ else {
+          logger.trace("internalPropertyUpdate: Found null BindingConfig for item '{}' property '{}'",itemName,property);
+        }
+      }
+    }
+  }
+  if (bound == 0) {
+    logger.trace("internalPropertyUpdate: NOT BOUND {mios=\"{}\"}, value={}",property,value);
+  }
+ else {
+    logger.debug("internalPropertyUpdate: BOUND {mios=\"{}\"}, value={}, bound {} time(s)",new Object[]{property,value,bound});
+  }
+}

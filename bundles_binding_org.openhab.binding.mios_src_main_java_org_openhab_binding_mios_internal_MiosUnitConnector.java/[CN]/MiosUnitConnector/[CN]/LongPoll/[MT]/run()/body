@@ -2,14 +2,18 @@
   long loopCount=0;
   do {
     try {
-      String uri=getUri(loopCount == 0);
+      MiosUnit unit=getMiosUnit();
+      int errorCount=unit.getErrorCount();
+      boolean force=(loopCount == 0l) || (errorCount != 0) && (failures != 0) && ((failures % errorCount) == 0);
+      boolean incremental=(!force && loadTime != null && dataVersion != null);
+      String uri=getUri(incremental);
       logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
       Future<Response> f=getAsyncHttpClient().prepareGet(uri).execute();
       Response r=(Response)f.get();
-      Map<String,Object> json=readJson(r.getResponseBody());
+      Map<String,Object> json=readJson(r.getResponseBody("UTF-8"));
       if (json.containsKey("error"))       throw new IOException(json.get("error").toString());
       connected=true;
-      processResponse(json);
+      processResponse(json,incremental);
       int c=getMiosUnit().getRefreshCount();
       loopCount=loopCount + 1;
       if (c != 0) {
@@ -18,7 +22,8 @@
     }
  catch (    Exception e) {
       connected=false;
-      logger.debug("run: Exception Error occurred fetching content: {}",e.getMessage(),e);
+      this.failures++;
+      logger.debug("run: Exception Error occurred fetching/processing content: {},{}.  Total failures ({})",new Object[]{e.getMessage(),e,Integer.toString(failures)});
       try {
         Thread.sleep(5000);
       }

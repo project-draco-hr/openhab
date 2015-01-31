@@ -1,0 +1,53 @@
+{
+  Multimap<String,ItemDefinition> items=HashMultimap.create();
+  for (  NetworkUpsToolsBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String name=provider.getUps(itemName);
+      Class<? extends Item> itemType=provider.getItemType(itemName);
+      String property=provider.getProperty(itemName);
+      items.put(name,new ItemDefinition(itemName,itemType,property));
+    }
+  }
+  for (  String name : items.keySet()) {
+    NutConfig nut=upses.get(name);
+    if (nut == null) {
+      logger.error("No configuration for UPS with name: '{}'",name);
+      continue;
+    }
+    Client client=null;
+    try {
+      client=new Client(nut.host,nut.port,nut.login,nut.pass);
+      Device device=client.getDevice(nut.device);
+      for (      ItemDefinition definition : items.get(name)) {
+        Variable variable=device.getVariable(definition.property);
+        String value=variable.getValue();
+        Class<? extends Item> itemType=definition.itemType;
+        String itemName=definition.itemName;
+        State state=null;
+        if (itemType.isAssignableFrom(StringItem.class)) {
+          state=StringType.valueOf(value);
+        }
+ else         if (itemType.isAssignableFrom(NumberItem.class)) {
+          state=DecimalType.valueOf(value);
+        }
+ else         if (itemType.isAssignableFrom(SwitchItem.class)) {
+          state=OnOffType.valueOf(value);
+        }
+        if (state != null) {
+          eventPublisher.postUpdate(itemName,state);
+        }
+ else {
+          logger.error("'{}' couldn't be parsed to a State. Valid State-Types are String, Number and Switch",variable.toString());
+        }
+      }
+    }
+ catch (    Exception ex) {
+      logger.error("Nut processing error",ex);
+    }
+ finally {
+      if (client != null) {
+        client.disconnect();
+      }
+    }
+  }
+}

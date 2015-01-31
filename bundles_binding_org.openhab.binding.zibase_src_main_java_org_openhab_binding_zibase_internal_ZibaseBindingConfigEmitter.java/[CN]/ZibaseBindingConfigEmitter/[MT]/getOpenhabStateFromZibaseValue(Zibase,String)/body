@@ -1,0 +1,13 @@
+{
+  if (constructor != null) {
+    try {
+      String zibaseValue=XmlSimpleParse.getTagValue(this.values[ZibaseBindingConfig.POS_VALUES],zbResponseStr);
+      return (State)constructor.newInstance(zibaseValue);
+    }
+ catch (    Exception e) {
+      logger.error("unable to convert zibase value to openHab State : " + e.toString());
+      e.printStackTrace();
+    }
+  }
+  return new StringType(this.values[ZibaseBindingConfig.POS_VALUES]);
+}

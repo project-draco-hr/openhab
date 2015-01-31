@@ -1,0 +1,19 @@
+{
+  if (properties != null) {
+    String language=(String)properties.get(LANGUAGE_PROPERTY);
+    if (!StringUtils.isBlank(language)) {
+      logger.debug("Using TTS language from config: " + ttsLanguage);
+      ttsLanguage=language;
+    }
+    String delimiters=(String)properties.get(SENTENCE_DELIMITERS_PROPERTY);
+    if (!StringUtils.isBlank(delimiters)) {
+      logger.debug("Using custom sentence delimiters from config: " + delimiters);
+      textProcessor.setCustomSentenceDelimiters(delimiters);
+    }
+    String configTranslateUrl=(String)properties.get(TRANSLATE_URL_PROPERTY);
+    if (!StringUtils.isBlank(configTranslateUrl)) {
+      logger.debug("Using custom translate URL from config: " + configTranslateUrl);
+      translateUrl=configTranslateUrl;
+    }
+  }
+}
