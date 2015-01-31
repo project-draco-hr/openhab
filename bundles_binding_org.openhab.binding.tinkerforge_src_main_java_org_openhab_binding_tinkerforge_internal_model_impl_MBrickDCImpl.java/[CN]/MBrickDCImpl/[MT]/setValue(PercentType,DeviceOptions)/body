@@ -1,3 +1,20 @@
 {
-  throw new UnsupportedOperationException();
+  BigDecimal max=Tools.getBigDecimalOpt(ConfigOptsDimmable.MAX.toString(),opts);
+  if (max == null) {
+    logger.error("BrickDC dimmer option max is missing, items configuration has to be fixed!");
+    return;
+  }
+ else {
+    logger.debug("Brick DC max {}",max);
+  }
+  BigDecimal min=Tools.getBigDecimalOpt(ConfigOptsDimmable.MIN.toString(),opts);
+  logger.debug("Brick DC min {}",min);
+  if (min == null) {
+    logger.error("BrickDC dimmer option min is missing, items configuration has to be fixed!");
+    return;
+  }
+  setPercentValue(new PercentValue(percentValue.toBigDecimal()));
+  BigDecimal abs=max.add(min.abs());
+  Short newVelocity=abs.divide(new BigDecimal(100)).multiply(percentValue.toBigDecimal()).subtract(min.abs()).shortValue();
+  setPoint(newVelocity,opts);
 }

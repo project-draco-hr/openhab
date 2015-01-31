@@ -47,10 +47,14 @@
   createEReference(mSubDeviceHolderEClass,MSUB_DEVICE_HOLDER__MSUBDEVICES);
   createEOperation(mSubDeviceHolderEClass,MSUB_DEVICE_HOLDER___INIT_SUB_DEVICES);
   mActorEClass=createEClass(MACTOR);
+  switchSensorEClass=createEClass(SWITCH_SENSOR);
+  createEOperation(switchSensorEClass,SWITCH_SENSOR___FETCH_SWITCH_STATE);
   mSwitchActorEClass=createEClass(MSWITCH_ACTOR);
   createEAttribute(mSwitchActorEClass,MSWITCH_ACTOR__SWITCH_STATE);
   createEOperation(mSwitchActorEClass,MSWITCH_ACTOR___TURN_SWITCH__ONOFFVALUE);
-  createEOperation(mSwitchActorEClass,MSWITCH_ACTOR___FETCH_SWITCH_STATE);
+  programmableSwitchActorEClass=createEClass(PROGRAMMABLE_SWITCH_ACTOR);
+  createEAttribute(programmableSwitchActorEClass,PROGRAMMABLE_SWITCH_ACTOR__SWITCH_STATE);
+  createEOperation(programmableSwitchActorEClass,PROGRAMMABLE_SWITCH_ACTOR___TURN_SWITCH__ONOFFVALUE_DEVICEOPTIONS);
   mOutSwitchActorEClass=createEClass(MOUT_SWITCH_ACTOR);
   mInSwitchActorEClass=createEClass(MIN_SWITCH_ACTOR);
   genericDeviceEClass=createEClass(GENERIC_DEVICE);
@@ -87,6 +91,7 @@
   createEAttribute(dimmableActorEClass,DIMMABLE_ACTOR__MAX_VALUE);
   createEOperation(dimmableActorEClass,DIMMABLE_ACTOR___DIMM__INCREASEDECREASETYPE_DEVICEOPTIONS);
   setPointActorEClass=createEClass(SET_POINT_ACTOR);
+  createEAttribute(setPointActorEClass,SET_POINT_ACTOR__PERCENT_VALUE);
   createEOperation(setPointActorEClass,SET_POINT_ACTOR___SET_VALUE__BIGDECIMAL_DEVICEOPTIONS);
   createEOperation(setPointActorEClass,SET_POINT_ACTOR___SET_VALUE__PERCENTTYPE_DEVICEOPTIONS);
   mBrickServoEClass=createEClass(MBRICK_SERVO);
@@ -112,7 +117,6 @@
   createEAttribute(mBrickDCEClass,MBRICK_DC__ACCELERATION);
   createEAttribute(mBrickDCEClass,MBRICK_DC__PWM_FREQUENCY);
   createEAttribute(mBrickDCEClass,MBRICK_DC__DRIVE_MODE);
-  createEAttribute(mBrickDCEClass,MBRICK_DC__SWITCH_ON_VELOCITY);
   createEOperation(mBrickDCEClass,MBRICK_DC___INIT);
   mDualRelayBrickletEClass=createEClass(MDUAL_RELAY_BRICKLET);
   createEAttribute(mDualRelayBrickletEClass,MDUAL_RELAY_BRICKLET__DEVICE_TYPE);
@@ -305,7 +309,6 @@
   createEAttribute(tfBrickDCConfigurationEClass,TF_BRICK_DC_CONFIGURATION__ACCELERATION);
   createEAttribute(tfBrickDCConfigurationEClass,TF_BRICK_DC_CONFIGURATION__PWM_FREQUENCY);
   createEAttribute(tfBrickDCConfigurationEClass,TF_BRICK_DC_CONFIGURATION__DRIVE_MODE);
-  createEAttribute(tfBrickDCConfigurationEClass,TF_BRICK_DC_CONFIGURATION__SWITCH_ON_VELOCITY);
   tfioActorConfigurationEClass=createEClass(TFIO_ACTOR_CONFIGURATION);
   createEAttribute(tfioActorConfigurationEClass,TFIO_ACTOR_CONFIGURATION__DEFAULT_STATE);
   createEAttribute(tfioActorConfigurationEClass,TFIO_ACTOR_CONFIGURATION__KEEP_ON_RECONNECT);
@@ -361,7 +364,7 @@
   configOptsMoveEEnum=createEEnum(CONFIG_OPTS_MOVE);
   configOptsDimmableEEnum=createEEnum(CONFIG_OPTS_DIMMABLE);
   configOptsSetPointEEnum=createEEnum(CONFIG_OPTS_SET_POINT);
-  directionEEnum=createEEnum(DIRECTION);
+  configOptsSwitchSpeedEEnum=createEEnum(CONFIG_OPTS_SWITCH_SPEED);
   dcDriveModeEEnum=createEEnum(DC_DRIVE_MODE);
   mipConnectionEDataType=createEDataType(MIP_CONNECTION);
   mTinkerDeviceEDataType=createEDataType(MTINKER_DEVICE);
@@ -400,8 +403,10 @@
   tinkerBrickletLEDStripEDataType=createEDataType(TINKER_BRICKLET_LED_STRIP);
   hsbTypeEDataType=createEDataType(HSB_TYPE);
   upDownTypeEDataType=createEDataType(UP_DOWN_TYPE);
+  percentValueEDataType=createEDataType(PERCENT_VALUE);
   deviceOptionsEDataType=createEDataType(DEVICE_OPTIONS);
   percentTypeEDataType=createEDataType(PERCENT_TYPE);
   increaseDecreaseTypeEDataType=createEDataType(INCREASE_DECREASE_TYPE);
+  directionValueEDataType=createEDataType(DIRECTION_VALUE);
   enumEDataType=createEDataType(ENUM);
 }
