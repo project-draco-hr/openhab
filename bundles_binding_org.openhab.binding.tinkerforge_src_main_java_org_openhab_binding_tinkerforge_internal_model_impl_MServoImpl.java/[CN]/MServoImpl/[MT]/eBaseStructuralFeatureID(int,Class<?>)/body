@@ -31,5 +31,23 @@ default :
 return -1;
 }
 }
+if (baseClass == DimmableActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MSERVO__MIN_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MIN_VALUE;
+case ModelPackage.MSERVO__MAX_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MAX_VALUE;
+default :
+return -1;
+}
+}
+if (baseClass == SetPointActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MSERVO__PERCENT_VALUE:
+return ModelPackage.SET_POINT_ACTOR__PERCENT_VALUE;
+default :
+return -1;
+}
+}
 return super.eBaseStructuralFeatureID(derivedFeatureID,baseClass);
 }

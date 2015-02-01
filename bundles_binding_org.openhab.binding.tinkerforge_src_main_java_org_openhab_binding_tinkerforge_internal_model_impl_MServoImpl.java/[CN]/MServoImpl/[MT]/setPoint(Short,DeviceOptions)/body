@@ -1,0 +1,63 @@
+{
+  Integer xacceleration=Tools.getIntOpt(ConfigOptsServo.ACCELERATION.toString(),opts,this.acceleration);
+  if (xacceleration == null) {
+    logger.error("acceleration may not be null");
+    return;
+  }
+  Integer xvelocity=Tools.getIntOpt(ConfigOptsServo.VELOCITY.toString(),opts,this.velocity);
+  if (xvelocity == null) {
+    logger.error("xvelocity may not be null");
+    return;
+  }
+  if (newPosition == null) {
+    logger.error("position may not be null");
+    return;
+  }
+  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts);
+  if (max == null) {
+    logger.error("option max is missing, items configuration has to be fixed!");
+    return;
+  }
+ else {
+    logger.debug("max {}",max);
+  }
+  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts);
+  logger.debug("min {}",min);
+  if (min == null) {
+    logger.error("BrickDC dimmer option min is missing, items configuration has to be fixed!");
+    return;
+  }
+  if (newPosition > max) {
+    if (this.targetPosition < newPosition) {
+      logger.debug("setting value to max speed {}, which is lower then target speed {}",max,newPosition);
+      newPosition=max;
+    }
+ else {
+      logger.debug("max value already reached {}",max);
+      return;
+    }
+  }
+ else   if (newPosition < min) {
+    if (this.targetPosition > newPosition) {
+      logger.debug("setting velocity to min speed {}, which is higher then target speed {}",min,newPosition);
+      newPosition=min;
+    }
+ else {
+      logger.debug("min value already reached {}",min);
+      return;
+    }
+  }
+  try {
+    BrickServo tinkerBrickServo=getMbrick().getTinkerforgeDevice();
+    tinkerBrickServo.setVelocity(servoNum,xvelocity);
+    tinkerBrickServo.setAcceleration(servoNum,xacceleration);
+    tinkerBrickServo.setPosition(servoNum,newPosition);
+    setTargetPosition(newPosition);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

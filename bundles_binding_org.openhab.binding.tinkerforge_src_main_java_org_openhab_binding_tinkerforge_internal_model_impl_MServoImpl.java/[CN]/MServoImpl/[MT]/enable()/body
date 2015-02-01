@@ -18,12 +18,12 @@
     BrickServo tinkerBrickServo=brick.getTinkerforgeDevice();
     try {
       servoNum=Short.parseShort(String.valueOf(subId.charAt(subId.length() - 1)));
-      tinkerBrickServo.setVelocity(servoNum,velocity);
-      tinkerBrickServo.setAcceleration(servoNum,acceleration);
       tinkerBrickServo.setPulseWidth(servoNum,pulseWidthMin,pulseWidthMax);
       tinkerBrickServo.setPeriod(servoNum,period);
       tinkerBrickServo.setOutputVoltage(outputVoltage);
-      tinkerBrickServo.addPositionReachedListener(new PositionReachedListener());
+      setTargetPosition(tinkerBrickServo.getPosition(servoNum));
+      listener=new PositionReachedListener();
+      tinkerBrickServo.addPositionReachedListener(listener);
       tinkerBrickServo.enable(servoNum);
       fetchSwitchState();
     }
