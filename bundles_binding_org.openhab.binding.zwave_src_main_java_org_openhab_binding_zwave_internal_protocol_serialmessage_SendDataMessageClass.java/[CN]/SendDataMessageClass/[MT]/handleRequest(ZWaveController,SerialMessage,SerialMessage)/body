@@ -30,6 +30,12 @@ case COMPLETE_OK:
 checkTransactionComplete(lastSentMessage,incomingMessage);
 return true;
 case COMPLETE_NO_ACK:
+byte[] payload=lastSentMessage.getMessagePayload();
+if (payload.length >= 4 && (payload[2] & 0xFF) == ZWaveCommandClass.CommandClass.WAKE_UP.getKey() && (payload[3] & 0xFF) == ZWaveWakeUpCommandClass.WAKE_UP_NO_MORE_INFORMATION) {
+checkTransactionComplete(lastSentMessage,incomingMessage);
+logger.debug("NODE {}: WAKE_UP_NO_MORE_INFORMATION. Treated as ACK.",node.getNodeId());
+return true;
+}
 case COMPLETE_FAIL:
 case COMPLETE_NOT_IDLE:
 case COMPLETE_NOROUTE:
