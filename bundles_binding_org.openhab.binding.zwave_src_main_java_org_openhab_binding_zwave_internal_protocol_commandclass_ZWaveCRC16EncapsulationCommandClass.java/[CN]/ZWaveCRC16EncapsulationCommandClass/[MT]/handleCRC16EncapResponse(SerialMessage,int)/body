@@ -1,0 +1,38 @@
+{
+  logger.trace("Process CRC16 Encapsulation");
+  byte[] payload=serialMessage.getMessagePayload();
+  byte[] messageCrc=Arrays.copyOfRange(payload,payload.length - 2,payload.length);
+  byte[] tocheck=Arrays.copyOfRange(payload,offset - 2,payload.length - 2);
+  short calculatedCrc=crc_ccit(tocheck);
+  ByteBuffer byteBuffer=ByteBuffer.allocate(2);
+  byteBuffer.putShort(calculatedCrc);
+  if (!Arrays.equals(messageCrc,byteBuffer.array())) {
+    logger.error("NODE {}: CRC check failed message contains {} but should be {}",this.getNode().getNodeId(),SerialMessage.bb2hex(messageCrc),SerialMessage.bb2hex(byteBuffer.array()));
+    return;
+  }
+  CommandClass commandClass;
+  ZWaveCommandClass zwaveCommandClass;
+  int commandClassCode=serialMessage.getMessagePayloadByte(offset);
+  commandClass=CommandClass.getCommandClass(commandClassCode);
+  if (commandClass == null) {
+    logger.error(String.format("NODE %d: Unsupported command class 0x%02x",this.getNode().getNodeId(),commandClassCode));
+  }
+ else {
+    zwaveCommandClass=this.getNode().getCommandClass(commandClass);
+    if (zwaveCommandClass == null) {
+      logger.debug(String.format("NODE %d: Command class %s (0x%02x) not found, trying to add it.",getNode().getNodeId(),commandClass.getLabel(),commandClass.getKey()));
+      zwaveCommandClass=ZWaveCommandClass.getInstance(commandClass.getKey(),getNode(),getController());
+      if (zwaveCommandClass != null) {
+        logger.debug(String.format("NODE %d: Adding command class %s (0x%02x)",getNode().getNodeId(),commandClass.getLabel(),commandClass.getKey()));
+        getNode().addCommandClass(zwaveCommandClass);
+      }
+    }
+    if (zwaveCommandClass == null) {
+      logger.error(String.format("NODE %d: CommandClass %s (0x%02x) not implemented.",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
+    }
+ else {
+      logger.debug(String.format("NODE %d: Calling handleApplicationCommandRequest.",this.getNode().getNodeId()));
+      zwaveCommandClass.handleApplicationCommandRequest(serialMessage,offset + 1,0);
+    }
+  }
+}
