@@ -1,8 +1,11 @@
 {
 switch (featureID) {
-case ModelPackage.MSERVO__SWITCH_STATE:
-    setSwitchState((OnOffValue)newValue);
+case ModelPackage.MSERVO__SENSOR_VALUE:
+    setSensorValue((DecimalValue)newValue);
   return;
+case ModelPackage.MSERVO__SWITCH_STATE:
+setSwitchState((OnOffValue)newValue);
+return;
 case ModelPackage.MSERVO__LOGGER:
 setLogger((Logger)newValue);
 return;
@@ -20,6 +23,9 @@ setSubId((String)newValue);
 return;
 case ModelPackage.MSERVO__MBRICK:
 setMbrick((MBrickServo)newValue);
+return;
+case ModelPackage.MSERVO__DIRECTION:
+setDirection((DirectionValue)newValue);
 return;
 case ModelPackage.MSERVO__TF_CONFIG:
 setTfConfig((TFServoConfiguration)newValue);
@@ -50,9 +56,6 @@ setPeriod((Integer)newValue);
 return;
 case ModelPackage.MSERVO__OUTPUT_VOLTAGE:
 setOutputVoltage((Integer)newValue);
-return;
-case ModelPackage.MSERVO__CURRENT_POSITION:
-setCurrentPosition((Short)newValue);
 return;
 case ModelPackage.MSERVO__TARGET_POSITION:
 setTargetPosition((Short)newValue);

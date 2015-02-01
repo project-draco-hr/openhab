@@ -1,0 +1,16 @@
+{
+  try {
+    short position=getMbrick().getTinkerforgeDevice().getPosition(servoNum);
+    DecimalValue newValue=Tools.calculate(position);
+    setSensorValue(newValue);
+    OnOffValue newSwitchState=newValue.onOffValue(0);
+    logger.trace("new switchstate {} new value {}",newSwitchState,newValue);
+    setSwitchState(newSwitchState);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

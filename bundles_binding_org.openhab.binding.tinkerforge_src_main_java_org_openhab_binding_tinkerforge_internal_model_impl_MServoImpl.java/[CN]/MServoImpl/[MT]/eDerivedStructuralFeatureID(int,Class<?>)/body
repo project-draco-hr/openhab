@@ -1,12 +1,26 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == SwitchSensor.class) {
+switch (baseFeatureID) {
+default :
+      return -1;
+  }
+}
+if (baseClass == ProgrammableSwitchActor.class) {
+switch (baseFeatureID) {
+case ModelPackage.PROGRAMMABLE_SWITCH_ACTOR__SWITCH_STATE:
+    return ModelPackage.MSERVO__SWITCH_STATE;
+default :
+  return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (baseFeatureID) {
 case ModelPackage.MBASE_DEVICE__LOGGER:
-      return ModelPackage.MSERVO__LOGGER;
+return ModelPackage.MSERVO__LOGGER;
 case ModelPackage.MBASE_DEVICE__UID:
-    return ModelPackage.MSERVO__UID;
+return ModelPackage.MSERVO__UID;
 case ModelPackage.MBASE_DEVICE__POLL:
-  return ModelPackage.MSERVO__POLL;
+return ModelPackage.MSERVO__POLL;
 case ModelPackage.MBASE_DEVICE__ENABLED_A:
 return ModelPackage.MSERVO__ENABLED_A;
 default :
@@ -19,6 +33,14 @@ case ModelPackage.MSUB_DEVICE__SUB_ID:
 return ModelPackage.MSERVO__SUB_ID;
 case ModelPackage.MSUB_DEVICE__MBRICK:
 return ModelPackage.MSERVO__MBRICK;
+default :
+return -1;
+}
+}
+if (baseClass == MoveActor.class) {
+switch (baseFeatureID) {
+case ModelPackage.MOVE_ACTOR__DIRECTION:
+return ModelPackage.MSERVO__DIRECTION;
 default :
 return -1;
 }

@@ -13,8 +13,8 @@
     logger.error("dimmer option min is missing, items configuration has to be fixed!");
     return;
   }
-  setPercentValue(new PercentValue(percentValue.toBigDecimal()));
+  setPercentValue(new PercentValue(newPercentValue.toBigDecimal()));
   BigDecimal abs=max.add(min.abs());
-  Short newVelocity=abs.divide(new BigDecimal(100)).multiply(percentValue.toBigDecimal()).subtract(min.abs()).shortValue();
+  Short newVelocity=abs.divide(new BigDecimal(100)).multiply(newPercentValue.toBigDecimal()).subtract(min.abs()).shortValue();
   setPoint(newVelocity,opts);
 }

@@ -1,0 +1,32 @@
+{
+  if (opts == null) {
+    logger.error("options are missing");
+    return;
+  }
+  if (direction == null) {
+    logger.error("direction may not be null, items configuration has to be fixed!");
+    return;
+  }
+  Short xposition=null;
+  if (direction.equals(UpDownType.DOWN)) {
+    xposition=Tools.getShortOpt(ConfigOptsServo.RIGHTPOSITION.toString(),opts);
+    if (xposition == null) {
+      logger.error("\"{}\" option missing or empty, items configuration has to be fixed!",ConfigOptsServo.RIGHTPOSITION.toString());
+      return;
+    }
+ else {
+      setDirection(DirectionValue.RIGHT);
+    }
+  }
+ else   if (direction.equals(UpDownType.UP)) {
+    xposition=Tools.getShortOpt(ConfigOptsServo.LEFTPOSITION.toString(),opts);
+    if (xposition == null) {
+      logger.error("\"{}\" option missing or empty, items configuration has to be fixed!",ConfigOptsServo.LEFTPOSITION.toString());
+      return;
+    }
+ else {
+      setDirection(DirectionValue.LEFT);
+    }
+  }
+  setPoint(xposition,opts);
+}
