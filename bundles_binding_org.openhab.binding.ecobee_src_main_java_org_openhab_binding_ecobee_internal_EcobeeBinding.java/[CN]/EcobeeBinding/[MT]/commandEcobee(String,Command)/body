@@ -1,51 +1,5 @@
 {
-  EcobeeBindingProvider provider=null;
-  String selectionMatch=null;
-  for (  EcobeeBindingProvider p : this.providers) {
-    selectionMatch=p.getThermostatIdentifier(itemName);
-    if (selectionMatch != null) {
-      provider=p;
-      break;
-    }
-  }
-  if (provider == null) {
-    logger.warn("no matching binding provider found [itemName={}, command={}]",itemName,command);
-    return;
-  }
- else {
-    final Selection selection=new Selection(selectionMatch);
-    List<AbstractFunction> functions=new ArrayList<AbstractFunction>();
-    String property=provider.getProperty(itemName);
-    try {
-      final Thermostat thermostat=null;
-      EcobeeCommand cmd=ECOBEE_COMMANDS.get(property);
-      OAuthCredentials oauthCredentials=getOAuthCredentials(provider.getUserid(itemName));
-      if (oauthCredentials == null) {
-        logger.warn("Unable to locate credentials for item {}; aborting command.",itemName);
-        return;
-      }
-      if (oauthCredentials.noAccessToken()) {
-        if (!oauthCredentials.refreshTokens()) {
-          logger.warn("Sending command skipped.");
-          return;
-        }
-      }
-      UpdateThermostatRequest request=new UpdateThermostatRequest(oauthCredentials.accessToken,selection,functions,null);
-      ApiResponse response=request.execute();
-      if (response.isError()) {
-        final Status status=response.getStatus();
-        if (status.isAccessTokenExpired()) {
-          if (oauthCredentials.refreshTokens()) {
-            commandEcobee(itemName,command);
-          }
-        }
- else {
-          logger.error("Error sending thermostat function(s): {}",response);
-        }
-      }
-    }
- catch (    Exception e) {
-      logger.error("Unable to send thermostat function(s)",e);
-    }
+  if (command instanceof State) {
+    updateEcobee(itemName,(State)command);
   }
 }

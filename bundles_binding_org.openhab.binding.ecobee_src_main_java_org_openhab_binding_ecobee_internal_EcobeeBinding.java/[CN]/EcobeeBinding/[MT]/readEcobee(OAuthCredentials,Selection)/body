@@ -20,7 +20,10 @@
   Set<String> thermostatIdentifiers=new HashSet<String>();
   for (  Revision newRevision : newRevisionMap.values()) {
     Revision lastRevision=this.lastRevisionMap.get(newRevision.getThermostatIdentifier());
-    if (newRevision.hasRuntimeChanged(lastRevision)) {
+    boolean changed=false;
+    changed=changed || (newRevision.hasRuntimeChanged(lastRevision) && (selection.getIncludeRuntime() || selection.getIncludeExtendedRuntime()));
+    changed=changed || (newRevision.hasThermostatChanged(lastRevision) && (selection.getIncludeSettings() || selection.getIncludeProgram()));
+    if (changed) {
       thermostatIdentifiers.add(newRevision.getThermostatIdentifier());
     }
   }
