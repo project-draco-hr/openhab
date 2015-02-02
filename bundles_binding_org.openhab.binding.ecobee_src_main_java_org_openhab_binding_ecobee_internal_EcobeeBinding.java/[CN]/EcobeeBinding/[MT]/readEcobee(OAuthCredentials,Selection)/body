@@ -48,7 +48,7 @@
         for (        final String itemName : provider.getItemNames()) {
           if (provider.isInBound(itemName)) {
             final State state=getState(provider,thermostats,itemName);
-            ignoreEventList.add(itemName + state.toString());
+            ignoreEventSet.add(itemName + state.toString());
             logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,state.toString());
             if (state != null) {
               this.eventPublisher.postUpdate(itemName,state);
