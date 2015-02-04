@@ -1,9 +1,14 @@
 {
   Dictionary props=config.getProperties();
   if (props == null) {
-    props=new Hashtable();
+    logger.warn("No tokens loaded from previous invocation.");
+    this.authToken=null;
+    this.refreshToken=null;
+    this.accessToken=null;
   }
-  this.authToken=(String)props.get(AUTH_TOKEN);
-  this.refreshToken=(String)props.get(REFRESH_TOKEN);
-  this.accessToken=(String)props.get(ACCESS_TOKEN);
+ else {
+    this.authToken=(String)props.get(AUTH_TOKEN);
+    this.refreshToken=(String)props.get(REFRESH_TOKEN);
+    this.accessToken=(String)props.get(ACCESS_TOKEN);
+  }
 }
