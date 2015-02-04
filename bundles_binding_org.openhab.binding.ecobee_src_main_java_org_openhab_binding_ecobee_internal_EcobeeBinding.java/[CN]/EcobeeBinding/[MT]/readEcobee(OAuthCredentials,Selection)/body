@@ -23,8 +23,8 @@
   for (  Revision newRevision : newRevisionMap.values()) {
     Revision lastRevision=this.lastRevisionMap.get(newRevision.getThermostatIdentifier());
     boolean changed=false;
-    changed=changed || (newRevision.hasRuntimeChanged(lastRevision) && (selection.getIncludeRuntime() || selection.getIncludeExtendedRuntime()));
-    changed=changed || (newRevision.hasThermostatChanged(lastRevision) && (selection.getIncludeSettings() || selection.getIncludeProgram()));
+    changed=changed || (newRevision.hasRuntimeChanged(lastRevision) && (selection.includeRuntime() || selection.includeExtendedRuntime()));
+    changed=changed || (newRevision.hasThermostatChanged(lastRevision) && (selection.includeSettings() || selection.includeProgram()));
     if (changed) {
       thermostatIdentifiers.add(newRevision.getThermostatIdentifier());
     }
