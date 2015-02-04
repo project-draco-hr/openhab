@@ -11,8 +11,10 @@
  else {
       logger.error(status.getMessage());
     }
+    logger.error("Aborting this poll due to previous errors.");
     return;
   }
+  logger.debug("Retrieved summaries for {} thermostat(s).",response.getRevisionList().size());
   Map<String,Revision> newRevisionMap=new HashMap<String,Revision>();
   for (  Revision r : response.getRevisionList()) {
     newRevisionMap.put(r.getThermostatIdentifier(),r);
