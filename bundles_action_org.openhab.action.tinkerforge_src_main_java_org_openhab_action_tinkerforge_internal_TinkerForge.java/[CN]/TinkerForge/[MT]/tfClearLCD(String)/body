@@ -1,0 +1,20 @@
+{
+  if (!TinkerForgeActionService.isProperlyConfigured) {
+    logger.debug("TinkerForge action is not yet configured - execution aborted!");
+    return false;
+  }
+  if (context.getEcosystem() != null) {
+    MBaseDevice mDevice=context.getEcosystem().getDevice(uid,null);
+    if (mDevice instanceof MBrickletLCD20x4) {
+      return ((MBrickletLCD20x4)mDevice).clear();
+    }
+ else {
+      logger.error("no lcd device found with uid {}",uid);
+      return false;
+    }
+  }
+ else {
+    logger.warn("ecosystem was null");
+    return false;
+  }
+}

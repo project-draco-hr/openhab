@@ -13,7 +13,7 @@
     logger.error("position may not be null");
     return;
   }
-  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts);
+  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts,getMaxPosition());
   if (max == null) {
     logger.error("option max is missing, items configuration has to be fixed!");
     return;
@@ -21,10 +21,10 @@
  else {
     logger.debug("max {}",max);
   }
-  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts);
+  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts,getMinPosition());
   logger.debug("min {}",min);
   if (min == null) {
-    logger.error("BrickDC dimmer option min is missing, items configuration has to be fixed!");
+    logger.error("dimmer option min is missing, items configuration has to be fixed!");
     return;
   }
   if (newPosition > max) {
@@ -47,17 +47,5 @@
       return;
     }
   }
-  try {
-    BrickServo tinkerBrickServo=getMbrick().getTinkerforgeDevice();
-    tinkerBrickServo.setVelocity(servoNum,xvelocity);
-    tinkerBrickServo.setAcceleration(servoNum,xacceleration);
-    tinkerBrickServo.setPosition(servoNum,newPosition);
-    setTargetPosition(newPosition);
-  }
- catch (  TimeoutException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
-  }
-catch (  NotConnectedException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
-  }
+  setPoint(newPosition,xvelocity,xacceleration);
 }
