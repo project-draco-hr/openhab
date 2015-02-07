@@ -314,6 +314,24 @@ addToQueue(associationCls.setAssociationMessage(group.Index,controller.getOwnNod
 }
 }
 break;
+case GET_CONFIGURATION:
+database=new ZWaveProductDatabase();
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+logger.warn("NODE {}: Node advancer: GET_CONFIGURATION - Unknown device: {}:{}:{}",node.getNodeId(),Integer.toHexString(node.getManufacturer()),Integer.toHexString(node.getDeviceType()),Integer.toHexString(node.getDeviceId()));
+break;
+}
+ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+if (configurationCommandClass == null) {
+logger.error("NODE {}: Node advancer: GET_CONFIGURATION - CONFIGURATION class not supported",node.getNodeId());
+break;
+}
+List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+for (ZWaveDbConfigurationParameter parameter : configList) {
+if (stageAdvanced == false || configurationCommandClass.getParameter(parameter.Index) == null) {
+addToQueue(configurationCommandClass.getConfigMessage(parameter.Index));
+}
+}
+break;
 case STATIC_END:
 case DONE:
 nodeSerializer.SerializeNode(node);

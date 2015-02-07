@@ -82,7 +82,9 @@
           return;
         }
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
-        for (        ZWaveDbConfigurationParameter parameter : configList)         this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+        for (        ZWaveDbConfigurationParameter parameter : configList) {
+          this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+        }
       }
     }
     if (splitDomain[2].equals("wakeup")) {
