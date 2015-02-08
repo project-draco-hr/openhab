@@ -3,6 +3,11 @@
     return;
   }
   logger.debug("NODE {}: Node advancer - {}: queue length({}), free to send({})",node.getNodeId(),currentStage.toString(),msgQueue.size(),freeToSend);
+  if (wakeupCount >= 3) {
+    msgQueue.clear();
+    wakeupCount=0;
+  }
+  startIdleTimer();
   if (eventClass == null) {
     freeToSend=true;
   }
@@ -342,6 +347,7 @@ if (currentStage != ZWaveNodeInitStage.DONE) {
 break;
 }
 logger.debug("NODE {}: Node advancer: Initialisation complete!",node.getNodeId());
+resetIdleTimer();
 controller.removeEventListener(this);
 ZWaveEvent zEvent=new ZWaveInitializationCompletedEvent(node.getNodeId());
 controller.notifyEventListeners(zEvent);
@@ -355,6 +361,7 @@ break;
 if (currentStage != ZWaveNodeInitStage.DONE && sendMessage() == false) {
 setCurrentStage(currentStage.getNextStage());
 stageAdvanced=true;
+retryTimer=BACKOFF_TIMER_START;
 logger.debug("NODE {}: Node advancer - advancing to {}",node.getNodeId(),currentStage.toString());
 }
 }
