@@ -29,16 +29,18 @@ synchronized (serialPort.getOutputStream()) {
       }
 switch (nextByte) {
 case SOF:
-        SOFCount++;
-      int messageLength;
-    try {
-      messageLength=serialPort.getInputStream().read();
-    }
- catch (    IOException e) {
-      logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
-      break;
-    }
-  byte[] buffer=new byte[messageLength + 2];
+        sendAllowed.acquire();
+      SOFCount++;
+    int messageLength;
+  try {
+    messageLength=serialPort.getInputStream().read();
+  }
+ catch (  IOException e) {
+    logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+    sendAllowed.release();
+    break;
+  }
+byte[] buffer=new byte[messageLength + 2];
 buffer[0]=SOF;
 buffer[1]=(byte)messageLength;
 int total=0;

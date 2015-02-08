@@ -7,9 +7,11 @@
  else {
     logger.error("Message is not valid, discarding");
     sendResponse(NAK);
+    if (recvQueue.size() == 0) {
+      sendAllowed.release();
+    }
     return;
   }
-  sendAllowed.acquire();
   recvQueue.add(recvMessage);
   logger.trace("Receive queue ADD: Length={}",recvQueue.size());
 }
