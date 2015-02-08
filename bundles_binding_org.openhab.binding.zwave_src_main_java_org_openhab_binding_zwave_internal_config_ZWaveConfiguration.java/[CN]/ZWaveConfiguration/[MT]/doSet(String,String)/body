@@ -22,8 +22,12 @@
       return;
     }
     if (splitDomain.length == 3) {
-      if (splitDomain[2].equals("Name"))       node.setName(value);
-      if (splitDomain[2].equals("Location"))       node.setLocation(value);
+      if (splitDomain[2].equals("Name")) {
+        node.setName(value);
+      }
+      if (splitDomain[2].equals("Location")) {
+        node.setLocation(value);
+      }
       ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
       nodeSerializer.SerializeNode(node);
     }
@@ -87,7 +91,9 @@
           this.zController.sendData(associationCommandClass.removeAssociationMessage(assocId,assocArg));
         }
         this.zController.sendData(associationCommandClass.getAssociationMessage(assocId));
-        if (networkMonitor != null)         networkMonitor.startNodeHeal(nodeId);
+        if (networkMonitor != null) {
+          networkMonitor.startNodeHeal(nodeId);
+        }
       }
     }
   }
