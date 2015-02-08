@@ -13,11 +13,13 @@
         return state;
       }
  else       if (devType.equals(DeviceType.VALUE)) {
-        bindingConfig.setScale(dev.getScale());
+        if (dev.getScale() != null) {
+          bindingConfig.setScale(dev.getScale());
+        }
         String property=bindingConfig.getProperty();
         if (dev.getProperties().containsKey(property)) {
           String value=dev.getProperties().get(property);
-          return getStateFromProperty(value,bindingConfig);
+          return getState(value,bindingConfig);
         }
       }
     }
