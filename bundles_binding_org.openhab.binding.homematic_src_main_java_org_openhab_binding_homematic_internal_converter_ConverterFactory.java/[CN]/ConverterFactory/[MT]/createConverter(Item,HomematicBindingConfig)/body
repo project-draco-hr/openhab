@@ -3,7 +3,7 @@
     logger.debug("Using custom converter for {}",bindingConfig);
     return ((ValueBindingConfig)bindingConfig).getConverter();
   }
-  List<Class<? extends State>> acceptedTypes=item.getAcceptedDataTypes();
+  List<Class<? extends State>> acceptedTypes=new ArrayList<Class<? extends State>>(item.getAcceptedDataTypes());
   Collections.sort(acceptedTypes,typeComparator);
   for (  Class<? extends State> clazz : acceptedTypes) {
     String converterName=clazz.getSimpleName() + "Converter";

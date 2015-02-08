@@ -10,7 +10,7 @@
   }
  catch (  NoSuchPortException e) {
     if (Modbus.debug)     System.out.println(e.getMessage());
-    throw new Exception(e.getMessage());
+    throw new Exception("Could not get port identifier, maybe insufficient permissions. " + e.getMessage());
   }
   try {
     m_SerialPort=(SerialPort)m_PortIdentifyer.open("Modbus Serial Master",30000);
