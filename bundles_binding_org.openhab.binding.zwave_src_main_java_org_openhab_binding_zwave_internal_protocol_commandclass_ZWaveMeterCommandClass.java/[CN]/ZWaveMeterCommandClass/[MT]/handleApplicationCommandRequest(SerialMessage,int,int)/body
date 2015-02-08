@@ -10,9 +10,9 @@ case METER_RESET:
     logger.warn("Command {} not implemented.",command);
   return;
 case METER_REPORT:
-logger.debug("NODE {}: Meter report received",this.getNode().getNodeId());
+logger.trace("NODE {}: Meter report received",this.getNode().getNodeId());
 if (serialMessage.getMessagePayload().length < offset + 3) {
-logger.error("NODE {}: Buffer too short: length={}, required={}",this.getNode().getNodeId(),serialMessage.getMessagePayload().length,offset + 3);
+logger.error("NODE {}: Meter Report: Buffer too short: length={}, required={}",this.getNode().getNodeId(),serialMessage.getMessagePayload().length,offset + 3);
 return;
 }
 meterTypeIndex=serialMessage.getMessagePayloadByte(offset + 1) & 0x1F;
@@ -21,7 +21,6 @@ logger.warn("NODE {}: Invalid meter type {}",this.getNode().getNodeId(),meterTyp
 return;
 }
 meterType=MeterType.getMeterType(meterTypeIndex);
-logger.debug("NODE {}: Meter Type = {} ({})",this.getNode().getNodeId(),meterType.getLabel(),meterTypeIndex);
 int scaleIndex=(serialMessage.getMessagePayloadByte(offset + 2) & 0x18) >> 0x03;
 if (this.getVersion() > 2) {
 scaleIndex|=((serialMessage.getMessagePayloadByte(offset + 1) & 0x80) >> 0x05);
@@ -31,17 +30,17 @@ if (scale == null) {
 logger.warn("NODE {}: Invalid meter scale {}",this.getNode().getNodeId(),scaleIndex);
 return;
 }
-logger.debug("NODE {}: Meter Scale = {} ({})",this.getNode().getNodeId(),scale.getUnit(),scale.getScale());
 if (!this.meterScales.contains(scale)) {
 this.meterScales.add(scale);
 }
 try {
 BigDecimal value=extractValue(serialMessage.getMessagePayload(),offset + 2);
-logger.debug("NODE {}: Meter Value = {}",this.getNode().getNodeId(),value);
+logger.debug("NODE {}: Meter: Type={}({}), Scale={}({}), Value={}",this.getNode().getNodeId(),meterType.getLabel(),meterTypeIndex,scale.getUnit(),scale.getScale(),value);
 ZWaveMeterValueEvent zEvent=new ZWaveMeterValueEvent(this.getNode().getNodeId(),endpoint,meterType,scale,value);
 this.getController().notifyEventListeners(zEvent);
 }
  catch (NumberFormatException e) {
+logger.error("NODE {}: Meter Value Error {}",this.getNode().getNodeId(),e);
 return;
 }
 dynamicDone=true;
