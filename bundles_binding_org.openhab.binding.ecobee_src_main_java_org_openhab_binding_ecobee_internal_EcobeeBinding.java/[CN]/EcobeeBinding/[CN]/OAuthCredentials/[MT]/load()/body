@@ -1,14 +1,6 @@
 {
-  Dictionary props=config.getProperties();
-  if (props == null) {
-    logger.warn("No tokens loaded from previous invocation.");
-    this.authToken=null;
-    this.refreshToken=null;
-    this.accessToken=null;
-  }
- else {
-    this.authToken=(String)props.get(AUTH_TOKEN);
-    this.refreshToken=(String)props.get(REFRESH_TOKEN);
-    this.accessToken=(String)props.get(ACCESS_TOKEN);
-  }
+  Preferences prefs=getPrefsNode();
+  this.authToken=prefs.get(AUTH_TOKEN,null);
+  this.refreshToken=prefs.get(REFRESH_TOKEN,null);
+  this.accessToken=prefs.get(ACCESS_TOKEN,null);
 }
