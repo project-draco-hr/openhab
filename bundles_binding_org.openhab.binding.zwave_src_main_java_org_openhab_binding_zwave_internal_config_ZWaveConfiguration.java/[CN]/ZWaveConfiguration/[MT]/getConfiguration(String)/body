@@ -115,7 +115,7 @@ record=new OpenHABConfigurationRecord("nodes/" + "node" + node.getNodeId() + "/"
 }
 if (node.getManufacturer() == Integer.MAX_VALUE) {
 }
- else if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+ else if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
 if (database.FindManufacturer(node.getManufacturer()) == false) {
 record.value="Manufacturer:" + node.getManufacturer() + " [ID:"+ Integer.toHexString(node.getDeviceId())+ ",Type:"+ Integer.toHexString(node.getDeviceType())+ "]";
 }
@@ -192,7 +192,7 @@ record=new OpenHABConfigurationRecord(domain,"Location","Location",false);
 record.value=node.getLocation();
 records.add(record);
 if (node.getManufacturer() != Integer.MAX_VALUE) {
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == true) {
 if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey()) == true) {
 record=new OpenHABConfigurationRecord(domain + "parameters/","Configuration Parameters");
 record.addAction("Refresh","Refresh");
@@ -232,7 +232,7 @@ record=new OpenHABConfigurationRecord(domain,"Manufacturer","Manufacturer",true)
 record.value=database.getManufacturerName();
 records.add(record);
 }
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == true) {
 record=new OpenHABConfigurationRecord(domain,"Product","Product",true);
 record.value=database.getProductName();
 records.add(record);
@@ -410,7 +410,7 @@ records.add(record);
 }
 }
  else if (arg.equals("associations/")) {
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) != false) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) != false) {
 List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
 if (groupList != null) {
 for (ZWaveDbAssociationGroup group : groupList) {
@@ -430,7 +430,7 @@ records.add(record);
 }
 }
  else if (arg.startsWith("associations/association")) {
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) != false) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) != false) {
 String groupString=arg.substring(24);
 int nextDelimiter=groupString.indexOf('/');
 if (nextDelimiter != -1) {
