@@ -160,7 +160,7 @@ break;
 case UPDATE_DATABASE:
 logger.debug("NODE {}: Node advancer: UPDATE_DATABASE",node.getNodeId());
 database=new ZWaveProductDatabase();
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == true) {
 List<ZWaveDbCommandClass> classList=database.getProductCommandClasses();
 if (classList != null) {
 for (ZWaveDbCommandClass dbClass : classList) {
@@ -219,7 +219,7 @@ if (stageAdvanced == false) {
 break;
 }
 ZWaveProductDatabase associations=new ZWaveProductDatabase();
-if (associations.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == true) {
+if (associations.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == true) {
 List<ZWaveDbAssociationGroup> groupList=associations.getProductAssociationGroups();
 if (groupList == null) {
 logger.debug("NODE {}: Node advancer: ASSOCIATIONS - none in database",node.getNodeId());
@@ -263,7 +263,7 @@ if (controller.isMasterController() == false) {
 break;
 }
 database=new ZWaveProductDatabase();
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
 logger.warn("NODE {}: Node advancer: SET_ASSOCIATION - Unknown device: {}:{}:{}",node.getNodeId(),Integer.toHexString(node.getManufacturer()),Integer.toHexString(node.getDeviceType()),Integer.toHexString(node.getDeviceId()));
 break;
 }
@@ -291,7 +291,7 @@ addToQueue(associationCls.setAssociationMessage(group.Index,controller.getOwnNod
 break;
 case GET_CONFIGURATION:
 database=new ZWaveProductDatabase();
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
+if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
 logger.warn("NODE {}: Node advancer: GET_CONFIGURATION - Unknown device: {}:{}:{}",node.getNodeId(),Integer.toHexString(node.getManufacturer()),Integer.toHexString(node.getDeviceType()),Integer.toHexString(node.getDeviceId()));
 break;
 }

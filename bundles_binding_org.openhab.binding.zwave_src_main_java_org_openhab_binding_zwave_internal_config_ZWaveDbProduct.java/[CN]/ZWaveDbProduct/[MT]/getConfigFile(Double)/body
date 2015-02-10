@@ -1,0 +1,20 @@
+{
+  if (ConfigFile == null) {
+    return null;
+  }
+  String filename=null;
+  for (  ZWaveDbConfigFile cfg : ConfigFile) {
+    if (cfg.VersionMin == null && cfg.VersionMax == null) {
+      filename=cfg.Filename;
+      continue;
+    }
+    if (cfg.VersionMin != null && version < cfg.VersionMin) {
+      continue;
+    }
+    if (cfg.VersionMax != null && version > cfg.VersionMax) {
+      continue;
+    }
+    return cfg.Filename;
+  }
+  return filename;
+}
