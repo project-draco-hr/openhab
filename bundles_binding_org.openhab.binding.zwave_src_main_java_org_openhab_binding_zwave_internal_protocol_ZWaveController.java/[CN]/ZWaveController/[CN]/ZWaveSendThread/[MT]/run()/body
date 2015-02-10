@@ -42,7 +42,7 @@ synchronized (serialPort.getOutputStream()) {
       try {
         if (!transactionCompleted.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
           timeOutCount.incrementAndGet();
-          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData && lastSentMessage.isAckPending()) {
             buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
             logger.debug("NODE {}: Sending ABORT Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
             try {
