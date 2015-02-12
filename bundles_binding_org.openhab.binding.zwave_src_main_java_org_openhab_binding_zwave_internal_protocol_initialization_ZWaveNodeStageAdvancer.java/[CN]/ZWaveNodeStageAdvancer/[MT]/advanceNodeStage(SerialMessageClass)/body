@@ -302,6 +302,9 @@ break;
 }
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
 for (ZWaveDbConfigurationParameter parameter : configList) {
+if (parameter.WriteOnly == true) {
+continue;
+}
 if (configurationCommandClass.getParameter(parameter.Index) == null) {
 addToQueue(configurationCommandClass.getConfigMessage(parameter.Index));
 }
