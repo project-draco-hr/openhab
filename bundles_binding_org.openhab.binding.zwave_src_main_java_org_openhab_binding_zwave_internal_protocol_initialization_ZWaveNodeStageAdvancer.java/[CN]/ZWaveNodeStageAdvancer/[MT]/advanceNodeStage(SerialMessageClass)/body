@@ -25,7 +25,7 @@
       if (retryCount > MAX_RETRIES) {
         retryCount=0;
         logger.error("NODE {}: Node advancer: Retries exceeded at {}",node.getNodeId(),currentStage.toString());
-        if (currentStage.isStaticComplete()) {
+        if (currentStage.isStageMandatory() == false) {
           logger.debug("NODE {}: Retry timout: Advancing",node.getNodeId());
           setCurrentStage(currentStage.getNextStage());
         }
@@ -302,7 +302,7 @@ break;
 }
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
 for (ZWaveDbConfigurationParameter parameter : configList) {
-if (parameter.WriteOnly == true) {
+if (parameter.WriteOnly != null && parameter.WriteOnly == true) {
 continue;
 }
 if (configurationCommandClass.getParameter(parameter.Index) == null) {
