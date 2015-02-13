@@ -1,0 +1,8 @@
+{
+synchronized (m_requestQueue) {
+    m_requestQueue.add(new QEntry(f,m));
+  }
+  long now=System.currentTimeMillis();
+  logger.trace("enqueing direct message with delay {}",delay);
+  RequestQueueManager.s_instance().addQueue(this,now + delay);
+}

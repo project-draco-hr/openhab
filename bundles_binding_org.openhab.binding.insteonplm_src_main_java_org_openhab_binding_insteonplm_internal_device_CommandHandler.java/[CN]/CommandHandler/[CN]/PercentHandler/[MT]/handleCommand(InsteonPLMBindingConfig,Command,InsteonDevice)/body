@@ -7,18 +7,18 @@
       level=getMaxLightLevel(conf,level);
       Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x11,(byte)level);
       dev.enqueueMessage(m,m_feature);
-      logger.info("PercentHandler: sent msg to set {} to {}",dev.getAddress(),level);
+      logger.info("{}: sent msg to set {} to {}",nm(),dev.getAddress(),level);
     }
  else {
       Msg m=dev.makeStandardMessage((byte)0x0f,(byte)0x13,(byte)0x00);
       dev.enqueueMessage(m,m_feature);
-      logger.info("PercentHandler: sent msg to set {} to zero by switching off",dev.getAddress());
+      logger.info("{}: sent msg to set {} to zero by switching off",nm(),dev.getAddress());
     }
   }
  catch (  IOException e) {
-    logger.error("command send i/o error: ",e);
+    logger.error("{}: command send i/o error: ",nm(),e);
   }
 catch (  FieldException e) {
-    logger.error("command send message creation error ",e);
+    logger.error("{}: command send message creation error ",nm(),e);
   }
 }

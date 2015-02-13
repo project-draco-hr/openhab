@@ -1,0 +1,33 @@
+{
+  String buffer=bufferStatus();
+  logger.trace("poll: {}",buffer);
+  String data=buffer.substring(0,buffer.length() - 2);
+  int nIdx=-1;
+  try {
+    nIdx=Integer.parseInt(buffer.substring(buffer.length() - 2,buffer.length()),16);
+  }
+ catch (  NumberFormatException e) {
+    m_bufferIdx=-1;
+    logger.error("invalid buffer size received in line: {}",buffer);
+    return;
+  }
+  if (m_bufferIdx == -1) {
+    m_bufferIdx=nIdx;
+    return;
+  }
+  StringBuilder msg=new StringBuilder();
+  if (nIdx < m_bufferIdx) {
+    msg.append(data.substring(m_bufferIdx + 1,data.length()));
+    msg.append(data.substring(0,nIdx));
+    logger.trace("wrap around: copying new data on: {}",msg.toString());
+  }
+ else {
+    msg.append(data.substring(m_bufferIdx,nIdx));
+    logger.trace("no wrap:      appending new data: {}",msg.toString());
+  }
+  if (msg.length() != 0) {
+    ByteBuffer buf=ByteBuffer.wrap(s_hexStringToByteArray(msg.toString()));
+    ((HubInputStream)m_in).handle(buf);
+  }
+  m_bufferIdx=nIdx;
+}
