@@ -20,9 +20,7 @@
     logger.debug("got interrupted waiting for write thread to exit.");
   }
   logger.debug("all threads for port {} stopped.",m_logName);
-  if (m_port != null) {
-    m_port.close();
-  }
+  m_ioStream.close();
   m_running=false;
 synchronized (m_listeners) {
     m_listeners.clear();

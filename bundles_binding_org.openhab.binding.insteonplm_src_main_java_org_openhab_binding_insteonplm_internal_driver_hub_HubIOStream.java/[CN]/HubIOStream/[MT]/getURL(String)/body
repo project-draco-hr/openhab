@@ -1,0 +1,15 @@
+{
+synchronized (m_client) {
+    StringBuilder b=new StringBuilder();
+    b.append("http://");
+    b.append(m_host);
+    if (m_port != -1) {
+      b.append(":").append(m_port);
+    }
+    b.append(resource);
+    HttpGet get=new HttpGet(b.toString());
+    HttpResponse res=m_client.execute(get);
+    String html=EntityUtils.toString(res.getEntity());
+    return html;
+  }
+}
