@@ -387,7 +387,9 @@ return null;
 for (ZWaveDbConfigurationParameter parameter : configList) {
 record=new OpenHABConfigurationRecord(domain,"configuration" + parameter.Index,parameter.Index + ": " + database.getLabel(parameter.Label),false);
 ConfigurationParameter configurationParameter=configurationCommandClass.getParameter(parameter.Index);
-if (configurationParameter != null) record.value=Integer.toString(configurationParameter.getValue());
+if (configurationParameter != null && configurationParameter.getWriteOnly() == false) {
+record.value=Integer.toString(configurationParameter.getValue());
+}
 Integer pendingValue=PendingCfg.Get(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey(),nodeId,parameter.Index);
 if (pendingValue != null) {
 record.value=Integer.toString(pendingValue);

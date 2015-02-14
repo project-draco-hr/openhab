@@ -303,6 +303,7 @@ break;
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
 for (ZWaveDbConfigurationParameter parameter : configList) {
 if (parameter.WriteOnly != null && parameter.WriteOnly == true) {
+configurationCommandClass.setParameterWriteOnly(parameter.Index,true);
 continue;
 }
 if (configurationCommandClass.getParameter(parameter.Index) == null) {
