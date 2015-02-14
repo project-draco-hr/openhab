@@ -5,7 +5,7 @@
   ZWaveNode node=this.getNode(serialMessage.getMessageNode());
   if (node != null) {
     node.incrementSendCount();
-    if (!node.isListening() && !node.isFrequentlyListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
+    if (!node.isListening() && !node.isFrequentlyListening()) {
       ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
       if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
         return;
