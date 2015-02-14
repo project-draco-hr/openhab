@@ -6,16 +6,13 @@
     logger.error("NODE {}: Node is DEAD. Dropping message.",node.getNodeId());
     return false;
   }
-  if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() != SerialMessagePriority.Low) {
+  if (!node.isListening() && !node.isFrequentlyListening()) {
     ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
     if (wakeUpCommandClass != null) {
       wakeUpCommandClass.setAwake(false);
       wakeUpCommandClass.processOutgoingWakeupMessage(originalMessage);
       return false;
     }
-  }
- else   if (!node.isListening() && !node.isFrequentlyListening() && originalMessage.getPriority() == SerialMessagePriority.Low) {
-    return false;
   }
   logger.error("NODE {}: Got an error while sending data. Resending message.",node.getNodeId());
   zController.sendData(originalMessage);
