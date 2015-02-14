@@ -8,7 +8,9 @@
     if (node != null && !node.isListening() && !node.isFrequentlyListening()) {
       arg0Listening=false;
       ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-      if (wakeUpCommandClass != null && wakeUpCommandClass.isAwake())       arg0Awake=true;
+      if (wakeUpCommandClass != null && wakeUpCommandClass.isAwake()) {
+        arg0Awake=true;
+      }
     }
   }
   if ((arg1.getMessageClass() == SerialMessageClass.RequestNodeInfo || arg1.getMessageClass() == SerialMessageClass.SendData)) {
@@ -16,14 +18,26 @@
     if (node != null && !node.isListening() && !node.isFrequentlyListening()) {
       arg1Listening=false;
       ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-      if (wakeUpCommandClass != null && wakeUpCommandClass.isAwake())       arg1Awake=true;
+      if (wakeUpCommandClass != null && wakeUpCommandClass.isAwake()) {
+        arg1Awake=true;
+      }
     }
   }
-  if (arg0Awake && !arg1Awake)   return -1;
- else   if (arg1Awake && !arg0Awake)   return 1;
-  if (arg0Listening && !arg1Listening)   return -1;
- else   if (arg1Listening && !arg0Listening)   return 1;
+  if (arg0Awake && !arg1Awake) {
+    return -1;
+  }
+ else   if (arg1Awake && !arg0Awake) {
+    return 1;
+  }
+  if (arg0Listening && !arg1Listening) {
+    return -1;
+  }
+ else   if (arg1Listening && !arg0Listening) {
+    return 1;
+  }
   int res=arg0.priority.compareTo(arg1.priority);
-  if (res == 0 && arg0 != arg1)   res=(arg0.sequenceNumber < arg1.sequenceNumber ? -1 : 1);
+  if (res == 0 && arg0 != arg1) {
+    res=(arg0.sequenceNumber < arg1.sequenceNumber ? -1 : 1);
+  }
   return res;
 }
