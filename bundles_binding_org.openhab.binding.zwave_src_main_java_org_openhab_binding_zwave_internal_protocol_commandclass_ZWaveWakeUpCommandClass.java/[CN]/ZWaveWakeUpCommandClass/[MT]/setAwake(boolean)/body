@@ -6,6 +6,7 @@
     this.getController().notifyEventListeners(event);
     if (!this.wakeUpQueue.isEmpty()) {
       SerialMessage serialMessage=this.wakeUpQueue.poll();
+      serialMessage.setPriority(SerialMessagePriority.Immediate);
       this.getController().sendData(serialMessage);
     }
  else {

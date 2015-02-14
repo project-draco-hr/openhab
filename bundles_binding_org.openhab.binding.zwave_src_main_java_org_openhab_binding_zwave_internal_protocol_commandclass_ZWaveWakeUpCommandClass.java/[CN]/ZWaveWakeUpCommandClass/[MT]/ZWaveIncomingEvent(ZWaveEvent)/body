@@ -17,6 +17,7 @@
   }
   if (!this.wakeUpQueue.isEmpty()) {
     serialMessage=this.wakeUpQueue.poll();
+    serialMessage.setPriority(SerialMessagePriority.Immediate);
     this.getController().sendData(serialMessage);
   }
  else   if (isAwake() == true) {
