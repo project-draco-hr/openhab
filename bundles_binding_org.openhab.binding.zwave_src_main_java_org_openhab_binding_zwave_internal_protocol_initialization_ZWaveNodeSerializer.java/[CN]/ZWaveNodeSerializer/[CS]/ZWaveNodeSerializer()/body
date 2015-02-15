@@ -1,6 +1,10 @@
 {
   logger.trace("Initializing ZWaveNodeSerializer.");
-  File folder=new File(folderName);
+  File folder=new File("userdata");
+  if (folder.exists()) {
+    folderName="userdata/zwave";
+  }
+  folder=new File(folderName);
   if (!folder.exists()) {
     logger.debug("Creating directory {}",folderName);
     folder.mkdirs();
