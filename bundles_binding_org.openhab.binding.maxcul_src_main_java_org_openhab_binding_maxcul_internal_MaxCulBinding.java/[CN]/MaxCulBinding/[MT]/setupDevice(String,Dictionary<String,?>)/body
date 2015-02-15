@@ -5,7 +5,7 @@
   try {
     accessDevice=device;
     logger.debug("Opening CUL device on " + accessDevice);
-    cul=CULManager.getOpenCULHandler(accessDevice,CULMode.MAX);
+    cul=CULManager.getOpenCULHandler(accessDevice,CULMode.MAX,convertDictionaryToMap(config));
     messageHandler=new MaxCulMsgHandler(this.srcAddr,cul,super.providers);
     messageHandler.registerMaxCulBindingMessageProcessor(this);
   }
