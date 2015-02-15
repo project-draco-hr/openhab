@@ -5,17 +5,17 @@
     if (cmd2 == 0xfe) {
       cmd2=0xff;
     }
-    int level=cmd2 * 100 / 255;
-    if (level == 0 && cmd2 > 0)     level=1;
     if (cmd2 == 0) {
-      logger.info("{}: set device {} to OFF",nm(),dev.getAddress());
-      m_feature.publish(OnOffType.OFF,StateChangeType.CHANGED);
+      logger.info("{}: set device {} to level 0",nm(),dev.getAddress());
+      m_feature.publish(PercentType.ZERO,StateChangeType.CHANGED);
     }
  else     if (cmd2 == 0xff) {
-      logger.info("{}: set device {} to ON",nm(),dev.getAddress());
-      m_feature.publish(OnOffType.ON,StateChangeType.CHANGED);
+      logger.info("{}: set device {} to level 100",nm(),dev.getAddress());
+      m_feature.publish(PercentType.HUNDRED,StateChangeType.CHANGED);
     }
  else {
+      int level=cmd2 * 100 / 255;
+      if (level == 0)       level=1;
       logger.info("{}: set device {} to level {}",nm(),dev.getAddress(),level);
       m_feature.publish(new PercentType(level),StateChangeType.CHANGED);
     }

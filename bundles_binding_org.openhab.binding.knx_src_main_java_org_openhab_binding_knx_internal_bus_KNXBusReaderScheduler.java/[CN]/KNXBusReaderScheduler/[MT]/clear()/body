@@ -14,17 +14,19 @@
     }
  catch (    InterruptedException e) {
       sLogger.debug("Schedule executor restart failed: interrupted while waiting for termination.");
+      Thread.currentThread().interrupt();
     }
     mScheduledExecutorService=Executors.newScheduledThreadPool(KNXConnection.getNumberOfThreads());
     sLogger.debug("Schedule executor restart: started.");
   }
-  for (  int autoRefreshTimeInSecs : mScheduleMap.keySet()) {
+  for (Iterator<Integer> iterator=mScheduleMap.keySet().iterator(); iterator.hasNext(); ) {
+    int autoRefreshTimeInSecs=iterator.next();
     List<Datapoint> dpList=mScheduleMap.get(autoRefreshTimeInSecs);
 synchronized (dpList) {
       sLogger.debug("Clearing list {}",autoRefreshTimeInSecs);
       dpList.clear();
     }
     sLogger.debug("Removing list {} from scheduler",autoRefreshTimeInSecs);
-    mScheduleMap.remove(autoRefreshTimeInSecs);
+    iterator.remove();
   }
 }

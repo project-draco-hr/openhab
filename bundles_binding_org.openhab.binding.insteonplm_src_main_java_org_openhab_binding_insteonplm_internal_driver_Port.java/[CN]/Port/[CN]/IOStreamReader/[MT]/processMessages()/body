@@ -1,0 +1,18 @@
+{
+  try {
+    for (Msg m=m_msgFactory.processData(); m != null; m=m_msgFactory.processData()) {
+      toAllListeners(m);
+      notifyWriter(m);
+    }
+  }
+ catch (  IOException e) {
+    logger.warn("bad data received: {}",e.toString());
+synchronized (getRequestReplyLock()) {
+      if (m_reply == ReplyType.WAITING_FOR_ACK) {
+        logger.warn("got bad data back, must assume message was acked.");
+        m_reply=ReplyType.GOT_ACK;
+        getRequestReplyLock().notify();
+      }
+    }
+  }
+}

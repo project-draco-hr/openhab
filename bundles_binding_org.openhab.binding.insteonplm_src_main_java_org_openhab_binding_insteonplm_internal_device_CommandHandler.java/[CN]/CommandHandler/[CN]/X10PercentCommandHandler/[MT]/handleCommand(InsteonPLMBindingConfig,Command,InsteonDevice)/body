@@ -5,7 +5,7 @@
     Msg munit=dev.makeX10Message(houseUnitCode,(byte)0x00);
     dev.enqueueMessage(munit,m_feature);
     PercentType pc=(PercentType)cmd;
-    logger.debug("changing level of {} to {}",dev.getAddress(),pc.intValue());
+    logger.debug("{}: changing level of {} to {}",nm(),dev.getAddress(),pc.intValue());
     int level=(pc.intValue() * 32) / 100;
     byte cmdCode=(level >= 16) ? X10.Command.PRESET_DIM_2.code() : X10.Command.PRESET_DIM_1.code();
     level=level % 16;
@@ -16,9 +16,9 @@
     dev.enqueueMessage(mcmd,m_feature);
   }
  catch (  IOException e) {
-    logger.error("command send i/o error: ",e);
+    logger.error("{}: command send i/o error: ",nm(),e);
   }
 catch (  FieldException e) {
-    logger.error("command send message creation error ",e);
+    logger.error("{}: command send message creation error ",nm(),e);
   }
 }

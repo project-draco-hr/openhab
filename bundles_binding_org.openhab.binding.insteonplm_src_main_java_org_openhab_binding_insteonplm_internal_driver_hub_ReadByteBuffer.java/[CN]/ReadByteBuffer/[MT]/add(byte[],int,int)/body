@@ -1,0 +1,15 @@
+{
+  if ((off < 0) || (off > b.length) || (len < 0)|| ((off + len) > b.length)|| ((off + len) < 0)) {
+    throw new IndexOutOfBoundsException();
+  }
+ else   if (len == 0) {
+    return;
+  }
+  int nCount=m_count + len;
+  if (nCount > m_buf.length) {
+    m_buf=Arrays.copyOf(m_buf,Math.max(m_buf.length << 1,nCount));
+  }
+  System.arraycopy(b,off,m_buf,m_count,len);
+  m_count=nCount;
+  notifyAll();
+}

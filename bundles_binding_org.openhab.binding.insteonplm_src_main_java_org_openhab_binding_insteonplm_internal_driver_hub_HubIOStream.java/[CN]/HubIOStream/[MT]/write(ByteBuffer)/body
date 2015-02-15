@@ -1,0 +1,10 @@
+{
+  poll();
+  clearBuffer();
+  StringBuilder b=new StringBuilder();
+  while (msg.remaining() > 0) {
+    b.append(String.format("%02x",msg.get()));
+  }
+  String hexMSG=b.toString();
+  getURL("/3?" + hexMSG + "=I=3");
+}
