@@ -1,0 +1,44 @@
+{
+  ZWaveCommandConverter<?,?> converter=this.getCommandConverter(command.getClass());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring command.",node.getNodeId(),item.getName(),endpointId);
+    return;
+  }
+  String parmNumber=arguments.get("parameter");
+  if (parmNumber == null) {
+    logger.error("NODE {}: 'parameter' option must be specified.",node.getNodeId());
+    return;
+  }
+  int parmValue=Integer.parseInt(parmNumber);
+  if (parmValue <= 0 || parmValue > 255) {
+    logger.error("NODE {}: 'parameter' option must be between 1 and 255.",node.getNodeId());
+    return;
+  }
+  ZWaveProductDatabase database=new ZWaveProductDatabase();
+  if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
+    logger.error("NODE {}: database can't find product.",node.getNodeId());
+    return;
+  }
+  List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+  if (configList == null) {
+    logger.error("NODE {}: Device has no configuration.",node.getNodeId());
+    return;
+  }
+  ZWaveDbConfigurationParameter dbParameter=configList.get(parmValue);
+  if (dbParameter == null) {
+    logger.error("NODE {}: Device has no parameter {}.",node.getNodeId(),parmValue);
+    return;
+  }
+  ConfigurationParameter configurationParameter=new ConfigurationParameter(parmValue,(Integer)converter.convertFromCommandToValue(item,command),dbParameter.Size);
+  SerialMessage serialMessage=commandClass.setConfigMessage(configurationParameter);
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
+    return;
+  }
+  this.getController().sendData(serialMessage);
+  serialMessage=commandClass.getConfigMessage(parmValue);
+  this.getController().sendData(serialMessage);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+}
