@@ -166,12 +166,21 @@ if (classList != null) {
 for (ZWaveDbCommandClass dbClass : classList) {
 if (dbClass.remove != null && dbClass.remove == true) {
 node.removeCommandClass(CommandClass.getCommandClass(dbClass.Id));
+logger.debug("NODE {}: Node advancer: UPDATE_DATABASE - removing {}",node.getNodeId(),CommandClass.getCommandClass(dbClass.Id).getLabel());
 continue;
 }
 int endpoint=dbClass.endpoint == null ? 0 : dbClass.endpoint;
 ZWaveCommandClass zwaveClass=node.resolveCommandClass(CommandClass.getCommandClass(dbClass.Id),endpoint);
 if (zwaveClass != null) {
 zwaveClass.setOptions(dbClass);
+continue;
+}
+if (dbClass.add != null && dbClass.add == true) {
+ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(dbClass.Id,node,controller);
+if (commandClass != null) {
+logger.debug("NODE {}: Node advancer: UPDATE_DATABASE - adding {}",node.getNodeId(),CommandClass.getCommandClass(dbClass.Id).getLabel());
+node.addCommandClass(commandClass);
+}
 }
 }
 }
