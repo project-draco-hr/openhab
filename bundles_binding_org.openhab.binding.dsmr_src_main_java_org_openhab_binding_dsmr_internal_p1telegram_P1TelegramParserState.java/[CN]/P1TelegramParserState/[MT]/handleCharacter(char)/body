@@ -1,0 +1,36 @@
+{
+switch (state) {
+case WAIT_FOR_START:
+    break;
+case STARTED:
+  header+=c;
+receivedData+=c;
+break;
+case HEADER:
+header+=c;
+receivedData+=c;
+break;
+case CRLF:
+receivedData+=c;
+break;
+case DATA_OBIS_ID:
+obisId+=c;
+receivedData+=c;
+break;
+case DATA_OBIS_VALUE_START:
+receivedData+=c;
+break;
+case DATA_OBIS_VALUE:
+obisValue+=c;
+receivedData+=c;
+break;
+case DATA_OBIS_VALUE_END:
+receivedData+=c;
+break;
+case CRC_VALUE:
+crcValue+=c;
+break;
+default :
+break;
+}
+}

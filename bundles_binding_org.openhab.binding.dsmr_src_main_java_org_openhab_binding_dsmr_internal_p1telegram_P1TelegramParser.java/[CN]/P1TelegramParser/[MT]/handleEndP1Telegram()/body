@@ -1,0 +1,15 @@
+{
+  finishObisLine();
+  List<OBISMessage> obisMessages=new LinkedList<OBISMessage>();
+  for (  OBISDataLine obisDataLine : obisDataLines) {
+    OBISMessage obisMessage=factory.getMessage(obisDataLine.obisId,obisDataLine.obisStringValues);
+    logger.debug("Parsed:" + obisDataLine + ", to:"+ obisMessage);
+    if (obisMessage != null) {
+      obisMessages.add(obisMessage);
+    }
+ else {
+      logger.warn("Failed to parse:" + obisDataLine);
+    }
+  }
+  return obisMessages;
+}
