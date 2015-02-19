@@ -26,12 +26,11 @@ if (modeTypeToAdd != null) {
 }
 }
 }
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 case THERMOSTAT_MODE_REPORT:
 logger.trace("NODE {}: Process Thermostat Mode Report",this.getNode().getNodeId());
 processThermostatModeReport(serialMessage,offset,endpoint);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :
 logger.warn("NODE {}: Unsupported Command {} for command class {} ({}).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey());

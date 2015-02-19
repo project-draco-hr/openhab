@@ -11,7 +11,7 @@
   for (int endpointId=startId; endpointId <= endId; endpointId++) {
     ZWaveEndpoint endpoint=this.endpoints.get(endpointId);
     if (endpoint == null) {
-      logger.error("Endpoint {} not found on node {}. Cannot set command classes.",endpointId,this.getNode().getNodeId());
+      logger.error("NODE {}: Endpoint {} not found. Cannot set command classes.",this.getNode().getNodeId(),endpointId);
       continue;
     }
     Basic basic=this.getNode().getDeviceClass().getBasicDeviceClass();
@@ -43,19 +43,24 @@
       if (data == 0xef) {
         break;
       }
-      logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",this.getNode().getNodeId(),data));
       ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
-      if (commandClass == null)       continue;
+      if (commandClass == null) {
+        continue;
+      }
+      logger.debug("NODE {}: Endpoint {}: Adding command class {}.",this.getNode().getNodeId(),endpointId,commandClass.getCommandClass().getLabel());
       endpoint.addCommandClass(commandClass);
       ZWaveCommandClass parentClass=this.getNode().getCommandClass(commandClass.getCommandClass());
-      if (parentClass != null)       commandClass.setVersion(parentClass.getVersion());
+      if (parentClass != null) {
+        commandClass.setVersion(parentClass.getVersion());
+      }
+      commandClass.setInstances(1);
     }
   }
-  if (this.endpointsAreTheSameDeviceClass)   this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
- else {
+  if (!this.endpointsAreTheSameDeviceClass) {
     for (    ZWaveEndpoint ep : this.endpoints.values()) {
-      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN)       return;
+      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN) {
+        return;
+      }
     }
-    this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
   }
 }

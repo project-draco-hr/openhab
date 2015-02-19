@@ -1,0 +1,25 @@
+{
+  if (state == nodeState) {
+    return;
+  }
+switch (state) {
+case ALIVE:
+    logger.debug("NODE {}: Node has risen from the DEAD. Init stage is {}:{}.",nodeId,this.getNodeInitializationStage().toString());
+  this.resendCount=0;
+break;
+case FAILED:
+case DEAD:
+this.deadCount++;
+this.deadTime=Calendar.getInstance().getTime();
+logger.debug("NODE {}: Node is DEAD.",this.nodeId);
+break;
+}
+if (nodeStageAdvancer.isInitializationComplete() == true) {
+ZWaveEvent zEvent=new ZWaveNodeStatusEvent(this.getNodeId(),ZWaveNodeState.DEAD);
+controller.notifyEventListeners(zEvent);
+}
+ else {
+logger.debug("NODE {}: Initialisation incomplete, not signalling state change.",this.nodeId);
+}
+nodeState=state;
+}

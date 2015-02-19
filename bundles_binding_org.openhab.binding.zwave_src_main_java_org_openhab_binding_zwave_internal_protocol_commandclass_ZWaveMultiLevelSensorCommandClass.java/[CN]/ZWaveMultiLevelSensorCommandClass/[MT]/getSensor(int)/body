@@ -1,0 +1,14 @@
+{
+  SensorType sensorType=SensorType.getSensorType(sensorTypeCode);
+  if (sensorType == null) {
+    logger.error("NODE {}: Unknown Sensor Type = {}, ignoring report.",this.getNode().getNodeId(),sensorTypeCode);
+    return null;
+  }
+  Sensor sensor=sensors.get(sensorType);
+  if (sensor == null) {
+    sensor=new Sensor(sensorType);
+    this.sensors.put(sensorType,sensor);
+    logger.debug("NODE {}: Adding new sensor Type = {}({})",this.getNode().getNodeId(),sensorType.getLabel(),sensorTypeCode);
+  }
+  return sensor;
+}

@@ -1,0 +1,18 @@
+{
+  logger.debug("NODE {}: handleEvent()",event.getNodeId());
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    return;
+  }
+  String sensorType=arguments.get("type");
+  FibaroFGRM222CommandClass.FibaroFGRM222ValueEvent sensorEvent=(FibaroFGRM222CommandClass.FibaroFGRM222ValueEvent)event;
+  if (sensorType != null && !sensorType.equalsIgnoreCase(sensorEvent.getSensorType().name())) {
+    return;
+  }
+  State state=converter.convertFromValueToState(event.getValue());
+  if (converter instanceof IntegerPercentTypeConverter) {
+    state=new PercentType(100 - ((DecimalType)state).intValue());
+  }
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

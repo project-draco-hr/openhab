@@ -1,0 +1,59 @@
+{
+  if (currentStage == ZWaveNodeInitStage.DONE) {
+    return;
+  }
+  if (event instanceof ZWaveTransactionCompletedEvent) {
+    ZWaveTransactionCompletedEvent completeEvent=(ZWaveTransactionCompletedEvent)event;
+    SerialMessage serialMessage=completeEvent.getCompletedMessage();
+    byte[] payload=serialMessage.getMessagePayload();
+    if (payload.length == 0 || node.getNodeId() != (payload[0] & 0xFF)) {
+      if (controller.getSendQueueLength() < 2 && currentStage == ZWaveNodeInitStage.WAIT) {
+        logger.debug("NODE {}: Node advancer - WAIT: The WAIT is over!",node.getNodeId());
+        currentStage=currentStage.getNextStage();
+        handleNodeQueue(null);
+      }
+      return;
+    }
+switch (serialMessage.getMessageClass()) {
+case SendData:
+case IdentifyNode:
+case RequestNodeInfo:
+case GetRoutingInfo:
+case IsFailedNodeID:
+      logger.debug("NODE {}: Node advancer - {}: Transaction complete ({}:{}) success({})",node.getNodeId(),currentStage.toString(),serialMessage.getMessageClass(),serialMessage.getMessageType(),completeEvent.getState());
+    if (((ZWaveTransactionCompletedEvent)event).getState() == true) {
+      handleNodeQueue(serialMessage);
+    }
+  break;
+default :
+break;
+}
+}
+ else if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
+if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_NOTIFICATION) {
+return;
+}
+if (node.getNodeId() != event.getNodeId()) {
+return;
+}
+logger.debug("NODE {}: Wakeup during initialisation.",node.getNodeId());
+wakeupCount++;
+advanceNodeStage(null);
+}
+ else if (event instanceof ZWaveNodeStatusEvent) {
+ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
+if (node.getNodeId() != event.getNodeId()) {
+return;
+}
+logger.debug("NODE {}: Node Status event during initialisation - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+switch (statusEvent.getState()) {
+case DEAD:
+case FAILED:
+break;
+case ALIVE:
+advanceNodeStage(null);
+break;
+}
+logger.trace("NODE {}: Node Status event during initialisation processed",statusEvent.getNodeId());
+}
+}

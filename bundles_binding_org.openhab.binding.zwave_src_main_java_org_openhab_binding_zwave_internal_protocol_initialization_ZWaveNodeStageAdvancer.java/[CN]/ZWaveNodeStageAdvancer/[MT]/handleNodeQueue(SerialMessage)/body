@@ -1,0 +1,12 @@
+{
+  if (currentStage == ZWaveNodeInitStage.DONE) {
+    return;
+  }
+  logger.debug("NODE {}: Node advancer - checking initialisation queue. Queue size {}.",node.getNodeId(),msgQueue.size());
+  if (msgQueue.contains(incomingMessage)) {
+    msgQueue.remove(incomingMessage);
+    logger.debug("NODE {}: Node advancer - message removed from queue. Queue size {}.",node.getNodeId(),msgQueue.size());
+    freeToSend=true;
+    advanceNodeStage(incomingMessage.getMessageClass());
+  }
+}
