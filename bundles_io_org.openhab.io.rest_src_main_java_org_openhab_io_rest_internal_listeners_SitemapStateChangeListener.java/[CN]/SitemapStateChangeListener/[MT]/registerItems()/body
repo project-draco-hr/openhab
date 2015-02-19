@@ -5,8 +5,8 @@
       return new BroadcastAction(message);
     }
     @Override public BroadcastAction filter(    String broadcasterId,    AtmosphereResource resource,    Object originalMessage,    Object message){
-      UUIDBroadcasterCache uuidCache=(UUIDBroadcasterCache)broadcaster.getBroadcasterConfig().getBroadcasterCache();
-      List<Object> entries=uuidCache.retrieveFromCache(null,resource);
+      BroadcasterCache uuidCache=broadcaster.getBroadcasterConfig().getBroadcasterCache();
+      List<Object> entries=uuidCache.retrieveFromCache(broadcasterId,resource.uuid());
       if (entries != null)       logger.trace("UUID {} had {} previous messages",resource.uuid(),entries.size());
       return new BroadcastAction(ACTION.CONTINUE,message);
     }

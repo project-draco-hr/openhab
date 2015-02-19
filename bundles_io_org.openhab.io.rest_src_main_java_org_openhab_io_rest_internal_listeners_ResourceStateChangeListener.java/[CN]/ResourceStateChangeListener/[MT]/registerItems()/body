@@ -1,11 +1,12 @@
 {
   StartCacheExecutor();
-  broadcaster.getBroadcasterConfig().setBroadcasterCache(new UUIDBroadcasterCache());
-  broadcaster.getBroadcasterConfig().getBroadcasterCache().configure(broadcaster.getBroadcasterConfig());
-  broadcaster.getBroadcasterConfig().getBroadcasterCache().start();
-  broadcaster.getBroadcasterConfig().addFilter(new PerRequestBroadcastFilter(){
-    @Override public BroadcastAction filter(    Object originalMessage,    Object message){
-      return new BroadcastAction(ACTION.CONTINUE,message);
+  BroadcasterConfig config=broadcaster.getBroadcasterConfig();
+  config.setBroadcasterCache(new UUIDBroadcasterCache());
+  config.getBroadcasterCache().configure(broadcaster.getBroadcasterConfig());
+  config.getBroadcasterCache().start();
+  addBroadcastFilter(config,new PerRequestBroadcastFilter(){
+    @Override public BroadcastAction filter(    String broadcasterId,    Object originalMessage,    Object message){
+      return new BroadcastAction(message);
     }
     @Override public BroadcastAction filter(    String broadcasterId,    AtmosphereResource resource,    Object originalMessage,    Object message){
       HttpServletRequest request=null;
@@ -22,10 +23,10 @@
     }
   }
 );
-  broadcaster.getBroadcasterConfig().addFilter(new PollingDelayFilter());
-  broadcaster.getBroadcasterConfig().addFilter(new SendPageUpdateFilter());
-  broadcaster.getBroadcasterConfig().addFilter(new DuplicateBroadcastProtectionFilter());
-  broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
+  addBroadcastFilter(config,new PollingDelayFilter());
+  addBroadcastFilter(config,new SendPageUpdateFilter());
+  addBroadcastFilter(config,new DuplicateBroadcastProtectionFilter());
+  addBroadcastFilter(config,new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
       broadcaster.broadcast(item);

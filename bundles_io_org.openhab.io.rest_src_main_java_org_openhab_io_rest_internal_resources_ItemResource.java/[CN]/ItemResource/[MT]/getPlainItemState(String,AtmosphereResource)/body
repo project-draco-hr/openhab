@@ -2,11 +2,11 @@
   if (TRANSPORT.UNDEFINED.equals(resource.transport())) {
     Item item=getItem(itemname);
     if (item != null) {
-      logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
+      if (logger.isDebugEnabled())       logger.debug("Received HTTP GET request at '{}'.",uriInfo.getPath());
       throw new WebApplicationException(Response.ok(item.getState().toString()).build());
     }
  else {
-      logger.info("Received HTTP GET request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
+      if (logger.isDebugEnabled())       logger.info("Received HTTP GET request at '{}' for the unknown item '{}'.",uriInfo.getPath(),itemname);
       throw new WebApplicationException(404);
     }
   }

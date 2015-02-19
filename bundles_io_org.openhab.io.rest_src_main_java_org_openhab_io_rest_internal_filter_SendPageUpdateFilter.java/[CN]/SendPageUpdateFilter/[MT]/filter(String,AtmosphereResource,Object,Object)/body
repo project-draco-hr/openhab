@@ -22,20 +22,14 @@
         }
       }
       if (originalMessage instanceof PageBean) {
-        PageBean originalBean=(PageBean)message;
-        PageBean responseBeam=new PageBean();
-        responseBeam.icon=originalBean.icon;
-        responseBeam.id=originalBean.id;
-        responseBeam.link=originalBean.link;
-        responseBeam.parent=originalBean.parent;
-        responseBeam.title=originalBean.title;
-        return new BroadcastAction(ACTION.CONTINUE,responseBeam);
+        final PageBean responseBean=clonePageBeanWithoutWidgets((PageBean)message);
+        return new BroadcastAction(ACTION.CONTINUE,responseBean);
       }
     }
     return new BroadcastAction(ACTION.CONTINUE,message);
   }
  catch (  Exception e) {
-    logger.error(e.getMessage());
+    logger.error(e.getMessage(),e);
     return new BroadcastAction(ACTION.ABORT,message);
   }
 }
