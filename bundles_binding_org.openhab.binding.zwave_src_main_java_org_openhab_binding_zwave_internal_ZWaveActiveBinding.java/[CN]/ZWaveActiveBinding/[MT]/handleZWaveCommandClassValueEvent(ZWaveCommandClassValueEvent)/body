@@ -4,7 +4,9 @@
   for (  ZWaveBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       ZWaveBindingConfig bindingConfig=provider.getZwaveBindingConfig(itemName);
-      if (bindingConfig.getNodeId() != event.getNodeId() || bindingConfig.getEndpoint() != event.getEndpoint())       continue;
+      if (bindingConfig.getNodeId() != event.getNodeId() || bindingConfig.getEndpoint() != event.getEndpoint()) {
+        continue;
+      }
       converterHandler.handleEvent(provider,itemName,event);
       handled=true;
     }
