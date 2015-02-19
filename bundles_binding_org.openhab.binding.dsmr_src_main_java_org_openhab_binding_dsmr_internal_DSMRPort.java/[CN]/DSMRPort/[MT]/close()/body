@@ -1,8 +1,7 @@
 {
 synchronized (portLock) {
     logger.info("Closing DSMR port");
-    messages.clear();
-    isOpen=false;
+    portState=PortState.CLOSED;
     if (bis != null) {
       try {
         bis.close();

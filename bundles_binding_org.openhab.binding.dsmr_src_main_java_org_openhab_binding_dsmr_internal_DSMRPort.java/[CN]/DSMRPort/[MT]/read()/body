@@ -1,6 +1,7 @@
 {
   List<OBISMessage> receivedMessages=new LinkedList<OBISMessage>();
-  if (!open()) {
+  handlePortState();
+  if (portState == PortState.CLOSED) {
     logger.warn("Could not open DSMRPort, no values will be read");
     close();
     return receivedMessages;
@@ -19,7 +20,7 @@
     }
   }
  catch (  IOException ioe) {
-    if (!isOpen) {
+    if (portState == PortState.CLOSED) {
       logger.info("Read aborted: DSMRPort is closed");
     }
  else {
@@ -29,7 +30,7 @@
     }
   }
 catch (  NullPointerException npe) {
-    if (!isOpen) {
+    if (portState == PortState.CLOSED) {
       logger.info("Read aborted: DSMRPort is closed");
     }
  else {
@@ -37,8 +38,8 @@ catch (  NullPointerException npe) {
       close();
     }
   }
-  if (!portReceivedData && receivedMessages.size() > 0) {
-    portReceivedData=true;
+  if (portState == PortState.AUTO_DETECT && receivedMessages.size() > 0) {
+    portState=PortState.OPENED;
   }
   return receivedMessages;
 }

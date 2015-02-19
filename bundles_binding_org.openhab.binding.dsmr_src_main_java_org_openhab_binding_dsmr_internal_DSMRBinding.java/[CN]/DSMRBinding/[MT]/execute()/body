@@ -3,41 +3,24 @@
     logger.debug("There is no existing DSMR binding configuration => refresh cycle aborted!");
     return;
   }
-  if (dsmrPort != null) {
-    boolean receivedData=dsmrPort.portReceivedData();
-    long autoDetectDuration=dsmrPort.getDetectingDuration();
-    logger.debug("Port received any data:" + receivedData + ", auto detect duration:"+ autoDetectDuration);
-    if (!receivedData && autoDetectDuration > 2 * DSMR_UPDATE_INTERVAL) {
-      logger.info("No valid data received for " + autoDetectDuration + "ms during autodetection, switch speed");
-      dsmrPort.close();
-switch (portSpeed) {
-case LOW_SPEED:
-        portSpeed=DSMRPort.PortSpeed.HIGH_SPEED;
-      break;
-case HIGH_SPEED:
-    portSpeed=DSMRPort.PortSpeed.LOW_SPEED;
-  break;
-}
-}
-}
-if (dsmrPort == null || !dsmrPort.isOpen()) {
-logger.debug("Creating DSMR Port:" + port + ", speed:"+ portSpeed);
-dsmrPort=new DSMRPort(port,portSpeed,dsmrMeters,DSMR_UPDATE_INTERVAL);
-}
-List<OBISMessage> messages=dsmrPort.read();
-logger.debug("Received " + messages.size() + " messages");
-for (OBISMessage msg : messages) {
-logger.debug("Read message:" + msg);
-for (DSMRBindingProvider provider : providers) {
-for (String itemName : provider.getItemNames()) {
-String dsmrItemId=provider.getDSMRItemID(itemName);
-for (CosemValue<? extends State> openHABValue : msg.getOpenHABValues()) {
-  if (dsmrItemId.equals(openHABValue.getDsmrItemId())) {
-    logger.debug("Publish data(" + dsmrItemId + ") to "+ itemName);
-    eventPublisher.postUpdate(itemName,openHABValue.getValue());
+  if (dsmrPort == null || !dsmrPort.isOpen()) {
+    logger.debug("Creating DSMR Port:" + port);
+    dsmrPort=new DSMRPort(port,new P1TelegramParser(new OBISMsgFactory(dsmrMeters)),DSMR_UPDATE_INTERVAL / 2,DSMR_UPDATE_INTERVAL * 2);
   }
-}
-}
-}
-}
+  List<OBISMessage> messages=dsmrPort.read();
+  logger.debug("Received " + messages.size() + " messages");
+  for (  OBISMessage msg : messages) {
+    logger.debug("Read message:" + msg);
+    for (    DSMRBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        String dsmrItemId=provider.getDSMRItemID(itemName);
+        for (        CosemValue<? extends State> openHABValue : msg.getOpenHABValues()) {
+          if (dsmrItemId.equals(openHABValue.getDsmrItemId())) {
+            logger.debug("Publish data(" + dsmrItemId + ") to "+ itemName);
+            eventPublisher.postUpdate(itemName,openHABValue.getValue());
+          }
+        }
+      }
+    }
+  }
 }

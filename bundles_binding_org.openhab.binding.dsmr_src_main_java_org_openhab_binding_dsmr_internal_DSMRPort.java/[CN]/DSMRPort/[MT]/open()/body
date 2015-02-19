@@ -1,17 +1,17 @@
 {
 synchronized (portLock) {
-    if (isOpen) {
+    if (portState != PortState.CLOSED) {
       return true;
     }
     try {
       logger.debug("Creating CommPortIdentifier");
       CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
       logger.debug("Opening CommPortIdentifier");
-      CommPort commPort=portIdentifier.open("org.openhab.binding.dsmr",2000);
+      CommPort commPort=portIdentifier.open("org.openhab.binding.dsmr",readTimeoutMSec);
       logger.debug("Configure serial port");
       serialPort=(SerialPort)commPort;
       serialPort.enableReceiveThreshold(1);
-      serialPort.enableReceiveTimeout(timeoutMSec);
+      serialPort.enableReceiveTimeout(readTimeoutMSec);
       logger.debug("Configure serial port speed " + portSpeed);
 switch (portSpeed) {
 case LOW_SPEED:
@@ -48,7 +48,6 @@ logger.error("Failed to get inputstream for serialPort. Closing port",ioe);
 return false;
 }
 logger.info("DSMR Port opened successful");
-isOpen=true;
-return isOpen;
+return true;
 }
 }
