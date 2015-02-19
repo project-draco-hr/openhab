@@ -1,0 +1,22 @@
+{
+  super.initialize(name,uri,config);
+  this.addBroadcasterLifeCyclePolicyListener(new BroadcasterLifeCyclePolicyListener(){
+    @Override public void onIdle(){
+      logger.debug("broadcaster '{}' is idle",this.toString());
+    }
+    @Override public void onEmpty(){
+      logger.debug("broadcaster '{}' is empty",this.toString());
+    }
+    @Override public void onDestroy(){
+      logger.debug("broadcaster '{}' destroyed",this.toString());
+      logger.trace("broadcaster '{}' left {} {} instaces",this.toString(),listeners.size(),ResourceStateChangeListener.class.getName());
+      for (      ResourceStateChangeListener listener : listeners) {
+        listener.unregisterItems();
+        boolean removed=listeners.remove(listener);
+        if (!removed)         logger.warn("Could not remove event listener '{}', this may cause a memory leak.",listener.toString());
+      }
+    }
+  }
+);
+  return this;
+}

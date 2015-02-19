@@ -7,13 +7,13 @@
     @Override public BroadcastAction filter(    Object originalMessage,    Object message){
       return new BroadcastAction(ACTION.CONTINUE,message);
     }
-    @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
+    @Override public BroadcastAction filter(    String broadcasterId,    AtmosphereResource resource,    Object originalMessage,    Object message){
       HttpServletRequest request=null;
       BroadcastAction result=null;
       try {
         request=resource.getRequest();
-        Object responce=getResponseObject(request);
-        result=new BroadcastAction(ACTION.CONTINUE,responce);
+        Object response=getResponseObject(request);
+        result=new BroadcastAction(ACTION.CONTINUE,response);
       }
  catch (      Exception e) {
         result=new BroadcastAction(ACTION.ABORT,getResponseObject(request));
