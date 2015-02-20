@@ -1,0 +1,65 @@
+{
+  logger.debug("Requesting summaries for {}",selection);
+  ThermostatSummaryRequest request=new ThermostatSummaryRequest(oauthCredentials.accessToken,selection);
+  ThermostatSummaryResponse response=request.execute();
+  if (response.isError()) {
+    final Status status=response.getStatus();
+    if (status.isAccessTokenExpired()) {
+      logger.debug("Access token has expired: {}",status);
+      if (oauthCredentials.refreshTokens())       readEcobee(oauthCredentials,selection);
+    }
+ else {
+      logger.error(status.getMessage());
+    }
+    return;
+  }
+  logger.debug("Retrieved summaries for {} thermostat(s).",response.getRevisionList().size());
+  Map<String,Revision> newRevisionMap=new HashMap<String,Revision>();
+  for (  Revision r : response.getRevisionList()) {
+    newRevisionMap.put(r.getThermostatIdentifier(),r);
+  }
+  Set<String> thermostatIdentifiers=new HashSet<String>();
+  for (  Revision newRevision : newRevisionMap.values()) {
+    Revision lastRevision=this.lastRevisionMap.get(newRevision.getThermostatIdentifier());
+    boolean changed=false;
+    changed=changed || (newRevision.hasRuntimeChanged(lastRevision) && (selection.includeRuntime() || selection.includeExtendedRuntime()));
+    changed=changed || (newRevision.hasThermostatChanged(lastRevision) && (selection.includeSettings() || selection.includeProgram()));
+    if (changed) {
+      thermostatIdentifiers.add(newRevision.getThermostatIdentifier());
+    }
+  }
+  this.lastRevisionMap=newRevisionMap;
+  if (0 == thermostatIdentifiers.size()) {
+    logger.debug("No changes detected.");
+    return;
+  }
+  logger.debug("Requesting full retrieval for {} thermostat(s).",thermostatIdentifiers.size());
+  selection.setSelectionMatch(thermostatIdentifiers);
+  ThermostatRequest treq=new ThermostatRequest(oauthCredentials.accessToken,selection,null);
+  ThermostatResponse tres=treq.execute();
+  if (tres.isError()) {
+    logger.error("Error retrieving thermostats: {}",tres.getStatus());
+    return;
+  }
+  Map<String,Thermostat> thermostats=new HashMap<String,Thermostat>();
+  for (  Thermostat t : tres.getThermostatList()) {
+    thermostats.put(t.getIdentifier(),t);
+  }
+  for (  final EcobeeBindingProvider provider : this.providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      if (provider.isInBound(itemName)) {
+        final State newState=getState(provider,thermostats,itemName);
+        State oldState=(itemRegistry == null) ? null : itemRegistry.getItem(itemName).getState();
+        if ((oldState == null && newState != null) || (UnDefType.UNDEF.equals(oldState) && !UnDefType.UNDEF.equals(newState)) || !oldState.equals(newState)) {
+          logger.debug("readEcobee: Updating itemName '{}' with newState '{}', oldState '{}'",itemName,newState,oldState);
+          ignoreEventSet.add(itemName + newState.toString());
+          logger.trace("Added event (item='{}', newState='{}') to the ignore event list",itemName,newState);
+          this.eventPublisher.postUpdate(itemName,newState);
+        }
+ else {
+          logger.trace("readEcobee: Ignoring item='{}' with newState='{}', oldState='{}'",itemName,newState,oldState);
+        }
+      }
+    }
+  }
+}

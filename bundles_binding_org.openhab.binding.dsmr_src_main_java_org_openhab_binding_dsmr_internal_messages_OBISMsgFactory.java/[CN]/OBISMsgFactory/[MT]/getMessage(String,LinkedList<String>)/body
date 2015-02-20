@@ -1,0 +1,34 @@
+{
+  OBISIdentifier obisId=null;
+  OBISIdentifier reducedObisId=null;
+  try {
+    obisId=new OBISIdentifier(obisIdString);
+    reducedObisId=obisId.getReducedOBISIdentifier();
+  }
+ catch (  ParseException pe) {
+    logger.error("Received invalid OBIS identifer:" + obisIdString);
+    return null;
+  }
+  logger.debug("Received obisIdString " + obisIdString + ", obisId:"+ obisId+ ", values:"+ cosemStringValues);
+  if (obisLookupTable.containsKey(reducedObisId)) {
+    List<OBISMsgType> compatibleMsgTypes=obisLookupTable.get(reducedObisId);
+    OBISMessage msg=null;
+    logger.debug("Found " + compatibleMsgTypes.size() + " compatible message type(s)");
+    for (    OBISMsgType msgType : compatibleMsgTypes) {
+      msg=new OBISMessage(msgType);
+      try {
+        logger.debug("Parse values for OBIS Message type:" + msgType);
+        msg.parseCosemValues(cosemStringValues);
+        return msg;
+      }
+ catch (      ParseException pe) {
+        logger.debug("Failed to parse OBIS identifer " + obisId + ", values:"+ cosemStringValues+ " for type"+ msgType,pe);
+      }
+    }
+    logger.error("Failed to parse OBIS identifier " + obisId + ", values:"+ cosemStringValues);
+  }
+ else {
+    logger.warn("Received OBIS unknown message:" + obisId);
+  }
+  return null;
+}

@@ -1,0 +1,12 @@
+{
+  final String url=buildQueryString();
+  String json=null;
+  try {
+    json=executeQuery(url);
+    final ThermostatResponse response=JSON.readValue(json,ThermostatResponse.class);
+    return response;
+  }
+ catch (  final Exception e) {
+    throw newException("Could not get thermostats.",e,url,json);
+  }
+}
