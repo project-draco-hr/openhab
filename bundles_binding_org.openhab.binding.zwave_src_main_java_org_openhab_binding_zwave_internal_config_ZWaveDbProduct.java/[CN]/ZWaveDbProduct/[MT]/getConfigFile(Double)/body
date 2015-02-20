@@ -9,11 +9,17 @@
       filename=cfg.Filename;
       continue;
     }
-    if (cfg.VersionMin != null && vIn.compareTo(cfg.VersionMin) < 0) {
-      continue;
+    if (cfg.VersionMin != null) {
+      Version vMin=new Version(cfg.VersionMin);
+      if (vIn.compareTo(vMin) < 0) {
+        continue;
+      }
     }
-    if (cfg.VersionMax != null && vIn.compareTo(cfg.VersionMin) > 0) {
-      continue;
+    if (cfg.VersionMax != null) {
+      Version vMax=new Version(cfg.VersionMax);
+      if (vIn.compareTo(vMax) > 0) {
+        continue;
+      }
     }
     return cfg.Filename;
   }
