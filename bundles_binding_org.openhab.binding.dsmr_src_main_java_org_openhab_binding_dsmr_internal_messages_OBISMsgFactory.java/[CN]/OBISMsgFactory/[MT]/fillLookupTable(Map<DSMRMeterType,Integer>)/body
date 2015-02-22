@@ -1,0 +1,23 @@
+{
+  for (  OBISMsgType t : OBISMsgType.values()) {
+    OBISIdentifier obisId=t.obisId;
+    if (obisId.getGroupB() == null) {
+      DSMRMeterType meterType=t.meterType;
+      if (mapping.containsKey(meterType)) {
+        Integer channel=mapping.get(t.meterType);
+        logger.debug("Change OBIS-identifier " + t.obisId + " for meter "+ t.meterType+ " on channel "+ channel);
+        obisId=new OBISIdentifier(obisId.getGroupA(),channel,obisId.getGroupC(),obisId.getGroupD(),obisId.getGroupE(),obisId.getGroupF());
+      }
+ else {
+        logger.debug("Mapping does not contain a channel for " + meterType);
+        obisId=null;
+      }
+    }
+    if (obisId != null) {
+      if (!obisLookupTable.containsKey(obisId)) {
+        obisLookupTable.put(obisId,new LinkedList<OBISMsgType>());
+      }
+      obisLookupTable.get(obisId).add(t);
+    }
+  }
+}

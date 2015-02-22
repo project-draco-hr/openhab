@@ -1,0 +1,35 @@
+{
+  super("setHold");
+  if (holdClimateRef == null && (coolHoldTemp == null || heatHoldTemp == null)) {
+    throw new IllegalArgumentException("coolHoldTemp and heatHoldTemp are required when holdClimateRef is not supplied.");
+  }
+  if (holdType == HoldType.HOLD_HOURS && holdHours == null) {
+    throw new IllegalArgumentException("holdHours must be specified when holdType='holdHours'");
+  }
+  if (holdType == HoldType.DATE_TIME && endDateTime == null) {
+    throw new IllegalArgumentException("endDateTime must be specific when holdType='dateTime'");
+  }
+  if (coolHoldTemp != null) {
+    makeParams().put("coolHoldTemp",coolHoldTemp);
+  }
+  if (heatHoldTemp != null) {
+    makeParams().put("heatHoldTemp",heatHoldTemp);
+  }
+  if (holdClimateRef != null) {
+    makeParams().put("holdClimateRef",holdClimateRef);
+  }
+  if (startDateTime != null) {
+    makeParams().put("startDate",ymd.format(startDateTime));
+    makeParams().put("startTime",hms.format(startDateTime));
+  }
+  if (endDateTime != null) {
+    makeParams().put("endDate",ymd.format(endDateTime));
+    makeParams().put("endTime",hms.format(endDateTime));
+  }
+  if (holdType != null) {
+    makeParams().put("holdType",holdType);
+  }
+  if (holdHours != null) {
+    makeParams().put("holdHours",holdHours);
+  }
+}

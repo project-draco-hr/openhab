@@ -1,0 +1,28 @@
+{
+  super("controlPlug");
+  if (plugName == null || plugState == null) {
+    throw new IllegalArgumentException("plugName and plugState arguments are required.");
+  }
+  if (holdType == HoldType.DATE_TIME && endDateTime == null) {
+    throw new IllegalArgumentException("End date/time is required for dateTime hold type.");
+  }
+  if (holdType == HoldType.HOLD_HOURS && holdHours == null) {
+    throw new IllegalArgumentException("holdHours must be specified when using holdHours hold type.");
+  }
+  makeParams().put("plugName",plugName);
+  makeParams().put("plugState",plugState);
+  if (startDateTime != null) {
+    makeParams().put("startDate",ymd.format(startDateTime));
+    makeParams().put("startTime",hms.format(startDateTime));
+  }
+  if (endDateTime != null) {
+    makeParams().put("endDate",ymd.format(endDateTime));
+    makeParams().put("endTime",hms.format(endDateTime));
+  }
+  if (holdType != null) {
+    makeParams().put("holdType",holdType);
+  }
+  if (holdHours != null) {
+    makeParams().put("holdHours",holdHours);
+  }
+}

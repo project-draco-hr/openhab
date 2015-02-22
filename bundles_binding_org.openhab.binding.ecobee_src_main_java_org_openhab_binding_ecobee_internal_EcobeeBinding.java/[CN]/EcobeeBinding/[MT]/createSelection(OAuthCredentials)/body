@@ -1,0 +1,77 @@
+{
+  final Selection selection=new Selection(SelectionType.THERMOSTATS,null);
+  final Set<String> thermostatIdentifiers=new HashSet<String>();
+  for (  final EcobeeBindingProvider provider : this.providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      final String thermostatIdentifier=provider.getThermostatIdentifier(itemName);
+      final String property=provider.getProperty(itemName);
+      if (!provider.isInBound(itemName) || oauthCredentials != getOAuthCredentials(provider.getUserid(itemName))) {
+        continue;
+      }
+      thermostatIdentifiers.add(thermostatIdentifier);
+      if (property.startsWith("settings")) {
+        selection.setIncludeSettings(true);
+      }
+ else       if (property.startsWith("runtime")) {
+        selection.setIncludeRuntime(true);
+      }
+ else       if (property.startsWith("extendedRuntime")) {
+        selection.setIncludeExtendedRuntime(true);
+      }
+ else       if (property.startsWith("electricity")) {
+        selection.setIncludeElectricity(true);
+      }
+ else       if (property.startsWith("devices")) {
+        selection.setIncludeDevice(true);
+      }
+ else       if (property.startsWith("electricity")) {
+        selection.setIncludeElectricity(true);
+      }
+ else       if (property.startsWith("location")) {
+        selection.setIncludeLocation(true);
+      }
+ else       if (property.startsWith("technician")) {
+        selection.setIncludeTechnician(true);
+      }
+ else       if (property.startsWith("utility")) {
+        selection.setIncludeUtility(true);
+      }
+ else       if (property.startsWith("management")) {
+        selection.setIncludeManagement(true);
+      }
+ else       if (property.startsWith("weather")) {
+        selection.setIncludeWeather(true);
+      }
+ else       if (property.startsWith("events")) {
+        selection.setIncludeEvents(true);
+      }
+ else       if (property.startsWith("program")) {
+        selection.setIncludeProgram(true);
+      }
+ else       if (property.startsWith("houseDetails")) {
+        selection.setIncludeHouseDetails(true);
+      }
+ else       if (property.startsWith("oemCfg")) {
+        selection.setIncludeOemCfg(true);
+      }
+ else       if (property.startsWith("equipmentStatus")) {
+        selection.setIncludeEquipmentStatus(true);
+      }
+ else       if (property.startsWith("notificationSettings")) {
+        selection.setIncludeNotificationSettings(true);
+      }
+ else       if (property.startsWith("privacy")) {
+        selection.setIncludePrivacy(true);
+      }
+ else       if (property.startsWith("version")) {
+        selection.setIncludeVersion(true);
+      }
+    }
+  }
+  if (thermostatIdentifiers.isEmpty()) {
+    logger.info("No Ecobee in-bindings have been found for selection.");
+    return null;
+  }
+  selection.setSelectionMatch(thermostatIdentifiers);
+  return selection;
+}

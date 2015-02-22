@@ -1,10 +1,10 @@
 {
 synchronized (portLock) {
     logger.info("Closing DSMR port");
-    isOpen=false;
-    if (reader != null) {
+    portState=PortState.CLOSED;
+    if (bis != null) {
       try {
-        reader.close();
+        bis.close();
       }
  catch (      IOException ioe) {
         logger.debug("Failed to close reader",ioe);
@@ -13,7 +13,7 @@ synchronized (portLock) {
     if (serialPort != null) {
       serialPort.close();
     }
-    reader=null;
+    bis=null;
     serialPort=null;
   }
 }

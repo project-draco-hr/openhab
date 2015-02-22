@@ -2,17 +2,24 @@
   if (ConfigFile == null) {
     return null;
   }
+  Version vIn=new Version(Double.toString(version));
   String filename=null;
   for (  ZWaveDbConfigFile cfg : ConfigFile) {
-    if (cfg.VersionMin == null && cfg.VersionMax == null) {
+    if (cfg.VersionMin == null && cfg.VersionMax == null && filename == null) {
       filename=cfg.Filename;
       continue;
     }
-    if (cfg.VersionMin != null && version < cfg.VersionMin) {
-      continue;
+    if (cfg.VersionMin != null) {
+      Version vMin=new Version(cfg.VersionMin);
+      if (vIn.compareTo(vMin) < 0) {
+        continue;
+      }
     }
-    if (cfg.VersionMax != null && version > cfg.VersionMax) {
-      continue;
+    if (cfg.VersionMax != null) {
+      Version vMax=new Version(cfg.VersionMax);
+      if (vIn.compareTo(vMax) > 0) {
+        continue;
+      }
     }
     return cfg.Filename;
   }

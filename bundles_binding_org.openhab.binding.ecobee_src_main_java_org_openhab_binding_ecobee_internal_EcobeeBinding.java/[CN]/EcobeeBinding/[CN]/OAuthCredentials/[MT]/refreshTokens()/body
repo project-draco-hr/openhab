@@ -1,0 +1,29 @@
+{
+  if (this.authToken == null) {
+    authorize();
+    return false;
+  }
+ else {
+    logger.trace("Refreshing tokens.");
+    Request request;
+    if (this.refreshToken == null) {
+      request=new TokenRequest(this.authToken,this.appKey);
+    }
+ else {
+      request=new RefreshTokenRequest(this.refreshToken,this.appKey);
+    }
+    logger.trace("Request: {}",request);
+    final TokenResponse response=(TokenResponse)request.execute();
+    logger.trace("Response: {}",response);
+    if (response.isError()) {
+      logger.error("Error retrieving tokens: {}",response.getError());
+      return false;
+    }
+ else {
+      this.refreshToken=response.getRefreshToken();
+      this.accessToken=response.getAccessToken();
+      save();
+      return true;
+    }
+  }
+}
