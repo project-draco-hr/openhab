@@ -1,23 +1,23 @@
 {
-  logger.debug("callDevice: Need to remote-invoke Device '{}' action '{}' and current state '{}')",new Object[]{config.toProperty(),command,state});
+  logger.debug("invokeDevice: Need to remote-invoke Device '{}' action '{}' and current state '{}')",new Object[]{config.toProperty(),command,state});
   String newCommand=config.transformCommand(command);
   if (newCommand == null) {
-    logger.warn("callDevice: Command '{}' not supported, or missing command: mapping, for Item '{}'",command.toString(),config.getItemName());
+    logger.warn("invokeDevice: Command '{}' not supported, or missing command: mapping, for Item '{}'",command.toString(),config.getItemName());
     return;
   }
  else   if (newCommand.equals("")) {
-    logger.trace("callDevice: Item '{}' has disabled the use of Command '{}' via it's configuration '{}'",new Object[]{config.getItemName(),command.toString(),config.toProperty()});
+    logger.trace("invokeDevice: Item '{}' has disabled the use of Command '{}' via it's configuration '{}'",new Object[]{config.getItemName(),command.toString(),config.toProperty()});
     return;
   }
   Matcher matcher=DEVICE_PATTERN.matcher(newCommand);
   if (matcher.matches()) {
     try {
       MiosUnit u=getMiosUnit();
-      String serviceName=matcher.group("serviceName");
+      String serviceName=DeviceBindingConfig.mapServiceAlias(matcher.group("serviceName"));
       String serviceAction=matcher.group("serviceAction");
       String serviceParam=matcher.group("serviceParam");
       String serviceValue=matcher.group("serviceValue");
-      logger.debug("callDevice: decoded as serviceName '{}' serviceAction '{}' serviceParam '{}' serviceValue '{}'",new Object[]{serviceName,serviceAction,serviceParam,serviceValue});
+      logger.debug("invokeDevice: decoded as serviceName '{}' serviceAction '{}' serviceParam '{}' serviceValue '{}'",new Object[]{serviceName,serviceAction,serviceParam,serviceValue});
       serviceValue=toBindValue(serviceValue,command,state);
       if (serviceParam != null) {
         String p=URLEncoder.encode(serviceParam,ENCODING_CHARSET) + '=' + URLEncoder.encode(serviceValue,ENCODING_CHARSET);
@@ -32,6 +32,6 @@
     }
   }
  else {
-    logger.error("callDevice: The parameter is in the wrong format.  BindingConfig '{}', UPnP Action '{}'",config,newCommand);
+    logger.error("invokeDevice: The parameter is in the wrong format.  BindingConfig '{}', UPnP Action '{}'",config,newCommand);
   }
 }

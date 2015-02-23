@@ -1,0 +1,22 @@
+{
+  try {
+    logger.debug("Attempting to invoke MiOS Action {} using Item {} and {} Parameters",new Object[]{actionName,itemName,(params == null) ? 0 : params.size()});
+    ArrayList<Entry<String,Object>> paramList;
+    if (params != null) {
+      paramList=new ArrayList<Entry<String,Object>>(params.size());
+      for (      Pair<String,String> p : params) {
+        logger.trace("Type of parameter key={} value={}",p.getKey(),p.getValue());
+        paramList.add(new AbstractMap.SimpleImmutableEntry<String,Object>(p.getKey(),p.getValue()));
+      }
+    }
+ else {
+      paramList=null;
+    }
+    MiosActionProvider actionProvider=getActionProviderInternal(itemName);
+    return actionProvider.invokeMiosAction(itemName,actionName,paramList);
+  }
+ catch (  Exception ex) {
+    logger.error(ex.getMessage(),ex);
+    return false;
+  }
+}

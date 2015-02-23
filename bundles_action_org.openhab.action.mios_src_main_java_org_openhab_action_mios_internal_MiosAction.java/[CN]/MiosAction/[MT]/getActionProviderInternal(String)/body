@@ -1,0 +1,11 @@
+{
+  MiosActionService service=MiosActionService.getMiosActionService();
+  if (service == null) {
+    throw new Exception(String.format("MiOS Service is not configured, Action for Item %1$s not queued.",itemName));
+  }
+  MiosActionProvider actionProvider=service.getMiosActionProvider();
+  if (actionProvider == null) {
+    throw new Exception(String.format("MiOS Action Provider is not configured, Action for Item %1$s not queued.",itemName));
+  }
+  return actionProvider;
+}
