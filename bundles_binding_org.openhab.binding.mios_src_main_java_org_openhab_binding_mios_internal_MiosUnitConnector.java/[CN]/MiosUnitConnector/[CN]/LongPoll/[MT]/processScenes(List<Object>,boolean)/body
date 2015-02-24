@@ -10,8 +10,19 @@
           value=fixTimestamp(value);
           key="TimeStamp";
         }
-        String property="scene:" + sceneId + "/"+ key;
-        publish(property,value,incremental);
+        boolean force=false;
+        boolean statusAttr=key.equals("status");
+        if (statusAttr) {
+          Integer lastValue=sceneStatusCache.get(sceneId);
+          if (!value.equals(lastValue)) {
+            sceneStatusCache.put(sceneId,(Integer)value);
+            force=true;
+          }
+        }
+        if (!statusAttr || force) {
+          String property="scene:" + sceneId + "/"+ key;
+          publish(property,value,incremental);
+        }
       }
  else {
         if (key.equals("timers") || key.equals("triggers") || key.equals("groups")|| key.equals("tooltip")|| key.equals("Jobs")|| key.equals("lua")) {
