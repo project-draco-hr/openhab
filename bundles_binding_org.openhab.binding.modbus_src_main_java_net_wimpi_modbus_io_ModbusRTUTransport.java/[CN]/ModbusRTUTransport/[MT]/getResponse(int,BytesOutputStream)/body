@@ -20,7 +20,7 @@ inpBytes=m_InputStream.read(inpBuf,0,bc + 2);
 out.write(inpBuf,0,inpBytes);
 m_CommPort.disableReceiveThreshold();
 if (inpBytes != bc + 2) {
-System.out.println("Error: looking for " + (bc + 2) + " bytes, received "+ inpBytes);
+logger.error("awaited {} bytes, but received {}",(bc + 2),inpBytes);
 }
 break;
 case 0x05:
