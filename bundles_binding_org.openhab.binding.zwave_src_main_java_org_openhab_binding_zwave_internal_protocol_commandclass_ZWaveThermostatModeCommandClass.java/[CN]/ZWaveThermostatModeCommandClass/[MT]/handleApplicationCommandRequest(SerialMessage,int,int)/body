@@ -2,11 +2,14 @@
   logger.debug("NODE {}: Received Thermostat Mode Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
-case THERMOSTAT_MODE_SET:
 case THERMOSTAT_MODE_GET:
 case THERMOSTAT_MODE_SUPPORTED_GET:
     logger.warn("NODE {}: Command {} not implemented.",this.getNode().getNodeId(),command);
   return;
+case THERMOSTAT_MODE_SET:
+logger.trace("NODE {}: Process Thermostat Mode Get as Report",this.getNode().getNodeId());
+processThermostatModeReport(serialMessage,offset,endpoint);
+break;
 case THERMOSTAT_MODE_SUPPORTED_REPORT:
 logger.debug("NODE {}: Process Thermostat Supported Mode Report",this.getNode().getNodeId());
 int payloadLength=serialMessage.getMessagePayload().length;
@@ -18,20 +21,19 @@ int index=((i - (offset + 1)) * 8) + bit;
 if (index >= ModeType.values().length) continue;
 ModeType modeTypeToAdd=ModeType.getModeType(index);
 if (modeTypeToAdd != null) {
-  this.modeTypes.add(modeTypeToAdd);
-  logger.debug("NODE {}: Added mode type {} ({})",this.getNode().getNodeId(),modeTypeToAdd.getLabel(),index);
+this.modeTypes.add(modeTypeToAdd);
+logger.debug("NODE {}: Added mode type {} ({})",this.getNode().getNodeId(),modeTypeToAdd.getLabel(),index);
 }
  else {
-  logger.warn("NODE {}: Unknown mode type {}",this.getNode().getNodeId(),index);
+logger.warn("NODE {}: Unknown mode type {}",this.getNode().getNodeId(),index);
 }
 }
 }
-this.getNode().advanceNodeStage(NodeStage.DYNAMIC);
+initialiseDone=true;
 break;
 case THERMOSTAT_MODE_REPORT:
 logger.trace("NODE {}: Process Thermostat Mode Report",this.getNode().getNodeId());
 processThermostatModeReport(serialMessage,offset,endpoint);
-if (this.getNode().getNodeStage() != NodeStage.DONE) this.getNode().advanceNodeStage(NodeStage.DONE);
 break;
 default :
 logger.warn("NODE {}: Unsupported Command {} for command class {} ({}).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey());

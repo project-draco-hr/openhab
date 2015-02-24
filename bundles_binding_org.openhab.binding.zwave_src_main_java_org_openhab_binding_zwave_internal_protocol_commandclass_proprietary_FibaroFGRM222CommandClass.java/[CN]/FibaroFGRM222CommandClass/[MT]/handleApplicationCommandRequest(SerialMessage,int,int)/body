@@ -1,0 +1,11 @@
+{
+  logger.debug("NODE {}: handleApplicationCommandRequest: {}",this.getNode().getNodeId(),serialMessage.toString());
+  int blindValue=serialMessage.getMessagePayloadByte(offset + blindOffset);
+  int lamellaTiltValue=serialMessage.getMessagePayloadByte(offset + lamellaTiltOffset);
+  logger.debug("NODE {}: Blind Value: {}",this.getNode().getNodeId(),blindValue);
+  logger.debug("NODE {}: Lamella Tilt Value: {}",this.getNode().getNodeId(),lamellaTiltValue);
+  FibaroFGRM222ValueEvent shutterEvent=new FibaroFGRM222ValueEvent(this.getNode().getNodeId(),endpoint,FibaroFGRM222ValueType.Shutter,blindValue);
+  this.getController().notifyEventListeners(shutterEvent);
+  FibaroFGRM222ValueEvent lamellaEvent=new FibaroFGRM222ValueEvent(this.getNode().getNodeId(),endpoint,FibaroFGRM222ValueType.Lamella,lamellaTiltValue);
+  this.getController().notifyEventListeners(lamellaEvent);
+}

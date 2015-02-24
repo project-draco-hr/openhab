@@ -1,12 +1,27 @@
 {
-  logger.debug("Starting Z-Wave receive thread");
+  logger.debug("Starting Z-Wave thread: Receive");
   try {
     sendResponse(NAK);
+    if (softReset == true) {
+      try {
+synchronized (serialPort.getOutputStream()) {
+          SerialMessage resetMsg=new SerialApiSoftResetMessageClass().doRequest();
+          byte[] buffer=resetMsg.getMessageBuffer();
+          serialPort.getOutputStream().write(buffer);
+          serialPort.getOutputStream().flush();
+        }
+      }
+ catch (      IOException e) {
+        logger.error("Error sending soft reset on initialisation: {}",e.getMessage());
+      }
+    }
     while (!interrupted()) {
       int nextByte;
       try {
         nextByte=serialPort.getInputStream().read();
-        if (nextByte == -1)         continue;
+        if (nextByte == -1) {
+          continue;
+        }
       }
  catch (      IOException e) {
         logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
@@ -14,16 +29,19 @@
       }
 switch (nextByte) {
 case SOF:
-        int messageLength;
-      try {
-        messageLength=serialPort.getInputStream().read();
-      }
- catch (      IOException e) {
-        logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
-        break;
-      }
-    byte[] buffer=new byte[messageLength + 2];
-  buffer[0]=SOF;
+        sendAllowed.acquire();
+      SOFCount++;
+    int messageLength;
+  try {
+    messageLength=serialPort.getInputStream().read();
+  }
+ catch (  IOException e) {
+    logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocalizedMessage());
+    sendAllowed.release();
+    break;
+  }
+byte[] buffer=new byte[messageLength + 2];
+buffer[0]=SOF;
 buffer[1]=(byte)messageLength;
 int total=0;
 while (total < messageLength) {
@@ -36,23 +54,22 @@ logger.error("Got I/O exception {} during receiving. exiting thread.",e.getLocal
 return;
 }
 }
-logger.trace("Reading message finished");
 logger.debug("Receive Message = {}",SerialMessage.bb2hex(buffer));
 processIncomingMessage(buffer);
-SOFCount++;
 break;
 case ACK:
-logger.trace("Received ACK");
 ACKCount++;
+logger.trace("Received ACK");
 break;
 case NAK:
-logger.error("Message not acklowledged by controller (NAK), discarding");
+NAKCount++;
+logger.error("Protocol error (NAK), discarding");
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-NAKCount++;
 break;
 case CAN:
-logger.error("Message cancelled by controller (CAN), resending");
+CANCount++;
+logger.error("Protocol error (CAN), resending");
 try {
 Thread.sleep(100);
 }
@@ -62,18 +79,18 @@ break;
 enqueue(lastSentMessage);
 transactionCompleted.release();
 logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-CANCount++;
 break;
 default :
-logger.warn(String.format("Out of Frame flow. Got 0x%02X. Sending NAK.",nextByte));
-sendResponse(NAK);
 OOFCount++;
+logger.warn(String.format("Protocol error (OOF). Got 0x%02X. Sending NAK.",nextByte));
+sendResponse(NAK);
 break;
 }
 }
 }
  catch (Exception e) {
-logger.error("Got an exception during receiving. exiting thread.",e);
+logger.error("Exception during Z-Wave thread: Receive",e);
 }
-logger.debug("Stopped Z-Wave receive thread");
+logger.debug("Stopped Z-Wave thread: Receive");
+serialPort.removeEventListener();
 }

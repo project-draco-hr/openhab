@@ -1,5 +1,9 @@
 {
   logger.trace("Process Multi-channel Encapsulation");
+  if (serialMessage.getMessagePayload().length < offset + 2) {
+    logger.error("NODE {}: Invalid data length",this.getNode().getNodeId());
+    return;
+  }
   CommandClass commandClass;
   ZWaveCommandClass zwaveCommandClass;
   int endpointId=serialMessage.getMessagePayloadByte(offset);
@@ -24,6 +28,6 @@
     logger.error(String.format("NODE %d: CommandClass %s (0x%02x) not implemented.",this.getNode().getNodeId(),commandClass.getLabel(),commandClassCode));
     return;
   }
-  logger.debug(String.format("NODE %d: Endpoint = %d, calling handleApplicationCommandRequest.",this.getNode().getNodeId(),endpointId));
+  logger.debug("NODE {}: Endpoint = {}, calling handleApplicationCommandRequest.",this.getNode().getNodeId(),endpointId);
   zwaveCommandClass.handleApplicationCommandRequest(serialMessage,offset + 3,endpointId);
 }

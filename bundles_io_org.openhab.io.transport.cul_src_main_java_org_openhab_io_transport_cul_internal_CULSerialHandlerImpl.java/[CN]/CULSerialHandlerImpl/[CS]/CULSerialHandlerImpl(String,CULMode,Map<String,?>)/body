@@ -1,11 +1,40 @@
 {
   super(deviceName,mode);
-  if (properties.get("baudrate") != null) {
-    baudRate=(Integer)properties.get("baudrate");
-    log.debug("Set baudrate to " + baudRate);
+  final String configuredBaudRate=(String)properties.get(KEY_BAUDRATE);
+  if (StringUtils.isNotBlank(configuredBaudRate)) {
+    try {
+      int tmpBaudRate=Integer.parseInt(configuredBaudRate);
+      if (validBaudrateMap.contains(tmpBaudRate)) {
+        baudRate=tmpBaudRate;
+      }
+ else {
+        log.error("Error parsing config parameter '{}'. Value = {} is not a valid baudrate. Value must be in [75, 110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]",KEY_BAUDRATE,tmpBaudRate);
+      }
+      log.info("Update config, {} = {}",KEY_BAUDRATE,baudRate);
+    }
+ catch (    NumberFormatException e) {
+      log.error("Error parsing config parameter '{}' to integer. Value = {}",KEY_BAUDRATE,configuredBaudRate);
+    }
   }
-  if (properties.get("parity") != null) {
-    parityMode=(Integer)properties.get("parity");
-    log.debug("Set parity to " + parityMode);
+  final String configuredParity=(String)properties.get(KEY_PARITY);
+  if (StringUtils.isNotBlank(configuredParity)) {
+    try {
+      if (isValidParity(configuredParity)) {
+        parityMode=validParitiesMap.get(configuredParity.toUpperCase());
+      }
+ else {
+        int parsedParityNumber=Integer.parseInt(configuredParity);
+        if (isValidParity(parsedParityNumber)) {
+          parityMode=parsedParityNumber;
+        }
+ else {
+          log.error("The configured '{}' value is invalid. The value '{}' has to be one of {}.",KEY_PARITY,parsedParityNumber,validParitiesMap.keySet());
+        }
+      }
+      log.info("Update config, {} = {} ({})",KEY_PARITY,convertParityModeToString(parityMode),parityMode);
+    }
+ catch (    NumberFormatException e) {
+      log.error("Error parsing config key '{}'. Use one of {}.",KEY_PARITY,validParitiesMap.keySet());
+    }
   }
 }

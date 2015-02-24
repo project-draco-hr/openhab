@@ -1,5 +1,8 @@
 {
-  if (fanModeTypes.isEmpty())   return this.getSupportedMessage();
+  if (fanModeTypes.isEmpty()) {
+    logger.warn("NODE {}: requesting fan mode types, set request ignored (try again later)",this.getNode().getNodeId());
+    return this.getSupportedMessage();
+  }
   if (!fanModeTypes.contains(FanModeType.getFanModeType(value))) {
     logger.error("NODE {}: Unsupported fanMode type {}",value,this.getNode().getNodeId());
     return null;

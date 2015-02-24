@@ -12,15 +12,29 @@
  else {
       throw new IllegalArgumentException("WTF?");
     }
-    for (    Map.Entry<String,Object> da : device.entrySet()) {
+    for (    Entry<String,Object> da : device.entrySet()) {
       String key=da.getKey();
       Object value=da.getValue();
       if (value instanceof String || value instanceof Integer || value instanceof Double|| value instanceof Boolean) {
         if (key.equals("time_created")) {
           value=fixTimestamp(value);
         }
-        String property="device:" + deviceId + '/'+ da.getKey();
-        publish(property,value,incremental);
+ else         if (key.equals("id")) {
+          continue;
+        }
+        boolean force=false;
+        boolean statusAttr=key.equals("status");
+        if (statusAttr) {
+          Integer lastValue=deviceStatusCache.get(deviceId);
+          if (!value.equals(lastValue)) {
+            deviceStatusCache.put(deviceId,(Integer)value);
+            force=true;
+          }
+        }
+        if (!statusAttr || force) {
+          String property="device:" + deviceId + '/'+ key;
+          publish(property,value,incremental);
+        }
       }
  else {
         if (key.equals("states") || key.equals("ControlURLs") || key.equals("Jobs")|| key.equals("tooltip")) {
@@ -30,12 +44,17 @@
       }
     }
     List<Object> deviceStates=getList(device,"states");
+    boolean variablesProcessed=false;
     for (    Object ds : deviceStates) {
       @SuppressWarnings("unchecked") Map<String,Object> state=(Map<String,Object>)ds;
       String var=(String)state.get("service") + "/" + (String)state.get("variable");
       String property="device:" + deviceId + "/service/"+ var;
       Object value=(Object)state.get("value");
       publish(property,value,incremental);
+      variablesProcessed=true;
+    }
+    if (variablesProcessed) {
+      publish("device:" + deviceId + "/id",deviceId,incremental);
     }
   }
 }
