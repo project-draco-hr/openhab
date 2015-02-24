@@ -1,0 +1,28 @@
+{
+  if (!(event instanceof IntegraStatusEvent)) {
+    return null;
+  }
+  IntegraStatusEvent statusEvent=(IntegraStatusEvent)event;
+switch (this.statusType) {
+case DATE_TIME:
+    if (item.getAcceptedDataTypes().contains(DateTimeType.class)) {
+      return new DateTimeType(statusEvent.getIntegraTime());
+    }
+ else {
+      return null;
+    }
+case SERVICE_MODE:
+  return booleanToState(item,statusEvent.inServiceMode());
+case TROUBLES:
+return booleanToState(item,statusEvent.troublesPresent());
+case TROUBLES_MEMORY:
+return booleanToState(item,statusEvent.troublesMemory());
+case ACU100_PRESENT:
+return booleanToState(item,statusEvent.isAcu100Present());
+case INTRX_PRESENT:
+return booleanToState(item,statusEvent.isIntRxPresent());
+case GRADE23_SET:
+return booleanToState(item,statusEvent.isGrade23Set());
+}
+return null;
+}

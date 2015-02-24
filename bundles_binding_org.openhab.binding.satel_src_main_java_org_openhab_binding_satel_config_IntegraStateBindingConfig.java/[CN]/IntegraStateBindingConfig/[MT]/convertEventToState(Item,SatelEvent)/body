@@ -1,0 +1,25 @@
+{
+  if (!(event instanceof IntegraStateEvent)) {
+    return null;
+  }
+  IntegraStateEvent stateEvent=(IntegraStateEvent)event;
+  if (stateEvent.getStateType() != this.stateType) {
+    return null;
+  }
+  if (this.objectNumbers.length == 1) {
+    int bitNbr=this.objectNumbers[0] - 1;
+    return booleanToState(item,stateEvent.isSet(bitNbr));
+  }
+ else   if (this.objectNumbers.length == 0) {
+    if (item instanceof ContactItem) {
+      return (stateEvent.statesSet() > 0) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+    }
+ else     if (item instanceof SwitchItem) {
+      return (stateEvent.statesSet() > 0) ? OnOffType.ON : OnOffType.OFF;
+    }
+ else     if (item instanceof NumberItem) {
+      return new DecimalType(stateEvent.statesSet());
+    }
+  }
+  return null;
+}

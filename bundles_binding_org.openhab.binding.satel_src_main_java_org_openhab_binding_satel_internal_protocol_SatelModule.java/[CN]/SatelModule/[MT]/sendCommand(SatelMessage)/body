@@ -1,0 +1,15 @@
+{
+  try {
+    if (this.sendQueue.contains(cmd)) {
+      logger.debug("Command already in the queue: {}",cmd);
+    }
+ else {
+      this.sendQueue.put(cmd);
+      logger.trace("Command enqueued: {}",cmd);
+    }
+    return true;
+  }
+ catch (  InterruptedException e) {
+    return false;
+  }
+}
