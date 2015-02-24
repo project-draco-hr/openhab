@@ -1,14 +1,14 @@
 {
-  Item item=getItem(itemname);
+  final Item item=getItem(itemname);
   if (item != null) {
-    State state=TypeParser.parseState(item.getAcceptedDataTypes(),value);
+    final State state=TypeParser.parseState(item.getAcceptedDataTypes(),value);
     if (state != null) {
-      logger.debug("Received HTTP PUT request at '{}' with value '{}'.",uriInfo.getPath(),value);
+      if (logger.isDebugEnabled())       logger.debug("Received HTTP PUT request at '{}' with value '{}'.",uriInfo.getPath(),value);
       RESTApplication.getEventPublisher().postUpdate(itemname,state);
       return Response.ok().build();
     }
  else {
-      logger.warn("Received HTTP PUT request at '{}' with an invalid status value '{}'.",uriInfo.getPath(),value);
+      if (logger.isDebugEnabled())       logger.warn("Received HTTP PUT request at '{}' with an invalid status value '{}'.",uriInfo.getPath(),value);
       return Response.status(Status.BAD_REQUEST).build();
     }
   }

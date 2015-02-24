@@ -1,0 +1,31 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  try {
+    boolean isItemMessage=originalMessage instanceof Item || originalMessage instanceof GroupItem;
+    boolean isStreamingTransport=ResponseTypeHelper.isStreamingTransport(request);
+    if (!isStreamingTransport && message instanceof PageBean && isItemMessage) {
+      final String delayedBroadcasterName=resource.getRequest().getPathInfo();
+      Executors.newSingleThreadExecutor().submit(new Runnable(){
+        public void run(){
+          try {
+            Thread.sleep(300);
+            BroadcasterFactory broadcasterFactory=resource.getAtmosphereConfig().getBroadcasterFactory();
+            GeneralBroadcaster delayedBroadcaster=broadcasterFactory.lookup(GeneralBroadcaster.class,delayedBroadcasterName);
+            if (delayedBroadcaster != null)             delayedBroadcaster.broadcast(message,resource);
+          }
+ catch (          Exception e) {
+            logger.error("Could not broadcast message",e);
+          }
+        }
+      }
+);
+    }
+ else {
+      return new BroadcastAction(ACTION.CONTINUE,message);
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage(),e);
+  }
+  return new BroadcastAction(ACTION.ABORT,message);
+}
