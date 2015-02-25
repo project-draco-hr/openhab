@@ -1,11 +1,10 @@
 {
-  if (stopbits.equals("1")) {
-    m_Stopbits=SerialPort.STOPBITS_1;
+  double doubleStopBits=1.0;
+  try {
+    doubleStopBits=Double.parseDouble(stopbits);
   }
-  if (stopbits.equals("1.5")) {
-    m_Stopbits=SerialPort.STOPBITS_1_5;
+ catch (  NumberFormatException e) {
+    throw new IllegalArgumentException("stopbitsString '" + stopbits + "' can not be converted to a number: "+ e.getMessage());
   }
-  if (stopbits.equals("2")) {
-    m_Stopbits=SerialPort.STOPBITS_2;
-  }
+  setStopbits(doubleStopBits);
 }
