@@ -6,26 +6,24 @@ synchronized (state) {
     switchLocked=state.switchLocked[switchNr - 1];
   }
   if (!Boolean.valueOf(newState).equals(switchState)) {
-    if (switchLocked != null) {
-      if (!switchLocked) {
-        final String cmd="Sw_" + (newState ? "on" : "off") + switchNr+ user+ password;
-        logger.debug("Sending to " + state.host + ": "+ cmd);
-        try {
-          connector.sendDatagram(cmd.getBytes());
-        }
- catch (        Exception e) {
-          logger.error("Error occured when sending UDP data to Anel device: " + cmd,e);
-        }
+    logger.debug("switch " + switchNr + " has already the requested state "+ (newState ? "ON" : "OFF")+ ", but sending update anyway.");
+  }
+  if (switchLocked != null) {
+    if (!switchLocked) {
+      final String cmd="Sw_" + (newState ? "on" : "off") + switchNr+ user+ password;
+      logger.debug("Sending to " + connector.host + ":"+ connector.receivePort+ " -> "+ cmd);
+      try {
+        connector.sendDatagram(cmd.getBytes());
       }
- else {
-        logger.debug("switch " + switchNr + " is locked, nothing sent.");
+ catch (      Exception e) {
+        logger.error("Error occured when sending UDP data to Anel device: " + cmd,e);
       }
     }
  else {
-      logger.debug("switch " + switchNr + " lock state not yet initialized, nothing sent.");
+      logger.debug("switch " + switchNr + " is locked, nothing sent.");
     }
   }
  else {
-    logger.debug("switch " + switchNr + " has already the requested state "+ (newState ? "ON" : "OFF")+ ", nothing sent.");
+    logger.debug("switch " + switchNr + " lock state not yet initialized, nothing sent.");
   }
 }
