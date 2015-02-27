@@ -1,0 +1,21 @@
+{
+  long startTime=System.currentTimeMillis();
+  try {
+    if (!db.isClosed() && (needsCommit || commitSameState)) {
+      needsCommit=false;
+      db.commit();
+      logger.trace("successfully commited mapdb transaction in {}ms",System.currentTimeMillis() - startTime);
+    }
+  }
+ catch (  Exception e) {
+    try {
+      logger.warn("Error committing transaction : {}",e.getMessage());
+      if (!db.isClosed()) {
+        db.rollback();
+      }
+    }
+ catch (    Exception re) {
+      logger.debug("Rollback Exception: {}",e.getMessage());
+    }
+  }
+}
