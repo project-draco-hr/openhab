@@ -5,10 +5,9 @@
     boolean isStreamingTransport=ResponseTypeHelper.isStreamingTransport(request);
     if (!isStreamingTransport && message instanceof PageBean && isItemMessage) {
       final String delayedBroadcasterName=resource.getRequest().getPathInfo();
-      Executors.newSingleThreadExecutor().submit(new Runnable(){
+      executor.schedule(new Runnable(){
         public void run(){
           try {
-            Thread.sleep(300);
             BroadcasterFactory broadcasterFactory=resource.getAtmosphereConfig().getBroadcasterFactory();
             GeneralBroadcaster delayedBroadcaster=broadcasterFactory.lookup(GeneralBroadcaster.class,delayedBroadcasterName);
             if (delayedBroadcaster != null)             delayedBroadcaster.broadcast(message,resource);
@@ -18,7 +17,7 @@
           }
         }
       }
-);
+,300,TimeUnit.MILLISECONDS);
     }
  else {
       return new BroadcastAction(ACTION.CONTINUE,message);
