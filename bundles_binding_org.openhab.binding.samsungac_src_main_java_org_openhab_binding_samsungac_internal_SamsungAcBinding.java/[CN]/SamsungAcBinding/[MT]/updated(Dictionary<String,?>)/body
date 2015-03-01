@@ -1,8 +1,17 @@
 {
   Enumeration<String> keys=config.keys();
+  String refreshIntervalString=(String)config.get("refresh");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+    logger.info("Refresh interval set to " + refreshIntervalString + " ms");
+  }
+ else {
+    logger.info("No refresh interval configured, using default: " + refreshInterval + " ms");
+  }
   Map<String,AirConditioner> hosts=new HashMap<String,AirConditioner>();
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
+    logger.debug("Configuration key is: " + key);
     if ("service.pid".equals(key)) {
       continue;
     }
