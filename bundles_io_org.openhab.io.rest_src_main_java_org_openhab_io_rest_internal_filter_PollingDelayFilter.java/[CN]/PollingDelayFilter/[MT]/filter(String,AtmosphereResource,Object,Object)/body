@@ -3,12 +3,17 @@
   try {
     boolean isItemMessage=originalMessage instanceof Item || originalMessage instanceof GroupItem;
     boolean isStreamingTransport=ResponseTypeHelper.isStreamingTransport(request);
+    try {
+      resource.getRequest().getPathInfo();
+    }
+ catch (    Exception e) {
+      return new BroadcastAction(ACTION.ABORT,message);
+    }
     if (!isStreamingTransport && message instanceof PageBean && isItemMessage) {
       final String delayedBroadcasterName=resource.getRequest().getPathInfo();
-      Executors.newSingleThreadExecutor().submit(new Runnable(){
+      executor.schedule(new Runnable(){
         public void run(){
           try {
-            Thread.sleep(300);
             BroadcasterFactory broadcasterFactory=resource.getAtmosphereConfig().getBroadcasterFactory();
             GeneralBroadcaster delayedBroadcaster=broadcasterFactory.lookup(GeneralBroadcaster.class,delayedBroadcasterName);
             if (delayedBroadcaster != null)             delayedBroadcaster.broadcast(message,resource);
@@ -18,7 +23,7 @@
           }
         }
       }
-);
+,300,TimeUnit.MILLISECONDS);
     }
  else {
       return new BroadcastAction(ACTION.CONTINUE,message);
