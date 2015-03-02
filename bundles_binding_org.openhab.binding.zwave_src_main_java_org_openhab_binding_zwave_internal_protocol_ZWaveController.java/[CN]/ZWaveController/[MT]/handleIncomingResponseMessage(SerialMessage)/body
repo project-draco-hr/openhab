@@ -1,16 +1,15 @@
 {
-  logger.trace("Message type = RESPONSE");
+  logger.trace("Incoming Message type = RESPONSE");
   ZWaveCommandProcessor processor=ZWaveCommandProcessor.getMessageDispatcher(incomingMessage.getMessageClass());
-  if (processor != null) {
-    processor.handleResponse(this,lastSentMessage,incomingMessage);
-    if (processor.isTransactionComplete()) {
-      notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage));
-      transactionCompleted.release();
-      logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
-    }
-  }
- else {
+  if (processor == null) {
     logger.warn(String.format("TODO: Implement processing of Response Message = %s (0x%02X)",incomingMessage.getMessageClass().getLabel(),incomingMessage.getMessageClass().getKey()));
+    return;
+  }
+  boolean result=processor.handleResponse(this,lastSentMessage,incomingMessage);
+  if (processor.isTransactionComplete()) {
+    notifyEventListeners(new ZWaveTransactionCompletedEvent(this.lastSentMessage,result));
+    transactionCompleted.release();
+    logger.trace("Released. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
   }
 switch (incomingMessage.getMessageClass()) {
 case GetVersion:
@@ -77,7 +76,7 @@ node.setDeviceType(this.getDeviceType());
 node.setManufacturer(this.getManufactureId());
 }
 this.zwaveNodes.put(nodeId,node);
-node.advanceNodeStage(NodeStage.PROTOINFO);
+node.initialiseNode();
 }
 break;
 case GetSucNodeId:

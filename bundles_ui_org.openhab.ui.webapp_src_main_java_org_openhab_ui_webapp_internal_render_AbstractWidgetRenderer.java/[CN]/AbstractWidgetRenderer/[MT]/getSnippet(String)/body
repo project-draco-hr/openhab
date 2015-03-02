@@ -7,7 +7,9 @@
     if (entry != null) {
       try {
         snippet=IOUtils.toString(entry.openStream());
-        snippetCache.put(elementType,snippet);
+        if (useSnippetCache) {
+          snippetCache.put(elementType,snippet);
+        }
       }
  catch (      IOException e) {
         logger.warn("Cannot load snippet for element type '{}'",elementType,e);

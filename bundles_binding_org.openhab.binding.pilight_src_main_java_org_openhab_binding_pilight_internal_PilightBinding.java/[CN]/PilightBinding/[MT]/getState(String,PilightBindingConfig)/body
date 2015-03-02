@@ -1,0 +1,14 @@
+{
+  State state=null;
+  if (config.getItemType().equals(StringItem.class)) {
+    state=new StringType(value);
+  }
+ else   if (config.getItemType().equals(NumberItem.class)) {
+    if (!StringUtils.isBlank(value)) {
+      BigDecimal numberValue=new BigDecimal(value);
+      numberValue=numberValue.divide(new BigDecimal(Math.pow(10,config.getScale())),config.getScale(),RoundingMode.HALF_UP);
+      state=new DecimalType(numberValue);
+    }
+  }
+  return state;
+}

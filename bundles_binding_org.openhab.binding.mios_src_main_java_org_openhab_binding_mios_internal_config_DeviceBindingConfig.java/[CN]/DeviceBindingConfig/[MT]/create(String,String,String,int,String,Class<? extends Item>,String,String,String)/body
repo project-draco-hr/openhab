@@ -9,10 +9,7 @@
     if (matcher.matches()) {
       iName=matcher.group("serviceName");
       iVar=matcher.group("serviceVar");
-      tmp=(String)aliasMap.get(iName);
-      if (tmp != null) {
-        iName=tmp;
-      }
+      iName=mapServiceAlias(iName);
       newInStuff="service/" + iName + '/'+ iVar;
     }
     ParameterDefaults pd=paramDefaults.get(newInStuff);
@@ -63,10 +60,7 @@
             serviceName=matcher.group("serviceName");
             serviceAction=matcher.group("serviceAction");
             if (serviceName != null) {
-              tmp=(String)aliasMap.get(serviceName);
-              if (tmp != null) {
-                serviceName=tmp;
-              }
+              serviceName=mapServiceAlias(serviceName);
               serviceStr=serviceName + '/' + serviceAction;
             }
  else {

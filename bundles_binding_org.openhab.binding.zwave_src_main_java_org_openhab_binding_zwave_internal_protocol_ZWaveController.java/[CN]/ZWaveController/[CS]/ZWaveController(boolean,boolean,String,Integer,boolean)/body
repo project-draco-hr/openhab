@@ -1,0 +1,15 @@
+{
+  logger.info("Starting Z-Wave controller");
+  this.masterController=masterController;
+  this.setSUC=isSUC;
+  this.softReset=reset;
+  if (timeout != null && timeout >= 1500 && timeout <= 10000) {
+    zWaveResponseTimeout=timeout;
+  }
+  logger.info("Z-Wave timeout is set to {}ms. Soft reset is {}.",zWaveResponseTimeout,reset);
+  connect(serialPortName);
+  this.watchdog=new Timer(true);
+  this.watchdog.schedule(new WatchDogTimerTask(serialPortName),WATCHDOG_TIMER_PERIOD,WATCHDOG_TIMER_PERIOD);
+  Timer initTimer=new Timer();
+  initTimer.schedule(new InitializeDelayTask(),3000);
+}

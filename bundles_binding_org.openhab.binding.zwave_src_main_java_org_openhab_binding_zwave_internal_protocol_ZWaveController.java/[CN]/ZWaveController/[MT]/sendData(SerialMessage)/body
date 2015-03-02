@@ -1,4 +1,8 @@
 {
+  if (serialMessage == null) {
+    logger.error("Null message for sendData");
+    return;
+  }
   if (serialMessage.getMessageClass() != SerialMessageClass.SendData) {
     logger.error(String.format("Invalid message class %s (0x%02X) for sendData",serialMessage.getMessageClass().getLabel(),serialMessage.getMessageClass().getKey()));
     return;
@@ -7,14 +11,7 @@
     logger.error("Only request messages can be sent");
     return;
   }
-  ZWaveNode node=this.getNode(serialMessage.getMessageNode());
-  node.incrementSendCount();
-  if (!node.isListening() && !node.isFrequentlyListening() && serialMessage.getPriority() != SerialMessagePriority.Low) {
-    ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-    if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
-      return;
-    }
-  }
+  serialMessage.setAckRequired();
   serialMessage.setTransmitOptions(TRANSMIT_OPTION_ACK | TRANSMIT_OPTION_AUTO_ROUTE | TRANSMIT_OPTION_EXPLORE);
   serialMessage.setCallbackId(getCallbackId());
   this.enqueue(serialMessage);

@@ -1,0 +1,14 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>(2);
+  if (refresh == true) {
+    initReportDone=false;
+    initCapabilitiesDone=false;
+  }
+  if (initReportDone == false) {
+    result.add(getIntervalMessage());
+  }
+  if (initCapabilitiesDone == false && this.getVersion() > 1) {
+    result.add(getIntervalCapabilitiesMessage());
+  }
+  return result;
+}

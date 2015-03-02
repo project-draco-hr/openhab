@@ -1,32 +1,29 @@
 {
 synchronized (portLock) {
-    if (isOpen) {
+    if (portState != PortState.CLOSED) {
       return true;
     }
     try {
       logger.debug("Creating CommPortIdentifier");
       CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(portName);
       logger.debug("Opening CommPortIdentifier");
-      CommPort commPort=portIdentifier.open("org.openhab.binding.dsmr",2000);
+      CommPort commPort=portIdentifier.open("org.openhab.binding.dsmr",readTimeoutMSec);
       logger.debug("Configure serial port");
       serialPort=(SerialPort)commPort;
       serialPort.enableReceiveThreshold(1);
-      serialPort.enableReceiveTimeout(timeoutMSec);
-      logger.debug("Configure serial port based on version " + version);
-switch (version) {
-case V21:
-case V22:
-case V30:
+      serialPort.enableReceiveTimeout(readTimeoutMSec);
+      logger.debug("Configure serial port speed " + portSpeed);
+switch (portSpeed) {
+case LOW_SPEED:
         serialPort.setSerialPortParams(9600,SerialPort.DATABITS_7,SerialPort.STOPBITS_1,SerialPort.PARITY_EVEN);
       serialPort.setDTR(false);
     serialPort.setRTS(true);
   break;
-case V40:
-case V404:
+case HIGH_SPEED:
 serialPort.setSerialPortParams(115200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 break;
 default :
-logger.error("Invalid version, closing port");
+logger.error("Invalid speed, closing port");
 return false;
 }
 }
@@ -44,14 +41,13 @@ return false;
 }
 logger.info("SerialPort opened successful");
 try {
-reader=new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+bis=new BufferedInputStream(serialPort.getInputStream());
 }
  catch (IOException ioe) {
 logger.error("Failed to get inputstream for serialPort. Closing port",ioe);
 return false;
 }
 logger.info("DSMR Port opened successful");
-isOpen=true;
-return isOpen;
+return true;
 }
 }

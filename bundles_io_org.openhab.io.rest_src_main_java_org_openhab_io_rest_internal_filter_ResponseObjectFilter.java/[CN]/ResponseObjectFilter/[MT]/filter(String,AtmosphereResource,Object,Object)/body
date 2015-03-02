@@ -1,0 +1,7 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  if (ResponseTypeHelper.isStreamingTransport(request) && message instanceof PageBean && originalMessage instanceof Item) {
+    return new BroadcastAction(ACTION.CONTINUE,getSingleResponseObject((PageBean)message,(Item)originalMessage,request));
+  }
+  return new BroadcastAction(ACTION.CONTINUE,message);
+}

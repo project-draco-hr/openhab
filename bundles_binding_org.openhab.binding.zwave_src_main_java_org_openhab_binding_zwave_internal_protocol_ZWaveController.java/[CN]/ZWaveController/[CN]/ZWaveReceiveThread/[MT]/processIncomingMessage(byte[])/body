@@ -1,12 +1,17 @@
 {
-  SerialMessage serialMessage=new SerialMessage(buffer);
-  if (serialMessage.isValid) {
+  SerialMessage recvMessage=new SerialMessage(buffer);
+  if (recvMessage.isValid) {
     logger.trace("Message is valid, sending ACK");
     sendResponse(ACK);
   }
  else {
     logger.error("Message is not valid, discarding");
+    sendResponse(NAK);
+    if (recvQueue.size() == 0) {
+      sendAllowed.release();
+    }
     return;
   }
-  handleIncomingMessage(serialMessage);
+  recvQueue.add(recvMessage);
+  logger.debug("Receive queue ADD: Length={}",recvQueue.size());
 }

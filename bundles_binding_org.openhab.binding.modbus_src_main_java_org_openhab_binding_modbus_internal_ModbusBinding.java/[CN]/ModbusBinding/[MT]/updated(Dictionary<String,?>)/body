@@ -18,7 +18,7 @@
           ModbusSlave.setWriteMultipleRegisters(Boolean.valueOf(config.get(key).toString()));
         }
  else {
-          logger.debug("given modbus-slave-config-key '" + key + "' does not follow the expected pattern 'pollInterval' or '<slaveId>.<connection|id|start|length|type>'");
+          logger.debug("given modbus-slave-config-key '" + key + "' does not follow the expected pattern or 'serial.<slaveId>.<"+ VALID_COFIG_KEYS+ ">'");
         }
         continue;
       }
@@ -39,6 +39,7 @@
  else {
           throw new ConfigurationException(slave,"the given slave type '" + slave + "' is unknown");
         }
+        logger.debug("modbusSlave '" + slave + "' instanciated");
         modbusSlaves.put(slave,modbusSlave);
       }
       String configKey=matcher.group(3);
@@ -62,8 +63,11 @@
           if (chunks.length >= 4) {
             ((ModbusSerialSlave)modbusSlave).setParity(chunks[3]);
           }
-          if (chunks.length == 5) {
+          if (chunks.length >= 5) {
             ((ModbusSerialSlave)modbusSlave).setStopbits(Integer.valueOf(chunks[4]));
+          }
+          if (chunks.length == 6) {
+            ((ModbusSerialSlave)modbusSlave).setEncoding(chunks[5]);
           }
         }
       }
@@ -92,10 +96,14 @@
           throw new ConfigurationException(configKey,"the given value type '" + value + "' is invalid");
         }
       }
+ else       if ("rawdatamultiplier".equals(configKey)) {
+        modbusSlave.setRawDataMultiplier(Double.valueOf(value.toString()));
+      }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }
     }
+    logger.debug("config looked good, proceeding with slave-connections");
     for (    ModbusSlave slave : modbusSlaves.values()) {
       slave.connect();
     }

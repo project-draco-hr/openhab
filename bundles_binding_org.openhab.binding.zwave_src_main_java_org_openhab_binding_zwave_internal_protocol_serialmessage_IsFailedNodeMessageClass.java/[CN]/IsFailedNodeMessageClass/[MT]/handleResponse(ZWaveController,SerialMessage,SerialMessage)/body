@@ -1,13 +1,18 @@
 {
   int nodeId=lastSentMessage.getMessagePayloadByte(0);
-  logger.trace("Handle IsFailedNode Response");
+  ZWaveNode node=zController.getNode(nodeId);
+  if (node == null) {
+    logger.error("NODE {}: Failed node message for unknown node",nodeId);
+    incomingMessage.setTransactionCanceled();
+    return false;
+  }
   if (incomingMessage.getMessagePayloadByte(0) != 0x00) {
-    zController.notifyEventListeners(new ZWaveNetworkEvent(ZWaveNetworkEvent.Type.FailedNode,nodeId,ZWaveNetworkEvent.State.Success));
     logger.warn("NODE {}: Is currently marked as failed by the controller!",nodeId);
+    node.setNodeState(ZWaveNodeState.FAILED);
   }
  else {
     logger.debug("NODE {}: Is currently marked as healthy by the controller",nodeId);
   }
-  transactionComplete=true;
+  checkTransactionComplete(lastSentMessage,incomingMessage);
   return true;
 }

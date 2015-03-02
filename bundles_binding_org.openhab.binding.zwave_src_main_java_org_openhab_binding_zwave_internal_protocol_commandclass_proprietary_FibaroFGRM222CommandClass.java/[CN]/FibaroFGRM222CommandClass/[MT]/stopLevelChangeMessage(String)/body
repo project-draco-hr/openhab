@@ -1,0 +1,7 @@
+{
+  logger.debug("NODE {}: Creating new message for application command SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessageType.Request,SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)CommandClass.SWITCH_MULTILEVEL.getKey(),(byte)0x05};
+  result.setMessagePayload(newPayload);
+  return result;
+}

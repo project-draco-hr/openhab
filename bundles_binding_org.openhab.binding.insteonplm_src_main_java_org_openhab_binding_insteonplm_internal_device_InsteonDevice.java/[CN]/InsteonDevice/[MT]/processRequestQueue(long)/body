@@ -3,6 +3,17 @@ synchronized (m_requestQueue) {
     if (m_requestQueue.isEmpty()) {
       return 0L;
     }
+    if (m_requestQueueState == DeviceFeature.QueryStatus.QUERY_PENDING) {
+      long dt=timeNow - (m_lastQueryTime + QUERY_TIMEOUT);
+      if (dt < 0) {
+        logger.debug("still waiting for query reply from {} for another {} usec",m_address,dt);
+        return (m_lastQueryTime + QUERY_TIMEOUT);
+      }
+ else {
+        logger.warn("gave up waiting for query reply from device {}",m_address);
+      }
+    }
+    m_lastQueryTime=timeNow;
     QEntry qe=m_requestQueue.poll();
     qe.getFeature().setQueryStatus(DeviceFeature.QueryStatus.QUERY_PENDING);
     long quietTime=qe.getMsg().getQuietTime();

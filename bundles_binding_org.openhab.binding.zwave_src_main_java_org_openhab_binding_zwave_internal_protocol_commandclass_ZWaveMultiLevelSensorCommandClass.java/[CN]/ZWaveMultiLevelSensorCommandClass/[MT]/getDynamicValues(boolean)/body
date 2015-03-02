@@ -1,0 +1,22 @@
+{
+  ArrayList<SerialMessage> result=new ArrayList<SerialMessage>();
+  if (refresh == true && this.getVersion() > 4) {
+    logger.debug("=========== Resetting init flag!");
+    for (    Map.Entry<SensorType,Sensor> entry : this.sensors.entrySet()) {
+      entry.getValue().resetInitialised();
+    }
+    dynamicDone=false;
+  }
+  if (this.getVersion() > 4) {
+    for (    Map.Entry<SensorType,Sensor> entry : this.sensors.entrySet()) {
+      if (entry.getValue().getInitialised() == false) {
+        logger.debug("============ Requesting {}!",entry.getValue().getSensorType());
+        result.add(this.getMessage(entry.getValue().getSensorType()));
+      }
+    }
+  }
+ else   if (dynamicDone == false) {
+    result.add(this.getValueMessage());
+  }
+  return result;
+}

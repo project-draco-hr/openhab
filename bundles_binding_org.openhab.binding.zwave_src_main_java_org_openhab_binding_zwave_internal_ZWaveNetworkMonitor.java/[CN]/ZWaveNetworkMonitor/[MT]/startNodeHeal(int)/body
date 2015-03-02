@@ -1,0 +1,28 @@
+{
+  ZWaveNode node=zController.getNode(nodeId);
+  if (node == null) {
+    logger.error("NODE {}: Heal node - can't be found.",nodeId);
+    return false;
+  }
+  if (isNodeHealing(nodeId)) {
+    logger.debug("NODE {}: Node is already healing.",node.getNodeId());
+    return false;
+  }
+  HealNode heal=new HealNode();
+  heal.node=node;
+  heal.nodeId=nodeId;
+  heal.retryCnt=0;
+  heal.routeList=null;
+  heal.state=HealState.WAITING;
+  heal.lastChange=Calendar.getInstance().getTime();
+  if (node.isListening()) {
+    heal.listening=true;
+  }
+ else {
+    heal.listening=false;
+  }
+  healNodes.put(nodeId,heal);
+  logger.debug("NODE {}: Starting heal",nodeId);
+  networkHealNextTime=0;
+  return true;
+}

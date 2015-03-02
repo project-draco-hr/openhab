@@ -9,13 +9,13 @@
       Msg mcmd=dev.makeX10Message(houseCommandCode,(byte)0x80);
       dev.enqueueMessage(mcmd,m_feature);
       String onOff=cmd == OnOffType.ON ? "ON" : "OFF";
-      logger.info("X10OnOffCommandHandler: sent msg to switch {} {}",dev.getAddress(),onOff);
+      logger.info("{}: sent msg to switch {} {}",nm(),dev.getAddress(),onOff);
     }
   }
  catch (  IOException e) {
-    logger.error("command send i/o error: ",e);
+    logger.error("{}: command send i/o error: ",nm(),e);
   }
 catch (  FieldException e) {
-    logger.error("command send message creation error ",e);
+    logger.error("{}: command send message creation error ",nm(),e);
   }
 }

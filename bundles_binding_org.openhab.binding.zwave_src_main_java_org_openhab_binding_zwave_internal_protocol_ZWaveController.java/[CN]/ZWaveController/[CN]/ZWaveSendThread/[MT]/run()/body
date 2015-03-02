@@ -1,7 +1,12 @@
 {
-  logger.debug("Starting Z-Wave send thread");
+  logger.debug("Starting Z-Wave thread: Send");
   try {
     while (!interrupted()) {
+      if (!sendAllowed.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
+        logger.warn("Receive queue TIMEOUT:",recvQueue.size());
+        continue;
+      }
+      sendAllowed.release();
       try {
         lastSentMessage=sendQueue.take();
         logger.debug("Took message from queue for sending. Queue length = {}",sendQueue.size());
@@ -9,24 +14,25 @@
  catch (      InterruptedException e1) {
         break;
       }
-      if (lastSentMessage == null)       continue;
-      if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
-        ZWaveNode node=getNode(lastSentMessage.getMessageNode());
-        if (node != null && !node.isListening() && !node.isFrequentlyListening() && lastSentMessage.getPriority() != SerialMessagePriority.Low) {
-          ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
-          if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(lastSentMessage)) {
-            continue;
-          }
+      if (lastSentMessage == null) {
+        continue;
+      }
+      ZWaveNode node=getNode(lastSentMessage.getMessageNode());
+      if (node != null && !node.isListening() && !node.isFrequentlyListening()) {
+        ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+        if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(lastSentMessage)) {
+          continue;
         }
       }
       transactionCompleted.drainPermits();
       byte[] buffer=lastSentMessage.getMessageBuffer();
-      logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+      logger.debug("NODE {}: Sending REQUEST Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
       lastMessageStartTime=System.currentTimeMillis();
       try {
 synchronized (serialPort.getOutputStream()) {
           serialPort.getOutputStream().write(buffer);
           serialPort.getOutputStream().flush();
+          logger.trace("Message SENT");
         }
       }
  catch (      IOException e) {
@@ -36,9 +42,9 @@ synchronized (serialPort.getOutputStream()) {
       try {
         if (!transactionCompleted.tryAcquire(1,zWaveResponseTimeout,TimeUnit.MILLISECONDS)) {
           timeOutCount.incrementAndGet();
-          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
-            buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.High).getMessageBuffer();
-            logger.debug("Sending Message = " + SerialMessage.bb2hex(buffer));
+          if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData && lastSentMessage.isAckPending()) {
+            buffer=new SerialMessage(SerialMessageClass.SendDataAbort,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Immediate).getMessageBuffer();
+            logger.debug("NODE {}: Sending ABORT Message = {}",lastSentMessage.getMessageNode(),SerialMessage.bb2hex(buffer));
             try {
 synchronized (serialPort.getOutputStream()) {
                 serialPort.getOutputStream().write(buffer);
@@ -51,18 +57,24 @@ synchronized (serialPort.getOutputStream()) {
             }
           }
           if (--lastSentMessage.attempts >= 0) {
-            logger.error("NODE {}: Timeout while sending message. Requeueing",lastSentMessage.getMessageNode());
-            if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData)             handleFailedSendDataRequest(lastSentMessage);
- else             enqueue(lastSentMessage);
+            logger.error("NODE {}: Timeout while sending message. Requeueing - {} attempts left!",lastSentMessage.getMessageNode(),lastSentMessage.attempts);
+            if (lastSentMessage.getMessageClass() == SerialMessageClass.SendData) {
+              handleFailedSendDataRequest(lastSentMessage);
+            }
+ else {
+              enqueue(lastSentMessage);
+            }
           }
  else {
-            logger.warn("NODE {}: Discarding message: {}",lastSentMessage.getMessageNode(),lastSentMessage.toString());
+            logger.warn("NODE {}: Too many retries. Discarding message: {}",lastSentMessage.getMessageNode(),lastSentMessage.toString());
           }
           continue;
         }
         long responseTime=System.currentTimeMillis() - lastMessageStartTime;
-        if (responseTime > longestResponseTime)         longestResponseTime=responseTime;
-        logger.debug("Response processed after {}ms/{}ms.",responseTime,longestResponseTime);
+        if (responseTime > longestResponseTime) {
+          longestResponseTime=responseTime;
+        }
+        logger.debug("NODE {}: Response processed after {}ms/{}ms.",lastSentMessage.getMessageNode(),responseTime,longestResponseTime);
         logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
       }
  catch (      InterruptedException e) {
@@ -71,7 +83,7 @@ synchronized (serialPort.getOutputStream()) {
     }
   }
  catch (  Exception e) {
-    logger.error("Got an exception during sending. exiting thread.",e);
+    logger.error("Exception during Z-Wave thread: Send",e);
   }
-  logger.debug("Stopped Z-Wave send thread");
+  logger.debug("Stopped Z-Wave thread: Send");
 }

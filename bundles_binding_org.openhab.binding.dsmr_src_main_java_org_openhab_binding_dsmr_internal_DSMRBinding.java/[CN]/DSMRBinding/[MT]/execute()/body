@@ -5,9 +5,10 @@
   }
   if (dsmrPort == null || !dsmrPort.isOpen()) {
     logger.debug("Creating DSMR Port:" + port);
-    dsmrPort=new DSMRPort(port,version,dsmrMeters,DSMR_UPDATE_INTERVAL);
+    dsmrPort=new DSMRPort(port,new P1TelegramParser(new OBISMsgFactory(dsmrMeters)),DSMR_UPDATE_INTERVAL / 2,DSMR_UPDATE_INTERVAL * 2);
   }
   List<OBISMessage> messages=dsmrPort.read();
+  logger.debug("Received " + messages.size() + " messages");
   for (  OBISMessage msg : messages) {
     logger.debug("Read message:" + msg);
     for (    DSMRBindingProvider provider : providers) {

@@ -9,13 +9,13 @@
       Msg mcmd=dev.makeX10Message(houseCommandCode,(byte)0x80);
       dev.enqueueMessage(mcmd,m_feature);
       String bd=cmd == IncreaseDecreaseType.INCREASE ? "BRIGHTEN" : "DIM";
-      logger.info("X10IncreaseDecreaseCommandHandler: sent msg to switch {} {}",dev.getAddress(),bd);
+      logger.info("{}: sent msg to switch {} {}",nm(),dev.getAddress(),bd);
     }
   }
  catch (  IOException e) {
-    logger.error("command send i/o error: ",e);
+    logger.error("{}: command send i/o error: ",nm(),e);
   }
 catch (  FieldException e) {
-    logger.error("command send message creation error ",e);
+    logger.error("{}: command send message creation error ",nm(),e);
   }
 }

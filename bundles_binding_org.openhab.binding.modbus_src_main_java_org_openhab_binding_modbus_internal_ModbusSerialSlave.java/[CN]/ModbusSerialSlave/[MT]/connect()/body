@@ -1,16 +1,16 @@
 {
   try {
     if (connection == null) {
+      logger.debug("connection was null, going to create a new one");
       SerialParameters params=new SerialParameters();
       params.setPortName(port);
       params.setBaudRate(baud);
       params.setDatabits(dataBits);
       params.setParity(parity);
       params.setStopbits(stopBits);
-      params.setEncoding(Modbus.SERIAL_ENCODING_RTU);
+      params.setEncoding(serialEncoding);
       params.setEcho(false);
       connection=new SerialConnection(params);
-      connection.open();
     }
     if (!connection.isOpen()) {
       connection.open();
@@ -18,7 +18,7 @@
     ((ModbusSerialTransaction)transaction).setSerialConnection(connection);
   }
  catch (  Exception e) {
-    logger.debug("ModbusSlave: Error connecting to master: " + e.getMessage());
+    logger.error("ModbusSlave: Error connecting to master: " + e.getMessage());
     return false;
   }
   return true;

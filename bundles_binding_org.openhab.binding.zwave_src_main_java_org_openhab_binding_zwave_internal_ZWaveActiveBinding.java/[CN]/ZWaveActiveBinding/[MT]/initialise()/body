@@ -1,14 +1,17 @@
 {
   try {
+    logger.debug("Initialising zwave binding");
     this.setProperlyConfigured(true);
     this.deactivate();
-    this.zController=new ZWaveController(isSUC,port,timeout);
+    this.zController=new ZWaveController(masterController,isSUC,port,timeout,softReset);
     this.converterHandler=new ZWaveConverterHandler(this.zController,this.eventPublisher);
-    zController.initialize();
     zController.addEventListener(this);
     this.networkMonitor=new ZWaveNetworkMonitor(this.zController);
     if (healtime != null) {
       this.networkMonitor.setHealTime(healtime);
+    }
+    if (aliveCheckPeriod != null) {
+      this.networkMonitor.setPollPeriod(aliveCheckPeriod);
     }
     if (softReset != false) {
       this.networkMonitor.resetOnError(softReset);
