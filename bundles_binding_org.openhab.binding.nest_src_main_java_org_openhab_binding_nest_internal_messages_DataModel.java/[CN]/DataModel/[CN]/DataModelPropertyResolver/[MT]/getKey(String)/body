@@ -1,9 +1,12 @@
 {
   String key=super.getKey(expression);
-  try {
-    return URLDecoder.decode(key,"UTF-8");
+  if (key != null) {
+    try {
+      return URLDecoder.decode(key,"UTF-8");
+    }
+ catch (    UnsupportedEncodingException ex) {
+      return URLDecoder.decode(key);
+    }
   }
- catch (  UnsupportedEncodingException ex) {
-    return URLDecoder.decode(key);
-  }
+  return null;
 }

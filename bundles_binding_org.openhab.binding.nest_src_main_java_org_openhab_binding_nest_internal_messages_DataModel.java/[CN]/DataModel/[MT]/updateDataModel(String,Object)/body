@@ -1,12 +1,20 @@
 {
   Object oldObject=null;
-  for (String beanProperty=property; beanProperty.indexOf('.') > 0; beanProperty=beanProperty.substring(0,beanProperty.lastIndexOf('.') - 1)) {
+  String beanProperty=property;
+  do {
     Object obj=this.getProperty(beanProperty);
     if (obj instanceof Structure || obj instanceof Thermostat || obj instanceof SmokeCOAlarm) {
       oldObject=obj;
       break;
     }
+    if (beanProperty.indexOf('.') != -1) {
+      beanProperty=beanProperty.substring(0,beanProperty.lastIndexOf('.'));
+    }
+ else {
+      break;
+    }
   }
+ while (beanProperty.length() > 0);
   DataModel updateDataModel=null;
   if (oldObject != null) {
     if (oldObject instanceof Structure) {
@@ -44,6 +52,11 @@
   }
   if (updateDataModel != null) {
     updateDataModel.setProperty(property,newState);
+    updateDataModel.structures_by_name=null;
+    if (updateDataModel.devices != null) {
+      updateDataModel.devices.smoke_co_alarms_by_name=null;
+      updateDataModel.devices.thermostats_by_name=null;
+    }
   }
   return updateDataModel;
 }
