@@ -1,0 +1,36 @@
+{
+  State state=null;
+switch (itemType) {
+case MODULES:
+    state=new DecimalType(response.getModules());
+  break;
+case SIZE_W:
+state=new DecimalType(response.getSize_w());
+break;
+case CURRENT_POWER:
+state=new DecimalType(response.getCurrent_power());
+break;
+case ENERGY_TODAY:
+state=new DecimalType(response.getEnergy_today() * 0.001);
+break;
+case ENERGY_LIFETIME:
+state=new DecimalType(response.getEnergy_lifetime() * 0.001 * 0.001);
+break;
+case SUMMARY_DATE:
+state=new DateTimeType(response.getSummary_date());
+break;
+case SOURCE:
+state=new StringType(response.getSource());
+break;
+case STATUS:
+state=new StringType(response.getStatus());
+break;
+case OPERATIONAL_AT:
+state=new DateTimeType(response.getOperational_at());
+break;
+case LAST_REPORT_AT:
+state=new DateTimeType(response.getLast_report_at());
+break;
+}
+return state;
+}
