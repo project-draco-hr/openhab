@@ -1,0 +1,14 @@
+{
+  for (  final String itemName : provider.getItemNamesBy(CommandType.FORECAST)) {
+    eventPublisher.postUpdate(itemName,new StringType(sagerWeatherCaster.getForecast()));
+  }
+  for (  final String itemName : provider.getItemNamesBy(CommandType.VELOCITY)) {
+    eventPublisher.postUpdate(itemName,new StringType(sagerWeatherCaster.getWindVelocity()));
+  }
+  for (  final String itemName : provider.getItemNamesBy(CommandType.WINDFROM)) {
+    eventPublisher.postUpdate(itemName,new DecimalType(sagerWeatherCaster.getWindDirection()));
+  }
+  for (  final String itemName : provider.getItemNamesBy(CommandType.WINDTO)) {
+    eventPublisher.postUpdate(itemName,new DecimalType(sagerWeatherCaster.getWindDirection2()));
+  }
+}
