@@ -1,6 +1,7 @@
 {
   Map<CommandEnum,String> status=new HashMap<CommandEnum,String>();
   try {
+    logger.debug("Getting status for ac: '" + acName + "'");
     status=host.getStatus();
   }
  catch (  Exception e) {
@@ -8,7 +9,8 @@
     return;
   }
   for (  CommandEnum cmd : status.keySet()) {
-    String item=getItemName(cmd);
+    logger.debug("Trying to find item for: " + acName + " and cmd: "+ cmd.toString());
+    String item=getItemName(acName,cmd);
     String value=status.get(cmd);
     if (item != null && value != null) {
       updateItemWithValue(cmd,item,value);
