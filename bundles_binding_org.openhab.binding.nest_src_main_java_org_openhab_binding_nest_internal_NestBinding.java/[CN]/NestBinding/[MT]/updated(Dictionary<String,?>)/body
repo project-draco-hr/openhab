@@ -1,0 +1,57 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get(CONFIG_REFRESH);
+    if (isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    Enumeration<String> configKeys=config.keys();
+    while (configKeys.hasMoreElements()) {
+      String configKey=(String)configKeys.nextElement();
+      if (CONFIG_REFRESH.equals(configKey) || "service.pid".equals(configKey)) {
+        continue;
+      }
+      String userid=DEFAULT_USER_ID;
+      String configKeyTail=configKey;
+      OAuthCredentials credentials=credentialsCache.get(userid);
+      if (credentials == null) {
+        credentials=new OAuthCredentials(userid);
+        credentialsCache.put(userid,credentials);
+      }
+      String value=(String)config.get(configKey);
+      if (CONFIG_CLIENT_ID.equals(configKeyTail)) {
+        credentials.clientId=value;
+      }
+ else       if (CONFIG_CLIENT_SECRET.equals(configKeyTail)) {
+        credentials.clientSecret=value;
+      }
+ else       if (CONFIG_PIN_CODE.equals(configKeyTail)) {
+        credentials.pinCode=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
+      }
+    }
+    boolean properlyConfigured=true;
+    for (    String userid : credentialsCache.keySet()) {
+      OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+      String userString=(DEFAULT_USER_ID.equals(userid)) ? "" : (userid + ".");
+      if (oauthCredentials.clientId == null) {
+        logger.error("Required nest:{}{} is missing.",userString,CONFIG_CLIENT_ID);
+        properlyConfigured=false;
+        break;
+      }
+      if (oauthCredentials.clientSecret == null) {
+        logger.error("Required nest:{}{} is missing.",userString,CONFIG_CLIENT_SECRET);
+        properlyConfigured=false;
+        break;
+      }
+      if (oauthCredentials.pinCode == null) {
+        logger.error("Required nest:{}{} is missing.",userString,CONFIG_PIN_CODE);
+        properlyConfigured=false;
+        break;
+      }
+      oauthCredentials.load();
+    }
+    setProperlyConfigured(properlyConfigured);
+  }
+}

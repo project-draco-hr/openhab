@@ -1,0 +1,24 @@
+{
+  logger.debug("Processing binding configuration: '{}'",bindingConfig);
+  super.processBindingConfiguration(context,item,bindingConfig);
+  boolean inBound=false;
+  boolean outBound=false;
+  if (bindingConfig.startsWith(IN_BOUND)) {
+    inBound=true;
+  }
+ else   if (bindingConfig.startsWith(OUT_BOUND)) {
+    outBound=true;
+  }
+ else   if (bindingConfig.startsWith(BIDIRECTIONAL)) {
+    inBound=true;
+    outBound=true;
+  }
+ else {
+    throw new BindingConfigParseException("Item \"" + item.getName() + "\" does not start with "+ IN_BOUND+ ", "+ OUT_BOUND+ " or "+ BIDIRECTIONAL+ ".");
+  }
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches() || matcher.groupCount() != 1)   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  String property=matcher.group(1);
+  NestBindingConfig config=new NestBindingConfig(property,inBound,outBound);
+  addBindingConfig(item,config);
+}

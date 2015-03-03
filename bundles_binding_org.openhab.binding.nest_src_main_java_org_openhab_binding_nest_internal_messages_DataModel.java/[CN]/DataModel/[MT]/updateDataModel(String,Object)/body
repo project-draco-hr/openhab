@@ -1,0 +1,49 @@
+{
+  Object oldObject=null;
+  for (String beanProperty=property; beanProperty.indexOf('.') > 0; beanProperty=beanProperty.substring(0,beanProperty.lastIndexOf('.') - 1)) {
+    Object obj=this.getProperty(beanProperty);
+    if (obj instanceof Structure || obj instanceof Thermostat || obj instanceof SmokeCOAlarm) {
+      oldObject=obj;
+      break;
+    }
+  }
+  DataModel updateDataModel=null;
+  if (oldObject != null) {
+    if (oldObject instanceof Structure) {
+      String structureId=((Structure)oldObject).getStructure_id();
+      String structureName=((Structure)oldObject).getName();
+      updateDataModel=new DataModel();
+      Structure structure=new Structure(null);
+      updateDataModel.structures_by_id=new HashMap<String,Structure>();
+      updateDataModel.structures_by_id.put(structureId,structure);
+      updateDataModel.structures_by_name=new HashMap<String,Structure>();
+      updateDataModel.structures_by_name.put(structureName,structure);
+    }
+ else     if (oldObject instanceof Thermostat) {
+      String deviceId=((Thermostat)oldObject).getDevice_id();
+      String deviceName=((Thermostat)oldObject).getName();
+      updateDataModel=new DataModel();
+      updateDataModel.devices=new Devices();
+      Thermostat thermostat=new Thermostat(null);
+      updateDataModel.devices.thermostats_by_id=new HashMap<String,Thermostat>();
+      updateDataModel.devices.thermostats_by_id.put(deviceId,thermostat);
+      updateDataModel.devices.thermostats_by_name=new HashMap<String,Thermostat>();
+      updateDataModel.devices.thermostats_by_name.put(deviceName,thermostat);
+    }
+ else     if (oldObject instanceof SmokeCOAlarm) {
+      String deviceId=((SmokeCOAlarm)oldObject).getDevice_id();
+      String deviceName=((SmokeCOAlarm)oldObject).getName();
+      updateDataModel=new DataModel();
+      updateDataModel.devices=new Devices();
+      SmokeCOAlarm smokeCOAlarm=new SmokeCOAlarm(null);
+      updateDataModel.devices.smoke_co_alarms_by_id=new HashMap<String,SmokeCOAlarm>();
+      updateDataModel.devices.smoke_co_alarms_by_id.put(deviceId,smokeCOAlarm);
+      updateDataModel.devices.smoke_co_alarms_by_name=new HashMap<String,SmokeCOAlarm>();
+      updateDataModel.devices.smoke_co_alarms_by_name.put(deviceName,smokeCOAlarm);
+    }
+  }
+  if (updateDataModel != null) {
+    updateDataModel.setProperty(property,newState);
+  }
+  return updateDataModel;
+}
