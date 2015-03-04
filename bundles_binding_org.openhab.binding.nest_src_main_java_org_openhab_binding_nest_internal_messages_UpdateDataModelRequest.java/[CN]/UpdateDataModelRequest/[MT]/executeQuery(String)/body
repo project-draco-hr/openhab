@@ -1,6 +1,3 @@
 {
-  Properties headers=new Properties();
-  headers.putAll(HTTP_HEADERS);
-  String json=JSON.writeValueAsString(this.dataModel);
-  return executeUrl(HTTP_PUT,url,headers,json,"application/json",HTTP_REQUEST_TIMEOUT);
+  return executeUrl(HTTP_PUT,url,JSON.writeValueAsString(this.dataModel),"application/json");
 }
