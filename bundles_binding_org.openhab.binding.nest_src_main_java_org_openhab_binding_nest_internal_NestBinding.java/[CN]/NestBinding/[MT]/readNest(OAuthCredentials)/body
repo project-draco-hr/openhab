@@ -6,23 +6,16 @@
     return;
   }
   DataModel newDataModel=dmres;
-  DataModel oldDataModel=this.oldDataModel;
   this.oldDataModel=newDataModel;
   for (  final NestBindingProvider provider : this.providers) {
     for (    final String itemName : provider.getItemNames()) {
       if (provider.isInBound(itemName)) {
         final String property=provider.getProperty(itemName);
         final State newState=getState(newDataModel,property);
-        final State oldState=getState(oldDataModel,property);
-        if ((oldState == null && newState != null) || (UnDefType.UNDEF.equals(oldState) && !UnDefType.UNDEF.equals(newState)) || !oldState.equals(newState)) {
-          logger.debug("readNest: Updating itemName '{}' with newState '{}', oldState '{}'",itemName,newState,oldState);
-          ignoreEventSet.add(itemName + newState.toString());
-          logger.trace("Added event (item='{}', newState='{}') to the ignore event list",itemName,newState);
-          this.eventPublisher.postUpdate(itemName,newState);
-        }
- else {
-          logger.trace("readNest: Ignoring item='{}' with newState='{}', oldState='{}'",itemName,newState,oldState);
-        }
+        logger.trace("Updating itemName '{}' with newState '{}'",itemName,newState);
+        ignoreEventSet.add(itemName + newState.toString());
+        logger.trace("Added event (item='{}', newState='{}') to the ignore event set",itemName,newState);
+        this.eventPublisher.postUpdate(itemName,newState);
       }
     }
   }
