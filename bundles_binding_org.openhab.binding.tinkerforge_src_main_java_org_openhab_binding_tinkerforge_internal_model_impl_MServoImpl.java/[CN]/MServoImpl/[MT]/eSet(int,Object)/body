@@ -1,8 +1,11 @@
 {
 switch (featureID) {
-case ModelPackage.MSERVO__SWITCH_STATE:
-    setSwitchState((OnOffValue)newValue);
+case ModelPackage.MSERVO__SENSOR_VALUE:
+    setSensorValue((DecimalValue)newValue);
   return;
+case ModelPackage.MSERVO__SWITCH_STATE:
+setSwitchState((OnOffValue)newValue);
+return;
 case ModelPackage.MSERVO__LOGGER:
 setLogger((Logger)newValue);
 return;
@@ -21,14 +24,32 @@ return;
 case ModelPackage.MSERVO__MBRICK:
 setMbrick((MBrickServo)newValue);
 return;
+case ModelPackage.MSERVO__DIRECTION:
+setDirection((DirectionValue)newValue);
+return;
 case ModelPackage.MSERVO__TF_CONFIG:
 setTfConfig((TFServoConfiguration)newValue);
+return;
+case ModelPackage.MSERVO__MIN_VALUE:
+setMinValue((BigDecimal)newValue);
+return;
+case ModelPackage.MSERVO__MAX_VALUE:
+setMaxValue((BigDecimal)newValue);
+return;
+case ModelPackage.MSERVO__PERCENT_VALUE:
+setPercentValue((PercentValue)newValue);
 return;
 case ModelPackage.MSERVO__VELOCITY:
 setVelocity((Integer)newValue);
 return;
 case ModelPackage.MSERVO__ACCELERATION:
 setAcceleration((Integer)newValue);
+return;
+case ModelPackage.MSERVO__MAX_POSITION:
+setMaxPosition((Short)newValue);
+return;
+case ModelPackage.MSERVO__MIN_POSITION:
+setMinPosition((Short)newValue);
 return;
 case ModelPackage.MSERVO__PULSE_WIDTH_MIN:
 setPulseWidthMin((Integer)newValue);
@@ -42,11 +63,8 @@ return;
 case ModelPackage.MSERVO__OUTPUT_VOLTAGE:
 setOutputVoltage((Integer)newValue);
 return;
-case ModelPackage.MSERVO__SERVO_CURRENT_POSITION:
-setServoCurrentPosition((Short)newValue);
-return;
-case ModelPackage.MSERVO__SERVO_DESTINATION_POSITION:
-setServoDestinationPosition((Short)newValue);
+case ModelPackage.MSERVO__TARGET_POSITION:
+setTargetPosition((Short)newValue);
 return;
 }
 super.eSet(featureID,newValue);

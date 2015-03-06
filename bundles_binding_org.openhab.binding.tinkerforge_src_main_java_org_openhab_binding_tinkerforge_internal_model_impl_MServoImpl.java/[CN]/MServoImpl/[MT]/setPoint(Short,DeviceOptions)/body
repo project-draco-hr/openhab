@@ -1,0 +1,51 @@
+{
+  Integer xacceleration=Tools.getIntOpt(ConfigOptsServo.ACCELERATION.toString(),opts,this.acceleration);
+  if (xacceleration == null) {
+    logger.error("acceleration may not be null");
+    return;
+  }
+  Integer xvelocity=Tools.getIntOpt(ConfigOptsServo.VELOCITY.toString(),opts,this.velocity);
+  if (xvelocity == null) {
+    logger.error("xvelocity may not be null");
+    return;
+  }
+  if (newPosition == null) {
+    logger.error("position may not be null");
+    return;
+  }
+  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts,getMaxPosition());
+  if (max == null) {
+    logger.error("option max is missing, items configuration has to be fixed!");
+    return;
+  }
+ else {
+    logger.debug("max {}",max);
+  }
+  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts,getMinPosition());
+  logger.debug("min {}",min);
+  if (min == null) {
+    logger.error("dimmer option min is missing, items configuration has to be fixed!");
+    return;
+  }
+  if (newPosition > max) {
+    if (this.targetPosition < newPosition) {
+      logger.debug("setting value to max speed {}, which is lower then target speed {}",max,newPosition);
+      newPosition=max;
+    }
+ else {
+      logger.debug("max value already reached {}",max);
+      return;
+    }
+  }
+ else   if (newPosition < min) {
+    if (this.targetPosition > newPosition) {
+      logger.debug("setting velocity to min speed {}, which is higher then target speed {}",min,newPosition);
+      newPosition=min;
+    }
+ else {
+      logger.debug("min value already reached {}",min);
+      return;
+    }
+  }
+  setPoint(newPosition,xvelocity,xacceleration);
+}

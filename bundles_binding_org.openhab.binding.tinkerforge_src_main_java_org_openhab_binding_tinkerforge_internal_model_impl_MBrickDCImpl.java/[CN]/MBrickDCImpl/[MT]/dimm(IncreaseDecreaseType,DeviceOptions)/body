@@ -1,0 +1,25 @@
+{
+  logger.trace("dimmer increase increaseDecrease {} opts {}",increaseDecrease,opts);
+  if (opts == null) {
+    logger.error("Brick DC options are missing");
+    return;
+  }
+  if (increaseDecrease == null) {
+    logger.error("Brick DC increaseDecrease may not be null!");
+    return;
+  }
+  Short step=Tools.getShortOpt(ConfigOptsDimmable.STEP.toString(),opts);
+  if (step == null) {
+    logger.error("BrickDC dimmer option step is missing, items configuration has to be fixed!");
+    return;
+  }
+  Short newVelocity=null;
+  if (increaseDecrease.equals(IncreaseDecreaseType.INCREASE)) {
+    newVelocity=(short)(this.targetvelocity + step);
+  }
+ else   if (increaseDecrease.equals(IncreaseDecreaseType.DECREASE)) {
+    newVelocity=(short)(this.targetvelocity - step);
+  }
+  logger.debug("Brick DC newVelocity {}",newVelocity);
+  setPoint(newVelocity,opts);
+}

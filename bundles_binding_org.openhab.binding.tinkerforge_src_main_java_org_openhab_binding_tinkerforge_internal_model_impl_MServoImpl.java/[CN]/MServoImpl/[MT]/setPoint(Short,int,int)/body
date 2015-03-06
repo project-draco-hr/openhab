@@ -1,0 +1,39 @@
+{
+  Short max=getMaxPosition();
+  Short min=getMinPosition();
+  if (newPosition > max) {
+    if (this.targetPosition < newPosition) {
+      logger.debug("setting value to max speed {}, which is lower then target speed {}",max,newPosition);
+      newPosition=max;
+    }
+ else {
+      logger.debug("max value already reached {}",max);
+      return true;
+    }
+  }
+ else   if (newPosition < min) {
+    if (this.targetPosition > newPosition) {
+      logger.debug("setting velocity to min speed {}, which is higher then target speed {}",min,newPosition);
+      newPosition=min;
+    }
+ else {
+      logger.debug("min value already reached {}",min);
+      return true;
+    }
+  }
+  try {
+    BrickServo tinkerBrickServo=getMbrick().getTinkerforgeDevice();
+    tinkerBrickServo.setVelocity(servoNum,newVelocity);
+    tinkerBrickServo.setAcceleration(servoNum,newAccelleration);
+    tinkerBrickServo.setPosition(servoNum,newPosition);
+    setTargetPosition(newPosition);
+    return true;
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  return false;
+}
