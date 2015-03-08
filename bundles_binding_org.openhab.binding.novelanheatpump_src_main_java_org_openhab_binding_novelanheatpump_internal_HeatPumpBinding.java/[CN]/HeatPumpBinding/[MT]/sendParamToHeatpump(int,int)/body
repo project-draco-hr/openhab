@@ -1,0 +1,20 @@
+{
+  HeatpumpConnector connector=new HeatpumpConnector(ip);
+  try {
+    connector.connect();
+    return connector.setParam(param,value);
+  }
+ catch (  UnknownHostException e) {
+    logger.warn("the given hostname '{}' of the Novela heatpump is unknown",ip);
+    return false;
+  }
+catch (  IOException e) {
+    logger.warn("couldn't establish network connection [host '{}']",ip);
+    return false;
+  }
+ finally {
+    if (connector != null) {
+      connector.disconnect();
+    }
+  }
+}

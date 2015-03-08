@@ -1,21 +1,14 @@
 {
-  String clientId=request.getHeader("X-Atmosphere-tracking-id");
+  String clientId=request.getHeader(HeaderConfig.X_ATMOSPHERE_TRACKING_ID);
   if (clientId == null || clientId.isEmpty()) {
     return false;
   }
-  try {
-    CacheEntry entry=ResourceStateChangeListener.getCachedEntries().put(clientId,new CacheEntry(responseEntity));
-    if (entry != null) {
-      ObjectMapper mapper=new ObjectMapper();
-      String firedResponse=mapper.writeValueAsString(entry.getData());
-      String responseValue=mapper.writeValueAsString(responseEntity);
-      if (responseValue.equals(firedResponse)) {
-        return true;
-      }
-    }
-  }
- catch (  Exception e) {
-    logger.error("Could not check if double broadcast",e);
+  CacheEntry entry=ResourceStateChangeListener.getCachedEntries().put(clientId,new CacheEntry(responseEntity));
+  if (entry != null) {
+    ObjectMapper mapper=new ObjectMapper();
+    final String firedResponse=mapper.writeValueAsString(entry.getData());
+    final String responseValue=mapper.writeValueAsString(responseEntity);
+    return responseValue.equals(firedResponse);
   }
   return false;
 }

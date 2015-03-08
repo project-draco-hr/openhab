@@ -9,8 +9,9 @@
   }
   for (  Map.Entry<String,AirConditioner> entry : nameHostMapper.entrySet()) {
     AirConditioner host=entry.getValue();
+    String acName=entry.getKey();
     if (host.isConnected()) {
-      getAndUpdateStatusForAirConditioner(host);
+      getAndUpdateStatusForAirConditioner(acName,host);
     }
  else {
       reconnectToAirConditioner(entry.getKey(),host);

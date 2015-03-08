@@ -1,0 +1,14 @@
+{
+  String parmNumber=arguments.get("parameter");
+  ZWaveConfigurationParameterEvent cfgEvent=(ZWaveConfigurationParameterEvent)event;
+  if (cfgEvent.getParameter() != null && cfgEvent.getParameter().getIndex() != Integer.parseInt(parmNumber)) {
+    return;
+  }
+  ZWaveStateConverter<?,?> converter=this.getStateConverter(item,cfgEvent.getParameter().getValue());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    return;
+  }
+  State state=converter.convertFromValueToState(cfgEvent.getParameter().getValue());
+  this.getEventPublisher().postUpdate(item.getName(),state);
+}

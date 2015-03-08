@@ -5,7 +5,7 @@
     return;
   }
   logger.debug("NODE {}: receiveCommand with converter {} ",node.getNodeId(),converter.getClass());
-  SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage(((BigDecimal)converter.convertFromCommandToValue(item,command)).intValue()),commandClass,endpointId);
+  SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage((Integer)converter.convertFromCommandToValue(item,command)),commandClass,endpointId);
   logger.debug("NODE {}: receiveCommand sending message {} ",node.getNodeId(),serialMessage);
   if (serialMessage == null) {
     logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);

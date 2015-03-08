@@ -1,0 +1,12 @@
+{
+  this.structures_by_name=new HashMap<String,Structure>();
+  if (this.structures_by_id != null) {
+    for (    Structure st : this.structures_by_id.values()) {
+      this.structures_by_name.put(st.getName(),st);
+      st.sync(this);
+    }
+  }
+  if (this.devices != null) {
+    this.devices.sync(this);
+  }
+}

@@ -1,0 +1,13 @@
+{
+  final String url=buildQueryString();
+  String json=null;
+  try {
+    json=executeQuery(url);
+    final DataModelResponse response=JSON.readValue(json,DataModelResponse.class);
+    response.sync();
+    return response;
+  }
+ catch (  final Exception e) {
+    throw newException("Could not get data model.",e,url,json);
+  }
+}

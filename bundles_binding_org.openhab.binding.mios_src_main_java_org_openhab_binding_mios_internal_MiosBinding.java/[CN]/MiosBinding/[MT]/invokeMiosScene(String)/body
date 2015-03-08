@@ -1,0 +1,34 @@
+{
+  try {
+    logger.debug("invokeMiosScene item {}",itemName);
+    boolean sent=false;
+    String unitName=getMiosUnitName(itemName);
+    MiosUnitConnector connector=getMiosConnector(unitName);
+    if (connector == null) {
+      logger.warn("invokeMiosScene: Scene call for item '{}' but no connector found for MiOS Unit '{}', ignoring",itemName,unitName);
+      return false;
+    }
+    if (!connector.isConnected()) {
+      logger.warn("invokeMiosScene: Scene call for item '{}' but the connection to the MiOS Unit '{}' is down, ignoring",itemName,unitName);
+      return false;
+    }
+    for (    BindingProvider provider : providers) {
+      if (provider instanceof MiosBindingProvider) {
+        MiosBindingProviderImpl miosProvider=(MiosBindingProviderImpl)provider;
+        MiosBindingConfig config=miosProvider.getMiosBindingConfig(itemName);
+        if ((config != null) && (config instanceof SceneBindingConfig)) {
+          connector.invokeScene((SceneBindingConfig)config);
+          sent=true;
+        }
+ else {
+          logger.error("invokeMiosScene: Missing BindingConfig for item '{}', or not bound to a MiOS Scene.",itemName);
+        }
+      }
+    }
+    return sent;
+  }
+ catch (  Exception e) {
+    logger.error("invokeMiosScene: Error handling command",e);
+    return false;
+  }
+}
