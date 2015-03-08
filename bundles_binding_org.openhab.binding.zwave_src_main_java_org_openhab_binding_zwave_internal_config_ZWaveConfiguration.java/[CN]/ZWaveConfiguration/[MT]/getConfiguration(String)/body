@@ -413,11 +413,16 @@ records.add(record);
  else if (arg.equals("associations/")) {
 if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) != false) {
 List<ZWaveDbAssociationGroup> groupList=database.getProductAssociationGroups();
-if (groupList != null) {
+if (groupList == null) {
+return records;
+}
+ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
+if (associationCommandClass == null) {
+return null;
+}
 for (ZWaveDbAssociationGroup group : groupList) {
 record=new OpenHABConfigurationRecord(domain,"association" + group.Index + "/",database.getLabel(group.Label),true);
 record.description=database.getLabel(group.Help);
-ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
 int memberCnt=0;
 List<Integer> members=associationCommandClass.getGroupMembers(group.Index);
 if (members != null) {
@@ -426,7 +431,6 @@ memberCnt=members.size();
 record.value=memberCnt + " of " + group.Maximum+ " group members";
 record.addAction("Refresh","Refresh");
 records.add(record);
-}
 }
 }
 }
