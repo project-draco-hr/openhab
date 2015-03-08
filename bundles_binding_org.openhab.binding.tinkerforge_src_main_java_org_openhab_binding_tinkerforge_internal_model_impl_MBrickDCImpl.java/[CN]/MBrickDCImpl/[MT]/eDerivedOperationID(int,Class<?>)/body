@@ -1,12 +1,28 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == SwitchSensor.class) {
+switch (baseOperationID) {
+case ModelPackage.SWITCH_SENSOR___FETCH_SWITCH_STATE:
+      return ModelPackage.MBRICK_DC___FETCH_SWITCH_STATE;
+default :
+    return -1;
+}
+}
+if (baseClass == ProgrammableSwitchActor.class) {
+switch (baseOperationID) {
+case ModelPackage.PROGRAMMABLE_SWITCH_ACTOR___TURN_SWITCH__ONOFFVALUE_DEVICEOPTIONS:
+  return ModelPackage.MBRICK_DC___TURN_SWITCH__ONOFFVALUE_DEVICEOPTIONS;
+default :
+return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (baseOperationID) {
 case ModelPackage.MBASE_DEVICE___INIT:
-      return ModelPackage.MBRICK_DC___INIT;
+return ModelPackage.MBRICK_DC___INIT;
 case ModelPackage.MBASE_DEVICE___ENABLE:
-    return ModelPackage.MBRICK_DC___ENABLE;
+return ModelPackage.MBRICK_DC___ENABLE;
 case ModelPackage.MBASE_DEVICE___DISABLE:
-  return ModelPackage.MBRICK_DC___DISABLE;
+return ModelPackage.MBRICK_DC___DISABLE;
 default :
 return -1;
 }
@@ -17,7 +33,43 @@ default :
 return -1;
 }
 }
+if (baseClass == MoveActor.class) {
+switch (baseOperationID) {
+case ModelPackage.MOVE_ACTOR___MOVE__UPDOWNTYPE_DEVICEOPTIONS:
+return ModelPackage.MBRICK_DC___MOVE__UPDOWNTYPE_DEVICEOPTIONS;
+case ModelPackage.MOVE_ACTOR___STOP:
+return ModelPackage.MBRICK_DC___STOP;
+case ModelPackage.MOVE_ACTOR___MOVEON__DEVICEOPTIONS:
+return ModelPackage.MBRICK_DC___MOVEON__DEVICEOPTIONS;
+default :
+return -1;
+}
+}
 if (baseClass == MTFConfigConsumer.class) {
+switch (baseOperationID) {
+default :
+return -1;
+}
+}
+if (baseClass == DimmableActor.class) {
+switch (baseOperationID) {
+case ModelPackage.DIMMABLE_ACTOR___DIMM__INCREASEDECREASETYPE_DEVICEOPTIONS:
+return ModelPackage.MBRICK_DC___DIMM__INCREASEDECREASETYPE_DEVICEOPTIONS;
+default :
+return -1;
+}
+}
+if (baseClass == SetPointActor.class) {
+switch (baseOperationID) {
+case ModelPackage.SET_POINT_ACTOR___SET_VALUE__BIGDECIMAL_DEVICEOPTIONS:
+return ModelPackage.MBRICK_DC___SET_VALUE__BIGDECIMAL_DEVICEOPTIONS;
+case ModelPackage.SET_POINT_ACTOR___SET_VALUE__PERCENTTYPE_DEVICEOPTIONS:
+return ModelPackage.MBRICK_DC___SET_VALUE__PERCENTTYPE_DEVICEOPTIONS;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
 switch (baseOperationID) {
 default :
 return -1;
