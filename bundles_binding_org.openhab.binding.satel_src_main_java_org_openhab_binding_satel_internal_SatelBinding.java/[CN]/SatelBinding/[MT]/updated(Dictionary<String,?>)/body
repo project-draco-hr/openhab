@@ -1,0 +1,20 @@
+{
+  logger.trace("Binding configuration updated");
+  if (config == null) {
+    return;
+  }
+  this.refreshInterval=getLongValue(config,"refresh",10000);
+  this.userCode=getStringValue(config,"user_code",null);
+  int timeout=getIntValue(config,"timeout",5000);
+  String host=getStringValue(config,"host",null);
+  if (StringUtils.isNotBlank(host)) {
+    this.satelModule=new Ethm1Module(host,getIntValue(config,"port",7094),timeout,(String)config.get("encryption_key"));
+  }
+ else {
+    this.satelModule=new IntRSModule((String)config.get("port"),timeout);
+  }
+  this.satelModule.addEventListener(this);
+  this.satelModule.open();
+  setProperlyConfigured(true);
+  logger.trace("Binding properly configured");
+}

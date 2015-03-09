@@ -1,0 +1,9 @@
+{
+  if (commandSucceeded(response)) {
+    BitSet newStates=new BitSet();
+    if (this.controlType instanceof OutputControl) {
+      newStates.set(OutputState.OUTPUT.getRefreshCommand());
+      this.getEventDispatcher().dispatchEvent(new NewStatesEvent(newStates));
+    }
+  }
+}

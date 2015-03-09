@@ -1,0 +1,27 @@
+{
+  int bytesCount=6 + message.length;
+  if (bytesCount < 16) {
+    bytesCount=16;
+  }
+  byte[] data=new byte[bytesCount];
+  int randomValue=this.rand.nextInt();
+  data[0]=(byte)(randomValue >> 8);
+  data[1]=(byte)(randomValue & 0xff);
+  data[2]=(byte)(this.rollingCounter >> 8);
+  data[3]=(byte)(this.rollingCounter & 0xff);
+  data[4]=this.id_s=(byte)this.rand.nextInt();
+  data[5]=this.id_r;
+  ++this.rollingCounter;
+  System.arraycopy(message,0,data,6,message.length);
+  logger.debug("Encrypting data: {}",bytesToHex(data));
+  try {
+    this.aesHelper.encrypt(data);
+  }
+ catch (  Exception e) {
+    throw new IOException("Encryption exception",e);
+  }
+  logger.trace("Encrypted data: {}",bytesToHex(data));
+  os.write(bytesCount);
+  os.write(data);
+  os.flush();
+}

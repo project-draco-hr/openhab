@@ -1,0 +1,20 @@
+{
+  logger.trace("Handling incoming event: {}",event);
+  if (event instanceof NewStatesEvent) {
+    List<SatelMessage> commands=getRefreshCommands((NewStatesEvent)event);
+    for (    SatelMessage message : commands) {
+      this.satelModule.sendCommand(message);
+    }
+  }
+  for (  SatelBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      SatelBindingConfig itemConfig=provider.getItemConfig(itemName);
+      Item item=provider.getItem(itemName);
+      State newState=itemConfig.convertEventToState(item,event);
+      if (newState != null) {
+        logger.debug("Updating item state: item = {}, state = {}, event = {}",itemName,newState,event);
+        eventPublisher.postUpdate(itemName,newState);
+      }
+    }
+  }
+}

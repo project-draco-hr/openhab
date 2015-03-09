@@ -1,0 +1,63 @@
+{
+  try {
+    InputStream is=this.channel.getInputStream();
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    boolean inMessage=false;
+    int syncBytes=0;
+    while (true) {
+      byte b=(byte)is.read();
+      if (b == FRAME_SYNC) {
+        if (inMessage) {
+          if (syncBytes == 0) {
+          }
+ else {
+            logger.warn("Received frame sync bytes, discarding input: {}",baos.size());
+            inMessage=false;
+            baos.reset();
+          }
+        }
+        ++syncBytes;
+      }
+ else {
+        if (inMessage) {
+          if (syncBytes == 0) {
+            baos.write(b);
+          }
+ else           if (syncBytes == 1) {
+            if (b == FRAME_SYNC_ESC) {
+              baos.write(FRAME_SYNC);
+            }
+ else             if (b == FRAME_END[1]) {
+              break;
+            }
+ else {
+              logger.warn("Received invalid byte {}, discarding input: {}",String.format("%02X",b),baos.size());
+              inMessage=false;
+              baos.reset();
+            }
+          }
+ else {
+            logger.error("Sync bytes in message: {}",syncBytes);
+          }
+        }
+ else         if (syncBytes >= 2) {
+          inMessage=true;
+          baos.write(b);
+        }
+ else {
+        }
+        syncBytes=0;
+      }
+      if (Thread.interrupted()) {
+        return null;
+      }
+    }
+    return SatelMessage.fromBytes(baos.toByteArray());
+  }
+ catch (  IOException e) {
+    if (!Thread.interrupted()) {
+      logger.error("Unexpected exception occurred during reading a message",e);
+    }
+  }
+  return null;
+}
