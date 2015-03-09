@@ -1,0 +1,11 @@
+{
+  if (response.getCommand() != this.stateType.getRefreshCommand()) {
+    logger.error("Invalid response code: {}",response.getCommand());
+    return;
+  }
+  if (!isPayloadLengthValid(response.getPayload().length)) {
+    logger.error("Invalid payload length for this object type {}: {}",this.stateType.getObjectType(),response.getPayload().length);
+    return;
+  }
+  this.getEventDispatcher().dispatchEvent(new IntegraStateEvent(this.stateType,response.getPayload()));
+}

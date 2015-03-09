@@ -1,0 +1,16 @@
+{
+  try {
+    SatelBindingConfig bc=null;
+    bc=IntegraStateBindingConfig.parseConfig(bindingConfig);
+    if (bc != null) {
+      return bc;
+    }
+    bc=IntegraStatusBindingConfig.parseConfig(bindingConfig);
+    if (bc != null) {
+      return bc;
+    }
+  }
+ catch (  Exception e) {
+  }
+  throw new BindingConfigParseException(String.format("Invalid binding configuration: {}",bindingConfig));
+}

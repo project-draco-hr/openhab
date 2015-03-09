@@ -1,0 +1,15 @@
+{
+  if (buffer.length < 3) {
+    logger.error("Invalid message length: {}",buffer.length);
+    return null;
+  }
+  int receivedCrc=0xffff & ((buffer[buffer.length - 2] << 8) | (buffer[buffer.length - 1] & 0xff));
+  int expectedCrc=calculateChecksum(buffer,buffer.length - 2);
+  if (receivedCrc != expectedCrc) {
+    logger.error("Invalid message checksum: received = {}, expected = {}",receivedCrc,expectedCrc);
+    return null;
+  }
+  SatelMessage message=new SatelMessage(buffer[0],new byte[buffer.length - 3]);
+  if (message.payload.length > 0)   System.arraycopy(buffer,1,message.payload,0,buffer.length - 3);
+  return message;
+}

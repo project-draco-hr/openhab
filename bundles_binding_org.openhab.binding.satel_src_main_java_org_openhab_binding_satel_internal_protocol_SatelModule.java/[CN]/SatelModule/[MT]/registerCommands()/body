@@ -1,0 +1,25 @@
+{
+  this.supportedCommands.put(IntegraVersionCommand.COMMAND_CODE,new IntegraVersionCommand(this));
+  this.supportedCommands.put(NewStatesCommand.COMMAND_CODE,new NewStatesCommand(this));
+  for (  StateType state : PartitionState.values()) {
+    this.supportedCommands.put(state.getRefreshCommand(),new IntegraStateCommand(state,this));
+  }
+  for (  StateType state : ZoneState.values()) {
+    this.supportedCommands.put(state.getRefreshCommand(),new IntegraStateCommand(state,this));
+  }
+  for (  StateType state : OutputState.values()) {
+    this.supportedCommands.put(state.getRefreshCommand(),new IntegraStateCommand(state,this));
+  }
+  for (  StateType state : DoorsState.values()) {
+    this.supportedCommands.put(state.getRefreshCommand(),new IntegraStateCommand(state,this));
+  }
+  for (  ControlType ct : PartitionControl.values()) {
+    this.supportedCommands.put(ct.getControlCommand(),new ControlObjectCommand(ct,this));
+  }
+  for (  ControlType ct : OutputControl.values()) {
+    this.supportedCommands.put(ct.getControlCommand(),new ControlObjectCommand(ct,this));
+  }
+  this.supportedCommands.put(IntegraStatusCommand.COMMAND_CODE,new IntegraStatusCommand(this));
+  this.supportedCommands.put(ClearTroublesCommand.COMMAND_CODE,new ClearTroublesCommand(this));
+  this.supportedCommands.put(SetClockCommand.COMMAND_CODE,new SetClockCommand(this));
+}
