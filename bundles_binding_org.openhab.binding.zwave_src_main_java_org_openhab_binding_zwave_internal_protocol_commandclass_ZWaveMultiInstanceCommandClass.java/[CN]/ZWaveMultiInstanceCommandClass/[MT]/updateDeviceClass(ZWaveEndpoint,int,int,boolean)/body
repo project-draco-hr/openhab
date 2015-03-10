@@ -1,0 +1,23 @@
+{
+  Basic basic=this.getNode().getDeviceClass().getBasicDeviceClass();
+  Generic generic=Generic.getGeneric(genericDeviceClass);
+  if (generic == null) {
+    logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
+    return false;
+  }
+  Specific specific=Specific.getSpecific(generic,specificDeviceClass);
+  if (specific == null) {
+    logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
+    return false;
+  }
+  logger.debug("NODE {}: Endpoint Id = {}",this.getNode().getNodeId(),endpoint.getEndpointId());
+  logger.debug("NODE {}: Endpoints is dynamic = {}",this.getNode().getNodeId(),dynamic ? "true" : false);
+  logger.debug(String.format("NODE %d: Basic = %s 0x%02x",this.getNode().getNodeId(),basic.getLabel(),basic.getKey()));
+  logger.debug(String.format("NODE %d: Generic = %s 0x%02x",this.getNode().getNodeId(),generic.getLabel(),generic.getKey()));
+  logger.debug(String.format("NODE %d: Specific = %s 0x%02x",this.getNode().getNodeId(),specific.getLabel(),specific.getKey()));
+  ZWaveDeviceClass deviceClass=endpoint.getDeviceClass();
+  deviceClass.setBasicDeviceClass(basic);
+  deviceClass.setGenericDeviceClass(generic);
+  deviceClass.setSpecificDeviceClass(specific);
+  return true;
+}
