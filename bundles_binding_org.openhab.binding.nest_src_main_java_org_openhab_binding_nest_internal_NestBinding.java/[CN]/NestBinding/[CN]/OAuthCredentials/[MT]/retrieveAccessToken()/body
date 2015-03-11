@@ -1,0 +1,13 @@
+{
+  logger.trace("Retrieving access token in order to access the Nest API.");
+  final AccessTokenRequest request=new AccessTokenRequest(clientId,clientSecret,pinCode);
+  logger.trace("Request: {}",request);
+  final AccessTokenResponse response=request.execute();
+  logger.trace("Response: {}",response);
+  if (response.isError()) {
+    logger.error("Error retrieving access token: {}'",response);
+  }
+  this.accessToken=response.getAccessToken();
+  save();
+  return !noAccessToken();
+}

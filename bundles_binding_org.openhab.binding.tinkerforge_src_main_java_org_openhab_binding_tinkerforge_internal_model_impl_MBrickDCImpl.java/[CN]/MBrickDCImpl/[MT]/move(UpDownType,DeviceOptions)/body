@@ -1,0 +1,34 @@
+{
+  if (opts == null) {
+    logger.error("Brick DC options are missing");
+    return;
+  }
+  if (direction == null) {
+    logger.error("Brick DC direction may not be null, items configuration has to be fixed!");
+    return;
+  }
+  Integer itemacceleration=Tools.getIntOpt(ConfigOptsMove.ACCELERATION.toString(),opts);
+  String drivemodestr=Tools.getStringOpt(ConfigOptsMove.DRIVEMODE.toString(),opts);
+  Short speed=null;
+  if (direction.equals(UpDownType.DOWN)) {
+    speed=Tools.getShortOpt(ConfigOptsMove.RIGHTSPEED.toString(),opts);
+    if (speed == null) {
+      logger.error("\"rightspeed\" option missing or empty, items configuration has to be fixed!");
+      return;
+    }
+ else {
+      setDirection(DirectionValue.RIGHT);
+    }
+  }
+ else   if (direction.equals(UpDownType.UP)) {
+    speed=Tools.getShortOpt(ConfigOptsMove.LEFTSPEED.toString(),opts);
+    if (speed == null) {
+      logger.error("\"leftspeed\" option missing or empty, items configuration has to be fixed!");
+      return;
+    }
+ else {
+      setDirection(DirectionValue.LEFT);
+    }
+  }
+  setSpeed(speed,itemacceleration,drivemodestr,this.pwmFrequency);
+}

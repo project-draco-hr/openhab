@@ -1,0 +1,26 @@
+{
+  logger.trace("Receiving data from ETHM-1");
+  int bytesCount=is.read();
+  logger.trace("Read count of bytes: {}",bytesCount);
+  if (bytesCount == -1) {
+    throw new IOException("End of input stream reached");
+  }
+  byte[] data=new byte[bytesCount];
+  int bytesRead=is.read(data);
+  if (bytesCount != bytesRead) {
+    throw new IOException(String.format("Too few bytes read. Read: %d, expected: %d",bytesRead,bytesCount));
+  }
+  logger.trace("Decrypting data: {}",bytesToHex(data));
+  try {
+    this.aesHelper.decrypt(data);
+  }
+ catch (  Exception e) {
+    throw new IOException("Decryption exception",e);
+  }
+  logger.debug("Decrypted data: {}",bytesToHex(data));
+  this.id_r=data[4];
+  if (this.id_s != data[5]) {
+    throw new IOException(String.format("Invalid 'id_s' value. Got: %d, expected: %d",data[5],this.id_s));
+  }
+  return data;
+}

@@ -1,0 +1,18 @@
+{
+  logger.info("Connecting to ETHM-1 module at {}:{}",this.host,this.port);
+  try {
+    Socket socket=new Socket();
+    socket.connect(new InetSocketAddress(this.host,this.port),this.getTimeout());
+    logger.info("ETHM-1 module connected successfuly");
+    if (StringUtils.isBlank(this.encryptionKey)) {
+      return new TCPCommunicationChannel(socket);
+    }
+ else {
+      return new EncryptedCommunicationChannel(socket,this.encryptionKey);
+    }
+  }
+ catch (  IOException e) {
+    logger.error("IO error occurred during connecting socket",e);
+  }
+  return null;
+}

@@ -1,8 +1,11 @@
 {
 switch (operationID) {
-case ModelPackage.REMOTE_SWITCH_B___INIT:
-    init();
+case ModelPackage.REMOTE_SWITCH_B___DIMM__INCREASEDECREASETYPE_DEVICEOPTIONS:
+    dimm((IncreaseDecreaseType)arguments.get(0),(DeviceOptions)arguments.get(1));
   return null;
+case ModelPackage.REMOTE_SWITCH_B___INIT:
+init();
+return null;
 case ModelPackage.REMOTE_SWITCH_B___ENABLE:
 enable();
 return null;
@@ -14,6 +17,9 @@ turnSwitch((OnOffValue)arguments.get(0));
 return null;
 case ModelPackage.REMOTE_SWITCH_B___FETCH_SWITCH_STATE:
 fetchSwitchState();
+return null;
+case ModelPackage.REMOTE_SWITCH_B___FETCH_SENSOR_VALUE:
+fetchSensorValue();
 return null;
 }
 return super.eInvoke(operationID,arguments);

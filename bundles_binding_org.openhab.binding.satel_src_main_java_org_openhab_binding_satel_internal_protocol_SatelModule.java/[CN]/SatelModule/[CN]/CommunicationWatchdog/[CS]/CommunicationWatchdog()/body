@@ -1,0 +1,10 @@
+{
+  this.thread=null;
+  this.lastActivity=0;
+  this.schedule(new TimerTask(){
+    @Override public void run(){
+      CommunicationWatchdog.this.checkThread();
+    }
+  }
+,0,1000);
+}

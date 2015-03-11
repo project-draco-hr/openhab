@@ -1,9 +1,11 @@
 {
 switch (featureID) {
+case ModelPackage.MSERVO__SENSOR_VALUE:
+    return sensorValue != null;
 case ModelPackage.MSERVO__SWITCH_STATE:
-    return SWITCH_STATE_EDEFAULT == null ? switchState != null : !SWITCH_STATE_EDEFAULT.equals(switchState);
+  return SWITCH_STATE_EDEFAULT == null ? switchState != null : !SWITCH_STATE_EDEFAULT.equals(switchState);
 case ModelPackage.MSERVO__LOGGER:
-  return LOGGER_EDEFAULT == null ? logger != null : !LOGGER_EDEFAULT.equals(logger);
+return LOGGER_EDEFAULT == null ? logger != null : !LOGGER_EDEFAULT.equals(logger);
 case ModelPackage.MSERVO__UID:
 return UID_EDEFAULT == null ? uid != null : !UID_EDEFAULT.equals(uid);
 case ModelPackage.MSERVO__POLL:
@@ -14,14 +16,26 @@ case ModelPackage.MSERVO__SUB_ID:
 return SUB_ID_EDEFAULT == null ? subId != null : !SUB_ID_EDEFAULT.equals(subId);
 case ModelPackage.MSERVO__MBRICK:
 return getMbrick() != null;
+case ModelPackage.MSERVO__DIRECTION:
+return DIRECTION_EDEFAULT == null ? direction != null : !DIRECTION_EDEFAULT.equals(direction);
 case ModelPackage.MSERVO__TF_CONFIG:
 return tfConfig != null;
+case ModelPackage.MSERVO__MIN_VALUE:
+return MIN_VALUE_EDEFAULT == null ? minValue != null : !MIN_VALUE_EDEFAULT.equals(minValue);
+case ModelPackage.MSERVO__MAX_VALUE:
+return MAX_VALUE_EDEFAULT == null ? maxValue != null : !MAX_VALUE_EDEFAULT.equals(maxValue);
+case ModelPackage.MSERVO__PERCENT_VALUE:
+return PERCENT_VALUE_EDEFAULT == null ? percentValue != null : !PERCENT_VALUE_EDEFAULT.equals(percentValue);
 case ModelPackage.MSERVO__DEVICE_TYPE:
 return DEVICE_TYPE_EDEFAULT == null ? deviceType != null : !DEVICE_TYPE_EDEFAULT.equals(deviceType);
 case ModelPackage.MSERVO__VELOCITY:
 return velocity != VELOCITY_EDEFAULT;
 case ModelPackage.MSERVO__ACCELERATION:
 return acceleration != ACCELERATION_EDEFAULT;
+case ModelPackage.MSERVO__MAX_POSITION:
+return MAX_POSITION_EDEFAULT == null ? maxPosition != null : !MAX_POSITION_EDEFAULT.equals(maxPosition);
+case ModelPackage.MSERVO__MIN_POSITION:
+return MIN_POSITION_EDEFAULT == null ? minPosition != null : !MIN_POSITION_EDEFAULT.equals(minPosition);
 case ModelPackage.MSERVO__PULSE_WIDTH_MIN:
 return pulseWidthMin != PULSE_WIDTH_MIN_EDEFAULT;
 case ModelPackage.MSERVO__PULSE_WIDTH_MAX:
@@ -30,10 +44,8 @@ case ModelPackage.MSERVO__PERIOD:
 return period != PERIOD_EDEFAULT;
 case ModelPackage.MSERVO__OUTPUT_VOLTAGE:
 return outputVoltage != OUTPUT_VOLTAGE_EDEFAULT;
-case ModelPackage.MSERVO__SERVO_CURRENT_POSITION:
-return servoCurrentPosition != SERVO_CURRENT_POSITION_EDEFAULT;
-case ModelPackage.MSERVO__SERVO_DESTINATION_POSITION:
-return servoDestinationPosition != SERVO_DESTINATION_POSITION_EDEFAULT;
+case ModelPackage.MSERVO__TARGET_POSITION:
+return targetPosition != TARGET_POSITION_EDEFAULT;
 }
 return super.eIsSet(featureID);
 }

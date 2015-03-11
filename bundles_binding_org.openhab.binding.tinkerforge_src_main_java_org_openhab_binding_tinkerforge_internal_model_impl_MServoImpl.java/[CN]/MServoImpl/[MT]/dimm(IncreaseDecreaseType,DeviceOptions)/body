@@ -1,0 +1,25 @@
+{
+  logger.trace("dimmer increase increaseDecrease {} opts {}",increaseDecrease,opts);
+  if (opts == null) {
+    logger.error("options are missing");
+    return;
+  }
+  if (increaseDecrease == null) {
+    logger.error("increaseDecrease may not be null!");
+    return;
+  }
+  Short step=Tools.getShortOpt(ConfigOptsDimmable.STEP.toString(),opts);
+  if (step == null) {
+    logger.error("dimmer option step is missing, items configuration has to be fixed!");
+    return;
+  }
+  Short newPosition=null;
+  if (increaseDecrease.equals(IncreaseDecreaseType.INCREASE)) {
+    newPosition=(short)(this.targetPosition + step);
+  }
+ else   if (increaseDecrease.equals(IncreaseDecreaseType.DECREASE)) {
+    newPosition=(short)(this.targetPosition - step);
+  }
+  logger.debug("new position {}",newPosition);
+  setPoint(newPosition,opts);
+}
