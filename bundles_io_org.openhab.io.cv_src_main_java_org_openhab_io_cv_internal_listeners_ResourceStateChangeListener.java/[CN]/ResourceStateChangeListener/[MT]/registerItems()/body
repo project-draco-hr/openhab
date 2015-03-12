@@ -26,14 +26,6 @@
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
-      if (item instanceof GroupItem) {
-        GroupItem gItem=(GroupItem)item;
-        if (gItem.getBaseItem() != null) {
-          if (!broadcaster.getAtmosphereResources().isEmpty()) {
-            broadcaster.broadcast(item);
-          }
-        }
-      }
     }
     public void stateChanged(    final Item item,    State oldState,    State newState){
       broadcaster.broadcast(item);
