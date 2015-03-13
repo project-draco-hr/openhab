@@ -122,9 +122,8 @@
       messageType="thermoregulation";
       objectClass="Thermo";
       objectName=who + "*" + where;
-      String temperature=null;
       if (frameParts[2].equalsIgnoreCase("0")) {
-        temperature=frameParts[3];
+        String temperature=frameParts[3];
         temperature=OWNUtilities.convertTemperature(temperature);
         messageDescription="Temperature value";
         if (temperature != null) {
@@ -318,18 +317,20 @@
  else     where="";
     event=new ProtocolRead(frame);
     objectName=who + "*" + where;
-    boolean virtual_where=(where.length() == 4);
+    boolean virtual_where=false;
+    String[] what_parts;
 switch (Integer.parseInt(who)) {
 case 1:
       messageType="Lighting";
     objectClass="Light";
-  if (virtual_where) {
-    String[] what_parts=what.split("#");
-    what=what_parts[what_parts.length - 1];
-  }
+  what_parts=what.split("#");
+if (what_parts.length > 1) {
+  virtual_where=true;
+  what=what_parts[what_parts.length - 1];
+}
 switch (Integer.parseInt(what)) {
 case 0:
-  messageDescription="Light OFF";
+messageDescription="Light OFF";
 break;
 case 1:
 messageDescription="Light ON";
@@ -534,7 +535,7 @@ break;
 case 15:
 messageType="CEN Basic and Evolved";
 objectClass="CEN";
-String[] what_parts=what.split("#");
+what_parts=what.split("#");
 if (what_parts.length == 1) {
 messageDescription="Virtual pressure";
 }
