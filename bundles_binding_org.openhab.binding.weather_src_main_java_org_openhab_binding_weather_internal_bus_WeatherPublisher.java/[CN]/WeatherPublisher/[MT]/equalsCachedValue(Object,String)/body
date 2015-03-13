@@ -1,5 +1,9 @@
 {
-  int cachedValueHashCode=ObjectUtils.hashCode(itemCache.get(itemName));
+  Object cachedValue=itemCache.get(itemName);
+  if (cachedValue == null && value != null) {
+    return false;
+  }
+  int cachedValueHashCode=ObjectUtils.hashCode(cachedValue);
   int valueHashCode=ObjectUtils.hashCode(value);
   return cachedValueHashCode == valueHashCode;
 }
