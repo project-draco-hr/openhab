@@ -292,11 +292,12 @@ break;
 for (ZWaveDbAssociationGroup group : groups) {
 if (group.SetToController == true) {
 if (associationCls.getGroupMembers(group.Index).contains(controller.getOwnNodeId())) {
-logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - ASSOCIATION already set for group {}",node.getNodeId(),group.Index);
+logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - ASSOCIATION set for group {}",node.getNodeId(),group.Index);
 }
  else {
 logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - Adding ASSOCIATION to group {}",node.getNodeId(),group.Index);
 addToQueue(associationCls.setAssociationMessage(group.Index,controller.getOwnNodeId()));
+addToQueue(associationCls.getAssociationMessage(group.Index));
 }
 }
 }
