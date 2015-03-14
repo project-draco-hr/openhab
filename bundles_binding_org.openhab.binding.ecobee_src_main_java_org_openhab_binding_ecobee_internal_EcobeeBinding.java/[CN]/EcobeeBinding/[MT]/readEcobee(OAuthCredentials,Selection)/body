@@ -52,7 +52,7 @@
         State oldState=(itemRegistry == null) ? null : itemRegistry.getItem(itemName).getState();
         if ((oldState == null && newState != null) || (UnDefType.UNDEF.equals(oldState) && !UnDefType.UNDEF.equals(newState)) || !oldState.equals(newState)) {
           logger.debug("readEcobee: Updating itemName '{}' with newState '{}', oldState '{}'",itemName,newState,oldState);
-          ignoreEventSet.add(itemName + newState.toString());
+          ignoreEventList.add(itemName + newState.toString());
           logger.trace("Added event (item='{}', newState='{}') to the ignore event list",itemName,newState);
           this.eventPublisher.postUpdate(itemName,newState);
         }
