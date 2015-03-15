@@ -4,6 +4,7 @@
   try {
     json=executeQuery(url);
     final DataModelResponse response=JSON.readValue(json,DataModelResponse.class);
+    response.setLast_connection(new Date());
     response.sync();
     return response;
   }
