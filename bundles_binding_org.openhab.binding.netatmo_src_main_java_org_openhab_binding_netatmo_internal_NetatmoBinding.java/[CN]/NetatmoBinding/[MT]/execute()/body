@@ -38,10 +38,10 @@ for (Module module : oauthCredentials.deviceListResponse.getModules()) {
   if (module.getId().equals(moduleId)) {
 switch (measureType) {
 case BATTERYVP:
-      state=new DecimalType(module.getBatteryVp());
+      state=new DecimalType(module.getBatteryLevel());
     break;
 case RFSTATUS:
-  state=new DecimalType(module.getRfStatus());
+  state=new DecimalType(module.getRfLevel());
 break;
 }
 }
@@ -68,7 +68,7 @@ case ALTITUDE:
 state=stationPosition.getAltitude();
 break;
 case WIFISTATUS:
-state=new DecimalType(device.getWifiStatus());
+state=new DecimalType(device.getWifiLevel());
 break;
 case COORDINATE:
 state=stationPosition;
