@@ -1,6 +1,6 @@
 {
-  String lowerCaseAddress=address.toLowerCase();
-  if (!lowerCaseAddress.matches("[a-p]([1-9]|1[0-6])")) {
+  Matcher matcher=X10_ADDRESS_PATTERN.matcher(address.toLowerCase());
+  if (!matcher.matches()) {
     throw new BindingConfigParseException("The specified address '" + address + "' is not a valid X10 address.");
   }
 }
