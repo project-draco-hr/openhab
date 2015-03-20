@@ -1,0 +1,34 @@
+{
+  if (data.startsWith("H")) {
+    String device=data.substring(1,5);
+    String woHeader=data.substring(5,data.length() - 1);
+    String s1=woHeader.substring(0,1);
+    String batteryStatus="ok";
+    boolean isEmpty=(s1.charAt(0) & 2) == 2;
+    boolean isReplaced=(s1.charAt(0) & 4) == 4;
+    if (isEmpty) {
+      batteryStatus="empty";
+    }
+ else     if (isReplaced) {
+      batteryStatus="replaced";
+    }
+    double temperature=Integer.parseInt(woHeader.substring(5,6) + woHeader.substring(2,4)) / 10.0;
+    boolean isNegative=(s1.charAt(0) & 8) == 8;
+    if (isNegative) {
+      temperature=-temperature;
+    }
+    double humidity=Integer.parseInt(woHeader.substring(6,8) + woHeader.substring(4,5)) / 10.0;
+    logger.info("device: " + device + ", T: "+ (!isNegative ? " " : "")+ temperature+ ",\tH: "+ humidity+ ", Bat.: "+ batteryStatus);
+    HMSBindingConfig temperatureConfig=findConfig(device,HMSBindingConfig.Datapoint.TEMPERATURE);
+    if (temperatureConfig != null) {
+      updateItem(temperatureConfig.item,temperature);
+    }
+    HMSBindingConfig humidityConfig=findConfig(device,HMSBindingConfig.Datapoint.HUMIDITY);
+    if (humidityConfig != null) {
+      updateItem(humidityConfig.item,humidity);
+    }
+  }
+ else {
+    logger.warn("Received unparseable message: " + data);
+  }
+}
