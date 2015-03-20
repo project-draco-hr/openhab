@@ -14,7 +14,7 @@ synchronized (m_ByteOut) {
       byte buf[]=m_ByteOut.getBuffer();
       m_OutputStream.write(buf,0,len);
       m_OutputStream.flush();
-      if (Modbus.debug)       System.out.println("Sent: " + ModbusUtil.toHex(buf,0,len));
+      logger.debug("Sent: {}",ModbusUtil.toHex(buf,0,len));
       if (m_Echo) {
         readEcho(len);
       }

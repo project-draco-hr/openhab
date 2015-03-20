@@ -1,12 +1,17 @@
 {
   parity=parity.toLowerCase();
-  if (parity.equals("none")) {
-    m_Parity=SerialPort.PARITY_NONE;
+  int intParity=SerialPort.PARITY_NONE;
+  if (parity.equals("none") || parity.equals("n")) {
+    intParity=SerialPort.PARITY_NONE;
   }
-  if (parity.equals("even")) {
-    m_Parity=SerialPort.PARITY_EVEN;
+ else   if (parity.equals("even") || parity.equals("e")) {
+    intParity=SerialPort.PARITY_EVEN;
   }
-  if (parity.equals("odd")) {
-    m_Parity=SerialPort.PARITY_ODD;
+ else   if (parity.equals("odd") || parity.equals("o")) {
+    intParity=SerialPort.PARITY_ODD;
   }
+ else {
+    throw new IllegalArgumentException("unknown parity string '" + parity + "'");
+  }
+  setParity(intParity);
 }

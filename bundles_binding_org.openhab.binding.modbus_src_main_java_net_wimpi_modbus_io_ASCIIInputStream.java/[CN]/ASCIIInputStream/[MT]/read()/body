@@ -20,11 +20,13 @@
  else {
       try {
         sbuf.append((char)in.read());
+        logger.trace("Read byte: {}",sbuf.toString().toLowerCase());
         return Integer.parseInt(sbuf.toString().toLowerCase(),16);
       }
  catch (      NumberFormatException ex) {
-        if (Modbus.debug)         System.out.println(sbuf.toString());
-        throw new IOException("Malformed Stream - Wrong Characters");
+        final String errMsg="Malformed Stream - Wrong Characters";
+        logger.debug("{}: {}",errMsg,sbuf.toString());
+        throw new IOException(errMsg);
       }
     }
   }

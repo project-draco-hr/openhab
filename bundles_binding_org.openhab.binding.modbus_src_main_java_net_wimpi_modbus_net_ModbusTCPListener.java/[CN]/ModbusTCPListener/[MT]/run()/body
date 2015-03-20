@@ -1,10 +1,10 @@
 {
   try {
     m_ServerSocket=new ServerSocket(m_Port,m_FloodProtection,m_Address);
-    if (Modbus.debug)     System.out.println("Listenening to " + m_ServerSocket.toString() + "(Port "+ m_Port+ ")");
+    logger.debug("Listenening to {} (Port {})",m_ServerSocket.toString(),m_Port);
     do {
       Socket incoming=m_ServerSocket.accept();
-      if (Modbus.debug)       System.out.println("Making new connection " + incoming.toString());
+      logger.debug("Making new connection {}",incoming.toString());
       if (m_Listening) {
         m_ThreadPool.execute(new TCPConnectionHandler(new TCPSlaveConnection(incoming)));
         count();

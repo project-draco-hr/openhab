@@ -1,9 +1,7 @@
 {
   enc=enc.toLowerCase();
-  if (enc.equals(Modbus.SERIAL_ENCODING_ASCII) || enc.equals(Modbus.SERIAL_ENCODING_RTU) || enc.equals(Modbus.SERIAL_ENCODING_BIN)) {
-    m_Encoding=enc;
+  if (!SerialParameterValidator.isEncodingValid(enc)) {
+    throw new IllegalArgumentException("encoding value '" + enc + "' not valid");
   }
- else {
-    m_Encoding=Modbus.DEFAULT_SERIAL_ENCODING;
-  }
+  m_Encoding=enc;
 }
