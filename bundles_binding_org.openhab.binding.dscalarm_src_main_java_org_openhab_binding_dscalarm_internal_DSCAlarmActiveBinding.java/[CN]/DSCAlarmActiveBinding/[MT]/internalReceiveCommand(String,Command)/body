@@ -8,13 +8,14 @@
       DSCAlarmDeviceType dscAlarmDeviceType=dscAlarmBindingConfig.getDeviceType();
       int partitionId;
       int zoneId;
+      int cmd;
       logger.debug("internalReceiveCommand():  Item Name: {} Command: {} Item Device Type: {}",itemName,command,dscAlarmDeviceType);
       if (connected) {
 switch (dscAlarmDeviceType) {
 case PANEL:
 switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
 case PANEL_CONNECTION:
-            if (command.toString() == "0") {
+            if (command.toString().equals("0")) {
               closeConnection();
               if (!connected) {
                 dscAlarmItemUpdate.setConnected(false);
@@ -23,7 +24,7 @@ case PANEL_CONNECTION:
             }
           break;
 case PANEL_COMMAND:
-        int cmd=Integer.parseInt(command.toString());
+        cmd=Integer.parseInt(command.toString());
 switch (cmd) {
 case 0:
         api.sendCommand(APICode.Poll);
@@ -49,6 +50,22 @@ break;
 itemName=getItemName(DSCAlarmItemType.PANEL_COMMAND,0,0);
 if (itemName != "") {
 updateDeviceProperties(itemName,-1,"");
+updateItem(itemName);
+}
+break;
+case PANEL_TIME_STAMP:
+if (command instanceof OnOffType) {
+cmd=command == OnOffType.ON ? 1 : 0;
+api.sendCommand(APICode.TimeStampControl,String.valueOf(cmd));
+updateDeviceProperties(itemName,cmd,"");
+updateItem(itemName);
+}
+break;
+case PANEL_TIME_BROADCAST:
+if (command instanceof OnOffType) {
+cmd=command == OnOffType.ON ? 1 : 0;
+api.sendCommand(APICode.TimeDateBroadcastControl,String.valueOf(cmd));
+updateDeviceProperties(itemName,cmd,"");
 updateItem(itemName);
 }
 break;
