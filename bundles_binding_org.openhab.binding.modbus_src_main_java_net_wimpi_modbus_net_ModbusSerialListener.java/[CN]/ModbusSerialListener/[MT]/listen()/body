@@ -2,6 +2,7 @@
   try {
     m_Listening=true;
     m_SerialCon.open();
+    logger.trace("Opened Serial connection.");
     ModbusTransport transport=m_SerialCon.getModbusTransport();
     do {
       if (m_Listening) {
@@ -14,8 +15,8 @@
  else {
             response=request.createResponse();
           }
-          if (Modbus.debug)           System.out.println("Request:" + request.getHexMessage());
-          if (Modbus.debug)           System.out.println("Response:" + response.getHexMessage());
+          logger.debug("Request:{}",request.getHexMessage());
+          logger.debug("Response:{}",response.getHexMessage());
           transport.writeMessage(response);
           count();
         }

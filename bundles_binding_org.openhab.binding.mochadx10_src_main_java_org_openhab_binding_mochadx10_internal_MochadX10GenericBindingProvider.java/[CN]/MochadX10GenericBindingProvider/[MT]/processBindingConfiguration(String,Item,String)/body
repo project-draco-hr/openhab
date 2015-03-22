@@ -1,0 +1,30 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  try {
+    if (bindingConfig != null) {
+      String[] configParts=bindingConfig.split(":");
+      String address=null;
+      String transmitMethod="pl";
+switch (configParts.length) {
+case 2:
+        transmitMethod=configParts[1];
+case 1:
+      address=configParts[0];
+    break;
+default :
+  logger.warn("bindingConfig should only contain x10 address and optional transmission method (item=" + item + ") -> processing bindingConfig aborted!");
+return;
+}
+validateAddress(address);
+validateTransmitMethod(transmitMethod);
+BindingConfig mochadX10BindingConfig=(BindingConfig)new MochadX10BindingConfig(item.getClass(),transmitMethod,address);
+addBindingConfig(item,mochadX10BindingConfig);
+}
+ else {
+throw new BindingConfigParseException("No binding config specified (item=" + item + ") -> processing bindingConfig aborted!");
+}
+}
+ catch (ArrayIndexOutOfBoundsException e) {
+throw new BindingConfigParseException("bindingConfig is invalid (item=" + item + ") -> processing bindingConfig aborted!");
+}
+}
