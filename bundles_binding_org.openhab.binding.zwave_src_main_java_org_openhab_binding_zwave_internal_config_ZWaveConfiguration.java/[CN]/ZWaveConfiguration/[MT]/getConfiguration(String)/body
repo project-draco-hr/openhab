@@ -32,7 +32,7 @@ records.add(record);
 }
 break;
 case 4:
-if (database.FindProduct(Integer.parseInt(splitDomain[1]),Integer.parseInt(splitDomain[2]),Integer.parseInt(splitDomain[3]),Double.MAX_VALUE) == false) {
+if (database.FindProduct(Integer.parseInt(splitDomain[1]),Integer.parseInt(splitDomain[2]),Integer.parseInt(splitDomain[3]),MAX_VERSION) == false) {
 break;
 }
 if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey()) == true) {
@@ -47,7 +47,7 @@ record=new OpenHABConfigurationRecord(domain + "classes/","Command Classes");
 records.add(record);
 break;
 case 5:
-if (database.FindProduct(Integer.parseInt(splitDomain[1]),Integer.parseInt(splitDomain[2]),Integer.parseInt(splitDomain[3]),Double.MAX_VALUE) == false) {
+if (database.FindProduct(Integer.parseInt(splitDomain[1]),Integer.parseInt(splitDomain[2]),Integer.parseInt(splitDomain[3]),MAX_VERSION) == false) {
 break;
 }
 if (splitDomain[4].equals("parameters")) {
@@ -306,7 +306,7 @@ if (versionCommandClass.getProtocolVersion() == null) {
 record.value="Unknown";
 }
  else {
-record.value=Double.toString(versionCommandClass.getProtocolVersion());
+record.value=versionCommandClass.getProtocolVersion();
 }
 records.add(record);
 record=new OpenHABConfigurationRecord(domain,"AppVersion","Application Version",true);
@@ -314,7 +314,7 @@ if (versionCommandClass.getApplicationVersion() == null) {
 record.value="Unknown";
 }
  else {
-record.value=Double.toString(versionCommandClass.getApplicationVersion());
+record.value=versionCommandClass.getApplicationVersion();
 }
 records.add(record);
 }
