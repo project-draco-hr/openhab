@@ -160,6 +160,21 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.dualbutton_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,DualButtonButtonSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualButtonButtonSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.dualbutton_led.name())) {
+    logger.debug("setting DualButtonLEDConfiguration device_type {}",deviceType);
+    DualButtonLEDConfiguration configuration=modelFactory.createDualButtonLEDConfiguration();
+    OHTFDevice<DualButtonLEDConfiguration,DualButtonLedSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualButtonLedSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);

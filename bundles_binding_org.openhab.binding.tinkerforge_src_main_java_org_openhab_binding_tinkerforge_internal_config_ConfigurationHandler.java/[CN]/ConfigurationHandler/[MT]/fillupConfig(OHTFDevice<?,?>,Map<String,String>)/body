@@ -6,6 +6,7 @@
     if (!ohtfDevice.isValidSubId(subid)) {
       throw new ConfigurationException(subid,String.format("\"%s\" is an invalid subId: openhab.cfg has to be fixed!",subid));
     }
+    logger.trace("fillupConfig ohtfDevice subid {}",subid);
     ohtfDevice.setSubid(subid);
   }
   if (ohConfig.getConfigByTFId(uid,subid) != null) {
@@ -37,7 +38,7 @@
         logger.trace("found feature: {}",feature.getName());
         if (feature.getName().equals(property)) {
           logger.trace("{} feature type {}",LoggerConstants.CONFIG,feature.getEType().getInstanceClassName());
-          logger.debug("configuring feature: {} for uid {}",feature.getName(),uid);
+          logger.debug("configuring feature: {} for uid {} subid {}",feature.getName(),uid,subid);
           String className=feature.getEType().getInstanceClassName();
           if (className.equals("int")) {
             tfConfig.eSet(feature,Integer.parseInt(deviceConfig.get(property)));

@@ -1,12 +1,6 @@
 {
-  setSwitchState(OnOffValue.UNDEF);
-  MBrickletLCD20x4 masterBrick=getMbrick();
-  if (masterBrick == null) {
-    logger.error("{} No brick found for Button: {} ",LoggerConstants.TFINIT,subId);
-  }
- else {
-    BrickletLCD20x4 brickletLCD20x4=masterBrick.getTinkerforgeDevice();
-    buttonPressedListener=new ButtonPressedListener();
-    brickletLCD20x4.addButtonPressedListener(buttonPressedListener);
-  }
+  setSensorValue(OnOffValue.UNDEF);
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  buttonPressedListener=new ButtonPressedListener();
+  tinkerforgeDevice.addButtonPressedListener(buttonPressedListener);
 }
