@@ -15,13 +15,13 @@
  else {
     final Selection selection=new Selection(selectionMatch);
     List<AbstractFunction> functions=null;
-    logger.debug("Selection for update: {}",selection);
+    logger.trace("Selection for update: {}",selection);
     String property=provider.getProperty(itemName);
     try {
       final Thermostat thermostat=new Thermostat(null);
       logger.debug("About to set property '{}' to '{}'",property,newState);
       thermostat.setProperty(property,newState);
-      logger.debug("Thermostat for update: {}",thermostat);
+      logger.trace("Thermostat for update: {}",thermostat);
       OAuthCredentials oauthCredentials=getOAuthCredentials(provider.getUserid(itemName));
       if (oauthCredentials == null) {
         logger.warn("Unable to locate credentials for item {}; aborting update.",itemName);
