@@ -1,0 +1,15 @@
+{
+  int result=0;
+  IhcBindingConfig config=(IhcBindingConfig)bindingConfigs.get(itemName);
+  if (config != null) {
+    IhcOutCommandConfig outConfig=config.outCommandMap.get(cmd);
+    if (outConfig != null) {
+      result=outConfig.resourceId;
+    }
+ else {
+      outConfig=config.outCommandMap.get(null);
+      if (outConfig != null)       result=outConfig.resourceId;
+    }
+  }
+  return result;
+}

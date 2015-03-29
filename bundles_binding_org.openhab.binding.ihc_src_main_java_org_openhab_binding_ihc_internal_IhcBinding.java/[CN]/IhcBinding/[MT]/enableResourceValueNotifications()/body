@@ -2,13 +2,13 @@
   logger.debug("Subscripe resource runtime value notifications");
   if (ihc != null) {
     if (ihc.getConnectionState() != ConnectionState.CONNECTED) {
-      logger.debug("Controller is connecting, abort subscripe");
+      logger.debug("Controller is connecting, abort subscribe");
       return;
     }
     List<Integer> resourceIdList=new ArrayList<Integer>();
     for (    IhcBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
-        resourceIdList.add(provider.getResourceId(itemName));
+        resourceIdList.add(provider.getResourceIdForInBinding(itemName));
       }
     }
     if (resourceIdList.size() > 0) {
