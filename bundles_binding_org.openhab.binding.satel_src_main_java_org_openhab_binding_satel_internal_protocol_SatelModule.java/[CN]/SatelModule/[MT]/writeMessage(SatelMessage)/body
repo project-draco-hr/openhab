@@ -1,0 +1,21 @@
+{
+  try {
+    OutputStream os=this.channel.getOutputStream();
+    os.write(FRAME_START);
+    for (    byte b : message.getBytes()) {
+      os.write(b);
+      if (b == FRAME_SYNC) {
+        os.write(FRAME_SYNC_ESC);
+      }
+    }
+    os.write(FRAME_END);
+    os.flush();
+    return true;
+  }
+ catch (  IOException e) {
+    if (!Thread.interrupted()) {
+      logger.error("Unexpected exception occurred during writing a message",e);
+    }
+  }
+  return false;
+}

@@ -11,18 +11,26 @@
     this.receiveThread.start();
     this.sendThread=new ZWaveSendThread();
     this.sendThread.start();
+    this.inputThread=new ZWaveInputThread();
+    this.inputThread.start();
+    serialPort.addEventListener(this.receiveThread);
+    serialPort.notifyOnDataAvailable(true);
     logger.info("Serial port is initialized");
   }
  catch (  NoSuchPortException e) {
-    logger.error(String.format("Port %s does not exist",serialPortName));
+    logger.error("Serial Error: Port {} does not exist",serialPortName);
     throw new SerialInterfaceException(String.format("Port %s does not exist",serialPortName),e);
   }
 catch (  PortInUseException e) {
-    logger.error(String.format("Port %s in use.",serialPortName));
+    logger.error("Serial Error: Port {} in use.",serialPortName);
     throw new SerialInterfaceException(String.format("Port %s in use.",serialPortName),e);
   }
 catch (  UnsupportedCommOperationException e) {
-    logger.error(String.format("Unsupported comm operation on Port %s.",serialPortName));
+    logger.error("Serial Error: Unsupported comm operation on Port {}.",serialPortName);
     throw new SerialInterfaceException(String.format("Unsupported comm operation on Port %s.",serialPortName),e);
+  }
+catch (  TooManyListenersException e) {
+    logger.error("Serial Error: Too many listeners on Port {}.",serialPortName);
+    e.printStackTrace();
   }
 }

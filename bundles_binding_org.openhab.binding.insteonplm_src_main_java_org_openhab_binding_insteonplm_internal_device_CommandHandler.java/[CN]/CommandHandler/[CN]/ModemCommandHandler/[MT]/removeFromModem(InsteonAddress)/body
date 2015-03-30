@@ -16,18 +16,18 @@
         m.setByte("linkData3",(byte)0x00);
         dbe.getPort().writeMessage(m);
         removed=true;
-        logger.info("wrote erase message: {}",m);
+        logger.info("{}: wrote erase message: {}",nm(),m);
       }
     }
  else {
-      logger.warn("address {} not found in modem database!",aAddr);
+      logger.warn("{}: address {} not found in modem database!",nm(),aAddr);
     }
   }
  catch (  FieldException e) {
-    logger.error("field exception: ",e);
+    logger.error("{}: field exception: ",nm(),e);
   }
 catch (  IOException e) {
-    logger.error("i/o exception: ",e);
+    logger.error("{}: i/o exception: ",nm(),e);
   }
  finally {
     driver.unlockModemDBEntries();

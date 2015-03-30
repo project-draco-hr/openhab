@@ -1,0 +1,58 @@
+{
+  if (response.getCommand() != RESPONSE_CODE) {
+    logger.error("Invalid response code: {}",response.getCommand());
+    return false;
+  }
+  if (response.getPayload().length != 1) {
+    logger.error("Invalid payload length: {}",response.getPayload().length);
+    return false;
+  }
+  byte responseCode=response.getPayload()[0];
+  String errorMsg;
+switch (responseCode) {
+case 0:
+    return true;
+case 0x01:
+  errorMsg="Requesting user code not found";
+break;
+case 0x02:
+errorMsg="No access";
+break;
+case 0x03:
+errorMsg="Selected user does not exist";
+break;
+case 0x04:
+errorMsg="Selected user already exists";
+break;
+case 0x05:
+errorMsg="Wrong code or code already exists";
+break;
+case 0x06:
+errorMsg="Telephone code already exists";
+break;
+case 0x07:
+errorMsg="Changed code is the same";
+break;
+case 0x08:
+errorMsg="Other error";
+break;
+case 0x11:
+errorMsg="Can not arm, but can use force arm";
+break;
+case 0x12:
+errorMsg="Can not arm";
+break;
+case (byte)0xff:
+logger.trace("Command accepted");
+return true;
+default :
+if (responseCode >= 0x80 && responseCode <= 0x8f) {
+errorMsg=String.format("Other error: %02X",responseCode);
+}
+ else {
+errorMsg=String.format("Unknown response code: %02X",responseCode);
+}
+}
+logger.error(errorMsg);
+return false;
+}

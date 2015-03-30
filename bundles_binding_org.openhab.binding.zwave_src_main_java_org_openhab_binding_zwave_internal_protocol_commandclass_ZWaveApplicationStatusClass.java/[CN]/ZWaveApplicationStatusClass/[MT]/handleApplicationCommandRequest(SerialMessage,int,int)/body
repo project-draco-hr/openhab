@@ -17,7 +17,7 @@ final ZWaveNode node=this.getNode();
 final ZWaveController controller=this.getController();
 scheduler.schedule(new Runnable(){
 @Override public void run(){
-if (node == null || node.getNodeStage() != NodeStage.DONE) return;
+if (node == null || node.getNodeState() != ZWaveNodeState.ALIVE) return;
 controller.pollNode(node);
 }
 }

@@ -1,0 +1,15 @@
+{
+  if (selManufacturer == null) {
+    return false;
+  }
+  productVersion=version;
+  for (  ZWaveDbProduct product : selManufacturer.Product) {
+    for (    ZWaveDbProductReference reference : product.Reference) {
+      if (reference.Type == productType && reference.Id == productId) {
+        selProduct=product;
+        return true;
+      }
+    }
+  }
+  return false;
+}

@@ -1,12 +1,32 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == SwitchSensor.class) {
+switch (derivedFeatureID) {
+default :
+      return -1;
+  }
+}
+if (baseClass == MSwitchActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.REMOTE_SWITCH_B__SWITCH_STATE:
+    return ModelPackage.MSWITCH_ACTOR__SWITCH_STATE;
+default :
+  return -1;
+}
+}
+if (baseClass == MInSwitchActor.class) {
+switch (derivedFeatureID) {
+default :
+return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (derivedFeatureID) {
 case ModelPackage.REMOTE_SWITCH_B__LOGGER:
-      return ModelPackage.MBASE_DEVICE__LOGGER;
+return ModelPackage.MBASE_DEVICE__LOGGER;
 case ModelPackage.REMOTE_SWITCH_B__UID:
-    return ModelPackage.MBASE_DEVICE__UID;
+return ModelPackage.MBASE_DEVICE__UID;
 case ModelPackage.REMOTE_SWITCH_B__POLL:
-  return ModelPackage.MBASE_DEVICE__POLL;
+return ModelPackage.MBASE_DEVICE__POLL;
 case ModelPackage.REMOTE_SWITCH_B__ENABLED_A:
 return ModelPackage.MBASE_DEVICE__ENABLED_A;
 default :
@@ -23,10 +43,26 @@ default :
 return -1;
 }
 }
+if (baseClass == RemoteSwitch.class) {
+switch (derivedFeatureID) {
+default :
+return -1;
+}
+}
 if (baseClass == MTFConfigConsumer.class) {
 switch (derivedFeatureID) {
 case ModelPackage.REMOTE_SWITCH_B__TF_CONFIG:
 return ModelPackage.MTF_CONFIG_CONSUMER__TF_CONFIG;
+default :
+return -1;
+}
+}
+if (baseClass == DimmableActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.REMOTE_SWITCH_B__MIN_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MIN_VALUE;
+case ModelPackage.REMOTE_SWITCH_B__MAX_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MAX_VALUE;
 default :
 return -1;
 }

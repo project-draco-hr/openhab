@@ -1,0 +1,68 @@
+{
+  HeatPumpGenericBindingProvider provider=findFirstProvider();
+  if (provider != null) {
+    HeatPumpBindingConfig bindingConfig=provider.getHeatPumpBindingConfig(itemName);
+    HeatpumpCommandType commandType=bindingConfig.getType();
+switch (commandType) {
+case TYPE_HEATING_OPERATION_MODE:
+      if (command instanceof DecimalType) {
+        int value=((DecimalType)command).intValue();
+        HeatpumpOperationMode mode=HeatpumpOperationMode.fromValue(value);
+        if (mode != null) {
+          if (sendParamToHeatpump(PARAM_HEATING_OPERATION_MODE,mode.getValue())) {
+            logger.info("Heatpump heating operation mode set to " + mode.name());
+          }
+        }
+ else {
+          logger.warn("Headpump heating operation mode with value " + value + " is unknown.");
+        }
+      }
+ else {
+        logger.warn("Headpump heating operation mode item " + itemName + " must be from type:"+ DecimalType.class.getSimpleName());
+      }
+    break;
+case TYPE_HEATING_TEMPERATURE:
+  if (command instanceof DecimalType) {
+    float temperature=((DecimalType)command).floatValue();
+    int value=(int)(temperature * 10.);
+    if (sendParamToHeatpump(PARAM_HEATING_TEMPERATURE,value)) {
+      logger.info("Heatpump heating temeprature set to " + temperature);
+    }
+  }
+ else {
+    logger.warn("Headpump heating temperature item " + itemName + " must be from type:"+ DecimalType.class.getSimpleName());
+  }
+break;
+case TYPE_WARMWATER_OPERATION_MODE:
+if (command instanceof DecimalType) {
+int value=((DecimalType)command).intValue();
+HeatpumpOperationMode mode=HeatpumpOperationMode.fromValue(value);
+if (mode != null) {
+  if (sendParamToHeatpump(PARAM_WARMWATER_OPERATION_MODE,mode.getValue())) {
+    logger.info("Heatpump warmwater operation mode set to " + mode.name());
+  }
+}
+ else {
+  logger.warn("Headpump warmwater operation mode with value " + value + " is unknown.");
+}
+}
+ else {
+logger.warn("Headpump warmwater operation mode item " + itemName + " must be from type:"+ DecimalType.class.getSimpleName());
+}
+break;
+case TYPE_WARMWATER_TEMPERATURE:
+if (command instanceof DecimalType) {
+float temperature=((DecimalType)command).floatValue();
+int value=(int)(temperature * 10.);
+if (sendParamToHeatpump(PARAM_WARMWATER_TEMPERATURE,value)) {
+logger.info("Heatpump warmwater temeprature set to " + temperature);
+}
+}
+ else {
+logger.warn("Headpump warmwater temperature item " + itemName + " must be from type:"+ DecimalType.class.getSimpleName());
+}
+break;
+default :
+}
+}
+}

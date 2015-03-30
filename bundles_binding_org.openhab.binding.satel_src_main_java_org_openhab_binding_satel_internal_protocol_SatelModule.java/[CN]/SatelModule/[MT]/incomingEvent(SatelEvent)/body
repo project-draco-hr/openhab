@@ -1,0 +1,8 @@
+{
+  if (event instanceof IntegraVersionEvent) {
+    IntegraVersionEvent versionEvent=(IntegraVersionEvent)event;
+    this.integraType=IntegraType.valueOf(versionEvent.getType() & 0xFF);
+    this.integraVersion=versionEvent.getVersion();
+    logger.info("Connection to {} initialized. Version: {}.",this.integraType.getName(),this.integraVersion);
+  }
+}

@@ -81,8 +81,7 @@
       }
     }
     if (!exclusive) {
-      socket.close();
-      socket=null;
+      socketClose();
     }
     for (    MaxCubeBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
@@ -135,13 +134,16 @@ default :
 }
 }
  catch (UnknownHostException e) {
-logger.info("Cannot establish connection with MAX!Cube lan gateway while connecting to '{}'",ip);
-logger.debug(Utils.getStackTrace(e));
-socket=null;
+logger.info("Host error occurred while connecting to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+socketClose();
 }
 catch (IOException e) {
-logger.info("Cannot read data from MAX!Cube lan gateway while connecting to '{}'",ip);
-logger.debug(Utils.getStackTrace(e));
-socket=null;
+logger.info("IO error occurred while connecting to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+socketClose();
+}
+catch (Exception e) {
+logger.info("Error occurred while connecting to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+logger.info(Utils.getStackTrace(e));
+socketClose();
 }
 }

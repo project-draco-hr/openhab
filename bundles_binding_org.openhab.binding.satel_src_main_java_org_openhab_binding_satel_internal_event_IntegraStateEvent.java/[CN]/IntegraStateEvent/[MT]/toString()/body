@@ -1,0 +1,10 @@
+{
+  StringBuilder bitsStr=new StringBuilder();
+  for (int i=this.stateBits.nextSetBit(0); i >= 0; i=this.stateBits.nextSetBit(i + 1)) {
+    if (bitsStr.length() > 0) {
+      bitsStr.append(",");
+    }
+    bitsStr.append(Integer.toString(i + 1));
+  }
+  return String.format("IntegraStateEvent: object = %s, state = %s, active = [%s]",stateType.getObjectType(),stateType,bitsStr);
+}

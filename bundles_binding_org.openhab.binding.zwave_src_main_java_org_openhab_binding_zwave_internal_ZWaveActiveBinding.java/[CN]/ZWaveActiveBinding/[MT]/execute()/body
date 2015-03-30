@@ -1,10 +1,7 @@
 {
-  if (!isZwaveNetworkReady) {
-    logger.debug("Zwave Network isn't ready yet!");
-    if (this.zController != null)     this.zController.checkForDeadOrSleepingNodes();
-    return;
+  if (networkMonitor != null) {
+    networkMonitor.execute();
   }
-  networkMonitor.execute();
   if (pollingIterator == null) {
     pollingIterator=pollingList.iterator();
   }

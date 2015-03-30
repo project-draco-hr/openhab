@@ -22,6 +22,7 @@
     messageMap.put(SerialMessage.SerialMessageClass.SendData,SendDataMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.SerialApiGetCapabilities,SerialApiGetCapabilitiesMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.SerialApiGetInitData,SerialApiGetInitDataMessageClass.class);
+    messageMap.put(SerialMessage.SerialMessageClass.SerialApiSetTimeouts,SerialApiSetTimeoutsMessageClass.class);
     messageMap.put(SerialMessage.SerialMessageClass.SetSucNodeID,SetSucNodeMessageClass.class);
   }
   Constructor<? extends ZWaveCommandProcessor> constructor;
@@ -29,22 +30,7 @@
     constructor=messageMap.get(serialMessage).getConstructor();
     return constructor.newInstance();
   }
- catch (  NoSuchMethodException e) {
-    logger.error("Command processor error: {}",e);
-  }
-catch (  InvocationTargetException e) {
-    logger.error("Command processor error: {}",e);
-  }
-catch (  InstantiationException e) {
-    logger.error("Command processor error: {}",e);
-  }
-catch (  IllegalAccessException e) {
-    logger.error("Command processor error: {}",e);
-  }
-catch (  SecurityException e) {
-    logger.error("Command processor error: {}",e);
-  }
-catch (  IllegalArgumentException e) {
+ catch (  Exception e) {
     logger.error("Command processor error: {}",e);
   }
   return null;

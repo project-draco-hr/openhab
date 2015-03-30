@@ -18,14 +18,15 @@
   if (oldListNumber > 0) {
     if (oldListNumber == autoRefreshTimeInSecs) {
       sLogger.debug("Datapoint '{}' was already in  auto refresh list {}",datapoint.getName(),autoRefreshTimeInSecs);
-      return false;
+      return true;
     }
     List<Datapoint> oldList=mScheduleMap.get(oldListNumber);
 synchronized (oldList) {
       sLogger.debug("Datapoint '{}' already present in different list: {}, removing",datapoint.getName(),oldListNumber);
-      for (      Datapoint dp : oldList) {
+      for (Iterator<Datapoint> iterator=oldList.iterator(); iterator.hasNext(); ) {
+        Datapoint dp=iterator.next();
         if (dp.toString().equals(datapoint.toString())) {
-          oldList.remove(dp);
+          iterator.remove();
         }
       }
     }

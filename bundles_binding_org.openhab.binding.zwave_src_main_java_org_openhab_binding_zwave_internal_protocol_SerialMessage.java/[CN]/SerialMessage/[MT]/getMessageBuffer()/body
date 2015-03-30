@@ -10,6 +10,7 @@
     resultByteBuffer.write(messagePayload);
   }
  catch (  IOException e) {
+    logger.error("Error getting message buffer: ",e);
   }
   if (this.messageClass == SerialMessageClass.SendData && this.messageType == SerialMessageType.Request) {
     resultByteBuffer.write(transmitOptions);

@@ -1,0 +1,16 @@
+{
+  this.thermostats_by_name=new HashMap<String,Thermostat>();
+  if (this.thermostats_by_id != null) {
+    for (    Thermostat thermostat : this.thermostats_by_id.values()) {
+      thermostat.sync(dataModel);
+      this.thermostats_by_name.put(thermostat.getName(),thermostat);
+    }
+  }
+  this.smoke_co_alarms_by_name=new HashMap<String,SmokeCOAlarm>();
+  if (this.smoke_co_alarms_by_id != null) {
+    for (    SmokeCOAlarm smoke_co_alarm : this.smoke_co_alarms_by_id.values()) {
+      smoke_co_alarm.sync(dataModel);
+      this.smoke_co_alarms_by_name.put(smoke_co_alarm.getName(),smoke_co_alarm);
+    }
+  }
+}

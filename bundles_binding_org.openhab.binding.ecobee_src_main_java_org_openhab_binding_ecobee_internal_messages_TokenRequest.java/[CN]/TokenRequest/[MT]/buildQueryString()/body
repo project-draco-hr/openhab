@@ -1,0 +1,14 @@
+{
+  final StringBuilder urlBuilder=new StringBuilder(RESOURCE_URL);
+  try {
+    urlBuilder.append("?grant_type=ecobeePin");
+    urlBuilder.append("&code=");
+    urlBuilder.append(authToken);
+    urlBuilder.append("&client_id=");
+    urlBuilder.append(appKey);
+    return URIUtil.encodeQuery(urlBuilder.toString());
+  }
+ catch (  final Exception e) {
+    throw new EcobeeException(e);
+  }
+}
