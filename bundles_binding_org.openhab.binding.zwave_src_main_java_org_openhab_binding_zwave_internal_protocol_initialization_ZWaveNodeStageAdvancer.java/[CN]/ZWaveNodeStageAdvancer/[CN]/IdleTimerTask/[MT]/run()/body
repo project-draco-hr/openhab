@@ -1,0 +1,9 @@
+{
+  retryTimer*=2;
+  if (retryTimer > BACKOFF_TIMER_MAX) {
+    retryTimer=BACKOFF_TIMER_MAX;
+  }
+  logger.debug("NODE {}: Stage {}. Initialisation retry timer triggered. Increased to {}",node.getNodeId(),currentStage.toString(),retryTimer);
+  msgQueue.clear();
+  advanceNodeStage(null);
+}

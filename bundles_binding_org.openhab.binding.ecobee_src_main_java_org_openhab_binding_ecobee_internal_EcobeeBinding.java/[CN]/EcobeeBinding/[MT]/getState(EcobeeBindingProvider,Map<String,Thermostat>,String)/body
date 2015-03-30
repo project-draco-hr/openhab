@@ -1,0 +1,17 @@
+{
+  final String thermostatIdentifier=provider.getThermostatIdentifier(itemName);
+  final String property=provider.getProperty(itemName);
+  final Thermostat thermostat=thermostats.get(thermostatIdentifier);
+  if (thermostat == null) {
+    logger.error("Did not receive thermostat '{}' for item '{}'; skipping.",thermostatIdentifier,itemName);
+  }
+ else {
+    try {
+      return createState(thermostat.getProperty(property));
+    }
+ catch (    Exception e) {
+      logger.error("Unable to get state from thermostat",e);
+    }
+  }
+  return UnDefType.NULL;
+}

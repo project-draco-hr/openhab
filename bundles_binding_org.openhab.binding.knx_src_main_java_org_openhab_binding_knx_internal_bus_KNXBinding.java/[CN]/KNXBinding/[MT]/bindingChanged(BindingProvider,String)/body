@@ -7,8 +7,9 @@
         if (datapoint.getName().equals(itemName)) {
           logger.debug("Initializing read of item {}.",itemName);
           if (!mKNXBusReaderScheduler.scheduleRead(datapoint,knxProvider.getAutoRefreshTime(datapoint))) {
-            logger.warn("Clouldn't add to KNX bus reader scheduler",datapoint);
+            logger.warn("Clouldn't add to KNX bus reader scheduler (bindingChanged)",datapoint);
           }
+          break;
         }
       }
     }

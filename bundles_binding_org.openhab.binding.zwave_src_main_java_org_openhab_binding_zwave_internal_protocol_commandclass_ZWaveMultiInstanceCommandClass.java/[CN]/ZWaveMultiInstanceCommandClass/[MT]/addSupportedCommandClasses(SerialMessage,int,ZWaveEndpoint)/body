@@ -1,0 +1,19 @@
+{
+  for (int i=0; i < serialMessage.getMessagePayload().length - offset - 3; i++) {
+    int data=serialMessage.getMessagePayloadByte(offset + 3 + i);
+    if (data == 0xef) {
+      break;
+    }
+    ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
+    if (commandClass == null) {
+      continue;
+    }
+    logger.debug("NODE {}: Endpoint {}: Adding command class {}.",this.getNode().getNodeId(),endpoint.getEndpointId(),commandClass.getCommandClass().getLabel());
+    endpoint.addCommandClass(commandClass);
+    ZWaveCommandClass parentClass=this.getNode().getCommandClass(commandClass.getCommandClass());
+    if (parentClass != null) {
+      commandClass.setVersion(parentClass.getVersion());
+    }
+    commandClass.setInstances(1);
+  }
+}

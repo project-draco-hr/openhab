@@ -1,0 +1,36 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  try {
+    boolean isItemMessage=originalMessage instanceof Item || originalMessage instanceof GroupItem;
+    boolean isStreamingTransport=ResponseTypeHelper.isStreamingTransport(request);
+    try {
+      resource.getRequest().getPathInfo();
+    }
+ catch (    Exception e) {
+      return new BroadcastAction(ACTION.ABORT,message);
+    }
+    if (!isStreamingTransport && message instanceof PageBean && isItemMessage) {
+      final String delayedBroadcasterName=resource.getRequest().getPathInfo();
+      executor.schedule(new Runnable(){
+        public void run(){
+          try {
+            BroadcasterFactory broadcasterFactory=resource.getAtmosphereConfig().getBroadcasterFactory();
+            GeneralBroadcaster delayedBroadcaster=broadcasterFactory.lookup(GeneralBroadcaster.class,delayedBroadcasterName);
+            if (delayedBroadcaster != null)             delayedBroadcaster.broadcast(message,resource);
+          }
+ catch (          Exception e) {
+            logger.error("Could not broadcast message",e);
+          }
+        }
+      }
+,300,TimeUnit.MILLISECONDS);
+    }
+ else {
+      return new BroadcastAction(ACTION.CONTINUE,message);
+    }
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage(),e);
+  }
+  return new BroadcastAction(ACTION.ABORT,message);
+}

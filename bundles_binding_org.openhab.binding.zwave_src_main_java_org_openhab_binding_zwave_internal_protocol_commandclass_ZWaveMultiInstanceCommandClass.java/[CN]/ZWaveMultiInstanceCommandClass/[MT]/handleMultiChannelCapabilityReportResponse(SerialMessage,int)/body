@@ -11,51 +11,23 @@
   for (int endpointId=startId; endpointId <= endId; endpointId++) {
     ZWaveEndpoint endpoint=this.endpoints.get(endpointId);
     if (endpoint == null) {
-      logger.error("Endpoint {} not found on node {}. Cannot set command classes.",endpointId,this.getNode().getNodeId());
+      logger.error("NODE {}: Endpoint {} not found. Cannot set command classes.",this.getNode().getNodeId(),endpointId);
       continue;
     }
-    Basic basic=this.getNode().getDeviceClass().getBasicDeviceClass();
-    Generic generic=Generic.getGeneric(genericDeviceClass);
-    if (generic == null) {
-      logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
+    if (!updateDeviceClass(endpoint,genericDeviceClass,specificDeviceClass,dynamic)) {
       continue;
     }
-    Specific specific=Specific.getSpecific(generic,specificDeviceClass);
-    if (specific == null) {
-      logger.error(String.format("NODE %d: Endpoint %d has invalid device class. generic = 0x%02x, specific = 0x%02x.",this.getNode().getNodeId(),endpoint,genericDeviceClass,specificDeviceClass));
-      continue;
-    }
-    logger.debug("NODE {}: Endpoint Id = {}",this.getNode().getNodeId(),endpointId);
-    logger.debug("NODE {}: Endpoints is dynamic = {}",this.getNode().getNodeId(),dynamic ? "true" : false);
-    logger.debug(String.format("NODE %d: Basic = %s 0x%02x",this.getNode().getNodeId(),basic.getLabel(),basic.getKey()));
-    logger.debug(String.format("NODE %d: Generic = %s 0x%02x",this.getNode().getNodeId(),generic.getLabel(),generic.getKey()));
-    logger.debug(String.format("NODE %d: Specific = %s 0x%02x",this.getNode().getNodeId(),specific.getLabel(),specific.getKey()));
-    ZWaveDeviceClass deviceClass=endpoint.getDeviceClass();
-    deviceClass.setBasicDeviceClass(basic);
-    deviceClass.setGenericDeviceClass(generic);
-    deviceClass.setSpecificDeviceClass(specific);
     if (supportsBasicCommandClass) {
       ZWaveCommandClass commandClass=new ZWaveBasicCommandClass(this.getNode(),this.getController(),endpoint);
       endpoint.addCommandClass(commandClass);
     }
-    for (int i=0; i < serialMessage.getMessagePayload().length - offset - 3; i++) {
-      int data=serialMessage.getMessagePayloadByte(offset + 3 + i);
-      if (data == 0xef) {
-        break;
-      }
-      logger.debug(String.format("NODE %d: Adding command class 0x%02X to the list of supported command classes.",this.getNode().getNodeId(),data));
-      ZWaveCommandClass commandClass=ZWaveCommandClass.getInstance(data,this.getNode(),this.getController(),endpoint);
-      if (commandClass == null)       continue;
-      endpoint.addCommandClass(commandClass);
-      ZWaveCommandClass parentClass=this.getNode().getCommandClass(commandClass.getCommandClass());
-      if (parentClass != null)       commandClass.setVersion(parentClass.getVersion());
-    }
+    addSupportedCommandClasses(serialMessage,offset,endpoint);
   }
-  if (this.endpointsAreTheSameDeviceClass)   this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
- else {
+  if (!this.endpointsAreTheSameDeviceClass) {
     for (    ZWaveEndpoint ep : this.endpoints.values()) {
-      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN)       return;
+      if (ep.getDeviceClass().getBasicDeviceClass() == Basic.NOT_KNOWN) {
+        return;
+      }
     }
-    this.getNode().advanceNodeStage(NodeStage.STATIC_VALUES);
   }
 }

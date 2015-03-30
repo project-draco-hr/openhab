@@ -16,18 +16,18 @@
             value=newValue;
           }
           if (incremental) {
-            logger.debug("internalPropertyUpdate: Updating (Incremental) itemName '{}' with value '{}'",itemName,value);
+            logger.debug("internalPropertyUpdate: BOUND (Incr) Updating '{} {mios=\"{}\"}' to '{}'",itemName,property,value);
             eventPublisher.postUpdate(itemName,value);
           }
  else {
             ItemRegistry reg=miosProvider.getItemRegistry();
             State oldValue=reg.getItem(itemName).getState();
             if ((oldValue == null && value != null) || (UnDefType.UNDEF.equals(oldValue) && !UnDefType.UNDEF.equals(value)) || !oldValue.equals(value)) {
-              logger.debug("internalPropertyUpdate: Updating (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+              logger.debug("internalPropertyUpdate: BOUND (Full) Updating '{} {mios=\"{}\"}' to '{}', was '{}'",new Object[]{itemName,property,value,oldValue});
               eventPublisher.postUpdate(itemName,value);
             }
  else {
-              logger.trace("internalPropertyUpdate: Ignoring (Full) itemName '{}' with value '{}', oldValue '{}'",new Object[]{itemName,value,oldValue});
+              logger.trace("internalPropertyUpdate: BOUND (Full) Ignoring '{} {mios=\"{}\"}' to '{}', was '{}'",new Object[]{itemName,property,value,oldValue});
             }
           }
           bound++;
@@ -42,6 +42,6 @@
     logger.trace("internalPropertyUpdate: NOT BOUND {mios=\"{}\"}, value={}",property,value);
   }
  else {
-    logger.debug("internalPropertyUpdate: BOUND {mios=\"{}\"}, value={}, bound {} time(s)",new Object[]{property,value,bound});
+    logger.trace("internalPropertyUpdate: BOUND {mios=\"{}\"}, value={}, bound {} time(s)",new Object[]{property,value,bound});
   }
 }

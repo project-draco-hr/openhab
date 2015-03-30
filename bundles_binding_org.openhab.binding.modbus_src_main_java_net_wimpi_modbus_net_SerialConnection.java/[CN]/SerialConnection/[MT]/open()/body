@@ -9,22 +9,25 @@
     m_PortIdentifyer=CommPortIdentifier.getPortIdentifier(m_Parameters.getPortName());
   }
  catch (  NoSuchPortException e) {
-    if (Modbus.debug)     System.out.println(e.getMessage());
-    throw new Exception(e.getMessage());
+    final String errMsg="Could not get port identifier, maybe insufficient permissions. " + e.getMessage();
+    logger.debug(errMsg);
+    throw new Exception(errMsg);
   }
+  logger.trace("Got Port Identifier");
   try {
     m_SerialPort=(SerialPort)m_PortIdentifyer.open("Modbus Serial Master",30000);
   }
  catch (  PortInUseException e) {
-    if (Modbus.debug)     System.out.println(e.getMessage());
+    logger.debug("open port failed: " + e.getMessage());
     throw new Exception(e.getMessage());
   }
+  logger.trace("Got Serial Port");
   try {
     setConnectionParameters();
   }
  catch (  Exception e) {
     m_SerialPort.close();
-    if (Modbus.debug)     System.out.println(e.getMessage());
+    logger.debug("parameter setup failed: " + e.getMessage());
     throw e;
   }
   if (Modbus.SERIAL_ENCODING_ASCII.equals(m_Parameters.getEncoding())) {
@@ -44,16 +47,18 @@
   }
  catch (  IOException e) {
     m_SerialPort.close();
-    if (Modbus.debug)     System.out.println(e.getMessage());
+    logger.debug(e.getMessage());
     throw new Exception("Error opening i/o streams");
   }
+  logger.trace("i/o Streams prepared");
   try {
     m_SerialPort.addEventListener(this);
   }
  catch (  TooManyListenersException e) {
     m_SerialPort.close();
-    if (Modbus.debug)     System.out.println(e.getMessage());
-    throw new Exception("too many listeners added");
+    final String errMsg="too many listeners added";
+    logger.debug("{}: {}",errMsg,e.getMessage());
+    throw new Exception(errMsg);
   }
   m_SerialPort.notifyOnBreakInterrupt(true);
   m_Open=true;

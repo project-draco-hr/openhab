@@ -70,12 +70,17 @@
         }
       }
  catch (      UnknownHostException e) {
-        logger.warn("Cannot establish connection with MAX!cube lan gateway while sending command to '{}'",ip);
-        logger.debug(Utils.getStackTrace(e));
+        logger.info("Host error occurred while connecting to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+        socketClose();
       }
 catch (      IOException e) {
-        logger.warn("Cannot write data from MAX!Cube lan gateway while connecting to '{}'",ip);
-        logger.debug(Utils.getStackTrace(e));
+        logger.info("IO error occurred while writing to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+        socketClose();
+      }
+catch (      Exception e) {
+        logger.info("Error occurred while writing to MAX! Cube lan gateway '{}': {}",ip,e.getMessage());
+        logger.info(Utils.getStackTrace(e));
+        socketClose();
       }
       logger.debug("Command Sent to {}",ip);
     }

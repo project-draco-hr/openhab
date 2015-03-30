@@ -24,10 +24,10 @@ synchronized (state) {
         newValues=AnelDataParser.parseData(data,state);
       }
       if (newValues != null && !newValues.isEmpty()) {
-        logger.debug("newValues (len={}): {}",newValues.size(),newValues);
+        logger.debug("newValues ({}, len={}): {}",this.connector.host,newValues.size(),newValues);
         for (        AnelCommandType cmd : newValues.keySet()) {
           final org.openhab.core.types.State state=newValues.get(cmd);
-          final Collection<String> itemNames=binding.getItemNamesForCommandType(cmd);
+          final Collection<String> itemNames=binding.getItemNamesForCommandType(device,cmd);
           for (          String itemName : itemNames) {
             binding.postUpdateToEventBus(itemName,state);
           }

@@ -1,0 +1,18 @@
+{
+  logger.trace("Querying Nest API");
+  try {
+    for (    String userid : credentialsCache.keySet()) {
+      OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+      if (oauthCredentials.noAccessToken()) {
+        if (!oauthCredentials.retrieveAccessToken()) {
+          logger.warn("Periodic poll skipped.");
+          continue;
+        }
+      }
+      readNest(oauthCredentials);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error reading from Nest:",e);
+  }
+}

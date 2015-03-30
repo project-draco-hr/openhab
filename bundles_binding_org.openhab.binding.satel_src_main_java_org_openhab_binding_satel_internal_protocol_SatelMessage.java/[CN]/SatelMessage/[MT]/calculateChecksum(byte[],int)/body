@@ -1,0 +1,11 @@
+{
+  int checkSum=0x147a;
+  for (int i=0; i < length; i++) {
+    checkSum=((checkSum << 1) | ((checkSum >> 15) & 1));
+    checkSum^=0xffff;
+    checkSum+=((checkSum >> 8) & 0xff) + (buffer[i] & 0xff);
+  }
+  checkSum&=0xffff;
+  logger.trace("Calculated checksum = {}",String.format("%04X",checkSum));
+  return checkSum;
+}

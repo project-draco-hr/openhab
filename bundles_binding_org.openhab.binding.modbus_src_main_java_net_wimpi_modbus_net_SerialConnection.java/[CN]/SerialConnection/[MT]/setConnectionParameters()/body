@@ -12,14 +12,16 @@
     m_Parameters.setDatabits(oldDatabits);
     m_Parameters.setStopbits(oldStopbits);
     m_Parameters.setParity(oldParity);
-    if (Modbus.debug)     System.out.println(e.getMessage());
-    throw new Exception("Unsupported parameter");
+    final String errMsg="Unsupported parameter";
+    logger.debug("{} failed to set up one of [baudRate, dataBits, stopBits, parity]: {}",errMsg,e.getMessage());
+    throw new Exception(errMsg);
   }
   try {
     m_SerialPort.setFlowControlMode(m_Parameters.getFlowControlIn() | m_Parameters.getFlowControlOut());
   }
  catch (  UnsupportedCommOperationException e) {
-    if (Modbus.debug)     System.out.println(e.getMessage());
-    throw new Exception("Unsupported flow control");
+    final String errMsg="Unsupported flow control";
+    logger.debug("{}: {}",errMsg,e.getMessage());
+    throw new Exception(errMsg);
   }
 }

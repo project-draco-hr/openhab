@@ -1,14 +1,18 @@
 {
   boolean handled=false;
-  if ((this.isProperlyConfigured() == false) | (isZwaveNetworkReady == false)) {
-    logger.debug("internalReceiveCommand Called, But Not Properly Configure yet or Zwave Network Isn't Ready, returning.");
+  if (this.isProperlyConfigured() == false) {
+    logger.debug("internalReceiveCommand Called, But Not Properly Configure yet, returning.");
     return;
   }
   logger.trace("internalReceiveCommand(itemname = {}, Command = {})",itemName,command.toString());
   for (  ZWaveBindingProvider provider : providers) {
-    if (!provider.providesBindingFor(itemName))     continue;
+    if (!provider.providesBindingFor(itemName)) {
+      continue;
+    }
     converterHandler.receiveCommand(provider,itemName,command);
     handled=true;
   }
-  if (!handled)   logger.warn("No converter found for item = {}, command = {}, ignoring.",itemName,command.toString());
+  if (!handled) {
+    logger.warn("No converter found for item = {}, command = {}, ignoring.",itemName,command.toString());
+  }
 }

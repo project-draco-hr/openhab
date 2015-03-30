@@ -3,8 +3,10 @@
     String property=config.getProperty();
     if (status.getValues().containsKey(property)) {
       String value=status.getValues().get(property);
-      State state=getStateFromProperty(value,config);
-      eventPublisher.postUpdate(config.getItemName(),state);
+      State state=getState(value,config);
+      if (state != null) {
+        eventPublisher.postUpdate(config.getItemName(),state);
+      }
     }
   }
 }

@@ -1,0 +1,22 @@
+{
+  Matcher m=obisIdPattern.matcher(obisIDString);
+  if (m.matches()) {
+    if (m.group(2) != null) {
+      this.groupA=Integer.parseInt(m.group(2));
+    }
+    if (m.group(4) != null) {
+      this.groupB=Integer.parseInt(m.group(4));
+    }
+    this.groupC=Integer.parseInt(m.group(6));
+    this.groupD=Integer.parseInt(m.group(7));
+    if (m.group(9) != null) {
+      this.groupE=Integer.parseInt(m.group(9));
+    }
+    if (m.group(11) != null) {
+      this.groupF=Integer.parseInt(m.group(11));
+    }
+  }
+ else {
+    throw new ParseException("Invalis OBIS identifier:" + obisIDString,0);
+  }
+}

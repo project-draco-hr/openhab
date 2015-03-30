@@ -13,7 +13,7 @@ synchronized (m_IO) {
               Thread.sleep(m_TransDelayMS);
             }
  catch (            InterruptedException ex) {
-              System.err.println("InterruptedException: " + ex.getMessage());
+              logger.error("InterruptedException: {}",ex.getMessage());
             }
           }
           m_IO.writeMessage(m_Request);
@@ -24,7 +24,7 @@ synchronized (m_IO) {
           if (++tries >= m_Retries) {
             throw e;
           }
-          System.err.println("execute try " + tries + " error: "+ e.getMessage());
+          logger.error("execute try {} error: {}",tries,e.getMessage());
         }
       }
  while (!finished);

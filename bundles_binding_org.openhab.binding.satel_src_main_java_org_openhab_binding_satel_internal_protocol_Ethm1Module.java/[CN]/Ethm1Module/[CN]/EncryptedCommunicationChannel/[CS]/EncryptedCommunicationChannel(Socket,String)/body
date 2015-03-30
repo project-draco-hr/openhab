@@ -1,0 +1,35 @@
+{
+  super(socket);
+  try {
+    this.aesHelper=new EncryptionHelper(encryptionKey);
+  }
+ catch (  Exception e) {
+    throw new IOException("General encryption failure",e);
+  }
+  this.rand=new Random();
+  this.id_s=0;
+  this.id_r=0;
+  this.rollingCounter=0;
+  this.inputStream=new InputStream(){
+    private ByteArrayInputStream inputBuffer=null;
+    @Override public int read() throws IOException {
+      if (inputBuffer == null || inputBuffer.available() == 0) {
+        byte[] data=readMessage(socket.getInputStream());
+        inputBuffer=new ByteArrayInputStream(data,6,data.length - 6);
+      }
+      return inputBuffer.read();
+    }
+  }
+;
+  this.outputStream=new OutputStream(){
+    private ByteArrayOutputStream outputBuffer=new ByteArrayOutputStream(256);
+    @Override public void write(    int b) throws IOException {
+      outputBuffer.write(b);
+    }
+    @Override public void flush() throws IOException {
+      writeMessage(outputBuffer.toByteArray(),socket.getOutputStream());
+      outputBuffer.reset();
+    }
+  }
+;
+}

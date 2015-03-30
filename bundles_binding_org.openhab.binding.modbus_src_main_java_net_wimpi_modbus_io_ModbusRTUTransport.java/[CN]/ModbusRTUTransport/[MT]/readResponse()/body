@@ -15,7 +15,7 @@ synchronized (m_ByteIn) {
           response.setHeadless();
           getResponse(fc,m_ByteInOut);
           dlength=m_ByteInOut.size() - 2;
-          if (Modbus.debug)           System.out.println("Response: " + ModbusUtil.toHex(m_ByteInOut.getBuffer(),0,dlength + 2));
+          logger.debug("Response: {}",ModbusUtil.toHex(m_ByteInOut.getBuffer(),0,dlength + 2));
           m_ByteIn.reset(m_InBuffer,dlength);
           int[] crc=ModbusUtil.calculateCRC(m_InBuffer,0,dlength);
           if (ModbusUtil.unsignedByteToInt(m_InBuffer[dlength]) != crc[0] || ModbusUtil.unsignedByteToInt(m_InBuffer[dlength + 1]) != crc[1]) {
@@ -36,8 +36,9 @@ synchronized (m_ByteIn) {
     return response;
   }
  catch (  Exception ex) {
-    System.err.println("Last request: " + ModbusUtil.toHex(lastRequest));
-    System.err.println(ex.getMessage());
-    throw new ModbusIOException("I/O exception - failed to read");
+    final String errMsg="failed to read";
+    logger.error("Last request: {}",ModbusUtil.toHex(lastRequest));
+    logger.error("{}: {}",errMsg,ex.getMessage());
+    throw new ModbusIOException("I/O exception - " + errMsg);
   }
 }

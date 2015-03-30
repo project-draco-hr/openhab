@@ -1,12 +1,13 @@
 {
-  String clientId=request.getHeader("X-Atmosphere-tracking-id");
+  final String clientId=request.getHeader(HeaderConfig.X_ATMOSPHERE_TRACKING_ID);
   if (clientId == null || clientId.isEmpty()) {
     return false;
   }
-  CacheEntry entry=ResourceStateChangeListener.getCachedEntries().get(clientId);
+  final CacheEntry entry=ResourceStateChangeListener.getCachedEntries().get(clientId);
   if (entry != null && entry.getData() instanceof PageBean) {
-    Object firedEntity=entry.getData();
-    if (firedEntity == null || ((PageBean)firedEntity).icon != ((PageBean)responseEntity).icon || ((PageBean)firedEntity).title != ((PageBean)responseEntity).title) {
+    final PageBean firedEntity=(PageBean)entry.getData();
+    final PageBean responsePageBean=(PageBean)responseEntity;
+    if (firedEntity == null || firedEntity.icon != responsePageBean.icon || firedEntity.title != responsePageBean.title) {
       return true;
     }
   }

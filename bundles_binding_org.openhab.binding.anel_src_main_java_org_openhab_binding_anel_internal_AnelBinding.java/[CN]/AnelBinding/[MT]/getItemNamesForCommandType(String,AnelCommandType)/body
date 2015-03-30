@@ -1,0 +1,15 @@
+{
+  if (cmd == null)   return Collections.emptyList();
+  final Set<String> itemNames=new HashSet<String>();
+  for (  final AnelBindingProvider provider : providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      if (device.equals(provider.getDeviceId(itemName))) {
+        final AnelCommandType commandType=provider.getCommandType(itemName);
+        if (commandType.equals(cmd)) {
+          itemNames.add(itemName);
+        }
+      }
+    }
+  }
+  return itemNames;
+}

@@ -1,0 +1,12 @@
+{
+  State publishState=state;
+  if (state instanceof PercentType) {
+    if (state.equals(PercentType.ZERO)) {
+      publishState=OnOffType.OFF;
+    }
+ else     if (state.equals(PercentType.HUNDRED)) {
+      publishState=OnOffType.ON;
+    }
+  }
+  m_eventPublisher.postUpdate(m_itemName,publishState);
+}

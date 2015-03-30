@@ -2,15 +2,21 @@
   ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
   ZWaveCommandClass commandClass;
   String commandClassName=bindingConfiguration.getArguments().get("command");
-  if (!forceRefresh && bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval())   return;
+  if (!forceRefresh && bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval()) {
+    return;
+  }
   ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
-  if (node == null)   return;
+  if (node == null) {
+    return;
+  }
   if (commandClassName != null) {
     if (commandClassName.equalsIgnoreCase("info")) {
       infoConverter.executeRefresh(provider.getItem(itemName),node,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
       return;
     }
-    if (node.getNodeStage() != NodeStage.DONE)     return;
+    if (node.getNodeState() != ZWaveNodeState.ALIVE || node.isInitializationComplete() == false) {
+      return;
+    }
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
     if (commandClass == null) {
       logger.warn("No command class found for item = {}, command class name = {}, ignoring execute refresh.",itemName,commandClassName);
@@ -31,9 +37,19 @@
   }
   if (bindingConfiguration.getRefreshInterval() == null) {
     bindingConfiguration.setRefreshInterval(converter.getRefreshInterval());
-    if (!forceRefresh && 0 == bindingConfiguration.getRefreshInterval())     return;
+    if (!forceRefresh && 0 == bindingConfiguration.getRefreshInterval()) {
+      return;
+    }
   }
-  if (!forceRefresh && bindingConfiguration.getLastRefreshed() != null && (bindingConfiguration.getLastRefreshed().getTime() + (bindingConfiguration.getRefreshInterval() * 1000) > Calendar.getInstance().getTimeInMillis()))   return;
+  if (!forceRefresh && bindingConfiguration.getLastRefreshed() != null && (bindingConfiguration.getLastRefreshed().getTime() + (bindingConfiguration.getRefreshInterval() * 1000) > Calendar.getInstance().getTimeInMillis())) {
+    return;
+  }
   bindingConfiguration.setLastRefreshed(Calendar.getInstance().getTime());
-  converter.executeRefresh(node,commandClass,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
+  SerialMessage serialMessage=converter.executeRefresh(node,commandClass,bindingConfiguration.getEndpoint(),bindingConfiguration.getArguments());
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Generating message failed for command class = {}",node.getNodeId(),commandClass.getCommandClass().getLabel());
+    return;
+  }
+  serialMessage.setPriority(SerialMessagePriority.Poll);
+  this.controller.sendData(serialMessage);
 }

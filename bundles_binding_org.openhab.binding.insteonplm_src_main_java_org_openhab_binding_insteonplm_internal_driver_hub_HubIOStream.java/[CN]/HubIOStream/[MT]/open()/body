@@ -1,0 +1,11 @@
+{
+  m_client=new DefaultHttpClient();
+  if (m_user != null && m_pass != null) {
+    m_client.getCredentialsProvider().setCredentials(new AuthScope(m_host,m_port),new UsernamePasswordCredentials(m_user,m_pass));
+  }
+  m_in=new HubInputStream();
+  m_pollThread=new Thread(this);
+  m_pollThread.start();
+  m_out=new HubOutputStream();
+  return true;
+}

@@ -1,0 +1,11 @@
+{
+  if (!this.satelModule.isInitialized()) {
+    logger.debug("Module not initialized yet, skipping refresh");
+    return;
+  }
+  logger.trace("Sending 'get new states' command");
+  if (this.newStatesCommand == null) {
+    this.newStatesCommand=NewStatesCommand.buildMessage(this.satelModule.getIntegraType() == IntegraType.I256_PLUS);
+  }
+  this.satelModule.sendCommand(this.newStatesCommand);
+}

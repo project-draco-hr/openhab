@@ -1,4 +1,8 @@
 {
+  if (tinkerforgeEcosystem == null) {
+    logger.warn("tinkerforge ecosystem not yet ready");
+    return;
+  }
   String deviceUid=provider.getUid(itemName);
   Item item=provider.getItem(itemName);
   String deviceSubId=provider.getSubId(itemName);
@@ -17,8 +21,8 @@
       if (mDevice instanceof MSensor) {
         ((MSensor<?>)mDevice).fetchSensorValue();
       }
- else       if (mDevice instanceof MInSwitchActor && item instanceof SwitchItem) {
-        ((MInSwitchActor)mDevice).fetchSwitchState();
+ else       if (mDevice instanceof SwitchSensor && item instanceof SwitchItem) {
+        ((SwitchSensor)mDevice).fetchSwitchState();
       }
  else       if (mDevice instanceof DigitalActor) {
         ((DigitalActor)mDevice).fetchDigitalValue();

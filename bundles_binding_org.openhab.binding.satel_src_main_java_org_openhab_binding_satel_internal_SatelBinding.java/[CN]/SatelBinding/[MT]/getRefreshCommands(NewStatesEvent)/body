@@ -1,0 +1,19 @@
+{
+  logger.trace("Gathering refresh commands from all items");
+  List<SatelMessage> commands=new ArrayList<SatelMessage>();
+  for (  SatelBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      logger.trace("Getting refresh command from item: {}",itemName);
+      SatelBindingConfig itemConfig=provider.getItemConfig(itemName);
+      SatelMessage message=itemConfig.buildRefreshMessage(this.satelModule.getIntegraType());
+      if (message == null || commands.contains(message)) {
+        continue;
+      }
+      Item item=provider.getItem(itemName);
+      if (item.getState() == UnDefType.UNDEF || (nse != null && nse.isNew(message.getCommand())) || message.getCommand() == IntegraStatusCommand.COMMAND_CODE) {
+        commands.add(message);
+      }
+    }
+  }
+  return commands;
+}

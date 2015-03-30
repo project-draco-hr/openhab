@@ -1,10 +1,8 @@
 {
-  if (speechDispatcherClient == null || !speechDispatcherClient.getConnection().isConnected()) {
-    openConnection();
-  }
   if (text == null) {
     return;
   }
+  openConnection();
   try {
     if (voiceName != null) {
       speechDispatcherClient.setVoice(voiceName);
@@ -14,4 +12,5 @@
  catch (  SSIPException e) {
     logger.error("Error sending text to SpeechDispatcher Host {}: {}",host,e.getLocalizedMessage());
   }
+  closeConnection();
 }

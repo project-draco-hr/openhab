@@ -1,0 +1,21 @@
+{
+  if (!isProperlyConfigured()) {
+    logger.warn("Binding not properly configured, exiting");
+    return;
+  }
+  if (!this.satelModule.isInitialized()) {
+    logger.debug("Module not initialized yet, ignoring command");
+    return;
+  }
+  for (  SatelBindingProvider provider : providers) {
+    SatelBindingConfig itemConfig=provider.getItemConfig(itemName);
+    if (itemConfig != null) {
+      logger.trace("Sending internal command for item {}: {}",itemName,command);
+      SatelMessage message=itemConfig.convertCommandToMessage(command,this.satelModule.getIntegraType(),this.userCode);
+      if (message != null) {
+        this.satelModule.sendCommand(message);
+      }
+      break;
+    }
+  }
+}

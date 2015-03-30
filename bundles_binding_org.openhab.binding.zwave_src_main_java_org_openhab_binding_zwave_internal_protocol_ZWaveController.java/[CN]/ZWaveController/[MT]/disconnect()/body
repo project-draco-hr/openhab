@@ -17,7 +17,18 @@
     }
     receiveThread=null;
   }
-  if (transactionCompleted.availablePermits() < 0)   transactionCompleted.release(transactionCompleted.availablePermits());
+  if (inputThread != null) {
+    inputThread.interrupt();
+    try {
+      inputThread.join();
+    }
+ catch (    InterruptedException e) {
+    }
+    inputThread=null;
+  }
+  if (transactionCompleted.availablePermits() < 0) {
+    transactionCompleted.release(transactionCompleted.availablePermits());
+  }
   transactionCompleted.drainPermits();
   logger.trace("Transaction completed permit count -> {}",transactionCompleted.availablePermits());
   if (this.serialPort != null) {

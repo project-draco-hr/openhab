@@ -5,15 +5,15 @@
       logger.debug("NODE {}: Found dynamic state command class {}",node.getNodeId(),zwaveCommandClass.getCommandClass().getLabel());
       ZWaveCommandClassDynamicState zdds=(ZWaveCommandClassDynamicState)zwaveCommandClass;
       int instances=zwaveCommandClass.getInstances();
-      if (instances == 0) {
-        Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
+      if (instances == 1) {
+        Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues(true);
         for (        SerialMessage serialMessage : dynamicQueries) {
           sendData(serialMessage);
         }
       }
  else {
         for (int i=1; i <= instances; i++) {
-          Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues();
+          Collection<SerialMessage> dynamicQueries=zdds.getDynamicValues(true);
           for (          SerialMessage serialMessage : dynamicQueries) {
             sendData(node.encapsulate(serialMessage,zwaveCommandClass,i));
           }
@@ -24,11 +24,11 @@
       ZWaveMultiInstanceCommandClass multiInstanceCommandClass=(ZWaveMultiInstanceCommandClass)zwaveCommandClass;
       for (      ZWaveEndpoint endpoint : multiInstanceCommandClass.getEndpoints()) {
         for (        ZWaveCommandClass endpointCommandClass : endpoint.getCommandClasses()) {
-          logger.trace(String.format("NODE %d: Inspecting command class %s for endpoint %d",node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId()));
+          logger.trace("NODE {}: Inspecting command class {} for endpoint {}",node.getNodeId(),endpointCommandClass.getCommandClass().getLabel(),endpoint.getEndpointId());
           if (endpointCommandClass instanceof ZWaveCommandClassDynamicState) {
             logger.debug("NODE {}: Found dynamic state command class {}",node.getNodeId(),endpointCommandClass.getCommandClass().getLabel());
             ZWaveCommandClassDynamicState zdds2=(ZWaveCommandClassDynamicState)endpointCommandClass;
-            Collection<SerialMessage> dynamicQueries=zdds2.getDynamicValues();
+            Collection<SerialMessage> dynamicQueries=zdds2.getDynamicValues(true);
             for (            SerialMessage serialMessage : dynamicQueries) {
               sendData(node.encapsulate(serialMessage,endpointCommandClass,endpoint.getEndpointId()));
             }

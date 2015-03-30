@@ -1,0 +1,18 @@
+{
+  logger.debug("setSwitchState called");
+  Short position=null;
+  if (state == OnOffValue.OFF) {
+    position=0;
+  }
+ else   if (state == OnOffValue.ON) {
+    position=Tools.getShortOpt(ConfigOptsServo.POSITION.toString(),opts);
+    if (position == null) {
+      logger.error("{} option is missing",ConfigOptsServo.POSITION.toString().toLowerCase());
+      return;
+    }
+  }
+ else {
+    logger.error("{} unkown switchstate {}",LoggerConstants.TFMODELUPDATE,state);
+  }
+  setPoint(position,opts);
+}

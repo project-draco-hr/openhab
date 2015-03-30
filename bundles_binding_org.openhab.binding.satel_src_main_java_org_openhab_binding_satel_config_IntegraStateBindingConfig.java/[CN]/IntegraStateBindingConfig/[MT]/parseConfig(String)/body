@@ -1,0 +1,43 @@
+{
+  ConfigIterator iterator=new ConfigIterator(bindingConfig);
+  ObjectType objectType;
+  try {
+    objectType=ObjectType.valueOf(iterator.nextUpperCase());
+  }
+ catch (  Exception e) {
+    return null;
+  }
+  StateType stateType=null;
+  int[] objectNumbers={};
+switch (objectType) {
+case ZONE:
+    stateType=iterator.nextOfType(ZoneState.class,"zone state type");
+  break;
+case PARTITION:
+stateType=iterator.nextOfType(PartitionState.class,"partition state type");
+break;
+case OUTPUT:
+stateType=OutputState.OUTPUT;
+break;
+case DOORS:
+stateType=iterator.nextOfType(DoorsState.class,"doors state type");
+break;
+}
+if (iterator.hasNext()) {
+try {
+String[] objectNumbersStr=iterator.next().split(",");
+objectNumbers=new int[objectNumbersStr.length];
+for (int i=0; i < objectNumbersStr.length; ++i) {
+int objectNumber=Integer.parseInt(objectNumbersStr[i]);
+if (objectNumber < 1 || objectNumber > 256) {
+throw new BindingConfigParseException(String.format("Invalid object number: %s",bindingConfig));
+}
+objectNumbers[i]=objectNumber;
+}
+}
+ catch (NumberFormatException e) {
+throw new BindingConfigParseException(String.format("Invalid object number: %s",bindingConfig));
+}
+}
+return new IntegraStateBindingConfig(stateType,objectNumbers,parseOptions(iterator));
+}

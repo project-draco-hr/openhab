@@ -10,9 +10,13 @@
       logger.error("NODE {}: Unknown Setpoint Type = {}, ignoring report.",this.getNode().getNodeId(),setpointTypeCode);
       return;
     }
-    if (!this.setpointTypes.contains(setpointType))     this.setpointTypes.add(setpointType);
-    logger.debug("NODE {}: Setpoint Type = {} ({})",this.getNode().getNodeId(),setpointType.getLabel(),setpointTypeCode);
-    logger.debug("NODE {}: Thermostat Setpoint Report value = {}",this.getNode().getNodeId(),value.toPlainString());
+    Setpoint setpoint=setpoints.get(setpointType);
+    if (setpoint == null) {
+      setpoint=new Setpoint(setpointType);
+      setpoints.put(setpointType,setpoint);
+    }
+    setpoint.setInitialised();
+    logger.debug("NODE {}: Thermostat Setpoint Report, Type {} ({}), value = {}",this.getNode().getNodeId(),setpointType.getLabel(),setpointTypeCode,value.toPlainString());
     ZWaveThermostatSetpointValueEvent zEvent=new ZWaveThermostatSetpointValueEvent(this.getNode().getNodeId(),endpoint,setpointType,scale,value);
     this.getController().notifyEventListeners(zEvent);
   }

@@ -34,7 +34,8 @@ synchronized (m_InBuffer) {
     return request;
   }
  catch (  Exception ex) {
-    if (Modbus.debug)     System.out.println(ex.getMessage());
-    throw new ModbusIOException("readRequest: I/O exception - failed to read.");
+    final String errMsg="I/O exception - failed to read";
+    logger.debug("{}: {}",errMsg,ex.getMessage());
+    throw new ModbusIOException("readRequest: " + errMsg);
   }
 }

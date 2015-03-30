@@ -1,0 +1,16 @@
+{
+  int[] heatpump_values=null;
+  while (datain.available() > 0) {
+    datain.readByte();
+  }
+  dataout.writeInt(3003);
+  dataout.writeInt(0);
+  dataout.flush();
+  if (datain.readInt() != 3003) {
+    return null;
+  }
+  int arraylength=datain.readInt();
+  heatpump_values=new int[arraylength];
+  for (int i=0; i < arraylength; i++)   heatpump_values[i]=datain.readInt();
+  return heatpump_values;
+}

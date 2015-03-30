@@ -1,0 +1,27 @@
+{
+  logger.debug("setTimeStampState(): Time Stamp: {}",timeStamp);
+  int state=0;
+  String itemName="";
+  itemName=getItemName(DSCAlarmItemType.PANEL_TIME_STAMP,0,0);
+  if (itemName != "") {
+    DSCAlarmBindingConfig config=getItemConfig(itemName);
+    if (config != null) {
+      Item item=getItem(itemName);
+      if (item != null) {
+        DSCAlarmDeviceProperties dsclarmDeviceProperties=dscAlarmItemUpdate.getDeviceProperties(item,config);
+        if (dsclarmDeviceProperties != null) {
+          boolean isTimeStamp=dsclarmDeviceProperties.getSystemTimeStamp();
+          if ((timeStamp == "" && isTimeStamp == false) || (timeStamp != "" && isTimeStamp == true)) {
+            logger.debug("setTimeStampState(): Already Set!",timeStamp);
+            return;
+          }
+ else           if (timeStamp != "") {
+            state=1;
+          }
+        }
+      }
+    }
+  }
+  updateItemType(DSCAlarmItemType.PANEL_TIME_STAMP,0,0,state);
+  logger.debug("setTimeStampState(): Changed state to '{}'.",state == 1 ? OnOffType.ON : OnOffType.OFF);
+}
