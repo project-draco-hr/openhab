@@ -1,4 +1,5 @@
 {
+  threadPool=Executors.newCachedThreadPool();
   while (!isInterrupted() || reConnectCounter == -1) {
     try {
       if (inputStream == null) {
@@ -45,4 +46,5 @@ catch (    Exception e) {
  catch (  IOException e) {
     logger.error(e.toString(),e);
   }
+  if (threadPool != null && !threadPool.isShutdown())   threadPool.shutdown();
 }

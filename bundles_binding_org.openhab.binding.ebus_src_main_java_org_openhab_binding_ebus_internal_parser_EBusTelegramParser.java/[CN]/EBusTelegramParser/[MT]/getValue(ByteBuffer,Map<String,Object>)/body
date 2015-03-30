@@ -1,10 +1,16 @@
 {
+  String type=((String)settings.get("type")).toLowerCase();
+  int pos=settings.containsKey("pos") ? ((Integer)settings.get("pos")).intValue() : -1;
+  BigDecimal valueMin=NumberUtils.toBigDecimal(settings.get("min"));
+  BigDecimal valueMax=NumberUtils.toBigDecimal(settings.get("max"));
+  BigDecimal replaceValue=NumberUtils.toBigDecimal(settings.get("replaceValue"));
+  BigDecimal factor=NumberUtils.toBigDecimal(settings.get("factor"));
   Object value=null;
   byte hByte=0;
   byte lByte=0;
   BigDecimal repVal=null;
   if (pos > byteBuffer.position()) {
-    logger.warn("Wow, buffer pos error!");
+    logger.warn("eBus buffer pos error! Can happen ...");
   }
   if (type.equals("data2b")) {
     hByte=byteBuffer.get(pos);
@@ -69,11 +75,11 @@
       logger.trace("Value multiplied ...");
       value=b=b.multiply(factor);
     }
-    if (min != null && b != null && b.compareTo(min) == -1) {
+    if (valueMin != null && b != null && b.compareTo(valueMin) == -1) {
       logger.trace("Minimal value reached, skip value ...");
       value=b=null;
     }
- else     if (max != null && b != null && b.compareTo(max) == 1) {
+ else     if (valueMax != null && b != null && b.compareTo(valueMax) == 1) {
       logger.trace("Maximal value reached, skip value ...");
       value=b=null;
     }

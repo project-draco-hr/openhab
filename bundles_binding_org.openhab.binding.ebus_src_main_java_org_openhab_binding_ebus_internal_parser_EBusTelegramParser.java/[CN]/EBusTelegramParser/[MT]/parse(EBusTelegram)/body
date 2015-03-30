@@ -28,16 +28,11 @@
     }
     @SuppressWarnings("unchecked") Map<String,Map<String,Object>> values=(Map<String,Map<String,Object>>)registryEntry.get("values");
     loggerAnalyses.debug("  >>> {}",registryEntry.containsKey("comment") ? registryEntry.get("comment") : "<No comment available>");
+    Map<String,Object> settings=null;
     for (    Entry<String,Map<String,Object>> entry : values.entrySet()) {
       String uniqueKey=(classKey != "" ? classKey + "." : "") + entry.getKey();
       settings=entry.getValue();
-      String type=((String)settings.get("type")).toLowerCase();
-      int pos=settings.containsKey("pos") ? ((Integer)settings.get("pos")).intValue() : -1;
-      BigDecimal valueMin=NumberUtils.toBigDecimal(settings.get("min"));
-      BigDecimal valueMax=NumberUtils.toBigDecimal(settings.get("max"));
-      BigDecimal replaceValue=NumberUtils.toBigDecimal(settings.get("replaceValue"));
-      BigDecimal factor=NumberUtils.toBigDecimal(settings.get("factor"));
-      Object value=getValue(byteBuffer,type,pos,valueMin,valueMax,replaceValue,factor);
+      Object value=getValue(byteBuffer,entry.getValue());
       if (settings.containsKey("cscript")) {
         try {
           HashMap<String,Object> bindings=new HashMap<String,Object>();
