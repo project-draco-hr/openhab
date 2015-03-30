@@ -1,25 +1,25 @@
 {
-  try {
-    ButtonState buttonState=tinkerforgeDevice.getButtonState();
-    OnOffValue newValue;
-    if (position == DualButtonDevicePosition.LEFT) {
-      newValue=getValue4State(buttonState.buttonL);
-    }
+  if (tactile || this.sensorValue == null || this.sensorValue == OnOffValue.UNDEF) {
+    try {
+      ButtonState buttonState=tinkerforgeDevice.getButtonState();
+      OnOffValue newValue;
+      if (position == DualButtonDevicePosition.LEFT) {
+        newValue=getValue4State(buttonState.buttonL);
+      }
  else {
-      newValue=getValue4State(buttonState.buttonR);
-    }
-    if (newValue != sensorValue) {
+        newValue=getValue4State(buttonState.buttonR);
+      }
       setSensorValue(newValue);
-      logger.trace("{} fetch value changed to: {}",position,newValue);
+      logger.trace("{} fetch value: {}",position,newValue);
     }
+ catch (    TimeoutException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+    }
+catch (    NotConnectedException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    }
+  }
  else {
-      logger.trace("{} fetch omitting unchanged value: {}",position,newValue);
-    }
-  }
- catch (  TimeoutException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
-  }
-catch (  NotConnectedException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    setSensorValue(getSensorValue());
   }
 }

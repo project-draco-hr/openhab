@@ -1,12 +1,17 @@
 {
-  try {
-    OnOffValue value=tinkerforgeDevice.isPressed() ? OnOffValue.OFF : OnOffValue.ON;
-    setSensorValue(value);
+  if (tactile || this.sensorValue == null || this.sensorValue == OnOffValue.UNDEF) {
+    try {
+      OnOffValue value=tinkerforgeDevice.isPressed() ? OnOffValue.ON : OnOffValue.OFF;
+      setSensorValue(value);
+    }
+ catch (    TimeoutException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+    }
+catch (    NotConnectedException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    }
   }
- catch (  TimeoutException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
-  }
-catch (  NotConnectedException e) {
-    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+ else {
+    setSensorValue(getSensorValue());
   }
 }

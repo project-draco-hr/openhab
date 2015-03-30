@@ -175,6 +175,20 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.joystick_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,JoystickSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(JoystickSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.lcd_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,LCDButtonSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LCDButtonSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);

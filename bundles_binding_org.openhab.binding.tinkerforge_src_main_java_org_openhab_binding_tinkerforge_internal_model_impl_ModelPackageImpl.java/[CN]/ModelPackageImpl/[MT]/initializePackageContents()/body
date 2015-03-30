@@ -143,6 +143,10 @@
   g2=createEGenericType(this.getSwitchState());
   g1.getETypeArguments().add(g2);
   joystickButtonEClass.getEGenericSuperTypes().add(g1);
+  g1=createEGenericType(this.getMTFConfigConsumer());
+  g2=createEGenericType(this.getButtonConfiguration());
+  g1.getETypeArguments().add(g2);
+  joystickButtonEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMDevice());
   g2=createEGenericType(this.getMTinkerBrickServo());
   g1.getETypeArguments().add(g2);
@@ -630,7 +634,9 @@
   mlcd20x4ButtonEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getMLCDSubDevice());
   mlcd20x4ButtonEClass.getEGenericSuperTypes().add(g1);
-  g1=createEGenericType(this.getCallbackListener());
+  g1=createEGenericType(this.getMTFConfigConsumer());
+  g2=createEGenericType(this.getButtonConfiguration());
+  g1.getETypeArguments().add(g2);
   mlcd20x4ButtonEClass.getEGenericSuperTypes().add(g1);
   g1=createEGenericType(this.getOHTFDevice());
   g2=createEGenericType(ohtfSubDeviceAdminDeviceEClass_TFC);
@@ -1237,6 +1243,10 @@
   initEEnum(dualButtonButtonSubIdsEEnum,DualButtonButtonSubIds.class,"DualButtonButtonSubIds");
   addEEnumLiteral(dualButtonButtonSubIdsEEnum,DualButtonButtonSubIds.DUALBUTTON_LEFTBUTTON);
   addEEnumLiteral(dualButtonButtonSubIdsEEnum,DualButtonButtonSubIds.DUALBUTTON_RIGHTBUTTON);
+  initEEnum(joystickSubIdsEEnum,JoystickSubIds.class,"JoystickSubIds");
+  addEEnumLiteral(joystickSubIdsEEnum,JoystickSubIds.JOYSTICK_XPOSITION);
+  addEEnumLiteral(joystickSubIdsEEnum,JoystickSubIds.JOYSTICK_YPOSITION);
+  addEEnumLiteral(joystickSubIdsEEnum,JoystickSubIds.JOYSTICK_BUTTON);
   initEDataType(mipConnectionEDataType,IPConnection.class,"MIPConnection",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mTinkerDeviceEDataType,Device.class,"MTinkerDevice",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);
   initEDataType(mLoggerEDataType,Logger.class,"MLogger",IS_SERIALIZABLE,!IS_GENERATED_INSTANCE_CLASS);

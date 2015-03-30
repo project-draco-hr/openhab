@@ -1,6 +1,14 @@
 {
   setSensorValue(OnOffValue.UNDEF);
   tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
-  buttonPressedListener=new ButtonPressedListener();
-  tinkerforgeDevice.addButtonPressedListener(buttonPressedListener);
+  tactile=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("tactile"))) {
+      tactile=tfConfig.isTactile();
+    }
+  }
+  logger.trace("button {} tactile is {}",buttonNum,tactile);
+  buttonListener=new ButtonListener();
+  tinkerforgeDevice.addButtonPressedListener(buttonListener);
+  tinkerforgeDevice.addButtonReleasedListener(buttonListener);
 }
