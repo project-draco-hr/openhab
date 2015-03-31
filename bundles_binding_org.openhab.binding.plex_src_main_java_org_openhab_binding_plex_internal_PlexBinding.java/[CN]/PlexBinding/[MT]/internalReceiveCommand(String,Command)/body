@@ -1,0 +1,14 @@
+{
+  PlexBindingConfig config=getConfig(itemName);
+  if (!config.isReadOnly()) {
+    try {
+      connector.sendCommand(config,command);
+    }
+ catch (    IOException e) {
+      logger.error("Cannot send command {} for item {}",command,itemName,e);
+    }
+  }
+ else {
+    logger.warn("Cannot send command for item {}, property {} is read only",config.getItemName(),config.getProperty());
+  }
+}

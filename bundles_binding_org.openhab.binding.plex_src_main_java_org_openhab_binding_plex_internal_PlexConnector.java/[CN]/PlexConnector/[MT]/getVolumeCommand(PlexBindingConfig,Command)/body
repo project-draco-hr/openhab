@@ -1,0 +1,19 @@
+{
+  int newVolume=100;
+  PlexSession session=getSessionByMachineId(config.getMachineIdentifier());
+  if (session != null)   newVolume=session.getVolume();
+  if (command.getClass().equals(PercentType.class)) {
+    PercentType percentType=(PercentType)command;
+    newVolume=percentType.intValue();
+  }
+ else   if (command.getClass().equals(IncreaseDecreaseType.class)) {
+    if (command.equals(IncreaseDecreaseType.DECREASE))     newVolume=Math.max(0,newVolume - VOLUME_STEP);
+ else     newVolume=Math.min(100,newVolume + VOLUME_STEP);
+  }
+  if (session != null) {
+    session.setVolume(newVolume);
+    callback.updateReceived(session);
+  }
+  String url=String.format("playback/setParameters?volume=%d",newVolume);
+  return url;
+}

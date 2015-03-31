@@ -1,0 +1,23 @@
+{
+  try {
+    HttpURLConnection connection=(HttpURLConnection)new URL(uri).openConnection();
+    connection.setRequestMethod("GET");
+    connection.setConnectTimeout(REQUEST_TIMEOUT_MS);
+    connection.setReadTimeout(REQUEST_TIMEOUT_MS);
+    JAXBContext jc=JAXBContext.newInstance(type);
+    InputStream xml=connection.getInputStream();
+    @SuppressWarnings("unchecked") T obj=(T)jc.createUnmarshaller().unmarshal(xml);
+    connection.disconnect();
+    return obj;
+  }
+ catch (  MalformedURLException e) {
+    e.printStackTrace();
+  }
+catch (  IOException e) {
+    e.printStackTrace();
+  }
+catch (  JAXBException e) {
+    e.printStackTrace();
+  }
+  return null;
+}
