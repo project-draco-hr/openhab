@@ -40,6 +40,9 @@ case SystemArmingInProgress:
 dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 break;
 case PartitionArmed:
+case UserClosing:
+case SpecialClosing:
+case PartialClosing:
 updateItemType(DSCAlarmItemType.PARTITION_ARMED,apiMessage.getPartition(),-1,1);
 updateItemType(DSCAlarmItemType.PARTITION_ENTRY_DELAY,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,0);
@@ -47,6 +50,8 @@ dscAlarmItemType=DSCAlarmItemType.PARTITION_ARM_MODE;
 setPartitionStatus(partitionId,0,apiMessage.getAPIName());
 break;
 case PartitionDisarmed:
+case UserOpening:
+case SpecialOpening:
 updateItemType(DSCAlarmItemType.PARTITION_ARMED,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_ENTRY_DELAY,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,0);
