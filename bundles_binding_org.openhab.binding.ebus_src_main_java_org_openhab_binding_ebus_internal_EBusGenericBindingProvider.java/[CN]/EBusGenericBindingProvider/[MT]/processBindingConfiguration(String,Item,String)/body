@@ -1,0 +1,37 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  logger.debug("Process binding cfg for {} with settings {} [Context:{}]",item.getName(),bindingConfig,context);
+  EBusBindingConfig config=new EBusBindingConfig();
+  for (  String set : bindingConfig.trim().split(",")) {
+    String[] configParts=set.split(":");
+    if (configParts.length > 2) {
+      throw new BindingConfigParseException("eBus binding configuration must not contain more than two parts");
+    }
+    configParts[0]=configParts[0].trim().toLowerCase();
+    configParts[1]=configParts[1].trim();
+    if (configParts[0].equals("data")) {
+      config.map.put(configParts[0],EBusUtils.toByteArray(configParts[1]));
+    }
+ else     if (configParts[0].equals("src")) {
+      config.map.put(configParts[0],DatatypeConverter.parseHexBinary(configParts[1])[0]);
+    }
+ else     if (configParts[0].equals("dst")) {
+      config.map.put(configParts[0],DatatypeConverter.parseHexBinary(configParts[1])[0]);
+    }
+ else     if (configParts[0].equals("refresh")) {
+      config.map.put(configParts[0],Integer.parseInt(configParts[1]));
+    }
+ else     if (configParts[0].startsWith("data-")) {
+      if (!config.map.containsKey("data-map")) {
+        config.map.put("data-map",new HashMap<String,byte[]>());
+      }
+      @SuppressWarnings("unchecked") HashMap<String,byte[]> m=(HashMap<String,byte[]>)config.map.get("data-map");
+      String key=configParts[0].substring(5);
+      m.put(key,EBusUtils.toByteArray(configParts[1]));
+    }
+ else {
+      config.map.put(configParts[0],configParts[1]);
+    }
+  }
+  addBindingConfig(item,config);
+}

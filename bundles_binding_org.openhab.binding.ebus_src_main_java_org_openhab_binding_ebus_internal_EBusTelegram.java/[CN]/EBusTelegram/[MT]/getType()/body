@@ -1,0 +1,11 @@
+{
+  int pos=getDataLen() + 6;
+  byte b=data.get(pos);
+  if (b == SYN) {
+    return BROADCAST;
+  }
+ else   if (b == ACK_OK && data.get(pos + 1) == SYN) {
+    return MASTER_MASTER;
+  }
+  return MASTER_SLAVE;
+}

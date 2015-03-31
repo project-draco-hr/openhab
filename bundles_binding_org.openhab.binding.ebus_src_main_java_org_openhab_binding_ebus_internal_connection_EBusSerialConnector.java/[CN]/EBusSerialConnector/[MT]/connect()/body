@@ -1,0 +1,24 @@
+{
+  try {
+    final CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(port);
+    if (portIdentifier != null) {
+      serialPort=(SerialPort)portIdentifier.open("openhab-ebus",5000);
+      serialPort.setSerialPortParams(2400,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+      serialPort.enableReceiveTimeout(10000);
+      serialPort.disableReceiveThreshold();
+      outputStream=serialPort.getOutputStream();
+      inputStream=serialPort.getInputStream();
+      return true;
+    }
+  }
+ catch (  NoSuchPortException e) {
+    logger.error("Unable to connect to serial port {}",port);
+  }
+catch (  PortInUseException e) {
+    logger.error("Serial port {} is already in use",port);
+  }
+catch (  UnsupportedCommOperationException e) {
+    logger.error(e.toString(),e);
+  }
+  return false;
+}

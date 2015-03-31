@@ -1,0 +1,16 @@
+{
+  if ((highData & (byte)0x80) == (byte)0x80) {
+    short hh=(short)((highData ^ 0xFF) & 0xFF);
+    short ll=(short)((lowData ^ 0xFF) & 0xFF);
+    short hn=(short)((ll & 0xF0) >> 4);
+    short ln=(short)(ll & 0x0F);
+    return -1 * ((hh * 16) + hn + ((ln + 1) / 16f));
+  }
+ else {
+    short hh=(short)(highData & 0xFF);
+    short ll=(short)(lowData & 0xFF);
+    short hn=(short)((ll & 0xF0) >> 4);
+    short ln=(short)(ll & 0x0F);
+    return (hh * 16) + hn + (ln / 16f);
+  }
+}

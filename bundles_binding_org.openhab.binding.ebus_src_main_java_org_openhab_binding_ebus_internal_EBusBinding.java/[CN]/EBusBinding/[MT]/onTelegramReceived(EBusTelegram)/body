@@ -1,0 +1,23 @@
+{
+  final Map<String,Object> results=parser.parse(telegram);
+  if (results == null) {
+    logger.debug("No valid parser result for raw telegram!");
+    return;
+  }
+  for (  Entry<String,Object> entry : results.entrySet()) {
+    State state=StateUtils.convertToState(entry.getValue());
+    if (state != null) {
+      for (      EBusBindingProvider provider : providers) {
+        for (        String itemName : provider.getItemNames(entry.getKey())) {
+          Byte telegramSource=provider.getTelegramSource(itemName);
+          Byte telegramDestination=provider.getTelegramDestination(itemName);
+          if (telegramSource == null || telegram.getSource() == telegramSource) {
+            if (telegramDestination == null || telegram.getDestination() == telegramDestination) {
+              eventPublisher.postUpdate(itemName,state);
+            }
+          }
+        }
+      }
+    }
+  }
+}
