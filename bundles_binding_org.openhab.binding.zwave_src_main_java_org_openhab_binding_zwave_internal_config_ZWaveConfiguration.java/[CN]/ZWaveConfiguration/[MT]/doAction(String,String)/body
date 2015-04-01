@@ -5,8 +5,13 @@
     logger.error("Error malformed domain in doAction '{}'",domain);
     return;
   }
-  if (splitDomain[0].equals("binding") && splitDomain[1].equals("network") && action.equals("SoftReset")) {
-    zController.requestSoftReset();
+  if (splitDomain[0].equals("binding") && splitDomain[1].equals("network")) {
+    if (action.equals("SoftReset")) {
+      zController.requestSoftReset();
+    }
+ else     if (action.equals("HardReset")) {
+      zController.requestHardReset();
+    }
   }
   if (zController.isConnected() == false) {
     logger.debug("Controller not ready - Ignoring request to '{}'",domain);
