@@ -1,0 +1,14 @@
+{
+  if (cachePeriod <= 0)   return true;
+  long now=System.currentTimeMillis();
+  if (lastCachePurge + (cachePeriod * 60000) < now) {
+    cachedStates.clear();
+    lastCachePurge=now;
+  }
+  final Boolean cachedState=cachedStates.get(hostname + port);
+  if (cachedState == null || newState != cachedState.booleanValue()) {
+    cachedStates.put(hostname + port,newState);
+    return true;
+  }
+  return false;
+}
