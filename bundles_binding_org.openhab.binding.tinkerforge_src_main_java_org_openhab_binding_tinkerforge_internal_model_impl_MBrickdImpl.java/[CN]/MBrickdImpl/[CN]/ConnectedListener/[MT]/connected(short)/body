@@ -5,9 +5,18 @@
     setReconnected(true);
   }
   try {
+    if (authkey != null && !authkey.equals("")) {
+      ipcon.authenticate(authkey);
+    }
     ipcon.enumerate();
   }
- catch (  NotConnectedException e) {
-    logger.error("{} enumeration failed with NotConnectedException",LoggerConstants.TFINIT);
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  CryptoException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_NOT_CRYPTO_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
   }
 }

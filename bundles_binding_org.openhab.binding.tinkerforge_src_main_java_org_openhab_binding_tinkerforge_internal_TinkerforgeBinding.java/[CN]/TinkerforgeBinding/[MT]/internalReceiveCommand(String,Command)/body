@@ -39,20 +39,20 @@
               ((MTextActor)mDevice).setText(command.toString());
             }
           }
- else           if (command instanceof PercentType) {
-            if (mDevice instanceof SetPointActor) {
-              ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
-            }
- else {
-              logger.error("found no percenttype actor");
-            }
-          }
  else           if (command instanceof DecimalType) {
             logger.debug("{} found number command",LoggerConstants.COMMAND);
             if (command instanceof HSBType) {
               logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
               if (mDevice instanceof ColorActor) {
                 ((ColorActor)mDevice).setColor((HSBType)command,provider.getDeviceOptions(itemName));
+              }
+            }
+ else             if (command instanceof PercentType) {
+              if (mDevice instanceof SetPointActor) {
+                ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
+              }
+ else {
+                logger.error("found no percenttype actor");
               }
             }
  else {
