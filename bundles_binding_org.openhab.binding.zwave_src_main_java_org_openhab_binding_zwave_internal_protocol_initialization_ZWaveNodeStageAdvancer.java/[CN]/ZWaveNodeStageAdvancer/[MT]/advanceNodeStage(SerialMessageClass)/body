@@ -259,12 +259,15 @@ if (wakeupCommandClass.getTargetNodeId() == controller.getOwnNodeId()) {
 logger.debug("NODE {}: Node advancer: SET_WAKEUP - TargetNode is set to controller",node.getNodeId());
 break;
 }
+int value=3600;
 if (wakeupCommandClass.getInterval() == 0) {
-logger.debug("NODE {}: Node advancer: SET_WAKEUP - Interval is currently 0. Skipping stage",node.getNodeId(),controller.getOwnNodeId());
-break;
+logger.debug("NODE {}: Node advancer: SET_WAKEUP - Interval is currently 0. Set to 3600",node.getNodeId());
 }
-logger.debug("NODE {}: Node advancer: SET_WAKEUP - Set wakeup node to controller ({})",node.getNodeId(),controller.getOwnNodeId());
-addToQueue(wakeupCommandClass.setInterval(wakeupCommandClass.getInterval()));
+ else {
+value=wakeupCommandClass.getInterval();
+}
+logger.debug("NODE {}: Node advancer: SET_WAKEUP - Set wakeup node to controller ({}), period {}",node.getNodeId(),controller.getOwnNodeId(),value);
+addToQueue(wakeupCommandClass.setInterval(value));
 addToQueue(wakeupCommandClass.getIntervalMessage());
 break;
 case SET_ASSOCIATION:
@@ -289,11 +292,12 @@ break;
 for (ZWaveDbAssociationGroup group : groups) {
 if (group.SetToController == true) {
 if (associationCls.getGroupMembers(group.Index).contains(controller.getOwnNodeId())) {
-logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - ASSOCIATION already set for group {}",node.getNodeId(),group.Index);
+logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - ASSOCIATION set for group {}",node.getNodeId(),group.Index);
 }
  else {
 logger.debug("NODE {}: Node advancer: SET_ASSOCIATION - Adding ASSOCIATION to group {}",node.getNodeId(),group.Index);
 addToQueue(associationCls.setAssociationMessage(group.Index,controller.getOwnNodeId()));
+addToQueue(associationCls.getAssociationMessage(group.Index));
 }
 }
 }

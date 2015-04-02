@@ -3,6 +3,7 @@
   int state;
   String str="";
   boolean trigger;
+  boolean boolState;
   OnOffType onOffType;
   if (config != null) {
     if (config.getDSCAlarmItemType() != null) {
@@ -19,9 +20,19 @@ case PANEL_SYSTEM_ERROR:
 str=String.format("%03d",panelProperties.getSystemErrorCode()) + ": " + panelProperties.getSystemErrorDescription();
 publisher.postUpdate(item.getName(),new StringType(str));
 break;
-case PANEL_TIME_DATE:
-str=panelProperties.getTimeDate();
-publisher.postUpdate(item.getName(),new StringType(str));
+case PANEL_TIME:
+str=panelProperties.getSystemTime();
+publisher.postUpdate(item.getName(),new DateTimeType(str));
+break;
+case PANEL_TIME_STAMP:
+boolState=panelProperties.getSystemTimeStamp();
+onOffType=boolState ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
+break;
+case PANEL_TIME_BROADCAST:
+boolState=panelProperties.getSystemTimeBroadcast();
+onOffType=boolState ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
 break;
 case PANEL_COMMAND:
 state=panelProperties.getSystemCommand();

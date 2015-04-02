@@ -9,8 +9,12 @@
   String messageDescription=null;
   String[] frameParts=null;
   ProtocolRead event=null;
+  if (frame.isEmpty()) {
+    logger.error("Empty frame");
+    return;
+  }
   int length=frame.length();
-  if (frame.isEmpty() || !frame.endsWith("##")) {
+  if (!frame.endsWith("##")) {
     logger.error("Malformed frame " + frame + " "+ frame.substring(length - 2,length));
     return;
   }
@@ -115,11 +119,11 @@
       }
     }
     if (who.equalsIgnoreCase("4")) {
+      messageType="thermoregulation";
       objectClass="Thermo";
       objectName=who + "*" + where;
-      String temperature=null;
       if (frameParts[2].equalsIgnoreCase("0")) {
-        temperature=frameParts[3];
+        String temperature=frameParts[3];
         temperature=OWNUtilities.convertTemperature(temperature);
         messageDescription="Temperature value";
         if (temperature != null) {
@@ -303,6 +307,7 @@
       event.addProperty("messageType",messageType);
     }
     logger.info(OWNUtilities.getDateTime() + " Rx: " + frame+ " "+ "("+ messageDescription+ ")");
+    pluginReference.notifyEvent(event);
   }
   if (!(frame.substring(0,2).equalsIgnoreCase("*#")) && (frame.substring(0,1).equalsIgnoreCase("*"))) {
     frame=frame.substring(1,length - 2);
@@ -313,18 +318,20 @@
  else     where="";
     event=new ProtocolRead(frame);
     objectName=who + "*" + where;
-    boolean virtual_where=(where.length() == 4);
+    boolean virtual_where=false;
+    String[] what_parts;
 switch (Integer.parseInt(who)) {
 case 1:
       messageType="Lighting";
     objectClass="Light";
-  if (virtual_where) {
-    String[] what_parts=what.split("#");
-    what=what_parts[what_parts.length - 1];
-  }
+  what_parts=what.split("#");
+if (what_parts.length > 1) {
+  virtual_where=true;
+  what=what_parts[what_parts.length - 1];
+}
 switch (Integer.parseInt(what)) {
 case 0:
-  messageDescription="Light OFF";
+messageDescription="Light OFF";
 break;
 case 1:
 messageDescription="Light ON";
@@ -371,7 +378,7 @@ break;
 break;
 case 4:
 messageType="thermoregulation";
-objectClass="Temperature";
+objectClass="Thermo";
 switch (Integer.parseInt(what)) {
 case 0:
 messageDescription="Conditioning";
@@ -529,7 +536,7 @@ break;
 case 15:
 messageType="CEN Basic and Evolved";
 objectClass="CEN";
-String[] what_parts=what.split("#");
+what_parts=what.split("#");
 if (what_parts.length == 1) {
 messageDescription="Virtual pressure";
 }

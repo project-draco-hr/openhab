@@ -3,9 +3,9 @@
   if (temp.getCurrent() != null && weather instanceof Forecast) {
     temp.setCurrent(null);
   }
-  Athmosphere athm=weather.getAthmosphere();
-  if (temp.getFeel() == null && temp.getCurrent() != null && athm.getHumidity() != null) {
-    Double humidex=UnitUtils.getHumidex(temp.getCurrent(),athm.getHumidity());
+  Atmosphere atm=weather.getAtmosphere();
+  if (temp.getFeel() == null && temp.getCurrent() != null && atm.getHumidity() != null) {
+    Double humidex=UnitUtils.getHumidex(temp.getCurrent(),atm.getHumidity());
     temp.setFeel(humidex);
   }
   Wind wind=weather.getWind();
@@ -22,11 +22,11 @@
     precip.setSnow(precip.getRain());
     precip.setRain(null);
   }
-  if (precip.getSnow() != null && precip.getSnow() == 0.0) {
-    precip.setSnow(null);
+  if (precip.getSnow() == null) {
+    precip.setSnow(0.0);
   }
-  if (precip.getRain() != null && precip.getRain() == 0.0) {
-    precip.setRain(null);
+  if (precip.getRain() == null) {
+    precip.setRain(0.0);
   }
   CommonIdHandler.getInstance().setCommonId(weather);
 }

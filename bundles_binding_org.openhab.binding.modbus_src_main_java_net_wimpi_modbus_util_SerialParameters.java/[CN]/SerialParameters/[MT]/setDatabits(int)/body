@@ -1,3 +1,22 @@
 {
-  m_Databits=databits;
+  if (!SerialParameterValidator.isDataBitsValid(databits)) {
+    throw new IllegalArgumentException("Databit '" + databits + "' invalid");
+  }
+switch (databits) {
+case 5:
+    m_Databits=SerialPort.DATABITS_5;
+  break;
+case 6:
+m_Databits=SerialPort.DATABITS_6;
+break;
+case 7:
+m_Databits=SerialPort.DATABITS_7;
+break;
+case 8:
+m_Databits=SerialPort.DATABITS_8;
+break;
+default :
+m_Databits=SerialPort.DATABITS_8;
+break;
+}
 }

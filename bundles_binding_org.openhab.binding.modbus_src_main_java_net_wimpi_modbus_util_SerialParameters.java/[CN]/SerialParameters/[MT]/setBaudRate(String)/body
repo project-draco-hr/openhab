@@ -1,3 +1,10 @@
 {
-  m_BaudRate=Integer.parseInt(rate);
+  int intBaudRate=0;
+  try {
+    intBaudRate=Integer.parseInt(rate);
+  }
+ catch (  NumberFormatException e) {
+    throw new IllegalArgumentException("baudString '" + rate + "' can not be converted to a number: "+ e.getMessage());
+  }
+  setBaudRate(intBaudRate);
 }

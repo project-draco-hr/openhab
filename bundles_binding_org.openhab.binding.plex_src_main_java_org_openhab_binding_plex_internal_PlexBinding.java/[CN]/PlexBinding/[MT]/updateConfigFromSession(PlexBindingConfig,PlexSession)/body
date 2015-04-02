@@ -1,0 +1,23 @@
+{
+  String property=config.getProperty();
+  String itemName=config.getItemName();
+  PlexPlayerState state=session.getState();
+  for (  Field field : session.getClass().getDeclaredFields()) {
+    ItemMapping itemMapping=field.getAnnotation(ItemMapping.class);
+    if (itemMapping != null) {
+      if (itemMapping.property().equals(property)) {
+        if (itemMapping.type().equals(StringType.class)) {
+          eventPublisher.postUpdate(itemName,new StringType(getStringProperty(field,session)));
+        }
+ else         if (itemMapping.type().equals(PercentType.class)) {
+          eventPublisher.postUpdate(itemName,new PercentType(getStringProperty(field,session)));
+        }
+      }
+      for (      ItemPlayerStateMapping stateMapping : itemMapping.stateMappings()) {
+        if (stateMapping.property().equals(property)) {
+          eventPublisher.postUpdate(itemName,state.equals(stateMapping.state()) ? OnOffType.ON : OnOffType.OFF);
+        }
+      }
+    }
+  }
+}

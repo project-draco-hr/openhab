@@ -1,0 +1,14 @@
+{
+  try {
+    socket=new Socket(hostname,port);
+    socket.setSoTimeout(10000);
+    socket.setKeepAlive(true);
+    inputStream=socket.getInputStream();
+    outputStream=socket.getOutputStream();
+    return true;
+  }
+ catch (  Exception e) {
+    logger.error(e.toString(),e);
+  }
+  return false;
+}

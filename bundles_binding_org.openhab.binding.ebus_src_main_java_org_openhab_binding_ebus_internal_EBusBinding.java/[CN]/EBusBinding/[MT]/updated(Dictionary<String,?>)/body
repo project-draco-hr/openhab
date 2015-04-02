@@ -1,0 +1,55 @@
+{
+  logger.info("Update eBus Binding configuration ...");
+  try {
+    if (connector != null && connector.isAlive()) {
+      connector.interrupt();
+    }
+    checkConfigurationProvider();
+    configurationProvider.clear();
+    parser=new EBusTelegramParser(configurationProvider);
+    URL configurationUrl=null;
+    String parsers=(String)properties.get("parsers");
+    if (StringUtils.isEmpty(parsers)) {
+      parsers="common,wolf";
+    }
+    for (    String elem : parsers.split(",")) {
+      configurationUrl=null;
+      if (elem.trim().equals("custom")) {
+        String parserUrl=(String)properties.get("parserUrl");
+        if (parserUrl != null) {
+          logger.debug("Load custom eBus Parser with url {}",parserUrl);
+          configurationUrl=new URL(parserUrl);
+        }
+      }
+ else {
+        logger.debug("Load eBus Parser Configuration \"{}\" ...",elem.trim());
+        configurationUrl=this.getClass().getResource("/" + elem.trim() + "-configuration.json");
+      }
+      if (configurationUrl != null) {
+        configurationProvider.loadConfigurationFile(configurationUrl);
+      }
+    }
+    if (properties.get("serialPort") != null && properties.get("hostname") != null) {
+      throw new ConfigurationException("hostname","Set property serialPort or hostname, not both!");
+    }
+    if (StringUtils.isNotEmpty((String)properties.get("serialPort"))) {
+      connector=new EBusSerialConnector((String)properties.get("serialPort"));
+    }
+ else     if (StringUtils.isNotEmpty((String)properties.get("hostname"))) {
+      connector=new EBusTCPConnector((String)properties.get("hostname"),Integer.parseInt((String)properties.get("port")));
+    }
+    if (StringUtils.isNotEmpty((String)properties.get("senderId"))) {
+      connector.setSenderId(EBusUtils.toByte((String)properties.get("senderId")));
+    }
+    connector.addEBusEventListener(this);
+    connector.start();
+    commandProcessor.setConnector(connector);
+    commandProcessor.setConfigurationProvider(configurationProvider);
+  }
+ catch (  MalformedURLException e) {
+    logger.error(e.toString(),e);
+  }
+catch (  IOException e) {
+    throw new ConfigurationException("general",e.toString(),e);
+  }
+}

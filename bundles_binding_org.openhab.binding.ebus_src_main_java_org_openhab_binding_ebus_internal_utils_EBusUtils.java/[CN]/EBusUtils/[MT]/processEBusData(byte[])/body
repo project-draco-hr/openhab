@@ -1,0 +1,70 @@
+{
+  try {
+    ByteBuffer buffer=ByteBuffer.allocate(data.length + 10);
+    buffer.put(data,0,5);
+    int nnPos=4;
+    int nn=data[nnPos];
+    byte uc_crc=0;
+    for (int i=0; i < 5; i++) {
+      byte b=data[i];
+      uc_crc=crc8_tab(b,uc_crc);
+    }
+    if (nn > 0) {
+      nnPos=0;
+      for (int i=5; i < data.length; i++) {
+        byte b=data[i];
+        uc_crc=crc8_tab(b,uc_crc);
+        if (b != (byte)0xA9) {
+          nnPos++;
+          buffer.put(expandByte(data,i));
+        }
+        if (nnPos == nn) {
+          nnPos=i;
+          break;
+        }
+      }
+    }
+    int crcPos=nnPos + 1;
+    byte crc=data[crcPos];
+    if (crc != uc_crc) {
+      logger.warn("EBus telegram sender-crc invalid, skip data! Data: {}",toHexDumpString(data));
+      return null;
+    }
+    buffer.put(crc);
+    buffer.put(data[crcPos + 1]);
+    if (data[crcPos + 1] == EBusTelegram.SYN) {
+      return new EBusTelegram(buffer);
+    }
+    if ((data[crcPos + 1] == EBusTelegram.ACK_OK || data[crcPos + 1] == EBusTelegram.ACK_FAIL) && data[crcPos + 2] == EBusTelegram.SYN) {
+      buffer.put(data[crcPos + 2]);
+      return new EBusTelegram(buffer);
+    }
+    if (data[crcPos + 1] != EBusTelegram.ACK_OK && data[crcPos + 1] != EBusTelegram.ACK_FAIL) {
+      logger.warn("Unexpect ack value in EBus telegram, skip data!");
+      return null;
+    }
+    int nn2Pos=crcPos + 2;
+    byte nn2=data[nn2Pos];
+    buffer.put(nn2);
+    uc_crc=crc8_tab(nn2,(byte)0);
+    if (nn2 > 0) {
+      for (int i=nn2Pos + 1; i < data.length - 3; i++) {
+        byte b=data[i];
+        uc_crc=crc8_tab(b,uc_crc);
+        if (b != (byte)0xA9) {
+          buffer.put(expandByte(data,i));
+        }
+      }
+    }
+    crc=data[data.length - 3];
+    buffer.put(data,data.length - 3,3);
+    if (crc != uc_crc) {
+      logger.warn("EBus telegram answer-crc invalid, skip data!");
+      return null;
+    }
+    return new EBusTelegram(buffer);
+  }
+ catch (  IndexOutOfBoundsException e) {
+    return null;
+  }
+}

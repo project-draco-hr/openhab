@@ -1,0 +1,21 @@
+{
+  ArrayList<String> list=new ArrayList<String>();
+  String id=uniqueId;
+  String className=null;
+  if (uniqueId.contains(".")) {
+    String[] split=StringUtils.split(uniqueId,'.');
+    id=split[1];
+    className=split[0];
+  }
+  for (  Entry<String,BindingConfig> entry : bindingConfigs.entrySet()) {
+    EBusBindingConfig cfg=(EBusBindingConfig)entry.getValue();
+    if (cfg.map.containsKey("id")) {
+      if (StringUtils.equals((String)cfg.map.get("id"),id)) {
+        if (className == null || StringUtils.equals((String)cfg.map.get("class"),className)) {
+          list.add(entry.getKey());
+        }
+      }
+    }
+  }
+  return list;
+}
