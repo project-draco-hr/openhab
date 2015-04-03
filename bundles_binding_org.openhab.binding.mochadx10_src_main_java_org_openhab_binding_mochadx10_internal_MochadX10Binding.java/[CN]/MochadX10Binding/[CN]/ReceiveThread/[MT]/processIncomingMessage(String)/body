@@ -1,0 +1,14 @@
+{
+  logger.debug("Received message: " + msg);
+  MochadX10Command command=commandParser.parse(msg);
+  if (command != null) {
+    logger.debug("Command: " + command.toString());
+    String itemName=getItemNameForAddress(command.getAddress());
+    if (itemName != null) {
+      command.postCommand(itemName,getCurrentLevel(command.getAddress().toString()));
+      logger.debug("Address " + command.getAddress() + " level set to "+ command.getLevel());
+      binding.previousX10Address=command.getAddress();
+      logger.debug("ReceiveThread: previous X10 address set to " + previousX10Address.toString());
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  String command=null;
+  Matcher huc_matcher=HOUSEUNIT_COMMAND.matcher(msg);
+  if (huc_matcher.matches()) {
+    previousHouseCode=huc_matcher.group("houseCode").toLowerCase();
+    previousUnitCode=huc_matcher.group("unitCode");
+    try {
+      command=huc_matcher.group("command");
+    }
+ catch (    IllegalArgumentException e) {
+    }
+    if (command != null) {
+      return parseCommand(new MochadX10Address(previousHouseCode,previousUnitCode),command);
+    }
+ else {
+      return null;
+    }
+  }
+  Matcher hc_matcher=HOUSE_COMMAND.matcher(msg);
+  if (hc_matcher.matches()) {
+    String houseCode=hc_matcher.group("houseCode").toLowerCase();
+    if (houseCode.equals(previousHouseCode)) {
+      return parseCommand(new MochadX10Address(previousHouseCode,previousUnitCode),hc_matcher.group("command"));
+    }
+  }
+  return null;
+}
