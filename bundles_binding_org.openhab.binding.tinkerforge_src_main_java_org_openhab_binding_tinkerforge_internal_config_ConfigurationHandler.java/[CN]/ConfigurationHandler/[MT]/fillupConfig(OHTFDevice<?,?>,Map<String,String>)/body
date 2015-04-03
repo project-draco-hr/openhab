@@ -40,7 +40,7 @@
           logger.trace("{} feature type {}",LoggerConstants.CONFIG,feature.getEType().getInstanceClassName());
           logger.debug("configuring feature: {} for uid {} subid {}",feature.getName(),uid,subid);
           String className=feature.getEType().getInstanceClassName();
-          if (className.equals("int")) {
+          if (className.equals("int") || className.equals("java.lang.Integer")) {
             tfConfig.eSet(feature,Integer.parseInt(deviceConfig.get(property)));
           }
  else           if (className.equals("short") || className.equals("java.lang.Short")) {
