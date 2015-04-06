@@ -1,0 +1,36 @@
+{
+  LedList ledlist=new LedList();
+  String[] tokens=leds.split("\\|");
+  for (int i=0; i < tokens.length; i++) {
+    String token=tokens[i].trim();
+    logger.trace("led token {}",token);
+    if (token.length() == 0) {
+      logger.trace("ignoring empty token");
+      continue;
+    }
+    Matcher matcher=rangePattern.matcher(token);
+    if (matcher.find()) {
+      logger.trace("found range");
+      int startLed=Integer.parseInt(matcher.group(1).trim());
+      logger.debug("found startLed {}",startLed);
+      short range=(short)(Short.parseShort(matcher.group(2).trim()) - startLed + 1);
+      logger.debug("found range {}",range);
+      short maxRange=16;
+      while (range > maxRange) {
+        ledlist.addLedRange(startLed,maxRange);
+        startLed=startLed + maxRange;
+        logger.trace("new startled {} range {}",startLed,range);
+        range=(short)(range - maxRange);
+        logger.trace("cutting down range: {}",range);
+      }
+      logger.trace("new startled {} range {}",startLed,range);
+      ledlist.addLedRange(startLed,range);
+    }
+ else {
+      int led=(int)Integer.parseInt(token.trim());
+      logger.trace("found led {}",led);
+      ledlist.addLed(led);
+    }
+  }
+  return ledlist;
+}

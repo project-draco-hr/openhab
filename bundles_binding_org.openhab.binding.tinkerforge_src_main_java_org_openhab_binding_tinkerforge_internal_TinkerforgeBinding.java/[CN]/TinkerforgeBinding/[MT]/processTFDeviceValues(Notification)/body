@@ -34,6 +34,13 @@
       processValue((MBaseDevice)actor,notification);
     }
   }
+  if (notification.getNotifier() instanceof ColorActor) {
+    ColorActor actor=(ColorActor)notification.getNotifier();
+    int featureID=notification.getFeatureID(ColorActor.class);
+    if (featureID == ModelPackage.COLOR_ACTOR__COLOR) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
  else {
     logger.trace("{} ignored notifier {}",LoggerConstants.TFMODELUPDATE,notification.getNotifier());
   }

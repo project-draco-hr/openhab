@@ -196,6 +196,13 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.ledgroup.name())) {
+    LEDGroupConfiguration configuration=modelFactory.createLEDGroupConfiguration();
+    OHTFSubDeviceAdminDevice<LEDGroupConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFSubDeviceAdminDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);

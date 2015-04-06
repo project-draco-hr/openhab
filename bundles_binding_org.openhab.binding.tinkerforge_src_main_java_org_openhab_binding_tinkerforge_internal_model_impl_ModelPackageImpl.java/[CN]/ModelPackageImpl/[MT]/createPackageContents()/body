@@ -79,7 +79,11 @@
   numberActorEClass=createEClass(NUMBER_ACTOR);
   createEOperation(numberActorEClass,NUMBER_ACTOR___SET_NUMBER__BIGDECIMAL);
   colorActorEClass=createEClass(COLOR_ACTOR);
-  createEOperation(colorActorEClass,COLOR_ACTOR___SET_COLOR__HSBTYPE_DEVICEOPTIONS);
+  createEAttribute(colorActorEClass,COLOR_ACTOR__COLOR);
+  programmableColorActorEClass=createEClass(PROGRAMMABLE_COLOR_ACTOR);
+  createEOperation(programmableColorActorEClass,PROGRAMMABLE_COLOR_ACTOR___SET_SELECTED_COLOR__HSBTYPE_DEVICEOPTIONS);
+  simpleColorActorEClass=createEClass(SIMPLE_COLOR_ACTOR);
+  createEOperation(simpleColorActorEClass,SIMPLE_COLOR_ACTOR___SET_SELECTED_COLOR__HSBTYPE);
   moveActorEClass=createEClass(MOVE_ACTOR);
   createEAttribute(moveActorEClass,MOVE_ACTOR__DIRECTION);
   createEOperation(moveActorEClass,MOVE_ACTOR___MOVE__UPDOWNTYPE_DEVICEOPTIONS);
@@ -158,6 +162,9 @@
   createEAttribute(mBrickletSegmentDisplay4x7EClass,MBRICKLET_SEGMENT_DISPLAY4X7__DEVICE_TYPE);
   mBrickletLEDStripEClass=createEClass(MBRICKLET_LED_STRIP);
   createEAttribute(mBrickletLEDStripEClass,MBRICKLET_LED_STRIP__DEVICE_TYPE);
+  createEAttribute(mBrickletLEDStripEClass,MBRICKLET_LED_STRIP__COLOR_MAPPING);
+  ledGroupEClass=createEClass(LED_GROUP);
+  createEAttribute(ledGroupEClass,LED_GROUP__DEVICE_TYPE);
   digitalActorIO16EClass=createEClass(DIGITAL_ACTOR_IO16);
   createEAttribute(digitalActorIO16EClass,DIGITAL_ACTOR_IO16__DEVICE_TYPE);
   createEAttribute(digitalActorIO16EClass,DIGITAL_ACTOR_IO16__PORT);
@@ -385,6 +392,10 @@
   createEAttribute(ledStripConfigurationEClass,LED_STRIP_CONFIGURATION__CHIPTYPE);
   createEAttribute(ledStripConfigurationEClass,LED_STRIP_CONFIGURATION__FRAMEDURATION);
   createEAttribute(ledStripConfigurationEClass,LED_STRIP_CONFIGURATION__CLOCKFREQUENCY);
+  createEAttribute(ledStripConfigurationEClass,LED_STRIP_CONFIGURATION__COLOR_MAPPING);
+  createEAttribute(ledStripConfigurationEClass,LED_STRIP_CONFIGURATION__SUB_DEVICES);
+  ledGroupConfigurationEClass=createEClass(LED_GROUP_CONFIGURATION);
+  createEAttribute(ledGroupConfigurationEClass,LED_GROUP_CONFIGURATION__LEDS);
   noSubIdsEEnum=createEEnum(NO_SUB_IDS);
   industrialDigitalInSubIDsEEnum=createEEnum(INDUSTRIAL_DIGITAL_IN_SUB_IDS);
   industrialQuadRelayIDsEEnum=createEEnum(INDUSTRIAL_QUAD_RELAY_IDS);
@@ -420,6 +431,7 @@
   mTinkerBrickletIndustrialDigitalOut4EDataType=createEDataType(MTINKER_BRICKLET_INDUSTRIAL_DIGITAL_OUT4);
   switchStateEDataType=createEDataType(SWITCH_STATE);
   digitalValueEDataType=createEDataType(DIGITAL_VALUE);
+  hsbValueEDataType=createEDataType(HSB_VALUE);
   tinkerBrickletIO16EDataType=createEDataType(TINKER_BRICKLET_IO16);
   mTinkerBrickServoEDataType=createEDataType(MTINKER_BRICK_SERVO);
   mTinkerforgeValueEDataType=createEDataType(MTINKERFORGE_VALUE);
