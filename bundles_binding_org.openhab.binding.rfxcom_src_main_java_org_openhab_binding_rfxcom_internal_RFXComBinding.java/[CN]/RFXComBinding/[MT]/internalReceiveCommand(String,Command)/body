@@ -1,3 +1,8 @@
 {
-  executeCommand(itemName,command);
+  logger.info("RFXComBinding.internalReceiveCommand: " + itemName + " "+ command);
+  if (itemName != null) {
+    if (executeCommand(itemName,command) && command instanceof State) {
+      eventPublisher.postUpdate(itemName,(State)command);
+    }
+  }
 }

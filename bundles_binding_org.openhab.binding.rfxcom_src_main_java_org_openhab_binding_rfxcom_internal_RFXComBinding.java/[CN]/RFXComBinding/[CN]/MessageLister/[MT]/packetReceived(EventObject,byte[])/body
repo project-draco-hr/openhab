@@ -3,23 +3,17 @@
     RFXComMessageInterface obj=RFXComMessageFactory.getMessageInterface(packet);
     if (obj instanceof RFXComTransmitterMessage) {
       RFXComTransmitterMessage resp=(RFXComTransmitterMessage)obj;
-      if (resp.seqNbr == getSeqNumber()) {
-        logger.debug("Transmitter response received:\n{}",obj.toString());
-        setResponseMessage(resp);
-synchronized (notifierObject) {
-          notifierObject.notify();
-        }
-      }
+      resultRegistry.responseReceived(resp);
     }
  else {
-      String id2=obj.generateDeviceId();
-      List<RFXComValueSelector> supportedValueSelectors=obj.getSupportedValueSelectors();
+      final String deviceId=obj.generateDeviceId();
+      final List<RFXComValueSelector> supportedValueSelectors=obj.getSupportedValueSelectors();
       if (supportedValueSelectors != null) {
         for (        RFXComBindingProvider provider : providers) {
           for (          String itemName : provider.getItemNames()) {
             String id1=provider.getId(itemName);
             boolean inBinding=provider.isInBinding(itemName);
-            if (id1.equals(id2) && inBinding) {
+            if (id1.equals(deviceId) && inBinding) {
               RFXComValueSelector valueSelector=provider.getValueSelector(itemName);
               if (supportedValueSelectors.contains(valueSelector)) {
                 try {

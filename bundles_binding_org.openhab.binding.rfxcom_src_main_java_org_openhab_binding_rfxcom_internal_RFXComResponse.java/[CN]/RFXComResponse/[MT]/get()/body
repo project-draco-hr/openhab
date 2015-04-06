@@ -1,0 +1,12 @@
+{
+  lock.lock();
+  try {
+    if (!done) {
+      condition.await();
+    }
+    return result;
+  }
+  finally {
+    lock.unlock();
+  }
+}
