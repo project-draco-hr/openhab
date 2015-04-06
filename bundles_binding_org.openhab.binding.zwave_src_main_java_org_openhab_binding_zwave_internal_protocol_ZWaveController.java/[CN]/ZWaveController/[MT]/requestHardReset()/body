@@ -1,5 +1,9 @@
 {
+  sendQueue.clear();
+  recvQueue.clear();
   SerialMessage msg=new ControllerSetDefaultMessageClass().doRequest();
   msg.attempts=1;
   this.enqueue(msg);
+  this.zwaveNodes.clear();
+  this.enqueue(new SerialApiGetInitDataMessageClass().doRequest());
 }
