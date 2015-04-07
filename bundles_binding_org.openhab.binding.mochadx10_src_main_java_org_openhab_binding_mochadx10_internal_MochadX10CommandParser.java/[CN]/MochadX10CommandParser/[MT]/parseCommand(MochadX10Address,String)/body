@@ -1,0 +1,27 @@
+{
+  if (commandString != null) {
+    String command=commandString.toLowerCase();
+    Matcher matcher;
+    if (command.equals("on")) {
+      return new MochadX10OnCommand(eventPublisher,address);
+    }
+ else     if (command.equals("off")) {
+      return new MochadX10OffCommand(eventPublisher,address);
+    }
+ else     if (command.contains("dim")) {
+      matcher=DIM_PATTERN.matcher(command);
+      if (matcher.matches()) {
+        int level=matcher.group("value") == null ? -1 : Integer.parseInt(matcher.group("value"));
+        return new MochadX10DimCommand(eventPublisher,address,level);
+      }
+    }
+ else     if (command.contains("bright")) {
+      matcher=BRIGHT_PATTERN.matcher(command);
+      if (matcher.matches()) {
+        int level=matcher.group("value") == null ? -1 : Integer.parseInt(matcher.group("value"));
+        return new MochadX10BrightCommand(eventPublisher,address,level);
+      }
+    }
+  }
+  return null;
+}

@@ -1,0 +1,14 @@
+{
+  try {
+    client=new Socket(hostIp,hostPort);
+    in=new BufferedReader(new InputStreamReader(client.getInputStream()));
+    out=new DataOutputStream(client.getOutputStream());
+    logger.debug("Connected to Mochad X10 server");
+  }
+ catch (  UnknownHostException e) {
+    logger.error("Unknown host: " + hostIp + ":"+ hostPort);
+  }
+catch (  IOException e) {
+    logger.error("IOException: " + e.getMessage() + " while trying to connect to Mochad X10 host: "+ hostIp+ ":"+ hostPort);
+  }
+}
