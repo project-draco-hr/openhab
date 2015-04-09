@@ -1,7 +1,7 @@
 {
   if (command instanceof OnOffType && this.objectNumbers.length == 1) {
     boolean switchOn=((OnOffType)command == OnOffType.ON);
-    boolean force_arm=this.options.containsKey("FORCE_ARM");
+    boolean force_arm=hasOptionEnabled(Options.FORCE_ARM);
 switch (this.stateType.getObjectType()) {
 case OUTPUT:
       byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
@@ -37,6 +37,20 @@ return ControlObjectCommand.buildMessage(switchOn ? (force_arm ? PartitionContro
 default :
 break;
 }
+}
+}
+ else if (this.stateType.getObjectType() == ObjectType.OUTPUT && this.objectNumbers.length == 2) {
+if (command == UpDownType.UP) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16,0);
+return ControlObjectCommand.buildMessage(OutputControl.ON,outputs,userCode);
+}
+ else if (command == UpDownType.DOWN) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16,1);
+return ControlObjectCommand.buildMessage(OutputControl.ON,outputs,userCode);
+}
+ else if (command == StopMoveType.STOP) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
+return ControlObjectCommand.buildMessage(OutputControl.OFF,outputs,userCode);
 }
 }
 return null;
