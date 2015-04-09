@@ -17,6 +17,9 @@
       logger.debug("found range {}",range);
       short maxRange=16;
       while (range > maxRange) {
+        if (!ledlist.hasTrackingled()) {
+          ledlist.setTrackingled(startLed);
+        }
         ledlist.addLedRange(startLed,maxRange);
         startLed=startLed + maxRange;
         logger.trace("new startled {} range {}",startLed,range);
@@ -29,6 +32,9 @@
  else {
       int led=(int)Integer.parseInt(token.trim());
       logger.trace("found led {}",led);
+      if (!ledlist.hasTrackingled()) {
+        ledlist.setTrackingled(led);
+      }
       ledlist.addLed(led);
     }
   }
