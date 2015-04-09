@@ -1,5 +1,7 @@
 {
   if (provider instanceof EcobeeBindingProvider) {
-    this.lastRevisionMap.clear();
+    for (    String userid : this.credentialsCache.keySet()) {
+      getOAuthCredentials(userid).getLastRevisionMap().clear();
+    }
   }
 }
