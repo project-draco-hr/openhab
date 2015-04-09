@@ -1,0 +1,17 @@
+{
+  latitude=flat.add(aLat.toBigDecimal()).remainder(circle);
+  longitude=aLon.toBigDecimal();
+  if (latitude.compareTo(BigDecimal.ZERO) == -1)   latitude.add(circle);
+  latitude=latitude.subtract(flat);
+  if (latitude.compareTo(right) == 1) {
+    latitude=flat.subtract(latitude);
+    longitude=longitude.add(flat);
+  }
+ else   if (latitude.compareTo(right.negate()) == -1) {
+    latitude=flat.negate().subtract(latitude);
+    longitude=longitude.add(flat);
+  }
+  longitude=flat.add(longitude).remainder(circle);
+  if (longitude.compareTo(BigDecimal.ZERO) <= 0)   longitude=longitude.add(circle);
+  longitude=longitude.subtract(flat);
+}
