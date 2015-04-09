@@ -1,5 +1,5 @@
 {
-  if (!(event instanceof IntegraStateEvent)) {
+  if (!(event instanceof IntegraStateEvent) || hasOptionEnabled(Options.COMMANDS_ONLY)) {
     return null;
   }
   IntegraStateEvent stateEvent=(IntegraStateEvent)event;
@@ -19,6 +19,18 @@
     }
  else     if (item instanceof NumberItem) {
       return new DecimalType(stateEvent.statesSet());
+    }
+  }
+ else   if (this.objectNumbers.length == 2 && item instanceof RollershutterItem) {
+    int upBitNbr=this.objectNumbers[0] - 1;
+    int downBitNbr=this.objectNumbers[1] - 1;
+    if (stateEvent.isSet(upBitNbr)) {
+      if (!stateEvent.isSet(downBitNbr)) {
+        return UpDownType.UP;
+      }
+    }
+ else     if (stateEvent.isSet(downBitNbr)) {
+      return UpDownType.DOWN;
     }
   }
   return null;
