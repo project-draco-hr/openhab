@@ -1,8 +1,7 @@
 {
   IhcBindingProvider firstMatchingProvider=null;
   for (  IhcBindingProvider provider : this.providers) {
-    int resourceId=provider.getResourceId(itemName);
-    if (resourceId > 0) {
+    if (provider.getResourceId(itemName,type) > 0 || provider.getResourceId(itemName,null) > 0) {
       firstMatchingProvider=provider;
       break;
     }

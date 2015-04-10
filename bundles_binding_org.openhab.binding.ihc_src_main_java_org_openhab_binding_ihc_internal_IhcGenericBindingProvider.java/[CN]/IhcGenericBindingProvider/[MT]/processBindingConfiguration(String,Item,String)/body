@@ -2,34 +2,69 @@
   super.processBindingConfiguration(context,item,bindingConfig);
   IhcBindingConfig config=new IhcBindingConfig();
   config.itemType=item.getClass();
-  String[] configParts=bindingConfig.trim().split(":");
-  if (configParts.length > 2) {
-    throw new BindingConfigParseException("IHC / ELKO LS binding must contain of max two two parts separated by ':'");
-  }
-  if (bindingConfig.startsWith(">")) {
-    if (configParts.length == 1) {
-      config.outBindingOnly=true;
-      String resourceId=configParts[0].replace(">","");
-      if (resourceId.startsWith("0x")) {
-        config.resourceId=Integer.parseInt(resourceId.replace("0x",""),16);
+  config.outCommandMap=new HashMap<Command,IhcOutCommandConfig>();
+  String[] splittedCommands=bindingConfig.split(",");
+  for (  String split : splittedCommands) {
+    if (split.startsWith(">")) {
+      try {
+        String resourceCommand=split.substring(1);
+        Matcher m=commandPattern.matcher(resourceCommand);
+        IhcOutCommandConfig outConfig=new IhcOutCommandConfig();
+        if (!m.matches()) {
+          if (splittedCommands.length < 2) {
+            outConfig.command=null;
+            outConfig.resourceId=getResourceIdFromString(resourceCommand);
+          }
+ else {
+            throw new BindingConfigParseException("Item '" + item.getName() + "' has invalid out binding config");
+          }
+        }
+ else {
+          Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),m.group(1));
+          if (command == null && !m.group(1).equals("*")) {
+            throw new BindingConfigParseException("Item '" + item.getName() + " invalid Command: "+ m.group(1));
+          }
+          outConfig.command=command;
+          outConfig.resourceId=getResourceIdFromString(m.group(2));
+          if (m.groupCount() == 3 && m.group(3) != null) {
+            outConfig.value=Integer.parseInt(m.group(3));
+            if (outConfig.value > 2000) {
+              throw new BindingConfigParseException("Item '" + item.getName() + "' exceeds maximum value of 2000 ms for trigger command");
+            }
+          }
+        }
+        config.outCommandMap.put(outConfig.command,outConfig);
+      }
+ catch (      Exception e) {
+        logger.warn("Error in output config for item: " + item.getName(),e);
+      }
+    }
+ else     if (split.startsWith("<")) {
+      if (config.resourceId < 1) {
+        config.resourceId=getResourceIdFromString(split.substring(1));
       }
  else {
-        config.resourceId=Integer.parseInt(resourceId);
+        throw new BindingConfigParseException("Multiple In-Bindings found, only one In-Binding allowed.");
       }
     }
  else {
-      throw new BindingConfigParseException("When configuration start with '>', refresh interval is not supported ");
-    }
-  }
+      if (splittedCommands.length < 2) {
+        String[] configParts=bindingConfig.trim().split(":");
+        if (configParts.length > 2) {
+          throw new BindingConfigParseException("IHC / ELKO LS binding must contain of max two two parts separated by ':'");
+        }
+        String resourceId=configParts[0];
+        config.resourceId=getResourceIdFromString(resourceId);
+        IhcOutCommandConfig outConfig=new IhcOutCommandConfig();
+        outConfig.command=null;
+        outConfig.resourceId=config.resourceId;
+        config.outCommandMap.put(null,outConfig);
+        if (configParts.length == 2)         config.refreshInterval=Integer.parseInt(configParts[1]);
+      }
  else {
-    String resourceId=configParts[0];
-    if (resourceId.startsWith("0x")) {
-      config.resourceId=Integer.parseInt(resourceId.replace("0x",""),16);
+        throw new BindingConfigParseException("Only a sum of out bindings (+In-Only Binding) or a normal binding is supported.");
+      }
     }
- else {
-      config.resourceId=Integer.parseInt(resourceId);
-    }
-    if (configParts.length == 2)     config.refreshInterval=Integer.parseInt(configParts[1]);
   }
   addBindingConfig(item,config);
 }

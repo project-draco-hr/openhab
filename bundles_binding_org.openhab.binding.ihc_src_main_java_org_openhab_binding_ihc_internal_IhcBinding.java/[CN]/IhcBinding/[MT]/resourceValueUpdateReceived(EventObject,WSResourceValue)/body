@@ -1,10 +1,10 @@
 {
   for (  IhcBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      int resourceId=provider.getResourceId(itemName);
+      int resourceId=provider.getResourceIdForInBinding(itemName);
       if (value.getResourceID() == resourceId) {
-        if (provider.isOutBindingOnly(itemName)) {
-          logger.trace("{} is out binding only...skip update to OpenHAB bus",itemName);
+        if (!provider.hasInBinding(itemName)) {
+          logger.trace("{} has no inbinding...skip update to OpenHAB bus",itemName);
         }
  else {
           Class<? extends Item> itemType=provider.getItemType(itemName);
