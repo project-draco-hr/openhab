@@ -1,0 +1,13 @@
+{
+  StringBuilder buffer=new StringBuilder();
+  buffer.append("[");
+  for (  Long time : data.keySet()) {
+    buffer.append("[\"" + time + "\",");
+    buffer.append("[");
+    buffer.append("\"" + StringUtils.join(data.get(time),"\",\"") + "\"");
+    buffer.append("]],");
+  }
+  buffer.deleteCharAt(buffer.length() - 1);
+  buffer.append("]");
+  return buffer.toString();
+}

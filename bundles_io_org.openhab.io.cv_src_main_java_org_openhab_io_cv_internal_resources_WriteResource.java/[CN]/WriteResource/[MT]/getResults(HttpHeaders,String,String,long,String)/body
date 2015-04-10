@@ -2,16 +2,22 @@
   if (logger.isDebugEnabled())   logger.debug("Received HTTP GET request at '{}' for item '{}'.",uriInfo.getPath(),itemName);
   String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes());
   if (responseType != null) {
-    Item item=ReadResource.getItem(itemName);
-    boolean commandSend=false;
-    if (item != null) {
-      Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
-      if (command != null) {
-        CVApplication.getEventPublisher().postCommand(item.getName(),command);
-        commandSend=true;
+    try {
+      ReturnType rt=new ReturnType(itemName);
+      Item item=rt.getItem();
+      boolean commandSend=false;
+      if (item != null) {
+        Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),value);
+        if (command != null) {
+          CVApplication.getEventPublisher().postCommand(item.getName(),command);
+          commandSend=true;
+        }
       }
+      return Response.ok(getSuccessBean(commandSend),responseType).build();
     }
-    return Response.ok(getSuccessBean(commandSend),responseType).build();
+ catch (    ItemNotFoundException e) {
+      return Response.notAcceptable(null).build();
+    }
   }
  else {
     return Response.notAcceptable(null).build();
