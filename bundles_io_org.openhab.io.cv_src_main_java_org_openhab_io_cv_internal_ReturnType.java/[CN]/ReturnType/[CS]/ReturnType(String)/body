@@ -1,0 +1,17 @@
+{
+  this.clientItemName=cvItemName;
+  this.stateClass=null;
+  String[] parts=cvItemName.split(":");
+  String ohItemName=cvItemName;
+  if (parts.length == 2) {
+    String classPrefix=parts[0].toLowerCase();
+    if (itemTypeMapper.containsKey(classPrefix)) {
+      stateClass=itemTypeMapper.get(classPrefix);
+    }
+ else {
+      logger.debug("no type found for '{}'",classPrefix);
+    }
+    ohItemName=parts[1];
+  }
+  item=CVApplication.getItemUIRegistry().getItem(ohItemName);
+}

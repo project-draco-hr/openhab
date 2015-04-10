@@ -26,6 +26,20 @@
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
+      if (item instanceof GroupItem && getRelevantItemNames().containsKey(item.getName())) {
+        Collection<ItemBean> beans=new LinkedList<ItemBean>();
+        for (        ReturnType rt : getRelevantItemNames().get(item.getName())) {
+          if (rt.getStateClass() != null) {
+            logger.debug("updating item {} statetype {}=>'{}'",rt.getClientItemName(),rt.getStateClass(),item.getStateAs(rt.getStateClass()).toString());
+            beans.add(new ItemBean(rt.getClientItemName(),item.getStateAs(rt.getStateClass()).toString()));
+          }
+        }
+        if (beans.size() > 0) {
+          ItemStateListBean responseBean=new ItemStateListBean(new ItemListBean(beans));
+          responseBean.index=System.currentTimeMillis();
+          broadcaster.broadcast(responseBean);
+        }
+      }
     }
     public void stateChanged(    final Item item,    State oldState,    State newState){
       broadcaster.broadcast(item);
