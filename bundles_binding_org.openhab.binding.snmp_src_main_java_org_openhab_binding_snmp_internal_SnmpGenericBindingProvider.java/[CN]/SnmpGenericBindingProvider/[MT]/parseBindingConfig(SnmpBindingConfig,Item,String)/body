@@ -2,19 +2,80 @@
   config.itemType=item.getClass();
   if (bindingConfig != null) {
     Matcher inMatcher=IN_BINDING_PATTERN.matcher(bindingConfig);
-    Matcher outMatcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
-    if (!inMatcher.matches())     inMatcher=IN_BINDING_PATTERN_TRANSFORM.matcher(bindingConfig);
-    if (!outMatcher.matches() && !inMatcher.matches()) {
-      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of four [config=" + inMatcher+ "] or five parts [config="+ outMatcher+ "]");
+    if (!inMatcher.matches()) {
+      inMatcher=IN_BINDING_PATTERN_TRANSFORM.matcher(bindingConfig);
+    }
+    if (inMatcher.matches()) {
+      SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
+      newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
+      newElement.snmpVersion=SnmpConstants.version1;
+      newElement.community=new OctetString(inMatcher.group(2).toString());
+      newElement.oid=new OID(inMatcher.group(3).toString());
+      newElement.refreshInterval=Integer.valueOf(inMatcher.group(4)).intValue();
+      if (inMatcher.groupCount() == 5)       newElement.setTransformationRule(inMatcher.group(5));
+      config.put(IN_BINDING_KEY,newElement);
     }
  else {
+      inMatcher=IN_BINDING_PATTERN_VERSION.matcher(bindingConfig);
+      if (!inMatcher.matches()) {
+        inMatcher=IN_BINDING_PATTERN_VERSION_TRANSFORM.matcher(bindingConfig);
+      }
+      if (inMatcher.matches()) {
+        SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
+        newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
+        String version=inMatcher.group(2).toString();
+        if (version.equals("v3")) {
+          newElement.snmpVersion=SnmpConstants.version3;
+        }
+ else         if (version.equals("v2c")) {
+          newElement.snmpVersion=SnmpConstants.version2c;
+        }
+ else {
+          newElement.snmpVersion=SnmpConstants.version1;
+        }
+        newElement.community=new OctetString(inMatcher.group(3).toString());
+        newElement.oid=new OID(inMatcher.group(4).toString());
+        newElement.refreshInterval=Integer.valueOf(inMatcher.group(5)).intValue();
+        if (inMatcher.groupCount() == 6)         newElement.setTransformationRule(inMatcher.group(6));
+        config.put(IN_BINDING_KEY,newElement);
+      }
+    }
+    Matcher outMatcher=OUT_BINDING_PATTERN.matcher(bindingConfig);
+    if (outMatcher.matches()) {
       SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
+      String commandAsString=outMatcher.group(1).toString();
+      newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
+      newElement.snmpVersion=SnmpConstants.version1;
+      newElement.community=new OctetString(outMatcher.group(3).toString());
+      newElement.oid=new OID(outMatcher.group(4).toString());
+      newElement.value=new Integer32(Integer.parseInt(outMatcher.group(5).toString()));
+      Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
+      if (command == null) {
+        logger.error("SNMP can't resolve command {} for item {}",commandAsString,item);
+      }
+ else {
+        config.put(command,newElement);
+      }
+    }
+ else {
+      outMatcher=OUT_BINDING_PATTERN_VERSION.matcher(bindingConfig);
       if (outMatcher.matches()) {
+        SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
         String commandAsString=outMatcher.group(1).toString();
         newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
-        newElement.community=new OctetString(outMatcher.group(3).toString());
-        newElement.oid=new OID(outMatcher.group(4).toString());
-        newElement.value=new Integer32(Integer.parseInt(outMatcher.group(5).toString()));
+        String version=inMatcher.group(3).toString();
+        if (version.equals("v3")) {
+          newElement.snmpVersion=SnmpConstants.version3;
+        }
+ else         if (version.equals("v2c")) {
+          newElement.snmpVersion=SnmpConstants.version2c;
+        }
+ else {
+          newElement.snmpVersion=SnmpConstants.version1;
+        }
+        newElement.community=new OctetString(outMatcher.group(4).toString());
+        newElement.oid=new OID(outMatcher.group(5).toString());
+        newElement.value=new Integer32(Integer.parseInt(outMatcher.group(6).toString()));
         Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandAsString);
         if (command == null) {
           logger.error("SNMP can't resolve command {} for item {}",commandAsString,item);
@@ -23,14 +84,9 @@
           config.put(command,newElement);
         }
       }
- else       if (inMatcher.matches()) {
-        newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
-        newElement.community=new OctetString(inMatcher.group(2).toString());
-        newElement.oid=new OID(inMatcher.group(3).toString());
-        newElement.refreshInterval=Integer.valueOf(inMatcher.group(4)).intValue();
-        if (inMatcher.groupCount() == 5)         newElement.setTransformationRule(inMatcher.group(5));
-        config.put(IN_BINDING_KEY,newElement);
-      }
+    }
+    if (!outMatcher.matches() && !inMatcher.matches()) {
+      throw new BindingConfigParseException(getBindingType() + " binding configuration must consist of four/five/six [config=" + inMatcher+ "] or five/six parts [config="+ outMatcher+ "]");
     }
   }
  else {
