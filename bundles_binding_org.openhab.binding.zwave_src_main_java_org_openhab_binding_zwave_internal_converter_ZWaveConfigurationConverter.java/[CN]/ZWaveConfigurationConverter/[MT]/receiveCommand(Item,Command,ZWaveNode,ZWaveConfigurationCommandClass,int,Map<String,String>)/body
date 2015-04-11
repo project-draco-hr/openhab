@@ -9,8 +9,8 @@
     logger.error("NODE {}: 'parameter' option must be specified.",node.getNodeId());
     return;
   }
-  int parmValue=Integer.parseInt(parmNumber);
-  if (parmValue <= 0 || parmValue > 255) {
+  int paramIndex=Integer.parseInt(parmNumber);
+  if (paramIndex <= 0 || paramIndex > 255) {
     logger.error("NODE {}: 'parameter' option must be between 1 and 255.",node.getNodeId());
     return;
   }
@@ -24,19 +24,25 @@
     logger.error("NODE {}: Device has no configuration.",node.getNodeId());
     return;
   }
-  ZWaveDbConfigurationParameter dbParameter=configList.get(parmValue);
+  ZWaveDbConfigurationParameter dbParameter=null;
+  for (  ZWaveDbConfigurationParameter parameter : configList) {
+    if (parameter.Index == paramIndex) {
+      dbParameter=parameter;
+      break;
+    }
+  }
   if (dbParameter == null) {
-    logger.error("NODE {}: Device has no parameter {}.",node.getNodeId(),parmValue);
+    logger.error("NODE {}: Device has no parameter {}.",node.getNodeId(),paramIndex);
     return;
   }
-  ConfigurationParameter configurationParameter=new ConfigurationParameter(parmValue,(Integer)converter.convertFromCommandToValue(item,command),dbParameter.Size);
+  ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,(Integer)converter.convertFromCommandToValue(item,command),dbParameter.Size);
   SerialMessage serialMessage=commandClass.setConfigMessage(configurationParameter);
   if (serialMessage == null) {
     logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
     return;
   }
   this.getController().sendData(serialMessage);
-  serialMessage=commandClass.getConfigMessage(parmValue);
+  serialMessage=commandClass.getConfigMessage(paramIndex);
   this.getController().sendData(serialMessage);
   if (command instanceof State) {
     this.getEventPublisher().postUpdate(item.getName(),(State)command);
