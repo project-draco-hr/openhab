@@ -1,0 +1,28 @@
+{
+  String line1="H:KHA0007199,081dd4,0113,00000000,0d524351,10,30,0f0407,1130,03,0000";
+  String line2="M:00,01,VgIBAQpXb2huemltbWVyAAAAAQMQV6lMRVEwOTgyMTU2DldhbmR0aGVybW9zdGF0AQE=";
+  try {
+    Assert.assertTrue(this.processor.addReceivedLine(line1));
+    this.processor.addReceivedLine(line2);
+    Assert.fail("Expected exception was not thrown.");
+  }
+ catch (  MessageIsWaitingException e) {
+  }
+catch (  Exception e) {
+    e.printStackTrace();
+    Assert.fail("Unexpected error");
+  }
+  try {
+    Message message=this.processor.pull();
+    Assert.assertNotNull(message);
+    Assert.assertEquals(message.getClass().getName(),H_Message.class.getName());
+    this.processor.addReceivedLine(line2);
+    message=this.processor.pull();
+    Assert.assertNotNull(message);
+    Assert.assertEquals(message.getClass().getName(),M_Message.class.getName());
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    Assert.fail("Unexpected error");
+  }
+}

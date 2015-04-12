@@ -1,0 +1,46 @@
+{
+  Boolean result=false;
+  String[] tokens=line.split(Message.DELIMETER);
+  try {
+    Integer index=Integer.valueOf(tokens[0].replaceFirst("M:",""));
+    Integer counter=Integer.valueOf(tokens[1]);
+    if (this.numberOfRequiredLines == null) {
+switch (counter) {
+case 0:
+        throw new UnprocessableMessageException();
+case 1:
+      this.currentMessage=new M_Message(line);
+    result=true;
+  break;
+default :
+this.numberOfRequiredLines=counter;
+this.currentMessageType=MessageType.M;
+if (index == 0) {
+this.receivedLines.add(line);
+}
+ else {
+throw new IncorrectMultilineIndexException();
+}
+}
+}
+ else {
+if ((!counter.equals(this.numberOfRequiredLines)) || (!(index == this.receivedLines.size()))) {
+throw new IncorrectMultilineIndexException();
+}
+receivedLines.add(tokens[2]);
+if (index + 1 == receivedLines.size()) {
+String newLine="";
+for (String curLine : receivedLines) newLine+=curLine;
+this.currentMessage=new M_Message(newLine);
+result=true;
+}
+}
+}
+ catch (IncorrectMultilineIndexException ex) {
+throw ex;
+}
+catch (Exception ex) {
+throw new UnprocessableMessageException();
+}
+return result;
+}
