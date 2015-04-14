@@ -1,4 +1,5 @@
 {
+  System.out.println(message);
   logger.debug("[{}]: Message received: {}",xbmc.getHostname(),message);
   Map<String,Object> json;
   try {
@@ -27,6 +28,9 @@ catch (  IOException e) {
       }
  else       if (method.startsWith("System.On")) {
         processSystemStateChanged(method,json);
+      }
+ else       if (method.startsWith("GUI.OnScreensaver")) {
+        processScreensaverStateChanged(method,json);
       }
     }
   }
