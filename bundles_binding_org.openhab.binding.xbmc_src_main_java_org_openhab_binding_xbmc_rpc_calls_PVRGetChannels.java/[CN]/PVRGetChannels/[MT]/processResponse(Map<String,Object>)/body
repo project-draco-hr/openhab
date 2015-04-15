@@ -1,0 +1,15 @@
+{
+  Map<String,Object> result=getMap(response,"result");
+  List<Object> channelList=getList(result,"channels");
+  for (int i=0; i < channelList.size(); i++) {
+    Object channelInfo=channelList.get(i);
+    if (channelInfo != null && channelInfo instanceof LinkedHashMap) {
+      LinkedHashMap map=(LinkedHashMap)channelList.get(i);
+      String channelLabel=getParamAsString(map,"label");
+      if (StringUtils.equalsIgnoreCase(channelLabel,channelName)) {
+        channelId=getParamAsInteger(map,"channelid");
+        break;
+      }
+    }
+  }
+}
