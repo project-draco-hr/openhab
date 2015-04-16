@@ -1,5 +1,12 @@
 {
   String uid=deviceConfig.get(ConfigKey.uid.name());
+  if (uid == null || uid.equals("")) {
+    logger.error("===== uid missing");
+    throw new ConfigurationException(deviceConfig.toString(),"config is an invalid missing uid: openhab.cfg has to be fixed!");
+  }
+ else {
+    logger.debug("*** uid is \"{}\"",uid);
+  }
   ohtfDevice.setUid(uid);
   String subid=deviceConfig.get(ConfigKey.subid.name());
   if (subid != null) {
