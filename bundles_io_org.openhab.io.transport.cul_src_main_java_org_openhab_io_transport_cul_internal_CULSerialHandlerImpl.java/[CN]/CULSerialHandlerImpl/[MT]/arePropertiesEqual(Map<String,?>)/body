@@ -2,7 +2,16 @@
   if (properties == null) {
     return false;
   }
-  boolean baudRateEquals=mapContainsEqualValueByKey(properties,KEY_BAUDRATE,baudRate);
-  boolean parityEquals=mapContainsEqualValueByKey(properties,KEY_PARITY,parityMode);
-  return baudRateEquals && parityEquals;
+  parityFromConfig(KEY_BAUDRATE);
+  if (properties.containsKey(KEY_BAUDRATE)) {
+    Integer configured=baudrateFromConfig((String)properties.get(KEY_BAUDRATE));
+    if (configured == null)     return false;
+    if (!configured.equals(baudRate))     return false;
+  }
+  if (properties.containsKey(KEY_PARITY)) {
+    Integer configured=parityFromConfig((String)properties.get(KEY_PARITY));
+    if (configured == null)     return false;
+    if (!configured.equals(parityMode))     return false;
+  }
+  return true;
 }
