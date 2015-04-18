@@ -8,7 +8,7 @@
     ohtfDevice.setTfConfig(servoConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_joystick.name())|| deviceType.equals(TypeKey.bricklet_halleffect.name())|| deviceType.equals(TypeKey.bricklet_linear_poti.name())|| deviceType.equals(TypeKey.ptc_resistance.name())|| deviceType.equals(TypeKey.ptc_temperature.name())) {
+ else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_joystick.name())|| deviceType.equals(TypeKey.bricklet_halleffect.name())|| deviceType.equals(TypeKey.bricklet_linear_poti.name())|| deviceType.equals(TypeKey.ptc_resistance.name())|| deviceType.equals(TypeKey.ptc_temperature.name())|| deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
     logger.debug("{} setting base config",LoggerConstants.CONFIG);
     TFBaseConfiguration tfBaseConfiguration=modelFactory.createTFBaseConfiguration();
     if (deviceType.equals(TypeKey.bricklet_barometer)) {
@@ -32,6 +32,12 @@
  else     if (deviceType.equals(TypeKey.ptc_resistance.name()) || deviceType.equals(TypeKey.ptc_temperature.name())) {
       OHTFDevice<TFBaseConfiguration,PTCSubIds> ohtfDevice=modelFactory.createOHTFDevice();
       ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(PTCSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
+      OHTFDevice<TFBaseConfiguration,IndustrialDual020mASubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDual020mASubIds.values()));
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
@@ -213,6 +219,13 @@
     TFPTCBrickletConfiguration configuration=modelFactory.createTFPTCBrickletConfiguration();
     OHTFDevice<TFPTCBrickletConfiguration,PTCSubIds> ohtfDevice=modelFactory.createOHTFDevice();
     ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(PTCSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrialdual020ma.name())) {
+    TFIndustrialDual020mAConfiguration configuration=modelFactory.createTFIndustrialDual020mAConfiguration();
+    OHTFDevice<TFIndustrialDual020mAConfiguration,IndustrialDual020mASubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDual020mASubIds.values()));
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
