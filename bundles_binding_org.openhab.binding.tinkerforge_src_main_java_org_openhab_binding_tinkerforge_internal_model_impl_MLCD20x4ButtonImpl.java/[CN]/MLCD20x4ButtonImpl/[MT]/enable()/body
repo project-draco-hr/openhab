@@ -1,12 +1,14 @@
 {
-  setSwitchState(OnOffValue.UNDEF);
-  MBrickletLCD20x4 masterBrick=getMbrick();
-  if (masterBrick == null) {
-    logger.error("{} No brick found for Button: {} ",LoggerConstants.TFINIT,subId);
+  setSensorValue(OnOffValue.UNDEF);
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  tactile=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("tactile"))) {
+      tactile=tfConfig.isTactile();
+    }
   }
- else {
-    BrickletLCD20x4 brickletLCD20x4=masterBrick.getTinkerforgeDevice();
-    buttonPressedListener=new ButtonPressedListener();
-    brickletLCD20x4.addButtonPressedListener(buttonPressedListener);
-  }
+  logger.trace("button {} tactile is {}",buttonNum,tactile);
+  buttonListener=new ButtonListener();
+  tinkerforgeDevice.addButtonPressedListener(buttonListener);
+  tinkerforgeDevice.addButtonReleasedListener(buttonListener);
 }

@@ -1,0 +1,13 @@
+{
+  try {
+    LEDState ledState=tinkerforgeDevice.getLEDState();
+    short led=position == DualButtonDevicePosition.LEFT ? ledState.ledL : ledState.ledR;
+    setDigitalState(getValue4State(led));
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

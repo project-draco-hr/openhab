@@ -1,0 +1,28 @@
+{
+  OnOffValue newValue;
+  short newState;
+  if (position == DualButtonDevicePosition.LEFT) {
+    newValue=getValue4State(buttonL);
+    newState=buttonL;
+  }
+ else {
+    newValue=getValue4State(buttonR);
+    newState=buttonR;
+  }
+  if (tactile) {
+    if (newValue != sensorValue) {
+      setSensorValue(newValue);
+      logger.trace("listener {} tactile value changed to: {}",position,newValue);
+    }
+ else {
+      logger.trace("listener {} omitting unchanged tactile value: {}",position,newValue);
+    }
+  }
+ else {
+    if (newState == BrickletDualButton.BUTTON_STATE_PRESSED) {
+      OnOffValue newSwitchValue=sensorValue == OnOffValue.ON ? OnOffValue.OFF : OnOffValue.ON;
+      logger.trace("listener switch value changed to {}",newSwitchValue);
+      setSensorValue(newSwitchValue);
+    }
+  }
+}
