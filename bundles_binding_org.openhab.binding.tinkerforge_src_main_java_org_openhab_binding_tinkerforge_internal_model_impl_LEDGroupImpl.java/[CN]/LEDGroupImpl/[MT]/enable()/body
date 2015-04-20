@@ -1,0 +1,17 @@
+{
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  colorMapping=getMbrick().getColorMapping().toCharArray();
+  logger.debug("colorMapping is {}",colorMapping);
+  String ledsstring=null;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature(ModelPackage.LED_GROUP_CONFIGURATION__LEDS))) {
+      ledsstring=tfConfig.getLeds();
+    }
+  }
+  if (ledsstring == null) {
+    logger.error("leds configuration is missing");
+  }
+ else {
+    ledList=Tools.parseLedString(ledsstring);
+  }
+}

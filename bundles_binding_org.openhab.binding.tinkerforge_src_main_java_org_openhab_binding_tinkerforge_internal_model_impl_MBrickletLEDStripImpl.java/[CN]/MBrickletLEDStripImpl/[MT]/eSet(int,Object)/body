@@ -1,8 +1,11 @@
 {
 switch (featureID) {
-case ModelPackage.MBRICKLET_LED_STRIP__LOGGER:
-    setLogger((Logger)newValue);
+case ModelPackage.MBRICKLET_LED_STRIP__COLOR:
+    setColor((HSBValue)newValue);
   return;
+case ModelPackage.MBRICKLET_LED_STRIP__LOGGER:
+setLogger((Logger)newValue);
+return;
 case ModelPackage.MBRICKLET_LED_STRIP__UID:
 setUid((String)newValue);
 return;
@@ -32,6 +35,16 @@ setName((String)newValue);
 return;
 case ModelPackage.MBRICKLET_LED_STRIP__BRICKD:
 setBrickd((MBrickd)newValue);
+return;
+case ModelPackage.MBRICKLET_LED_STRIP__TF_CONFIG:
+setTfConfig((LEDStripConfiguration)newValue);
+return;
+case ModelPackage.MBRICKLET_LED_STRIP__MSUBDEVICES:
+getMsubdevices().clear();
+getMsubdevices().addAll((Collection<? extends LEDGroup>)newValue);
+return;
+case ModelPackage.MBRICKLET_LED_STRIP__COLOR_MAPPING:
+setColorMapping((String)newValue);
 return;
 }
 super.eSet(featureID,newValue);

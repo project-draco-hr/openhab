@@ -1,0 +1,23 @@
+{
+  PTCTemperature temperature=ModelFactory.eINSTANCE.createPTCTemperature();
+  temperature.setUid(getUid());
+  String subIdTemperature="ptc_temperature";
+  temperature.setSubId(subIdTemperature);
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdTemperature);
+  temperature.init();
+  temperature.setMbrick(this);
+  PTCResistance resistance=ModelFactory.eINSTANCE.createPTCResistance();
+  String subIdResistance="ptc_resistance";
+  resistance.setUid(getUid());
+  resistance.setSubId(subIdResistance);
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdResistance);
+  resistance.init();
+  resistance.setMbrick(this);
+  PTCConnected connected=ModelFactory.eINSTANCE.createPTCConnected();
+  String subIdConnected="ptc_connected";
+  connected.setSubId(subIdConnected);
+  connected.setUid(getUid());
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdConnected);
+  connected.init();
+  connected.setMbrick(this);
+}

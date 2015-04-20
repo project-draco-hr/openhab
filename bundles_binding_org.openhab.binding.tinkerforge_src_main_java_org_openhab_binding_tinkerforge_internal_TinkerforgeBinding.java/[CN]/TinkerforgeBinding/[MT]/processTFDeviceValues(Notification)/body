@@ -34,6 +34,25 @@
       processValue((MBaseDevice)actor,notification);
     }
   }
+  if (notification.getNotifier() instanceof ColorActor) {
+    ColorActor actor=(ColorActor)notification.getNotifier();
+    int featureID=notification.getFeatureID(ColorActor.class);
+    if (featureID == ModelPackage.COLOR_ACTOR__COLOR) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
+  if (notification.getNotifier() instanceof MBrickd) {
+    MBrickd brickd=(MBrickd)notification.getNotifier();
+    int featureID=notification.getFeatureID(MBrickd.class);
+    if (featureID == ModelPackage.MBRICKD__CONNECTED_COUNTER) {
+      String subId="connected_counter";
+      processValue(brickd,notification,subId);
+    }
+ else     if (featureID == ModelPackage.MBRICKD__IS_CONNECTED) {
+      String subId="isconnected";
+      processValue(brickd,notification,subId);
+    }
+  }
  else {
     logger.trace("{} ignored notifier {}",LoggerConstants.TFMODELUPDATE,notification.getNotifier());
   }

@@ -1,4 +1,11 @@
 {
-  logger.trace("{} setting new value {}",LoggerConstants.TFMODELUPDATE,HighLowValue.HIGH);
-  setSensorValue(HighLowValue.LOW);
+  if (tactile) {
+    logger.trace("{} pressed setting new tactile value {}",LoggerConstants.TFMODELUPDATE,OnOffValue.ON);
+    setSensorValue(OnOffValue.ON);
+  }
+ else {
+    OnOffValue newSwitchValue=sensorValue == OnOffValue.ON ? OnOffValue.OFF : OnOffValue.ON;
+    logger.trace("pressed switch value changed to {}",newSwitchValue);
+    setSensorValue(newSwitchValue);
+  }
 }
