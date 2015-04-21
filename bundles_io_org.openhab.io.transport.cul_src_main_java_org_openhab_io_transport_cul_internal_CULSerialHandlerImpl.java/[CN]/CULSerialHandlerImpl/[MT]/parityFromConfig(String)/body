@@ -1,0 +1,22 @@
+{
+  if (StringUtils.isNotBlank(configuredParity)) {
+    try {
+      if (isValidParity(configuredParity)) {
+        return validParitiesMap.get(configuredParity.toUpperCase());
+      }
+ else {
+        int parsedParityNumber=Integer.parseInt(configuredParity);
+        if (isValidParity(parsedParityNumber)) {
+          return parsedParityNumber;
+        }
+ else {
+          log.error("The configured '{}' value is invalid. The value '{}' has to be one of {}.",KEY_PARITY,parsedParityNumber,validParitiesMap.keySet());
+        }
+      }
+    }
+ catch (    NumberFormatException e) {
+      log.error("Error parsing config key '{}'. Use one of {}.",KEY_PARITY,validParitiesMap.keySet());
+    }
+  }
+  return null;
+}

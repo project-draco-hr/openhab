@@ -1,0 +1,17 @@
+{
+  if (StringUtils.isNotBlank(configuredBaudRate)) {
+    try {
+      int tmpBaudRate=Integer.parseInt(configuredBaudRate);
+      if (validBaudrateMap.contains(tmpBaudRate)) {
+        return tmpBaudRate;
+      }
+ else {
+        log.error("Error parsing config parameter '{}'. Value = {} is not a valid baudrate. Value must be in [75, 110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]",KEY_BAUDRATE,tmpBaudRate);
+      }
+    }
+ catch (    NumberFormatException e) {
+      log.error("Error parsing config parameter '{}' to integer. Value = {}",KEY_BAUDRATE,configuredBaudRate);
+    }
+  }
+  return null;
+}
