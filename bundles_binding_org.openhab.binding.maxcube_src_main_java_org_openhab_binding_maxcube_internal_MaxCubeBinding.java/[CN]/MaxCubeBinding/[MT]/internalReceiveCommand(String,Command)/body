@@ -57,8 +57,20 @@
         writer.write(commandString);
         logger.debug(commandString);
         writer.flush();
+        Message message=null;
         String raw=reader.readLine();
-        Message message=processRawMessage(raw);
+        try {
+          while (!this.messageProcessor.isMessageAvailable()) {
+            this.messageProcessor.addReceivedLine(raw);
+            raw=reader.readLine();
+          }
+          message=this.messageProcessor.pull();
+        }
+ catch (        Exception e) {
+          logger.info("Error while handling response from MAX! Cube lan gateway!");
+          logger.debug(Utils.getStackTrace(e));
+          this.messageProcessor.reset();
+        }
         if (message != null) {
           if (message.getType() == MessageType.S) {
             sMessageProcessing((S_Message)message);
