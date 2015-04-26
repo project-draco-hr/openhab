@@ -1,29 +1,27 @@
 {
-  String url=String.format("http://%s/param.csv",host.getHost());
-  CloseableHttpClient httpClient=HttpClients.custom().build();
   List<String> results=new ArrayList<String>();
+  GetMethod httpGet=null;
   try {
-    HttpGet httpGet=new HttpGet(url);
-    CloseableHttpResponse httpResponse=httpClient.execute(httpGet);
-    try {
-      InputStream content=httpResponse.getEntity().getContent();
-      BufferedReader reader=new BufferedReader(new InputStreamReader(content));
-      String line;
-      while ((line=reader.readLine()) != null) {
-        if (line != null && line.length() > 0)         results.add(line.substring(0,line.length() - 1));
-      }
+    String url=String.format("http://%s/param.csv",host.getHost());
+    httpGet=new GetMethod(url);
+    httpClient.executeMethod(httpGet);
+    if (httpGet.getStatusCode() != HttpStatus.SC_OK) {
+      logger.warn("Invalid response received from Daikin controller '{}': {}",host.getHost(),httpGet.getStatusCode());
+      return;
     }
-  finally {
-      httpResponse.close();
+    InputStream content=httpGet.getResponseBodyAsStream();
+    BufferedReader reader=new BufferedReader(new InputStreamReader(content));
+    String line;
+    while ((line=reader.readLine()) != null) {
+      if (line != null && line.length() > 0)       results.add(line.substring(0,line.length() - 1));
     }
   }
- catch (  ClientProtocolException e) {
-    logger.error("Client protocol error attempting to request current state",e);
+ catch (  Exception e) {
+    logger.error("Error attempting to request current state",e);
     return;
   }
-catch (  IOException e) {
-    logger.error("IO error attempting to request current state",e);
-    return;
+ finally {
+    if (httpGet != null)     httpGet.releaseConnection();
   }
   if (!results.get(0).equals("OK")) {
     logger.error("Bad connection state received: {}",results.get(0));
