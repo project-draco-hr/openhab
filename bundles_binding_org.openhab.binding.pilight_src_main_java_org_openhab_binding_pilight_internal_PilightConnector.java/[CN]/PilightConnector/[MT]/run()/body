@@ -1,0 +1,40 @@
+{
+  reconnect();
+  while (running) {
+    try {
+      Socket socket=connection.getSocket();
+      if (!socket.isClosed()) {
+        BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        String line=in.readLine();
+        while (running && line != null) {
+          if (!StringUtils.isEmpty(line)) {
+            logger.debug("Received from pilight: {}",line);
+            if (line.startsWith("{\"message\":\"config\"")) {
+              connection.setConfig(inputMapper.readValue(line,Message.class).getConfig());
+              configAction(ConfigModifyAction.ConfigReceived,null);
+            }
+ else             if (line.startsWith("{\"status\":")) {
+              Response response=inputMapper.readValue(line,Response.class);
+              logger.trace("Response success: " + response.isSuccess());
+            }
+ else             if (line.equals("1")) {
+              connection.getSocket().close();
+              throw new IOException("Connection to pilight lost");
+            }
+ else {
+              logger.debug(line);
+              Status status=inputMapper.readValue(line,Status.class);
+              callback.messageReceived(connection,status);
+            }
+          }
+          line=in.readLine();
+        }
+      }
+    }
+ catch (    IOException e) {
+      logger.error("Error in pilight listener thread",e);
+    }
+    reconnect();
+  }
+  cleanup();
+}

@@ -1,0 +1,10 @@
+{
+  connection.setConnector(new PilightConnector(connection,new IPilightMessageReceivedCallback(){
+    @Override public void messageReceived(    PilightConnection connection,    Status status){
+      processStatus(connection,status);
+    }
+  }
+));
+  connection.getConnector().start();
+  setInitialState();
+}
