@@ -1,0 +1,14 @@
+{
+  try {
+    Assert.assertTrue(this.processor.addReceivedLine(line));
+    Assert.assertTrue(this.processor.isMessageAvailable());
+    Message message=this.processor.pull();
+    Assert.assertNotNull(message);
+    Assert.assertEquals(message.getClass().getName(),expectedMessage.getClass().getName());
+    Assert.assertEquals(expectedMessage.getPayload(),message.getPayload());
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    Assert.fail("Unexpected error");
+  }
+}

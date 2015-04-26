@@ -1,0 +1,32 @@
+{
+  if (this.currentMessage != null) {
+    throw new MessageIsWaitingException();
+  }
+  MessageType messageType=getMessageType(line);
+  if (messageType == null) {
+    throw new UnsupportedMessageTypeException();
+  }
+  if ((this.currentMessageType != null) && (!messageType.equals(this.currentMessageType))) {
+    throw new IncompleteMessageException();
+  }
+  Boolean result=true;
+switch (messageType) {
+case H:
+    this.currentMessage=new H_Message(line);
+  break;
+case C:
+this.currentMessage=new C_Message(line);
+break;
+case L:
+this.currentMessage=new L_Message(line);
+break;
+case S:
+this.currentMessage=new S_Message(line);
+break;
+case M:
+result=handle_M_MessageLine(line);
+break;
+default :
+}
+return result;
+}
