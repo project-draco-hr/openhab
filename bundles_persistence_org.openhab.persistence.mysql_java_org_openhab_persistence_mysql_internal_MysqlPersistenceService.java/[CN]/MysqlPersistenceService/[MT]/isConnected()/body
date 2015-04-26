@@ -1,4 +1,14 @@
 {
+  try {
+    if (connection != null && !connection.isValid(5000)) {
+      errCnt++;
+      logger.error("mySQL: Connection is not valid!");
+    }
+  }
+ catch (  SQLException e) {
+    errCnt++;
+    logger.error("mySQL: Error while checking connection: {}",e);
+  }
   if (errReconnectThreshold != 0 && errCnt >= errReconnectThreshold) {
     logger.error("mySQL: Error count exceeded {}. Disconnecting database.",errReconnectThreshold);
     disconnectFromDatabase();
