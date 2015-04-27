@@ -1,14 +1,21 @@
 {
 synchronized (m_requestQueues) {
-    if (!m_requestQueueHash.containsKey(dev)) {
-      RequestQueue q=new RequestQueue(dev,time);
-      m_requestQueues.add(q);
-      m_requestQueues.notify();
-      m_requestQueueHash.put(dev,q);
-      logger.trace("scheduling queue for dev {}",dev.getAddress());
+    RequestQueue q=m_requestQueueHash.get(dev);
+    if (q == null) {
+      logger.trace("scheduling request for device {} in {} msec",dev.getAddress(),time - System.currentTimeMillis());
+      q=new RequestQueue(dev,time);
     }
  else {
-      logger.trace("queue for dev {} is already scheduled",dev.getAddress());
+      logger.trace("queue for dev {} is already scheduled in {} msec",dev.getAddress(),q.getExpirationTime() - System.currentTimeMillis());
+      if (!m_requestQueues.remove(q)) {
+        logger.error("queue for {} should be there, report as bug!",dev);
+      }
+      m_requestQueueHash.remove(dev);
     }
+    long expTime=q.getExpirationTime();
+    if (expTime > time)     q.setExpirationTime(time);
+    m_requestQueues.add(q);
+    m_requestQueueHash.put(dev,q);
+    m_requestQueues.notify();
   }
 }

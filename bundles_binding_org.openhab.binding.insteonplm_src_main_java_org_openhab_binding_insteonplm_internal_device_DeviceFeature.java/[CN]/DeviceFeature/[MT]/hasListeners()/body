@@ -1,3 +1,7 @@
 {
-  return !m_listeners.isEmpty();
+  if (!m_listeners.isEmpty())   return true;
+  for (  DeviceFeature f : m_connectedFeatures) {
+    if (f.hasListeners())     return true;
+  }
+  return false;
 }

@@ -8,4 +8,15 @@
       addFeature(fe.getKey(),f);
     }
   }
+  for (  Entry<String,FeatureGroup> fe : dt.getFeatureGroups().entrySet()) {
+    FeatureGroup fg=fe.getValue();
+    DeviceFeature f=DeviceFeature.s_makeDeviceFeature(fg.getType());
+    if (f == null) {
+      logger.error("device type {} references unknown feature group: {}",dt,fg.getType());
+    }
+ else {
+      addFeature(fe.getKey(),f);
+    }
+    connectFeatures(fe.getKey(),f,fg.getFeatures());
+  }
 }
