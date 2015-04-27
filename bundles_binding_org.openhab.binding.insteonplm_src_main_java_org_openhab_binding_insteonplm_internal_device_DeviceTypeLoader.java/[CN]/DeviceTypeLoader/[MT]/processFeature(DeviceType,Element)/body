@@ -1,0 +1,10 @@
+{
+  String name=e.getAttribute("name");
+  if (name.equals("")) {
+    throw new SAXException("feature " + e.getNodeName() + " has feature without name!");
+  }
+  if (!devType.addFeature(name,e.getTextContent())) {
+    throw new SAXException("duplicate feature: " + name);
+  }
+  return (name);
+}

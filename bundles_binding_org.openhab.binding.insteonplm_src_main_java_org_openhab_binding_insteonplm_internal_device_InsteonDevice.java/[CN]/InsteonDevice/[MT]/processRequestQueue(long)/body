@@ -3,19 +3,26 @@ synchronized (m_requestQueue) {
     if (m_requestQueue.isEmpty()) {
       return 0L;
     }
-    if (m_requestQueueState == DeviceFeature.QueryStatus.QUERY_PENDING) {
-      long dt=timeNow - (m_lastQueryTime + QUERY_TIMEOUT);
+    if (m_featureQueried != null) {
+      long dt=timeNow - (m_lastQueryTime + TIMEOUT_DIRECT_MESSAGE_REPLY);
       if (dt < 0) {
-        logger.debug("still waiting for query reply from {} for another {} usec",m_address,dt);
-        return (m_lastQueryTime + QUERY_TIMEOUT);
+        logger.debug("still waiting for query reply from {} for another {} usec",m_address,-dt);
+        return (timeNow + 2000L);
       }
  else {
         logger.warn("gave up waiting for query reply from device {}",m_address);
       }
     }
-    m_lastQueryTime=timeNow;
     QEntry qe=m_requestQueue.poll();
-    qe.getFeature().setQueryStatus(DeviceFeature.QueryStatus.QUERY_PENDING);
+    if (!qe.getMsg().isBroadcast()) {
+      logger.debug("qe taken off direct: {} {}",qe.getFeature(),qe.getMsg());
+      m_lastQueryTime=timeNow;
+      qe.getFeature().setQueryStatus(DeviceFeature.QueryStatus.QUERY_PENDING);
+      m_featureQueried=qe.getFeature();
+    }
+ else {
+      logger.debug("qe taken off bcast: {} {}",qe.getFeature(),qe.getMsg());
+    }
     long quietTime=qe.getMsg().getQuietTime();
     qe.getMsg().setQuietTime(500L);
     try {
@@ -24,6 +31,10 @@ synchronized (m_requestQueue) {
  catch (    IOException e) {
       logger.error("message write failed for msg {}",qe.getMsg(),e);
     }
-    return (timeNow + quietTime);
+    QEntry qnext=m_requestQueue.peek();
+    long nextExpTime=(qnext == null ? 0L : qnext.getExpirationTime());
+    long nextTime=Math.max(timeNow + quietTime,nextExpTime);
+    logger.debug("next request queue processed in {} msec, quiettime = {}",nextTime - timeNow,quietTime);
+    return (nextTime);
   }
 }
