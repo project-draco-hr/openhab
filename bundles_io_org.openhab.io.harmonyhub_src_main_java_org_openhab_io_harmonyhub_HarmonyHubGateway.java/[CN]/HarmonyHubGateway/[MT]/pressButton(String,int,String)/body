@@ -1,0 +1,12 @@
+{
+  logger.debug("pressButton for qualifer {} deviceId {} and button {}",qualifier,deviceId,button);
+  if (!properlyConfigured) {
+    throw new IllegalStateException("Harmony Hub Gateway is not properly configured, or the connection is not yet started");
+  }
+  withClient(checkQualifier(qualifier),new ClientRunnable(){
+    @Override public void run(    HarmonyClient client){
+      client.pressButton(deviceId,button);
+    }
+  }
+);
+}

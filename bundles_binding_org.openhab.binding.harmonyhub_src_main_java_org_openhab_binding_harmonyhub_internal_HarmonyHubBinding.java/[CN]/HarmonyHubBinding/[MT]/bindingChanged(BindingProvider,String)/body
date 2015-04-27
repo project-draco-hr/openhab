@@ -1,0 +1,40 @@
+{
+  logger.debug("bindingChanged {} {}",provider,itemName);
+  if (harmonyHubGateway == null)   return;
+  if (harmonyListeners == null) {
+    harmonyListeners=new HashMap<String,HarmonyHubListener>();
+  }
+ else {
+    for (    String qualifier : harmonyListeners.keySet()) {
+      harmonyHubGateway.removeListener(qualifier,harmonyListeners.get(qualifier));
+    }
+    harmonyListeners.clear();
+  }
+  if (provider instanceof HarmonyHubBindingProvider) {
+    HarmonyHubBindingProvider harmonyProvider=(HarmonyHubBindingProvider)provider;
+    final HarmonyHubBindingConfig config=harmonyProvider.getHarmonyHubBindingConfig(itemName);
+    if (harmonyHubGateway != null && config.getBindingType() == HarmonyHubBindingType.CurrentActivity) {
+      if (!harmonyListeners.containsKey(config.getQualifier())) {
+        logger.debug("adding new listener for {}",config.getQualifier());
+        HarmonyHubListener listener=new HarmonyHubListener(){
+          @Override public void removeFrom(          HarmonyClient client){
+            logger.debug("removeFrom called for {}",config.getQualifier());
+          }
+          @Override public void addTo(          HarmonyClient client){
+            client.addListener(new ActivityChangeListener(){
+              @Override public void activityStarted(              Activity activity){
+                logger.debug("activityStarted called for {}",config.getQualifier());
+                updateActivity(activity,config.getQualifier());
+              }
+            }
+);
+            updateActivity(client.getCurrentActivity(),config.getQualifier());
+          }
+        }
+;
+        harmonyHubGateway.addListener(config.getQualifier(),listener);
+        harmonyListeners.put(config.getQualifier(),listener);
+      }
+    }
+  }
+}

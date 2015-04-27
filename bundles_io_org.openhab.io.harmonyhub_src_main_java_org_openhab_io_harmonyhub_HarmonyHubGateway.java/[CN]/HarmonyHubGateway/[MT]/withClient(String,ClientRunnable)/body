@@ -1,0 +1,8 @@
+{
+  final HarmonyHubInstance hub=hubs.get(qualifier);
+  logger.debug("running for qualifier {} and client {}",qualifier,hub);
+  if (hub == null) {
+    throw new IllegalArgumentException(format("No client '%s' defined",qualifier));
+  }
+  hub.execute(runnable);
+}

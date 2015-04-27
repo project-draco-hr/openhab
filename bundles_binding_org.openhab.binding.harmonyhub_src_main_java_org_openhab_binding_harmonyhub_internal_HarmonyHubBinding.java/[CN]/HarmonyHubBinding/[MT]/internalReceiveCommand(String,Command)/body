@@ -1,0 +1,42 @@
+{
+  logger.debug("internalReceiveCommand({},{}) is called!",itemName,command);
+  if (harmonyHubGateway == null) {
+    logger.warn("A command was received, but could not be executed as no Harmony Hub has been configured");
+    return;
+  }
+  for (  HarmonyHubBindingProvider provider : providers) {
+    HarmonyHubBindingConfig config=provider.getHarmonyHubBindingConfig(itemName);
+    if (config.getBindingType().getDirection() == HarmonyHubBindingDirection.IN) {
+      logger.warn("item {} is not configured to send outbound commands! Please change to > or * in the binding");
+      continue;
+    }
+switch (config.getBindingType()) {
+case PressButton:
+      logger.debug("PressButton command:{} q:{} p1:{} p2:{}",command.toString(),config.getQualifier(),config.getParam1(),config.getParam2());
+    String cmd=config.getParam2();
+  if (cmd == null) {
+    cmd=command.toString();
+  }
+try {
+  harmonyHubGateway.pressButton(config.getQualifier(),Integer.parseInt(config.getParam1()),cmd);
+}
+ catch (NumberFormatException ignored) {
+  harmonyHubGateway.pressButton(config.getQualifier(),config.getParam1(),cmd);
+}
+break;
+case StartActivity:
+try {
+harmonyHubGateway.startActivity(config.getQualifier(),Integer.parseInt(config.getParam1()));
+}
+ catch (NumberFormatException ignored) {
+harmonyHubGateway.startActivity(config.getQualifier(),config.getParam1());
+}
+break;
+case CurrentActivity:
+harmonyHubGateway.startActivity(config.getQualifier(),command.toString());
+break;
+default :
+break;
+}
+}
+}
