@@ -9,6 +9,10 @@
       }
       return state;
     }
+ else     if (bindingConfig.getItemType().equals(ContactItem.class)) {
+      OpenClosedType state=PilightContactType.valueOf(dev.getState().toUpperCase()).toOpenClosedType();
+      return state;
+    }
  else     if (bindingConfig.getItemType().equals(StringItem.class) || bindingConfig.getItemType().equals(NumberItem.class)) {
       String property=bindingConfig.getProperty();
       if (dev.getProperties().containsKey(property)) {
