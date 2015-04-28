@@ -1,0 +1,57 @@
+{
+  logger.trace("execute() method is called!");
+  try {
+    clientSocket.setBroadcast(true);
+    clientSocket.setSoTimeout(10000);
+    byte[] receiveData=new byte[14];
+    DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
+    clientSocket.receive(receivePacket);
+    byte[] data=receivePacket.getData();
+    Message message;
+    if (data[1] > 0) {
+      logger.debug("Processing analog message");
+      message=new AnalogMessage(data);
+    }
+ else     if (data[1] == 0) {
+      logger.debug("Processing digital message");
+      message=new DigitalMessage(data);
+    }
+ else {
+      logger.debug("Invalid message received");
+      return;
+    }
+    logger.debug(message.toString());
+    for (    TACmiBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        logger.debug("Processing item: " + itemName);
+        int portNumber=provider.getPortNumber(itemName);
+        if (provider.getCanNode(itemName) == message.canNode && provider.getPortType(itemName).equals(message.getType().toString().toLowerCase())) {
+          if (message.hasPortnumber(portNumber)) {
+            if (message.getType() == MessageType.A) {
+              AnalogValue value=((AnalogMessage)message).getAnalogValue(portNumber);
+              if (value.value != null) {
+                logger.debug("Updating item: " + itemName + " with value: "+ value.value);
+                eventPublisher.postUpdate(itemName,new DecimalType(value.value));
+              }
+            }
+ else {
+              OnOffType state=((DigitalMessage)message).getPortStateAsOnOffType(portNumber);
+              logger.debug("Updating item {} with state {}",itemName,state);
+              eventPublisher.postUpdate(itemName,state);
+            }
+          }
+ else {
+            logger.debug("Portnumber {} not included in message",portNumber);
+          }
+        }
+ else {
+          logger.debug("CAN Node does not match");
+        }
+      }
+    }
+  }
+ catch (  Exception e) {
+    logger.warn("Error in execute: {}, Message: {}",e.getClass().getName(),e.getMessage());
+  }
+  logger.trace("TACmi execute() finished");
+}
