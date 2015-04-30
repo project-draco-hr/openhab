@@ -1,11 +1,9 @@
 {
-  SqueezePlayer player=getPlayer(playerId);
-  if (player == null)   return false;
+  if (!isReady())   return false;
   if (mute) {
-    squeezeServer.mute(playerId);
+    return squeezeServer.mute(playerId);
   }
  else {
-    squeezeServer.unMute(playerId);
+    return squeezeServer.unMute(playerId);
   }
-  return true;
 }
