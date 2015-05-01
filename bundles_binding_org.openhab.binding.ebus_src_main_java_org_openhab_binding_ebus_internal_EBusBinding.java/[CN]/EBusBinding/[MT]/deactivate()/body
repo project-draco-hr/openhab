@@ -1,0 +1,12 @@
+{
+  super.deactivate();
+  logger.debug("eBus binding has been stopped.");
+  if (connector != null && connector.isAlive()) {
+    connector.interrupt();
+    connector=null;
+  }
+  if (commandProcessor != null) {
+    commandProcessor.deactivate();
+    commandProcessor=null;
+  }
+}

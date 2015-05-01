@@ -2,15 +2,25 @@
   String[] cfgHostsEntries=cfgHostsLine.split("\\s");
   for (int i=0; i < cfgHostsEntries.length; i++) {
     String cfgHostEntry=cfgHostsEntries[i];
-    String[] cfgHostAndPort=cfgHostEntry.split(":",2);
+    String[] cfgHostAndPort=cfgHostEntry.split(":",3);
     String host=cfgHostAndPort[0];
     int port;
-    if (cfgHostAndPort.length == 2) {
-      port=Integer.parseInt(cfgHostAndPort[1]);
+    String authkey=null;
+    if (cfgHostAndPort.length > 1) {
+      if (!cfgHostAndPort[1].equals("")) {
+        port=Integer.parseInt(cfgHostAndPort[1]);
+      }
+ else {
+        port=BRICKD_DEFAULT_PORT;
+      }
     }
  else {
       port=BRICKD_DEFAULT_PORT;
     }
-    connectBrickd(host,port);
+    if (cfgHostAndPort.length == 3) {
+      authkey=cfgHostAndPort[2];
+    }
+    logger.debug("parse brickd config: host {}, port {}, authkey is set {}",host,port,authkey != null ? true : false);
+    connectBrickd(host,port,authkey);
   }
 }

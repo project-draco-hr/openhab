@@ -1,0 +1,26 @@
+{
+  tinkerforgeDevice=new BrickletIndustrialDual020mA(getUid(),getIpConnection());
+  Short sampleRate=null;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("sampleRate"))) {
+      Short sampleRateFromConfig=tfConfig.getSampleRate();
+      if (sampleRateFromConfig != 0 || sampleRateFromConfig != 1 || sampleRateFromConfig != 2 || sampleRateFromConfig != 3) {
+        logger.error("sampleRate must be 0, 1, 2, or 3. \"{}\" is configured. Falling back to default",sampleRateFromConfig);
+      }
+ else {
+        sampleRate=sampleRateFromConfig;
+      }
+    }
+  }
+  if (sampleRate != null) {
+    try {
+      tinkerforgeDevice.setSampleRate(sampleRate);
+    }
+ catch (    TimeoutException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+    }
+catch (    NotConnectedException e) {
+      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    }
+  }
+}

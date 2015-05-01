@@ -1,0 +1,19 @@
+{
+  PlexSession session=getSessionByMachineId(config.getMachineIdentifier());
+  String url=null;
+  if (session != null) {
+    int offset=0;
+    if (command.getClass().equals(PercentType.class)) {
+      PercentType percent=(PercentType)command;
+      offset=new BigDecimal(session.getDuration()).multiply(percent.toBigDecimal().divide(new BigDecimal("100"),new MathContext(5,RoundingMode.HALF_UP))).intValue();
+      offset=Math.max(0,offset);
+      offset=Math.min(session.getDuration(),offset);
+      url=String.format("playback/seekTo?offset=%d",offset);
+    }
+ else     if (command.getClass().equals(IncreaseDecreaseType.class)) {
+      if (command.equals(IncreaseDecreaseType.DECREASE))       url=PlexBindingConstants.PROPERTY_STEP_BACK;
+ else       url=PlexBindingConstants.PROPERTY_STEP_FORWARD;
+    }
+  }
+  return url;
+}

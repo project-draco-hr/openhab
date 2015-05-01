@@ -1,0 +1,52 @@
+{
+  logger.debug("setSelectedColor called");
+  char[] colorMapping=getColorMapping().toCharArray();
+  String leds=null;
+  if (opts != null) {
+    if (opts.containsKey(COLOR_MAPPING)) {
+      logger.debug("custom color mapping {} ",opts.getOption(COLOR_MAPPING));
+      colorMapping=opts.getOption(COLOR_MAPPING).toCharArray();
+    }
+    if (opts.containsKey(LEDS)) {
+      leds=opts.getOption(LEDS).trim();
+      logger.debug("leds: {}",leds);
+    }
+  }
+  if (leds == null || leds.length() == 0) {
+    logger.error("\"leds\" option missing or empty, items configuration has to be fixed!");
+    return;
+  }
+  Color rgbColor=color.toColor();
+  short red=(short)rgbColor.getRed();
+  short green=(short)rgbColor.getGreen();
+  short blue=(short)rgbColor.getBlue();
+  logger.debug("rgb is: {}:{}:{}",red,green,blue);
+  HashMap<Character,short[]> colorMap=new HashMap<Character,short[]>(3);
+  short[] reds={red,red,red,red,red,red,red,red,red,red,red,red,red,red,red,red};
+  short[] greens={green,green,green,green,green,green,green,green,green,green,green,green,green,green,green,green};
+  short[] blues={blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue,blue};
+  colorMap.put('r',reds);
+  colorMap.put('g',greens);
+  colorMap.put('b',blues);
+  LedList ledList=Tools.parseLedString(leds);
+  try {
+    if (ledList.hasLedRanges()) {
+      Map<Integer,Short> ledRanges=ledList.getLedRanges();
+      for (      Integer led : ledRanges.keySet()) {
+        tinkerforgeDevice.setRGBValues(led,ledRanges.get(led),colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
+      }
+    }
+    if (ledList.hasLeds()) {
+      for (      Integer led : ledList.getLedNumbers()) {
+        tinkerforgeDevice.setRGBValues(led,(short)1,colorMap.get(colorMapping[0]),colorMap.get(colorMapping[1]),colorMap.get(colorMapping[2]));
+      }
+    }
+    setColor(new HSBValue(color));
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

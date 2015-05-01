@@ -6,6 +6,12 @@
   boolean start_found=false;
   logger.debug("Data listener started");
   try {
+    serialPort.addEventListener(this);
+    serialPort.notifyOnDataAvailable(true);
+  }
+ catch (  TooManyListenersException e) {
+  }
+  try {
     byte[] tmpData=new byte[20];
     int len=-1;
     while ((len=in.read(tmpData)) > 0 && interrupted != true) {
@@ -49,5 +55,6 @@
 catch (  IOException e) {
     logger.error("Reading from serial port failed",e);
   }
+  serialPort.removeEventListener();
   logger.debug("Data listener stopped");
 }

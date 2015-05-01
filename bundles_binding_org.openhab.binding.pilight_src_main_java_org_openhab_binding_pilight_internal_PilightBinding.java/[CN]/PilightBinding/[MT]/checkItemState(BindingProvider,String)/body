@@ -4,7 +4,7 @@
   if (config != null) {
     PilightConnection connection=connections.get(config.getInstance());
     if (connection.isConnected()) {
-      connection.getListener().refreshConfig(new IPilightConfigReceivedCallback(){
+      connection.getConnector().refreshConfig(new IPilightConfigReceivedCallback(){
         @Override public void configReceived(        PilightConnection connection){
           State state=getStateFromConfig(connection.getConfig(),config);
           if (state != null) {

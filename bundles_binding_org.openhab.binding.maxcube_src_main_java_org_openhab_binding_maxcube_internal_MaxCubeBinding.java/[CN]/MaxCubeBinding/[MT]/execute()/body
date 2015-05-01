@@ -26,11 +26,17 @@
         cont=false;
         continue;
       }
-      Message message;
+      Message message=null;
       try {
-        message=processRawMessage(raw);
-        message.debug(logger);
+        this.messageProcessor.addReceivedLine(raw);
+        if (this.messageProcessor.isMessageAvailable()) {
+          message=this.messageProcessor.pull();
+        }
+ else {
+          continue;
+        }
         if (message != null) {
+          message.debug(logger);
           if (message.getType() == MessageType.M) {
             M_Message msg=(M_Message)message;
             for (            DeviceInformation di : msg.devices) {
@@ -75,9 +81,34 @@
           }
         }
       }
- catch (      Exception e) {
+ catch (      IncorrectMultilineIndexException ex) {
+        logger.info("Incorrect MAX!Cube multiline message detected. Stopping processing and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      NoMessageAvailableException ex) {
+        logger.info("Could not process MAX!Cube message. Stopping processing and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      IncompleteMessageException ex) {
+        logger.info("Error while parsing MAX!Cube multiline message. Stopping processing, and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      UnprocessableMessageException ex) {
+        logger.info("Error while parsing MAX!Cube message. Stopping processing, and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      UnsupportedMessageTypeException ex) {
+        logger.info("Unsupported MAX!Cube message detected. Ignoring and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      MessageIsWaitingException ex) {
+        logger.info("There was and unhandled message waiting. Ignoring and continue with next Line.");
+        this.messageProcessor.reset();
+      }
+catch (      Exception e) {
         logger.info("Failed to process message received by MAX! protocol.");
         logger.debug(Utils.getStackTrace(e));
+        this.messageProcessor.reset();
       }
     }
     if (!exclusive) {

@@ -1,0 +1,39 @@
+{
+  tinkerforgeDevice=new BrickletPTC(getUid(),getIpConnection());
+  Short wireMode=null;
+  Short noiseRejectionFilter=null;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("wireMode"))) {
+      Short wireModeFromConfig=tfConfig.getWireMode();
+      if (wireModeFromConfig != 2 || wireModeFromConfig != 3 || wireModeFromConfig != 4) {
+        logger.error("wireMode must be 2, 3 or 4. \"{}\" is configured. Falling back to default",wireModeFromConfig);
+      }
+ else {
+        wireMode=wireModeFromConfig;
+      }
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("noiseRejectionFilter"))) {
+      Short noiseRejectionFilterFromConfig=tfConfig.getNoiseRejectionFilter();
+      if (noiseRejectionFilterFromConfig != 0 || noiseRejectionFilterFromConfig != 1) {
+        logger.error("noiseRejectionFilter must be 0 or 1. \"{}\" is configured. Fallback is using no reduction filter.");
+      }
+ else {
+        noiseRejectionFilter=noiseRejectionFilterFromConfig;
+      }
+    }
+  }
+  try {
+    if (wireMode != null) {
+      tinkerforgeDevice.setWireMode(wireMode);
+    }
+    if (noiseRejectionFilter != null) {
+      tinkerforgeDevice.setNoiseRejectionFilter(noiseRejectionFilter);
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

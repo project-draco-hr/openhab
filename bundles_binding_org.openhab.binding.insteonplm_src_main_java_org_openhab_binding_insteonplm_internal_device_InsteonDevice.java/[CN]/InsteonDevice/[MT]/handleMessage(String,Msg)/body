@@ -6,6 +6,8 @@ synchronized (m_features) {
     for (    DeviceFeature f : m_features.values()) {
       if (!f.isStatusFeature()) {
         if (f.handleMessage(msg,fromPort)) {
+          logger.trace("handled reply of direct: {}",f);
+          setFeatureQueried(null);
           break;
         }
       }

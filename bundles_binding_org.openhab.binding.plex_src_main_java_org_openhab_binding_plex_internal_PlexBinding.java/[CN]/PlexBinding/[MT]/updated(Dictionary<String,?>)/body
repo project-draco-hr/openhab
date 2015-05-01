@@ -1,0 +1,24 @@
+{
+  logger.debug("Plex binding updated");
+  if (config != null) {
+    PlexConnectionProperties connectionProperties=new PlexConnectionProperties();
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=keys.nextElement();
+      if ("service.pid".equals(key))       continue;
+      String value=((String)config.get(key)).trim();
+      if ("host".equals(key))       connectionProperties.setHost(value);
+ else       if ("port".equals(key))       connectionProperties.setPort(Integer.valueOf(value));
+ else       if ("refresh".equals(key))       if (StringUtils.isNumeric(value))       refreshInterval=Integer.valueOf(value);
+ else       logger.warn("Non-numeric refresh interval {}, using default {}",value,refreshInterval);
+    }
+    logger.debug("Plex config, server at {}:{}",connectionProperties.getHost(),connectionProperties.getPort());
+    if (!StringUtils.isEmpty(connectionProperties.getHost())) {
+      connect(connectionProperties);
+      setProperlyConfigured(true);
+    }
+ else {
+      logger.warn("No host IP configured for Plex binding");
+    }
+  }
+}

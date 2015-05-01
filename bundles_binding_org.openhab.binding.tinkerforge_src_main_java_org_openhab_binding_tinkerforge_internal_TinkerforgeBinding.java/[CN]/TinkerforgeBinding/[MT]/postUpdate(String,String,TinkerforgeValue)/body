@@ -70,6 +70,12 @@
         continue;
       }
     }
+ else     if (sensorValue instanceof HSBValue) {
+      if (itemType.isAssignableFrom(ColorItem.class)) {
+        logger.trace("found item to update for HSBValue {}",itemName);
+        value=((HSBValue)sensorValue).getHsbValue();
+      }
+    }
  else     if (sensorValue == UnDefValue.UNDEF || sensorValue == null) {
       value=UnDefType.UNDEF;
     }

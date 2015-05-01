@@ -1,0 +1,18 @@
+{
+  if (value instanceof BigDecimal) {
+    return new DecimalType((BigDecimal)value);
+  }
+ else   if (value instanceof Boolean) {
+    return (Boolean)value ? OnOffType.ON : OnOffType.OFF;
+  }
+ else   if (value instanceof String) {
+    return new StringType((String)value);
+  }
+ else   if (value == null) {
+    return null;
+  }
+ else {
+    logger.error("Unknown data type!");
+    return null;
+  }
+}

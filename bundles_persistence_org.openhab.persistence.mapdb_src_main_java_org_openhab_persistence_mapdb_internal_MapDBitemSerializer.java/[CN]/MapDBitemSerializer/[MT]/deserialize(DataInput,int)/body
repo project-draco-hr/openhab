@@ -1,0 +1,29 @@
+{
+  MapDBItem item=new MapDBItem();
+  item.setName(in.readUTF());
+  String stateType=in.readUTF();
+  String stateStr=in.readUTF();
+  State state=null;
+  if ("DecimalType".equals(stateType)) {
+    state=new DecimalType(Double.parseDouble(stateStr));
+  }
+ else   if ("HSBType".equals(stateType)) {
+    state=new HSBType(stateStr);
+  }
+ else   if ("PercentType".equals(stateType)) {
+    state=new PercentType(Integer.parseInt(stateStr));
+  }
+ else   if ("OnOffType".equals(stateType)) {
+    state=OnOffType.valueOf(stateStr);
+  }
+ else   if ("OpenClosedType".equals(stateType)) {
+    state=OpenClosedType.valueOf(stateStr);
+  }
+ else   if ("DateTimeType".equals(stateType)) {
+    state=DateTimeType.valueOf(stateStr);
+  }
+ else   state=new StringType(stateStr);
+  item.setState(state);
+  item.setTimestamp(new Date(in.readLong()));
+  return item;
+}

@@ -1,0 +1,11 @@
+{
+  logger.debug("updateActivity {}" + activity.getLabel());
+  for (  HarmonyHubBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      HarmonyHubBindingConfig config=provider.getHarmonyHubBindingConfig(itemName);
+      if (config.matchesQualifier(qualifier) && config.getBindingType() == HarmonyHubBindingType.CurrentActivity) {
+        updateActivityForItem(itemName,config.getItemType(),activity);
+      }
+    }
+  }
+}

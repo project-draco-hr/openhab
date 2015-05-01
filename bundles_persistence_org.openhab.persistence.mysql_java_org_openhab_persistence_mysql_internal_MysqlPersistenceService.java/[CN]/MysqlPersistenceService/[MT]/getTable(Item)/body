@@ -20,7 +20,8 @@
     logger.debug("mySQL: new item {} is Item{}",itemName,rowId);
   }
  catch (  SQLException e) {
-    logger.error("mySQL: Could not create table for item '{}': ",itemName,e.getMessage());
+    errCnt++;
+    logger.error("mySQL: Could not create entry for '{}' in table 'Items' with statement '{}': {}",itemName,sqlCmd,e.getMessage());
   }
  finally {
     if (statement != null) {
@@ -50,6 +51,7 @@
     sqlTables.put(itemName,tableName);
   }
  catch (  Exception e) {
+    errCnt++;
     logger.error("mySQL: Could not create table for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
   }
  finally {
@@ -70,6 +72,7 @@
       statement.executeUpdate(sqlCmd);
     }
  catch (    Exception e) {
+      errCnt++;
       logger.error("mySQL: Could not remove index for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
     }
  finally {

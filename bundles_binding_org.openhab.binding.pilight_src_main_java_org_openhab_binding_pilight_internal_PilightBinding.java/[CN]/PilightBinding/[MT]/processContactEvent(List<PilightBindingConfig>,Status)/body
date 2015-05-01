@@ -1,0 +1,7 @@
+{
+  String stateString=status.getValues().get("state").toUpperCase();
+  State state=PilightContactType.valueOf(stateString).toOpenClosedType();
+  for (  PilightBindingConfig config : configs) {
+    eventPublisher.postUpdate(config.getItemName(),state);
+  }
+}

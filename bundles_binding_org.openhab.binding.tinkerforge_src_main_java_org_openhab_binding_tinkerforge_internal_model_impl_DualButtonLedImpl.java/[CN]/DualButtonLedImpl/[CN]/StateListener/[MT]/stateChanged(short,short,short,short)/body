@@ -1,0 +1,16 @@
+{
+  HighLowValue newValue;
+  if (position == DualButtonDevicePosition.LEFT) {
+    newValue=getValue4State(ledL);
+  }
+ else {
+    newValue=getValue4State(ledR);
+  }
+  if (newValue != digitalState) {
+    setDigitalState(newValue);
+    logger.trace("listener {} value changed to: {}",position,newValue);
+  }
+ else {
+    logger.trace("listener {} omitting unchanged value: {}",position,newValue);
+  }
+}

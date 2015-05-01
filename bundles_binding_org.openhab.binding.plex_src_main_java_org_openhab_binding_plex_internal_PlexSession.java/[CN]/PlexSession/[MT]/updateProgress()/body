@@ -1,0 +1,8 @@
+{
+  if (duration > 0) {
+    BigDecimal progress=new BigDecimal("100").divide(new BigDecimal(duration),new MathContext(100,RoundingMode.HALF_UP)).multiply(new BigDecimal(viewOffset)).setScale(2,RoundingMode.HALF_UP);
+    progress=BigDecimal.ZERO.max(progress);
+    progress=new BigDecimal("100").min(progress);
+    this.progress=progress;
+  }
+}

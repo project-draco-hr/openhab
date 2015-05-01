@@ -80,7 +80,7 @@
     List listWidget=(List)widget;
     bean.separator=listWidget.getSeparator();
   }
-  if (widget instanceof Image || widget instanceof Video || widget instanceof Webview) {
+  if (widget instanceof Image || widget instanceof Video || widget instanceof Webview|| widget instanceof Mapview) {
     if (widget instanceof Image) {
       Image imageWidget=(Image)widget;
       if (imageWidget.getRefresh() > 0) {
@@ -95,10 +95,14 @@
       }
       bean.url=videoWidget.getUrl();
     }
- else {
+ else     if (widget instanceof Webview) {
       Webview webViewWidget=(Webview)widget;
       bean.height=webViewWidget.getHeight();
       bean.url=webViewWidget.getUrl();
+    }
+ else     if (widget instanceof Mapview) {
+      Mapview mapViewWidget=(Mapview)widget;
+      bean.height=mapViewWidget.getHeight();
     }
     String wId=itemUIRegistry.getWidgetId(widget);
     StringBuilder sbBaseUrl=new StringBuilder();

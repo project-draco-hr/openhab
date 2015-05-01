@@ -5,7 +5,7 @@
     for (    final String itemName : provider.getItemNames()) {
       final String thermostatIdentifier=provider.getThermostatIdentifier(itemName);
       final String property=provider.getProperty(itemName);
-      if (!provider.isInBound(itemName) || oauthCredentials != getOAuthCredentials(provider.getUserid(itemName))) {
+      if (!provider.isInBound(itemName) || !credentialsMatch(provider,itemName,oauthCredentials)) {
         continue;
       }
       thermostatIdentifiers.add(thermostatIdentifier);
@@ -65,6 +65,9 @@
       }
  else       if (property.startsWith("version")) {
         selection.setIncludeVersion(true);
+      }
+ else       if (property.startsWith("remoteSensors")) {
+        selection.setIncludeSensors(true);
       }
     }
   }

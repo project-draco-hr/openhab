@@ -1,13 +1,24 @@
 {
   logger.debug("{} Connected listener was called.",LoggerConstants.TFINIT);
-  setIsConnected(true);
   if (connectReason == IPConnection.CONNECT_REASON_AUTO_RECONNECT) {
     setReconnected(true);
   }
   try {
+    if (authkey != null && !authkey.equals("")) {
+      ipcon.authenticate(authkey);
+    }
     ipcon.enumerate();
   }
- catch (  NotConnectedException e) {
-    logger.error("{} enumeration failed with NotConnectedException",LoggerConstants.TFINIT);
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
   }
+catch (  CryptoException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_NOT_CRYPTO_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(getLogger(),TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  setIsConnected(HighLowValue.HIGH);
+  Integer counternew=connectedCounter.intValue() + 1;
+  setConnectedCounter(new DecimalValue(counternew));
 }

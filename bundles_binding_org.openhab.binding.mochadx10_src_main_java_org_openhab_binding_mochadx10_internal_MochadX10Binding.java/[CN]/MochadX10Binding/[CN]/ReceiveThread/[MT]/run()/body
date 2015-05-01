@@ -1,0 +1,21 @@
+{
+  String msg=null;
+  logger.debug("Starting Mochad X10 Receive thread");
+  while (!interrupted()) {
+    try {
+      msg=in.readLine();
+      if (msg != null) {
+        processIncomingMessage(msg);
+      }
+ else {
+        logger.error("Received a \"null\" message");
+        reconnectToMochadX10Server();
+      }
+    }
+ catch (    IOException e) {
+      logger.trace("Caught IOException " + e.getMessage());
+      reconnectToMochadX10Server();
+    }
+  }
+  logger.debug("Stopped Mochad X10 Receive thread");
+}

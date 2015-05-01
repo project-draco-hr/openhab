@@ -1,0 +1,13 @@
+{
+  connector=new PlexConnector(connectionProperties,new PlexUpdateReceivedCallback(){
+    @Override public void updateReceived(    PlexSession session){
+      processUpdateRecevied(session);
+    }
+    @Override public void serverListUpdated(    MediaContainer container){
+      processServerList(container);
+    }
+  }
+);
+  connector.start();
+  setInitialState();
+}

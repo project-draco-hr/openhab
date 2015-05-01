@@ -1,0 +1,11 @@
+{
+  logger.debug("Remove all polling items for this provider from scheduler ...");
+  for (  String itemName : provider.getItemNames()) {
+    if (futureMap.containsKey(itemName)) {
+      futureMap.get(itemName).cancel(true);
+    }
+  }
+  for (  String itemName : provider.getItemNames()) {
+    bindingChanged(provider,itemName);
+  }
+}

@@ -17,7 +17,7 @@
           if (command instanceof OnOffType) {
             logger.trace("{} found onoff command",LoggerConstants.COMMAND);
             OnOffType cmd=(OnOffType)command;
-            if (mDevice instanceof MInSwitchActor) {
+            if (mDevice instanceof MSwitchActor) {
               OnOffValue state=cmd == OnOffType.OFF ? OnOffValue.OFF : OnOffValue.ON;
               ((MSwitchActor)mDevice).turnSwitch(state);
             }
@@ -39,20 +39,25 @@
               ((MTextActor)mDevice).setText(command.toString());
             }
           }
- else           if (command instanceof PercentType) {
-            if (mDevice instanceof SetPointActor) {
-              ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
-            }
- else {
-              logger.error("found no percenttype actor");
-            }
-          }
  else           if (command instanceof DecimalType) {
             logger.debug("{} found number command",LoggerConstants.COMMAND);
             if (command instanceof HSBType) {
               logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
-              if (mDevice instanceof ColorActor) {
-                ((ColorActor)mDevice).setColor((HSBType)command,provider.getDeviceOptions(itemName));
+              if (mDevice instanceof ProgrammableColorActor) {
+                logger.debug("{} found ProgrammableColorActor {}",itemName);
+                ((ProgrammableColorActor)mDevice).setSelectedColor((HSBType)command,provider.getDeviceOptions(itemName));
+              }
+ else               if (mDevice instanceof SimpleColorActor) {
+                logger.debug("{} found SimpleColorActor {}",itemName);
+                ((SimpleColorActor)mDevice).setSelectedColor((HSBType)command);
+              }
+            }
+ else             if (command instanceof PercentType) {
+              if (mDevice instanceof SetPointActor) {
+                ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
+              }
+ else {
+                logger.error("found no percenttype actor");
               }
             }
  else {

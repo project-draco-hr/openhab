@@ -1,0 +1,17 @@
+{
+  String url=null;
+  String property=config.getProperty();
+  if (property.equals(PlexBindingConstants.PROPERTY_VOLUME)) {
+    url=getVolumeCommand(config,command);
+  }
+ else   if (property.equals(PlexBindingConstants.PROPERTY_PROGRESS)) {
+    url=getProgressCommand(config,command);
+  }
+ else {
+    url=config.getProperty();
+  }
+  if (url != null) {
+    url=playerUrl + url;
+    internalSendCommand(config.getMachineIdentifier(),url);
+  }
+}

@@ -1,0 +1,31 @@
+{
+  int delay=0;
+  while (!isConnected()) {
+    try {
+      logger.debug("pilight reconnecting");
+      Thread.sleep(delay);
+      Socket socket=new Socket(connection.getHostname(),connection.getPort());
+      Identification identification=new Identification();
+      Options options=new Options();
+      options.setConfig(true);
+      identification.setOptions(options);
+      PrintStream printStream=new PrintStream(socket.getOutputStream(),true);
+      printStream.println(outputMapper.writeValueAsString(identification));
+      Response response=inputMapper.readValue(socket.getInputStream(),Response.class);
+      if (response.getStatus().equals(Response.SUCCESS)) {
+        logger.info("Established connection to pilight server at {}:{}",connection.getHostname(),connection.getPort());
+        connection.setSocket(socket);
+      }
+ else {
+        logger.error("pilight client not accepted: {}",response.getStatus());
+      }
+    }
+ catch (    IOException e) {
+      logger.error(e.getMessage(),e);
+    }
+catch (    InterruptedException e) {
+      logger.error(e.getMessage(),e);
+    }
+    delay=RECONNECT_DELAY;
+  }
+}

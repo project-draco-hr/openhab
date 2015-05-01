@@ -1,0 +1,6 @@
+{
+  for (  PlexBindingConfig config : getPowerConfigs()) {
+    boolean online=container.getServer(config.getMachineIdentifier()) != null;
+    eventPublisher.postUpdate(config.getItemName(),online ? OnOffType.ON : OnOffType.OFF);
+  }
+}

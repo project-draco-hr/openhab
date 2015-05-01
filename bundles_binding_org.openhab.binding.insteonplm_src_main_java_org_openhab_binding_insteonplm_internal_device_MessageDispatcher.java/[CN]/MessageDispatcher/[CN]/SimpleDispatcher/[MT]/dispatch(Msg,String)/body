@@ -4,13 +4,16 @@
     if (handleAllLinkMessage(msg,port)) {
       return false;
     }
+    if (msg.isAllLinkCleanupAckOrNack()) {
+      return false;
+    }
     cmd1=msg.getByte("command1");
   }
  catch (  FieldException e) {
     logger.debug("no cmd1 found, dropping msg {}",msg);
     return false;
   }
-  boolean isConsumed=msg.isAckOfDirect() && (m_feature.getQueryStatus() == DeviceFeature.QueryStatus.QUERY_PENDING);
+  boolean isConsumed=isMyDirectAck(msg);
   int key=(cmd1 & 0xFF);
   MessageHandler h=m_feature.getMsgHandlers().get(key);
   if (h == null)   h=m_feature.getDefaultMsgHandler();

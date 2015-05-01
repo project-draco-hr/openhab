@@ -4,22 +4,26 @@ synchronized (m_requestQueues) {
     while (m_keepRunning) {
       try {
         while (!m_requestQueues.isEmpty()) {
-          RequestQueue q=m_requestQueues.poll();
+          RequestQueue q=m_requestQueues.peek();
           long now=System.currentTimeMillis();
           long expTime=q.getExpirationTime();
           InsteonDevice dev=q.getDevice();
-          logger.trace("found busy request queue dev {} expTime: {} wait: {}",dev.getAddress(),expTime,expTime - now);
           if (expTime > now) {
+            logger.trace("request queue head: {} must wait for {} msec",dev.getAddress(),expTime - now);
             m_requestQueues.wait(expTime - now);
+            continue;
           }
+          q=m_requestQueues.poll();
+          m_requestQueueHash.remove(dev);
           long nextExp=dev.processRequestQueue(now);
           if (nextExp > 0) {
-            m_requestQueues.add(new RequestQueue(dev,nextExp));
-            logger.trace("device queue for {} rescheduled",dev.getAddress());
+            q=new RequestQueue(dev,nextExp);
+            m_requestQueues.add(q);
+            m_requestQueueHash.put(dev,q);
+            logger.trace("device queue for {} rescheduled in {} msec",dev.getAddress(),nextExp - now);
           }
  else {
-            m_requestQueueHash.remove(dev);
-            logger.trace("device queue for {} off schedule",dev.getAddress());
+            logger.debug("device queue for {} is empty!",dev.getAddress());
           }
         }
         logger.trace("waiting for request queues to fill");

@@ -1,0 +1,12 @@
+{
+  logger.debug("mapdb persistence service activated");
+  File folder=new File(DB_FOLDER_NAME);
+  if (!folder.exists()) {
+    folder.mkdir();
+  }
+  File dbFile=new File(DB_FOLDER_NAME,DB_FILE_NAME);
+  db=DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
+  Serializer<MapDBItem> serializer=new MapDBitemSerializer();
+  map=db.createTreeMap("itemStore").valueSerializer(serializer).makeOrGet();
+  scheduleJob();
+}

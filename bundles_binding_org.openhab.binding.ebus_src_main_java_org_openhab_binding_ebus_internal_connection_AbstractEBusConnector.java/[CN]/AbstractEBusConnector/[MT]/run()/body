@@ -1,0 +1,50 @@
+{
+  threadPool=Executors.newCachedThreadPool();
+  while (!isInterrupted() || reConnectCounter == -1) {
+    try {
+      if (inputStream == null) {
+        reconnect();
+      }
+ else {
+        int read=inputStream.read();
+        if (read == -1) {
+          logger.error("eBus read timeout occured, ignore it currently!");
+        }
+ else {
+          byte receivedByte=(byte)(read & 0xFF);
+          inputBuffer.put(receivedByte);
+          if (receivedByte == EBusTelegram.SYN) {
+            onEBusSyncReceived();
+          }
+        }
+      }
+    }
+ catch (    IOException e) {
+      logger.error("An IO exception has occured! Try to reconnect eBus connector ...",e);
+      try {
+        reconnect();
+      }
+ catch (      IOException e1) {
+        logger.error(e.toString(),e);
+      }
+catch (      InterruptedException e1) {
+        logger.error(e.toString(),e);
+      }
+    }
+catch (    BufferOverflowException e) {
+      logger.error("eBus telegram buffer overflow - not enough sync bytes received! Try to adjust eBus adapter.");
+      inputBuffer.clear();
+    }
+catch (    Exception e) {
+      logger.error(e.toString(),e);
+      inputBuffer.clear();
+    }
+  }
+  try {
+    disconnect();
+  }
+ catch (  IOException e) {
+    logger.error(e.toString(),e);
+  }
+  if (threadPool != null && !threadPool.isShutdown())   threadPool.shutdown();
+}

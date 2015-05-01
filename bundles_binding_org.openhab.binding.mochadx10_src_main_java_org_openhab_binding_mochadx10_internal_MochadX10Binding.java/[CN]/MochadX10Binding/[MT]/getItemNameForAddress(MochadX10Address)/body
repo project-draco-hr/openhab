@@ -1,0 +1,13 @@
+{
+  for (  MochadX10BindingProvider provider : this.providers) {
+    Collection<String> itemNames=provider.getItemNames();
+    for (    String itemName : itemNames) {
+      MochadX10BindingConfig bindingConfig=provider.getItemConfig(itemName);
+      if (bindingConfig.getAddress().equals(address.toString())) {
+        return bindingConfig.getItemName();
+      }
+    }
+  }
+  logger.warn("No item name found for address '" + address.toString() + "'");
+  return null;
+}

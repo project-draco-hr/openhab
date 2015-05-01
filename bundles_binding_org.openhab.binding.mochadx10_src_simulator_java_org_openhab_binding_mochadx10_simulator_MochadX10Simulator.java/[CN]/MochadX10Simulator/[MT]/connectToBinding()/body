@@ -1,0 +1,10 @@
+{
+  serverSocket=new ServerSocket(SERVER_PORT);
+  System.out.println("Waiting for connection...");
+  server=serverSocket.accept();
+  System.out.println("Connection established");
+  out=new PrintWriter(server.getOutputStream(),true);
+  in=new BufferedReader(new InputStreamReader(server.getInputStream()));
+  receiveThread=new MochadX10SimReceiveThread(in);
+  receiveThread.start();
+}

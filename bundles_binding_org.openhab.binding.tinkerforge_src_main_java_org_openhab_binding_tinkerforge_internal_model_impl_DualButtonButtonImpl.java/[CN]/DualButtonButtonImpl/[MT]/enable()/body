@@ -1,0 +1,13 @@
+{
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  tactile=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("tactile"))) {
+      tactile=tfConfig.isTactile();
+    }
+  }
+  logger.trace("tactile for {} is {}",position,tactile);
+  listener=new StateListener();
+  tinkerforgeDevice.addStateChangedListener(listener);
+  fetchSensorValue();
+}

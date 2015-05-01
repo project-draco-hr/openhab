@@ -1,0 +1,29 @@
+{
+  String name=e.getAttribute("name");
+  if (name.equals("")) {
+    throw new SAXException("feature group " + e.getNodeName() + " has no name attr!");
+  }
+  String type=e.getAttribute("type");
+  if (type.equals("")) {
+    throw new SAXException("feature group " + e.getNodeName() + " has no type attr!");
+  }
+  FeatureGroup fg=new FeatureGroup(name,type);
+  NodeList nodes=e.getChildNodes();
+  for (int i=0; i < nodes.getLength(); i++) {
+    Node node=nodes.item(i);
+    if (node.getNodeType() != Node.ELEMENT_NODE) {
+      continue;
+    }
+    Element subElement=(Element)node;
+    if (subElement.getNodeName().equals("feature")) {
+      fg.addFeature(processFeature(devType,subElement));
+    }
+ else     if (subElement.getNodeName().equals("feature_group")) {
+      fg.addFeature(processFeatureGroup(devType,subElement));
+    }
+  }
+  if (!devType.addFeatureGroup(name,fg)) {
+    throw new SAXException("duplicate feature group " + name);
+  }
+  return (name);
+}
