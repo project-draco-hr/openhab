@@ -1,8 +1,8 @@
 {
   String itemName=filter.getItemName();
-  ConsolFun consolidationFunction=getConsolidationFunction(itemName);
-  RrdDb db=getDB(itemName,consolidationFunction);
+  RrdDb db=getDB(itemName);
   if (db != null) {
+    ConsolFun consolidationFunction=getConsolidationFunction(db);
     long start=0L;
     long end=filter.getEndDate() == null ? System.currentTimeMillis() / 1000 : filter.getEndDate().getTime() / 1000;
     try {
@@ -23,7 +23,7 @@
           }
         }
  else {
-          throw new UnsupportedOperationException("rrd4j does not allow querys without a begin date, " + "unless order is decending and a single value is requested");
+          throw new UnsupportedOperationException("rrd4j does not allow querys without a begin date, " + "unless order is descending and a single value is requested");
         }
       }
  else {

@@ -1,0 +1,30 @@
+{
+  RrdDefConfig useRdc=null;
+  for (  Map.Entry<String,RrdDefConfig> e : rrdDefs.entrySet()) {
+    RrdDefConfig rdc=e.getValue();
+    if (rdc.appliesTo(itemName)) {
+      useRdc=rdc;
+      break;
+    }
+  }
+  if (useRdc == null) {
+    if (itemRegistry != null) {
+      try {
+        Item item=itemRegistry.getItem(itemName);
+        if (item instanceof NumberItem) {
+          useRdc=rrdDefs.get("default_numeric");
+        }
+ else {
+          useRdc=rrdDefs.get("default_other");
+        }
+      }
+ catch (      ItemNotFoundException e) {
+        logger.debug("Could not find item '{}' in registry",itemName);
+      }
+    }
+ else {
+      useRdc=rrdDefs.get("default_other");
+    }
+  }
+  return useRdc;
+}
