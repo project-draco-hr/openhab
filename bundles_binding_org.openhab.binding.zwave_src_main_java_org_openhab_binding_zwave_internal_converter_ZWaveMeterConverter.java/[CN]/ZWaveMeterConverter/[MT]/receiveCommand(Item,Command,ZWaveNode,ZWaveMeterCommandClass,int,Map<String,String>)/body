@@ -1,6 +1,10 @@
 {
   if (command != OnOffType.ON)   return;
   SerialMessage serialMessage=node.encapsulate(commandClass.getResetMessage(),commandClass,endpointId);
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Meter reset not supported for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    return;
+  }
   this.getController().sendData(serialMessage);
   for (  SerialMessage serialGetMessage : commandClass.getDynamicValues(true)) {
     this.getController().sendData(node.encapsulate(serialGetMessage,commandClass,endpointId));
