@@ -1,8 +1,13 @@
 {
-  this.isOn=settings.isBulbOn(this.deviceNumber);
-  this.isReachable=settings.isReachable(this.deviceNumber);
-  this.colorTemperature=settings.getColorTemperature(this.deviceNumber);
-  this.brightness=settings.getBrightness(this.deviceNumber);
-  this.hue=settings.getHue(this.deviceNumber);
-  this.saturation=settings.getSaturation(this.deviceNumber);
+  if (settings.isValidId(deviceId)) {
+    this.isOn=settings.isBulbOn(this.deviceId);
+    this.isReachable=settings.isReachable(this.deviceId);
+    this.colorTemperature=settings.getColorTemperature(this.deviceId);
+    this.brightness=settings.getBrightness(this.deviceId);
+    this.hue=settings.getHue(this.deviceId);
+    this.saturation=settings.getSaturation(this.deviceId);
+  }
+ else {
+    logger.warn("Not a valid id on the bridge: " + deviceId);
+  }
 }

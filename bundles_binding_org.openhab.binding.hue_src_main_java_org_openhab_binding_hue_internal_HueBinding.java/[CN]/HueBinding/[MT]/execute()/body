@@ -9,11 +9,10 @@
     Set<String> keys=settings.getKeys();
     for (    String key : keys) {
       try {
-        int deviceNumber=Integer.parseInt(key);
-        HueBulb bulb=bulbCache.get(deviceNumber);
+        HueBulb bulb=bulbCache.get(key);
         if (bulb == null) {
-          bulb=new HueBulb(activeBridge,deviceNumber,settings);
-          bulbCache.put(deviceNumber,bulb);
+          bulb=new HueBulb(activeBridge,key,settings);
+          bulbCache.put(key,bulb);
         }
         bulb.getStatus(settings);
       }
@@ -25,7 +24,7 @@
       for (      String hueItemName : provider.getInBindingItemNames()) {
         HueBindingConfig deviceConfig=getConfigForItemName(hueItemName);
         if (deviceConfig != null) {
-          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceId());
           if (bulb != null) {
             if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
               if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.ON) == false)) {
