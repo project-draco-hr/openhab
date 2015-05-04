@@ -1,0 +1,57 @@
+{
+  try {
+    int requestId=data.getInt("id");
+    logger.debug("Got request {}",requestId);
+    String requestPath=data.getString("path");
+    String requestMethod=data.getString("method");
+    String requestBody=data.getString("body");
+    JSONObject requestHeadersJson=data.getJSONObject("headers");
+    logger.debug(requestHeadersJson.toString());
+    JSONObject requestQueryJson=data.getJSONObject("query");
+    Iterator<String> headersIterator=requestHeadersJson.keys();
+    String newPath=URIUtil.addPaths(mOHBaseUrl,requestPath);
+    Iterator<String> queryIterator=requestQueryJson.keys();
+    newPath+="?";
+    while (queryIterator.hasNext()) {
+      String queryName=queryIterator.next();
+      newPath+=queryName;
+      newPath+="=";
+      newPath+=URLEncoder.encode(requestQueryJson.getString(queryName),"UTF-8");
+      if (queryIterator.hasNext())       newPath+="&";
+    }
+    URI requestUri=new URI(newPath);
+    logger.debug("Request method is " + requestMethod);
+    MyOHExchange exchange=new MyOHExchange(requestId);
+    exchange.setURI(requestUri);
+    exchange.setRequestHeaders(requestHeadersJson);
+    exchange.setRequestHeader("X-Forwarded-Proto","https");
+    if (requestMethod.equals("GET")) {
+      exchange.setMethod("GET");
+    }
+ else     if (requestMethod.equals("POST")) {
+      exchange.setMethod("POST");
+      Buffer requestContent=new ByteArrayBuffer(requestBody);
+      exchange.setRequestContent(requestContent);
+    }
+ else     if (requestMethod.equals("PUT")) {
+      exchange.setMethod("PUT");
+      Buffer requestContent=new ByteArrayBuffer(requestBody);
+      exchange.setRequestContent(requestContent);
+    }
+ else {
+      logger.error("Unsupported request method " + requestMethod);
+      return;
+    }
+    mJettyClient.send(exchange);
+    mRunningRequests.put(requestId,exchange);
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
+catch (  URISyntaxException e) {
+    logger.error(e.getMessage());
+  }
+}

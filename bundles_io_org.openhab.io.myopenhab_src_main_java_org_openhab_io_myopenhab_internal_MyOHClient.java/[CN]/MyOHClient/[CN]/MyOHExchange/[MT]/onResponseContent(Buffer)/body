@@ -1,0 +1,15 @@
+{
+  logger.debug("Jetty received response content of size " + String.valueOf(content.length()));
+  JSONObject responseJson=new JSONObject();
+  try {
+    responseJson.put("id",mRequestId);
+    responseJson.put("body",content.asArray());
+    if (this.getStatus() != STATUS_CANCELLING && this.getStatus() != STATUS_CANCELLED) {
+      mSocket.emit("responseContentBinary",responseJson);
+    }
+    logger.debug("Sent content to request {}",mRequestId);
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+}

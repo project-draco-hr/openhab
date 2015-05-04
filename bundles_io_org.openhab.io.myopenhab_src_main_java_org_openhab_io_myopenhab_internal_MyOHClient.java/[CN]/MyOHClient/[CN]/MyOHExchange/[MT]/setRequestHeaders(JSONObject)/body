@@ -1,0 +1,17 @@
+{
+  Iterator<String> headersIterator=requestHeadersJson.keys();
+  while (headersIterator.hasNext()) {
+    String headerName=headersIterator.next();
+    String headerValue;
+    try {
+      headerValue=requestHeadersJson.getString(headerName);
+      logger.debug("Jetty set header " + headerName + " = "+ headerValue);
+      if (!headerName.equalsIgnoreCase("Content-Length")) {
+        this.setRequestHeader(headerName,headerValue);
+      }
+    }
+ catch (    JSONException e) {
+      logger.error("Error processing request headers: {}",e.getMessage());
+    }
+  }
+}

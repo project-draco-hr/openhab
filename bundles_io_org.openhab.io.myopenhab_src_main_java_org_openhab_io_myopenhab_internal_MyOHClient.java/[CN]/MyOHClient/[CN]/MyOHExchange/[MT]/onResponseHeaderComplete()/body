@@ -1,0 +1,17 @@
+{
+  logger.debug("Jetty finished receiving response header");
+  JSONObject responseJson=new JSONObject();
+  try {
+    responseJson.put("id",mRequestId);
+    responseJson.put("headers",getJSONHeaders());
+    responseJson.put("responseStatusCode",getResponseStatus());
+    responseJson.put("responseStatusText","OK");
+    if (this.getStatus() != STATUS_CANCELLING && this.getStatus() != STATUS_CANCELLED) {
+      mSocket.emit("responseHeader",responseJson);
+    }
+    logger.debug("Sent headers to request {}",mRequestId);
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+}

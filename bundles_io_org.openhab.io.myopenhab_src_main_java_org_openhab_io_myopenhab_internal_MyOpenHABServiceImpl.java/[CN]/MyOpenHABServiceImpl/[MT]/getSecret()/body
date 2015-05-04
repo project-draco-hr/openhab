@@ -1,0 +1,14 @@
+{
+  File file=new File(STATIC_CONTENT_DIR + File.separator + SECRET_FILE_NAME);
+  String newSecretString="";
+  if (!file.exists()) {
+    newSecretString=RandomStringUtils.randomAlphanumeric(20);
+    logger.debug("New password = " + newSecretString);
+    writeFile(file,newSecretString);
+  }
+ else {
+    newSecretString=readFirstLine(file);
+    logger.debug("Secret file already exists at '{}' with content '{}'",file.getAbsolutePath(),newSecretString);
+  }
+  return newSecretString;
+}
