@@ -1,0 +1,18 @@
+{
+  StringBuilder sb=new StringBuilder("<response>");
+  String[] statuses={AUTELIS_TYPES_STATUS,AUTELIS_TYPES_CHEMISTRY,AUTELIS_TYPES_PUMPS};
+  for (  String status : statuses) {
+    String response=HttpUtil.executeUrl("GET",baseURL + "/" + status+ ".xml",TIMEOUT);
+    logger.trace(baseURL + "/" + status+ ".xml \n {}",response);
+    if (response == null) {
+      logger.warn("No response from Autelis controller!");
+      return null;
+    }
+    Matcher m=responsePattern.matcher(response);
+    if (m.find()) {
+      sb.append(m.group(1));
+    }
+  }
+  sb.append("</response>");
+  return sb.toString();
+}

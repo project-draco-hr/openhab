@@ -1,0 +1,27 @@
+{
+  logger.trace("Connecting to {}" + baseURL);
+  clearState();
+  String xmlDoc=fetchStateFromController();
+  if (xmlDoc == null)   return;
+  for (  AutelisBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      Item item=provider.getItem(itemName);
+      String config=provider.getAutelisBindingConfigString(itemName);
+      XPathFactory xpathFactory=XPathFactory.newInstance();
+      XPath xpath=xpathFactory.newXPath();
+      try {
+        InputSource is=new InputSource(new StringReader(xmlDoc));
+        String value=xpath.evaluate("response/" + config.replace('.','/'),is);
+        State state=toState(item.getClass(),value);
+        State oldState=stateMap.put(itemName,state);
+        if (!state.equals(oldState)) {
+          logger.debug("updating item {} with state {}",itemName,state);
+          eventPublisher.postUpdate(itemName,state);
+        }
+      }
+ catch (      XPathExpressionException e) {
+        logger.warn("could not parse xml",e);
+      }
+    }
+  }
+}
