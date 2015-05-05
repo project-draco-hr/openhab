@@ -8,17 +8,16 @@
   }
   if (this.objectNumbers.length == 1) {
     int bitNbr=this.objectNumbers[0] - 1;
-    return booleanToState(item,stateEvent.isSet(bitNbr));
+    boolean invertState=hasOptionEnabled(Options.INVERT_STATE) && (this.stateType.getObjectType() == ObjectType.ZONE || this.stateType.getObjectType() == ObjectType.OUTPUT);
+    return booleanToState(item,stateEvent.isSet(bitNbr) ^ invertState);
   }
  else   if (this.objectNumbers.length == 0) {
-    if (item instanceof ContactItem) {
-      return (stateEvent.statesSet() > 0) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+    int statesSet=stateEvent.statesSet();
+    if (item instanceof NumberItem) {
+      return new DecimalType(statesSet);
     }
- else     if (item instanceof SwitchItem) {
-      return (stateEvent.statesSet() > 0) ? OnOffType.ON : OnOffType.OFF;
-    }
- else     if (item instanceof NumberItem) {
-      return new DecimalType(stateEvent.statesSet());
+ else {
+      return booleanToState(item,statesSet > 0);
     }
   }
  else   if (this.objectNumbers.length == 2 && item instanceof RollershutterItem) {
