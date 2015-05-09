@@ -1,5 +1,6 @@
 {
   if (config != null) {
+    setProperlyConfigured(false);
     deviceName=(String)config.get("device");
     if (isBlank(deviceName)) {
       throw new ConfigurationException("freebox","The parameter 'device' is missing! Please refer to your 'openhab.cfg'");
@@ -11,6 +12,13 @@
     serverAddress=(String)config.get("server");
     if (isBlank(serverAddress))     serverAddress="mafreebox.freebox.fr";
     appToken=(String)config.get("apptoken");
-    setProperlyConfigured(true);
+    try {
+      authorize();
+    }
+ catch (    FreeboxException e) {
+      logger.info(e.getMessage());
+    }
+    setProperlyConfigured((loginManager != null) && loginManager.isConnected());
+    logger.info("Freebox binding " + (isProperlyConfigured() ? "" : "not ") + "properly configured");
   }
 }

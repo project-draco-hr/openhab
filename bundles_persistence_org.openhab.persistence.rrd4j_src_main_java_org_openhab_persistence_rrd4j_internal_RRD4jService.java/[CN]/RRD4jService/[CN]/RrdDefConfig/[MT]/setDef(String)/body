@@ -1,0 +1,38 @@
+{
+  String[] opts=defString.split(",");
+  if (opts.length != 5) {
+    logger.warn("invalid number of parameters {}: {}",name,defString);
+    return;
+  }
+  if (opts[0].equals("ABSOLUTE")) {
+    dsType=DsType.ABSOLUTE;
+  }
+ else   if (opts[0].equals("COUNTER")) {
+    dsType=DsType.COUNTER;
+  }
+ else   if (opts[0].equals("DERIVE")) {
+    dsType=DsType.DERIVE;
+  }
+ else   if (opts[0].equals("GAUGE")) {
+    dsType=DsType.GAUGE;
+  }
+ else {
+    logger.warn("{}: dsType {} not supported",name,opts[0]);
+  }
+  heartbeat=Integer.parseInt(opts[1]);
+  if (opts[2].equals("U")) {
+    min=Double.NaN;
+  }
+ else {
+    min=Double.parseDouble(opts[2]);
+  }
+  if (opts[3].equals("U")) {
+    max=Double.NaN;
+  }
+ else {
+    max=Double.parseDouble(opts[3]);
+  }
+  step=Integer.parseInt(opts[4]);
+  isInitialized=true;
+  return;
+}

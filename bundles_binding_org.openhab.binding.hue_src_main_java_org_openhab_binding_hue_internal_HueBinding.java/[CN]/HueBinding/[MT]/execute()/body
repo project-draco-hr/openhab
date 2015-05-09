@@ -1,23 +1,30 @@
 {
   if (activeBridge != null) {
+    logger.debug("Start Hue data refresh");
     HueSettings settings=activeBridge.getSettings();
     if (settings == null) {
-      logger.debug("Hue settings were null, maybe misconfigured bridge IP.");
+      logger.warn("Hue settings were null, maybe misconfigured bridge IP.");
       return;
     }
-    for (int i=1; i <= settings.getCount(); i++) {
-      HueBulb bulb=bulbCache.get(i);
-      if (bulb == null) {
-        bulb=new HueBulb(activeBridge,i);
-        bulbCache.put(i,bulb);
+    Set<String> keys=settings.getKeys();
+    for (    String key : keys) {
+      try {
+        HueBulb bulb=bulbCache.get(key);
+        if (bulb == null) {
+          bulb=new HueBulb(activeBridge,key,settings);
+          bulbCache.put(key,bulb);
+        }
+        bulb.getStatus(settings);
       }
-      bulb.getStatus(settings);
+ catch (      NumberFormatException e) {
+        logger.warn("lights index {} is not a number",key);
+      }
     }
     for (    HueBindingProvider provider : this.providers) {
       for (      String hueItemName : provider.getInBindingItemNames()) {
         HueBindingConfig deviceConfig=getConfigForItemName(hueItemName);
         if (deviceConfig != null) {
-          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+          HueBulb bulb=bulbCache.get(deviceConfig.getDeviceId());
           if (bulb != null) {
             if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
               if ((deviceConfig.itemStateOnOffType == null) || (deviceConfig.itemStateOnOffType.equals(OnOffType.ON) == false)) {
@@ -56,5 +63,6 @@
         }
       }
     }
+    logger.debug("Done Hue data refresh.");
   }
 }

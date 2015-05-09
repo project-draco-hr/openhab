@@ -1,0 +1,13 @@
+{
+  if (settingsData == null) {
+    logger.error("Hue bridge settings not initialized correctly.");
+    return 0;
+  }
+  Object sat=settingsData.node("lights").node(deviceId).node("state").value("sat");
+  if (sat instanceof Integer) {
+    return (Integer)sat;
+  }
+ else {
+    return 0;
+  }
+}

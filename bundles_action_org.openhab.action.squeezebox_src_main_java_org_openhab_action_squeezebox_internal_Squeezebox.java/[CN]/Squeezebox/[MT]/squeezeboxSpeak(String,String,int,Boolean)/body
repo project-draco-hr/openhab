@@ -1,5 +1,6 @@
 {
-  SqueezePlayer player=getPlayer(playerId);
+  if (!isReady())   return false;
+  SqueezePlayer player=squeezeServer.getPlayer(playerId);
   if (player == null)   return false;
   logger.trace("***START SPEECH**** Player: '{}'",playerId);
   int playerVolume=player.getUnmuteVolume();

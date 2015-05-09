@@ -1,15 +1,25 @@
 {
   Color color=LINECOLORS[counter % LINECOLORS.length];
   String label=itemUIRegistry.getLabel(item.getName());
+  String rrdName=RRD4jService.DB_FOLDER + File.separator + item.getName()+ ".rrd";
+  ConsolFun consolFun;
   if (label != null && label.contains("[") && label.contains("]")) {
     label=label.substring(0,label.indexOf('['));
   }
+  try {
+    RrdDb db=new RrdDb(rrdName);
+    consolFun=db.getRrdDef().getArcDefs()[0].getConsolFun();
+    db.close();
+  }
+ catch (  IOException e) {
+    consolFun=ConsolFun.MAX;
+  }
   if (item instanceof NumberItem) {
-    graphDef.datasource(Integer.toString(counter),RRD4jService.DB_FOLDER + File.separator + item.getName()+ ".rrd","state",RRD4jService.getConsolidationFunction(item));
+    graphDef.datasource(Integer.toString(counter),rrdName,"state",consolFun);
     graphDef.line(Integer.toString(counter),color,label,2);
   }
  else {
-    graphDef.datasource(Integer.toString(counter),RRD4jService.DB_FOLDER + File.separator + item.getName()+ ".rrd","state",RRD4jService.getConsolidationFunction(item));
+    graphDef.datasource(Integer.toString(counter),rrdName,"state",consolFun);
     Color areaColor=AREACOLORS[counter % LINECOLORS.length];
     graphDef.area(Integer.toString(counter),areaColor);
     graphDef.line(Integer.toString(counter),color,label,2);
