@@ -1,0 +1,15 @@
+{
+  for (  octollerBindingProvider provider : providers) {
+    octollerBindingConfig config=(octollerBindingConfig)provider.getConfig(itemName);
+    if (config == null)     continue;
+    try {
+      Connection con=new Connection(config.GatewayHost);
+      String result=con.DoCommand(con.BuildCommandString(config,command.getClass().getSimpleName(),command.toString()));
+      con.ProcessResultToPublisher(eventPublisher,itemName,result);
+      con.Close();
+    }
+ catch (    Exception e) {
+      e.printStackTrace();
+    }
+  }
+}

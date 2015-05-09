@@ -1,0 +1,15 @@
+{
+  int pos;
+  int[] values=new int[2];
+  int[] keyUse;
+  keyUse=Arrays.copyOf(key,key.length);
+  for (pos=offset; pos < offset + dataLen; pos+=8) {
+    values[0]=byteArrayToInt(data,pos);
+    values[1]=byteArrayToInt(data,pos + 4);
+    encipher(32,values,keyUse);
+    System.arraycopy(intToByteArray(values[0]),0,data,pos,4);
+    System.arraycopy(intToByteArray(values[1]),0,data,pos + 4,4);
+    keyUse[1]^=values[0];
+    keyUse[2]^=values[1];
+  }
+}

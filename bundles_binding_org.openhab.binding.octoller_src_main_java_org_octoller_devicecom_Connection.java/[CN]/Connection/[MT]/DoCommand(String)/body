@@ -1,0 +1,13 @@
+{
+  ByteBuffer b=ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+  b.putInt(command.length());
+  outStream.write(b.array(),0,4);
+  outStream.write(command.getBytes());
+  byte[] buffer=new byte[4];
+  inStream.read(buffer,0,4);
+  b=ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN);
+  int len=b.getInt();
+  buffer=new byte[len];
+  inStream.read(buffer,0,len);
+  return new String(buffer,"UTF-8");
+}
