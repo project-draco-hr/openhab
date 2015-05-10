@@ -1,0 +1,26 @@
+{
+  MailConnector connector=null;
+  try {
+    connector=new MailConnector(mailProperties);
+  }
+ catch (  Exception ex) {
+    logger.error("",ex);
+    ex.printStackTrace();
+    throw new ConfigurationException("","",ex);
+  }
+  try {
+    connector.checkSMTPConnection();
+  }
+ catch (  ConnectorException ex) {
+    logger.error("Cannot establish SMTP connection",ex);
+    throw new ConfigurationException("SMTP connection","Cannot establish SMTP connection",ex);
+  }
+  try {
+    connector.checkPOP3Connection();
+  }
+ catch (  ConnectorException ex) {
+    logger.error("Cannot establish POP3 connection",ex);
+    throw new ConfigurationException("POP3 connection","Cannot establish POP3 connection",ex);
+  }
+  return connector;
+}

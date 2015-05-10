@@ -1,0 +1,23 @@
+{
+  logger.debug("Processing messages");
+  for (  Object msg : messages) {
+    if (msg instanceof String) {
+      logger.debug("Message: " + msg);
+      GenericMessage message=requestTransformer.transform((String)msg);
+      logger.debug("Processing message: " + message);
+      if (message.getMessageType() == ITEM_COMMAND_REQUEST_MESSAGE) {
+        ItemCommandData itemCommand=(ItemCommandData)((ItemCommandRequestMessage)message).getItemCommand();
+        itemCommandProcessor.processItemCommand(itemCommand);
+      }
+ else       if (message.getMessageType() == ITEM_STATE_REQUEST_MESSAGE) {
+        ItemStateRequestMessage itemStateRequestMessage=(ItemStateRequestMessage)message;
+        ItemStateData itemState=itemStateRequestProcessor.getItemState(itemStateRequestMessage.getItemId());
+        messagesSender.sendMessage(message,itemState);
+      }
+ else       if (message.getMessageType() == ITEMS_STATE_REQUEST_MESSAGE) {
+        List<ItemStateData> itemStates=itemStateRequestProcessor.getItemStates();
+        messagesSender.sendMessage(message,itemStates);
+      }
+    }
+  }
+}

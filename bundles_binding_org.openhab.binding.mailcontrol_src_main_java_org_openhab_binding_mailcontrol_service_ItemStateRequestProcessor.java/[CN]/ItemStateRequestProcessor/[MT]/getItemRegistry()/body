@@ -1,0 +1,11 @@
+{
+  BundleContext bundleContext=FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+  if (bundleContext != null) {
+    ServiceReference<?> serviceReference=bundleContext.getServiceReference(ItemRegistry.class.getName());
+    if (serviceReference != null) {
+      ItemRegistry itemregistry=(ItemRegistry)bundleContext.getService(serviceReference);
+      return itemregistry;
+    }
+  }
+  throw new ServiceException("Cannot get ItemRegistry");
+}

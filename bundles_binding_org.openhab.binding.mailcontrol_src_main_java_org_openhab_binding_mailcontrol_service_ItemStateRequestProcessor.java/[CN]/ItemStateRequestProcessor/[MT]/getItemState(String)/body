@@ -1,0 +1,13 @@
+{
+  ItemRegistry itemRegistry=getItemRegistry();
+  ItemStateData itemState=null;
+  try {
+    Item item=itemRegistry.getItem(itemId);
+    StateTransformable state=getState(item);
+    itemState=new ItemStateData(System.currentTimeMillis(),itemId,state);
+  }
+ catch (  ItemNotFoundException ex) {
+    logger.info(itemId + " not found",ex);
+  }
+  return itemState;
+}
