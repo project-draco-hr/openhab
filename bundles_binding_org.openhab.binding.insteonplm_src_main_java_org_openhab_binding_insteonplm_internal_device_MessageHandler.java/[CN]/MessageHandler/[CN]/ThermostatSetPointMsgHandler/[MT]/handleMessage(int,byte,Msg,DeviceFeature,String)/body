@@ -1,0 +1,22 @@
+{
+  InsteonDevice dev=f.getDevice();
+  try {
+    if (msg.isExtended()) {
+      logger.info("{}: received msg for feature {}",nm(),f.getName());
+      int level=((f.getName()).equals("ThermostatCoolSetPoint")) ? (int)(msg.getByte("userData7") & 0xff) : (int)(msg.getByte("userData8") & 0xff);
+      logger.info("{}: got SetPoint from {} of value: {}",nm(),dev.getAddress(),level);
+      f.publish(new DecimalType(level),StateChangeType.CHANGED);
+    }
+ else {
+      logger.info("{}: received msg for feature {}",nm(),f.getName());
+      int cmd2=(int)(msg.getByte("command2") & 0xff);
+      int level=cmd2 / 2;
+      logger.info("{}: got SETPOINT from {} of value: {}",nm(),dev.getAddress(),level);
+      f.publish(new DecimalType(level),StateChangeType.CHANGED);
+    }
+  }
+ catch (  FieldException e) {
+    logger.debug("{} no cmd2 found, dropping msg {}",nm(),msg);
+    return;
+  }
+}

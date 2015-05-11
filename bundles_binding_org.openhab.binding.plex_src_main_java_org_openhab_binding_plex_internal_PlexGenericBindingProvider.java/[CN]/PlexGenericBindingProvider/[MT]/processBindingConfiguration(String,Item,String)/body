@@ -1,0 +1,16 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  bindingConfig=bindingConfig.trim();
+  if (CONFIG_PATTERN.matcher(bindingConfig).matches()) {
+    PlexBindingConfig config=new PlexBindingConfig();
+    String fields[]=bindingConfig.split("#");
+    config.setItemName(item.getName());
+    config.setMachineIdentifier(fields[0]);
+    config.setProperty(fields[1]);
+    logger.info("Plex item {} bound to client {} property {}",config.getItemName(),config.getMachineIdentifier(),config.getProperty());
+    addBindingConfig(item,config);
+  }
+ else {
+    logger.error("Item config {} does not match <player-id>#<property> pattern",bindingConfig);
+  }
+}

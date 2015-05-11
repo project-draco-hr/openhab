@@ -1,11 +1,16 @@
 {
   super(deviceName,mode);
-  if (properties.get("baudrate") != null) {
-    baudRate=(Integer)properties.get("baudrate");
-    log.debug("Set baudrate to " + baudRate);
+  if (properties == null)   return;
+  final String configuredBaudRate=(String)properties.get(KEY_BAUDRATE);
+  Integer tmpBaudRate=baudrateFromConfig(configuredBaudRate);
+  if (tmpBaudRate != null) {
+    baudRate=tmpBaudRate;
+    log.info("Update config, {} = {}",KEY_BAUDRATE,baudRate);
   }
-  if (properties.get("parity") != null) {
-    parityMode=(Integer)properties.get("parity");
-    log.debug("Set parity to " + parityMode);
+  final String configuredParity=(String)properties.get(KEY_PARITY);
+  Integer parsedParityNumber=parityFromConfig(configuredParity);
+  if (parsedParityNumber != null) {
+    parityMode=parsedParityNumber;
+    log.info("Update config, {} = {} ({})",KEY_PARITY,convertParityModeToString(parityMode),parityMode);
   }
 }

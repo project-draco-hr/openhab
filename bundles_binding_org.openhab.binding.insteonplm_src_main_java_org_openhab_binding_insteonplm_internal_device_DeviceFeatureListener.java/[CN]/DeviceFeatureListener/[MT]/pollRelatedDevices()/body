@@ -1,0 +1,12 @@
+{
+  for (  InsteonAddress a : m_relatedDevices) {
+    logger.debug("polling related device {} in {} ms",a,TIME_DELAY_POLL_RELATED_MSEC);
+    InsteonDevice d=m_binding.getDevice(a);
+    if (d != null) {
+      d.doPoll(TIME_DELAY_POLL_RELATED_MSEC);
+    }
+ else {
+      logger.warn("device {} related to item {} is not configured!",a,m_itemName);
+    }
+  }
+}

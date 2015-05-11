@@ -1,4 +1,17 @@
 {
+  if (serialMessage == null) {
+    return;
+  }
+  ZWaveNode node=this.getNode(serialMessage.getMessageNode());
+  if (node != null) {
+    node.incrementSendCount();
+    if (!node.isListening() && !node.isFrequentlyListening()) {
+      ZWaveWakeUpCommandClass wakeUpCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
+      if (wakeUpCommandClass != null && !wakeUpCommandClass.processOutgoingWakeupMessage(serialMessage)) {
+        return;
+      }
+    }
+  }
   this.sendQueue.add(serialMessage);
   logger.debug("Enqueueing message. Queue length = {}",this.sendQueue.size());
 }

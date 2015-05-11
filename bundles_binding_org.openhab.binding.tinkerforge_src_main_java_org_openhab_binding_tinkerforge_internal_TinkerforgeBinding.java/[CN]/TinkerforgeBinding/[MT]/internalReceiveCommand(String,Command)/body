@@ -16,15 +16,18 @@
         if (mDevice != null && mDevice.getEnabledA().get()) {
           if (command instanceof OnOffType) {
             logger.trace("{} found onoff command",LoggerConstants.COMMAND);
-            if (mDevice instanceof MInSwitchActor) {
-              OnOffType cmd=(OnOffType)command;
+            OnOffType cmd=(OnOffType)command;
+            if (mDevice instanceof MSwitchActor) {
               OnOffValue state=cmd == OnOffType.OFF ? OnOffValue.OFF : OnOffValue.ON;
               ((MSwitchActor)mDevice).turnSwitch(state);
             }
  else             if (mDevice instanceof DigitalActor) {
-              OnOffType cmd=(OnOffType)command;
               HighLowValue state=cmd == OnOffType.OFF ? HighLowValue.LOW : HighLowValue.HIGH;
               ((DigitalActor)mDevice).turnDigital(state);
+            }
+ else             if (mDevice instanceof ProgrammableSwitchActor) {
+              OnOffValue state=cmd == OnOffType.OFF ? OnOffValue.OFF : OnOffValue.ON;
+              ((ProgrammableSwitchActor)mDevice).turnSwitch(state,provider.getDeviceOptions(itemName));
             }
  else {
               logger.error("{} received OnOff command for non-SwitchActor",LoggerConstants.COMMAND);
@@ -40,15 +43,60 @@
             logger.debug("{} found number command",LoggerConstants.COMMAND);
             if (command instanceof HSBType) {
               logger.debug("{} found HSBType command",LoggerConstants.COMMAND);
-              if (mDevice instanceof ColorActor) {
-                ((ColorActor)mDevice).setColor((HSBType)command,provider.getDeviceOptions(itemName));
+              if (mDevice instanceof ProgrammableColorActor) {
+                logger.debug("{} found ProgrammableColorActor {}",itemName);
+                ((ProgrammableColorActor)mDevice).setSelectedColor((HSBType)command,provider.getDeviceOptions(itemName));
+              }
+ else               if (mDevice instanceof SimpleColorActor) {
+                logger.debug("{} found SimpleColorActor {}",itemName);
+                ((SimpleColorActor)mDevice).setSelectedColor((HSBType)command);
+              }
+            }
+ else             if (command instanceof PercentType) {
+              if (mDevice instanceof SetPointActor) {
+                ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
+              }
+ else {
+                logger.error("found no percenttype actor");
               }
             }
  else {
               if (mDevice instanceof NumberActor) {
                 ((NumberActor)mDevice).setNumber(((DecimalType)command).toBigDecimal());
               }
+ else               if (mDevice instanceof SetPointActor) {
+                ((SetPointActor<?>)mDevice).setValue(((DecimalType)command).toBigDecimal(),provider.getDeviceOptions(itemName));
+              }
+ else {
+                logger.error("found no number actor");
+              }
             }
+          }
+ else           if (command instanceof UpDownType) {
+            UpDownType cmd=(UpDownType)command;
+            logger.debug("{} UpDownType command {}",itemName,cmd);
+            if (mDevice instanceof MoveActor) {
+              ((MoveActor)mDevice).move((UpDownType)command,provider.getDeviceOptions(itemName));
+            }
+          }
+ else           if (command instanceof StopMoveType) {
+            StopMoveType cmd=(StopMoveType)command;
+            if (mDevice instanceof MoveActor) {
+              if (cmd == StopMoveType.STOP) {
+                ((MoveActor)mDevice).stop();
+              }
+ else {
+                ((MoveActor)mDevice).moveon(provider.getDeviceOptions(itemName));
+              }
+            }
+            logger.debug("{} StopMoveType command {}",itemName,cmd);
+          }
+ else           if (command instanceof IncreaseDecreaseType) {
+            IncreaseDecreaseType cmd=(IncreaseDecreaseType)command;
+            if (mDevice instanceof DimmableActor) {
+              ((DimmableActor<?>)mDevice).dimm((IncreaseDecreaseType)command,provider.getDeviceOptions(itemName));
+            }
+            logger.debug("{} IncreaseDecreaseType command {}",itemName,cmd);
           }
  else {
             logger.error("{} got unknown command type: {}",LoggerConstants.COMMAND,command.toString());

@@ -4,7 +4,8 @@
   Map<String,String> jsonPayload=readJsonPayload(decoded);
   if (jsonPayload == null)   return;
   String type=jsonPayload.get("_type");
-  if (StringUtils.isEmpty(type) || !type.equals("location"))   return;
+  if (StringUtils.isEmpty(type))   return;
+  if (!type.equals("location") && !type.equals("transition"))   return;
   for (  MqttitudeItemConfig itemConfig : getItemConfigs()) {
     logger.trace("Checking item {}...",itemConfig.getItemName());
     if (StringUtils.isEmpty(itemConfig.getRegion())) {
@@ -12,8 +13,22 @@
         logger.error("Unable to calculate relative location for {} as there is no lat/lon configured for 'home'",itemConfig.getItemName());
         continue;
       }
-      float latitude=Float.parseFloat(jsonPayload.get("lat"));
-      float longitude=Float.parseFloat(jsonPayload.get("lon"));
+      Object lat=jsonPayload.get("lat");
+      Object lon=jsonPayload.get("lon");
+      float latitude;
+      float longitude;
+      if (lat instanceof Float) {
+        latitude=(Float)lat;
+      }
+ else {
+        latitude=Float.parseFloat(lat.toString());
+      }
+      if (lon instanceof Float) {
+        longitude=(Float)lon;
+      }
+ else {
+        longitude=Float.parseFloat(lon.toString());
+      }
       Location location=new Location(latitude,longitude);
       logger.trace("Location received for {}: {}",itemConfig.getItemName(),location.toString());
       double distance=calculateDistance(location,homeLocation);

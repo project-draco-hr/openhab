@@ -1,0 +1,11 @@
+{
+  RrdDef rrdDef=new RrdDef(file.getAbsolutePath());
+  RrdDefConfig useRdc=getRrdDefConfig(itemName);
+  rrdDef.setStep(useRdc.step);
+  rrdDef.setStartTime(System.currentTimeMillis() / 1000 - 1);
+  rrdDef.addDatasource(DATASOURCE_STATE,useRdc.dsType,useRdc.heartbeat,useRdc.min,useRdc.max);
+  for (  RrdArchiveDef rad : useRdc.archives) {
+    rrdDef.addArchive(rad.fcn,rad.xff,rad.steps,rad.rows);
+  }
+  return rrdDef;
+}

@@ -1,8 +1,11 @@
 {
-synchronized (m_requestQueue) {
-    m_requestQueue.add(new QEntry(f,m));
-  }
   long now=System.currentTimeMillis();
+synchronized (m_requestQueue) {
+    m_requestQueue.add(new QEntry(f,m,now + delay));
+  }
+  if (!m.isBroadcast()) {
+    m.setQuietTime(QUIET_TIME_DIRECT_MESSAGE);
+  }
   logger.trace("enqueing direct message with delay {}",delay);
   RequestQueueManager.s_instance().addQueue(this,now + delay);
 }

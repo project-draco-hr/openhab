@@ -35,54 +35,54 @@
       State value=UnDefType.UNDEF;
       AbstractAudioDeviceConfig audioItem=client.getGenericAudioItem(audioItemName);
       if (audioItem != null) {
-        if (itemType.isAssignableFrom(DimmerItem.class)) {
-          value=new PercentType(audioItem.getVolume());
-        }
- else         if (itemType.isAssignableFrom(NumberItem.class)) {
+        if (itemType.isAssignableFrom(SwitchItem.class)) {
           if (commandType == null) {
-            value=new DecimalType(audioItem.getVolume());
+            if (!audioItem.isMuted() && audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.RUNNING)) {
+              value=OnOffType.ON;
+            }
+ else {
+              value=OnOffType.OFF;
+            }
           }
  else {
 switch (commandType) {
-case VOLUME:
-              value=new DecimalType(audioItem.getVolume());
-            break;
-case ID:
-          value=new DecimalType(audioItem.getId());
-        break;
-case MODULE_ID:
-      if (audioItem.getModule() != null)       value=new DecimalType(audioItem.getModule().getId());
-    break;
-}
-}
-}
- else if (itemType.isAssignableFrom(SwitchItem.class)) {
-if (commandType == null) {
-if (!audioItem.isMuted() && audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.RUNNING)) {
-  value=OnOffType.ON;
-}
- else {
-  value=OnOffType.OFF;
-}
-}
- else {
-switch (commandType) {
 case EXISTS:
-  value=OnOffType.ON;
-break;
+              value=OnOffType.ON;
+            break;
 case MUTED:
-value=audioItem.isMuted() ? OnOffType.ON : OnOffType.OFF;
-break;
+          value=audioItem.isMuted() ? OnOffType.ON : OnOffType.OFF;
+        break;
 case RUNNING:
 case CORKED:
 case SUSPENDED:
 case IDLE:
-try {
-value=audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.valueOf(commandType.name())) ? OnOffType.ON : OnOffType.OFF;
+      try {
+        value=audioItem.getState() != null && audioItem.getState().equals(AbstractAudioDeviceConfig.State.valueOf(commandType.name())) ? OnOffType.ON : OnOffType.OFF;
+      }
+ catch (      IllegalArgumentException e) {
+        logger.warn("no corresponding AbstractAudioDeviceConfig.State found for " + commandType.name());
+      }
+    break;
 }
- catch (IllegalArgumentException e) {
-logger.warn("no corresponding AbstractAudioDeviceConfig.State found for " + commandType.name());
 }
+}
+ else if (itemType.isAssignableFrom(DimmerItem.class)) {
+value=new PercentType(audioItem.getVolume());
+}
+ else if (itemType.isAssignableFrom(NumberItem.class)) {
+if (commandType == null) {
+value=new DecimalType(audioItem.getVolume());
+}
+ else {
+switch (commandType) {
+case VOLUME:
+  value=new DecimalType(audioItem.getVolume());
+break;
+case ID:
+value=new DecimalType(audioItem.getId());
+break;
+case MODULE_ID:
+if (audioItem.getModule() != null) value=new DecimalType(audioItem.getModule().getId());
 break;
 }
 }

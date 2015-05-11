@@ -1,0 +1,14 @@
+{
+  try {
+    HarmonyClient harmonyClient=HarmonyClient.getInstance();
+    logger.debug("Connecting {} to {} with user {}",qualifier,hostConfig.getHost(),hostConfig.getUsername());
+    harmonyClient.connect(hostConfig.getHost(),hostConfig.getUsername(),hostConfig.getPassword());
+    hubs.put(qualifier,new HarmonyHubInstance(harmonyClient));
+    logger.debug("Devices for qualifier {}\n{}",qualifier,harmonyClient.getDeviceLabels().toString());
+    logger.debug("Activity for qualifier {}\n{}",qualifier,harmonyClient.getConfig().getActivities());
+    logger.debug("Config for qualifier {}\n{}",qualifier,harmonyClient.getConfig().toJson());
+  }
+ catch (  Exception e) {
+    logger.error(format("Failed creating harmony hub connection to %s",hostConfig.getHost()),e);
+  }
+}

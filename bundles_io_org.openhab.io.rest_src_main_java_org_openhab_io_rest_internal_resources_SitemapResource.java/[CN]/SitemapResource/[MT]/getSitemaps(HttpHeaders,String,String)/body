@@ -1,8 +1,9 @@
 {
-  logger.debug("Received HTTP GET request at '{}' for media type '{}'.",new String[]{uriInfo.getPath(),type});
-  String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
+  if (logger.isDebugEnabled())   logger.debug("Received HTTP GET request at '{}' for media type '{}'.",uriInfo.getPath(),type);
+  final String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
   if (responseType != null) {
-    Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(new SitemapListBean(getSitemapBeans(uriInfo.getAbsolutePathBuilder().build())),callback) : new SitemapListBean(getSitemapBeans(uriInfo.getAbsolutePathBuilder().build()));
+    final SitemapListBean content=new SitemapListBean(getSitemapBeans(uriInfo.getAbsolutePathBuilder().build()));
+    final Object responseObject=ResponseHelper.wrapContentIfNeccessary(callback,responseType,content);
     return Response.ok(responseObject,responseType).build();
   }
  else {

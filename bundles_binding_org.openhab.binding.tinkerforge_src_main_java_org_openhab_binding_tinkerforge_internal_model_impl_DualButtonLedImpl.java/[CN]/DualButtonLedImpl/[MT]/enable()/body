@@ -1,0 +1,54 @@
+{
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  boolean autotoggle=false;
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("autotoggle"))) {
+      autotoggle=tfConfig.isAutotoggle();
+    }
+  }
+  logger.trace("autotoggle for {} is {}",position,autotoggle);
+  try {
+    short ledstate;
+    short led;
+    LEDState ledState=tinkerforgeDevice.getLEDState();
+    if (position == DualButtonDevicePosition.LEFT) {
+      ledstate=ledState.ledL;
+      led=BrickletDualButton.LED_LEFT;
+    }
+ else {
+      ledstate=ledState.ledR;
+      led=BrickletDualButton.LED_RIGHT;
+    }
+    if (!autotoggle) {
+      logger.trace("autotoggle is off for led {}",led);
+      if (ledstate == BrickletDualButton.LED_STATE_AUTO_TOGGLE_OFF) {
+        tinkerforgeDevice.setSelectedLEDState(led,BrickletDualButton.LED_STATE_OFF);
+        logger.trace("setting led {} to off",led);
+      }
+ else       if (ledstate == BrickletDualButton.LED_STATE_AUTO_TOGGLE_ON) {
+        tinkerforgeDevice.setSelectedLEDState(led,BrickletDualButton.LED_STATE_ON);
+        logger.trace("setting led {} to on",led);
+      }
+    }
+ else {
+      logger.trace("autotoggle is on for led {}",led);
+      if (ledstate == BrickletDualButton.LED_STATE_OFF) {
+        tinkerforgeDevice.setSelectedLEDState(led,BrickletDualButton.LED_STATE_AUTO_TOGGLE_OFF);
+        logger.trace("setting led {} to off",led);
+      }
+ else       if (ledstate == BrickletDualButton.LED_STATE_ON) {
+        tinkerforgeDevice.setSelectedLEDState(led,BrickletDualButton.LED_STATE_AUTO_TOGGLE_ON);
+        logger.trace("setting led {} to on",led);
+      }
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+  listener=new StateListener();
+  tinkerforgeDevice.addStateChangedListener(listener);
+  fetchDigitalValue();
+}

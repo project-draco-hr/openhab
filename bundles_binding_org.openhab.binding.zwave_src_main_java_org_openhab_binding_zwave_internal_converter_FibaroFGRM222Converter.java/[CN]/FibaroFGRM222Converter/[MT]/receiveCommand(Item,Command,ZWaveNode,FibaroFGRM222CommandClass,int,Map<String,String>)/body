@@ -1,0 +1,33 @@
+{
+  logger.debug("NODE {}: receiveCommand()",node.getNodeId());
+  Command internalCommand=command;
+  SerialMessage serialMessage=null;
+  if (internalCommand instanceof StopMoveType && (StopMoveType)internalCommand == StopMoveType.STOP) {
+    serialMessage=commandClass.stopLevelChangeMessage(arguments.get("type"));
+  }
+ else {
+    ZWaveCommandConverter<?,?> converter=this.getCommandConverter(command.getClass());
+    if (converter == null) {
+      logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring command.",node.getNodeId(),item.getName(),endpointId);
+      return;
+    }
+    if (converter instanceof MultiLevelPercentCommandConverter) {
+      internalCommand=new PercentType(100 - ((DecimalType)command).intValue());
+    }
+    Integer value=(Integer)converter.convertFromCommandToValue(item,internalCommand);
+    if (value == 0) {
+      value=1;
+    }
+    logger.trace("NODE {}: Converted command '{}' to value {} for item = {}, endpoint = {}.",node.getNodeId(),internalCommand.toString(),value,item.getName(),endpointId);
+    serialMessage=commandClass.setValueMessage(value,arguments.get("type"));
+  }
+  serialMessage=node.encapsulate(serialMessage,commandClass,endpointId);
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Generating message failed for command class = {}, node = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
+    return;
+  }
+  this.getController().sendData(serialMessage);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+}

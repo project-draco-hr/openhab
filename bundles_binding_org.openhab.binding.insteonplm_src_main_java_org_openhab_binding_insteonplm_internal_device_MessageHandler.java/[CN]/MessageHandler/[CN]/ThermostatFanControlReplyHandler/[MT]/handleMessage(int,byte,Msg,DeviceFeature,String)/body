@@ -1,0 +1,26 @@
+{
+  InsteonDevice dev=f.getDevice();
+  try {
+    byte cmd2=msg.getByte("command2");
+switch (cmd2) {
+case 0x07:
+      logger.info("{}: set device {} to {}",nm(),dev.getAddress(),"ON");
+    f.publish(new DecimalType(2),StateChangeType.CHANGED);
+  break;
+case 0x08:
+logger.info("{}: set device {} to {}",nm(),dev.getAddress(),"AUTO");
+f.publish(new DecimalType(3),StateChangeType.CHANGED);
+break;
+case 0x09:
+logger.info("{}: set device {} to {}",nm(),dev.getAddress(),"OFF");
+f.publish(new DecimalType(1),StateChangeType.CHANGED);
+break;
+default :
+break;
+}
+}
+ catch (FieldException e) {
+logger.debug("{} no cmd2 found, dropping msg {}",nm(),msg);
+return;
+}
+}

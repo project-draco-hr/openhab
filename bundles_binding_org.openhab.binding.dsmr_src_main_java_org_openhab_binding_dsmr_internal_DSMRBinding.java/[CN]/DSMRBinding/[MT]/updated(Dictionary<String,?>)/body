@@ -9,14 +9,6 @@
  else {
       logger.warn("dsmr:port setting is empty");
     }
-    String versionString=(String)config.get("version");
-    logger.debug("dsmr:version=" + versionString);
-    if (StringUtils.isNotBlank(versionString)) {
-      version=DSMRVersion.getDSMRVersion(versionString);
-    }
- else {
-      logger.warn("dsmr:version setting is empty");
-    }
     dsmrMeters.clear();
     for (    DSMRMeterType meterType : DSMRMeterType.values()) {
       String channelConfigValue=(String)config.get(meterType.channelConfigKey);
@@ -40,7 +32,7 @@ default :
   }
 }
 }
-if (version != DSMRVersion.NONE && port.length() > 0) {
+if (port.length() > 0) {
 logger.debug("Configuration succeeded");
 setProperlyConfigured(true);
 }

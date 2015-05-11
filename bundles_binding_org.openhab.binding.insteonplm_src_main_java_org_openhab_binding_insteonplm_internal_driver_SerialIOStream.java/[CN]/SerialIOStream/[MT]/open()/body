@@ -1,6 +1,8 @@
 {
   try {
-    System.setProperty("gnu.io.rxtx.SerialPorts",m_devName);
+    String ports=System.getProperty("gnu.io.rxtx.SerialPorts");
+    String sp=((ports == null) ? "" : (ports + ":")) + m_devName;
+    System.setProperty("gnu.io.rxtx.SerialPorts",sp);
     CommPortIdentifier ci=CommPortIdentifier.getPortIdentifier(m_devName);
     CommPort cp=ci.open(m_appName,1000);
     if (cp instanceof SerialPort) {

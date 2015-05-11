@@ -1,0 +1,34 @@
+{
+  if (propertyValue == null) {
+    return UnDefType.NULL;
+  }
+  Class<?> dataType=propertyValue.getClass();
+  if (Date.class.isAssignableFrom(dataType)) {
+    Calendar calendar=Calendar.getInstance();
+    calendar.setTime((Date)propertyValue);
+    return new DateTimeType(calendar);
+  }
+ else   if (Integer.class.isAssignableFrom(dataType)) {
+    return new DecimalType((Integer)propertyValue);
+  }
+ else   if (BigDecimal.class.isAssignableFrom(dataType)) {
+    return new DecimalType((BigDecimal)propertyValue);
+  }
+ else   if (Boolean.class.isAssignableFrom(dataType)) {
+    if ((Boolean)propertyValue) {
+      return OnOffType.ON;
+    }
+ else {
+      return OnOffType.OFF;
+    }
+  }
+ else   if (Temperature.class.isAssignableFrom(dataType)) {
+    return new DecimalType(((Temperature)propertyValue).toLocalTemperature());
+  }
+ else   if (State.class.isAssignableFrom(dataType)) {
+    return (State)propertyValue;
+  }
+ else {
+    return new StringType(propertyValue.toString());
+  }
+}

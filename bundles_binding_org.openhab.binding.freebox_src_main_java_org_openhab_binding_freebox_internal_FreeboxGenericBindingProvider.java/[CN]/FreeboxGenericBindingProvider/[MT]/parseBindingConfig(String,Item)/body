@@ -1,5 +1,9 @@
 {
-  String command=StringUtils.trim(bindingConfig);
-  CommandType commandType=CommandType.fromString(command);
-  return new FreeboxBindingConfig(commandType,item);
+  String commandElts[]=StringUtils.split(StringUtils.trim(bindingConfig),'/');
+  CommandType commandType=CommandType.fromString(commandElts[0]);
+  String commandParam=null;
+  if (commandElts.length == 2) {
+    commandParam=commandElts[1];
+  }
+  return new FreeboxBindingConfig(commandType,commandParam,item);
 }

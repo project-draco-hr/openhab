@@ -1,33 +1,25 @@
 {
-  List<NameValuePair> nameValuePairs=new ArrayList<NameValuePair>();
-  nameValuePairs.add(new BasicNameValuePair("wON",host.getPower() ? "On" : "Off"));
-  nameValuePairs.add(new BasicNameValuePair("wMODE",host.getMode().getCommand()));
-  nameValuePairs.add(new BasicNameValuePair("wTEMP",host.getTemp().setScale(0).toPlainString() + "C"));
-  nameValuePairs.add(new BasicNameValuePair("wFUN",host.getFan().getCommand()));
-  nameValuePairs.add(new BasicNameValuePair("wSWNG",host.getSwing().getCommand()));
-  nameValuePairs.add(new BasicNameValuePair("wSETd1","Set"));
-  String url=String.format("http://%s",host.getHost());
-  CloseableHttpClient httpClient=HttpClients.custom().build();
+  PostMethod httpPost=null;
   try {
-    HttpPost httpPost=new HttpPost(url);
-    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-    CloseableHttpResponse httpResponse=httpClient.execute(httpPost);
-    try {
-      if (httpResponse.getStatusLine().getStatusCode() != 200) {
-        logger.warn("Invalid response received from Daikin controller '{}': {}:{}",host.getHost(),httpResponse.getStatusLine().getStatusCode(),httpResponse.getStatusLine().getReasonPhrase());
-        return;
-      }
-    }
-  finally {
-      httpResponse.close();
+    String url=String.format("http://%s",host.getHost());
+    httpPost=new PostMethod(url);
+    httpPost.addParameter("wON",host.getPower() ? "On" : "Off");
+    httpPost.addParameter("wMODE",host.getMode().getCommand());
+    httpPost.addParameter("wTEMP",host.getTemp().setScale(0).toPlainString() + "C");
+    httpPost.addParameter("wFUN",host.getFan().getCommand());
+    httpPost.addParameter("wSWNG",host.getSwing().getCommand());
+    httpPost.addParameter("wSETd1","Set");
+    httpClient.executeMethod(httpPost);
+    if (httpPost.getStatusCode() != HttpStatus.SC_OK) {
+      logger.warn("Invalid response received from Daikin controller '{}': {}",host.getHost(),httpPost.getStatusCode());
+      return;
     }
   }
- catch (  ClientProtocolException e) {
-    logger.error("Client protocol error attempting to send command",e);
+ catch (  Exception e) {
+    logger.error("Error attempting to send command",e);
     return;
   }
-catch (  IOException e) {
-    logger.error("IO error attempting to send command",e);
-    return;
+ finally {
+    if (httpPost != null)     httpPost.releaseConnection();
   }
 }

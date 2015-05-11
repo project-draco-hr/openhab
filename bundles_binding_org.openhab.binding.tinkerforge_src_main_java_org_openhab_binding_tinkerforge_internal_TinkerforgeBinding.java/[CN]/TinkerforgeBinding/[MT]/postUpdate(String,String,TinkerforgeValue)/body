@@ -1,4 +1,5 @@
 {
+  logger.trace("postUpdate for uid {} subid {}",uid,subId);
   Map<String,TinkerforgeBindingProvider> providerMap=getBindingProviders(uid,subId);
   if (providerMap.size() == 0) {
     logger.debug("{} found no item for uid {}, subid {}",LoggerConstants.TFMODELUPDATE,uid,subId);
@@ -11,12 +12,17 @@
     if (sensorValue instanceof DecimalValue) {
       if (itemType.isAssignableFrom(NumberItem.class) || itemType.isAssignableFrom(StringItem.class)) {
         value=DecimalType.valueOf(String.valueOf(sensorValue));
+        logger.trace("found item to update for DecimalValue {}",itemName);
       }
  else       if (itemType.isAssignableFrom(ContactItem.class)) {
         value=sensorValue.equals(DecimalValue.ZERO) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
       }
  else       if (itemType.isAssignableFrom(SwitchItem.class)) {
         value=sensorValue.equals(DecimalValue.ZERO) ? OnOffType.OFF : OnOffType.ON;
+      }
+ else {
+        logger.trace("no update for DecimalValue for item {}",itemName);
+        continue;
       }
     }
  else     if (sensorValue instanceof HighLowValue) {
@@ -30,7 +36,7 @@
         value=sensorValue == HighLowValue.HIGH ? OnOffType.ON : OnOffType.OFF;
       }
  else {
-        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+        continue;
       }
     }
  else     if (sensorValue instanceof OnOffValue) {
@@ -44,7 +50,30 @@
         value=sensorValue == OnOffValue.ON ? OnOffType.ON : OnOffType.OFF;
       }
  else {
-        logger.error("{} unsupported item type {} for item {}",LoggerConstants.TFMODELUPDATE,provider.getItem(itemName),itemName);
+        continue;
+      }
+    }
+ else     if (sensorValue instanceof PercentValue) {
+      if (itemType.isAssignableFrom(RollershutterItem.class) || itemType.isAssignableFrom(DimmerItem.class)) {
+        value=new PercentType(((PercentValue)sensorValue).toBigDecimal());
+      }
+ else {
+        continue;
+      }
+    }
+ else     if (sensorValue instanceof DirectionValue) {
+      if (itemType.isAssignableFrom(RollershutterItem.class)) {
+        value=sensorValue == DirectionValue.RIGHT ? UpDownType.UP : UpDownType.DOWN;
+        logger.trace("found item to update for UpDownValue {}",itemName);
+      }
+ else {
+        continue;
+      }
+    }
+ else     if (sensorValue instanceof HSBValue) {
+      if (itemType.isAssignableFrom(ColorItem.class)) {
+        logger.trace("found item to update for HSBValue {}",itemName);
+        value=((HSBValue)sensorValue).getHsbValue();
       }
     }
  else     if (sensorValue == UnDefValue.UNDEF || sensorValue == null) {

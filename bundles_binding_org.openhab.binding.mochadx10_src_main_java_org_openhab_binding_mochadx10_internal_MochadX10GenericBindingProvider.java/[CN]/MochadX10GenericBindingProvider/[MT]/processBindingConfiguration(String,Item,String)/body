@@ -1,0 +1,21 @@
+{
+  String bindingConfigLc=bindingConfig.toLowerCase();
+  super.processBindingConfiguration(context,item,bindingConfigLc);
+  if (bindingConfigLc != null) {
+    String address=getAddress(bindingConfigLc);
+    String transmitMethod=getTransmitMethod(bindingConfigLc);
+    String dimMethod=getDimMethod(bindingConfigLc);
+    if (address != null) {
+      if (transmitMethod == null)       transmitMethod="pl";
+      if (dimMethod == null)       dimMethod="xdim";
+      BindingConfig mochadX10BindingConfig=(BindingConfig)new MochadX10BindingConfig(item.getName(),item.getClass(),transmitMethod,dimMethod,address);
+      addBindingConfig(item,mochadX10BindingConfig);
+    }
+ else {
+      throw new BindingConfigParseException("No address specified, bindingConfig is invalid (item=" + item + ") -> processing bindingConfig aborted!");
+    }
+  }
+ else {
+    throw new BindingConfigParseException("No binding config specified (item=" + item + ") -> processing bindingConfig aborted!");
+  }
+}

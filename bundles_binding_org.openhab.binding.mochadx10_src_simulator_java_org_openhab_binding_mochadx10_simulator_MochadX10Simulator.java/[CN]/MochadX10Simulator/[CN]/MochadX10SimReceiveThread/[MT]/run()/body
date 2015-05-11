@@ -1,0 +1,15 @@
+{
+  System.out.println("Receive Thread is started");
+  try {
+    while (!interrupted() && !stopThread) {
+      String incoming=in.readLine();
+      if (incoming != null) {
+        System.out.println("In: " + incoming);
+      }
+    }
+  }
+ catch (  IOException e) {
+    System.out.println("Exception in receive thread");
+  }
+  System.out.println("Receive Thread is stopped");
+}

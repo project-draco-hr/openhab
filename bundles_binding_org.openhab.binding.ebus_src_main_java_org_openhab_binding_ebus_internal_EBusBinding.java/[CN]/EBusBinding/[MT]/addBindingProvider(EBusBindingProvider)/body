@@ -1,0 +1,11 @@
+{
+  super.addBindingProvider(provider);
+  if (commandProcessor == null) {
+    commandProcessor=new EBusCommandProcessor();
+    commandProcessor.setConfigurationProvider(configurationProvider);
+  }
+  if (provider.providesBinding()) {
+    commandProcessor.allBindingsChanged(provider);
+  }
+  provider.addBindingChangeListener(commandProcessor);
+}

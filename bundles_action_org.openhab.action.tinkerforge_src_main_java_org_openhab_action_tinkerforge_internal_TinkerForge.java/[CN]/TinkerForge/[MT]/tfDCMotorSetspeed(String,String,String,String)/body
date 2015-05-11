@@ -1,0 +1,17 @@
+{
+  if (context.getEcosystem() != null) {
+    MBaseDevice mDevice=context.getEcosystem().getDevice(uid,null);
+    if (mDevice instanceof MBrickDC) {
+      logger.trace("servo setPoint action");
+      return ((MBrickDC)mDevice).setSpeed(Short.parseShort(speed),Integer.parseInt(acceleration),drivemode);
+    }
+ else {
+      logger.trace("no Brick DC device found with uid {}, num {}",uid);
+      return false;
+    }
+  }
+ else {
+    logger.error("Action failed ecosystem is null");
+  }
+  return false;
+}

@@ -11,17 +11,20 @@
     logger.debug("no command found, dropping msg {}",msg);
     return false;
   }
+  if (msg.isAllLinkCleanupAckOrNack()) {
+    return false;
+  }
   if (handleAllLinkMessage(msg,port)) {
     return false;
   }
   if (msg.isAckOfDirect()) {
-    if (m_feature.getQueryStatus() == DeviceFeature.QueryStatus.QUERY_PENDING && cmd == 0x50) {
-      logger.trace("changing key to 0x19 for msg {}",msg);
-      key=0x19;
+    logger.debug("defdisp: {}:{} qs:{} cmd: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus(),cmd);
+    if (isMyDirectAck(msg)) {
       isConsumed=true;
-    }
- else {
-      key=-1;
+      if (cmd == 0x50) {
+        logger.debug("changing key to 0x19 for msg {}",msg);
+        key=0x19;
+      }
     }
   }
  else {
@@ -30,11 +33,12 @@
   if (key != -1 || m_feature.isStatusFeature()) {
     MessageHandler h=m_feature.getMsgHandlers().get(key);
     if (h == null)     h=m_feature.getDefaultMsgHandler();
-    logger.trace("{}:{}->{} DIRECT: {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
+    logger.debug("{}:{}->{} DIRECT: {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
     h.handleMessage(-1,cmd1,msg,m_feature,port);
   }
   if (isConsumed) {
     m_feature.setQueryStatus(DeviceFeature.QueryStatus.QUERY_ANSWERED);
+    logger.debug("defdisp: {}:{} set status to: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus());
   }
   return isConsumed;
 }

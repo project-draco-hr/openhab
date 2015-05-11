@@ -1,6 +1,9 @@
 {
   String logId=subId == null ? uid : uid + " " + subId;
   OHTFDevice<?,?> deviceConfig=ohConfig.getConfigByTFId(uid,subId);
+  if (deviceConfig == null) {
+    logger.debug("{} found no device configuration for uid \"{}\" subid \"{}\"",LoggerConstants.TFINITSUB,uid,subId);
+  }
   if (device.getEnabledA().compareAndSet(false,true)) {
     if (subId != null) {
       MDevice<?> masterDevice=(MDevice<?>)device.eContainer();
@@ -18,9 +21,9 @@
  else {
         TFConfig deviceTfConfig=EcoreUtil.copy(deviceConfig.getTfConfig());
         logger.debug("{} setting tfConfig for {}",LoggerConstants.TFINIT,logId);
+        logger.debug("{} adding/enabling device {} with config: {}",LoggerConstants.TFINIT,logId,deviceTfConfig);
         ((MTFConfigConsumer<EObject>)device).setTfConfig(deviceTfConfig);
         device.enable();
-        logger.debug("{} adding/enabling device {} with config: {}",LoggerConstants.TFINIT,logId,deviceTfConfig);
       }
     }
  else     if (device instanceof IODevice) {

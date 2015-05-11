@@ -7,7 +7,7 @@ synchronized (m_ByteOut) {
       int len=m_ByteOut.size();
       m_OutputStream.write(FRAME_START);
       m_OutputStream.write(buf,0,len);
-      if (Modbus.debug)       System.out.println("Writing: " + ModbusUtil.toHex(buf,0,len));
+      logger.debug("Writing: {}",ModbusUtil.toHex(buf,0,len));
       m_OutputStream.write(ModbusUtil.calculateLRC(buf,0,len));
       m_OutputStream.write(FRAME_END);
       m_OutputStream.flush();

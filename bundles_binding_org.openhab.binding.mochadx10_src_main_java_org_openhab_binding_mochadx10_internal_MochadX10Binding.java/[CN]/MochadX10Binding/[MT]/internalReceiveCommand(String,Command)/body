@@ -1,0 +1,89 @@
+{
+  MochadX10BindingConfig deviceConfig=getConfigForItemName(itemName);
+  if (deviceConfig == null) {
+    return;
+  }
+  String address=deviceConfig.getAddress();
+  String tm=deviceConfig.getTransmitMethod();
+  String commandStr="none";
+  Command previousCommand=lastIssuedCommand.get(address);
+  int level=-1;
+  if (command instanceof OnOffType) {
+    commandStr=OnOffType.ON.equals(command) ? "on" : "off";
+    level=OnOffType.ON.equals(command) ? 100 : 0;
+  }
+ else   if (command instanceof UpDownType) {
+    commandStr=UpDownType.UP.equals(command) ? "bright" : "dim";
+    level=UpDownType.UP.equals(command) ? 100 : 0;
+  }
+ else   if (command instanceof StopMoveType) {
+    if (StopMoveType.STOP.equals(command)) {
+      commandStr=UpDownType.UP.equals(previousCommand) ? "dim" : "bright";
+    }
+ else {
+      commandStr="none";
+    }
+  }
+ else   if (command instanceof PercentType) {
+    if (deviceConfig.getItemType() == DimmerItem.class) {
+      level=((PercentType)command).intValue();
+      if (((PercentType)command).intValue() == 0) {
+        commandStr="off";
+      }
+ else {
+        long dim_value=0;
+        if (deviceConfig.getDimMethod().equals("xdim")) {
+          dim_value=Math.round(((PercentType)command).doubleValue() * (MochadX10Command.XDIM_LEVELS - 1) / 100);
+          commandStr="xdim " + dim_value;
+        }
+ else {
+          Integer currentValue=currentLevel.get(address);
+          if (currentValue == null) {
+            currentValue=0;
+          }
+          logger.debug("Address " + address + " current level "+ currentValue);
+          int newValue=((PercentType)command).intValue();
+          int relativeValue;
+          if (newValue > currentValue) {
+            relativeValue=(int)Math.round((newValue - currentValue) * ((MochadX10Command.DIM_LEVELS - 1) * 1.0 / 100));
+            commandStr="bright " + relativeValue;
+          }
+ else           if (currentValue > newValue) {
+            relativeValue=(int)Math.round((currentValue - newValue) * ((MochadX10Command.DIM_LEVELS - 1) * 1.0 / 100));
+            commandStr="dim " + relativeValue;
+          }
+ else {
+            commandStr="none";
+          }
+        }
+      }
+    }
+ else     if (deviceConfig.getItemType() == RollershutterItem.class) {
+      level=((PercentType)command).intValue();
+      Double invert_level=100 - ((PercentType)command).doubleValue();
+      long newlevel=Math.round(invert_level * 25.0 / 100);
+      commandStr="extended_code_1 0 1 " + newlevel;
+    }
+  }
+ else   if (command instanceof IncreaseDecreaseType) {
+    commandStr="none";
+  }
+  try {
+    if (!commandStr.equals("none")) {
+      out.writeBytes(tm + " " + address+ " "+ commandStr+ "\n");
+      logger.debug(tm + " " + address+ " "+ commandStr);
+      out.flush();
+      previousX10Address.setAddress(address);
+      logger.debug("Previous X10 address set to " + previousX10Address.toString());
+      if (level != -1) {
+        currentLevel.put(address,level);
+        logger.debug("Address " + address + " level set to "+ level);
+      }
+    }
+  }
+ catch (  IOException e) {
+    reconnectToMochadX10Server();
+    logger.error("IOException: " + e.getMessage() + " while trying to send a command to Mochad X10 host: "+ hostIp+ ":"+ hostPort);
+  }
+  lastIssuedCommand.put(address,command);
+}

@@ -1,16 +1,19 @@
 {
-  logger.debug(String.format("Creating new instance of command class 0x%02X",i));
   try {
-    CommandClass commandClass=CommandClass.getCommandClass(i);
+    CommandClass commandClass=CommandClass.getCommandClass(classId);
+    if (commandClass != null && commandClass.equals(CommandClass.MANUFACTURER_PROPRIETARY)) {
+      commandClass=CommandClass.getCommandClass(node.getManufacturer(),node.getDeviceType());
+    }
     if (commandClass == null) {
-      logger.warn(String.format("Unsupported command class 0x%02x",i));
+      logger.warn(String.format("NODE %d: Unknown command class 0x%02x",node.getNodeId(),classId));
       return null;
     }
     Class<? extends ZWaveCommandClass> commandClassClass=commandClass.getCommandClassClass();
     if (commandClassClass == null) {
-      logger.warn(String.format("Unsupported command class %s (0x%02x)",commandClass.getLabel(),i,endpoint));
+      logger.warn("NODE {}: Unsupported command class {}",node.getNodeId(),commandClass.getLabel(),classId);
       return null;
     }
+    logger.debug("NODE {}: Creating new instance of command class {}",node.getNodeId(),commandClass.getLabel());
     Constructor<? extends ZWaveCommandClass> constructor=commandClassClass.getConstructor(ZWaveNode.class,ZWaveController.class,ZWaveEndpoint.class);
     return constructor.newInstance(new Object[]{node,controller,endpoint});
   }
@@ -26,6 +29,6 @@ catch (  NoSuchMethodException e) {
   }
 catch (  SecurityException e) {
   }
-  logger.error(String.format("Error instantiating command class 0x%02x",i));
+  logger.error(String.format("NODE %d: Error instantiating command class 0x%02x",node.getNodeId(),classId));
   return null;
 }

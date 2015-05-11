@@ -5,8 +5,13 @@
     logger.error("Error malformed domain in doAction '{}'",domain);
     return;
   }
-  if (splitDomain[0].equals("binding") && splitDomain[1].equals("network") && action.equals("SoftReset")) {
-    zController.requestSoftReset();
+  if (splitDomain[0].equals("binding") && splitDomain[1].equals("network")) {
+    if (action.equals("SoftReset")) {
+      zController.requestSoftReset();
+    }
+ else     if (action.equals("HardReset")) {
+      zController.requestHardReset();
+    }
   }
   if (zController.isConnected() == false) {
     logger.debug("Controller not ready - Ignoring request to '{}'",domain);
@@ -15,7 +20,9 @@
   if (splitDomain[0].equals("binding")) {
     if (splitDomain[1].equals("network")) {
       if (action.equals("Heal")) {
-        if (networkMonitor != null)         networkMonitor.rescheduleHeal();
+        if (networkMonitor != null) {
+          networkMonitor.rescheduleHeal();
+        }
       }
       if (action.equals("Include") || action.equals("Exclude")) {
         if (inclusion == false && exclusion == false) {
@@ -46,7 +53,9 @@
     if (splitDomain.length == 2) {
       if (action.equals("Heal")) {
         logger.debug("NODE {}: Heal node",nodeId);
-        if (networkMonitor != null)         networkMonitor.healNode(nodeId);
+        if (networkMonitor != null) {
+          networkMonitor.startNodeHeal(nodeId);
+        }
       }
       if (action.equals("Save")) {
         logger.debug("NODE {}: Saving node",nodeId);
@@ -61,7 +70,6 @@
         logger.debug("NODE {}: Get node version",nodeId);
         ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
         if (versionCommandClass == null) {
-          logger.error("NODE {}: Error getting versionCommandClass in doAction",nodeId);
           return;
         }
         this.zController.sendData(versionCommandClass.getVersionMessage());
@@ -71,28 +79,27 @@
     if (splitDomain[2].equals("parameters")) {
       ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
       if (configurationCommandClass == null) {
-        logger.error("NODE {}: Error getting configurationCommandClass in doAction",nodeId);
         return;
       }
       if (action.equals("Refresh")) {
         logger.debug("NODE {}: Refresh parameters",nodeId);
         ZWaveProductDatabase database=new ZWaveProductDatabase();
-        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
-          logger.error("NODE {}: Error getting parameters - no database found",nodeId);
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
           return;
         }
         List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
-        for (        ZWaveDbConfigurationParameter parameter : configList)         this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+        for (        ZWaveDbConfigurationParameter parameter : configList) {
+          this.zController.sendData(configurationCommandClass.getConfigMessage(parameter.Index));
+        }
       }
     }
     if (splitDomain[2].equals("wakeup")) {
       if (action.equals("Refresh")) {
-        logger.debug("NODE {}: Refresh wakeup capabilities",nodeId);
         ZWaveWakeUpCommandClass wakeupCommandClass=(ZWaveWakeUpCommandClass)node.getCommandClass(CommandClass.WAKE_UP);
         if (wakeupCommandClass == null) {
-          logger.error("NODE {}: Error getting wakeupCommandClass in doAction",nodeId);
           return;
         }
+        logger.debug("NODE {}: Refresh wakeup capabilities",nodeId);
         this.zController.sendData(wakeupCommandClass.getIntervalMessage());
         this.zController.sendData(wakeupCommandClass.getIntervalCapabilitiesMessage());
       }
@@ -104,15 +111,14 @@
     }
     if (splitDomain[2].equals("associations")) {
       if (action.equals("Refresh")) {
-        logger.debug("NODE {}: Refresh associations",nodeId);
-        ZWaveProductDatabase database=new ZWaveProductDatabase();
-        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId()) == false) {
-          logger.error("NODE {}: Error in doAction - no database found",nodeId);
-          return;
-        }
         ZWaveAssociationCommandClass associationCommandClass=(ZWaveAssociationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION);
         if (associationCommandClass == null) {
-          logger.error("NODE {}: Error getting associationCommandClass in doAction",nodeId);
+          return;
+        }
+        logger.debug("NODE {}: Refresh associations",nodeId);
+        ZWaveProductDatabase database=new ZWaveProductDatabase();
+        if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
+          logger.error("NODE {}: Error in doAction - no database found",nodeId);
           return;
         }
         if (splitDomain.length == 3) {

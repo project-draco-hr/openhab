@@ -3,10 +3,10 @@
   broadcaster.getBroadcasterConfig().getBroadcasterCache().configure(broadcaster.getBroadcasterConfig());
   broadcaster.getBroadcasterConfig().getBroadcasterCache().start();
   broadcaster.getBroadcasterConfig().addFilter(new PerRequestBroadcastFilter(){
-    @Override public BroadcastAction filter(    Object originalMessage,    Object message){
-      return new BroadcastAction(ACTION.CONTINUE,message);
+    @Override public BroadcastAction filter(    String broadcasterId,    Object originalMessage,    Object message){
+      return new BroadcastAction(message);
     }
-    @Override public BroadcastAction filter(    AtmosphereResource resource,    Object originalMessage,    Object message){
+    @Override public BroadcastAction filter(    String broadcasterId,    AtmosphereResource resource,    Object originalMessage,    Object message){
       HttpServletRequest request=resource.getRequest();
       Object responseObject;
       if (message instanceof Item) {
@@ -26,12 +26,18 @@
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
     public void stateUpdated(    Item item,    State state){
-      if (item instanceof GroupItem) {
-        GroupItem gItem=(GroupItem)item;
-        if (gItem.getBaseItem() != null) {
-          if (!broadcaster.getAtmosphereResources().isEmpty()) {
-            broadcaster.broadcast(item);
+      if (item instanceof GroupItem && getRelevantItemNames().containsKey(item.getName())) {
+        Collection<ItemBean> beans=new LinkedList<ItemBean>();
+        for (        ReturnType rt : getRelevantItemNames().get(item.getName())) {
+          if (rt.getStateClass() != null) {
+            logger.debug("updating item {} statetype {}=>'{}'",rt.getClientItemName(),rt.getStateClass(),item.getStateAs(rt.getStateClass()).toString());
+            beans.add(new ItemBean(rt.getClientItemName(),item.getStateAs(rt.getStateClass()).toString()));
           }
+        }
+        if (beans.size() > 0) {
+          ItemStateListBean responseBean=new ItemStateListBean(new ItemListBean(beans));
+          responseBean.index=System.currentTimeMillis();
+          broadcaster.broadcast(responseBean);
         }
       }
     }

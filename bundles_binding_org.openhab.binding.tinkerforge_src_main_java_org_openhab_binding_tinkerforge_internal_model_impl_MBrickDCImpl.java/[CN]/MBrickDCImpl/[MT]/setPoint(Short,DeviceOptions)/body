@@ -1,0 +1,52 @@
+{
+  Integer xacceleration=Tools.getIntOpt(ConfigOptsMove.ACCELERATION.toString(),opts);
+  String drivemodestr=Tools.getStringOpt(ConfigOptsMove.DRIVEMODE.toString(),opts);
+  Short speed=null;
+  logger.trace("setPiont speed {} opts {}",targetspeed,opts);
+  if (opts == null) {
+    logger.error("Brick DC options are missing");
+    return;
+  }
+  if (targetspeed == null) {
+    logger.error("Brick DC setPoint targetspeed may not be null!");
+    return;
+  }
+  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts);
+  if (max == null) {
+    logger.error("BrickDC dimmer option max is missing, items configuration has to be fixed!");
+    return;
+  }
+ else {
+    logger.debug("Brick DC max {}",max);
+  }
+  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts);
+  logger.debug("Brick DC min {}",min);
+  if (min == null) {
+    logger.error("BrickDC dimmer option min is missing, items configuration has to be fixed!");
+    return;
+  }
+  if (targetspeed > max) {
+    if (this.velocity < targetspeed) {
+      logger.debug("setting velocity to max speed {}, which is lower then target speed {}",max,targetspeed);
+      speed=max;
+    }
+ else {
+      logger.debug("max velocity already reached {}",max);
+      return;
+    }
+  }
+ else   if (targetspeed < min) {
+    if (this.velocity > targetspeed) {
+      logger.debug("setting velocity to min speed {}, which is higher then target speed {}",min,targetspeed);
+      speed=min;
+    }
+ else {
+      logger.debug("min velocity already reached {}",min);
+      return;
+    }
+  }
+ else {
+    speed=targetspeed;
+  }
+  setSpeed(speed,xacceleration,drivemodestr,this.pwmFrequency);
+}

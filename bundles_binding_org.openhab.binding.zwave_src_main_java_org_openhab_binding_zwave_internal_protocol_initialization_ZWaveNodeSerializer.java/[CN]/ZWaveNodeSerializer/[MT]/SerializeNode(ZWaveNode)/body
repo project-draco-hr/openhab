@@ -1,5 +1,9 @@
 {
 synchronized (stream) {
+    if (node.getNodeInitializationStage().isStaticComplete() == false) {
+      logger.debug("NODE {}: Serialise aborted as static stages not complete",node.getNodeId());
+      return;
+    }
     File file=new File(this.folderName,String.format("node%d.xml",node.getNodeId()));
     BufferedWriter writer=null;
     logger.debug("NODE {}: Serializing to file {}",node.getNodeId(),file.getPath());
@@ -9,13 +13,15 @@ synchronized (stream) {
       writer.flush();
     }
  catch (    IOException e) {
-      logger.error("NODE {}: There was an error writing the node config to a file: {}",node.getNodeId(),e.getMessage());
+      logger.error("NODE {}: Error serializing to file: {}",node.getNodeId(),e.getMessage());
     }
  finally {
-      if (writer != null)       try {
-        writer.close();
-      }
- catch (      IOException e) {
+      if (writer != null) {
+        try {
+          writer.close();
+        }
+ catch (        IOException e) {
+        }
       }
     }
   }

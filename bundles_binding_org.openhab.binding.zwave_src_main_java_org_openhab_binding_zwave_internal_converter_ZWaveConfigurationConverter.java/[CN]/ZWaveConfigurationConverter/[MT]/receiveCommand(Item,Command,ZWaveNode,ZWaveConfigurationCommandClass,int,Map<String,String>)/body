@@ -1,0 +1,50 @@
+{
+  ZWaveCommandConverter<?,?> converter=this.getCommandConverter(command.getClass());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item={}, type={}, endpoint={}, ignoring command.",node.getNodeId(),item.getName(),command.getClass().getSimpleName(),endpointId);
+    return;
+  }
+  String parmNumber=arguments.get("parameter");
+  if (parmNumber == null) {
+    logger.error("NODE {}: 'parameter' option must be specified.",node.getNodeId());
+    return;
+  }
+  int paramIndex=Integer.parseInt(parmNumber);
+  if (paramIndex <= 0 || paramIndex > 255) {
+    logger.error("NODE {}: 'parameter' option must be between 1 and 255.",node.getNodeId());
+    return;
+  }
+  ZWaveProductDatabase database=new ZWaveProductDatabase();
+  if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == false) {
+    logger.error("NODE {}: database can't find product.",node.getNodeId());
+    return;
+  }
+  List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+  if (configList == null) {
+    logger.error("NODE {}: Device has no configuration.",node.getNodeId());
+    return;
+  }
+  ZWaveDbConfigurationParameter dbParameter=null;
+  for (  ZWaveDbConfigurationParameter parameter : configList) {
+    if (parameter.Index == paramIndex) {
+      dbParameter=parameter;
+      break;
+    }
+  }
+  if (dbParameter == null) {
+    logger.error("NODE {}: Device has no parameter {}.",node.getNodeId(),paramIndex);
+    return;
+  }
+  ConfigurationParameter configurationParameter=new ConfigurationParameter(paramIndex,(Integer)converter.convertFromCommandToValue(item,command),dbParameter.Size);
+  SerialMessage serialMessage=commandClass.setConfigMessage(configurationParameter);
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
+    return;
+  }
+  this.getController().sendData(serialMessage);
+  serialMessage=commandClass.getConfigMessage(paramIndex);
+  this.getController().sendData(serialMessage);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  byte addr=(byte)(address >> 4);
+  byte prio=(byte)(address & (byte)0x0F);
+  if (address != (byte)0xFE) {
+    if (addr == (byte)0x00 || addr == (byte)0x01 || addr == (byte)0x03 || addr == (byte)0x07 || addr == (byte)0x15) {
+      if (prio == (byte)0x00 || prio == (byte)0x01 || prio == (byte)0x03 || prio == (byte)0x07 || prio == (byte)0x15) {
+        return true;
+      }
+    }
+  }
+  return false;
+}

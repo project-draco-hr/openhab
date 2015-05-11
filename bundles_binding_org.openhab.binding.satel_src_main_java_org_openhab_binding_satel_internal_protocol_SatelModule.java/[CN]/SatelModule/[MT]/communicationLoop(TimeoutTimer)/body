@@ -1,0 +1,49 @@
+{
+  long reconnectionTime=10 * 1000;
+  try {
+    while (!Thread.interrupted()) {
+      SatelMessage message=this.sendQueue.take(), response=null;
+      SatelCommand command=this.supportedCommands.get(message.getCommand());
+      if (command == null) {
+        logger.error("Unsupported command: {}",message);
+        continue;
+      }
+      if (this.channel == null) {
+        long connectStartTime=System.currentTimeMillis();
+synchronized (this) {
+          this.channel=connect();
+        }
+        if (!this.isConnected()) {
+          Thread.sleep(reconnectionTime - System.currentTimeMillis() + connectStartTime);
+          continue;
+        }
+      }
+      logger.debug("Sending message: {}",message);
+      timeoutTimer.start();
+      boolean sent=writeMessage(message);
+      timeoutTimer.stop();
+      if (sent) {
+        logger.trace("Waiting for response");
+        timeoutTimer.start();
+        response=this.readMessage();
+        timeoutTimer.stop();
+        if (response != null) {
+          logger.debug("Got response: {}",response);
+          command.handleResponse(response);
+        }
+      }
+      if (!sent || response == null) {
+        break;
+      }
+    }
+  }
+ catch (  InterruptedException e) {
+  }
+catch (  Exception e) {
+    logger.info("Unhandled exception occurred in communication loop, disconnecting.",e);
+  }
+ finally {
+    timeoutTimer.stop();
+  }
+  disconnect();
+}

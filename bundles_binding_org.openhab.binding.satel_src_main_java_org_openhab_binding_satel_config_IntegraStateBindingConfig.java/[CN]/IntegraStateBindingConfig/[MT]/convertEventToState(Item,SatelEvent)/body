@@ -1,0 +1,37 @@
+{
+  if (!(event instanceof IntegraStateEvent) || hasOptionEnabled(Options.COMMANDS_ONLY)) {
+    return null;
+  }
+  IntegraStateEvent stateEvent=(IntegraStateEvent)event;
+  if (stateEvent.getStateType() != this.stateType) {
+    return null;
+  }
+  if (this.objectNumbers.length == 1) {
+    int bitNbr=this.objectNumbers[0] - 1;
+    return booleanToState(item,stateEvent.isSet(bitNbr));
+  }
+ else   if (this.objectNumbers.length == 0) {
+    if (item instanceof ContactItem) {
+      return (stateEvent.statesSet() > 0) ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+    }
+ else     if (item instanceof SwitchItem) {
+      return (stateEvent.statesSet() > 0) ? OnOffType.ON : OnOffType.OFF;
+    }
+ else     if (item instanceof NumberItem) {
+      return new DecimalType(stateEvent.statesSet());
+    }
+  }
+ else   if (this.objectNumbers.length == 2 && item instanceof RollershutterItem) {
+    int upBitNbr=this.objectNumbers[0] - 1;
+    int downBitNbr=this.objectNumbers[1] - 1;
+    if (stateEvent.isSet(upBitNbr)) {
+      if (!stateEvent.isSet(downBitNbr)) {
+        return UpDownType.UP;
+      }
+    }
+ else     if (stateEvent.isSet(downBitNbr)) {
+      return UpDownType.DOWN;
+    }
+  }
+  return null;
+}

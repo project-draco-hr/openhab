@@ -1,0 +1,20 @@
+{
+  this.thermostats_by_name=new HashMap<String,Thermostat>();
+  if (this.thermostat_id_list != null) {
+    for (    String id : this.thermostat_id_list) {
+      Thermostat th=dataModel.getDevices().getThermostats_by_id().get(id);
+      if (th != null) {
+        this.thermostats_by_name.put(th.getName(),th);
+      }
+    }
+  }
+  this.smoke_co_alarms_by_name=new HashMap<String,SmokeCOAlarm>();
+  if (this.smoke_co_alarm_id_list != null) {
+    for (    String id : this.smoke_co_alarm_id_list) {
+      SmokeCOAlarm sm=dataModel.getDevices().getSmoke_co_alarms_by_id().get(id);
+      if (sm != null) {
+        this.smoke_co_alarms_by_name.put(sm.getName(),sm);
+      }
+    }
+  }
+}

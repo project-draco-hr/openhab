@@ -1,0 +1,27 @@
+{
+  try {
+    if ("temperature".equals(type)) {
+      return new Temperature(Integer.parseInt(valueString));
+    }
+ else     if ("occupancy".equals(type)) {
+      if ("true".equals(valueString)) {
+        return Boolean.TRUE;
+      }
+ else       if ("false".equals(valueString)) {
+        return Boolean.FALSE;
+      }
+ else {
+        return UnDefType.NULL;
+      }
+    }
+ else     if ("humidity".equals(type)) {
+      return Integer.parseInt(valueString);
+    }
+ else {
+      return valueString;
+    }
+  }
+ catch (  NumberFormatException nfe) {
+    return UnDefType.NULL;
+  }
+}

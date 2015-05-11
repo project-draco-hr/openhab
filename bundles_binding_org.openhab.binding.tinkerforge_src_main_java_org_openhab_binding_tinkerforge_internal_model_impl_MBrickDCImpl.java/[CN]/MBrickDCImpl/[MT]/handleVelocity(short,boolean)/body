@@ -1,0 +1,22 @@
+{
+  DecimalValue newValue=Tools.calculate(velocity);
+  logger.trace("{} got new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+  if (usethreshold) {
+    if (newValue.compareTo(getSensorValue(),getThreshold()) != 0) {
+      logger.trace("{} setting new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+      setSensorValue(newValue);
+    }
+ else {
+      logger.trace("{} omitting new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+    }
+  }
+ else {
+    logger.trace("{} setting new value {}",LoggerConstants.TFMODELUPDATE,newValue);
+    setSensorValue(newValue);
+  }
+  OnOffValue newSwitchState=newValue.onOffValue(0);
+  logger.trace("new switchstate {} new value {}",newSwitchState,newValue);
+  if (newSwitchState != switchState) {
+    setSwitchState(newSwitchState);
+  }
+}

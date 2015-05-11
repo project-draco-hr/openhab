@@ -1,0 +1,15 @@
+{
+  try {
+    byte level=(byte)(((DecimalType)cmd).intValue() * 2);
+    Msg m=dev.makeExtendedMessage((byte)0x0f,(byte)0x6d,level);
+    dev.enqueueMessage(m,m_feature);
+    logger.info("{}: sent msg to change Heat SetPoint to {}",nm(),((DecimalType)cmd).intValue());
+    m=null;
+  }
+ catch (  IOException e) {
+    logger.error("{}: command send i/o error: ",nm(),e);
+  }
+catch (  FieldException e) {
+    logger.error("{}: command send message creation error ",nm(),e);
+  }
+}

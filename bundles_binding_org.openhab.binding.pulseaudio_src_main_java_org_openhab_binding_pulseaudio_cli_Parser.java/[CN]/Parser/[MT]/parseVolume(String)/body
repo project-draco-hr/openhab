@@ -1,7 +1,12 @@
 {
   Matcher matcher=volumePattern.matcher(vol);
   if (matcher.find()) {
-    return Math.round((Integer.valueOf(matcher.group(1)) + Integer.valueOf(matcher.group(2))) / 2);
+    if (matcher.group(7) == null) {
+      return Integer.valueOf(matcher.group(3));
+    }
+ else {
+      return Math.round((Integer.valueOf(matcher.group(3)) + Integer.valueOf(matcher.group(7))) / 2);
+    }
   }
   return 0;
 }

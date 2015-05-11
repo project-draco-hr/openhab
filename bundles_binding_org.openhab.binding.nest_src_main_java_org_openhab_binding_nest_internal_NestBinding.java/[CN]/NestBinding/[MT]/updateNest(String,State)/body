@@ -1,0 +1,44 @@
+{
+  NestBindingProvider provider=null;
+  String property=null;
+  for (  NestBindingProvider p : this.providers) {
+    property=p.getProperty(itemName);
+    if (property != null) {
+      provider=p;
+      break;
+    }
+  }
+  if (provider == null) {
+    logger.warn("no matching binding provider found [itemName={}, newState={}]",itemName,newState);
+    return;
+  }
+ else {
+    try {
+      logger.debug("About to set property '{}' to '{}'",property,newState);
+      DataModel updateDataModel=oldDataModel.updateDataModel(property,newState);
+      logger.trace("Data model for update: {}",updateDataModel);
+      if (updateDataModel == null) {
+        return;
+      }
+      OAuthCredentials oauthCredentials=getOAuthCredentials(DEFAULT_USER_ID);
+      if (oauthCredentials == null) {
+        logger.warn("Unable to locate credentials for item {}; aborting update.",itemName);
+        return;
+      }
+      if (oauthCredentials.noAccessToken()) {
+        if (!oauthCredentials.retrieveAccessToken()) {
+          logger.warn("Sending update skipped.");
+          return;
+        }
+      }
+      UpdateDataModelRequest request=new UpdateDataModelRequest(oauthCredentials.accessToken,updateDataModel);
+      DataModelResponse response=request.execute();
+      if (response.isError()) {
+        logger.error("Error updating data model: {}",response);
+      }
+    }
+ catch (    Exception e) {
+      logger.error("Unable to update data model",e);
+    }
+  }
+}

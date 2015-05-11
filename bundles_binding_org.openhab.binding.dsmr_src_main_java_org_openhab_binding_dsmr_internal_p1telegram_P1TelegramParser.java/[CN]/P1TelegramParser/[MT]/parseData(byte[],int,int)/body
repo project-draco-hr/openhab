@@ -1,0 +1,96 @@
+{
+  List<OBISMessage> receivedMessages=new LinkedList<OBISMessage>();
+  logger.trace("Data:" + Arrays.toString(Arrays.copyOfRange(data,offset,length)) + ", state before parsing:"+ parserState);
+  for (int i=offset; i < (offset + length); i++) {
+    char c=(char)data[i];
+switch (parserState.getState()) {
+case WAIT_FOR_START:
+      if (c == '/') {
+        parserState.setState(P1TelegramParserState.State.STARTED);
+        handleNewP1Telegram();
+      }
+    break;
+case STARTED:
+  parserState.setState(P1TelegramParserState.State.HEADER);
+break;
+case HEADER:
+if (c == '\r') {
+parserState.setState(P1TelegramParserState.State.CRLF);
+}
+break;
+case CRLF:
+if (Character.isWhitespace(c)) {
+}
+ else if (Character.isDigit(c)) {
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_ID);
+finishObisLine();
+}
+ else {
+handleUnexpectedCharacter(c);
+parserState.setState(P1TelegramParserState.State.WAIT_FOR_START);
+}
+break;
+case DATA_OBIS_ID:
+if (Character.isWhitespace(c)) {
+}
+ else if (Character.isDigit(c) || c == ':' || c == '-' || c == '.' || c == '*') {
+}
+ else if (c == '(') {
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_VALUE_START);
+}
+ else if (c == '!') {
+logger.warn("Unexpected character '!'. Going to state:" + P1TelegramParserState.State.CRC_VALUE);
+parserState.setState(P1TelegramParserState.State.CRC_VALUE);
+}
+ else {
+handleUnexpectedCharacter(c);
+parserState.setState(P1TelegramParserState.State.WAIT_FOR_START);
+}
+break;
+case DATA_OBIS_VALUE_START:
+if (c == ')') {
+handleObisValueReady();
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_VALUE_END);
+}
+ else {
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_VALUE);
+}
+break;
+case DATA_OBIS_VALUE:
+if (c == ')') {
+handleObisValueReady();
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_VALUE_END);
+}
+break;
+case DATA_OBIS_VALUE_END:
+if (Character.isWhitespace(c)) {
+}
+ else if (Character.isDigit(c)) {
+finishObisLine();
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_ID);
+}
+ else if (c == '(') {
+parserState.setState(P1TelegramParserState.State.DATA_OBIS_VALUE_START);
+}
+ else if (c == '!') {
+parserState.setState(P1TelegramParserState.State.CRC_VALUE);
+}
+ else {
+handleUnexpectedCharacter(c);
+parserState.setState(P1TelegramParserState.State.WAIT_FOR_START);
+}
+break;
+case CRC_VALUE:
+if (c == '\r') {
+if (parserState.getCrcValue().length() > 0) {
+}
+receivedMessages.addAll(handleEndP1Telegram());
+parserState.setState(P1TelegramParserState.State.WAIT_FOR_START);
+}
+break;
+}
+parserState.handleCharacter(c);
+}
+logger.trace("State after parsing:" + parserState);
+return receivedMessages;
+}

@@ -1,19 +1,15 @@
 {
-  if ((loginManager == null) || (!loginManager.isConnected())) {
-    try {
-      authorize();
-    }
- catch (    FreeboxException e) {
-      logger.error(e.getMessage());
-      setProperlyConfigured(false);
-    }
-  }
   try {
-    sc=fbClient.getSystemManager().getConfiguration();
-    cs=fbClient.getConnectionManager().getStatus();
-    wc=fbClient.getWifiManager().getGlobalConfig();
-    lcd=fbClient.getLCDManager().getLCDConfig();
-    xdsl=fbClient.getConnectionManager().getxDslStatus();
+    SystemConfiguration sc=fbClient.getSystemManager().getConfiguration();
+    ConnectionStatus cs=fbClient.getConnectionManager().getStatus();
+    WifiGlobalConfig wc=fbClient.getWifiManager().getGlobalConfig();
+    LCDConfig lcd=fbClient.getLCDManager().getLCDConfig();
+    xDslStatus xdsl=fbClient.getConnectionManager().getxDslStatus();
+    FtpConfig fc=fbClient.getFtpManager().getConfig();
+    AirMediaConfig ac=fbClient.getAirMediaManager().getConfig();
+    UPnPAVConfig uc=fbClient.getUPnPAVManager().getConfig();
+    SambaConfig sac=fbClient.getNetShareManager().getSambaConfig();
+    LanHostsConfig hc=fbClient.getLanManager().getAllLanHostsConfig();
     List<CallEntry> appels=fbClient.getCallManager().getCallEntries();
     for (    FreeboxBindingProvider provider : providers) {
       Collection<String> items=provider.getItemNames();
@@ -21,19 +17,24 @@
         if (call.is_new_()) {
           for (          String itemName : items) {
             FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
+            if (bindingConfig.commandParam == null || bindingConfig.commandParam.equalsIgnoreCase(call.getType())) {
 switch (bindingConfig.commandType) {
 case CALLSTATUS:
-              setItemValue(bindingConfig.item,call.getType());
-            break;
+                setItemValue(bindingConfig.item,call.getType());
+              break;
 case CALLDURATION:
-          setItemValue(bindingConfig.item,(long)call.getDuration());
-        break;
+            setItemValue(bindingConfig.item,(long)call.getDuration());
+          break;
 case CALLNUMBER:
-      setItemValue(bindingConfig.item,call.getNumber());
-    break;
+        setItemValue(bindingConfig.item,call.getNumber());
+      break;
 case CALLTIMESTAMP:
-  setDateTimeValue(bindingConfig.item,call.getDateTime());
+    setDateTimeValue(bindingConfig.item,call.getDateTime());
+  break;
+case CALLNAME:
+setItemValue(bindingConfig.item,call.getName());
 break;
+}
 }
 }
 call.setNew(false);
@@ -97,6 +98,30 @@ break;
 case XDSLSTATUS:
 setItemValue(bindingConfig.item,xdsl.getStatus());
 break;
+case FTPSTATUS:
+setItemValue(bindingConfig.item,fc.getEnabled());
+break;
+case AIRMEDIASTATUS:
+setItemValue(bindingConfig.item,ac.getEnabled());
+break;
+case UPNPAVSTATUS:
+setItemValue(bindingConfig.item,uc.getEnabled());
+break;
+case SAMBAFILESTATUS:
+setItemValue(bindingConfig.item,sac.getFileShareEnabled());
+break;
+case SAMBAPRINTERSTATUS:
+setItemValue(bindingConfig.item,sac.getPrintShareEnabled());
+break;
+case REACHABLEMAC:
+setItemValue(bindingConfig.item,hc.isMacReachable(bindingConfig.commandParam));
+break;
+case REACHABLEIP:
+setItemValue(bindingConfig.item,hc.isIpReachable(bindingConfig.commandParam));
+break;
+case REACHABLENAME:
+setItemValue(bindingConfig.item,hc.isHostNameReachable(bindingConfig.commandParam));
+break;
 default :
 break;
 }
@@ -104,6 +129,6 @@ break;
 }
 }
  catch (FreeboxException e) {
-logger.error(e.getMessage());
+logger.info(e.getMessage());
 }
 }

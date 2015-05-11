@@ -6,8 +6,9 @@
     logger.error("NODE {}: Unknown Fan Mode Type = {}, ignoring report.",this.getNode().getNodeId(),value);
     return;
   }
-  if (!this.fanModeTypes.contains(fanModeType))   this.fanModeTypes.add(fanModeType);
+  if (!fanModeTypes.contains(fanModeType))   fanModeTypes.add(fanModeType);
+  dynamicDone=true;
   logger.debug("NODE {}: Thermostat Fan Mode Report value = {}",this.getNode().getNodeId(),fanModeType.getLabel());
-  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),new BigDecimal(value));
+  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);
   this.getController().notifyEventListeners(zEvent);
 }

@@ -1,0 +1,11 @@
+{
+  final List<Map<String,Object>> matchedTelegramRegistry=new ArrayList<Map<String,Object>>();
+  for (  Map<String,Object> registryEntry : telegramRegistry) {
+    Pattern pattern=(Pattern)registryEntry.get("cfilter");
+    Matcher matcher=pattern.matcher(bufferString);
+    if (matcher.matches()) {
+      matchedTelegramRegistry.add(registryEntry);
+    }
+  }
+  return matchedTelegramRegistry;
+}

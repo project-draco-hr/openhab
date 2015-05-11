@@ -1,6 +1,11 @@
 {
   logger.trace("Initializing ZWaveNodeSerializer.");
-  File folder=new File(folderName);
+  final String USERDATA_DIR_PROG_ARGUMENT="smarthome.userdata";
+  final String eshUserDataFolder=System.getProperty(USERDATA_DIR_PROG_ARGUMENT);
+  if (eshUserDataFolder != null) {
+    folderName=eshUserDataFolder + "/zwave";
+  }
+  final File folder=new File(folderName);
   if (!folder.exists()) {
     logger.debug("Creating directory {}",folderName);
     folder.mkdirs();

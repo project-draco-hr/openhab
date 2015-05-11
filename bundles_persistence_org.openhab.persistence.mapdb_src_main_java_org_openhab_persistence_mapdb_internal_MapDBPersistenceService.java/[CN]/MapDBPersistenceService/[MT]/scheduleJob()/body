@@ -1,0 +1,12 @@
+{
+  try {
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    JobDetail job=newJob(CommitJob.class).withIdentity("Commit_Transaction",SCHEDULER_GROUP).build();
+    SimpleTrigger trigger=newTrigger().withIdentity("Commit_Transaction",SCHEDULER_GROUP).withSchedule(repeatSecondlyForever(commitInterval)).build();
+    sched.scheduleJob(job,trigger);
+    logger.debug("Scheduled Commit-Job with interval {}sec.",commitInterval);
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Could not create Job: {}",e.getMessage());
+  }
+}

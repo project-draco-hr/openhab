@@ -1,12 +1,26 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == SwitchSensor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__SWITCH_STATE:
+      return ModelPackage.SWITCH_SENSOR__SWITCH_STATE;
+default :
+    return -1;
+}
+}
+if (baseClass == ProgrammableSwitchActor.class) {
+switch (derivedFeatureID) {
+default :
+  return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (derivedFeatureID) {
 case ModelPackage.MBRICK_DC__LOGGER:
-      return ModelPackage.MBASE_DEVICE__LOGGER;
+return ModelPackage.MBASE_DEVICE__LOGGER;
 case ModelPackage.MBRICK_DC__UID:
-    return ModelPackage.MBASE_DEVICE__UID;
+return ModelPackage.MBASE_DEVICE__UID;
 case ModelPackage.MBRICK_DC__POLL:
-  return ModelPackage.MBASE_DEVICE__POLL;
+return ModelPackage.MBASE_DEVICE__POLL;
 case ModelPackage.MBRICK_DC__ENABLED_A:
 return ModelPackage.MBASE_DEVICE__ENABLED_A;
 default :
@@ -33,10 +47,44 @@ default :
 return -1;
 }
 }
+if (baseClass == MoveActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__DIRECTION:
+return ModelPackage.MOVE_ACTOR__DIRECTION;
+default :
+return -1;
+}
+}
 if (baseClass == MTFConfigConsumer.class) {
 switch (derivedFeatureID) {
 case ModelPackage.MBRICK_DC__TF_CONFIG:
 return ModelPackage.MTF_CONFIG_CONSUMER__TF_CONFIG;
+default :
+return -1;
+}
+}
+if (baseClass == DimmableActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__MIN_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MIN_VALUE;
+case ModelPackage.MBRICK_DC__MAX_VALUE:
+return ModelPackage.DIMMABLE_ACTOR__MAX_VALUE;
+default :
+return -1;
+}
+}
+if (baseClass == SetPointActor.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__PERCENT_VALUE:
+return ModelPackage.SET_POINT_ACTOR__PERCENT_VALUE;
+default :
+return -1;
+}
+}
+if (baseClass == CallbackListener.class) {
+switch (derivedFeatureID) {
+case ModelPackage.MBRICK_DC__CALLBACK_PERIOD:
+return ModelPackage.CALLBACK_LISTENER__CALLBACK_PERIOD;
 default :
 return -1;
 }

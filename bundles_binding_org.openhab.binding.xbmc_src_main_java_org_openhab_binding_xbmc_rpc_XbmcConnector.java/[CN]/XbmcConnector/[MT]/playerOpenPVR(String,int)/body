@@ -1,0 +1,17 @@
+{
+  final PVRGetChannels pvrGetChannels=new PVRGetChannels(client,httpUri);
+  pvrGetChannels.setChannelgroupid(channelgroupid);
+  pvrGetChannels.setChannelName(channelName);
+  logger.debug("channelName:" + channelName);
+  pvrGetChannels.execute(new Runnable(){
+    @Override public void run(){
+      logger.debug("channelId:" + pvrGetChannels.getChannelId());
+      if (pvrGetChannels.getChannelId() != null) {
+        PlayerOpen playerOpen=new PlayerOpen(client,httpUri);
+        playerOpen.setChannelId(pvrGetChannels.getChannelId());
+        playerOpen.execute();
+      }
+    }
+  }
+);
+}

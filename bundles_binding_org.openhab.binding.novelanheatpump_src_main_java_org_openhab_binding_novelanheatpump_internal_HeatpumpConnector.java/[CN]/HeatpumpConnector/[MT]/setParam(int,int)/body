@@ -1,0 +1,21 @@
+{
+  while (datain.available() > 0) {
+    datain.readByte();
+  }
+  dataout.writeInt(3002);
+  dataout.writeInt(param);
+  dataout.writeInt(value);
+  dataout.flush();
+  int cmd=datain.readInt();
+  int resp=datain.readInt();
+  if (cmd != 3002) {
+    logger.error("can't write parameter {} with value {} to heatpump.",param,value);
+    return false;
+  }
+ else {
+    if (logger.isDebugEnabled()) {
+      logger.debug("successful parameter {} with value {} to heatpump written.",param,value);
+    }
+    return true;
+  }
+}

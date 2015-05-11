@@ -8,7 +8,7 @@
     ohtfDevice.setTfConfig(servoConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_halleffect)) {
+ else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_temperature.name())|| deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_joystick.name())|| deviceType.equals(TypeKey.bricklet_halleffect.name())|| deviceType.equals(TypeKey.bricklet_linear_poti.name())|| deviceType.equals(TypeKey.ptc_resistance.name())|| deviceType.equals(TypeKey.ptc_temperature.name())|| deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
     logger.debug("{} setting base config",LoggerConstants.CONFIG);
     TFBaseConfiguration tfBaseConfiguration=modelFactory.createTFBaseConfiguration();
     if (deviceType.equals(TypeKey.bricklet_barometer)) {
@@ -26,6 +26,18 @@
  else     if (deviceType.equals(TypeKey.voltageCurrent_current.name()) || deviceType.equals(TypeKey.voltageCurrent_voltage.name()) || deviceType.equals(TypeKey.voltageCurrent_power.name())) {
       OHTFDevice<TFBaseConfiguration,VoltageCurrentSubIds> ohtfDevice=modelFactory.createOHTFDevice();
       ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(VoltageCurrentSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.ptc_resistance.name()) || deviceType.equals(TypeKey.ptc_temperature.name())) {
+      OHTFDevice<TFBaseConfiguration,PTCSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(PTCSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
+      OHTFDevice<TFBaseConfiguration,IndustrialDual020mASubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDual020mASubIds.values()));
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
@@ -158,6 +170,103 @@
     OHTFDevice<TFVoltageCurrentConfiguration,VoltageCurrentSubIds> ohtfDevice=modelFactory.createOHTFDevice();
     ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(VoltageCurrentSubIds.values()));
     ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.dualbutton_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,DualButtonButtonSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualButtonButtonSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.dualbutton_led.name())) {
+    logger.debug("setting DualButtonLEDConfiguration device_type {}",deviceType);
+    DualButtonLEDConfiguration configuration=modelFactory.createDualButtonLEDConfiguration();
+    OHTFDevice<DualButtonLEDConfiguration,DualButtonLedSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualButtonLedSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.joystick_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,JoystickSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(JoystickSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.lcd_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,LCDButtonSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LCDButtonSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_ledstrip.name())) {
+    LEDStripConfiguration configuration=modelFactory.createLEDStripConfiguration();
+    OHTFDevice<LEDStripConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.ledgroup.name())) {
+    LEDGroupConfiguration configuration=modelFactory.createLEDGroupConfiguration();
+    OHTFSubDeviceAdminDevice<LEDGroupConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFSubDeviceAdminDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_ptc.name())) {
+    TFPTCBrickletConfiguration configuration=modelFactory.createTFPTCBrickletConfiguration();
+    OHTFDevice<TFPTCBrickletConfiguration,PTCSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(PTCSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrialdual020ma.name())) {
+    TFIndustrialDual020mAConfiguration configuration=modelFactory.createTFIndustrialDual020mAConfiguration();
+    OHTFDevice<TFIndustrialDual020mAConfiguration,IndustrialDual020mASubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDual020mASubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.dual_relay.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,DualRelaySubIds.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,DualRelaySubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualRelaySubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.quad_relay.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialQuadRelayIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialQuadRelayIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialQuadRelayIDs.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.joystick_xposition.name()) || deviceType.equals(TypeKey.joystick_yposition.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,JoystickSubIds.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,JoystickSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(JoystickSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.digital_4in.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialDigitalInSubIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialDigitalInSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDigitalInSubIDs.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.digital_4out.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialDigitalOutSubIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialDigitalOutSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDigitalOutSubIDs.values()));
     fillupConfig(ohtfDevice,deviceConfig);
   }
  else {

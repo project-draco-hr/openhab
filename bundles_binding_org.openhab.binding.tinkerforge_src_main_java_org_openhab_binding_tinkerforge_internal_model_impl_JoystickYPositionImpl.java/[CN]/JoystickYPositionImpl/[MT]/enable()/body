@@ -1,0 +1,17 @@
+{
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  tinkerforgeDevice.setResponseExpected(BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD,false);
+  try {
+    logger.trace("callbackPeriod is {}",getMbrick().getCallbackPeriod());
+    tinkerforgeDevice.setPositionCallbackPeriod(getMbrick().getCallbackPeriod());
+    listener=new PositionListener();
+    tinkerforgeDevice.addPositionListener(listener);
+    fetchSensorValue();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

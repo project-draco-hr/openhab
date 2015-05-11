@@ -1,0 +1,25 @@
+{
+  if (item.getState() instanceof UnDefType)   return;
+  if (alias == null)   alias=item.getName();
+  logger.debug("store called for {}",alias);
+  State state=item.getState();
+  if (item instanceof DimmerItem || item instanceof RollershutterItem) {
+    state=item.getStateAs(PercentType.class);
+  }
+ else   if (item instanceof ColorItem) {
+    state=item.getStateAs(HSBType.class);
+  }
+  MapDBItem mItem=new MapDBItem();
+  mItem.setName(alias);
+  mItem.setState(state);
+  mItem.setTimestamp(new Date());
+  MapDBItem oldItem=map.put(alias,mItem);
+  if (!commitSameState) {
+    if (oldItem != null) {
+      if (!oldItem.getState().toString().equals(state.toString())) {
+        needsCommit=true;
+      }
+    }
+  }
+  logger.debug("Stored '{}' with state '{}' in mapdb database",alias,state.toString());
+}

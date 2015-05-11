@@ -2,7 +2,7 @@
   if (ihc == null || isReconnectRequestActivated()) {
     try {
       if (ihc != null) {
-        discnnect();
+        disconnect();
       }
       connect();
       setReconnectRequest(false);
@@ -24,9 +24,9 @@
     }
     for (    IhcBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
-        int resourceId=provider.getResourceId(itemName);
+        int resourceId=provider.getResourceIdForInBinding(itemName);
         int itemRefreshInterval=provider.getRefreshInterval(itemName) * 1000;
-        if (itemRefreshInterval > 0) {
+        if (resourceId > 0 && itemRefreshInterval > 0) {
           Long lastUpdateTimeStamp=lastUpdateMap.get(itemName);
           if (lastUpdateTimeStamp == null) {
             lastUpdateTimeStamp=0L;

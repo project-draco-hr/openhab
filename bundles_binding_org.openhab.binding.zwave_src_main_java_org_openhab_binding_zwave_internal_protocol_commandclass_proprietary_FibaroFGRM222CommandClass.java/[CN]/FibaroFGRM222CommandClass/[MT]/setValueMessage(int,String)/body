@@ -1,0 +1,13 @@
+{
+  logger.debug("NODE {}: Creating new message for application command FIBARO FGRM 222 set. type: {}. level {}.",this.getNode().getNodeId(),type,level);
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessageType.Request,SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessagePriority.Set);
+  byte[] newPayload;
+  if (type.equalsIgnoreCase(FibaroFGRM222ValueType.Shutter.name())) {
+    newPayload=new byte[]{(byte)this.getNode().getNodeId(),(byte)8,(byte)0x91,(byte)0x1,(byte)0xF,(byte)0x26,(byte)1,(byte)2,(byte)level,(byte)0};
+  }
+ else {
+    newPayload=new byte[]{(byte)this.getNode().getNodeId(),(byte)8,(byte)0x91,(byte)0x1,(byte)0xF,(byte)0x26,(byte)1,(byte)1,(byte)0,(byte)level};
+  }
+  result.setMessagePayload(newPayload);
+  return result;
+}

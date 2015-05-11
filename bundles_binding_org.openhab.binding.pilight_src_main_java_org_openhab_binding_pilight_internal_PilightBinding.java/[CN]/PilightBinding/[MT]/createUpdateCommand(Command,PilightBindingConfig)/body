@@ -1,8 +1,7 @@
 {
-  Update update=new Update();
+  Action action=new Action(Action.ACTION_CONTROL);
   Code code=new Code();
   code.setDevice(config.getDevice());
-  code.setLocation(config.getLocation());
   if (command instanceof OnOffType) {
     setOnOffValue((OnOffType)command,code);
   }
@@ -10,10 +9,9 @@
     setDimmerValue((PercentType)command,code);
   }
  else {
-    logger.error("Only OnOffType and PercentType are supported by the pilight binding");
+    logger.error("Only OnOffType and PercentType can be changed by the pilight binding");
     return null;
   }
-  update.setCode(code);
-  update.setMessage(Update.SEND);
-  return update;
+  action.setCode(code);
+  return action;
 }

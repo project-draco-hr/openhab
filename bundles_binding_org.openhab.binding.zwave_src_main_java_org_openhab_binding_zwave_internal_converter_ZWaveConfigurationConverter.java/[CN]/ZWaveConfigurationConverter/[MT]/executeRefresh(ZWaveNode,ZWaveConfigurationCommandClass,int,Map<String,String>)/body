@@ -1,0 +1,14 @@
+{
+  logger.debug("NODE {}: Generating poll message for {}, endpoint {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
+  String parmNumber=arguments.get("parameter");
+  if (parmNumber == null) {
+    logger.error("NODE {}: 'parameter' option must be specified.",node.getNodeId());
+    return null;
+  }
+  int parmValue=Integer.parseInt(parmNumber);
+  if (parmValue <= 0 || parmValue > 255) {
+    logger.error("NODE {}: 'parameter' option must be between 1 and 255.",node.getNodeId());
+    return null;
+  }
+  return node.encapsulate(commandClass.getConfigMessage(parmValue),commandClass,endpointId);
+}

@@ -1,0 +1,12 @@
+{
+  ZWaveVersionCommandClass versionCmdClass=(ZWaveVersionCommandClass)this.getCommandClass(CommandClass.VERSION);
+  if (versionCmdClass == null) {
+    return "0.0";
+  }
+  String appVersion=versionCmdClass.getApplicationVersion();
+  if (appVersion == null) {
+    logger.trace("NODE {}: App version requested but version is unknown",this.getNodeId());
+    return "0.0";
+  }
+  return appVersion;
+}

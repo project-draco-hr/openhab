@@ -1,0 +1,36 @@
+{
+  String splitArchives[]=archivesString.split(":");
+  for (  String archiveString : splitArchives) {
+    String[] opts=archiveString.split(",");
+    if (opts.length != 4) {
+      logger.warn("invalid number of parameters {}: {}",name,archiveString);
+      return;
+    }
+    RrdArchiveDef arc=new RrdArchiveDef();
+    if (opts[0].equals("AVERAGE")) {
+      arc.fcn=ConsolFun.AVERAGE;
+    }
+ else     if (opts[0].equals("MIN")) {
+      arc.fcn=ConsolFun.MIN;
+    }
+ else     if (opts[0].equals("MAX")) {
+      arc.fcn=ConsolFun.MAX;
+    }
+ else     if (opts[0].equals("LAST")) {
+      arc.fcn=ConsolFun.LAST;
+    }
+ else     if (opts[0].equals("FIRST")) {
+      arc.fcn=ConsolFun.FIRST;
+    }
+ else     if (opts[0].equals("TOTAL")) {
+      arc.fcn=ConsolFun.TOTAL;
+    }
+ else {
+      logger.warn("{}: consolidation function  {} not supported",name,opts[0]);
+    }
+    arc.xff=Double.parseDouble(opts[1]);
+    arc.steps=Integer.parseInt(opts[2]);
+    arc.rows=Integer.parseInt(opts[3]);
+    archives.add(arc);
+  }
+}

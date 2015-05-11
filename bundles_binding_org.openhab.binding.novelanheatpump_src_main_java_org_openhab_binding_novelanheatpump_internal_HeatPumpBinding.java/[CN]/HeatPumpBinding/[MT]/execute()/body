@@ -45,6 +45,16 @@
     handleEventType(new StringType(heatpumpState),HeatpumpCommandType.TYPE_HEATPUMP_STATE);
     String heatpumpExtendedState=getExtendeStateString(heatpumpValues) + ": " + formatHours(heatpumpValues[120]);
     handleEventType(new StringType(heatpumpExtendedState),HeatpumpCommandType.TYPE_HEATPUMP_EXTENDED_STATE);
+    int[] heatpumpParams=connector.getParams();
+    handleEventType(new DecimalType((double)heatpumpParams[PARAM_HEATING_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_HEATING_TEMPERATURE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_HEATING_OPERATION_MODE]),HeatpumpCommandType.TYPE_HEATING_OPERATION_MODE);
+    handleEventType(new DecimalType((double)heatpumpParams[PARAM_WARMWATER_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_WARMWATER_TEMPERATURE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_WARMWATER_OPERATION_MODE]),HeatpumpCommandType.TYPE_WARMWATER_OPERATION_MODE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_OPERATION_MODE]),HeatpumpCommandType.TYPE_COOLING_OPERATION_MODE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_RELEASE_TEMP] / 10.),HeatpumpCommandType.TYPE_COOLING_RELEASE_TEMPERATURE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_INLET_TEMP] / 10.),HeatpumpCommandType.TYPE_COOLING_INLET_TEMP);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_START] / 10.),HeatpumpCommandType.TYPE_COOLING_START_AFTER_HOURS);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_STOP] / 10.),HeatpumpCommandType.TYPE_COOLING_STOP_AFTER_HOURS);
   }
  catch (  UnknownHostException e) {
     logger.warn("the given hostname '{}' of the Novela heatpump is unknown",ip);

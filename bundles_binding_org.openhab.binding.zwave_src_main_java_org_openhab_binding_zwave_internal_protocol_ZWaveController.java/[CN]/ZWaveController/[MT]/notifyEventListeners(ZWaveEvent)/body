@@ -1,8 +1,7 @@
 {
-  logger.debug("Notifying event listeners");
+  logger.debug("Notifying event listeners: {}",event.getClass().getSimpleName());
   ArrayList<ZWaveEventListener> copy=new ArrayList<ZWaveEventListener>(this.zwaveEventListeners);
   for (  ZWaveEventListener listener : copy) {
-    logger.trace("Notifying {}",listener.toString());
     listener.ZWaveIncomingEvent(event);
   }
   if (event instanceof ZWaveInclusionEvent) {
@@ -14,9 +13,7 @@ case IncludeDone:
       logger.debug("NODE {}: Newly included node already exists - not initialising.",incEvent.getNodeId());
       break;
     }
-  ZWaveNode node=new ZWaveNode(this.homeId,incEvent.getNodeId(),this);
-this.zwaveNodes.put(incEvent.getNodeId(),node);
-node.advanceNodeStage(NodeStage.PROTOINFO);
+  addNode(incEvent.getNodeId());
 break;
 case ExcludeDone:
 logger.debug("NODE {}: Excluding node.",incEvent.getNodeId());
@@ -32,21 +29,9 @@ default :
 break;
 }
 }
-if (event instanceof ZWaveNetworkEvent) {
+ else if (event instanceof ZWaveNetworkEvent) {
 ZWaveNetworkEvent networkEvent=(ZWaveNetworkEvent)event;
 switch (networkEvent.getEvent()) {
-case FailedNode:
-if (getNode(networkEvent.getNodeId()) == null) {
-logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());
-break;
-}
-if (networkEvent.getState() == State.Success) {
-logger.debug("NODE {}: Marking node as failed because its on the controllers failed node list.",networkEvent.getNodeId());
-getNode(networkEvent.getNodeId()).setNodeStage(NodeStage.FAILED);
-ZWaveEvent zEvent=new ZWaveNodeStatusEvent(networkEvent.getNodeId(),ZWaveNodeStatusEvent.State.Failed);
-this.notifyEventListeners(zEvent);
-break;
-}
 case DeleteNode:
 if (getNode(networkEvent.getNodeId()) == null) {
 logger.debug("NODE {}: Deleting a node that doesn't exist.",networkEvent.getNodeId());
@@ -57,6 +42,23 @@ ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
 nodeSerializer.DeleteNode(event.getNodeId());
 break;
 default :
+break;
+}
+}
+ else if (event instanceof ZWaveNodeStatusEvent) {
+ZWaveNodeStatusEvent statusEvent=(ZWaveNodeStatusEvent)event;
+logger.debug("NODE {}: Node Status event - Node is {}",statusEvent.getNodeId(),statusEvent.getState());
+ZWaveNode node=getNode(event.getNodeId());
+if (node == null) {
+logger.error("NODE {}: Node is unknown!",statusEvent.getNodeId());
+return;
+}
+switch (statusEvent.getState()) {
+case DEAD:
+break;
+case FAILED:
+break;
+case ALIVE:
 break;
 }
 }

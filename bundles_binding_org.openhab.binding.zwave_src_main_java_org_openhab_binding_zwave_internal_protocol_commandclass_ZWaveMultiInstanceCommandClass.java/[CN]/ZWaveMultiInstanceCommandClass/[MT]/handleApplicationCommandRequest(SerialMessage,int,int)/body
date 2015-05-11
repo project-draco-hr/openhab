@@ -1,5 +1,4 @@
 {
-  logger.trace("Handle Message Multi-instance/Multi-channel Request");
   logger.debug("NODE {}: Received Multi-instance/Multi-channel Request",this.getNode().getNodeId());
   int command=serialMessage.getMessagePayloadByte(offset);
 switch (command) {
@@ -8,7 +7,7 @@ case MULTI_CHANNEL_ENDPOINT_GET:
 case MULTI_CHANNEL_CAPABILITY_GET:
 case MULTI_CHANNEL_ENDPOINT_FIND:
 case MULTI_CHANNEL_ENDPOINT_FIND_REPORT:
-    logger.warn(String.format("NODE %d: Command 0x%02X not implemented.",this.getNode().getNodeId(),command));
+    logger.warn("NODE {}: Command {} not implemented.",this.getNode().getNodeId(),command);
   return;
 case MULTI_INSTANCE_REPORT:
 handleMultiInstanceReportResponse(serialMessage,offset + 1);

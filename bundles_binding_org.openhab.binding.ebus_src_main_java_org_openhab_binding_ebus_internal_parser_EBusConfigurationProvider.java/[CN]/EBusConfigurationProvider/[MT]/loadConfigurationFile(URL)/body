@@ -1,0 +1,12 @@
+{
+  final ObjectMapper mapper=new ObjectMapper();
+  final InputStream inputStream=url.openConnection().getInputStream();
+  final ArrayList<Map<String,Object>> loadedTelegramRegistry=(ArrayList<Map<String,Object>>)mapper.readValue(inputStream,List.class);
+  for (Iterator<Map<String,Object>> iterator=loadedTelegramRegistry.iterator(); iterator.hasNext(); ) {
+    Map<String,Object> object=iterator.next();
+    transformDataTypes(object);
+  }
+  if (loadedTelegramRegistry != null && !loadedTelegramRegistry.isEmpty()) {
+    telegramRegistry.addAll(loadedTelegramRegistry);
+  }
+}

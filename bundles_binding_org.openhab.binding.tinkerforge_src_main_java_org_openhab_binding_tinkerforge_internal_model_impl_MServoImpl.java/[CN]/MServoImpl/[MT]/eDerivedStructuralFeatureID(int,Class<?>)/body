@@ -1,12 +1,26 @@
 {
-  if (baseClass == MBaseDevice.class) {
+  if (baseClass == SwitchSensor.class) {
+switch (baseFeatureID) {
+case ModelPackage.SWITCH_SENSOR__SWITCH_STATE:
+      return ModelPackage.MSERVO__SWITCH_STATE;
+default :
+    return -1;
+}
+}
+if (baseClass == ProgrammableSwitchActor.class) {
+switch (baseFeatureID) {
+default :
+  return -1;
+}
+}
+if (baseClass == MBaseDevice.class) {
 switch (baseFeatureID) {
 case ModelPackage.MBASE_DEVICE__LOGGER:
-      return ModelPackage.MSERVO__LOGGER;
+return ModelPackage.MSERVO__LOGGER;
 case ModelPackage.MBASE_DEVICE__UID:
-    return ModelPackage.MSERVO__UID;
+return ModelPackage.MSERVO__UID;
 case ModelPackage.MBASE_DEVICE__POLL:
-  return ModelPackage.MSERVO__POLL;
+return ModelPackage.MSERVO__POLL;
 case ModelPackage.MBASE_DEVICE__ENABLED_A:
 return ModelPackage.MSERVO__ENABLED_A;
 default :
@@ -23,10 +37,36 @@ default :
 return -1;
 }
 }
+if (baseClass == MoveActor.class) {
+switch (baseFeatureID) {
+case ModelPackage.MOVE_ACTOR__DIRECTION:
+return ModelPackage.MSERVO__DIRECTION;
+default :
+return -1;
+}
+}
 if (baseClass == MTFConfigConsumer.class) {
 switch (baseFeatureID) {
 case ModelPackage.MTF_CONFIG_CONSUMER__TF_CONFIG:
 return ModelPackage.MSERVO__TF_CONFIG;
+default :
+return -1;
+}
+}
+if (baseClass == DimmableActor.class) {
+switch (baseFeatureID) {
+case ModelPackage.DIMMABLE_ACTOR__MIN_VALUE:
+return ModelPackage.MSERVO__MIN_VALUE;
+case ModelPackage.DIMMABLE_ACTOR__MAX_VALUE:
+return ModelPackage.MSERVO__MAX_VALUE;
+default :
+return -1;
+}
+}
+if (baseClass == SetPointActor.class) {
+switch (baseFeatureID) {
+case ModelPackage.SET_POINT_ACTOR__PERCENT_VALUE:
+return ModelPackage.MSERVO__PERCENT_VALUE;
 default :
 return -1;
 }

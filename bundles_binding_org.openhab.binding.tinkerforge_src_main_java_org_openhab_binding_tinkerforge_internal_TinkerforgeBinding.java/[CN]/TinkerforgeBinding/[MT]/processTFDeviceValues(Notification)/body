@@ -6,18 +6,51 @@
       processValue((MBaseDevice)sensor,notification);
     }
   }
- else   if (notification.getNotifier() instanceof MSwitchActor) {
+  if (notification.getNotifier() instanceof SetPointActor<?>) {
+    SetPointActor<?> actor=(SetPointActor<?>)notification.getNotifier();
+    int setpointFeatureID=notification.getFeatureID(SetPointActor.class);
+    if (setpointFeatureID == ModelPackage.SET_POINT_ACTOR__PERCENT_VALUE) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
+  if (notification.getNotifier() instanceof MoveActor) {
+    MoveActor actor=(MoveActor)notification.getNotifier();
+    int moveFeatureID=notification.getFeatureID(MoveActor.class);
+    if (moveFeatureID == ModelPackage.MOVE_ACTOR__DIRECTION) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
+  if (notification.getNotifier() instanceof MSwitchActor) {
     MSwitchActor switchActor=(MSwitchActor)notification.getNotifier();
     int featureID=notification.getFeatureID(MSwitchActor.class);
     if (featureID == ModelPackage.MSWITCH_ACTOR__SWITCH_STATE) {
       processValue((MBaseDevice)switchActor,notification);
     }
   }
- else   if (notification.getNotifier() instanceof DigitalActor) {
+  if (notification.getNotifier() instanceof DigitalActor) {
     DigitalActor actor=(DigitalActor)notification.getNotifier();
     int featureID=notification.getFeatureID(DigitalActor.class);
     if (featureID == ModelPackage.DIGITAL_ACTOR__DIGITAL_STATE) {
       processValue((MBaseDevice)actor,notification);
+    }
+  }
+  if (notification.getNotifier() instanceof ColorActor) {
+    ColorActor actor=(ColorActor)notification.getNotifier();
+    int featureID=notification.getFeatureID(ColorActor.class);
+    if (featureID == ModelPackage.COLOR_ACTOR__COLOR) {
+      processValue((MBaseDevice)actor,notification);
+    }
+  }
+  if (notification.getNotifier() instanceof MBrickd) {
+    MBrickd brickd=(MBrickd)notification.getNotifier();
+    int featureID=notification.getFeatureID(MBrickd.class);
+    if (featureID == ModelPackage.MBRICKD__CONNECTED_COUNTER) {
+      String subId="connected_counter";
+      processValue(brickd,notification,subId);
+    }
+ else     if (featureID == ModelPackage.MBRICKD__IS_CONNECTED) {
+      String subId="isconnected";
+      processValue(brickd,notification,subId);
     }
   }
  else {

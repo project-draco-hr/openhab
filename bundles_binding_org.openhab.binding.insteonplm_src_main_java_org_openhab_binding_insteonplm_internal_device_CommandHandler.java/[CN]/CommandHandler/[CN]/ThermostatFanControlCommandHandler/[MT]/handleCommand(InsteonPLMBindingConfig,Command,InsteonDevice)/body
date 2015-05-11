@@ -1,0 +1,34 @@
+{
+  try {
+    int dc=((DecimalType)cmd).intValue();
+    Msg m=null;
+switch (dc) {
+case 1:
+      m=dev.makeExtendedMessage((byte)0x0f,(byte)0x6b,(byte)0x09);
+    dev.enqueueMessage(m,m_feature);
+  logger.info("{}: sent msg to turn A/C OFF",nm());
+m=null;
+break;
+case 2:
+m=dev.makeExtendedMessage((byte)0x0f,(byte)0x6b,(byte)0x07);
+dev.enqueueMessage(m,m_feature);
+logger.info("{}: sent msg to turn A/C fan ON",nm());
+m=null;
+break;
+case 3:
+m=dev.makeExtendedMessage((byte)0x0f,(byte)0x6b,(byte)0x08);
+dev.enqueueMessage(m,m_feature);
+logger.info("{}: sent msg to turn A/C fan AUTO",nm());
+m=null;
+break;
+default :
+break;
+}
+}
+ catch (IOException e) {
+logger.error("{}: command send i/o error: ",nm(),e);
+}
+catch (FieldException e) {
+logger.error("{}: command send message creation error ",nm(),e);
+}
+}

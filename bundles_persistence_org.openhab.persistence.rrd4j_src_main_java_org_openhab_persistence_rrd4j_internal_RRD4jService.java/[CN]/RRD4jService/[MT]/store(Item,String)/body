@@ -1,8 +1,8 @@
 {
   final String name=alias == null ? item.getName() : alias;
-  ConsolFun function=getConsolidationFunction(item);
-  RrdDb db=getDB(name,function);
+  RrdDb db=getDB(name);
   if (db != null) {
+    ConsolFun function=getConsolidationFunction(db);
     long now=System.currentTimeMillis() / 1000;
     if (function != ConsolFun.AVERAGE) {
       try {
@@ -27,6 +27,9 @@
       DecimalType state=(DecimalType)item.getStateAs(DecimalType.class);
       if (state != null) {
         double value=state.toBigDecimal().doubleValue();
+        if (db.getDatasource(DATASOURCE_STATE).getType() == DsType.COUNTER) {
+          value=value * db.getRrdDef().getStep();
+        }
         sample.setValue(DATASOURCE_STATE,value);
         sample.update();
         logger.debug("Stored '{}' with state '{}' in rrd4j database",name,item.getState());

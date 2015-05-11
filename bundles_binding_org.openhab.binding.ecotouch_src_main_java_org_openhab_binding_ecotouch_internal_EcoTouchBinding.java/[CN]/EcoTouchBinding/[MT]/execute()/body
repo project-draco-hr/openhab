@@ -27,18 +27,35 @@
           continue;
         }
         int heatpumpValue=rawvalues.get(item.getTagName());
+        State value;
         if (item.getType() == EcoTouchTags.Type.Analog) {
           BigDecimal decimal=new BigDecimal(heatpumpValue).divide(new BigDecimal(10));
-          handleEventType(new DecimalType(decimal),item);
+          value=new DecimalType(decimal);
         }
  else         if (item.getType() == EcoTouchTags.Type.Word) {
-          handleEventType(new DecimalType(heatpumpValue),item);
+          if (NumberItem.class.equals(item.getItemClass()))           value=new DecimalType(heatpumpValue);
+ else {
+            if (heatpumpValue == 0)             value=OnOffType.OFF;
+ else             value=OnOffType.ON;
+          }
         }
  else {
           heatpumpValue>>=item.getBitNum();
           heatpumpValue&=1;
-          handleEventType(new DecimalType(heatpumpValue),item);
+          if (NumberItem.class.equals(item.getItemClass()))           value=new DecimalType(heatpumpValue);
+ else {
+            if (heatpumpValue == 0)             value=OnOffType.OFF;
+ else             value=OnOffType.ON;
+          }
         }
+        if (item == EcoTouchTags.TYPE_ADAPT_HEATING) {
+          double adapt=((DecimalType)value).intValue();
+          adapt=Math.max(0,adapt);
+          adapt=Math.min(8,adapt);
+          adapt=(adapt - 4) / 2.0;
+          value=new DecimalType(adapt);
+        }
+        handleEventType(value,item);
       }
     }
     cookies=connector.getCookies();
