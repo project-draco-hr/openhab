@@ -1,0 +1,16 @@
+{
+  try {
+    JAXBContext jaxbContext=JAXBContext.newInstance(request.getClass());
+    Marshaller jaxbMarshaller=jaxbContext.createMarshaller();
+    StringWriter sw=new StringWriter();
+    jaxbMarshaller.marshal(request,sw);
+    String result=HttpUtil.executeUrl("POST",uri,IOUtils.toInputStream(sw.toString()),CONTENT_TYPE_XML,REQUEST_TIMEOUT_MS);
+    JAXBContext jcResponse=JAXBContext.newInstance(response);
+    @SuppressWarnings("unchecked") T obj=(T)jcResponse.createUnmarshaller().unmarshal(IOUtils.toInputStream(result));
+    return obj;
+  }
+ catch (  JAXBException e) {
+    logger.warn("Encoding error in post",e);
+  }
+  return null;
+}

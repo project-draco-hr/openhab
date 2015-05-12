@@ -1,0 +1,9 @@
+{
+  Date start=new Date();
+  logger.trace("Refresh Denon HTTP state");
+  refreshHttpProperties();
+  for (  Entry<String,State> state : stateCache.entrySet()) {
+    callback.updated(connection.getInstance(),state.getKey(),state.getValue());
+  }
+  logger.trace("Refresh took {}ms",new Date().getTime() - start.getTime());
+}

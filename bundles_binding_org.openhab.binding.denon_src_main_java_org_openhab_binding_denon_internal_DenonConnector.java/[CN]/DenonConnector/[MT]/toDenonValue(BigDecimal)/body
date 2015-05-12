@@ -1,0 +1,11 @@
+{
+  percent=percent.divide(POINTFIVE).setScale(0,RoundingMode.UP).multiply(POINTFIVE).min(connection.getMainVolumeMax()).max(BigDecimal.ZERO);
+  String dbString=String.valueOf(percent.intValue());
+  if (percent.compareTo(BigDecimal.TEN) == -1) {
+    dbString="0" + dbString;
+  }
+  if (percent.remainder(BigDecimal.ONE).equals(POINTFIVE)) {
+    dbString=dbString + "5";
+  }
+  return dbString;
+}

@@ -1,0 +1,35 @@
+{
+  if (COMMAND_PATTERN.matcher(commandString).matches()) {
+    String command=commandString.substring(0,2);
+    String value=commandString.substring(2,commandString.length()).trim();
+    if (ZONE_SUBCOMMAND_PATTERN.matcher(commandString).matches()) {
+      command=commandString.substring(0,4);
+      value=commandString.substring(4,commandString.length()).trim();
+    }
+    logger.debug("Command: {}, value: {}",command,value);
+    if (value.equals("ON") || value.equals("OFF")) {
+      sendUpdate(command,OnOffType.valueOf(value));
+    }
+ else     if (value.equals("STANDBY")) {
+      sendUpdate(command,OnOffType.OFF);
+    }
+ else     if (StringUtils.isNumeric(value)) {
+      PercentType percent=new PercentType(fromDenonValue(value));
+      command=translateVolumeCommand(command);
+      sendUpdate(command,percent);
+    }
+ else     if (command.equals("SI")) {
+      sendUpdate(DenonProperty.INPUT.getCode(),new StringType(value));
+      sendUpdate(commandString,OnOffType.ON);
+    }
+ else     if (command.equals("MS")) {
+      sendUpdate(DenonProperty.SURROUND_MODE.getCode(),new StringType(value));
+    }
+ else     if (command.equals("NS")) {
+      processTitleCommand(command,value);
+    }
+  }
+ else {
+    logger.debug("Invalid command: " + commandString);
+  }
+}

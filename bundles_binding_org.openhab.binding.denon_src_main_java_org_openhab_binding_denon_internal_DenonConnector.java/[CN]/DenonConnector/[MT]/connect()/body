@@ -1,0 +1,12 @@
+{
+  if (connection.isTelnet()) {
+    listener=new DenonListener(connection,new DenonUpdateReceivedCallback(){
+      @Override public void updateReceived(      String command){
+        processUpdate(command);
+      }
+    }
+);
+    listener.start();
+  }
+  getInitialState();
+}

@@ -1,0 +1,15 @@
+{
+  DenonBindingProvider firstProvider=getFirstMatchingProvider(instance,property);
+  if (firstProvider != null) {
+    DenonBindingConfig config=firstProvider.getConfig(instance,property);
+    try {
+      State oldState=itemRegistry.getItem(config.getItemName()).getState();
+      if (!oldState.equals(newState)) {
+        eventPublisher.postUpdate(config.getItemName(),newState);
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.debug("Cannot find item " + config.getItemName() + " in the registry",e);
+    }
+  }
+}
