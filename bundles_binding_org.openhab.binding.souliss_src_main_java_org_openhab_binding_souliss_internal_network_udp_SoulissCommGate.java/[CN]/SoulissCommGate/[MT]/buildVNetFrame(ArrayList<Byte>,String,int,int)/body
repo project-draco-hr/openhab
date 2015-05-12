@@ -1,0 +1,21 @@
+{
+  ArrayList<Byte> frame=new ArrayList<Byte>();
+  InetAddress ip;
+  try {
+    ip=InetAddress.getByName(soulissNodeIPAddress);
+  }
+ catch (  UnknownHostException e) {
+    e.printStackTrace();
+    return frame;
+  }
+  byte[] dude=ip.getAddress();
+  frame.add((byte)23);
+  frame.add((byte)dude[3]);
+  frame.add((byte)soulissNodeIPAddress.compareTo(ConstantsUDP.BROADCASTADDR) == 0 ? dude[2] : 0);
+  frame.add((byte)iNodeIndex);
+  frame.add((byte)iUserIndex);
+  frame.add(0,(byte)(frame.size() + MACACOframe2.size() + 1));
+  frame.add(0,(byte)(frame.size() + MACACOframe2.size() + 1));
+  frame.addAll(MACACOframe2);
+  return frame;
+}

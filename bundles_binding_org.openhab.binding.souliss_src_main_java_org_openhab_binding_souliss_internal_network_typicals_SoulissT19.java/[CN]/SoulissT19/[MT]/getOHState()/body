@@ -1,0 +1,9 @@
+{
+  String sOHState=StateTraslator.statesSoulissToOH(this.getNote(),this.getType(),(short)this.getState());
+  if (sOHState != null) {
+    return OnOffType.valueOf(sOHState);
+  }
+ else {
+    return new PercentType(String.valueOf((this.getState() / 250) * 100));
+  }
+}

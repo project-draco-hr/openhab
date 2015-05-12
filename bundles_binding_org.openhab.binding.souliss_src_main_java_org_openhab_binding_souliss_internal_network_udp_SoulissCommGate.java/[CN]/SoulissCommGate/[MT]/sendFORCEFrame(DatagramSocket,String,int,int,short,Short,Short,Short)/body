@@ -1,0 +1,24 @@
+{
+  ArrayList<Byte> MACACOframe=new ArrayList<Byte>();
+  MACACOframe.add((byte)ConstantsUDP.Souliss_UDP_function_force);
+  MACACOframe.add((byte)0x0);
+  MACACOframe.add((byte)0x0);
+  MACACOframe.add((byte)(IDNode));
+  if (byte1 == null && byte2 == null && byte3 == null)   MACACOframe.add((byte)((byte)slot + 1));
+ else   if (byte2 == null && byte3 == null)   MACACOframe.add((byte)((byte)slot + 2));
+ else   MACACOframe.add((byte)((byte)slot + 4));
+  for (int i=0; i <= slot - 1; i++) {
+    MACACOframe.add((byte)00);
+  }
+  MACACOframe.add((byte)shortCommand);
+  if (byte1 != null && byte2 != null && byte3 != null) {
+    MACACOframe.add(byte1.byteValue());
+    MACACOframe.add(byte2.byteValue());
+    MACACOframe.add(byte3.byteValue());
+  }
+ else   if (byte1 != null) {
+    MACACOframe.add(byte1.byteValue());
+  }
+  logger.debug("sendFORCEFrame - {}, soulissNodeIPAddressOnLAN: {}",MaCacoToString(MACACOframe),soulissNodeIPAddressOnLAN);
+  send(datagramSocket,MACACOframe,soulissNodeIPAddressOnLAN);
+}
