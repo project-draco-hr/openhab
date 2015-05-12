@@ -1,0 +1,23 @@
+{
+  StateTransformable state=null;
+  if (item.getState() instanceof HSBType) {
+    HSBType hsb=(HSBType)item.getState();
+    state=new HSBData(hsb.getHue().longValue(),hsb.getHue().longValue(),hsb.getHue().longValue());
+  }
+ else   if (item.getState() instanceof DateTimeType) {
+    DateTimeType dt=(DateTimeType)item.getState();
+    DateTimeDataType data=new DateTimeDataType(dt.toString());
+    state=new DateTimeData(data);
+  }
+ else   if (item.getState() instanceof DecimalType) {
+  }
+ else   if (item.getState() instanceof OnOffType) {
+  }
+ else   if (item.getState() instanceof OpenClosedType) {
+  }
+ else   if (item.getState() instanceof PercentType) {
+  }
+ else   if (item.getState() instanceof UpDownType) {
+  }
+  return state;
+}

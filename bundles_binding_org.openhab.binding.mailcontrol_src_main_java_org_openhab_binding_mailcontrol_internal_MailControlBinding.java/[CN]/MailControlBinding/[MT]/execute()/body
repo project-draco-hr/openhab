@@ -1,0 +1,13 @@
+{
+  try {
+    MailConnector connector=connectorBuilder.createAndCheckMailConnector();
+    service=new MessagesService<T>(connector,eventPublisher,config);
+    service.receiveMessages();
+  }
+ catch (  ServiceException ex) {
+    logger.error("Cannot receive messages",ex);
+  }
+catch (  ConfigurationException ex) {
+    logger.error("Cannot receive messages",ex);
+  }
+}
