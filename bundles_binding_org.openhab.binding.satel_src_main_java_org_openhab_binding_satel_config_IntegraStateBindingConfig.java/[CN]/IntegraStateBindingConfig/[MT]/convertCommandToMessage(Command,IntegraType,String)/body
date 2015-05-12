@@ -5,9 +5,10 @@
 switch (this.stateType.getObjectType()) {
 case OUTPUT:
       byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
-    return ControlObjectCommand.buildMessage(switchOn ? OutputControl.ON : OutputControl.OFF,outputs,userCode);
+    boolean invertState=hasOptionEnabled(Options.INVERT_STATE);
+  return ControlObjectCommand.buildMessage(switchOn ^ invertState ? OutputControl.ON : OutputControl.OFF,outputs,userCode);
 case DOORS:
-  break;
+break;
 case ZONE:
 break;
 case PARTITION:
