@@ -1,0 +1,9 @@
+{
+  String simpleConfig="DirFiles:60000:..\\resources\\";
+  NumberItem testItem=new NumberItem("DirFiles03");
+  provider.processBindingConfiguration("systeminfo",testItem,simpleConfig);
+  Assert.assertEquals("DirFiles",provider.getCommandType("DirFiles03").toString());
+  Assert.assertNull(provider.getItemType("DirFiles03"));
+  Assert.assertEquals(60000,provider.getRefreshInterval("DirFiles03"));
+  Assert.assertEquals("..\\resources\\",provider.getTarget("DirFiles03"));
+}

@@ -1,0 +1,17 @@
+{
+  NumberItem testItem=new NumberItem("DirFiles01");
+  String simpleConfig="DirFiles:60000:.";
+  provider.processBindingConfiguration("systeminfo",testItem,simpleConfig);
+  Assert.assertNull(provider.getCommandType(null));
+  Assert.assertNull(provider.getCommandType(""));
+  Assert.assertEquals("DirFiles",provider.getCommandType("DirFiles01").toString());
+  Assert.assertNull(provider.getItemType(null));
+  Assert.assertNull(provider.getItemType(""));
+  Assert.assertNull(provider.getItemType("DirFiles01"));
+  Assert.assertEquals(0,provider.getRefreshInterval(null));
+  Assert.assertEquals(0,provider.getRefreshInterval(""));
+  Assert.assertEquals(60000,provider.getRefreshInterval("DirFiles01"));
+  Assert.assertNull(provider.getTarget(null));
+  Assert.assertNull(provider.getTarget(""));
+  Assert.assertEquals(".",provider.getTarget("DirFiles01"));
+}
