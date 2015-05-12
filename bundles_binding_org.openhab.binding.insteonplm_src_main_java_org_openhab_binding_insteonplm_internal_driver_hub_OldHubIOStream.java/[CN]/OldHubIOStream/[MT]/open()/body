@@ -1,0 +1,20 @@
+{
+  if (m_host == null || m_port < 0) {
+    logger.error("tcp connection to hub not properly configured!");
+    return (false);
+  }
+  try {
+    m_socket=new Socket(m_host,m_port);
+    m_in=m_socket.getInputStream();
+    m_out=m_socket.getOutputStream();
+  }
+ catch (  UnknownHostException e) {
+    logger.error("unknown host name: {}",m_host,e);
+    return (false);
+  }
+catch (  IOException e) {
+    logger.error("cannot open connection to {} port {}: ",m_host,m_port,e);
+    return (false);
+  }
+  return true;
+}

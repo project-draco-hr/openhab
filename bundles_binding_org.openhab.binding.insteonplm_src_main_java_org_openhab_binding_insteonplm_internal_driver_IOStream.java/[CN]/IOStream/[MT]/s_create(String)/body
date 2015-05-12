@@ -1,34 +1,9 @@
 {
   if (config.startsWith("/hub2/")) {
-    config=config.substring(6);
-    String user=null;
-    String pass=null;
-    String host=null;
-    int port=25105;
-    int pollTime=1000;
-    String[] parts=config.split(",");
-    String[] adr=parts[0].split("@");
-    String[] hostPort;
-    if (adr.length > 1) {
-      String[] userPass=adr[0].split(":");
-      user=userPass[0];
-      pass=userPass[1];
-      hostPort=adr[1].split(":");
-    }
- else {
-      hostPort=parts[0].split(":");
-    }
-    host=hostPort[0];
-    if (hostPort.length > 1)     port=Integer.parseInt(hostPort[1]);
-    if (parts.length > 1) {
-      if (parts[1].trim().startsWith("poll_time")) {
-        pollTime=Integer.parseInt(parts[1].split("=")[1].trim());
-      }
-    }
-    return new HubIOStream(host,port,pollTime,user,pass);
+    return makeHub2014Stream(config);
   }
  else   if (config.startsWith("/hub/")) {
-    throw new IllegalArgumentException("old-style hub not implemented yet!");
+    return makeOldHubStream(config);
   }
  else   return new SerialIOStream(config);
 }
