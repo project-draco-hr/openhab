@@ -1,0 +1,17 @@
+{
+  String commandToSend=null;
+  Class<? extends Command> commandClass=command.getClass();
+  if (commandClass.equals(OnOffType.class)) {
+    commandToSend=getCommandFor(config,(OnOffType)command);
+  }
+ else   if (commandClass.equals(IncreaseDecreaseType.class)) {
+    commandToSend=getCommandFor(config,(IncreaseDecreaseType)command);
+  }
+ else   if (commandClass.equals(PercentType.class)) {
+    commandToSend=getCommandFor(config,(PercentType)command);
+  }
+ else   if (commandClass.equals(StringType.class)) {
+    commandToSend=getCommandFor(config,(StringType)command);
+  }
+  internalSendCommand(commandToSend);
+}

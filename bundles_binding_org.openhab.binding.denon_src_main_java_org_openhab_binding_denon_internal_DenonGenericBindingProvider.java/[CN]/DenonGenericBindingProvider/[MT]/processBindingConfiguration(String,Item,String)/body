@@ -1,0 +1,13 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  bindingConfig=bindingConfig.trim();
+  if (CONFIG_PATTERN.matcher(bindingConfig).matches()) {
+    DenonBindingConfig config=new DenonBindingConfig();
+    String[] parts=bindingConfig.split("#");
+    config.setItemName(item.getName());
+    config.setInstance(parts[0]);
+    config.setProperty(parts[1]);
+    logger.debug("denon:{} item {} bound to property {}",config.getInstance(),config.getItemName(),config.getProperty());
+    addBindingConfig(item,config);
+  }
+}
