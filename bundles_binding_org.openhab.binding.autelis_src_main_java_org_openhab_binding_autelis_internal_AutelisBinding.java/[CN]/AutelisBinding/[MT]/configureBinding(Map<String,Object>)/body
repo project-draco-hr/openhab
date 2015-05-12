@@ -1,0 +1,24 @@
+{
+  String refreshIntervalString=(String)configuration.get("refresh");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+  }
+  int port=DEFAULT_PORT;
+  String host=(String)configuration.get("host");
+  String username=(String)configuration.get("username");
+  String password=(String)configuration.get("password");
+  if (StringUtils.isBlank(host)) {
+    logger.error("Host config parameter is missing");
+    setProperlyConfigured(false);
+    return;
+  }
+  String portString=(String)configuration.get("port");
+  if (StringUtils.isNotBlank(portString))   port=Integer.parseInt(portString);
+  String prefix="";
+  if (username != null) {
+    prefix=username + ":" + password+ "@";
+  }
+  baseURL="http://" + prefix + host+ ":"+ port;
+  logger.debug("Autelius binding configured for host {}",host);
+  setProperlyConfigured(true);
+}
