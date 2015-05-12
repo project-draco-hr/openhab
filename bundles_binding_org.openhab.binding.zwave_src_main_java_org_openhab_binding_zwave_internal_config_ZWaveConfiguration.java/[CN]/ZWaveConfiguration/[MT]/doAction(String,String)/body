@@ -72,14 +72,6 @@
         logger.debug("NODE {}: Delete node",nodeId);
         this.zController.requestRemoveFailedNode(nodeId);
       }
-      if (action.equals("Version")) {
-        logger.debug("NODE {}: Get node version",nodeId);
-        ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
-        if (versionCommandClass == null) {
-          return;
-        }
-        this.zController.sendData(versionCommandClass.getVersionMessage());
-      }
       return;
     }
     if (splitDomain[2].equals("parameters")) {
