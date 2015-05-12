@@ -1,0 +1,12 @@
+{
+  if (config != null) {
+    this.config=config;
+    this.connectorBuilder=new ConnectorBuilder(config);
+    connectorBuilder.createAndCheckMailConnector();
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    setProperlyConfigured(true);
+  }
+}
