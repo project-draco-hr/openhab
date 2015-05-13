@@ -62,17 +62,15 @@
         ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
         nodeSerializer.SerializeNode(node);
       }
+      if (action.equals("Initialise")) {
+        logger.debug("NODE {}: re-initialising node",nodeId);
+        ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+        nodeSerializer.DeleteNode(nodeId);
+        this.zController.reinitialiseNode(nodeId);
+      }
       if (action.equals("Delete")) {
         logger.debug("NODE {}: Delete node",nodeId);
         this.zController.requestRemoveFailedNode(nodeId);
-      }
-      if (action.equals("Version")) {
-        logger.debug("NODE {}: Get node version",nodeId);
-        ZWaveVersionCommandClass versionCommandClass=(ZWaveVersionCommandClass)node.getCommandClass(CommandClass.VERSION);
-        if (versionCommandClass == null) {
-          return;
-        }
-        this.zController.sendData(versionCommandClass.getVersionMessage());
       }
       return;
     }
