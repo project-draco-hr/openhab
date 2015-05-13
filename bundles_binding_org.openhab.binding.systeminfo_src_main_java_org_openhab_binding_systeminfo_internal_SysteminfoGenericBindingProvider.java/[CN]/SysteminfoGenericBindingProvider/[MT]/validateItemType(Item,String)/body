@@ -1,5 +1,8 @@
 {
-  if (!(item instanceof NumberItem || item instanceof StringItem)) {
+  if (item == null) {
+    throw new BindingConfigParseException("item is not permitted to be null.  item must be a non-null NumberItem or StringItem - please check your *.items configuration");
+  }
+ else   if (!(item instanceof NumberItem || item instanceof StringItem)) {
     throw new BindingConfigParseException("item '" + item.getName() + "' is of type '"+ item.getClass().getSimpleName()+ "', only NumberItem and StringItem are allowed - please check your *.items configuration");
   }
 }
