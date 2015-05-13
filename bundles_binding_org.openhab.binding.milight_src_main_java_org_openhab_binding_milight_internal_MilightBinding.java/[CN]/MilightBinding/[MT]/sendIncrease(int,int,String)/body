@@ -32,6 +32,11 @@ int increasePercent=newPercent * rgbwSteps / 100;
 messageBytes="4E:" + Integer.toHexString(increasePercent) + ":55";
 logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
 }
+ else if (bulb < 5) {
+newPercent=(int)Math.round((Math.round(getCurrentState(bulb,bridgeId,BindingType.brightness).intValue() / 9.090909090909091) + 1) * 9.090909090909091);
+newValue=new PercentType(newPercent);
+logger.debug("milight: Bulb '{}' getting increased to '{}'",bulb,newPercent);
+}
 sendMessage(messageBytes,bridgeId);
 setCurrentState(bulb,bridgeId,newValue,BindingType.brightness);
 return newValue;

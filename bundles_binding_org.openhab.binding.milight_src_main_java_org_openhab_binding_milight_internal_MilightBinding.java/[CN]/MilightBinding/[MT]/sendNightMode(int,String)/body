@@ -1,6 +1,7 @@
 {
   logger.debug("milight: sendNightMode");
   String messageBytes=null;
+  String messageBytes2=null;
 switch (bulb) {
 case 0:
     messageBytes="B9:00:55";
@@ -17,6 +18,35 @@ break;
 case 4:
 messageBytes="B6:00:55";
 break;
+case 6:
+messageBytes="41:00:55";
+messageBytes2="C1:00:55";
+break;
+case 7:
+messageBytes="46:00:55";
+messageBytes2="C6:00:55";
+break;
+case 8:
+messageBytes="48:00:55";
+messageBytes2="C8:00:55";
+break;
+case 9:
+messageBytes="4A:00:55";
+messageBytes2="CA:00:55";
+break;
+case 10:
+messageBytes="4C:00:55";
+messageBytes2="CC:00:55";
+break;
 }
 sendMessage(messageBytes,bridgeId);
+if (bulb >= 6 && bulb <= 10) {
+try {
+Thread.sleep(100);
+sendMessage(messageBytes2,bridgeId);
+}
+ catch (InterruptedException e) {
+logger.debug("Sleeping thread has been interrupted.");
+}
+}
 }

@@ -36,6 +36,17 @@ case 10:
 messageBytes="4C:00:55";
 break;
 }
+if (bulb < 5) {
+setCurrentState(bulb,bridgeId,PercentType.HUNDRED,BindingType.brightness);
+for (int i=0; i < 10; i++) {
+sendDecrease(bulb,27,bridgeId);
+try {
+Thread.sleep(50);
+}
+ catch (InterruptedException e) {
+}
+}
+}
 sendMessage(messageBytes,bridgeId);
 setCurrentState(bulb,bridgeId,PercentType.ZERO,BindingType.brightness);
 }
