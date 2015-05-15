@@ -32,8 +32,9 @@
     }
   }
  catch (  Exception ex) {
-    logger.error(getProviderName() + ": " + ex.getMessage(),ex);
+    logger.error(getProviderName() + ": " + ex.getMessage());
     weather.setError(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+    throw ex;
   }
  finally {
     if (get != null) {
