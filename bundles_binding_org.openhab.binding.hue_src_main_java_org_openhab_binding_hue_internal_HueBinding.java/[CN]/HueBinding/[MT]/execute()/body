@@ -40,7 +40,7 @@
             }
             if (deviceConfig.getType().equals(BindingType.brightness)) {
               if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
-                PercentType newPercent=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
+                PercentType newPercent=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)HueBulb.MAX_BRIGHTNESS));
                 if ((deviceConfig.itemStatePercentType == null) || (deviceConfig.itemStatePercentType.equals(newPercent) == false)) {
                   eventPublisher.postUpdate(hueItemName,newPercent);
                   deviceConfig.itemStatePercentType=newPercent;
@@ -50,8 +50,8 @@
  else             if (deviceConfig.getType().equals(BindingType.rgb)) {
               if ((bulb.getIsOn() == true) && (bulb.getIsReachable() == true)) {
                 DecimalType decimalHue=new DecimalType(bulb.getHue() / (double)182);
-                PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)255));
-                PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)255));
+                PercentType percentBrightness=new PercentType((int)Math.round((bulb.getBrightness() * (double)100) / (double)HueBulb.MAX_BRIGHTNESS));
+                PercentType percentSaturation=new PercentType((int)Math.round((bulb.getSaturation() * (double)100) / (double)HueBulb.MAX_SATURATION));
                 HSBType newHsb=new HSBType(decimalHue,percentSaturation,percentBrightness);
                 if ((deviceConfig.itemStateHSBType == null) || (deviceConfig.itemStateHSBType.equals(newHsb) == false)) {
                   eventPublisher.postUpdate(hueItemName,newHsb);
