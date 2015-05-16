@@ -1,15 +1,8 @@
 {
   logger.debug("starting reader...");
   byte[] buffer=new byte[2 * m_readSize];
-  int len=-1;
-  try {
-    while ((len=m_ioStream.in().read(buffer,0,m_readSize)) > -1) {
-      m_msgFactory.addData(buffer,len);
-      processMessages();
-    }
-  }
- catch (  IOException e) {
-    e.printStackTrace();
-    logger.error("got read IOException on port {}, port is now disabled!",m_logName);
+  for (int len=-1; (len=m_ioStream.read(buffer,0,m_readSize)) > 0; ) {
+    m_msgFactory.addData(buffer,len);
+    processMessages();
   }
 }

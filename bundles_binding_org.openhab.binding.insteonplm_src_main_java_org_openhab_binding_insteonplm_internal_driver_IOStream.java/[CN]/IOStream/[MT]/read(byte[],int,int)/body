@@ -1,0 +1,21 @@
+{
+  int len=0;
+  while (len < 1) {
+    try {
+      len=m_in.read(b,offset,readSize);
+    }
+ catch (    IOException e) {
+      logger.trace("got exception while reading: {}",e.getMessage());
+      while (!reconnect()) {
+        try {
+          logger.trace("sleeping before reconnecting");
+          Thread.sleep(10000);
+        }
+ catch (        InterruptedException ie) {
+          logger.warn("interrupted while sleeping on read reconnect");
+        }
+      }
+    }
+  }
+  return (len);
+}
