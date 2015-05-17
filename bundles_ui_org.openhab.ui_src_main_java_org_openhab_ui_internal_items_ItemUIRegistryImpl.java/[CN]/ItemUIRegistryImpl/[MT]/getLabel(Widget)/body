@@ -1,40 +1,12 @@
 {
   String label=getLabelFromWidget(w);
   String itemName=w.getItem();
-  if (itemName != null && label.contains("[")) {
-    int indexOpenBracket=label.indexOf("[");
-    int indexCloseBracket=label.indexOf("]");
-    State state=null;
-    String formatPattern=label.substring(indexOpenBracket + 1,indexCloseBracket);
-    try {
-      Item item=getItem(itemName);
-      if (label.contains("%d")) {
-        state=item.getState();
-        if (!(state instanceof DecimalType)) {
-          state=item.getStateAs(DecimalType.class);
-        }
-      }
- else {
-        state=item.getState();
-      }
-    }
- catch (    ItemNotFoundException e) {
-      logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
-    }
-    if (state == null || state instanceof UnDefType) {
-      formatPattern=formatUndefined(formatPattern);
-    }
- else     if (state instanceof Type) {
-      try {
-        formatPattern=((Type)state).format(formatPattern);
-      }
- catch (      IllegalArgumentException e) {
-        logger.warn("Exception while formatting value '{}' of item {} with format '{}': {}",state,itemName,formatPattern,e);
-        formatPattern=new String("Err");
-      }
-    }
-    label=label.substring(0,indexOpenBracket + 1) + formatPattern + label.substring(indexCloseBracket);
+  Item item=null;
+  try {
+    item=getItem(itemName);
   }
-  label=transform(label);
-  return label;
+ catch (  ItemNotFoundException e) {
+    logger.error("Cannot retrieve item for widget {}",w.eClass().getInstanceTypeName());
+  }
+  return formatLabel(item,itemName,label);
 }
