@@ -2,6 +2,14 @@
   if (config != null) {
     sLogger.debug("KNXBinding configuration present. Setting up KNX bus connection.");
     sIp=(String)config.get("ip");
+    String readingBusAddrString=(String)config.get("busaddr");
+    if (StringUtils.isNotBlank(readingBusAddrString)) {
+      sLocalSourceAddr=readingBusAddrString;
+    }
+    String readingIgnLocEv=(String)config.get("ignorelocalevents");
+    if (StringUtils.isNotBlank(readingIgnLocEv)) {
+      sIgnoreLocalSourceEvents=readingIgnLocEv.equalsIgnoreCase("true");
+    }
     String connectionTypeString=(String)config.get("type");
     if (StringUtils.isNotBlank(connectionTypeString)) {
       if ("TUNNEL".equals(connectionTypeString)) {
