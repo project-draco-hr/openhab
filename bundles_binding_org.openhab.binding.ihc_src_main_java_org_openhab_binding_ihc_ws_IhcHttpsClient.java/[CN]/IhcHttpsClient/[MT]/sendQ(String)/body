@@ -1,0 +1,11 @@
+{
+  logger.trace("Send query (timeout={}): {}",requestTimeout,query);
+  postReq.setEntity(new StringEntity(query,"UTF-8"));
+  postReq.addHeader("content-type","text/xml");
+  final RequestConfig params=RequestConfig.custom().setConnectTimeout(connectTimeout).setSocketTimeout(requestTimeout).build();
+  postReq.setConfig(params);
+  HttpResponse response=client.execute(postReq,IhcConnectionPool.getInstance().getHttpContext());
+  String resp=EntityUtils.toString(response.getEntity());
+  logger.trace("Received response: {}",resp);
+  return resp;
+}
