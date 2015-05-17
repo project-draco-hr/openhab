@@ -1,0 +1,29 @@
+{
+  File file=null;
+  String prefix="";
+  try {
+    if (isLegacyConfiguration()) {
+      file=new File(CONFIG_DIR + File.separator + "openhab.cfg");
+      prefix=SERVICE_NAME + ":";
+    }
+ else {
+      file=new File(CONTENT_DIR + File.separator + SERVICE_NAME+ ".cfg");
+    }
+    if (!file.exists()) {
+      file.getParentFile().mkdirs();
+      file.createNewFile();
+    }
+    if (!WithingsAuthenticator.DEFAULT_ACCOUNT_ID.equals(accountId)) {
+      prefix+=accountId + ".";
+    }
+    Map<String,String> config=load(file);
+    config.put(prefix + "userid",userId);
+    config.put(prefix + "token",token);
+    config.put(prefix + "tokensecret",tokenSecret);
+    store(config,file);
+    logger.debug("Saved WithingsAccount to file '{}'.",file.getAbsolutePath());
+  }
+ catch (  IOException ioe) {
+    logger.error("Couldn't write WithingsAccount to file '{}'.",file.getAbsolutePath());
+  }
+}

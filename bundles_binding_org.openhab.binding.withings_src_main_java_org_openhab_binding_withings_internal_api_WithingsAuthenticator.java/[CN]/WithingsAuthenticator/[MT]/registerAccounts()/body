@@ -1,0 +1,15 @@
+{
+  for (  Entry<String,WithingsAccount> entry : accountsCache.entrySet()) {
+    String accountId=entry.getKey();
+    WithingsAccount account=entry.getValue();
+    if (account.isAuthenticated()) {
+      account.registerAccount(componentContext.getBundleContext());
+    }
+ else     if (account.isValid()) {
+      printAuthenticationInfo(accountId);
+    }
+ else {
+      logger.warn("Configuration details of Account '{}' are invalid please check openhab.cfg or withings.cfg.",accountId);
+    }
+  }
+}

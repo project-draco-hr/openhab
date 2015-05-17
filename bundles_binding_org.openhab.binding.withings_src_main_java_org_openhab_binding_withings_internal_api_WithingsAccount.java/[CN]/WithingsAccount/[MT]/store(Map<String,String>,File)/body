@@ -1,0 +1,11 @@
+{
+  FileOutputStream os=new FileOutputStream(file);
+  List<String> lines=new ArrayList<String>();
+  for (  Entry<String,String> line : config.entrySet()) {
+    String value=isBlank(line.getValue()) ? "" : "=" + line.getValue();
+    lines.add(line.getKey() + value);
+  }
+  IOUtils.writeLines(lines,System.getProperty("line.separator"),os);
+  IOUtils.closeQuietly(os);
+  return config;
+}

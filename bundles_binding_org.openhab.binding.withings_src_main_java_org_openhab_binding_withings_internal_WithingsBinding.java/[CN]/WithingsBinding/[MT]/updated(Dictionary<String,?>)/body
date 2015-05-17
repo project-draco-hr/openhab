@@ -3,16 +3,7 @@
     String refreshInterval=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshInterval)) {
       this.refreshInterval=Long.parseLong(refreshInterval);
-      if (isProperlyConfigured() && activeService.isRunning()) {
-        activeService.shutdown();
-        activeService.interrupt();
-        try {
-          Thread.sleep(5000);
-        }
- catch (        InterruptedException unhandled) {
-        }
-        setProperlyConfigured(isProperlyConfigured());
-      }
+      restartPollingThread();
     }
   }
 }
