@@ -1,0 +1,16 @@
+{
+  Map<String,String> config=new LinkedHashMap<String,String>();
+  FileInputStream is=new FileInputStream(file);
+  List<String> lines=IOUtils.readLines(is);
+  for (  String line : lines) {
+    String[] parameterPair=line.split("=");
+    if (parameterPair.length == 2) {
+      config.put(parameterPair[0].trim(),parameterPair[1].trim());
+    }
+ else {
+      config.put(parameterPair[0],"");
+    }
+  }
+  IOUtils.closeQuietly(is);
+  return config;
+}

@@ -1,20 +1,53 @@
 {
-  if (properties != null) {
-    String redirectUrl=(String)properties.get("redirectUrl");
-    if (redirectUrl != null) {
+  if (config != null) {
+    String redirectUrl=(String)config.get("redirectUrl");
+    if (StringUtils.isNotBlank(redirectUrl)) {
       this.redirectUrl=redirectUrl;
     }
-    String consumerKey=(String)properties.get("consumerKey");
-    if (consumerKey != null) {
-      this.consumerKey=consumerKey;
+    String consumerKeyString=(String)config.get("consumerkey");
+    if (StringUtils.isNotBlank(consumerKeyString)) {
+      this.consumerKey=consumerKeyString;
     }
-    String consumerSecret=(String)properties.get("consumerSecret");
-    if (consumerSecret != null) {
-      this.consumerSecret=consumerSecret;
+    String consumerSecretString=(String)config.get("consumersecret");
+    if (StringUtils.isNotBlank(consumerSecretString)) {
+      this.consumerSecret=consumerSecretString;
     }
-    String contentDir=(String)properties.get("contentDir");
-    if (contentDir != null) {
-      this.contentDir=contentDir;
+    Enumeration<String> configKeys=config.keys();
+    while (configKeys.hasMoreElements()) {
+      String configKey=(String)configKeys.nextElement();
+      if ("redirectUrl".equals(configKey) || "consumerkey".equals(configKey) || "consumersecret".equals(configKey)|| "service.pid".equals(configKey)) {
+        continue;
+      }
+      String accountId;
+      String configKeyTail;
+      if (configKey.contains(".")) {
+        String[] keyElements=configKey.split("\\.");
+        accountId=keyElements[0];
+        configKeyTail=keyElements[1];
+      }
+ else {
+        accountId=DEFAULT_ACCOUNT_ID;
+        configKeyTail=configKey;
+      }
+      WithingsAccount account=accountsCache.get(accountId);
+      if (account == null) {
+        account=new WithingsAccount(accountId,consumerKey,consumerSecret);
+        accountsCache.put(accountId,account);
+      }
+      String value=(String)config.get(configKeyTail);
+      if ("userid".equals(configKeyTail)) {
+        account.userId=value;
+      }
+ else       if ("token".equals(configKeyTail)) {
+        account.token=value;
+      }
+ else       if ("tokensecret".equals(configKeyTail)) {
+        account.tokenSecret=value;
+      }
+ else {
+        throw new ConfigurationException(configKey,"The given configuration key is unknown!");
+      }
     }
+    registerAccounts();
   }
 }
