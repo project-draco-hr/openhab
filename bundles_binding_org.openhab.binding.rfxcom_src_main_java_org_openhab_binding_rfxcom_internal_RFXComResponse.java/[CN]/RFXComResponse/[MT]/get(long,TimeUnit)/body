@@ -1,0 +1,15 @@
+{
+  lock.lock();
+  try {
+    if (!done) {
+      final boolean timedOut=!condition.await(timeout,unit);
+      if (timedOut) {
+        throw new TimeoutException("waiting timed out");
+      }
+    }
+    return result;
+  }
+  finally {
+    lock.unlock();
+  }
+}

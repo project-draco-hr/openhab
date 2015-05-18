@@ -14,7 +14,7 @@
   try {
     byte[] tmpData=new byte[20];
     int len=-1;
-    while ((len=in.read(tmpData)) > 0 && interrupted != true) {
+    while ((len=in.read(tmpData)) > 0 && !interrupted) {
       byte[] logData=Arrays.copyOf(tmpData,len);
       logger.trace("Received data (len={}): {}",len,DatatypeConverter.printHexBinary(logData));
       for (int i=0; i < len; i++) {
@@ -36,7 +36,7 @@
             try {
               Iterator<RFXComEventListener> iterator=_listeners.iterator();
               while (iterator.hasNext()) {
-                ((RFXComEventListener)iterator.next()).packetReceived(event,msg);
+                iterator.next().packetReceived(event,msg);
               }
             }
  catch (            Exception e) {

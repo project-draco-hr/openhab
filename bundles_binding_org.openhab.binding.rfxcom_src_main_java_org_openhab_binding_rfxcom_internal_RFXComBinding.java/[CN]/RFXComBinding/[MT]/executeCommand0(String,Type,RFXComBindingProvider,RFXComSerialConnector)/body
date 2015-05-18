@@ -1,0 +1,50 @@
+{
+  String id=provider.getId(itemName);
+  PacketType packetType=provider.getPacketType(itemName);
+  Object subType=provider.getSubType(itemName);
+  RFXComValueSelector valueSelector=provider.getValueSelector(itemName);
+  final Future<RFXComTransmitterMessage> result;
+  try {
+    RFXComMessageInterface obj=RFXComMessageFactory.getMessageInterface(packetType);
+    final byte seqNumber=getNextSeqNumber();
+    obj.convertFromState(valueSelector,id,subType,command,seqNumber);
+    byte[] data=obj.decodeMessage();
+    logger.debug("Transmitting data: {}",DatatypeConverter.printHexBinary(data));
+    result=resultRegistry.registerCommand(seqNumber);
+    connector.sendMessage(data);
+  }
+ catch (  IOException e) {
+    logger.error("Message sending to RFXCOM controller failed.",e);
+    return false;
+  }
+catch (  RFXComException e) {
+    logger.error("Message sending to RFXCOM controller failed.",e);
+    return false;
+  }
+  boolean success=false;
+  try {
+    final RFXComTransmitterMessage resp=result.get(timeout,TimeUnit.MILLISECONDS);
+switch (resp.response) {
+case ACK:
+case ACK_DELAYED:
+      logger.debug("Command succesfully transmitted, '{}' received",resp.response);
+    success=true;
+  break;
+case NAK:
+case NAK_INVALID_AC_ADDRESS:
+case UNKNOWN:
+logger.error("Command transmit failed, '{}' received",resp.response);
+break;
+}
+}
+ catch (InterruptedException e) {
+logger.error("No acknowledge received from RFXCOM controller, timeout {}ms due to",timeout,e);
+}
+catch (ExecutionException e) {
+logger.error("No acknowledge received from RFXCOM controller, timeout {}ms due to {}",timeout,e);
+}
+catch (TimeoutException e) {
+logger.error("No acknowledge received from RFXCOM controller, timeout {}ms due to {}",timeout,e);
+}
+return success;
+}
