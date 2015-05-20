@@ -1,0 +1,17 @@
+{
+  if (isConnected()) {
+    logger.trace("Sending (hex) [{}] to {} via Serial",PrimareUtils.byteArrayToHex(msg),this.toString());
+    try {
+synchronized (oLock) {
+        outStream.write(msg);
+        outStream.flush();
+      }
+      bytesSentAt=new Date();
+      logger.trace("Sent and flushed (hex) [{}] to {} via Serial",PrimareUtils.byteArrayToHex(msg),this.toString());
+    }
+ catch (    IOException e) {
+      connectionBroken=true;
+      throw e;
+    }
+  }
+}

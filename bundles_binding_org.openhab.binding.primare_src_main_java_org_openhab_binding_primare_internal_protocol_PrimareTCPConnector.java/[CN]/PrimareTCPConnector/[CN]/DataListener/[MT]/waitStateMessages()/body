@@ -1,0 +1,11 @@
+{
+  PrimareStatusUpdateEvent event=new PrimareStatusUpdateEvent(this);
+  logger.debug("Entered waitStateMessages loop for {}",PrimareTCPConnector.this.toString());
+  while (true) {
+    logger.trace("waitStateMessages - waiting for data");
+    byte b=inStream.readByte();
+    bytesReceivedAt=new Date();
+    buffer[total++]=b;
+    parseData(total - 1);
+  }
+}

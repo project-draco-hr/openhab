@@ -1,0 +1,130 @@
+{
+  boolean relevant=false;
+switch (PrimareSPA20Command.valueOf(deviceCmdString)) {
+case POWER_QUERY:
+case POWER_TOGGLE:
+case POWER_OFF:
+case POWER_ON:
+    relevant=(message[1] == 0x01);
+  break;
+case MAIN_INPUT_QUERY:
+case MAIN_INPUT_UP:
+case MAIN_INPUT_DOWN:
+case MAIN_INPUT_SET:
+relevant=(message[1] == 0x02);
+break;
+case VOLUME_QUERY:
+case VOLUME_UP:
+case VOLUME_DOWN:
+case VOLUME_SET:
+relevant=(message[1] == 0x03);
+break;
+case BALANCE_UP:
+case BALANCE_QUERY:
+case BALANCE_DOWN:
+case BALANCE_SET:
+relevant=(message[1] == 0x04);
+break;
+case CENTER_UP:
+case CENTER_QUERY:
+case CENTER_DOWN:
+case CENTER_SET:
+relevant=(message[1] == 0x05);
+break;
+case SURROUND_UP:
+case SURROUND_QUERY:
+case SURROUND_DOWN:
+case SURROUND_SET:
+relevant=(message[1] == 0x06);
+break;
+case BACK_QUERY:
+case BACK_UP:
+case BACK_DOWN:
+case BACK_SET:
+relevant=(message[1] == 0x07);
+break;
+case SUB_UP:
+case SUB_QUERY:
+case SUB_DOWN:
+case SUB_SET:
+relevant=(message[1] == 0x08);
+break;
+case MUTE_QUERY:
+case MUTE_TOGGLE:
+case MUTE_OFF:
+case MUTE_ON:
+relevant=(message[1] == 0x09);
+break;
+case DIM_QUERY:
+case DIM_TOGGLE:
+case DIM_OFF:
+case DIM_ON:
+relevant=(message[1] == 0x0A);
+break;
+case RECORD_INPUT_QUERY:
+case RECORD_INPUT_UP:
+case RECORD_INPUT_DOWN:
+case RECORD_INPUT_SET:
+relevant=(message[1] == 0x0B);
+break;
+case SURROUND_MODE_QUERY:
+case SURROUND_MODE_UP:
+case SURROUND_MODE_SET:
+relevant=(message[1] == 0x0C);
+break;
+case VERBOSE_QUERY:
+case VERBOSE_TOGGLE:
+case VERBOSE_OFF:
+case VERBOSE_ON:
+relevant=(message[1] == 0x0D);
+break;
+case MENU_QUERY:
+case MENU_TOGGLE:
+case MENU_SET:
+relevant=(message[1] == 0x0E);
+break;
+case EXTRA_SURROUND_MODE_QUERY:
+case EXTRA_SURROUND_MODE_TOGGLE:
+case EXTRA_SURROUND_MODE_ON:
+case EXTRA_SURROUND_MODE_OFF:
+relevant=(message[1] == 0x10);
+break;
+case FRONT_PANEL_LOCK_QUERY:
+case FRONT_PANEL_LOCK_TOGGLE:
+case FRONT_PANEL_LOCK_OFF:
+case FRONT_PANEL_LOCK_ON:
+relevant=(message[1] == 0x11);
+break;
+case IR_INPUT_QUERY:
+case IR_INPUT_TOGGLE:
+case IR_INPUT_FRONT:
+case IR_INPUT_BACK:
+relevant=(message[1] == 0x12);
+break;
+case RECALL_MEMORY:
+case RECALL_MEMORY_DIRECT_USER_SETTINGS:
+case RECALL_MEMORY_DIRECT_FACTORY_SETTINGS:
+case RECALL_MEMORY_DIRECT_INSTALLER_SETTINGS:
+relevant=(message[1] == 0x13);
+break;
+case CURRENT_INPUT_NAME_QUERY:
+relevant=(message[1] == 0x14);
+break;
+case PRODUCTLINE_QUERY:
+relevant=(message[1] == 0x15);
+break;
+case MODEL_QUERY:
+relevant=(message[1] == 0x16);
+break;
+case SW_VERSION_QUERY:
+relevant=(message[1] == 0x17);
+break;
+case LATE_NIGHT_MODE_QUERY:
+case LATE_NIGHT_MODE_TOGGLE:
+case LATE_NIGHT_MODE_OFF:
+case LATE_NIGHT_MODE_ON:
+relevant=(message[1] == 0x18);
+break;
+}
+return relevant;
+}

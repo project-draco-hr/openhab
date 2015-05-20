@@ -1,0 +1,24 @@
+{
+  logger.debug("Scheduled connection supervisor task started for {}",PrimareSerialConnector.this.toString());
+  if (connectionBroken) {
+    disconnectSerial();
+  }
+  if (!isConnected()) {
+    logger.trace("No connection, connecting to {}",PrimareSerialConnector.this.toString());
+    try {
+      connectSerial();
+    }
+ catch (    Exception unimportant) {
+      logger.trace("Still no connection after retry, failed to connect to {}",PrimareSerialConnector.this.toString());
+    }
+  }
+ else {
+    try {
+      sendPingMessages();
+    }
+ catch (    Exception unimportant) {
+      logger.trace("Send ping message to {} failed",PrimareSerialConnector.this.toString());
+      disconnectSerial();
+    }
+  }
+}
