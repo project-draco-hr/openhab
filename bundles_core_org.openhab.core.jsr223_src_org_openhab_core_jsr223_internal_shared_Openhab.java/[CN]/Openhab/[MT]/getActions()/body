@@ -1,0 +1,12 @@
+{
+  HashMap<String,Object> actions=new HashMap<String,Object>();
+  Object[] services=Jsr223CoreActivator.actionServiceTracker.getServices();
+  if (services != null) {
+    for (    Object service : services) {
+      ActionService actionService=(ActionService)service;
+      String className=actionService.getActionClassName().substring(actionService.getActionClassName().lastIndexOf(".") + 1);
+      actions.put(className,actionService.getActionClass());
+    }
+  }
+  return actions;
+}

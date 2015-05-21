@@ -1,0 +1,12 @@
+{
+  try {
+    boolean result=scheduler.deleteJob(jobKey);
+    if (result) {
+      cancelled=true;
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("An error occured while cancelling the job '{}': {}",new String[]{jobKey.toString(),e.getMessage()});
+  }
+  return cancelled;
+}
