@@ -1,0 +1,26 @@
+{
+  logger.trace("statusUpdateReceived for device {}: {}",deviceId,PrimareUtils.byteArrayToHex(data));
+  DeviceConfig deviceConfig=deviceConfigCache.get(deviceId);
+  if (deviceConfig != null) {
+    logger.trace("Received status update '{}' from device {}",PrimareUtils.byteArrayToHex(data),deviceConfig.toString());
+    PrimareResponse deviceResponse=null;
+    deviceResponse=deviceConfig.connector.getResponseFactory().getResponse(data);
+    for (    PrimareBindingProvider provider : providers) {
+      for (      String itemName : provider.getItemNames()) {
+        HashMap<String,String> values=provider.getDeviceCommands(itemName);
+        for (        String cmd : values.keySet()) {
+          String[] commandParts=values.get(cmd).split(":");
+          String deviceCmd=commandParts[1];
+          boolean match=deviceResponse.isRelevantFor(deviceCmd);
+          if (match) {
+            Class<? extends Item> itemType=provider.getItemType(itemName);
+            State v=deviceResponse.openHabState(itemType);
+            logger.trace("Updating itemName {} to {} based on device command {}",itemName,v,deviceCmd);
+            eventPublisher.postUpdate(itemName,v);
+            break;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  if (deviceConfigCache != null) {
+    for (    String device : deviceConfigCache.keySet()) {
+      PrimareConnector connector=deviceConfigCache.get(device).getConnector();
+      if (connector != null) {
+        connector.disconnect();
+        connector.removeEventListener(this);
+      }
+    }
+    deviceConfigCache=null;
+  }
+}

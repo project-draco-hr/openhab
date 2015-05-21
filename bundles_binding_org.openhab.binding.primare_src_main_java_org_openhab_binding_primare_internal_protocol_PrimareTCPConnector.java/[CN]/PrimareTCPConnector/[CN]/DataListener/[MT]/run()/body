@@ -1,0 +1,19 @@
+{
+  logger.debug("DataListener for {} started",PrimareTCPConnector.this.toString());
+  while (!connectionBroken && socket != null && socket.isConnected() && !interrupted) {
+    try {
+      waitStateMessages();
+    }
+ catch (    SocketTimeoutException e) {
+      logger.debug("No data received from {} during supervision interval ({} sec)!",PrimareTCPConnector.this.toString(),SOCKET_TIMEOUT);
+    }
+catch (    Exception e) {
+      if (interrupted != true && this.isInterrupted() != true) {
+        logger.error("Error for {} during message waiting: {}",PrimareTCPConnector.this.toString(),e);
+        connectionBroken=true;
+        break;
+      }
+    }
+  }
+  logger.debug("DataListener for {} stopped",PrimareTCPConnector.this.toString());
+}
