@@ -1,0 +1,14 @@
+{
+  try {
+    final Element fsApiResult=(Element)xmlDoc.getElementsByTagName("fsapiResponse").item(0);
+    final Element valueNode=(Element)fsApiResult.getElementsByTagName("value").item(0);
+    final Element u32Node=(Element)valueNode.getElementsByTagName("u32").item(0);
+    final String value=getCharacterDataFromElement(u32Node);
+    logger.trace("value is: " + value);
+    return Integer.parseInt(value);
+  }
+ catch (  Exception e) {
+    logger.error("getting Value.U32 failed with " + e.getClass().getName() + ": "+ e.getMessage());
+    return 0;
+  }
+}

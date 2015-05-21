@@ -1,0 +1,12 @@
+{
+  final int newVolume=volume < 0 ? 0 : volume > 32 ? 32 : volume;
+  final String params="value=" + newVolume;
+  try {
+    conn.doRequest(REQUEST_SET_VOLUME,params);
+    currentVolume=volume;
+    return;
+  }
+ catch (  Exception e) {
+    logger.error("request failed: " + REQUEST_SET_VOLUME + " = "+ params);
+  }
+}
