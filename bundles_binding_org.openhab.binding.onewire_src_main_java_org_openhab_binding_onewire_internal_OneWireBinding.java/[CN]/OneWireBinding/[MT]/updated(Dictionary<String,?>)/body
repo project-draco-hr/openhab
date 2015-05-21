@@ -1,0 +1,12 @@
+{
+  if (pvConfig != null) {
+    String lvPostOnlyChangedValues=(String)pvConfig.get("post_only_changed_values");
+    if (StringUtils.isNotBlank(lvPostOnlyChangedValues)) {
+      ivPostOnlyChangedValues=Boolean.getBoolean(lvPostOnlyChangedValues);
+    }
+    OneWireConnection.updated(pvConfig);
+  }
+  for (  OneWireBindingProvider lvProvider : providers) {
+    scheduleAllBindings(lvProvider);
+  }
+}
