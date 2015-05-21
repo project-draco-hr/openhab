@@ -1,0 +1,65 @@
+{
+  deviceConfigCache.clear();
+  if (config != null) {
+    logger.debug("Configuration updated with " + config.size() + " keys");
+    final Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      final String key=(String)keys.nextElement();
+      final Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+      if (!matcher.matches()) {
+        if (!"service.pid".equals(key)) {
+          logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.<host|port|pin|refreshInterval|cachePeriod>'");
+        }
+        continue;
+      }
+ else {
+        logger.debug("matching config item found: " + key + " = "+ config.get(key));
+      }
+      final String deviceId=matcher.group(1);
+      final String configKey=matcher.group(2);
+      final String value=(String)config.get(key);
+      if (deviceId == null || deviceId.trim().isEmpty()) {
+        if ("cachePeriod".equalsIgnoreCase(configKey)) {
+          logger.debug("Cache period is " + value);
+          cachePeriod=Integer.parseInt(value.trim());
+        }
+ else         if ("refreshInterval".equalsIgnoreCase(configKey)) {
+          logger.debug("Refresh interval is " + value);
+          refreshInterval=Long.parseLong(value.trim());
+        }
+ else {
+          logger.error("the given config key '" + configKey + "' is unknown");
+        }
+      }
+ else {
+        FrontierSiliconRadioBindingConfig deviceConfig=deviceConfigCache.get(deviceId);
+        if (deviceConfig == null) {
+          deviceConfig=new FrontierSiliconRadioBindingConfig(deviceId);
+          deviceConfigCache.put(deviceId,deviceConfig);
+        }
+        if ("host".equalsIgnoreCase(configKey)) {
+          logger.debug("Host name for " + deviceId + " is "+ value);
+          deviceConfig.host=value;
+        }
+ else         if ("port".equalsIgnoreCase(configKey)) {
+          logger.debug("Port number for " + deviceId + " is "+ value);
+          deviceConfig.port=Integer.valueOf(value.trim());
+        }
+ else         if ("pin".equalsIgnoreCase(configKey)) {
+          logger.debug("PIN for " + deviceId + " is "+ value);
+          deviceConfig.pin=value;
+        }
+ else {
+          logger.error("the given config key '" + configKey + "' is unknown");
+        }
+      }
+    }
+    for (    String device : deviceConfigCache.keySet()) {
+      final FrontierSiliconRadio radio=deviceConfigCache.get(device).getRadio();
+      if (radio != null) {
+        radio.login();
+      }
+    }
+  }
+  setProperlyConfigured(!deviceConfigCache.isEmpty());
+}

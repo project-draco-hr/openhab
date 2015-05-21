@@ -1,0 +1,14 @@
+{
+  try {
+    final Element fsApiResult=(Element)xmlDoc.getElementsByTagName("fsapiResponse").item(0);
+    final Element valueNode=(Element)fsApiResult.getElementsByTagName("value").item(0);
+    final Element c8Array=(Element)valueNode.getElementsByTagName("c8_array").item(0);
+    final String value=getCharacterDataFromElement(c8Array);
+    logger.trace("value is: " + value);
+    return value;
+  }
+ catch (  Exception e) {
+    logger.error("getting Value.c8array failed with " + e.getClass().getName() + ": "+ e.getMessage());
+    return "";
+  }
+}
