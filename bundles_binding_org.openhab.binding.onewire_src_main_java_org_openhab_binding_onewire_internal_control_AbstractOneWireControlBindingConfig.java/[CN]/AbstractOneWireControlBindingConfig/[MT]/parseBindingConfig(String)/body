@@ -1,0 +1,10 @@
+{
+  String[] pvConfigParts=pvBindingConfig.trim().split(";");
+  for (  String pvConfigPart : pvConfigParts) {
+    parseControl(pvConfigPart);
+  }
+  if (this.ivControlName == null) {
+    logger.error("control is not set in config!");
+    throw new BindingConfigParseException("Onewire binding control configuration must contain at least the 'control' name");
+  }
+}

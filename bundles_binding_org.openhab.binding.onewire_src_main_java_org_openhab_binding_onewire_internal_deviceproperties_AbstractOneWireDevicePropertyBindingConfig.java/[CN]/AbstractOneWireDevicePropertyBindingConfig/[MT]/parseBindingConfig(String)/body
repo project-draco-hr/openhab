@@ -1,0 +1,13 @@
+{
+  String[] pvConfigParts=pvBindingConfig.trim().split(";");
+  for (  String pvConfigPart : pvConfigParts) {
+    parseDeviceId(pvConfigPart);
+    parsePropertyName(pvConfigPart);
+    parseRefreshInterval(pvConfigPart);
+    parseIgnore85CPowerOnResetValues(pvConfigPart);
+  }
+  if (this.ivDeviceId == null || this.ivDeviceId.trim().equals("") || this.ivPropertyName == null || this.ivPropertyName.trim().equals("")) {
+    logger.error("deviceId and propertyName not set in config!");
+    throw new BindingConfigParseException("Onewire sensor configuration must contain at least the deviceId and the propertyName");
+  }
+}

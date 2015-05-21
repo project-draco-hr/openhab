@@ -1,16 +1,5 @@
 {
-  String[] configParts=bindingConfig.trim().split("#");
-  if (configParts.length != 2) {
-    throw new BindingConfigParseException("Onewire sensor configuration must contain of two parts separated by a '#'");
-  }
-  OneWireBindingConfig config=new OneWireBindingConfig();
-  config.sensorId=configParts[0];
-  parseParameters(config,configParts[1]);
-  addBindingConfig(item,config);
-  Set<Item> items=contextMap.get(context);
-  if (items == null) {
-    items=new HashSet<Item>();
-    contextMap.put(context,items);
-  }
-  items.add(item);
+  super.processBindingConfiguration(pvContext,pvItem,pvBindingConfig);
+  OneWireBindingConfig pvDevicePropertyBindingConfig=OneWireBindingConfigFactory.createOneWireDeviceProperty(pvItem,pvBindingConfig);
+  addBindingConfig(pvItem,pvDevicePropertyBindingConfig);
 }

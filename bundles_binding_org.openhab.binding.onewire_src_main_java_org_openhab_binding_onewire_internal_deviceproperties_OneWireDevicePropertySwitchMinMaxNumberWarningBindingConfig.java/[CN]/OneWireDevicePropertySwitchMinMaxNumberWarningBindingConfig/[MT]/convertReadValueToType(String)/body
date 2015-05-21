@@ -1,0 +1,13 @@
+{
+  Type lvType=super.convertReadValueToType(pvReadValue);
+  DecimalType lvDecimalType=(DecimalType)lvType;
+  if (ivMaxWarningValue != null && lvDecimalType.toBigDecimal().compareTo(ivMaxWarningValue) == 1) {
+    return OnOffType.ON;
+  }
+ else   if (ivMinWarningValue != null && lvDecimalType.toBigDecimal().compareTo(ivMinWarningValue) == -1) {
+    return OnOffType.ON;
+  }
+ else {
+    return OnOffType.OFF;
+  }
+}
