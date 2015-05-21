@@ -1,0 +1,70 @@
+{
+  logger.debug("internalReceiveCommand({},{}) is called!",itemName,command);
+  for (  SagerCasterBindingProvider provider : providers) {
+    SagerCasterBindingConfig config=provider.getConfig(itemName);
+switch (config.commandType) {
+case CLOUDLEVEL:
+{
+        logger.debug("Updated cloudlevel, updating forecast");
+        DecimalType newValue=(DecimalType)command;
+        sagerWeatherCaster.setCloudLevel(newValue.doubleValue());
+        postNewForecast(provider);
+        break;
+      }
+case RAINING:
+{
+      logger.debug("Updated rain status, updating forecast");
+      OnOffType newOnOffValue=(OnOffType)command;
+      sagerWeatherCaster.setRaining(newOnOffValue.equals(OnOffType.ON));
+      postNewForecast(provider);
+      break;
+    }
+case SEALEVELPRESSURE:
+{
+    logger.debug("Updated sea-level pressure, updating forecast");
+    DecimalType newValue=(DecimalType)command;
+    HistoricItem historicItem=getPreviousValue(config.item);
+    if (historicItem != null) {
+      DecimalType previousValue=(DecimalType)historicItem.getState();
+      sagerWeatherCaster.setPressure(newValue.doubleValue(),previousValue.doubleValue());
+      State pressTrend=new DecimalType(sagerWeatherCaster.getPressureTrend());
+      for (      final String pressureItems : provider.getItemNamesBy(CommandType.PRESSURETREND)) {
+        eventPublisher.postUpdate(pressureItems,pressTrend);
+      }
+      postNewForecast(provider);
+    }
+ else     logger.warn("Not enough historic data to study pressure evolution, wait a bit ...");
+    break;
+  }
+case WINDBEARING:
+{
+  logger.debug("Updated wind direction, updating forecast");
+  DecimalType newValue=(DecimalType)command;
+  HistoricItem historicItem=getPreviousValue(config.item);
+  if (historicItem != null) {
+    DecimalType previousValue=(DecimalType)historicItem.getState();
+    sagerWeatherCaster.setBearing(newValue.intValue(),previousValue.intValue());
+    State compassState=new StringType(sagerWeatherCaster.getCompass());
+    for (    final String compassItems : provider.getItemNamesBy(CommandType.COMPASS)) {
+      eventPublisher.postUpdate(compassItems,compassState);
+    }
+    State windTrend=new DecimalType(sagerWeatherCaster.getWindEvolution());
+    for (    final String windTrendItems : provider.getItemNamesBy(CommandType.WINDTREND)) {
+      eventPublisher.postUpdate(windTrendItems,windTrend);
+    }
+    postNewForecast(provider);
+  }
+ else   logger.warn("Not enough historic data to study wind bearing evolution, wait a bit ...");
+  break;
+}
+case WINDSPEED:
+{
+logger.debug("Updated wind speed, updating forecast");
+DecimalType newValue=(DecimalType)command;
+sagerWeatherCaster.setBeaufort(newValue.intValue());
+postNewForecast(provider);
+break;
+}
+}
+}
+}
