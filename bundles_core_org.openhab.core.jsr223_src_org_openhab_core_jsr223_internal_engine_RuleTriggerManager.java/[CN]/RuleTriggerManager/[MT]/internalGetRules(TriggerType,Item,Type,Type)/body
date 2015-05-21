@@ -1,0 +1,30 @@
+{
+  List<Rule> result=Lists.newArrayList();
+  Iterable<Rule> rules=getAllRules(triggerType,item.getName());
+  if (rules == null) {
+    rules=Lists.newArrayList();
+  }
+switch (triggerType) {
+case STARTUP:
+    return systemStartupTriggeredRules;
+case SHUTDOWN:
+  return systemShutdownTriggeredRules;
+case TIMER:
+return timerEventTriggeredRules;
+case UPDATE:
+case CHANGE:
+case COMMAND:
+if (newType instanceof State) {
+for (Rule rule : rules) {
+  for (  EventTrigger t : rule.getEventTrigger()) {
+    if (t.evaluate(item,(State)oldType,(State)newType,null,triggerType)) {
+      result.add(rule);
+      break;
+    }
+  }
+}
+}
+break;
+}
+return result;
+}

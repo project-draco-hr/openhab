@@ -1,0 +1,16 @@
+{
+switch (type) {
+case STARTUP:
+    return systemStartupTriggeredRules;
+case SHUTDOWN:
+  return systemShutdownTriggeredRules;
+case UPDATE:
+return updateEventTriggeredRules.get(itemName);
+case CHANGE:
+return changedEventTriggeredRules.get(itemName);
+case COMMAND:
+return commandEventTriggeredRules.get(itemName);
+default :
+return Sets.newHashSet();
+}
+}

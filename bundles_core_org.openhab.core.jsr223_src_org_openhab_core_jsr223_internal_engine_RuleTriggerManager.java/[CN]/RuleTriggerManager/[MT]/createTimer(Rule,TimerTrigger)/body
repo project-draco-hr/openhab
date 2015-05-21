@@ -1,0 +1,27 @@
+{
+  String cronExpression=trigger.getCron();
+  if (cronExpression != null) {
+    if (cronExpression.equals("noon")) {
+      cronExpression="0 0 12 * * ?";
+    }
+ else     if (cronExpression.equals("midnight")) {
+      cronExpression="0 0 0 * * ?";
+    }
+  }
+ else {
+    logger.warn("Unrecognized time expression '{}' in rule '{}'",trigger.getCron(),rule);
+    return;
+  }
+  String jobIdentity=getJobIdentityString(rule,trigger);
+  try {
+    JobDataMap dataMap=new JobDataMap();
+    dataMap.put("rule",rule);
+    JobDetail job=newJob(TimeTriggerJob.class).usingJobData(dataMap).withIdentity(jobIdentity).build();
+    Trigger quartzTrigger=newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+    scheduler.scheduleJob(job,quartzTrigger);
+    logger.debug("Scheduled rule {} with cron expression {}",rule,cronExpression);
+  }
+ catch (  RuntimeException e) {
+    throw new SchedulerException(e.getMessage());
+  }
+}

@@ -1,0 +1,14 @@
+{
+  for (  File scriptFile : removedScripts) {
+    removeScript(scriptFile.getName());
+  }
+  for (  File scriptFile : addedScripts) {
+    Script script=loadScript(scriptFile);
+    runStartupRules(script);
+  }
+  for (  File scriptFile : modifiedScripts) {
+    removeScript(scriptFile.getName());
+    Script script=loadScript(scriptFile);
+    runStartupRules(script);
+  }
+}

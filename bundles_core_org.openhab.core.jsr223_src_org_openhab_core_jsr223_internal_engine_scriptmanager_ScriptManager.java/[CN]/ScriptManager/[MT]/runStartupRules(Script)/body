@@ -1,0 +1,14 @@
+{
+  if (script != null) {
+    ArrayList<Rule> toTrigger=new ArrayList<Rule>();
+    for (    Rule rule : script.getRules()) {
+      for (      EventTrigger trigger : rule.getEventTrigger()) {
+        if (trigger instanceof StartupTrigger) {
+          toTrigger.add(rule);
+          break;
+        }
+      }
+    }
+    if (toTrigger.size() > 0)     executeRules(toTrigger,new Event(TriggerType.STARTUP,null,null,null,null));
+  }
+}
