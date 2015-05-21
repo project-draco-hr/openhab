@@ -1,0 +1,16 @@
+{
+  logger.debug("Data listener for {} started",PrimareSerialConnector.this.toString());
+  while (!connectionBroken && !interrupted) {
+    try {
+      waitStateMessages();
+    }
+ catch (    IOException e) {
+      logger.error("Reading from serial port failed",e);
+      connectionBroken=true;
+    }
+catch (    InterruptedException e) {
+      interrupted=true;
+    }
+  }
+  logger.debug("Data listener for {} stopped",PrimareSerialConnector.this.toString());
+}

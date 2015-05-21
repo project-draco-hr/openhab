@@ -1,0 +1,39 @@
+{
+  logger.trace("Response from {} parse index:{} containing:{}",PrimareConnector.this.toString(),i,buffer[i]);
+  if (buffer[i] == (byte)0x10) {
+    if (double_dle_start == i - 1) {
+      double_dle_start=-1;
+    }
+ else {
+      double_dle_start=i;
+    }
+  }
+ else   if (buffer[i] != (byte)0x03) {
+    double_dle_start=-1;
+  }
+  if (buffer[i] == (byte)0x03 && double_dle_start == i - 1) {
+    logger.trace("Response from {} DLE ETX seen",PrimareConnector.this.toString());
+    i++;
+    byte[] data=Arrays.copyOf(buffer,i);
+    System.arraycopy(buffer,i,buffer,0,total - i);
+    total=total - i;
+    logger.trace("Response from {} received {} bytes: (hex) [{}]",PrimareConnector.this.toString(),data.length,PrimareUtils.byteArrayToHex(data));
+    if (data[0] == (byte)0x02) {
+      logger.trace("Response from {} start consuming command response (hex) {}",PrimareConnector.this.toString(),PrimareUtils.byteArrayToHex(data));
+      messageReceivedAt=new Date();
+      try {
+        Iterator<PrimareEventListener> iterator=_listeners.iterator();
+        while (iterator.hasNext()) {
+          ((PrimareEventListener)iterator.next()).statusUpdateReceived(new PrimareStatusUpdateEvent(this),deviceId,PrimareUtils.unescapeMessage(data));
+        }
+      }
+ catch (      Exception e) {
+        logger.error("Response from {} event listener invoking error - {}",PrimareConnector.this.toString(),e);
+      }
+      logger.trace("Response from {} consumed command response (hex) {}",PrimareConnector.this.toString(),PrimareUtils.byteArrayToHex(data));
+    }
+ else {
+    }
+  }
+  return i;
+}

@@ -1,0 +1,13 @@
+{
+  logger.debug("Entered waitStateMessages loop for {}",PrimareSerialConnector.this.toString());
+  while (true) {
+    logger.trace("waitStateMessages - waiting data from {}",PrimareSerialConnector.this.toString());
+    byte b=inStream.readByte();
+    bytesReceivedAt=new Date();
+    buffer[total++]=b;
+    parseData(total - 1);
+    if (Thread.interrupted()) {
+      throw new InterruptedException();
+    }
+  }
+}
