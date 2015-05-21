@@ -1,0 +1,14 @@
+{
+  logger.error(x.getMessage());
+  JSONObject responseJson=new JSONObject();
+  try {
+    responseJson.put("id",mRequestId);
+    responseJson.put("responseStatusText","openHAB connection error: " + x.getMessage());
+    if (this.getStatus() != STATUS_CANCELLING && this.getStatus() != STATUS_CANCELLED) {
+      mSocket.emit("responseError",responseJson);
+    }
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+}

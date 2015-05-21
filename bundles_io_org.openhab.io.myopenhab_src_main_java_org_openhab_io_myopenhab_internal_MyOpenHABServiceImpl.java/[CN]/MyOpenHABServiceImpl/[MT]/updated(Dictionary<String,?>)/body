@@ -1,0 +1,27 @@
+{
+  if (config != null) {
+    String baseUrlString=(String)config.get("baseUrl");
+    if (StringUtils.isNotBlank(baseUrlString)) {
+      mMyOHBaseUrl=baseUrlString;
+    }
+    String localPortString=(String)config.get("localPort");
+    if (StringUtils.isNotBlank(localPortString)) {
+      mLocalPort=Integer.valueOf(localPortString);
+    }
+  }
+ else {
+    logger.debug("config is null");
+  }
+  logger.debug("UUID = " + getUUID() + ", secret = "+ getSecret());
+  myOHClient=new MyOHClient(getUUID(),getSecret());
+  if (mMyOHBaseUrl != null) {
+    myOHClient.setMyOHBaseUrl(mMyOHBaseUrl);
+  }
+  if (mLocalPort != 8080) {
+    myOHClient.setOHBaseUrl("http://localhost:" + String.valueOf(mLocalPort));
+  }
+  myOHClient.setOpenHABVersion(getVersion());
+  myOHClient.connect();
+  myOHClient.setListener(this);
+  MyOpenHAB.mMyOpenHABService=this;
+}

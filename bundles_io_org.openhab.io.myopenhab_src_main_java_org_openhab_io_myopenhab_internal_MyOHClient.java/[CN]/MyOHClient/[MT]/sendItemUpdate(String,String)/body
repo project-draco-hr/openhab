@@ -1,0 +1,16 @@
+{
+  if (isConnected()) {
+    JSONObject itemUpdateMessage=new JSONObject();
+    try {
+      itemUpdateMessage.put("itemName",itemName);
+      itemUpdateMessage.put("itemStatus",itemStatus);
+      mSocket.emit("itemupdate",itemUpdateMessage);
+    }
+ catch (    JSONException e) {
+      logger.error(e.getMessage());
+    }
+  }
+ else {
+    logger.debug("No connection, Item update is not sent");
+  }
+}
