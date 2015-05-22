@@ -3,16 +3,22 @@
   if (itemRegistry != null) {
     try {
       Item item=itemRegistry.getItem(itemName);
-      if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+      if (item instanceof ColorItem || item instanceof DimmerItem) {
+        return item.getState();
+      }
+ else       if (item instanceof SwitchItem) {
         return string2DigitalValue(valueStr).equals(DIGITAL_VALUE_OFF) ? OnOffType.OFF : OnOffType.ON;
       }
  else       if (item instanceof ContactItem) {
-        return string2DigitalValue(valueStr).equals(DIGITAL_VALUE_OFF) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+        return (string2DigitalValue(valueStr).equals(DIGITAL_VALUE_OFF)) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+      }
+ else       if (item instanceof GenericItem) {
+        return item.getState();
       }
     }
  catch (    ItemNotFoundException e) {
       logger.warn("Could not find item '{}' in registry",itemName);
     }
   }
-  return new DecimalType(valueStr);
+  return new StringType(valueStr);
 }
