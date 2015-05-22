@@ -1,0 +1,10 @@
+{
+  Integer r=dpReadRetries.remove(datapoint);
+  int retries=(r != null ? r : KNXConnection.getReadRetriesLimit()) - 1;
+  if (retries >= 0) {
+    sLogger.warn("Autorefresh: Remaining retries for address '{}' = '{}'",datapoint.getMainAddress().toString(),retries);
+    readQueue.put(datapoint);
+    dpReadRetries.put(datapoint,retries);
+  }
+ else   if (retries == -1)   sLogger.warn("Autorefresh: Give up, could not read address '{}' after '{}' retries.",datapoint.getMainAddress().toString(),KNXConnection.getReadRetriesLimit());
+}
