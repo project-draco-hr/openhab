@@ -3,8 +3,7 @@
   String query=String.format(soapQuery,previousState.getState(),timeoutInSeconds);
   openConnection(url);
   setRequestProperty("SOAPAction","waitForControllerStateChange");
-  setRequestTimeout(getRequestTimeout() + timeoutInSeconds * 1000);
-  String response=sendQuery(query);
+  String response=sendQuery(query,timeout + timeoutInSeconds * 1000);
   closeConnection();
   WSControllerState controllerState=new WSControllerState();
   controllerState.encodeData(response);
