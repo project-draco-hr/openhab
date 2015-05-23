@@ -18,7 +18,7 @@
       temperature=-temperature;
     }
     double humidity=Integer.parseInt(woHeader.substring(6,8) + woHeader.substring(4,5)) / 10.0;
-    logger.info("device: " + device + ", T: "+ (!isNegative ? " " : "")+ temperature+ ",\tH: "+ humidity+ ", Bat.: "+ batteryStatus);
+    logger.info("device: {}, T: {},\tH: {}, Bat.: {}",device,(!isNegative ? " " : "") + temperature,humidity,batteryStatus);
     HMSBindingConfig temperatureConfig=findConfig(device,HMSBindingConfig.Datapoint.TEMPERATURE);
     if (temperatureConfig != null) {
       updateItem(temperatureConfig.item,temperature);
