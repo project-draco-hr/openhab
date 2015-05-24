@@ -6,7 +6,9 @@
     }
     for (Enumeration<?> e=config.keys(); e.hasMoreElements(); ) {
       String tv=(String)e.nextElement();
-      if (tv.equalsIgnoreCase("service.pid") || tv.equalsIgnoreCase("refresh"))       continue;
+      if (tv.equalsIgnoreCase("service.pid") || tv.equalsIgnoreCase("refresh")) {
+        continue;
+      }
       logger.info("TV registered '" + tv + "' with IP '"+ config.get(tv)+ "'");
       registeredTVs.put(tv,config.get(tv).toString());
     }
