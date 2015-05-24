@@ -1,7 +1,7 @@
 {
   openConnection(url);
   setRequestProperty("SOAPAction","getIHCProjectNumberOfSegments");
-  String response=sendQuery(emptyQuery);
+  String response=sendQuery(emptyQuery,timeout);
   closeConnection();
   String numberOfSegments=WSBaseDataType.parseValue(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getIHCProjectNumberOfSegments1");
   return Integer.parseInt(numberOfSegments);

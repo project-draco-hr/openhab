@@ -2,8 +2,7 @@
   final String soapQuery="<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:utcs=\"utcs\">" + "<soapenv:Header/>"+ "<soapenv:Body>"+ " <utcs:waitForResourceValueChanges1>%s</utcs:waitForResourceValueChanges1>"+ "</soapenv:Body>"+ "</soapenv:Envelope>";
   String query=String.format(soapQuery,timeoutInSeconds);
   openConnection(url);
-  setRequestTimeout(getRequestTimeout() + timeoutInSeconds * 1000);
-  String response=sendQuery(query);
+  String response=sendQuery(query,timeout + timeoutInSeconds * 1000);
   closeConnection();
   List<WSResourceValue> resourceValueList=new ArrayList<WSResourceValue>();
   NodeList nodeList;

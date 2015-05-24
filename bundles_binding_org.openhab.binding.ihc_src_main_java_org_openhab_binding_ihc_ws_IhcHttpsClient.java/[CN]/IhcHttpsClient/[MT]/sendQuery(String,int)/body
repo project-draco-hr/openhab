@@ -1,0 +1,26 @@
+{
+  try {
+    return sendQ(query,timeout);
+  }
+ catch (  NoHttpResponseException e) {
+    try {
+      logger.debug("No response received, resend query");
+      return sendQ(query,timeout);
+    }
+ catch (    IOException ee) {
+      throw new IhcExecption(ee);
+    }
+  }
+catch (  SocketTimeoutException e) {
+    try {
+      logger.debug("Timeout received, resend query");
+      return sendQ(query,timeout);
+    }
+ catch (    IOException ee) {
+      throw new IhcExecption(ee);
+    }
+  }
+catch (  IOException e) {
+    throw new IhcExecption(e);
+  }
+}
