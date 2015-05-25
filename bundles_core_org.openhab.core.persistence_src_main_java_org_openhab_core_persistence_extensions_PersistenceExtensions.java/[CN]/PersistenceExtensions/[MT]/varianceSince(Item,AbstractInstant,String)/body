@@ -1,6 +1,10 @@
 {
   Iterable<HistoricItem> result=getAllStatesSince(item,timestamp,serviceName);
   Iterator<HistoricItem> it=result.iterator();
+  DecimalType average=averageSince(item,timestamp,serviceName);
+  if (average == null) {
+    return null;
+  }
   double total=0;
   int quantity=0;
   DecimalType histValue=null;
@@ -8,20 +12,20 @@
     State state=it.next().getState();
     if (state instanceof DecimalType) {
       histValue=(DecimalType)state;
-      total+=histValue.doubleValue();
+      total+=Math.pow(histValue.doubleValue() - average.doubleValue(),2);
       quantity++;
     }
   }
   DecimalType currentValue=(DecimalType)item.getStateAs(DecimalType.class);
   if (currentValue != null && currentValue != histValue) {
-    total+=currentValue.doubleValue();
+    total+=Math.pow(currentValue.doubleValue() - average.doubleValue(),2);
     quantity++;
   }
   if (quantity == 0) {
     return null;
   }
  else {
-    double average=total / quantity;
-    return new DecimalType(average);
+    double variance=total / quantity;
+    return new DecimalType(variance);
   }
 }
