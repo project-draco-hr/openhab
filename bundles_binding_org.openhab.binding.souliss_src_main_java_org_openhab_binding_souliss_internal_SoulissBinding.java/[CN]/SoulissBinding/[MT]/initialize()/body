@@ -1,0 +1,15 @@
+{
+  logger.info("START");
+  try {
+    UDPServerThread UDP_Server=null;
+    UDP_Server=new UDPServerThread(SoulissGenericBindingProvider.SoulissTypicalsRecipients);
+    UDP_Server.start();
+    mon=new Monitor(SoulissGenericBindingProvider.SoulissTypicalsRecipients,SoulissNetworkParameter.REFRESH_MONITOR_TIME,eventPublisher);
+    sendDisp=new SendDispatcher(SoulissGenericBindingProvider.SoulissTypicalsRecipients,SoulissNetworkParameter.SEND_DELAY,SoulissNetworkParameter.SEND_MIN_DELAY);
+    susbcription=new RefreshSUBSCRIPTION(UDP_Server.getSocket(),SoulissNetworkParameter.IPAddressOnLAN);
+    healty=new RefreshHEALTY(UDP_Server.getSocket(),SoulissNetworkParameter.IPAddressOnLAN);
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
+}

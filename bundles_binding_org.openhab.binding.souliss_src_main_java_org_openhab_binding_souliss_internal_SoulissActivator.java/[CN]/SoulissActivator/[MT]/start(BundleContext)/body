@@ -1,0 +1,18 @@
+{
+  logger.info("souliss binding has been started.");
+  InputStream is=getClass().getResourceAsStream("/" + sConfigurationFileName);
+  logger.info("Load parameter from file: " + sConfigurationFileName);
+  SoulissNetworkParameter.load(is);
+  logger.info("Load parameter from file: " + sConfigurationFileName_commands_OHtoSOULISS);
+  is=getClass().getResourceAsStream("/" + sConfigurationFileName_commands_OHtoSOULISS);
+  StateTraslator.loadCommands(is);
+  logger.info("Load parameter from file: " + sConfigurationFileName_states_SOULISStoOH);
+  is=getClass().getResourceAsStream("/" + sConfigurationFileName_states_SOULISStoOH);
+  StateTraslator.loadStates(is);
+  logger.info("Load parameter from file: " + sConfigurationFileName_ItemsType_OHtoSOULISS);
+  is=getClass().getResourceAsStream("/" + sConfigurationFileName_ItemsType_OHtoSOULISS);
+  StateTraslator.loadItemsType(is);
+  logger.info("Load parameter from file: " + sConfigurationFileName_commands_to_states);
+  is=getClass().getResourceAsStream("/" + sConfigurationFileName_commands_to_states);
+  StateTraslator.loadCommands_to_states(is);
+}
