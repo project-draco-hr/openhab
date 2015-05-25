@@ -1,0 +1,7 @@
+{
+  LightwaveRfSetHeatingTemperatureCommand command=new LightwaveRfSetHeatingTemperatureCommand(10,"1",19.0);
+  assertEquals("010,!R1DhF*tP19.0\n",command.getLightwaveRfCommandString());
+  assertEquals("1",command.getRoomId());
+  assertEquals("010",command.getMessageId().getMessageIdString());
+  assertEquals(new DecimalType(19.0),command.getState(LightwaveRfType.HEATING_SET_TEMP));
+}

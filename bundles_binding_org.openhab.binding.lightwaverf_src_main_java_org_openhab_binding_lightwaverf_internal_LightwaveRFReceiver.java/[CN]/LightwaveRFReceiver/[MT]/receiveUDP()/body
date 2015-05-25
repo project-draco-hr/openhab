@@ -1,0 +1,13 @@
+{
+  String receivedMessage="";
+  byte[] receiveData=new byte[1024];
+  DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
+  receiveSocket.receive(receivePacket);
+  receivedMessage=new String(receivePacket.getData(),0,receivePacket.getLength());
+  if (localIps.contains(receivePacket.getAddress())) {
+    logger.debug("Own Message received and will be discarded: {}",receivedMessage);
+    return null;
+  }
+  logger.debug("Message received: " + receivedMessage);
+  return receivedMessage;
+}

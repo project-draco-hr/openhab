@@ -1,0 +1,14 @@
+{
+  when(mockHeatInfoResponse.getState(LightwaveRfType.HEATING_BATTERY)).thenReturn(new DecimalType(2.99));
+  when(mockHeatInfoResponse.getState(LightwaveRfType.HEATING_CURRENT_TEMP)).thenReturn(new DecimalType(22.3));
+  when(mockHeatInfoResponse.getSerial()).thenReturn("655432");
+  when(mockBindingProvider.getBindingItemsForSerial("655432")).thenReturn(Arrays.asList("Battery","Temp"));
+  when(mockBindingProvider.getTypeForItemName("Battery")).thenReturn(LightwaveRfType.HEATING_BATTERY);
+  when(mockBindingProvider.getTypeForItemName("Temp")).thenReturn(LightwaveRfType.HEATING_CURRENT_TEMP);
+  LightwaveRfBinding binding=new LightwaveRfBinding();
+  binding.addBindingProvider(mockBindingProvider);
+  binding.setEventPublisher(mockEventPublisher);
+  binding.serialMessageReceived(mockHeatInfoResponse);
+  verify(mockEventPublisher).postUpdate("Battery",new DecimalType(2.99));
+  verify(mockEventPublisher).postUpdate("Temp",new DecimalType(22.3));
+}

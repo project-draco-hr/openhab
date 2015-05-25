@@ -1,0 +1,14 @@
+{
+  try {
+    Matcher matcher=REG_EXP.matcher(message);
+    matcher.matches();
+    this.messageId=new LightwaveRfGeneralMessageId(Integer.valueOf(matcher.group(1)));
+    this.roomId=matcher.group(2);
+    this.deviceId=matcher.group(3);
+    this.lightWaveDimLevel=Integer.valueOf(matcher.group(4));
+    this.openhabDimLevel=convertLightwaveDimToOpenhabDim(lightWaveDimLevel);
+  }
+ catch (  Exception e) {
+    throw new LightwaveRfMessageException("Error converting Dimming message: " + message,e);
+  }
+}

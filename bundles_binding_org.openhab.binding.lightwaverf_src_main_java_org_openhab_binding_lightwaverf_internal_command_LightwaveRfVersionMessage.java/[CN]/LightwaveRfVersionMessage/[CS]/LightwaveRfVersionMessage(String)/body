@@ -1,0 +1,11 @@
+{
+  try {
+    Matcher m=REG_EXP.matcher(message);
+    m.matches();
+    this.messageId=new LightwaveRfGeneralMessageId(Integer.valueOf(m.group(1)));
+    this.version=m.group(2);
+  }
+ catch (  Exception e) {
+    throw new LightwaveRfMessageException("Error decoding message: " + message,e);
+  }
+}
