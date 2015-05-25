@@ -1,0 +1,16 @@
+{
+  if (pvModifyValue == null) {
+    return null;
+  }
+  BigDecimal lvResult=pvModifyValue.toBigDecimal();
+  if (pvModifyValue.equals(BigDecimal.ZERO)) {
+    return DecimalType.ZERO;
+  }
+ else   if (lvResult.equals(BigDecimal.ZERO)) {
+    return DecimalType.ZERO;
+  }
+ else {
+    lvResult=lvResult.multiply(ivAdjustValue);
+  }
+  return new DecimalType(lvResult);
+}

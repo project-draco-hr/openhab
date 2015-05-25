@@ -2,7 +2,7 @@
   try {
     ProcessCommunicator pc=KNXConnection.getCommunicator();
     if (pc != null) {
-      sLogger.debug("Autorefresh: Sending read request to KNX for item '{}'",datapoint.getName());
+      sLogger.debug("Autorefresh: Sending read request to KNX for item '{}' DPT '{}'",datapoint.getName(),datapoint.getDPT());
       pc.read(datapoint);
     }
  else {
@@ -17,6 +17,7 @@ catch (  KNXInvalidResponseException e) {
   }
 catch (  KNXTimeoutException e) {
     sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: timeout",datapoint.getName(),e.getMessage());
+    addToReadQueue(datapoint);
   }
 catch (  KNXLinkClosedException e) {
     sLogger.warn("Autorefresh: Cannot read value for item '{}' from KNX bus: {}: link closed",datapoint.getName(),e.getMessage());

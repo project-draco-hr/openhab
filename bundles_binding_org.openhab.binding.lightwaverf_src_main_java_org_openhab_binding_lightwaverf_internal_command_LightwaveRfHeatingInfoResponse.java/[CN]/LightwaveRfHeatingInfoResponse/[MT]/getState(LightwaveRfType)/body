@@ -1,0 +1,21 @@
+{
+switch (type) {
+case HEATING_BATTERY:
+    return new DecimalType(getBatteryLevel());
+case HEATING_SIGNAL:
+  return new DecimalType(getSignal());
+case HEATING_CURRENT_TEMP:
+return new DecimalType(getCurrentTemperature());
+case HEATING_SET_TEMP:
+return new DecimalType(getCurrentTargetTemperature());
+case HEATING_MODE:
+return new StringType(getState());
+case HEATING_UPDATETIME:
+Calendar cal=Calendar.getInstance();
+return new DateTimeType(cal);
+case VERSION:
+return new StringType(getVersion());
+default :
+return null;
+}
+}

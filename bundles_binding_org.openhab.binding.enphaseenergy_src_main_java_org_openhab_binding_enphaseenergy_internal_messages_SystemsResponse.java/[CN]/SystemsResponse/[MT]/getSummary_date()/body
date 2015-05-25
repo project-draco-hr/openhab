@@ -1,0 +1,12 @@
+{
+  final SimpleDateFormat format=new SimpleDateFormat(enphaseDateFormatString);
+  Calendar calendar=Calendar.getInstance();
+  try {
+    Date date=format.parse(this.summary_date);
+    calendar.setTime(date);
+  }
+ catch (  ParseException e) {
+    logger.debug("summary_date {} has an unknown format",this.summary_date);
+  }
+  return calendar;
+}

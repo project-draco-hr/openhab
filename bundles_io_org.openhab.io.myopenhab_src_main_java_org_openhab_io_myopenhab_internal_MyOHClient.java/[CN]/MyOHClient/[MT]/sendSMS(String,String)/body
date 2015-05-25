@@ -1,0 +1,16 @@
+{
+  if (isConnected()) {
+    JSONObject smsMessage=new JSONObject();
+    try {
+      smsMessage.put("phone",phone);
+      smsMessage.put("message",message);
+      mSocket.emit("sms",smsMessage);
+    }
+ catch (    JSONException e) {
+      logger.error(e.getMessage());
+    }
+  }
+ else {
+    logger.debug("No connection, SMS is not sent");
+  }
+}

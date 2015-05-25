@@ -1,0 +1,14 @@
+{
+  try {
+    int requestId=data.getInt("id");
+    logger.debug("Received cancel for request {}",requestId);
+    if (mRunningRequests.containsKey(requestId)) {
+      MyOHExchange requestExchange=mRunningRequests.get(requestId);
+      requestExchange.cancel();
+      mRunningRequests.remove(requestId);
+    }
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+}

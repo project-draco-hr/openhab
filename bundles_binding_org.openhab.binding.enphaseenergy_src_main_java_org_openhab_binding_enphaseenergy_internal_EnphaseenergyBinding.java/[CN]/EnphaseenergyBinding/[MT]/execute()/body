@@ -1,0 +1,35 @@
+{
+  logger.debug("Querying Enphase Energy API");
+  try {
+    Set<Integer> systemIds=new HashSet<Integer>();
+    for (    final EnphaseenergyBindingProvider provider : this.providers) {
+      for (      final String itemName : provider.getItemNames()) {
+        final Integer systemId=provider.getSystemId(itemName);
+        systemIds.add(systemId);
+      }
+    }
+    for (    final Integer systemId : systemIds) {
+      final SystemsRequest request=new SystemsRequest(this.key,this.user_id,systemId);
+      logger.debug("Request: {} as {}",request,request.prepare());
+      final SystemsResponse response=request.execute();
+      logger.debug("Response: {}",response);
+      for (      final EnphaseenergyBindingProvider provider : this.providers) {
+        for (        final String itemName : provider.getItemNames()) {
+          final Integer itemSystemId=provider.getSystemId(itemName);
+          if (!systemId.equals(itemSystemId)) {
+            continue;
+          }
+          final EnphaseenergyItemType itemType=provider.getItemType(itemName);
+          logger.debug("itemName {} for {} and {}",itemName,systemId,itemType);
+          final State state=createStateFromType(itemType,response);
+          if (state != null) {
+            this.eventPublisher.postUpdate(itemName,state);
+          }
+        }
+      }
+    }
+  }
+ catch (  EnphaseenergyException ne) {
+    logger.error(ne.getMessage());
+  }
+}

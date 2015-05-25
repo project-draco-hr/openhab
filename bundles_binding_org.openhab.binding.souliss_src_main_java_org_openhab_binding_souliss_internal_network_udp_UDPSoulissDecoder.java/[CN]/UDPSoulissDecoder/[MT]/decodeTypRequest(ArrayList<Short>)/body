@@ -1,0 +1,20 @@
+{
+  try {
+    short tgtnode=mac.get(3);
+    int numberOf=mac.get(4);
+    int typXnodo=SoulissNetworkParameter.maxnodes;
+    logger.info("--DECODE MACACO OFFSET: {} NUMOF: {} TYPICALSXNODE: {}",tgtnode,numberOf,typXnodo);
+    for (int j=0; j < numberOf; j++) {
+      if (mac.get(5 + j) != 0) {
+        if (!(mac.get(5 + j) == Constants.Souliss_T_related)) {
+          String hTyp=Integer.toHexString(mac.get(5 + j));
+          short slot=(short)(j % typXnodo);
+          short node=(short)(j / typXnodo + tgtnode);
+        }
+      }
+    }
+  }
+ catch (  Exception uy) {
+    logger.error("decodeTypRequest ERROR");
+  }
+}

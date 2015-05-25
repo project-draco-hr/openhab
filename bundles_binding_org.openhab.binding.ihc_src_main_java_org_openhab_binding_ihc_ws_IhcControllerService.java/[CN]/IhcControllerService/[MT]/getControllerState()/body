@@ -1,8 +1,8 @@
 {
   openConnection(url);
-  super.setCookies(cookies);
   setRequestProperty("SOAPAction","getState");
-  String response=sendQuery(emptyQuery);
+  String response=sendQuery(emptyQuery,timeout);
+  closeConnection();
   WSControllerState controllerState=new WSControllerState();
   controllerState.encodeData(response);
   return controllerState;

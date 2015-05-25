@@ -1,0 +1,10 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] configs=bindingConfig.split(":");
+  if (configs.length < 2) {
+    logger.debug("Invalid item config for item '" + item.getName() + "': "+ bindingConfig);
+    return;
+  }
+  logger.debug("Item '" + item.getName() + "' added for TV '"+ configs[0]+ "' and command '"+ configs[1]+ "'");
+  addBindingConfig(item,new PanasonicTVBindingConfig(item,configs[0],configs[1].toUpperCase()));
+}

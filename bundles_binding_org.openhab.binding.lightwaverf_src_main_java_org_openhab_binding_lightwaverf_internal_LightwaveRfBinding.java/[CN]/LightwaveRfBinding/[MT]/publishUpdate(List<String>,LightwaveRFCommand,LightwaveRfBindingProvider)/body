@@ -1,0 +1,21 @@
+{
+  logger.debug("Publishing Update {} to {}",message,itemNames);
+  boolean published=false;
+  if (itemNames != null) {
+    for (    String itemName : itemNames) {
+      LightwaveRfType deviceType=provider.getTypeForItemName(itemName);
+      State state=message.getState(deviceType);
+      if (state != null) {
+        logger.info("Update from LightwaveRf ItemName[{}], State[{}]",itemName,state);
+        published=true;
+        eventPublisher.postUpdate(itemName,state);
+      }
+ else {
+        logger.info("State was null for {} type {}, message {}",itemName,deviceType,message);
+      }
+    }
+  }
+  if (!published) {
+    logger.warn("No item for incoming message[{}]",message.getLightwaveRfCommandString());
+  }
+}

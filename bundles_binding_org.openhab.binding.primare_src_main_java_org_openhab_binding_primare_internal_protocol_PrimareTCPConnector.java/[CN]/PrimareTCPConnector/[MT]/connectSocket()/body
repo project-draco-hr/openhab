@@ -1,0 +1,42 @@
+{
+  if (socket != null && (connectionBroken || !socket.isConnected())) {
+    disconnect();
+  }
+  if (socket == null) {
+    try {
+      socket=new Socket();
+      socket.connect(new InetSocketAddress(host,port),CONNECTION_TIMEOUT);
+      logger.debug("Socket connected to {}",PrimareTCPConnector.this.toString());
+      inStream=new DataInputStream(socket.getInputStream());
+      outStream=socket.getOutputStream();
+      socket.setSoTimeout(SOCKET_TIMEOUT);
+      outStream.flush();
+      logger.trace("connect - starting DataListener for {}",PrimareTCPConnector.this.toString());
+      dataListener=new DataListener();
+      dataListener.start();
+      logger.trace("connect - started DataListener update listener for {}",this.toString());
+      final PrimareMessage[] deviceInitMessages=messageFactory.getInitMessages();
+      if (deviceInitMessages != null) {
+        try {
+          logger.trace("Sending init messages to {}",this.toString());
+          sendMessage(deviceInitMessages);
+        }
+ catch (        Exception e) {
+          logger.warn("Failed to send init messages to {}",this.toString());
+          return;
+        }
+      }
+ else {
+        logger.trace("No init message found for {}",this.toString());
+      }
+    }
+ catch (    UnknownHostException unknownHost) {
+      logger.error("connect - unknown host for {} at",this.toString());
+      throw unknownHost;
+    }
+catch (    IOException ioException) {
+      logger.error("Can not connect to socket for {} : {}",this.toString(),ioException.getMessage());
+      throw ioException;
+    }
+  }
+}

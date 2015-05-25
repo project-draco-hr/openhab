@@ -1,0 +1,71 @@
+{
+  final String deviceId=provider.getDeviceID(itemName);
+  if (deviceId == null) {
+    logger.error("could not find deviceId of item: " + itemName);
+    return;
+  }
+  final FrontierSiliconRadioBindingConfig deviceConf=deviceConfigCache.get(deviceId);
+  if (deviceConf != null) {
+    final FrontierSiliconRadio radio=deviceConf.getRadio();
+    final String property=provider.getProperty(itemName);
+switch (property) {
+case "POWER":
+      if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
+        radio.setPower(true);
+      }
+ else {
+        radio.setPower(false);
+      }
+    new Thread(new Runnable(){
+      @Override public void run(){
+        try {
+          Thread.sleep(4000);
+        }
+ catch (        InterruptedException e) {
+        }
+        updateProvider(provider);
+      }
+    }
+).start();
+  break;
+case "VOLUME":
+if (command instanceof IncreaseDecreaseType) {
+  if (command.equals(IncreaseDecreaseType.INCREASE))   radio.increaseVolume();
+ else   radio.decreaseVolume();
+}
+ else if (command instanceof UpDownType) {
+  if (command.equals(UpDownType.UP))   radio.increaseVolume();
+ else   radio.decreaseVolume();
+}
+ else if (command instanceof PercentType) {
+  final Integer percentValue=((DecimalType)command).intValue();
+  final Integer absoluteValue=radio.convertPercentToVolume(percentValue);
+  radio.setVolume(absoluteValue);
+}
+ else if (command instanceof DecimalType) {
+  final Integer intValue=((DecimalType)command).intValue();
+  radio.setVolume(intValue);
+}
+break;
+case "MODE":
+final Integer mode=((DecimalType)command).intValue();
+radio.setMode(mode);
+break;
+case "PRESET":
+final Integer preset=((DecimalType)command).intValue();
+radio.setPreset(preset);
+break;
+case "MUTE":
+if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
+radio.setMuted(true);
+}
+ else {
+radio.setMuted(false);
+}
+break;
+default :
+logger.error("command on unkown property: '" + property + "'. Maybe trying to set read-only property?");
+break;
+}
+}
+}

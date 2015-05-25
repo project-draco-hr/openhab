@@ -1,0 +1,27 @@
+{
+  if (LightwaveRfCommandOk.matches(message)) {
+    return new LightwaveRfCommandOk(message);
+  }
+ else   if (LightwaveRfVersionMessage.matches(message)) {
+    return new LightwaveRfVersionMessage(message);
+  }
+ else   if (LightwaveRfDeviceRegistrationCommand.matches(message)) {
+    return new LightwaveRfDeviceRegistrationCommand(message);
+  }
+ else   if (LightwaveRfHeatingInfoResponse.matches(message)) {
+    return new LightwaveRfHeatingInfoResponse(message);
+  }
+ else   if (LightwaveRfSetHeatingTemperatureCommand.matches(message)) {
+    return new LightwaveRfSetHeatingTemperatureCommand(message);
+  }
+ else   if (LightwaveRfHeatInfoRequest.matches(message)) {
+    return new LightwaveRfHeatInfoRequest(message);
+  }
+ else   if (LightwaveRfDimCommand.matches(message)) {
+    return new LightwaveRfDimCommand(message);
+  }
+ else   if (LightwaveRfOnOffCommand.matches(message)) {
+    return new LightwaveRfOnOffCommand(message);
+  }
+  throw new LightwaveRfMessageException("Message not recorgnised: " + message);
+}

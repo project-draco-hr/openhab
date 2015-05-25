@@ -1,0 +1,26 @@
+{
+  if (cvIp != null && cvPort > 0) {
+    OwfsConnectionFactory owfsConnectorFactory=new OwfsConnectionFactory(cvIp,cvPort);
+    OwfsConnectionConfig owConnectionConfig=new OwfsConnectionConfig(cvIp,cvPort);
+    owConnectionConfig.setTemperatureScale(cvTempScale);
+    owConnectionConfig.setPersistence(OwPersistence.ON);
+    owConnectionConfig.setBusReturn(OwBusReturn.ON);
+    owfsConnectorFactory.setConnectionConfig(owConnectionConfig);
+    try {
+      cvOwConnection=owfsConnectorFactory.createNewConnection();
+      cvOwConnection.listDirectory("/");
+      logger.info("Connected to owserver [IP '" + cvIp + "' Port '"+ cvPort+ "']");
+      cvIsEstablished=true;
+      return true;
+    }
+ catch (    Exception exception) {
+      logger.error("Couldn't connect to owserver [IP '" + cvIp + "' Port '"+ cvPort+ "']: ",exception.getLocalizedMessage());
+      cvIsEstablished=false;
+      return false;
+    }
+  }
+ else {
+    logger.warn("Couldn't connect to owserver because of missing connection parameters [IP '{}' Port '{}'].",cvIp,cvPort);
+    return false;
+  }
+}

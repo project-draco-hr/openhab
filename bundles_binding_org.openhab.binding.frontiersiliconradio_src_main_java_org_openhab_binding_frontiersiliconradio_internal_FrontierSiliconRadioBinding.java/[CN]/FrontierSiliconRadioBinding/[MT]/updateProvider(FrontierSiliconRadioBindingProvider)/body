@@ -1,0 +1,79 @@
+{
+  for (  String itemName : provider.getItemNames()) {
+    final String deviceId=provider.getDeviceID(itemName);
+    if (deviceId == null) {
+      logger.error("could not find deviceId of item: " + itemName);
+      continue;
+    }
+ else {
+      final FrontierSiliconRadioBindingConfig deviceConf=deviceConfigCache.get(deviceId);
+      if (deviceConf != null) {
+        final FrontierSiliconRadio radio=deviceConf.getRadio();
+        final boolean powerState=radio.getPower();
+        final String property=provider.getProperty(itemName);
+        if (!powerState && !"POWER".equals(property)) {
+          if (stateChanged(deviceId,property,null)) {
+            eventPublisher.postUpdate(itemName,UnDefType.UNDEF);
+          }
+          continue;
+        }
+switch (property) {
+case "POWER":
+          if (stateChanged(deviceId,property,powerState)) {
+            logger.debug("powerState changed to " + powerState);
+            eventPublisher.postUpdate(itemName,powerState ? OnOffType.ON : OnOffType.OFF);
+          }
+        break;
+case "MODE":
+      final int mode=radio.getMode();
+    if (stateChanged(deviceId,property,mode)) {
+      logger.debug("powerState changed to " + mode);
+      eventPublisher.postUpdate(itemName,new DecimalType(mode));
+    }
+  break;
+case "VOLUME":
+final int volume=radio.getVolume();
+if (stateChanged(deviceId,property,volume)) {
+final int percent=radio.convertVolumeToPercent(volume);
+logger.debug("volume changed to " + volume + " ("+ percent+ "%)");
+if (provider.getItemType(itemName) == DimmerItem.class) {
+  eventPublisher.postUpdate(itemName,new PercentType(percent));
+}
+ else {
+  eventPublisher.postUpdate(itemName,new DecimalType(percent));
+}
+}
+break;
+case "PLAYINFONAME":
+final String playInfoName=radio.getPlayInfoName();
+if (stateChanged(deviceId,property,playInfoName)) {
+logger.debug("play info name changed to " + playInfoName);
+eventPublisher.postUpdate(itemName,new StringType(playInfoName));
+}
+break;
+case "PLAYINFOTEXT":
+final String playInfoText=radio.getPlayInfoText();
+if (stateChanged(deviceId,property,playInfoText)) {
+logger.debug("play info text changed to " + playInfoText);
+eventPublisher.postUpdate(itemName,new StringType(playInfoText));
+}
+break;
+case "PRESET":
+break;
+case "MUTE":
+final boolean muteState=radio.getMuted();
+if (stateChanged(deviceId,property,muteState)) {
+logger.debug("mute state changed to " + muteState);
+eventPublisher.postUpdate(itemName,muteState ? OnOffType.ON : OnOffType.OFF);
+}
+break;
+default :
+logger.error("unknown property: '" + property + "'");
+}
+}
+ else {
+logger.error("deviceConf is null, no config found for deviceId: '" + deviceId + "'. Check binding config.");
+}
+}
+}
+}

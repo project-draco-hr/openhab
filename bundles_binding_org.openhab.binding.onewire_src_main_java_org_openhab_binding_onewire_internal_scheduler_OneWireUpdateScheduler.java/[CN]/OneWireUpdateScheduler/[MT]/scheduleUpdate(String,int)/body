@@ -1,0 +1,40 @@
+{
+  if (pvItemName == null) {
+    logger.error("Argument itemName cannot be null");
+    return false;
+  }
+  if (pvAutoRefreshTimeInSecs < 0) {
+    logger.debug("AutoRefreshTimeInSecs must be >= 0 for itemName '{}'",pvItemName);
+    return false;
+  }
+  int lvOldListNumber=getAutoRefreshTimeInSecs(pvItemName);
+  if (lvOldListNumber > 0) {
+    if (lvOldListNumber == pvAutoRefreshTimeInSecs) {
+      logger.debug("item '{}' was already in  auto refresh list {}",pvItemName,pvAutoRefreshTimeInSecs);
+      return true;
+    }
+    List<String> lvOldList=cvScheduleMap.get(lvOldListNumber);
+synchronized (lvOldList) {
+      logger.debug("item '{}' already present in different list: {}, removing",pvItemName,lvOldListNumber);
+      for (Iterator<String> lvIterator=lvOldList.iterator(); lvIterator.hasNext(); ) {
+        String lvItemNameOldList=lvIterator.next();
+        if (lvItemNameOldList.toString().equals(pvItemName)) {
+          lvIterator.remove();
+        }
+      }
+    }
+  }
+  if (!cvScheduleMap.containsKey(pvAutoRefreshTimeInSecs)) {
+    logger.debug("Creating auto refresh list: {}.",pvAutoRefreshTimeInSecs);
+    cvScheduleMap.put(pvAutoRefreshTimeInSecs,new LinkedList<String>());
+    if (ivIsRunning) {
+      logger.debug("Starting auto refresh cycle {}",pvAutoRefreshTimeInSecs);
+      ivScheduledExecutorService.scheduleAtFixedRate(new AutoRefreshTask(pvAutoRefreshTimeInSecs),pvAutoRefreshTimeInSecs,pvAutoRefreshTimeInSecs,TimeUnit.SECONDS);
+    }
+  }
+  List<String> lvItemListe=cvScheduleMap.get(pvAutoRefreshTimeInSecs);
+synchronized (lvItemListe) {
+    logger.debug("Adding item '{}' to auto refresh list {}.",pvItemName,pvAutoRefreshTimeInSecs);
+    return lvItemListe.add(pvItemName);
+  }
+}

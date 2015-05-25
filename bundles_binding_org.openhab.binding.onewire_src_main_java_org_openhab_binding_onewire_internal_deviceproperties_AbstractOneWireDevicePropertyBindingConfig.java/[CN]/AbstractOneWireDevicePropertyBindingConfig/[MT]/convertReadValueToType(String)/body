@@ -1,0 +1,9 @@
+{
+  Type lvType=convertReadValueToUnmodifiedType(pvReadValue);
+  for (  InterfaceOneWireTypeModifier lvTypeModifier : getTypeModifieryList()) {
+    logger.debug("type of " + getDevicePropertyPath() + " before modifier:"+ lvTypeModifier.getModifierName()+ "type="+ lvType.toString());
+    lvType=lvTypeModifier.modify4Read(lvType);
+    logger.debug("type of " + getDevicePropertyPath() + " after modifier:"+ lvTypeModifier.getModifierName()+ "type="+ lvType.toString());
+  }
+  return lvType;
+}

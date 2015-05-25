@@ -1,0 +1,10 @@
+{
+  Script script=ScriptManager.getInstance().getScript(rule);
+  String jobIdentity=script.getFileName() + "#" + rule;
+  if (trigger != null) {
+    if (trigger.getCron() != null) {
+      jobIdentity+="#" + trigger.getCron();
+    }
+  }
+  return jobIdentity;
+}

@@ -1,0 +1,48 @@
+{
+  if (itemName == null) {
+    logger.warn("ignore command {} - no item name",command);
+    return;
+  }
+  logger.debug("Received command [item:{} command:{}, class:{}]",itemName,command.toString(),command.getClass().toString());
+  PrimareBindingProvider provider=findFirstMatchingBindingProvider(itemName,command.toString());
+  if (provider == null) {
+    logger.warn("Ignore item:{} command:{} - no matching binding provider",itemName,command);
+    return;
+  }
+  String tmp=provider.getDeviceCommand(itemName,command.toString());
+  if (tmp == null) {
+    tmp=provider.getDeviceCommand(itemName,WILDCARD_COMMAND_KEY);
+  }
+  if (tmp == null) {
+    logger.warn("Ignore item:{} command {} - no matching command",itemName,command);
+    return;
+  }
+  String[] commandParts=tmp.split(":");
+  String deviceId=commandParts[0];
+  String deviceCmd=commandParts[1];
+  if (deviceId == null || deviceCmd == null) {
+    logger.warn("Ignore item:{} command:{} - failed to find both device id and command in {}",itemName,command,tmp);
+    return;
+  }
+  DeviceConfig deviceConfig=deviceConfigCache.get(deviceId);
+  if (deviceConfig == null) {
+    logger.warn("Ignore item:{} command:{} - no configuration found for device {}",itemName,command,deviceId);
+    return;
+  }
+  PrimareConnector deviceConnector=deviceConfig.getInitializedConnector();
+  if (deviceConnector == null) {
+    logger.warn("Ignore {} item:{} command:{} - no connector found",deviceConfig.toString(),itemName,command);
+    return;
+  }
+  if (deviceConnector.isConnected()) {
+    try {
+      deviceConnector.sendCommand(command,deviceCmd);
+    }
+ catch (    Exception e) {
+      logger.warn("Ignore {} item:{} command:{} - message send error {}",deviceConfig.toString(),itemName,command,e.getMessage());
+    }
+  }
+ else {
+    logger.warn("Ignore {} item:{} command:{} - device disconnected",deviceConfig.toString(),itemName,command);
+  }
+}

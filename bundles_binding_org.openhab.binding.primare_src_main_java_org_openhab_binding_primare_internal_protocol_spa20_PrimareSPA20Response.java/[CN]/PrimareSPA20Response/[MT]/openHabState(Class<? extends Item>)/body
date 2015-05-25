@@ -1,0 +1,37 @@
+{
+  State state=UnDefType.UNDEF;
+  try {
+    int index;
+    String s;
+    if (itemType == SwitchItem.class) {
+      index=(int)message[2];
+      if (message[1] == 9) {
+        logger.trace("MUTE (variable 9) converted opposite to documentation");
+        state=index == 0 ? OnOffType.ON : OnOffType.OFF;
+      }
+ else {
+        state=index == 0 ? OnOffType.OFF : OnOffType.ON;
+      }
+    }
+ else     if (itemType == NumberItem.class) {
+      index=(int)message[2];
+      state=new DecimalType(index);
+    }
+ else     if (itemType == DimmerItem.class) {
+      index=(int)message[2];
+      state=new PercentType(index);
+    }
+ else     if (itemType == RollershutterItem.class) {
+      index=(int)message[2];
+      state=new PercentType(index);
+    }
+ else     if (itemType == StringItem.class) {
+      s=new String(Arrays.copyOfRange(message,2,message.length - 2));
+      state=new StringType(s);
+    }
+  }
+ catch (  Exception e) {
+    logger.debug("Cannot convert value '{}' to data type {}",message[1],itemType);
+  }
+  return state;
+}

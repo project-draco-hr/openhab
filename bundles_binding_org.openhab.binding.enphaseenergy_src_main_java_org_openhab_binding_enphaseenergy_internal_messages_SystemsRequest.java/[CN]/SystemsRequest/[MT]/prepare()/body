@@ -1,0 +1,16 @@
+{
+  final StringBuilder urlBuilder=new StringBuilder(RESOURCE_URL);
+  urlBuilder.append("/");
+  urlBuilder.append(this.system_id);
+  urlBuilder.append("/summary");
+  urlBuilder.append("?key=");
+  urlBuilder.append(this.key);
+  urlBuilder.append("&user_id=");
+  urlBuilder.append(this.user_id);
+  try {
+    return encodeQuery(urlBuilder.toString());
+  }
+ catch (  final URIException e) {
+    throw new EnphaseenergyException("Could not prepare systems request!",e);
+  }
+}

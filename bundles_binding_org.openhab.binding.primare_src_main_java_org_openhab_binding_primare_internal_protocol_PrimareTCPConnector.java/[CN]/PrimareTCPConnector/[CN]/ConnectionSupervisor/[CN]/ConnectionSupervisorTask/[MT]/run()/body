@@ -1,0 +1,24 @@
+{
+  logger.debug("Scheduled connection supervisor task started for {}",PrimareTCPConnector.this.toString());
+  if (needRestart()) {
+    disconnectSocket();
+  }
+  if (socket == null) {
+    logger.debug("No connection, connecting to {}",PrimareTCPConnector.this.toString());
+    try {
+      connectSocket();
+    }
+ catch (    Exception unimportant) {
+      logger.debug("Still no connection after retry, failed to connect to {}",PrimareTCPConnector.this.toString());
+    }
+  }
+ else {
+    logger.debug("Connection to {} exists, last message sent:{} received:{}",PrimareTCPConnector.this.toString(),messageSentAt,messageReceivedAt);
+    try {
+      sendPingMessages();
+    }
+ catch (    Exception unimportant) {
+      logger.trace("Connection to {} send ping message failed",PrimareTCPConnector.this.toString());
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  String message="109,!R2D1FdP1|Kitchen|Kitchen Ceiling 4%\n";
+  LightwaveRfRoomDeviceMessage command=new LightwaveRfDimCommand(message);
+  assertEquals("109,!R2D1FdP1\n",command.getLightwaveRfCommandString());
+  assertEquals("2",command.getRoomId());
+  assertEquals("1",command.getDeviceId());
+  assertEquals("109",command.getMessageId().getMessageIdString());
+  assertEquals(PercentType.valueOf("4"),command.getState(LightwaveRfType.DIMMER));
+}

@@ -1,0 +1,13 @@
+{
+  try {
+    if (running) {
+      queue.put(command);
+    }
+ else {
+      logger.info("Message not added to queue as we are shutting down Message[{}]");
+    }
+  }
+ catch (  InterruptedException e) {
+    logger.error("Error adding command[{}] to queue Throwable {}",command,e);
+  }
+}

@@ -1,0 +1,12 @@
+{
+  logger.debug("request to updateTIMESTAMP. Node:  " + idNodo);
+  SoulissTServiceNODE_TIMESTAMP VirtualTypical=(SoulissTServiceNODE_TIMESTAMP)soulissTypicalsRecipients.getTypicalFromAddress(idNodo,Constants.Souliss_TService_NODE_TIMESTAMP_VIRTUAL_SLOT,null);
+  if (VirtualTypical != null) {
+    String tstamp=getTimestamp();
+    VirtualTypical.setTIMESTAMP(tstamp);
+    logger.debug("updateTIMESTAMP:  " + VirtualTypical.getName() + " ( "+ Short.valueOf(VirtualTypical.getType())+ ") = "+ tstamp);
+  }
+ else {
+    logger.debug("Error for retrieving VirtualTypical from HashTable: " + idNodo + ", "+ Constants.Souliss_TService_NODE_TIMESTAMP_VIRTUAL_SLOT);
+  }
+}

@@ -1,0 +1,18 @@
+{
+  String lvItemName=null;
+  try {
+    while (true) {
+      logger.debug("Autorefresh: Waiting for new item in update queue");
+      lvItemName=ivUpdateQueue.take();
+      logger.debug("Autorefresh: got new item {} in update queue",lvItemName);
+      if (lvItemName != null) {
+        logger.debug("Autorefresh: Trying to update Item: {}",lvItemName);
+        ivWantsUpdateListener.devicePropertyWantsUpdate(new OneWireDevicePropertyWantsUpdateEvent(this,lvItemName));
+      }
+    }
+  }
+ catch (  InterruptedException ex) {
+    logger.debug("Autorefresh: OneWireUpdateTask wait on blockingqueue interrupted: {}",ex.getMessage());
+  }
+  logger.debug("Autorefresh: OneWireUpdateTask interrupted.");
+}

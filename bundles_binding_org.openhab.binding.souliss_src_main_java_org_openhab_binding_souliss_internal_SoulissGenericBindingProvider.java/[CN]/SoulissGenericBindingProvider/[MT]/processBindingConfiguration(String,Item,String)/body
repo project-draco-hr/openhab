@@ -1,0 +1,81 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String[] sNameArray=bindingConfig.split("\\:");
+  String sTypical=sNameArray[0];
+  int iNodeID=Integer.parseInt(sNameArray[1]);
+  int iSlot=Integer.parseInt(sNameArray[2]);
+  byte iBit=0;
+  String sUseSlot="";
+  if (sNameArray.length > 3) {
+    if (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31)     sUseSlot=sNameArray[3];
+ else     iBit=Byte.parseByte(sNameArray[3]);
+  }
+  String sNote=item.getClass().getSimpleName();
+  SoulissGenericTypical soulissTypicalNew=null;
+  if (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31) {
+    soulissTypicalNew=SoulissTypicalsRecipients.getTypicalFromAddress(iNodeID,iSlot,0);
+    if (soulissTypicalNew == null) {
+      soulissTypicalNew=TypicalFactory.getClass(StateTraslator.stringToSOULISSTypicalCode(sTypical),SoulissNetworkParameter.datagramsocket,SoulissNetworkParameter.IPAddressOnLAN,iNodeID,iSlot,sNote,iBit,sUseSlot);
+    }
+    if (soulissTypicalNew != null) {
+switch (sUseSlot) {
+case Constants.Souliss_T31_Use_Of_Slot_SETPOINT:
+        ((SoulissT31)soulissTypicalNew).setsItemNameSetpointValue(item.getName());
+      ((SoulissT31)soulissTypicalNew).setsItemTypeSetpointValue(sNote);
+    break;
+case Constants.Souliss_T31_Use_Of_Slot_MEASURED:
+  ((SoulissT31)soulissTypicalNew).setsItemNameMeasuredValue(item.getName());
+((SoulissT31)soulissTypicalNew).setsItemTypeMeasuredValue(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_SETASMEASURED:
+((SoulissT31)soulissTypicalNew).setAsMeasured.setName(item.getName());
+((SoulissT31)soulissTypicalNew).setAsMeasured.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_HEATING:
+((SoulissT31)soulissTypicalNew).heating.setName(item.getName());
+((SoulissT31)soulissTypicalNew).heating.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_COOLING:
+((SoulissT31)soulissTypicalNew).cooling.setName(item.getName());
+((SoulissT31)soulissTypicalNew).cooling.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_FANOFF:
+((SoulissT31)soulissTypicalNew).fanOff.setName(item.getName());
+((SoulissT31)soulissTypicalNew).fanOff.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_FANLOW:
+((SoulissT31)soulissTypicalNew).fanLow.setName(item.getName());
+((SoulissT31)soulissTypicalNew).fanLow.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_FANMED:
+((SoulissT31)soulissTypicalNew).fanMed.setName(item.getName());
+((SoulissT31)soulissTypicalNew).fanMed.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_FANHIGH:
+((SoulissT31)soulissTypicalNew).fanHigh.setName(item.getName());
+((SoulissT31)soulissTypicalNew).fanHigh.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_HEATING_COOLING:
+((SoulissT31)soulissTypicalNew).heatingCoolingModeValue.setName(item.getName());
+((SoulissT31)soulissTypicalNew).heatingCoolingModeValue.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_FANAUTOMODE:
+((SoulissT31)soulissTypicalNew).fanAutoMode.setName(item.getName());
+((SoulissT31)soulissTypicalNew).fanAutoMode.setNote(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_POWER:
+((SoulissT31)soulissTypicalNew).power.setName(item.getName());
+((SoulissT31)soulissTypicalNew).power.setNote(sNote);
+break;
+}
+logger.info("Add parameter to T31 : " + sUseSlot);
+}
+}
+if (soulissTypicalNew == null) {
+soulissTypicalNew=TypicalFactory.getClass(StateTraslator.stringToSOULISSTypicalCode(sTypical),SoulissNetworkParameter.datagramsocket,SoulissNetworkParameter.IPAddressOnLAN,iNodeID,iSlot,sNote,iBit,sUseSlot);
+}
+if (soulissTypicalNew != null) {
+SoulissTypicalsRecipients.addTypical(item.getName(),soulissTypicalNew);
+SoulissNetworkParameter.nodes=SoulissTypicalsRecipients.getNodeNumbers();
+}
+}

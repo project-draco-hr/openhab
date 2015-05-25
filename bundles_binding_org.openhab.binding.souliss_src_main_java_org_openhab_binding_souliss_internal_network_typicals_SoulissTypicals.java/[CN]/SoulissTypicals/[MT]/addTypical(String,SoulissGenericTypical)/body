@@ -1,0 +1,16 @@
+{
+  int iBit=0;
+  String sUseOfSlot="";
+  if (typical.getType() == Constants.Souliss_T1A) {
+    logger.info("Add Item: {} - Typ: {}, Node:{}, Slot: {}, Bit: {}",sItem,Integer.toHexString(typical.getType()),typical.getSoulissNodeID(),typical.getSlot(),((SoulissT1A)typical).getBit());
+    iBit=((SoulissT1A)typical).getBit();
+  }
+ else {
+    logger.info("Add Item: {} - Typ: {}, Node: {}, Slot: {}",sItem,Integer.toHexString(typical.getType()),typical.getSoulissNodeID(),typical.getSlot());
+  }
+  typical.setName(sItem);
+  logger.info("hashTableItemToAddress <-- [key: {} - value: {} - iBit {}]",sItem,String.valueOf(typical.getSoulissNodeID()),String.valueOf(typical.getSlot()));
+  hashTableItemToAddress.put(sItem,String.valueOf(typical.getSoulissNodeID()) + String.valueOf(typical.getSlot()) + iBit+ sUseOfSlot);
+  logger.info("hashTableAddressToTypicals <-- [key: {} - value: {}]",typical.getSoulissNodeID() + String.valueOf(typical.getSlot()) + iBit,typical);
+  hashTableAddressToTypicals.put(String.valueOf(typical.getSoulissNodeID()) + String.valueOf(typical.getSlot()) + iBit+ sUseOfSlot,typical);
+}

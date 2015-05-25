@@ -1,0 +1,18 @@
+{
+  byte[] buffer=new byte[a.length];
+  int target_ix=0;
+  int double_dle_start=-2;
+  for (int i=0; i < a.length; i++) {
+    if (a[i] == (byte)0x10) {
+      if (double_dle_start == i - 1) {
+        double_dle_start=-1;
+        continue;
+      }
+ else {
+        double_dle_start=i;
+      }
+    }
+    buffer[target_ix++]=a[i];
+  }
+  return Arrays.copyOf(buffer,target_ix);
+}

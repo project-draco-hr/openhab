@@ -1,0 +1,62 @@
+{
+  try {
+    mSocket=IO.socket(mMyOHBaseUrl);
+  }
+ catch (  URISyntaxException e) {
+    logger.error("Error creating Socket.IO: {}",e.getMessage());
+  }
+  mSocket.io().on(Manager.EVENT_TRANSPORT,new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      logger.debug("Manager.EVENT_TRANSPORT");
+      Transport transport=(Transport)args[0];
+      transport.on(Transport.EVENT_REQUEST_HEADERS,new Emitter.Listener(){
+        @Override public void call(        Object... args){
+          logger.debug("Transport.EVENT_REQUEST_HEADERS");
+          Map<String,String> headers=(Map<String,String>)args[0];
+          headers.put("uuid",mUUID);
+          headers.put("secret",mSecret);
+          headers.put("openhabversion",mOpenHABVersion);
+          headers.put("myohversion",MyOpenHABServiceImpl.myohVersion);
+        }
+      }
+);
+    }
+  }
+);
+  mSocket.on(Socket.EVENT_CONNECT,new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      logger.debug("Socket.IO connected");
+      mIsConnected=true;
+      onConnect();
+    }
+  }
+).on(Socket.EVENT_DISCONNECT,new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      logger.debug("Socket.IO disconnected");
+      mIsConnected=false;
+      onDisconnect();
+    }
+  }
+).on(Socket.EVENT_ERROR,new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      logger.error("Socket.IO error: " + args[0]);
+    }
+  }
+).on("request",new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      onEvent("request",(JSONObject)args[0]);
+    }
+  }
+).on("cancel",new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      onEvent("cancel",(JSONObject)args[0]);
+    }
+  }
+).on("command",new Emitter.Listener(){
+    @Override public void call(    Object... args){
+      onEvent("command",(JSONObject)args[0]);
+    }
+  }
+);
+  mSocket.connect();
+}

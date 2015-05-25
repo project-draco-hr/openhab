@@ -1,0 +1,31 @@
+{
+  logger.debug("Clearing all items from auto refresh scheduler");
+  ivUpdateQueue.clear();
+  if (ivScheduledExecutorService != null) {
+    logger.debug("Schedule executor restart.");
+    ivScheduledExecutorService.shutdown();
+    try {
+      if (ivScheduledExecutorService.awaitTermination(cvScheduledExecutorServiceShutdownTimeout,TimeUnit.SECONDS)) {
+        logger.debug("Schedule executor restart: successfully terminated old instance");
+      }
+ else {
+        logger.debug("Schedule executor restart failed: termination timed out.");
+      }
+    }
+ catch (    InterruptedException e) {
+      logger.debug("Schedule executor restart failed: interrupted while waiting for termination.");
+    }
+    ivScheduledExecutorService=Executors.newScheduledThreadPool(cvNumberOfThreads);
+    logger.debug("Schedule executor restart: started.");
+  }
+  for (Iterator<Integer> lvIterator=cvScheduleMap.keySet().iterator(); lvIterator.hasNext(); ) {
+    int autoRefreshTimeInSecs=lvIterator.next();
+    List<String> lvItemListe=cvScheduleMap.get(autoRefreshTimeInSecs);
+synchronized (lvItemListe) {
+      logger.debug("Clearing list {}",autoRefreshTimeInSecs);
+      lvItemListe.clear();
+    }
+    logger.debug("Removing list {} from scheduler",autoRefreshTimeInSecs);
+    lvIterator.remove();
+  }
+}

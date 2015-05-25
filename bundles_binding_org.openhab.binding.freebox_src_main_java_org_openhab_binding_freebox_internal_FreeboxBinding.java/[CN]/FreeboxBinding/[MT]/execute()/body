@@ -11,10 +11,12 @@
     SambaConfig sac=fbClient.getNetShareManager().getSambaConfig();
     LanHostsConfig hc=fbClient.getLanManager().getAllLanHostsConfig();
     List<CallEntry> appels=fbClient.getCallManager().getCallEntries();
+    PhoneCallComparator comparator=new PhoneCallComparator();
+    Collections.sort(appels,comparator);
     for (    FreeboxBindingProvider provider : providers) {
       Collection<String> items=provider.getItemNames();
       for (      CallEntry call : appels) {
-        if (call.is_new_()) {
+        if (call.getTimeStamp().after(lastPhoneCheck)) {
           for (          String itemName : items) {
             FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
             if (bindingConfig.commandParam == null || bindingConfig.commandParam.equalsIgnoreCase(call.getType())) {
@@ -37,10 +39,9 @@ break;
 }
 }
 }
-call.setNew(false);
-fbClient.getCallManager().setCallEntry(call);
 }
 }
+lastPhoneCheck.setTimeInMillis(System.currentTimeMillis());
 for (String itemName : items) {
 FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
 switch (bindingConfig.commandType) {
