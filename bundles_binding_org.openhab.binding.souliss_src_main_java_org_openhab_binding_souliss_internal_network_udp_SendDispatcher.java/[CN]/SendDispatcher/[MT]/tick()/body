@@ -1,0 +1,18 @@
+{
+  try {
+    while (!checkTime())     ;
+    resetTime();
+    SocketAndPacket sp=pop();
+    if (sp != null) {
+      logger.debug("SendDispatcherThread - Functional Code 0x{} - Packet: {} - Elementi rimanenti in lista: {}",Integer.toHexString(sp.packet.getData()[7]),MaCacoToString(sp.packet.getData()),packetsList.size());
+      sp.socket.send(sp.packet);
+    }
+    SendDispatcher.safeSendCheck();
+  }
+ catch (  IOException e) {
+    logger.warn(e.getMessage());
+  }
+catch (  Exception e) {
+    logger.warn(e.getMessage());
+  }
+}

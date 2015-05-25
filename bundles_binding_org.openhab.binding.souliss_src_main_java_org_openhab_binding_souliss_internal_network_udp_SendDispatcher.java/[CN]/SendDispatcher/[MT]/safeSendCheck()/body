@@ -1,0 +1,47 @@
+{
+  for (int i=0; i < packetsList.size(); i++) {
+    if (packetsList.get(i).isSent()) {
+      int node=getNode(packetsList.get(i).packet);
+      int iSlot=0;
+      for (int j=12; j < packetsList.get(i).packet.getData().length; j++) {
+        if (packetsList.get(i).packet.getData()[j] != 0) {
+          SoulissGenericTypical typ=soulissTypicalsRecipients.getTypicalFromAddress(node,iSlot,0);
+          if (logger.isDebugEnabled() && typ != null) {
+            String s1=String.valueOf((int)typ.getState());
+            String sStateMemoria=s1.length() < 2 ? "0x0" + s1.toUpperCase() : "0x" + s1.toUpperCase();
+            String sCmd=Integer.toHexString(packetsList.get(i).packet.getData()[j]);
+            sCmd=sCmd.length() < 2 ? "0x0" + sCmd.toUpperCase() : "0x" + sCmd.toUpperCase();
+            logger.debug("Compare. Node: {} Slot: {} Typical: {} Command: {} EXPECTED: {} - IN MEMORY: {}",node,iSlot,Integer.toHexString(typ.getType()),sCmd,expectedState(typ.getType(),packetsList.get(i).packet.getData()[j]),sStateMemoria);
+          }
+          if (typ != null && checkExpectedState((int)typ.getState(),expectedState(typ.getType(),packetsList.get(i).packet.getData()[j]))) {
+            packetsList.get(i).packet.getData()[j]=0;
+            logger.debug("T{} Node: {} Slot: {} - OK Expected State",Integer.toHexString(typ.getType()),node,iSlot);
+          }
+ else           if (typ == null) {
+            if (packetsList.get(i).packet.getData()[j - 1] == 0) {
+              packetsList.get(i).packet.getData()[j]=0;
+            }
+          }
+        }
+        iSlot++;
+      }
+      if (checkAllsSlotZero(packetsList.get(i).packet)) {
+        logger.debug("Command packet executed - Removed");
+        packetsList.remove(i);
+      }
+ else {
+        long t=System.currentTimeMillis();
+        if (SoulissNetworkParameter.SECURE_SEND_TIMEOUT_TO_REQUEUE < t - packetsList.get(i).getTime()) {
+          if (SoulissNetworkParameter.SECURE_SEND_TIMEOUT_TO_REMOVE_PACKET < t - packetsList.get(i).getTime()) {
+            logger.info("Packet Execution timeout - Removed");
+            packetsList.remove(i);
+          }
+ else {
+            logger.info("Packet Execution timeout - Requeued");
+            packetsList.get(i).setSent(false);
+          }
+        }
+      }
+    }
+  }
+}
