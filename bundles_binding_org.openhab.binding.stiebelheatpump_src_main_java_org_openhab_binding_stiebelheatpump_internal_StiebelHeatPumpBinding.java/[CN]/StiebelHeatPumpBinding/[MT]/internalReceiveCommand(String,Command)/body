@@ -21,7 +21,7 @@
       try {
         Map<String,String> data=new HashMap<String,String>();
         communicationInUse=true;
-        CommunicationService communicationService=new CommunicationService(serialPort,baudRate,heatPumpConfiguration);
+        CommunicationService communicationService=new CommunicationService(connector,heatPumpConfiguration);
         data=communicationService.setData(command.toString(),parameter);
         communicationService.finalizer();
         publishValues(data);

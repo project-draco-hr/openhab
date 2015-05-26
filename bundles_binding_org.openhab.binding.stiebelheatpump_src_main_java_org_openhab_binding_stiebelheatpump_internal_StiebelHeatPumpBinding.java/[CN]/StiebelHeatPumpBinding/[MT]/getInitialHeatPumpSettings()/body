@@ -1,4 +1,5 @@
 {
+  CommunicationService communicationService=null;
   try {
     int retry=0;
     while (communicationInUse) {
@@ -14,7 +15,7 @@
       }
     }
     communicationInUse=true;
-    CommunicationService communicationService=new CommunicationService(serialPort,baudRate);
+    communicationService=new CommunicationService(connector);
     Map<String,String> data=new HashMap<String,String>();
     Map<String,String> allData=new HashMap<String,String>();
     heatPumpConfiguration=communicationService.getHeatPumpConfiguration(version + ".xml");
@@ -30,7 +31,6 @@
     for (    Map.Entry<String,String> entry : allData.entrySet()) {
       logger.debug("Data {} has value {}",entry.getKey(),entry.getValue());
     }
-    communicationService.finalizer();
     publishValues(allData);
     return true;
   }
@@ -39,6 +39,9 @@
   }
  finally {
     communicationInUse=false;
+    if (communicationService != null) {
+      communicationService.finalizer();
+    }
   }
   return false;
 }

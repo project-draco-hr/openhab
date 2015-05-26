@@ -1,0 +1,11 @@
+{
+  try {
+    connectPort();
+    out.flush();
+    buffer=new CircularByteBuffer(Byte.MAX_VALUE * Byte.MAX_VALUE + 2 * Byte.MAX_VALUE);
+    byteStreamPipe=new ByteStreamPipe(in,buffer);
+  }
+ catch (  Exception e) {
+    throw new RuntimeException("Could not init serial connection",e);
+  }
+}

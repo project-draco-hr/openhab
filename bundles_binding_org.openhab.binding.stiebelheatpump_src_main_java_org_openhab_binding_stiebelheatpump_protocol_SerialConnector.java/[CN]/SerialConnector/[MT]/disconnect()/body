@@ -1,10 +1,10 @@
 {
   logger.debug("Interrupt reading thread");
-  byteStreamPipe.stopTask();
+  byteStreamPipe.close();
   logger.debug("Closing serial connection");
   try {
     out.close();
-    serialPort.close();
+    disconnectPort();
     buffer.stop();
     try {
       Thread.sleep(2000);

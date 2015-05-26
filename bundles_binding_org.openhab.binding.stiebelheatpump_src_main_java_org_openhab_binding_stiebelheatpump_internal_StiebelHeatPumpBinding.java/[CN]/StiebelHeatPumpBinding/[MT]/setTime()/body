@@ -1,4 +1,5 @@
 {
+  CommunicationService communicationService=null;
   try {
     int retry=0;
     while (communicationInUse) {
@@ -14,9 +15,8 @@
       }
     }
     communicationInUse=true;
-    CommunicationService communicationService=new CommunicationService(serialPort,baudRate,heatPumpConfiguration);
+    communicationService=new CommunicationService(connector,heatPumpConfiguration);
     communicationService.setTime();
-    communicationService.finalizer();
     return true;
   }
  catch (  StiebelHeatPumpException e) {
@@ -24,6 +24,9 @@
   }
  finally {
     communicationInUse=false;
+    if (communicationService != null) {
+      communicationService.finalizer();
+    }
   }
   return false;
 }

@@ -4,7 +4,7 @@
   communicationInUse=true;
   CommunicationService communicationService=null;
   try {
-    communicationService=new CommunicationService(serialPort,baudRate,heatPumpConfiguration);
+    communicationService=new CommunicationService(connector,heatPumpConfiguration);
     Map<String,String> data=new HashMap<String,String>();
     Map<String,String> allData=new HashMap<String,String>();
     data=communicationService.getStatus();
@@ -17,7 +17,6 @@
     for (    Map.Entry<String,String> entry : data.entrySet()) {
       logger.debug("Data {} has value {}",entry.getKey(),entry.getValue());
     }
-    communicationService.finalizer();
     publishValues(allData);
   }
  catch (  StiebelHeatPumpException e) {
