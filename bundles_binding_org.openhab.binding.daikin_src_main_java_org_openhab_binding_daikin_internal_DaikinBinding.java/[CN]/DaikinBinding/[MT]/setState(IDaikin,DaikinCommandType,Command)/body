@@ -1,0 +1,24 @@
+{
+switch (commandType) {
+case POWER:
+    host.setOn(value.equals(OnOffType.ON));
+  break;
+case MODE:
+host.setMode(getModeEnum(value.toString()));
+break;
+case TEMP:
+host.setTargetTemperature(((DecimalType)value).floatValue());
+break;
+case FAN:
+host.setFan(getFanEnum(value.toString()));
+break;
+case SWING:
+host.setFanDirection(getFanDirectionEnum(value.toString()));
+break;
+case TIMER:
+host.setTimer(getTimerEnum(value.toString()));
+break;
+default :
+throw new RuntimeException("Unsupported command type: " + commandType);
+}
+}

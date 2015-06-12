@@ -1,0 +1,24 @@
+{
+switch (commandType) {
+case POWER:
+    return host.isOn() ? OnOffType.ON : OnOffType.OFF;
+case MODE:
+  return new DecimalType(host.getMode().ordinal());
+case TEMP:
+return new DecimalType(host.getTargetTemperature());
+case FAN:
+return new DecimalType(host.getFan().ordinal());
+case SWING:
+return new DecimalType(host.getFanDirection().ordinal());
+case TEMPIN:
+return new DecimalType(host.getInsideTemperature());
+case TIMER:
+return new DecimalType(host.getTimer().ordinal());
+case TEMPOUT:
+return new DecimalType(host.getOutsideTemperature());
+case HUMIDITYIN:
+return new DecimalType(host.getTargetHumidity());
+default :
+throw new RuntimeException("Unsupported command type: " + commandType);
+}
+}
