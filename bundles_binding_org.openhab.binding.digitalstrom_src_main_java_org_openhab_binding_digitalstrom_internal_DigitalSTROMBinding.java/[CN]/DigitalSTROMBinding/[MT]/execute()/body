@@ -67,6 +67,7 @@ if (needsUpdate) {
 logger.debug("item '{}' is about to be refreshed now",itemName);
 Device device=getDsidToDeviceMap().get(itemConf.dsid.getValue());
 if (device != null) {
+if (itemConf.sensor == null) {
 SensorIndexEnum sensorIndex=null;
 try {
 sensorIndex=SensorIndexEnum.valueOf(itemConf.consumption.name());
@@ -76,6 +77,16 @@ sensorIndex=SensorIndexEnum.ACTIVE_POWER;
 }
 addLowPriorityJob(new DeviceConsumptionSensorJob(device,sensorIndex));
 lastUpdateMap.put(itemName,System.currentTimeMillis());
+}
+ else {
+SensorIndexEnum sensorIndex=null;
+try {
+sensorIndex=SensorIndexEnum.valueOf(itemConf.sensor.name());
+}
+ catch (Exception e) {
+}
+addHighPriorityJob(new DeviceSensorValueJob(device,sensorIndex));
+}
 }
 }
 }
