@@ -1,18 +1,4 @@
 {
-  try {
-    return object.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(object).toString();
-  }
- catch (  IllegalAccessException e) {
-    logger.debug("Error getting property value",e);
-  }
-catch (  NoSuchMethodException e) {
-    logger.debug("Error getting property value",e);
-  }
-catch (  SecurityException e) {
-    logger.debug("Error getting property value",e);
-  }
-catch (  InvocationTargetException e) {
-    logger.debug("Error getting property value",e);
-  }
-  return "";
+  Object value=invokeGetter(field,object);
+  return value != null ? value.toString() : "";
 }

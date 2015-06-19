@@ -1,21 +1,11 @@
 {
   logger.debug("Refreshing Plex sessions");
   MediaContainer container=getDocument(sessionsUrl,MediaContainer.class);
-  if (container != null && container.getVideos() != null) {
+  if (container != null) {
     Map<String,PlexSession> previousSessions=new HashMap<String,PlexSession>(sessions);
     sessions.clear();
-    for (    Video video : container.getVideos()) {
-      Player player=video.getPlayer();
-      PlexSession session=new PlexSession();
-      session.setSessionKey(video.getSessionKey());
-      session.setState(PlexPlayerState.of(player.getState()));
-      if (!StringUtils.isBlank(video.getGrandparentTitle()))       session.setTitle(video.getGrandparentTitle() + " - " + video.getTitle());
- else       session.setTitle(video.getTitle());
-      session.setType(video.getType());
-      session.setMachineIdentifier(player.getMachineIdentifier());
-      if (StringUtils.isNumeric(video.getDuration()))       session.setDuration(Integer.valueOf(video.getDuration()));
-      setVolumeFromPreviousSession(previousSessions,session);
-      sessions.put(video.getSessionKey(),session);
-    }
+    addSessionFor(container.getVideos());
+    addSessionFor(container.getTracks());
+    setVolumeFromPreviousSessions(previousSessions);
   }
 }
