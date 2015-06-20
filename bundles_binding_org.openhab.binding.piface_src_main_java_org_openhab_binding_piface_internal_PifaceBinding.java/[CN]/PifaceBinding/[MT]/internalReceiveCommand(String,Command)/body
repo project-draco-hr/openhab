@@ -16,11 +16,16 @@
       logger.warn("No Piface node for id " + pifaceId);
       continue;
     }
-    if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
-      sendDigitalWrite(node,pinNumber,1);
-    }
+    try {
+      if (command.equals(OnOffType.ON) || command.equals(OpenClosedType.CLOSED)) {
+        sendDigitalWrite(node,pinNumber,1);
+      }
  else {
-      sendDigitalWrite(node,pinNumber,0);
+        sendDigitalWrite(node,pinNumber,0);
+      }
+    }
+ catch (    ErrorResponseException e) {
+      logger.error("Failed to send digital write to " + node + " pin "+ pinNumber);
     }
   }
 }

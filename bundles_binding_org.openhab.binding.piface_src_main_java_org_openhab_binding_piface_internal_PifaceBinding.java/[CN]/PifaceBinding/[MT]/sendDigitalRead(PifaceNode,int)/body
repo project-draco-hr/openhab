@@ -1,4 +1,9 @@
 {
-  byte response=sendCommand(node,PifaceCommand.DIGITAL_READ_CMD.toByte(),PifaceCommand.DIGITAL_READ_ACK.toByte(),pinNumber,0);
-  return response == ERROR_RESPONSE ? -1 : (int)response;
+  try {
+    byte response=sendCommand(node,PifaceCommand.DIGITAL_READ_CMD.toByte(),PifaceCommand.DIGITAL_READ_ACK.toByte(),pinNumber,0);
+    return (int)response;
+  }
+ catch (  ErrorResponseException e) {
+    return -1;
+  }
 }

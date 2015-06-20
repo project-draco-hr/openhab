@@ -1,10 +1,23 @@
 {
+  Map<PifaceNode,Byte> outputPinsOnNode=new HashMap<PifaceNode,Byte>();
   for (  PifaceBindingConfig bindingConfig : clonedList) {
     try {
       PifaceNode node=pifaceNodes.get(bindingConfig.getPifaceId());
       if (node == null)       continue;
-      int value=sendDigitalRead(node,bindingConfig.getPinNumber());
-      for (      String itemName : getItemNamesForPin(bindingConfig.getPifaceId(),bindingConfig.getBindingType(),bindingConfig.getPinNumber()))       updateItemState(itemName,value);
+      if (bindingConfig.getBindingType() == BindingType.IN) {
+        int value=sendDigitalRead(node,bindingConfig.getPinNumber());
+        updateItemStates(bindingConfig,value);
+      }
+      if (bindingConfig.getBindingType() == BindingType.OUT) {
+        Byte value=outputPinsOnNode.get(node);
+        if (value == null) {
+          value=sendReadOutputPins(node);
+          outputPinsOnNode.put(node,value);
+        }
+        byte onOffValueForPin=(byte)((value >>> bindingConfig.getPinNumber()) & 1);
+        logger.debug("State of output pin " + bindingConfig.getPinNumber() + " is "+ onOffValueForPin);
+        updateItemStates(bindingConfig,onOffValueForPin);
+      }
       bindingConfigsToInitialise.remove(bindingConfig);
     }
  catch (    Exception e) {

@@ -9,9 +9,11 @@
   sun.setSeason(seasonCalc.getSeason(now,context.getConfig().getLatitude()));
   context.getJobScheduler().scheduleSeasonJob(sun.getSeason());
   context.setPlanet(PlanetName.SUN,sun);
+  logger.debug("{}",sun);
   planetPublisher.publish(PlanetName.SUN);
   MoonCalc moonCalc=new MoonCalc();
   Moon moon=moonCalc.getMoonInfo(now,context.getConfig().getLatitude(),context.getConfig().getLongitude());
   context.setPlanet(PlanetName.MOON,moon);
+  logger.debug("{}",moon);
   planetPublisher.publish(PlanetName.MOON);
 }
