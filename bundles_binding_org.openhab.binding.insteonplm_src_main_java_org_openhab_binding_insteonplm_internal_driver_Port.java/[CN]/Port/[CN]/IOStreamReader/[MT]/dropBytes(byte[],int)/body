@@ -1,0 +1,14 @@
+{
+  final int DROP_RATE=2;
+  Random rng=new Random();
+  ArrayList<Byte> l=new ArrayList<Byte>();
+  for (int i=0; i < len; i++) {
+    if (rng.nextInt(100) >= DROP_RATE) {
+      l.add(new Byte(buffer[i]));
+    }
+  }
+  for (int i=0; i < l.size(); i++) {
+    buffer[i]=l.get(i);
+  }
+  return (l.size());
+}
