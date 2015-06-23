@@ -1,5 +1,16 @@
 {
+  String id=entry.getId();
+  String parentId=entry.getParentId();
+  String title=entry.getTitle();
   String upnpClass=entry.getUpnpClass();
-  String metadata=METADATA_FORMAT.format(new Object[]{entry.getId(),entry.getParentId(),entry.getTitle(),upnpClass});
+  String desc="RINCON_AssociatedZPUDN";
+  if (entry.getResourceMetaData() != null) {
+    id=entry.getResourceMetaData().getId();
+    parentId=entry.getResourceMetaData().getParentId();
+    title=entry.getResourceMetaData().getTitle();
+    desc=entry.getResourceMetaData().getDesc();
+    upnpClass=entry.getResourceMetaData().getUpnpClass();
+  }
+  String metadata=METADATA_FORMAT.format(new Object[]{id,parentId,title,upnpClass,desc});
   return metadata;
 }

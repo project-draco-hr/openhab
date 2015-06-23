@@ -24,10 +24,16 @@
  else   if (qName.equals("upnp:originalTrackNumber")) {
     element=Element.TRACK_NUMBER;
   }
+ else   if (qName.equals("r:resMD")) {
+    element=Element.RESMD;
+  }
  else {
     if (ignore == null) {
       ignore=new ArrayList<String>();
       ignore.add("DIDL-Lite");
+      ignore.add("type");
+      ignore.add("ordinal");
+      ignore.add("description");
     }
     if (!ignore.contains(localName)) {
       logger.warn("Did not recognise element named {}",localName);
