@@ -1,0 +1,20 @@
+{
+  int sensorValue=digitalSTROM.getDeviceSensorValue(token,this.device.getDSID(),null,this.sensorIndex);
+  logger.info(this.device.getName() + " DeviceSensorValue : " + this.sensorIndex+ " "+ this.sensorIndex.ordinal()+ " "+ this.sensorIndex.getIndex()+ " "+ sensorValue+ ", DSID: "+ this.device.getDSID().getValue());
+switch (this.sensorIndex) {
+case TEMPERATURE_INDOORS:
+    this.device.setTemperatureSensorValue(sensorValue);
+  break;
+case RELATIVE_HUMIDITY_INDOORS:
+this.device.setHumiditySensorValue(sensorValue);
+break;
+case TEMPERATURE_OUTDOORS:
+this.device.setTemperatureSensorValue(sensorValue);
+break;
+case RELATIVE_HUMIDITY_OUTDOORS:
+this.device.setTemperatureSensorValue(sensorValue);
+break;
+default :
+break;
+}
+}
