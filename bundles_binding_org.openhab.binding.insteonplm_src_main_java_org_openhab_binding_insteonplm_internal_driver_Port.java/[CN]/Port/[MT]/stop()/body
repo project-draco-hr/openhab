@@ -3,6 +3,9 @@
     logger.debug("port {} not running, no need to stop it",m_logName);
     return;
   }
+  if (m_mdbb != null) {
+    m_mdbb=null;
+  }
   if (m_readThread != null)   m_readThread.interrupt();
   if (m_writeThread != null)   m_writeThread.interrupt();
   logger.debug("waiting for read thread to exit for port {}",m_logName);

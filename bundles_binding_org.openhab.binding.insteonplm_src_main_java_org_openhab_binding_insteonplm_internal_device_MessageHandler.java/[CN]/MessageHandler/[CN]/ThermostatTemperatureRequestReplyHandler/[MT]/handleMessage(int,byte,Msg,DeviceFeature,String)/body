@@ -1,6 +1,11 @@
 {
   InsteonDevice dev=f.getDevice();
   try {
+    int cmd1Msg=(int)(msg.getByte("command1") & 0xff);
+    if (cmd1Msg != 0x6a) {
+      logger.warn("{}: ignoring bad TEMPERATURE reply from {}",nm(),dev.getAddress());
+      return;
+    }
     int cmd2=(int)(msg.getByte("command2") & 0xff);
     int level=cmd2 / 2;
     logger.info("{}: got TEMPERATURE from {} of value: {}",nm(),dev.getAddress(),level);

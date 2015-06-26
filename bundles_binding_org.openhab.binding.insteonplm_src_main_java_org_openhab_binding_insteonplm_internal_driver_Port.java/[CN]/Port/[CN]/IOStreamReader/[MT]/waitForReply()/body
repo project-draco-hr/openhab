@@ -3,8 +3,15 @@
   while (m_reply == ReplyType.WAITING_FOR_ACK) {
     try {
       logger.trace("writer waiting for ack.");
-      getRequestReplyLock().wait();
-      logger.trace("writer got ack: {}",(m_reply == ReplyType.GOT_ACK));
+      getRequestReplyLock().wait(30000);
+      if (m_reply == ReplyType.WAITING_FOR_ACK) {
+        logger.trace("writer timeout expired, asking for retransmit!");
+        m_reply=ReplyType.GOT_NACK;
+        break;
+      }
+ else {
+        logger.trace("writer got ack: {}",(m_reply == ReplyType.GOT_ACK));
+      }
     }
  catch (    InterruptedException e) {
     }
