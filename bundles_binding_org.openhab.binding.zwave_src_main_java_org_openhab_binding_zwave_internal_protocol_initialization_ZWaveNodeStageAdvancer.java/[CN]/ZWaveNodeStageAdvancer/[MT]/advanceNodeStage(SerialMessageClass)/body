@@ -309,11 +309,14 @@ logger.warn("NODE {}: Node advancer: GET_CONFIGURATION - Unknown device: {}:{}:{
 break;
 }
 ZWaveConfigurationCommandClass configurationCommandClass=(ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION);
+List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
+if (configList.size() == 0) {
+break;
+}
 if (configurationCommandClass == null) {
 logger.error("NODE {}: Node advancer: GET_CONFIGURATION - CONFIGURATION class not supported",node.getNodeId());
 break;
 }
-List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
 for (ZWaveDbConfigurationParameter parameter : configList) {
 if (parameter.WriteOnly != null && parameter.WriteOnly == true) {
 configurationCommandClass.setParameterWriteOnly(parameter.Index,true);
