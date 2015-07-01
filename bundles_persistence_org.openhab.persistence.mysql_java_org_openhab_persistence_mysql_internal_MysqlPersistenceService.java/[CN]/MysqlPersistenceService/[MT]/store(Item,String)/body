@@ -22,11 +22,13 @@
     value=item.getState().toString();
   }
   String sqlCmd=null;
-  Statement statement=null;
+  PreparedStatement statement=null;
   try {
-    statement=connection.createStatement();
-    sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),'"+ item.getState().toString()+ "') ON DUPLICATE KEY UPDATE VALUE='"+ item.getState().toString()+ "';");
-    statement.executeUpdate(sqlCmd);
+    sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),?) ON DUPLICATE KEY UPDATE VALUE=?;");
+    statement=connection.prepareStatement(sqlCmd);
+    statement.setString(1,item.getState().toString());
+    statement.setString(2,item.getState().toString());
+    statement.executeUpdate();
     logger.debug("mySQL: Stored item '{}' as '{}'[{}] in SQL database at {}.",item.getName(),item.getState().toString(),value,(new java.util.Date()).toString());
     logger.debug("mySQL: {}",sqlCmd);
     errCnt=0;
