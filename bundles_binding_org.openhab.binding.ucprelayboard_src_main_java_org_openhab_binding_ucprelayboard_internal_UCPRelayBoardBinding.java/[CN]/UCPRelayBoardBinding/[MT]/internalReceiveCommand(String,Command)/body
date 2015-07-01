@@ -1,0 +1,10 @@
+{
+  UCPRelayConfig config=getRelayConfigForItem(itemName);
+  if (config != null) {
+    SerialDevice serialDevice=serialDevices.get(config.getBoardName());
+    if (command instanceof OnOffType) {
+      byte[] relayBoardCommand=prepareRelayCommand(config,((OnOffType)command));
+      serialDevice.writeBytes(relayBoardCommand);
+    }
+  }
+}

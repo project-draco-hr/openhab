@@ -1,0 +1,30 @@
+{
+  String boardName=null;
+  int relayNumber=-1;
+  boolean inverted=false;
+  final String[] params=StringUtils.split(config,";");
+  for (  String param : params) {
+    final String[] nameValue=StringUtils.split(param,"=");
+    if (nameValue.length != 2) {
+      continue;
+    }
+    if ("board".equals(nameValue[0])) {
+      boardName=nameValue[1];
+    }
+ else     if ("relay".equals(nameValue[0])) {
+      try {
+        relayNumber=Integer.parseInt(nameValue[1]);
+      }
+ catch (      NumberFormatException e) {
+        throw new BindingConfigParseException("Wrong item configuration. " + e.getMessage());
+      }
+    }
+ else     if ("inverted".equals(nameValue[0])) {
+      inverted=Boolean.valueOf(nameValue[1]);
+    }
+  }
+  if (boardName == null && relayNumber < 0) {
+    throw new BindingConfigParseException("Wrong item configuration. missing 'board' or 'relay' values");
+  }
+  return new UCPRelayConfig(boardName,relayNumber,inverted);
+}
