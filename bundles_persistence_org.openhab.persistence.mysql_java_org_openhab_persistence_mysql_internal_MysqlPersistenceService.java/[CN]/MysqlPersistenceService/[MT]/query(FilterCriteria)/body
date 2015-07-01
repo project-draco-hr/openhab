@@ -26,7 +26,7 @@
   }
   String table=sqlTables.get(itemName);
   if (table == null) {
-    logger.error("mySQL: Unable to find table for query '" + itemName + "'.");
+    logger.error("mySQL: Unable to find table for query '{}'.",itemName);
     return Collections.emptyList();
   }
   String filterString=new String();
@@ -53,7 +53,7 @@
     String queryString=new String();
     queryString="SELECT Time, Value FROM " + table;
     if (!filterString.isEmpty())     queryString+=filterString;
-    logger.debug("mySQL: " + queryString);
+    logger.debug("mySQL: query:" + queryString);
     st.setFetchSize(50);
     ResultSet rs=st.executeQuery(queryString);
     long count=0;
@@ -85,7 +85,7 @@
   }
  catch (  SQLException e) {
     errCnt++;
-    logger.error("mySQL: Error running querying : " + e.getMessage());
+    logger.error("mySQL: Error running querying : ",e.getMessage());
   }
   return null;
 }
