@@ -17,6 +17,14 @@
     logger.trace("Response: {}",response);
     if (response.isError()) {
       logger.error("Error retrieving tokens: {}",response.getError());
+      if ("authorization_expired".equals(response.getError())) {
+        this.refreshToken=null;
+        this.accessToken=null;
+        if (request instanceof TokenRequest) {
+          this.authToken=null;
+        }
+        save();
+      }
       return false;
     }
  else {
