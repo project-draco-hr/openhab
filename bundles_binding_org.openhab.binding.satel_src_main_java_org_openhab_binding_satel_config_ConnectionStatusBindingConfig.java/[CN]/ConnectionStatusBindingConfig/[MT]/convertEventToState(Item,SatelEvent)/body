@@ -1,0 +1,35 @@
+{
+  if (!(event instanceof ConnectionStatusEvent)) {
+    return null;
+  }
+  ConnectionStatusEvent statusEvent=(ConnectionStatusEvent)event;
+  boolean invertState=hasOptionEnabled(Options.INVERT_STATE);
+  if (statusEvent.isConnected()) {
+    this.connectionFailures=0;
+    if (this.connectedSince == null) {
+      this.connectedSince=Calendar.getInstance();
+    }
+  }
+ else {
+    this.connectionFailures+=1;
+    this.connectedSince=null;
+  }
+switch (this.statusType) {
+case CONNECTED:
+    return booleanToState(item,statusEvent.isConnected() ^ invertState);
+case CONNECTED_SINCE:
+  if (this.connectedSince == null) {
+    return UnDefType.NULL;
+  }
+ else   if (item.getAcceptedDataTypes().contains(DateTimeType.class)) {
+    return new DateTimeType(this.connectedSince);
+  }
+break;
+case CONNECTION_ERRORS:
+if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+return new DecimalType(this.connectionFailures);
+}
+break;
+}
+return null;
+}
