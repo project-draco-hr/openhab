@@ -3,11 +3,13 @@
   logger.debug("Response: {}",oauthCredentials.deviceListResponse);
   if (oauthCredentials.deviceListResponse.isError()) {
     final NetatmoError error=oauthCredentials.deviceListResponse.getError();
-    if (error.isAccessTokenExpired()) {
+    if (error.isAccessTokenExpired() || error.isTokenNotVaid()) {
+      logger.debug("Token is expired or is not valid, refreshing: code = {} message = {}",error.getCode(),error.getMessage());
       oauthCredentials.refreshAccessToken();
       execute();
     }
  else {
+      logger.error("Error processing device list: code = {} message = {}",error.getCode(),error.getMessage());
       throw new NetatmoException(error.getMessage());
     }
     return;
