@@ -1,42 +1,42 @@
 {
   try {
-    String endpoint="/upnp/control/basicevent1";
-    String switchFriendlyName=null;
     for (    WemoBindingProvider provider : providers) {
-      switchFriendlyName=provider.getWemoFriendlyName(itemName);
-    }
-    String wemoLocation=wemoConfigMap.get(switchFriendlyName);
-    if (wemoLocation != null) {
-      logger.debug("item '{}' is located at '{}'",itemName,wemoLocation);
-      URL url=new URL(wemoLocation + endpoint);
-      Socket wemoSocket=new Socket(InetAddress.getByName(url.getHost()),url.getPort());
-      try {
-        OutputStream wemoOutputStream=wemoSocket.getOutputStream();
-        StringBuffer wemoStringBuffer=new StringBuffer();
-        wemoStringBuffer.append("POST " + url + " HTTP/1.1\r\n");
-        wemoStringBuffer.append("Content-Type: text/xml; charset=utf-8\r\n");
-        wemoStringBuffer.append("Content-Length: " + content.getBytes().length + "\r\n");
-        wemoStringBuffer.append("SOAPACTION: \"" + soapMethod + "\"\r\n");
-        wemoStringBuffer.append("\r\n");
-        wemoOutputStream.write(wemoStringBuffer.toString().getBytes());
-        wemoOutputStream.write(content.getBytes());
-        wemoOutputStream.flush();
-        String wemoCallResponse=IOUtils.toString(wemoSocket.getInputStream());
+      String soapHeader="SOAPACTION: \"" + soapMethod + "\"";
+      String contentHeader="Content-Type: text/xml; charset=\"utf-8\"";
+      String endpoint="/upnp/control/basicevent1";
+      if (soapMethod.contains("insight")) {
+        endpoint="/upnp/control/insight1";
+      }
+      String wemoUDN=provider.getUDN(itemName);
+      if (wemoUDN == null) {
+        return null;
+      }
+      logger.trace("Calling WeMo item '{}' with configuration :",itemName);
+      logger.trace("        UDN = '{}'",provider.getUDN(itemName));
+      logger.trace("ChannelType = '{}'",provider.getChannelType(itemName));
+      String wemoLocation=wemoConfigMap.get(wemoUDN);
+      if (wemoLocation != null) {
+        logger.trace("    Location = '{}'",wemoLocation);
+        logger.trace("    EndPoint = '{}'",endpoint);
+        String wemoURL=wemoLocation + endpoint;
+        Properties wemoHeaders=new Properties();
+        wemoHeaders.setProperty(soapHeader,contentHeader);
+        InputStream wemoContent=new ByteArrayInputStream(content.getBytes(Charset.forName("UTF-8")));
+        String wemoCallResponse=HttpUtil.executeUrl("POST",wemoURL,wemoHeaders,wemoContent,"text/xml",2000);
+        logger.trace("wemoresp: {}",wemoCallResponse);
         return wemoCallResponse;
       }
-  finally {
-        wemoSocket.close();
-      }
-    }
  else {
-      logger.debug("No Location found for item '{}', start new discovery ",itemName);
-      wemoDiscovery();
-      String wemoCallResponse="";
-      return wemoCallResponse;
+        logger.debug("No Location found for item '{}', start new discovery ",itemName);
+        wemoDiscovery();
+        String wemoCallResponse="";
+        return wemoCallResponse;
+      }
     }
   }
  catch (  Exception e) {
     wemoDiscovery();
     throw new RuntimeException("Could not call Wemo, did rediscovery",e);
   }
+  return null;
 }
