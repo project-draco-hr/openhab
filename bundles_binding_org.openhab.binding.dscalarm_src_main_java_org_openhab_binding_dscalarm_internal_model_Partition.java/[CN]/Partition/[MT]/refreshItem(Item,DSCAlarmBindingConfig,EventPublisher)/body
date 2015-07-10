@@ -37,6 +37,16 @@ trigger=partitionProperties.getTrigger(TriggerType.ALARMED);
 onOffType=trigger ? OnOffType.ON : OnOffType.OFF;
 publisher.postUpdate(item.getName(),onOffType);
 break;
+case PARTITION_OPENING_CLOSING_MODE:
+state=partitionProperties.getState(StateType.OPENING_CLOSING_STATE);
+strStatus=partitionProperties.getStateDescription(StateType.OPENING_CLOSING_STATE);
+if (item instanceof NumberItem) {
+publisher.postUpdate(item.getName(),new DecimalType(state));
+}
+if (item instanceof StringItem) {
+publisher.postUpdate(item.getName(),new StringType(strStatus));
+}
+break;
 default :
 logger.debug("refreshItem(): Partition item not updated.");
 break;

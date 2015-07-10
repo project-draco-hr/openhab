@@ -1,6 +1,7 @@
 {
   logger.debug("updateProperties(): Panel Item Name: {}",item.getName());
   boolean trigger=state != 0 ? true : false;
+  boolean trouble=state != 0 ? true : false;
   boolean boolState=state != 0 ? true : false;
   if (config != null) {
     if (config.getDSCAlarmItemType() != null) {
@@ -13,6 +14,36 @@ case PANEL_MESSAGE:
   break;
 case PANEL_COMMAND:
 panelProperties.setSystemCommand(state);
+break;
+case PANEL_TROUBLE_MESSAGE:
+panelProperties.setTroubleMessage(description);
+break;
+case PANEL_TROUBLE_LED:
+panelProperties.setTroubleLED(boolState);
+break;
+case PANEL_SERVICE_REQUIRED:
+panelProperties.setTrouble(TroubleType.SERVICE_REQUIRED,trouble);
+break;
+case PANEL_AC_TROUBLE:
+panelProperties.setTrouble(TroubleType.AC_TROUBLE,trouble);
+break;
+case PANEL_TELEPHONE_TROUBLE:
+panelProperties.setTrouble(TroubleType.TELEPHONE_LINE_TROUBLE,trouble);
+break;
+case PANEL_FTC_TROUBLE:
+panelProperties.setTrouble(TroubleType.FAILURE_TO_COMMUNICATE,trouble);
+break;
+case PANEL_ZONE_FAULT:
+panelProperties.setTrouble(TroubleType.ZONE_FAULT,trouble);
+break;
+case PANEL_ZONE_TAMPER:
+panelProperties.setTrouble(TroubleType.ZONE_TAMPER,trouble);
+break;
+case PANEL_ZONE_LOW_BATTERY:
+panelProperties.setTrouble(TroubleType.ZONE_LOW_BATTERY,trouble);
+break;
+case PANEL_TIME_LOSS:
+panelProperties.setTrouble(TroubleType.LOSS_OF_TIME,trouble);
 break;
 case PANEL_FIRE_KEY_ALARM:
 panelProperties.setTrigger(TriggerType.FIRE_KEY_ALARM,trigger);
