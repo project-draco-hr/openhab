@@ -22,7 +22,17 @@
     notifyDataReceived(data);
     requestCreditReport();
   }
- catch (  IOException e) {
+ catch (  SocketException e) {
+    try {
+      this.openHardware();
+    }
+ catch (    CULDeviceException e1) {
+      log.error("Exception while reading from CUL port " + deviceName,e);
+      notifyError(e);
+      throw new CULCommunicationException(e);
+    }
+  }
+catch (  IOException e) {
     log.error("Exception while reading from CUL port " + deviceName,e);
     notifyError(e);
     throw new CULCommunicationException(e);
