@@ -1,18 +1,25 @@
 {
   try {
     if (registryLock.readLock().tryLock(REGISTRYLOCK_TIMEOUT,REGISTRYLOCK_TIMEOUT_UNITS)) {
+      String itemName="";
       try {
-        String itemName=(String)registry.getKey(pin);
+        itemName=(String)registry.getKey(pin);
         if (itemName != null) {
           if (value == GPIOPin.VALUE_HIGH) {
             eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+            logger.debug("Received command 1 from GPIO {}",pin.getPinNumber());
           }
  else {
             eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+            logger.debug("Received command 0 from GPIO {}",pin.getPinNumber());
           }
         }
       }
-  finally {
+ catch (      IOException e) {
+        logger.error("Error occured while receiving pin state for item " + itemName + ", exception: "+ e.getMessage());
+        return;
+      }
+ finally {
         registryLock.readLock().unlock();
       }
     }
