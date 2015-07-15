@@ -9,10 +9,10 @@
   Item item=null;
   String itemName="";
   boolean found=false;
+  boolean suppressPanelMsg=false;
   int state=0;
   int partitionId=apiMessage.getPartition();
   int zoneId=apiMessage.getZone();
-  setPanelMessage(apiMessage.getAPIDescription());
   setTimeStampState(apiMessage.getTimeStamp());
 switch (apiCode) {
 case CommandAcknowledge:
@@ -20,6 +20,9 @@ case CommandAcknowledge:
   if (apiData.equals("000")) {
     dscAlarmItemType=DSCAlarmItemType.PANEL_CONNECTION;
   }
+if (suppressAcknowledgementMsgs) {
+  suppressPanelMsg=true;
+}
 break;
 case SystemError:
 dscAlarmItemType=DSCAlarmItemType.PANEL_SYSTEM_ERROR;
@@ -31,6 +34,9 @@ break;
 case TimeDateBroadcast:
 dscAlarmItemType=DSCAlarmItemType.PANEL_TIME;
 updateItemType(DSCAlarmItemType.PANEL_TIME_BROADCAST,0,0,1);
+if (suppressAcknowledgementMsgs) {
+suppressPanelMsg=true;
+}
 break;
 case PartitionReady:
 case PartitionNotReady:
@@ -40,9 +46,6 @@ case SystemArmingInProgress:
 dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 break;
 case PartitionArmed:
-case UserClosing:
-case SpecialClosing:
-case PartialClosing:
 updateItemType(DSCAlarmItemType.PARTITION_ARMED,apiMessage.getPartition(),-1,1);
 updateItemType(DSCAlarmItemType.PARTITION_ENTRY_DELAY,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,0);
@@ -50,8 +53,6 @@ dscAlarmItemType=DSCAlarmItemType.PARTITION_ARM_MODE;
 setPartitionStatus(partitionId,0,apiMessage.getAPIName());
 break;
 case PartitionDisarmed:
-case UserOpening:
-case SpecialOpening:
 updateItemType(DSCAlarmItemType.PARTITION_ARMED,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_ENTRY_DELAY,apiMessage.getPartition(),-1,0);
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,0);
@@ -113,6 +114,57 @@ break;
 case ExitDelayInProgress:
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,1);
 break;
+case UserClosing:
+case SpecialClosing:
+case PartialClosing:
+case UserOpening:
+case SpecialOpening:
+dscAlarmItemType=DSCAlarmItemType.PARTITION_OPENING_CLOSING_MODE;
+break;
+case TroubleLEDOn:
+dscAlarmItemType=DSCAlarmItemType.PANEL_TROUBLE_LED;
+break;
+case TroubleLEDOff:
+updateItemType(DSCAlarmItemType.PANEL_SERVICE_REQUIRED,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_AC_TROUBLE,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_TELEPHONE_TROUBLE,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_FTC_TROUBLE,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_ZONE_FAULT,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_ZONE_TAMPER,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_ZONE_LOW_BATTERY,0,0,0);
+updateItemType(DSCAlarmItemType.PANEL_TIME_LOSS,0,0,0);
+dscAlarmItemType=DSCAlarmItemType.PANEL_TROUBLE_LED;
+break;
+case PanelBatteryTrouble:
+case PanelACTrouble:
+case SystemBellTrouble:
+case TLMLine1Trouble:
+case TLMLine2Trouble:
+case FTCTrouble:
+case GeneralDeviceLowBattery:
+case WirelessKeyLowBatteryTrouble:
+case HandheldKeypadLowBatteryTrouble:
+case GeneralSystemTamper:
+case HomeAutomationTrouble:
+case KeybusFault:
+dscAlarmItemType=DSCAlarmItemType.PANEL_TROUBLE_MESSAGE;
+break;
+case PanelBatteryTroubleRestore:
+case PanelACRestore:
+case SystemBellTroubleRestore:
+case TLMLine1TroubleRestore:
+case TLMLine2TroubleRestore:
+case GeneralDeviceLowBatteryRestore:
+case WirelessKeyLowBatteryTroubleRestore:
+case HandheldKeypadLowBatteryTroubleRestore:
+case GeneralSystemTamperRestore:
+case HomeAutomationTroubleRestore:
+case KeybusFaultRestore:
+updateItemType(DSCAlarmItemType.PANEL_TROUBLE_MESSAGE,0,0,0);
+break;
+case VerboseTroubleStatus:
+verboseTroubleStatusHandler(event);
+break;
 case CodeRequired:
 api.sendCommand(APICode.CodeSend);
 break;
@@ -149,6 +201,9 @@ break;
 }
 default :
 break;
+}
+if (!suppressPanelMsg) {
+setPanelMessage(apiMessage.getAPIDescription());
 }
 logger.debug("dscAlarmEventRecieved(): Event received! Looking for item: {}",dscAlarmItemType);
 if (dscAlarmItemType != null) {

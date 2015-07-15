@@ -17,6 +17,7 @@
         if (StringUtils.isNotBlank((String)config.get("baud")))         baudRate=Integer.parseInt((String)config.get("baud"));
       }
  catch (      NumberFormatException numberFormatException) {
+        baudRate=0;
         logger.error("updated(): Baud Rate not configured correctly!");
         return;
       }
@@ -48,6 +49,15 @@
     }
  else {
       pollPeriod=DEFAULT_POLL_PERIOD;
+    }
+    if (StringUtils.isNotBlank((String)config.get("suppressAcknowledgementMsgs"))) {
+      try {
+        suppressAcknowledgementMsgs=Boolean.parseBoolean((String)config.get("suppressAcknowledgementMsgs"));
+      }
+ catch (      NumberFormatException numberFormatException) {
+        suppressAcknowledgementMsgs=false;
+        logger.error("updated(): Error parsing 'suppressAcknowledgementMsgs'. This must be boolean!");
+      }
     }
   }
  else {
