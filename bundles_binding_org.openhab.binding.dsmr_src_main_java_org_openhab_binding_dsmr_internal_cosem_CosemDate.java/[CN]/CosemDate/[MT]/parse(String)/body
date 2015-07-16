@@ -1,14 +1,15 @@
 {
-  Pattern p=Pattern.compile("(\\d{12})([S,W]?)");
-  Matcher m=p.matcher(cosemValue);
-  if (m.matches()) {
-    SimpleDateFormat formatter=new SimpleDateFormat("yyMMddHHmmss");
-    Date date=formatter.parse(m.group(1));
-    Calendar c=Calendar.getInstance();
-    c.setTime(date);
-    return new DateTimeType(c);
+  for (  CosemDateFormat cosemDateFormat : CosemDateFormat.values()) {
+    logger.debug("Trying pattern:" + cosemDateFormat.pattern);
+    Matcher m=cosemDateFormat.pattern.matcher(cosemValue);
+    if (m.matches()) {
+      logger.debug(cosemValue + " matches pattern:" + cosemDateFormat.pattern);
+      Date date=cosemDateFormat.formatter.parse(m.group(1));
+      Calendar c=Calendar.getInstance();
+      c.setTime(date);
+      return new DateTimeType(c);
+    }
+    logger.debug(cosemValue + " does not match pattern:" + cosemDateFormat.pattern);
   }
- else {
-    throw new ParseException("value: " + cosemValue + " is not a valid CosemDate string (yyMMddHHmmss)",0);
-  }
+  throw new ParseException("value: " + cosemValue + " is not a known CosemDate string",0);
 }
