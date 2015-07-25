@@ -1,5 +1,6 @@
 {
   long reconnectionTime=10 * 1000;
+  boolean receivedResponse=false;
   try {
     while (!Thread.interrupted()) {
       if (this.channel == null) {
@@ -7,8 +8,8 @@
 synchronized (this) {
           this.channel=connect();
         }
-        this.dispatchEvent(new ConnectionStatusEvent(this.channel != null));
         if (this.channel == null) {
+          this.dispatchEvent(new ConnectionStatusEvent(false));
           Thread.sleep(reconnectionTime - System.currentTimeMillis() + connectStartTime);
           continue;
         }
@@ -21,7 +22,7 @@ synchronized (this) {
       }
       logger.debug("Sending message: {}",message);
       timeoutTimer.start();
-      boolean sent=writeMessage(message);
+      boolean sent=this.writeMessage(message);
       timeoutTimer.stop();
       if (sent) {
         logger.trace("Waiting for response");
@@ -30,6 +31,10 @@ synchronized (this) {
         timeoutTimer.stop();
         if (response != null) {
           logger.debug("Got response: {}",response);
+          if (!receivedResponse) {
+            receivedResponse=true;
+            this.dispatchEvent(new ConnectionStatusEvent(true));
+          }
           command.handleResponse(response);
         }
       }

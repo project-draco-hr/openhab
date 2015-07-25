@@ -2,7 +2,7 @@
   ConfigIterator iterator=new ConfigIterator(bindingConfig);
   ObjectType objectType;
   try {
-    objectType=ObjectType.valueOf(iterator.nextUpperCase());
+    objectType=iterator.nextOfType(ObjectType.class,"object type");
   }
  catch (  Exception e) {
     return null;
@@ -39,5 +39,5 @@ objectNumbers[i]=objectNumber;
 throw new BindingConfigParseException(String.format("Invalid object number: %s",bindingConfig));
 }
 }
-return new IntegraStateBindingConfig(stateType,objectNumbers,parseOptions(iterator));
+return new IntegraStateBindingConfig(stateType,objectNumbers,iterator.parseOptions());
 }

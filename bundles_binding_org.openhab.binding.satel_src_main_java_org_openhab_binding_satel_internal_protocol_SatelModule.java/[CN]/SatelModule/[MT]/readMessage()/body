@@ -5,7 +5,11 @@
     boolean inMessage=false;
     int syncBytes=0;
     while (true) {
-      byte b=(byte)is.read();
+      int c=is.read();
+      if (c < 0) {
+        return null;
+      }
+      byte b=(byte)c;
       if (b == FRAME_SYNC) {
         if (inMessage) {
           if (syncBytes == 0) {

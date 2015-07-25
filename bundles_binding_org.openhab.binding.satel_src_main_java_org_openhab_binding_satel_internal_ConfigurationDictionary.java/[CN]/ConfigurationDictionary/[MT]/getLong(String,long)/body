@@ -1,0 +1,14 @@
+{
+  String val=(String)configuration.get(name);
+  try {
+    if (StringUtils.isNotBlank(val)) {
+      return Long.parseLong(val);
+    }
+ else {
+      return defaultValue;
+    }
+  }
+ catch (  Exception e) {
+    throw new ConfigurationException(name,"invalid long value");
+  }
+}
