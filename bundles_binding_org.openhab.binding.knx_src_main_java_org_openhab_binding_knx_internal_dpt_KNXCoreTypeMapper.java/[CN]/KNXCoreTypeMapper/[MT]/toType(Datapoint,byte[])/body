@@ -91,7 +91,7 @@ return null;
 Calendar cal=Calendar.getInstance();
 if (translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && !translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
 cal.setTimeInMillis(translatorDateTime.getValueMilliseconds());
-value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+value=new SimpleDateFormat(DateTimeType.DATE_PATTERN).format(cal.getTime());
 return DateTimeType.valueOf(value);
 }
  else if (!translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
@@ -99,12 +99,12 @@ cal.clear();
 cal.set(Calendar.HOUR_OF_DAY,translatorDateTime.getHour());
 cal.set(Calendar.MINUTE,translatorDateTime.getMinute());
 cal.set(Calendar.SECOND,translatorDateTime.getSecond());
-value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+value=new SimpleDateFormat(DateTimeType.DATE_PATTERN).format(cal.getTime());
 return DateTimeType.valueOf(value);
 }
  else if (translatorDateTime.isValidField(DPTXlatorDateTime.YEAR) && translatorDateTime.isValidField(DPTXlatorDateTime.TIME)) {
 cal.setTimeInMillis(translatorDateTime.getValueMilliseconds());
-value=DateTimeType.DATE_FORMATTER.format(cal.getTime());
+value=new SimpleDateFormat(DateTimeType.DATE_PATTERN).format(cal.getTime());
 return DateTimeType.valueOf(value);
 }
 break;
