@@ -1,0 +1,112 @@
+{
+  if (sendEntry == null) {
+    return;
+  }
+  byte[] dataOutputBuffers=sendEntry.buffer;
+  ByteBuffer sendBuffer=ByteBuffer.allocate(100);
+  sendEntry.sendAttempts++;
+  int read=0;
+  byte readByte=0;
+  long readWriteDelay=0;
+  resetInputBuffer();
+  for (int i=0; i < dataOutputBuffers.length; i++) {
+    byte b=dataOutputBuffers[i];
+    writeByte(b);
+    if (i == 0) {
+      read=readByte(true);
+      readByte=(byte)(read & 0xFF);
+      sendBuffer.put(readByte);
+      if (b != readByte) {
+        if (readByte == EBusTelegram.SYN) {
+          logger.debug("eBus collision with SYN detected!");
+        }
+ else {
+          logger.debug("eBus collision detected! 0x{}",EBusUtils.toHexDumpString(readByte));
+        }
+        if (lastSendCollisionDetected) {
+          logger.warn("A second collision occured!");
+          resetSend();
+          return;
+        }
+ else         if ((byte)(readByte & 0x0F) == (byte)(b & 0x0F)) {
+          logger.trace("Priority class match, restart after next SYN ...");
+          lastSendCollisionDetected=true;
+        }
+ else {
+          logger.trace("Priority class doesn't match, blocked for next SYN ...");
+          blockNextSend=true;
+        }
+        return;
+      }
+    }
+  }
+  lastSendCollisionDetected=false;
+  blockNextSend=false;
+  if (dataOutputBuffers[1] == (byte)0xFE) {
+    logger.trace("Broadcast send ..............");
+    writeByte(EBusTelegram.SYN);
+    sendBuffer.put(EBusTelegram.SYN);
+  }
+ else {
+    readWriteDelay=System.nanoTime();
+    sendBuffer.put(dataOutputBuffers,1,dataOutputBuffers.length - 1);
+    getInputStream().skip(dataOutputBuffers.length - 1);
+    readWriteDelay=(System.nanoTime() - readWriteDelay) / 1000;
+    logger.trace("readin delay " + readWriteDelay);
+    read=readByte(true);
+    if (read != -1) {
+      byte ack=(byte)(read & 0xFF);
+      sendBuffer.put(ack);
+      if (ack == EBusTelegram.ACK_OK) {
+        boolean isMasterAddr=EBusUtils.isMasterAddress(dataOutputBuffers[1]);
+        if (!isMasterAddr) {
+          byte nn2=(byte)(readByte(true) & 0xFF);
+          sendBuffer.put(nn2);
+          byte crc=EBusUtils.crc8_tab(nn2,(byte)0);
+          if (nn2 > 16) {
+            logger.warn("slave data to long, invalid!");
+            if (!resend(secondTry))             return;
+          }
+          while (nn2 > 0) {
+            byte d=(byte)(readByte(true) & 0xFF);
+            sendBuffer.put(d);
+            crc=EBusUtils.crc8_tab(d,crc);
+            if (d != (byte)0xA) {
+              nn2--;
+            }
+          }
+          byte crc2=(byte)(readByte(true) & 0xFF);
+          sendBuffer.put(crc2);
+          if (crc2 != crc) {
+            logger.warn("Slave CRC wrong, resend!");
+            if (!resend(secondTry))             return;
+          }
+          writeByte(EBusTelegram.ACK_OK);
+          sendBuffer.put(EBusTelegram.ACK_OK);
+        }
+        writeByte(EBusTelegram.SYN);
+        sendBuffer.put(EBusTelegram.SYN);
+      }
+ else       if (ack == EBusTelegram.ACK_FAIL) {
+        sendBuffer.clear();
+        if (!resend(secondTry))         return;
+      }
+ else       if (ack == EBusTelegram.SYN) {
+        logger.debug("No answer from slave for telegram: {}",EBusUtils.toHexDumpString(sendBuffer));
+        sendBuffer.clear();
+        return;
+      }
+ else {
+        logger.debug("Received wrong telegram: {}",EBusUtils.toHexDumpString(sendBuffer));
+        sendBuffer.clear();
+        if (!resend(secondTry))         return;
+      }
+    }
+  }
+  if (sendBuffer.position() > 0) {
+    byte[] buffer=Arrays.copyOf(sendBuffer.array(),sendBuffer.position());
+    logger.debug("Succcesful send: {}",EBusUtils.toHexDumpString(buffer));
+    onEBusTelegramReceived(buffer);
+  }
+  resetSend();
+}
