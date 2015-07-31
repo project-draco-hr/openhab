@@ -33,7 +33,9 @@
     buffer.put(crc);
     buffer.put(data[crcPos + 1]);
     if (data[crcPos + 1] == EBusTelegram.SYN) {
-      return new EBusTelegram(buffer);
+      if (data[1] == EBusTelegram.BROADCAST) {
+        return new EBusTelegram(buffer);
+      }
     }
     if ((data[crcPos + 1] == EBusTelegram.ACK_OK || data[crcPos + 1] == EBusTelegram.ACK_FAIL) && data[crcPos + 2] == EBusTelegram.SYN) {
       buffer.put(data[crcPos + 2]);
