@@ -1,0 +1,12 @@
+{
+  JSONObject headersJSON=new JSONObject();
+  try {
+    for (    Map.Entry<String,String> responseHeader : mResponseHeaders.entrySet()) {
+      headersJSON.put(responseHeader.getKey(),responseHeader.getValue());
+    }
+  }
+ catch (  JSONException e) {
+    logger.error("Error forming response headers: {}",e.getMessage());
+  }
+  return headersJSON;
+}

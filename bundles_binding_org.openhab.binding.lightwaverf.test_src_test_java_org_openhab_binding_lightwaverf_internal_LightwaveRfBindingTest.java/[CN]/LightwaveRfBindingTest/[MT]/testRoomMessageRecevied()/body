@@ -1,0 +1,11 @@
+{
+  when(mockHeatInfoRequest.getState(LightwaveRfType.HEATING_SET_TEMP)).thenReturn(new DecimalType(24.5));
+  when(mockHeatInfoRequest.getRoomId()).thenReturn("2");
+  when(mockBindingProvider.getBindingItemsForRoom("2")).thenReturn(Arrays.asList("Temp"));
+  when(mockBindingProvider.getTypeForItemName("Temp")).thenReturn(LightwaveRfType.HEATING_SET_TEMP);
+  LightwaveRfBinding binding=new LightwaveRfBinding();
+  binding.addBindingProvider(mockBindingProvider);
+  binding.setEventPublisher(mockEventPublisher);
+  binding.roomMessageReceived(mockHeatInfoRequest);
+  verify(mockEventPublisher).postUpdate("Temp",new DecimalType(24.5));
+}

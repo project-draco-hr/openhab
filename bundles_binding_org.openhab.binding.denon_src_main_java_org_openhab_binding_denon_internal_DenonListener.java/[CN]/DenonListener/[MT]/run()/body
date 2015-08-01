@@ -1,0 +1,23 @@
+{
+  while (running) {
+    if (!tc.isConnected()) {
+      connectTelnetClient();
+    }
+    boolean end_loop=false;
+    BufferedReader reader=new BufferedReader(new InputStreamReader(tc.getInputStream()));
+    do {
+      try {
+        String line=reader.readLine();
+        if (!StringUtils.isBlank(line)) {
+          logger.trace("Received from {}: {}",connection.getHost(),line);
+          callback.updateReceived(line);
+        }
+      }
+ catch (      IOException e) {
+        logger.warn("Error in telnet connection",e);
+        end_loop=true;
+      }
+    }
+ while (running && end_loop == false);
+  }
+}

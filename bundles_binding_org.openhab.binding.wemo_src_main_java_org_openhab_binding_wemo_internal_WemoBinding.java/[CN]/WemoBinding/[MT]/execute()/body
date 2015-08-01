@@ -2,14 +2,68 @@
   logger.debug("execute() method is called!");
   for (  WemoBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      logger.debug("Wemo switch '{}' state will be updated",itemName);
+      logger.debug("Wemo item '{}' state will be updated",itemName);
       try {
-        String resp=wemoCall(itemName,"urn:Belkin:service:basicevent:1#GetBinaryState",IOUtils.toString(getClass().getResourceAsStream("GetRequest.xml")));
-        String state=resp.replaceAll("[\\d\\D]*<BinaryState>(.*)</BinaryState>[\\d\\D]*","$1");
-        State itemState=state.equals("0") ? OnOffType.OFF : OnOffType.ON;
-        eventPublisher.postUpdate(itemName,itemState);
+        if (provider.getUDN(itemName).toLowerCase().contains("insight")) {
+          String insightParams=getInsightParams(itemName);
+          if (insightParams != null) {
+            String[] splitInsightParams=insightParams.split("\\|");
+            if (splitInsightParams[0] != null) {
+              if (provider.getChannelType(itemName).equals(WemoChannelType.state)) {
+                OnOffType binaryState=null;
+                binaryState=splitInsightParams[0].equals("0") ? OnOffType.OFF : OnOffType.ON;
+                if (binaryState != null) {
+                  logger.trace("New InsightParam binaryState '{}' for device '{}' received",binaryState,itemName);
+                  eventPublisher.postUpdate(itemName,binaryState);
+                }
+              }
+              if (provider.getChannelType(itemName).equals(WemoChannelType.lastOnFor)) {
+                State lastOnFor=DecimalType.valueOf(splitInsightParams[2]);
+                if (lastOnFor != null) {
+                  logger.trace("New InsightParam lastOnFor '{}' for device '{}' received",lastOnFor,itemName);
+                  eventPublisher.postUpdate(itemName,lastOnFor);
+                }
+              }
+              if (provider.getChannelType(itemName).equals(WemoChannelType.onToday)) {
+                State onToday=DecimalType.valueOf(splitInsightParams[3]);
+                if (onToday != null) {
+                  logger.trace("New InsightParam lastOnFor '{}' for device '{}' received",onToday,itemName);
+                  eventPublisher.postUpdate(itemName,onToday);
+                }
+              }
+              if (provider.getChannelType(itemName).equals(WemoChannelType.onTotal)) {
+                State onTotal=DecimalType.valueOf(splitInsightParams[4]);
+                if (onTotal != null) {
+                  logger.trace("New InsightParam lastOnFor '{}' for device '{}' received",onTotal,itemName);
+                  eventPublisher.postUpdate(itemName,onTotal);
+                }
+              }
+              if (provider.getChannelType(itemName).equals(WemoChannelType.currentPower)) {
+                BigDecimal currentMW=new BigDecimal(splitInsightParams[7]);
+                State currentPower=new DecimalType(currentMW.divide(new BigDecimal(1000)));
+                if (currentPower != null) {
+                  logger.trace("New InsightParam lastOnFor '{}' for device '{}' received",currentPower,itemName);
+                  eventPublisher.postUpdate(itemName,currentPower);
+                }
+              }
+            }
+          }
+        }
+ else {
+          String state=getWemoState(itemName);
+          if (state != null) {
+            if (provider.getUDN(itemName).toLowerCase().contains("motion")) {
+              State newState=state.equals("0") ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+              eventPublisher.postUpdate(itemName,newState);
+            }
+ else {
+              State itemState=state.equals("0") ? OnOffType.OFF : OnOffType.ON;
+              eventPublisher.postUpdate(itemName,itemState);
+            }
+          }
+        }
       }
- catch (      IOException e) {
+ catch (      Exception e) {
         e.printStackTrace();
       }
     }

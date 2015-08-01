@@ -1,0 +1,11 @@
+{
+  try {
+    Matcher m=REG_EXP.matcher(message);
+    m.matches();
+    messageId=new LightwaveRfGeneralMessageId(Integer.valueOf(m.group(1)));
+    roomId=m.group(2);
+  }
+ catch (  Exception e) {
+    throw new LightwaveRfMessageException("Error converting message: " + message);
+  }
+}

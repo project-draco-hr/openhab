@@ -1,0 +1,20 @@
+{
+  String stateRequest=null;
+  String returnState=null;
+  try {
+    stateRequest=wemoCall(itemName,"urn:Belkin:service:basicevent:1#GetBinaryState",getRequestXML);
+    if (stateRequest != null) {
+      returnState=StringUtils.substringBetween(stateRequest,"<BinaryState>","</BinaryState>");
+      logger.debug("New binary state '{}' for item '{}' received",returnState,itemName);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Failed to get binary state for item '{}'",itemName,e);
+  }
+  if (returnState != null) {
+    return returnState;
+  }
+ else {
+    return null;
+  }
+}

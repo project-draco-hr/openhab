@@ -2,28 +2,21 @@
   Date date=null;
   try {
     if (DPTXlatorDate.DPT_DATE.getID().equals(dpt)) {
-      date=DATE_FORMATTER.parse(value);
+      date=new SimpleDateFormat(DATE_FORMAT).parse(value);
     }
  else     if (DPTXlatorTime.DPT_TIMEOFDAY.getID().equals(dpt)) {
-      if (value.contains("no-day, ")) {
+      if (value.contains("no-day")) {
         StringBuffer stb=new StringBuffer(value);
-        int start=stb.indexOf("no-day, ");
-        int end=start + "no-day, ".length();
-        stb.delete(start,end);
+        int start=stb.indexOf("no-day");
+        int end=start + "no-day".length();
+        stb.replace(start,end,String.format(Locale.US,"%1$ta",Calendar.getInstance()));
         value=stb.toString();
-        date=TIME_FORMATTER.parse(value);
-        Calendar cal=Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.MONTH,2);
-        date=cal.getTime();
       }
- else {
-        date=TIME_DAY_FORMATTER.parse(value);
-      }
+      date=new SimpleDateFormat(TIME_DAY_FORMAT,Locale.US).parse(value);
     }
   }
  catch (  ParseException pe) {
     logger.warn("Could not parse '{}' to a valid date",value);
   }
-  return date != null ? DateTimeType.DATE_FORMATTER.format(date) : "";
+  return date != null ? new SimpleDateFormat(DateTimeType.DATE_PATTERN).format(date) : "";
 }

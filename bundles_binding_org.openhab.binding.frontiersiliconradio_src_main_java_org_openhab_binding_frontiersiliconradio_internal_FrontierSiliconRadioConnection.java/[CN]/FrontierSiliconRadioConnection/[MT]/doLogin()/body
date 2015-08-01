@@ -1,0 +1,43 @@
+{
+  isLoggedIn=false;
+  if (httpClient == null) {
+    httpClient=new HttpClient();
+  }
+  final String url="http://" + hostname + ":"+ port+ "/fsapi/CREATE_SESSION?pin="+ pin;
+  logger.trace("opening URL:" + url);
+  final HttpMethod method=new GetMethod(url);
+  method.getParams().setSoTimeout(SOCKET_TIMEOUT);
+  method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+  try {
+    final int statusCode=httpClient.executeMethod(method);
+    if (statusCode != HttpStatus.SC_OK) {
+      logger.warn("Method failed: " + method.getStatusLine());
+    }
+    final String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
+    if (!responseBody.isEmpty()) {
+      logger.trace("login response: " + responseBody);
+    }
+    try {
+      final FrontierSiliconRadioApiResult result=new FrontierSiliconRadioApiResult(responseBody);
+      if (result.isStatusOk()) {
+        logger.trace("login successful");
+        sessionId=result.getSessionId();
+        isLoggedIn=true;
+        return true;
+      }
+    }
+ catch (    Exception e) {
+      logger.error("Parsing response failed");
+    }
+  }
+ catch (  HttpException he) {
+    logger.error("Fatal protocol violation: {}",he.toString());
+  }
+catch (  IOException ioe) {
+    logger.error("Fatal transport error: {}",ioe.toString());
+  }
+ finally {
+    method.releaseConnection();
+  }
+  return false;
+}

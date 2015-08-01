@@ -1,0 +1,10 @@
+{
+  String url=statusUrl + URL_DEVICE_INFO;
+  logger.debug("Refreshing URL: {}",url);
+  Deviceinfo deviceinfo=getDocument(url,Deviceinfo.class);
+  if (deviceinfo != null) {
+    connection.setZoneCount(deviceinfo.getDeviceZones());
+  }
+  connection.setMainVolumeMax(DenonConnectionProperties.MAX_VOLUME);
+  logger.debug("Denon {} zones: {}",connection.getInstance(),connection.getZoneCount());
+}

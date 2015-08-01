@@ -1,0 +1,67 @@
+{
+  logger.trace("internalReceiveCommand({},{}) is called!",itemName,command);
+  for (  AutelisBindingProvider provider : providers) {
+    Item item=provider.getItem(itemName);
+    String config=provider.getAutelisBindingConfigString(itemName);
+    Matcher m=commandPattern.matcher(config);
+    if (m.find() && m.groupCount() > 1) {
+      String type=m.group(1);
+      String name=m.group(2);
+      if (type.equals(AUTELIS_TYPES_EQUIP)) {
+        String cmd=AUTELIS_CMD_VALUE;
+        int value;
+        if (command == OnOffType.OFF) {
+          value=0;
+        }
+ else         if (command == OnOffType.ON) {
+          value=1;
+        }
+ else         if (command instanceof DecimalType) {
+          value=((DecimalType)item.getStateAs(DecimalType.class)).intValue();
+          if (value >= 3) {
+            cmd=AUTELIS_CMD_DIM;
+          }
+        }
+ else {
+          logger.error("Equipment commands must be of Decimal type not {}",command);
+          break;
+        }
+        String response=HttpUtil.executeUrl("GET",baseURL + "/set.cgi?name=" + name+ "&"+ cmd+ "="+ value,TIMEOUT);
+        logger.trace("equipment set {} {} {} : result {}",name,cmd,value,response);
+      }
+ else       if (type.equals(AUTELIS_TYPES_TEMP)) {
+        String value;
+        if (command == IncreaseDecreaseType.INCREASE) {
+          value=AUTELIS_CMD_UP;
+        }
+ else         if (command == IncreaseDecreaseType.DECREASE) {
+          value=AUTELIS_CMD_DOWN;
+        }
+ else {
+          value=command.toString();
+        }
+        String cmd;
+        if (name.endsWith(AUTELIS_SETPOINT)) {
+          cmd=AUTELIS_TYPES_TEMP;
+        }
+ else         if (name.endsWith(AUTELIS_HEATTYPE)) {
+          cmd=AUTELIS_CMD_HEAT;
+        }
+ else {
+          logger.error("Unknown temp type {}",name);
+          break;
+        }
+        String response=HttpUtil.executeUrl("GET",baseURL + "/set.cgi?wait=1&name=" + name+ "&"+ cmd+ "="+ value,TIMEOUT);
+        logger.trace("temp set {} {} : result {}",cmd,value,response);
+      }
+    }
+ else     if (config.equals(AUTELIS_TYPES_LIGHTS)) {
+      String response=HttpUtil.executeUrl("GET",baseURL + "lights.cgi?val=" + command.toString(),TIMEOUT);
+      logger.trace("lights set {} : result {}",command.toString(),response);
+    }
+ else {
+      logger.error("Unsupported set config {}",config);
+    }
+  }
+  scheduleClearTime(UPDATE_CLEARTIME);
+}

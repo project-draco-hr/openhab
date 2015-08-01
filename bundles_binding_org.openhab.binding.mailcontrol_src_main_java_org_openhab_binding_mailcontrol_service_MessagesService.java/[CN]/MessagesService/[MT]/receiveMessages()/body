@@ -1,0 +1,16 @@
+{
+  logger.debug("Receiving messages: " + REQUEST_SUBJECT);
+  try {
+    Set<Object> messages=mailConnector.receiveMessages(REQUEST_SUBJECT);
+    logger.debug("Messages received: " + messages.size());
+    if (messages.size() > 0) {
+      messagesProcessor.processReceivedMessages(messages);
+    }
+  }
+ catch (  TransformException ex) {
+    throw new ServiceException(ex);
+  }
+catch (  ConnectorException ex) {
+    throw new ServiceException(ex);
+  }
+}

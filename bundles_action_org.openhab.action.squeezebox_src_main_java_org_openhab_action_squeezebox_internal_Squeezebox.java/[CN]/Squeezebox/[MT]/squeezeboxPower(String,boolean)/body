@@ -1,11 +1,9 @@
 {
-  SqueezePlayer player=getPlayer(playerId);
-  if (player == null)   return false;
+  if (!isReady())   return false;
   if (power) {
-    squeezeServer.powerOn(playerId);
+    return squeezeServer.powerOn(playerId);
   }
  else {
-    squeezeServer.powerOff(playerId);
+    return squeezeServer.powerOff(playerId);
   }
-  return true;
 }

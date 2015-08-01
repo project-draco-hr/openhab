@@ -1,0 +1,10 @@
+{
+  logger.debug("Processing item state: " + itemData);
+  CommandTransformable command=itemData.getCommand();
+  logger.debug("Command: " + command);
+  OpenhabCommandTransformable<T> openhabCommand=getOpenhabCommand(command);
+  logger.debug("openhabCommand: " + openhabCommand);
+  T commandValue=openhabCommand.getCommandValue();
+  logger.debug("commandValue: " + commandValue);
+  eventPublisher.postCommand(itemData.getItemId(),openhabCommand.getCommandValue());
+}

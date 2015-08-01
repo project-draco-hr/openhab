@@ -1,0 +1,12 @@
+{
+  if (isProperlyConfigured() && activeService.isRunning()) {
+    activeService.shutdown();
+    activeService.interrupt();
+    try {
+      Thread.sleep(5000);
+    }
+ catch (    InterruptedException unhandled) {
+    }
+    setProperlyConfigured(isProperlyConfigured());
+  }
+}

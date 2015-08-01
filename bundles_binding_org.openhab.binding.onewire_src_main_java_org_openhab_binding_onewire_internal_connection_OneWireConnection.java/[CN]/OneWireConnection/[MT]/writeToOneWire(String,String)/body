@@ -1,0 +1,26 @@
+{
+  int lvAttempt=1;
+  while (lvAttempt <= cvRetry) {
+    try {
+      logger.debug("trying to write '{}' to '{}', write attempt={}",new Object[]{pvValue,pvDevicePropertyPath,lvAttempt});
+      if (checkIfDeviceExists(pvDevicePropertyPath)) {
+        OneWireConnection.getConnection().write(pvDevicePropertyPath,pvValue);
+        return;
+      }
+ else {
+        logger.info("there is no device for path {}, write attempt={}",new Object[]{pvDevicePropertyPath,lvAttempt});
+      }
+    }
+ catch (    OwfsException oe) {
+      logger.error("writing " + pvValue + " to path "+ pvDevicePropertyPath+ " attempt "+ lvAttempt+ " throws exception",oe);
+      reconnect();
+    }
+catch (    IOException ioe) {
+      logger.error("couldn't establish network connection while write attempt " + lvAttempt + " to '"+ pvDevicePropertyPath+ "' ip:port="+ cvIp+ ":"+ cvPort,ioe);
+      reconnect();
+    }
+ finally {
+      lvAttempt++;
+    }
+  }
+}

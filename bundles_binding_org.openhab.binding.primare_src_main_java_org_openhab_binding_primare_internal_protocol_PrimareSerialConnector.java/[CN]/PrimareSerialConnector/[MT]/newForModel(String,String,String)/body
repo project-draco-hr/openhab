@@ -1,0 +1,14 @@
+{
+  T pc=null;
+  if (m == null) {
+    logger.error("connectorForModel called with null argument");
+    return null;
+  }
+  if ("SP31.7".equals(m) || "SP31".equals(m) || "SPA20".equals(m)|| "SPA21".equals(m)) {
+    pc=(T)new org.openhab.binding.primare.internal.protocol.spa20.PrimareSPA20SerialConnector(deviceId,serialPortName);
+  }
+ else {
+    logger.error("Could not find PrimareSerialConnector for Primare model {m}");
+  }
+  return pc;
+}

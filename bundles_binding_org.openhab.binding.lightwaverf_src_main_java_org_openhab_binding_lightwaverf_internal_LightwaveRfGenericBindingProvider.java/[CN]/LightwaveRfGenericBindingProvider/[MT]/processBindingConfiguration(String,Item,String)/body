@@ -1,0 +1,36 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  try {
+    String roomId=null;
+    String deviceId=null;
+    LightwaveRfType type=null;
+    int poll=-1;
+    String serialId=null;
+    Matcher roomMatcher=ROOM_REG_EXP.matcher(bindingConfig);
+    if (roomMatcher.matches()) {
+      roomId=roomMatcher.group(1);
+    }
+    Matcher deviceMatcher=DEVICE_REG_EXP.matcher(bindingConfig);
+    if (deviceMatcher.matches()) {
+      deviceId=deviceMatcher.group(1);
+    }
+    Matcher serialMatcher=SERIAL_REG_EXP.matcher(bindingConfig);
+    if (serialMatcher.matches()) {
+      serialId=serialMatcher.group(1);
+    }
+    Matcher typeMatcher=TYPE_REG_EXP.matcher(bindingConfig);
+    if (typeMatcher.matches()) {
+      type=LightwaveRfType.valueOf(typeMatcher.group(1));
+    }
+    Matcher pollMatcher=POLL_REG_EXP.matcher(bindingConfig);
+    if (pollMatcher.matches()) {
+      poll=Integer.valueOf(pollMatcher.group(1));
+    }
+    LightwaveRfBindingConfig config=new LightwaveRfBindingConfig(roomId,deviceId,serialId,type,poll);
+    logger.info("ConfigString[{}] Room[{}] Device[{}] Serial[{}] Type[{}] Poll[{}]",bindingConfig,roomId,deviceId,serialId,type,poll);
+    addBindingConfig(item,config);
+  }
+ catch (  Exception e) {
+    throw new BindingConfigParseException("Error parsing binding for Context[" + context + "] Item["+ item+ "] BindingConfig["+ bindingConfig+ "] ErrorMessage: "+ e.getMessage());
+  }
+}

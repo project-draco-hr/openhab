@@ -1,0 +1,11 @@
+{
+  List<ItemStateData> itemStates=new ArrayList<ItemStateData>();
+  ItemRegistry itemRegistry=getItemRegistry();
+  for (  Item item : itemRegistry.getItems()) {
+    logger.debug("Item: " + item.getName() + " "+ item.getState());
+    StateTransformable state=getState(item);
+    ItemStateData itemState=new ItemStateData(System.currentTimeMillis(),item.getName(),state);
+    itemStates.add(itemState);
+  }
+  return itemStates;
+}

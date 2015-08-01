@@ -1,0 +1,11 @@
+{
+  logger.debug("Processing binding configuration: '{}'",bindingConfig);
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final EnphaseenergyBindingConfig config=new EnphaseenergyBindingConfig();
+  final String[] configParts=bindingConfig.split("#");
+  config.systemId=Integer.parseInt(configParts[0]);
+  ;
+  config.measureType=EnphaseenergyItemType.fromString(configParts[1]);
+  logger.debug("Adding binding: {}",config);
+  addBindingConfig(item,config);
+}

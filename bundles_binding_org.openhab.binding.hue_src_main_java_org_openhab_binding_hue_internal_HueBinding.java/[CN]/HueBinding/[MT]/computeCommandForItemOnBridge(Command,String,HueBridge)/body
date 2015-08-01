@@ -3,10 +3,10 @@
   if (deviceConfig == null) {
     return;
   }
-  HueBulb bulb=bulbCache.get(deviceConfig.getDeviceNumber());
+  HueBulb bulb=bulbCache.get(deviceConfig.getDeviceId());
   if (bulb == null) {
-    bulb=new HueBulb(bridge,deviceConfig.getDeviceNumber());
-    bulbCache.put(deviceConfig.getDeviceNumber(),bulb);
+    bulb=new HueBulb(bridge,deviceConfig.getDeviceId());
+    bulbCache.put(deviceConfig.getDeviceId(),bulb);
   }
   if (command instanceof OnOffType) {
     bulb.switchOn(OnOffType.ON.equals(command));
@@ -28,7 +28,7 @@
       eventPublisher.postUpdate(itemName,new PercentType(resultingValue));
     }
  else     if ((command instanceof PercentType) && !(command instanceof HSBType)) {
-      bulb.setBrightness((int)Math.round((double)255 / (double)100 * ((PercentType)command).intValue()));
+      bulb.setBrightness((int)Math.round((double)HueBulb.MAX_BRIGHTNESS / (double)100 * ((PercentType)command).intValue()));
     }
   }
   if (deviceConfig.getType().equals(BindingType.colorTemperature)) {

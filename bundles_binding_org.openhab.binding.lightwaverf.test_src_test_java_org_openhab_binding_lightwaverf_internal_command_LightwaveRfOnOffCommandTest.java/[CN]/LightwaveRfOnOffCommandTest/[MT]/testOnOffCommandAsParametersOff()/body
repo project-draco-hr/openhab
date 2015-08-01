@@ -1,0 +1,9 @@
+{
+  LightwaveRfRoomDeviceMessage command=new LightwaveRfOnOffCommand(10,"2","3",false);
+  assertEquals("010,!R2D3F0\n",command.getLightwaveRfCommandString());
+  assertEquals("2",command.getRoomId());
+  assertEquals("3",command.getDeviceId());
+  assertEquals("010",command.getMessageId().getMessageIdString());
+  assertEquals(OnOffType.OFF,command.getState(LightwaveRfType.SWITCH));
+  assertEquals(OnOffType.OFF,command.getState(LightwaveRfType.DIMMER));
+}

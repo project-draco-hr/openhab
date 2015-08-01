@@ -1,0 +1,10 @@
+{
+  when(mockVersionMessage.getState(LightwaveRfType.VERSION)).thenReturn(new StringType("2.91"));
+  when(mockBindingProvider.getBindingItemsForType(LightwaveRfType.VERSION)).thenReturn(Arrays.asList("MyVersion"));
+  when(mockBindingProvider.getTypeForItemName("MyVersion")).thenReturn(LightwaveRfType.VERSION);
+  LightwaveRfBinding binding=new LightwaveRfBinding();
+  binding.addBindingProvider(mockBindingProvider);
+  binding.setEventPublisher(mockEventPublisher);
+  binding.versionMessageReceived(mockVersionMessage);
+  verify(mockEventPublisher).postUpdate("MyVersion",new StringType("2.91"));
+}

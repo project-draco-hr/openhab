@@ -1,22 +1,23 @@
 {
-  if (value.unscaledValue().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+  BigDecimal normalizedValue=value.stripTrailingZeros();
+  if (normalizedValue.scale() < 0) {
+    normalizedValue=normalizedValue.setScale(0);
+  }
+  if (normalizedValue.unscaledValue().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
     throw new ArithmeticException();
   }
- else   if (value.unscaledValue().compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)   throw new ArithmeticException();
+ else   if (normalizedValue.unscaledValue().compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)   throw new ArithmeticException();
   int size=4;
-  if (value.unscaledValue().intValue() >= Byte.MIN_VALUE && value.unscaledValue().intValue() <= Byte.MAX_VALUE) {
+  if (normalizedValue.unscaledValue().intValue() >= Byte.MIN_VALUE && normalizedValue.unscaledValue().intValue() <= Byte.MAX_VALUE) {
     size=1;
   }
- else   if (value.unscaledValue().intValue() >= Short.MIN_VALUE && value.unscaledValue().intValue() <= Short.MAX_VALUE) {
+ else   if (normalizedValue.unscaledValue().intValue() >= Short.MIN_VALUE && normalizedValue.unscaledValue().intValue() <= Short.MAX_VALUE) {
     size=2;
   }
-  int precision=value.scale();
-  if (precision < 0) {
-    throw new ArithmeticException();
-  }
+  int precision=normalizedValue.scale();
   byte[] result=new byte[size + 1];
   result[0]=(byte)((precision << PRECISION_SHIFT) | size);
-  int unscaledValue=value.unscaledValue().intValue();
+  int unscaledValue=normalizedValue.unscaledValue().intValue();
   for (int i=0; i < size; i++) {
     result[size - i]=(byte)((unscaledValue >> (i * 8)) & 0xFF);
   }

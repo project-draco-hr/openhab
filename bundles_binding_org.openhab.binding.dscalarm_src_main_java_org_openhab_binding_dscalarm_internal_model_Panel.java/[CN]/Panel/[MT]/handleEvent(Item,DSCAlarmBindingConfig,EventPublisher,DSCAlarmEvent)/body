@@ -1,8 +1,12 @@
 {
   APIMessage apiMessage=null;
+  int apiCode=-1;
+  boolean boolState;
   int state;
+  OnOffType onOffType;
   if (event != null) {
     apiMessage=event.getAPIMessage();
+    apiCode=Integer.parseInt(apiMessage.getAPICode());
     String str="";
     logger.debug("handleEvent(): Panel Item Name: {}",item.getName());
     if (config != null) {
@@ -29,6 +33,21 @@ panelProperties.setSystemErrorCode(systemErrorCode);
 panelProperties.setSystemErrorDescription(apiMessage.getError());
 str=String.format("%03d",panelProperties.getSystemErrorCode()) + ": " + panelProperties.getSystemErrorDescription();
 publisher.postUpdate(item.getName(),new StringType(str));
+}
+break;
+case PANEL_TROUBLE_MESSAGE:
+if (apiMessage != null) {
+str=apiMessage.getAPIDescription();
+panelProperties.setTroubleMessage(str);
+}
+publisher.postUpdate(item.getName(),new StringType(str));
+break;
+case PANEL_TROUBLE_LED:
+if (apiMessage != null) {
+boolState=(apiCode == 840) ? true : false;
+panelProperties.setTroubleLED(boolState);
+onOffType=boolState ? OnOffType.ON : OnOffType.OFF;
+publisher.postUpdate(item.getName(),onOffType);
 }
 break;
 case PANEL_TIME:

@@ -1,0 +1,24 @@
+{
+  logger.debug("Disconnecting {}",PrimareSerialConnector.this.toString());
+  if (dataListener != null) {
+    logger.trace("{} interrupt serial listener",PrimareSerialConnector.this.toString());
+    dataListener.interrupt();
+  }
+  if (outStream != null) {
+    logger.trace("{} close serial out stream",PrimareSerialConnector.this.toString());
+    IOUtils.closeQuietly(outStream);
+  }
+  if (inStream != null) {
+    logger.trace("{} close serial in stream",PrimareSerialConnector.this.toString());
+    IOUtils.closeQuietly(inStream);
+  }
+  if (serialPort != null) {
+    logger.trace("{} close serial port",PrimareSerialConnector.this.toString());
+    serialPort.close();
+  }
+  dataListener=null;
+  serialPort=null;
+  outStream=null;
+  inStream=null;
+  logger.debug("Connection to {} closed",PrimareSerialConnector.this.toString());
+}

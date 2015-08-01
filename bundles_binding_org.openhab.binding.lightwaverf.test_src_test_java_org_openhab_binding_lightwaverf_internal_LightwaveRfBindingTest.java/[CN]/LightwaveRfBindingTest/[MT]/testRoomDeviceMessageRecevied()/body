@@ -1,0 +1,9 @@
+{
+  when(mockBindingProvider.getBindingItemsForRoomDevice("2","3")).thenReturn(Arrays.asList("MySwitch"));
+  when(mockBindingProvider.getTypeForItemName("MySwitch")).thenReturn(LightwaveRfType.SWITCH);
+  LightwaveRfBinding binding=new LightwaveRfBinding();
+  binding.addBindingProvider(mockBindingProvider);
+  binding.setEventPublisher(mockEventPublisher);
+  binding.roomDeviceMessageReceived(new LightwaveRfOnOffCommand(1,"2","3",true));
+  verify(mockEventPublisher).postUpdate("MySwitch",OnOffType.ON);
+}

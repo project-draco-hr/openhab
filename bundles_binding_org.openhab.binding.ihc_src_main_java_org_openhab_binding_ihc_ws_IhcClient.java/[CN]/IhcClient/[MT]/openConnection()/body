@@ -17,13 +17,10 @@
     throw new IhcExecption("login failed because of unknown reason");
   }
   logger.debug("Connection successfully opened");
-  cookies=authenticationService.getCookies();
-  resourceInteractionService=new IhcResourceInteractionService(ip);
-  resourceInteractionService.setCookies(cookies);
-  controllerService=new IhcControllerService(ip);
-  controllerService.setCookies(cookies);
+  resourceInteractionService=new IhcResourceInteractionService(ip,timeout);
+  controllerService=new IhcControllerService(ip,timeout);
   controllerState=controllerService.getControllerState();
   loadProject();
-  startIhcListener();
+  startIhcListeners();
   setConnectionState(ConnectionState.CONNECTED);
 }

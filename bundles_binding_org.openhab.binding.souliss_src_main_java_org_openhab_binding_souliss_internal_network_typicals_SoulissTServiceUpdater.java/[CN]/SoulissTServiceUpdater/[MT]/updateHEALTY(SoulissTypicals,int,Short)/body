@@ -1,0 +1,11 @@
+{
+  logger.debug("request to updateHEALTY. Node:  " + idNodo + "; Value: "+ valueOf);
+  SoulissTServiceNODE_HEALTY VirtualTypical=(SoulissTServiceNODE_HEALTY)soulissTypicalsRecipients.getTypicalFromAddress(idNodo,Constants.Souliss_TService_NODE_HEALTY_VIRTUAL_SLOT,null);
+  if (VirtualTypical != null) {
+    VirtualTypical.setState(valueOf);
+    logger.debug("updateHEALTY:  " + VirtualTypical.getName() + " ( "+ Short.valueOf(VirtualTypical.getType())+ ") = "+ valueOf);
+  }
+ else {
+    logger.debug("Error for retrieving VirtualTypical from HashTable: " + idNodo + ", "+ Constants.Souliss_TService_NODE_HEALTY_VIRTUAL_SLOT);
+  }
+}

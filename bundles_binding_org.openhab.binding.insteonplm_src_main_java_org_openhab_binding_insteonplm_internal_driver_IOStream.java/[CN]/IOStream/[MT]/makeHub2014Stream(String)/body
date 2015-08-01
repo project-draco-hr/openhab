@@ -1,0 +1,25 @@
+{
+  config=config.substring(6);
+  String user=null;
+  String pass=null;
+  int pollTime=1000;
+  String[] parts=config.split(",");
+  String[] adr=parts[0].split("@");
+  String[] hostPort;
+  if (adr.length > 1) {
+    String[] userPass=adr[0].split(":");
+    user=userPass[0];
+    pass=userPass[1];
+    hostPort=adr[1].split(":");
+  }
+ else {
+    hostPort=parts[0].split(":");
+  }
+  HostPort hp=new HostPort(hostPort,25105);
+  if (parts.length > 1) {
+    if (parts[1].trim().startsWith("poll_time")) {
+      pollTime=Integer.parseInt(parts[1].split("=")[1].trim());
+    }
+  }
+  return new HubIOStream(hp.host,hp.port,pollTime,user,pass);
+}

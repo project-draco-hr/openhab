@@ -229,6 +229,46 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.dual_relay.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,DualRelaySubIds.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,DualRelaySubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(DualRelaySubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.quad_relay.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialQuadRelayIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialQuadRelayIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialQuadRelayIDs.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.joystick_xposition.name()) || deviceType.equals(TypeKey.joystick_yposition.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,JoystickSubIds.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,JoystickSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(JoystickSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.digital_4in.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialDigitalInSubIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialDigitalInSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDigitalInSubIDs.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.digital_4out.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,IndustrialDigitalOutSubIDs.values());
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    OHTFDevice<?,IndustrialDigitalOutSubIDs> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDigitalOutSubIDs.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else {
     logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
     logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);

@@ -1,11 +1,32 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
+  if (item == null) {
+    throw new BindingConfigParseException("item is not permitted to be null");
+  }
+ else   if (bindingConfig == null) {
+    throw new BindingConfigParseException("bindingConfig is not permitted to be null");
+  }
   SysteminfoBindingConfig config=new SysteminfoBindingConfig();
   String[] configParts=bindingConfig.trim().split(":");
-  if (configParts.length < 2 || configParts.length > 3) {
-    throw new BindingConfigParseException("Systeminfo binding must contain 2-3 parts separated by ':'");
+  if (configParts.length < 2) {
+    throw new BindingConfigParseException("Systeminfo binding must contain at least 2 parts separated by ':'");
   }
   String commandType=configParts[0].trim();
+  if (configParts.length > 3) {
+    try {
+      int index1=bindingConfig.indexOf(":");
+      int index2=bindingConfig.indexOf(":",index1 + 1);
+      if (index1 > 0 && index2 > index1 + 1) {
+        config.target=bindingConfig.substring(index2 + 1);
+      }
+ else {
+        throw new BindingConfigParseException("Systeminfo binding must contain 2-3 parts separated by ':'");
+      }
+    }
+ catch (    Exception e) {
+      throw new BindingConfigParseException("Systeminfo binding must contain 2-3 parts separated by ':'");
+    }
+  }
   try {
     config.commandType=SysteminfoCommandType.getCommandType(commandType);
   }
@@ -18,8 +39,10 @@
  catch (  NumberFormatException e) {
     throw new BindingConfigParseException("'" + configParts[1] + "' is not a valid refresh interval");
   }
-  if (configParts.length > 2) {
-    config.target=configParts[2].trim();
+  if (config.target == null) {
+    if (configParts.length > 2) {
+      config.target=configParts[2].trim();
+    }
   }
   addBindingConfig(item,config);
 }

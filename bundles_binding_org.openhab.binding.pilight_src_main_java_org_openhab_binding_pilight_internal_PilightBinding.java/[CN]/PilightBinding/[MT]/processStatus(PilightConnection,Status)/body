@@ -1,14 +1,15 @@
 {
-  String type=status.getType();
+  Integer type=status.getType();
   if (!type.equals(DeviceType.SERVER)) {
-    Entry<String,List<String>> objectInfo=status.getDevices().entrySet().iterator().next();
     String instance=connection.getInstance();
-    String location=objectInfo.getKey();
-    String device=objectInfo.getValue().get(0);
-    List<PilightBindingConfig> configs=getConfigs(instance,location,device);
+    String device=status.getDevices().get(0);
+    List<PilightBindingConfig> configs=getConfigs(instance,device);
     if (!configs.isEmpty()) {
       if (type.equals(DeviceType.SWITCH) || type.equals(DeviceType.DIMMER)) {
         processSwitchEvent(configs,status);
+      }
+ else       if (type.equals(DeviceType.CONTACT)) {
+        processContactEvent(configs,status);
       }
  else       if (type.equals(DeviceType.VALUE)) {
         processValueEvent(configs,status);

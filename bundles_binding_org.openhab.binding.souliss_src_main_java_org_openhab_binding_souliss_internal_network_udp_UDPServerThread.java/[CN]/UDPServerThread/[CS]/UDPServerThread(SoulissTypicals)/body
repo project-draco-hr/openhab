@@ -1,0 +1,11 @@
+{
+  super();
+  if (SoulissNetworkParameter.serverPort != null) {
+    SoulissNetworkParameter.datagramsocket=new DatagramSocket(SoulissNetworkParameter.serverPort);
+  }
+ else {
+    SoulissNetworkParameter.datagramsocket=new DatagramSocket();
+  }
+  decoder=new UDPSoulissDecoder(typicals);
+  logger.info("Start UDPServerThread - Server in ascolto sulla porta " + SoulissNetworkParameter.datagramsocket.getLocalPort());
+}

@@ -1,0 +1,18 @@
+{
+  StringBuilder sb=new StringBuilder(name);
+  sb.append(" = ").append(dsType);
+  sb.append(" heartbeat = ").append(heartbeat);
+  sb.append(" min/max = ").append(min).append("/").append(max);
+  sb.append(" step = ").append(step);
+  sb.append(" ").append(archives.size()).append(" archives(s) = [");
+  for (  RrdArchiveDef arc : archives) {
+    sb.append(arc.toString());
+  }
+  sb.append("] ");
+  sb.append(itemNames.size()).append(" items(s) = [");
+  for (  String item : itemNames) {
+    sb.append(item).append(" ");
+  }
+  sb.append("]");
+  return sb.toString();
+}

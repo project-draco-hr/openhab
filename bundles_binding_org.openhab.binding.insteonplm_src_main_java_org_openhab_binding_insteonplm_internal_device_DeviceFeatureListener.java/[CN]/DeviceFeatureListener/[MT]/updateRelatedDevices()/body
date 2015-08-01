@@ -1,0 +1,13 @@
+{
+  String d=m_parameters.get("related");
+  if (d == null)   return;
+  String[] devs=d.split("\\+");
+  for (  String dev : devs) {
+    InsteonAddress a=InsteonAddress.s_parseAddress(dev);
+    if (a == null) {
+      logger.error("invalid insteon address: {}",a);
+      continue;
+    }
+    m_relatedDevices.add(a);
+  }
+}

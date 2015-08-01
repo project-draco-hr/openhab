@@ -1,0 +1,22 @@
+{
+  if (activated)   return;
+  activated=true;
+  try {
+    scheduler=StdSchedulerFactory.getDefaultScheduler();
+  }
+ catch (  SchedulerException e) {
+    logger.error("initializing scheduler throws exception",e);
+  }
+  logger.debug("activate()");
+  triggerManager=new RuleTriggerManager(scheduler);
+  scriptManager=new ScriptManager(triggerManager,itemRegistry);
+  if (!isEnabled()) {
+    logger.info("Jsr232 engine is disabled.");
+    return;
+  }
+  logger.debug("Started Jsr232 engine");
+  for (  Item item : itemRegistry.getItems()) {
+    internalItemAdded(item);
+  }
+  runStartupRules();
+}

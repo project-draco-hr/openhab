@@ -1,0 +1,37 @@
+{
+  if (pvConfig != null) {
+    logger.debug("OneWire configuration present. Setting up owserver connection.");
+    cvIp=(String)pvConfig.get("ip");
+    String lvPortConfig=(String)pvConfig.get("port");
+    if (StringUtils.isNotBlank(lvPortConfig)) {
+      cvPort=Integer.parseInt(lvPortConfig);
+    }
+    String lvTempScaleString=(String)pvConfig.get("tempscale");
+    if (StringUtils.isNotBlank(lvTempScaleString)) {
+      try {
+        cvTempScale=OwTemperatureScale.valueOf(lvTempScaleString);
+      }
+ catch (      IllegalArgumentException iae) {
+        String lvFehlertext="Unknown temperature scale '" + lvTempScaleString + "'. Valid values are CELSIUS, FAHRENHEIT, KELVIN or RANKINE.";
+        logger.error(lvFehlertext,iae);
+        throw new ConfigurationException("onewire:tempscale",lvFehlertext);
+      }
+    }
+    String lvRetryString=(String)pvConfig.get("retry");
+    if (StringUtils.isNotBlank(lvRetryString)) {
+      cvRetry=Integer.parseInt(lvRetryString);
+    }
+    if (cvOwConnection == null) {
+      logger.debug("Not connected to owserver yet. Trying to connect...");
+      if (!connect()) {
+        logger.warn("Inital connection to owserver failed!");
+      }
+ else {
+        logger.debug("Success: connected to owserver.");
+      }
+    }
+  }
+ else {
+    logger.info("OneWireBinding configuration is not present. Please check your configuration file or if not needed remove the OneWireBinding addon.");
+  }
+}

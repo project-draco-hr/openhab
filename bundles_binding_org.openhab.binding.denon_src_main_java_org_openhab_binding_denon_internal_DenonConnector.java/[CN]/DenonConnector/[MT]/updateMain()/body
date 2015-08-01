@@ -1,0 +1,8 @@
+{
+  String url=statusUrl + URL_MAIN;
+  logger.trace("Refreshing URL: {}",url);
+  Main statusMain=getDocument(url,Main.class);
+  if (statusMain != null) {
+    stateCache.put(DenonProperty.POWER.getCode(),statusMain.getPower().getValue() ? OnOffType.ON : OnOffType.OFF);
+  }
+}

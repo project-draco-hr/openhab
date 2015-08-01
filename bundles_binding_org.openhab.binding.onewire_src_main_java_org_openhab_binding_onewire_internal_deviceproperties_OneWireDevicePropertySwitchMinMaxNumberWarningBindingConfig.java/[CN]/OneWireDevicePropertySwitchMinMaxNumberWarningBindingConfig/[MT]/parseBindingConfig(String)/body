@@ -1,0 +1,11 @@
+{
+  String[] lvConfigParts=pvBindingConfig.trim().split(";");
+  for (  String lvConfigPart : lvConfigParts) {
+    parseMaxWarning(lvConfigPart);
+    parseMinWarning(lvConfigPart);
+  }
+  if (!(ivMaxWarningValue != null || ivMinWarningValue != null)) {
+    logger.error("maxWarning or minWarning must be set in config!");
+    throw new BindingConfigParseException("Onewire sensor configuration must contain maxWarning or minWarning Value!");
+  }
+}

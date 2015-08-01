@@ -1,0 +1,9 @@
+{
+  logger.debug("Denon binding changed for item {}",itemName);
+  if (provider instanceof DenonBindingProvider) {
+    DenonBindingConfig config=((DenonBindingProvider)provider).getConfig(itemName);
+    if (config != null) {
+      getConnector(config).updateStateFromCache(config.getProperty());
+    }
+  }
+}

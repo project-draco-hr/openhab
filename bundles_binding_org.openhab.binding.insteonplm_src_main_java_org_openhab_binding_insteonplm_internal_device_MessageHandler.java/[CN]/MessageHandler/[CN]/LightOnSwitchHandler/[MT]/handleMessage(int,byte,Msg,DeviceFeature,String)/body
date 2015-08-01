@@ -3,4 +3,7 @@
     logger.info("{}: device {} was switched on.",nm(),f.getDevice().getAddress());
     f.publish(OnOffType.ON,StateChangeType.ALWAYS);
   }
+ else {
+    logger.debug("ignored message: {} or {}",isDuplicate(msg),isMybutton(msg,f));
+  }
 }

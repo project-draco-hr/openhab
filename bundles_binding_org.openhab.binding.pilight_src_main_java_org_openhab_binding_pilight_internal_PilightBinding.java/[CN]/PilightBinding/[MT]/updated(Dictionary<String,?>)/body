@@ -4,15 +4,7 @@
     if (this.connections.size() > 0) {
       for (      Entry<String,PilightConnection> entry : this.connections.entrySet()) {
         PilightConnection connection=entry.getValue();
-        if (connection.connect(getInputMapper(),getOutputMapper())) {
-          logger.info("Established connection to pilight server at {}:{}",connection.getHostname(),connection.getPort());
-          startListener(connection);
-        }
- else {
-          String msg=String.format("Cannot connect to pilight server at %s:%d",connection.getHostname(),connection.getPort());
-          logger.error(msg);
-          throw new ConfigurationException("pilight." + connection.getInstance(),msg);
-        }
+        startConnector(connection);
       }
     }
   }

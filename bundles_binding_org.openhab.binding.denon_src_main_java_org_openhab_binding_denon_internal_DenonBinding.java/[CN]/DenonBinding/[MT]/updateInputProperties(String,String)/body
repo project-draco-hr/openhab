@@ -1,0 +1,12 @@
+{
+  for (  DenonBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      DenonBindingConfig cfg=provider.getConfig(itemName);
+      if (cfg.getInstance().equals(instance)) {
+        if (cfg.getProperty().startsWith(SWITCH_INPUT) && !cfg.getProperty().equals(property)) {
+          updateIfChanged(cfg.getInstance(),cfg.getProperty(),OnOffType.OFF);
+        }
+      }
+    }
+  }
+}

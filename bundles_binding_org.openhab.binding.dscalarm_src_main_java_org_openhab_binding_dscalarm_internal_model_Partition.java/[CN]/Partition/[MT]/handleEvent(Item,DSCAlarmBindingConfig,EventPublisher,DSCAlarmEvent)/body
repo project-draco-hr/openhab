@@ -43,6 +43,37 @@ if (item instanceof StringItem) {
 publisher.postUpdate(item.getName(),new StringType(strStatus));
 }
 break;
+case PARTITION_OPENING_CLOSING_MODE:
+switch (apiCode) {
+case 700:
+state=1;
+break;
+case 701:
+state=2;
+break;
+case 702:
+state=3;
+break;
+case 750:
+state=4;
+break;
+case 751:
+state=5;
+break;
+default :
+state=0;
+strStatus="";
+break;
+}
+partitionProperties.setState(StateType.OPENING_CLOSING_STATE,state,strStatus);
+strStatus=partitionProperties.getStateDescription(StateType.OPENING_CLOSING_STATE);
+if (item instanceof NumberItem) {
+publisher.postUpdate(item.getName(),new DecimalType(state));
+}
+if (item instanceof StringItem) {
+publisher.postUpdate(item.getName(),new StringType(strStatus));
+}
+break;
 default :
 logger.debug("handleEvent(): Partition item not updated.");
 break;

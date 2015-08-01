@@ -1,0 +1,30 @@
+{
+  DataType dataType=command.getCommandType();
+  if (dataType == DECIMAL) {
+    return (OpenhabCommandTransformable<T>)new OpenhabDecimalData((DecimalData)command);
+  }
+ else   if (dataType == HSB) {
+    return (OpenhabCommandTransformable<T>)new OpenhabHSBData((HSBData)command);
+  }
+ else   if (dataType == INCREASE_DECREASE) {
+    return (OpenhabCommandTransformable<T>)new OpenhabIncreaseDecreaseData((IncreaseDecreaseData)command);
+  }
+ else   if (dataType == ON_OFF) {
+    return (OpenhabCommandTransformable<T>)new OpenhabOnOffData((OnOffData)command);
+  }
+ else   if (dataType == OPEN_CLOSED) {
+    return (OpenhabCommandTransformable<T>)new OpenhabOpenClosedData((OpenClosedData)command);
+  }
+ else   if (dataType == PERCENT) {
+    return (OpenhabCommandTransformable<T>)new OpenhabPercentData((PercentData)command);
+  }
+ else   if (dataType == STOP_MOVE) {
+    return (OpenhabCommandTransformable<T>)new OpenhabStopMoveData((StopMoveData)command);
+  }
+ else   if (dataType == STRING) {
+    return (OpenhabCommandTransformable<T>)new OpenhabStringData((StringData)command);
+  }
+ else {
+    return (OpenhabCommandTransformable<T>)new OpenhabUpDownData((UpDownData)command);
+  }
+}

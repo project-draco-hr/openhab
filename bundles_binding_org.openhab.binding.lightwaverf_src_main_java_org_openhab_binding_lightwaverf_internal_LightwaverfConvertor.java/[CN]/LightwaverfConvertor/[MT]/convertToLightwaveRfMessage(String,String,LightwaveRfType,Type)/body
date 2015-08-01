@@ -1,0 +1,28 @@
+{
+  int messageId=getAndIncrementMessageId();
+switch (deviceType) {
+case HEATING_BATTERY:
+case HEATING_SIGNAL:
+case HEATING_CURRENT_TEMP:
+case HEATING_MODE:
+case VERSION:
+    throw new IllegalArgumentException(deviceType + " : is read only it can't be set");
+case HEATING_SET_TEMP:
+  return new LightwaveRfSetHeatingTemperatureCommand(messageId,roomId,((DecimalType)command).doubleValue());
+case DIMMER:
+case SWITCH:
+if (command instanceof OnOffType) {
+  boolean on=(command == OnOffType.ON);
+  return new LightwaveRfOnOffCommand(messageId,roomId,deviceId,on);
+}
+ else if (command instanceof PercentType) {
+  int dimmingLevel=((PercentType)command).intValue();
+  return new LightwaveRfDimCommand(messageId,roomId,deviceId,dimmingLevel);
+}
+ else {
+  throw new RuntimeException("Unsupported Command: " + command);
+}
+default :
+throw new IllegalArgumentException(deviceType + " : is unexpected");
+}
+}

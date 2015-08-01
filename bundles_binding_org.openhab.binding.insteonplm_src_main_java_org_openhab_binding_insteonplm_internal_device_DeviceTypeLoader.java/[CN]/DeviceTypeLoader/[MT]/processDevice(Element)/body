@@ -22,11 +22,10 @@
       devType.setDescription(subElement.getTextContent());
     }
  else     if (subElement.getNodeName().equals("feature")) {
-      String name=subElement.getAttribute("name");
-      if (name.equals("")) {
-        throw new SAXException("device type " + productKey + " has feature without name!");
-      }
-      devType.addFeature(name,subElement.getTextContent());
+      processFeature(devType,subElement);
+    }
+ else     if (subElement.getNodeName().equals("feature_group")) {
+      processFeatureGroup(devType,subElement);
     }
     m_deviceTypes.put(productKey,devType);
   }

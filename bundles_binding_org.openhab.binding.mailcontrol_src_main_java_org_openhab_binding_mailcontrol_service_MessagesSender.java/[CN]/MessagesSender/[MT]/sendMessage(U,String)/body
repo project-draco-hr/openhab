@@ -1,0 +1,10 @@
+{
+  try {
+    logger.debug("Sending message: " + message);
+    mailConnector.sendMessage(responseSubject,message.getMessageId().getSenderEmail(),message.toJSON().toString(),emails);
+    logger.debug("Message sent");
+  }
+ catch (  ConnectorException ex) {
+    throw new ServiceException(ex);
+  }
+}

@@ -1,0 +1,13 @@
+{
+synchronized (results) {
+    final RFXComResponse future=results.get(response.seqNbr);
+    if (future != null) {
+      logger.debug("Transmitter response received:\n{}",response.toString());
+      future.set(response);
+      results.remove(response.seqNbr);
+    }
+ else {
+      logger.warn("Transmitter response received for sequence {} but no listener is registered:\n{}",response.seqNbr,response.toString());
+    }
+  }
+}

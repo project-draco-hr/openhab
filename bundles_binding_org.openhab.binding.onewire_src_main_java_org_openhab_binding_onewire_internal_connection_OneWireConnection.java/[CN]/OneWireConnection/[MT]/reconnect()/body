@@ -1,0 +1,11 @@
+{
+  logger.info("Trying to reconnect to owserver...");
+  try {
+    cvOwConnection.disconnect();
+  }
+ catch (  Exception lvException) {
+    logger.error("Error while disconnecting from owserver: " + lvException,lvException);
+  }
+  cvOwConnection=null;
+  return connect();
+}

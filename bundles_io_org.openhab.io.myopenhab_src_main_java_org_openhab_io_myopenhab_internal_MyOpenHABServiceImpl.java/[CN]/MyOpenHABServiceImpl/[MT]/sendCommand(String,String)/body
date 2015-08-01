@@ -1,0 +1,37 @@
+{
+  try {
+    if (this.mItemUIRegistry != null) {
+      Item item=this.mItemUIRegistry.getItem(itemName);
+      Command command=null;
+      if (item != null) {
+        if (this.mEventPublisher != null) {
+          if ("toggle".equalsIgnoreCase(commandString) && (item instanceof SwitchItem || item instanceof RollershutterItem)) {
+            if (OnOffType.ON.equals(item.getStateAs(OnOffType.class)))             command=OnOffType.OFF;
+            if (OnOffType.OFF.equals(item.getStateAs(OnOffType.class)))             command=OnOffType.ON;
+            if (UpDownType.UP.equals(item.getStateAs(UpDownType.class)))             command=UpDownType.DOWN;
+            if (UpDownType.DOWN.equals(item.getStateAs(UpDownType.class)))             command=UpDownType.UP;
+          }
+ else {
+            command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),commandString);
+          }
+          if (command != null) {
+            logger.debug("Received command {} for item {}",commandString,itemName);
+            this.mEventPublisher.postCommand(itemName,command);
+          }
+ else {
+            logger.warn("Received invalid command {} for item {}",commandString,itemName);
+          }
+        }
+      }
+ else {
+        logger.warn("Received command {} for non existing item {}",commandString,itemName);
+      }
+    }
+ else {
+      return;
+    }
+  }
+ catch (  ItemNotFoundException e) {
+    logger.warn("Received my.openHAB command for a non-existant item {}",itemName);
+  }
+}

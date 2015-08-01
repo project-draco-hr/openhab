@@ -1,0 +1,14 @@
+{
+  logger.info("Loading Script " + file.getName());
+  String extension=getFileExtension(file);
+  ScriptEngineManager factory=new ScriptEngineManager();
+  engine=factory.getEngineByExtension(extension);
+  if (engine != null) {
+    logger.info("EngineName: " + engine.getFactory().getEngineName());
+    initializeSciptGlobals();
+    engine.eval(new FileReader(file));
+    Invocable inv=(Invocable)engine;
+    RuleSet ruleSet=(RuleSet)inv.invokeFunction("getRules");
+    rules.addAll(ruleSet.getRules());
+  }
+}

@@ -1,0 +1,17 @@
+{
+  File file=new File(CONFIG_DIR + File.separator + "openhab.cfg");
+  try {
+    if (file.exists()) {
+      Map<String,String> config=load(file);
+      for (      Object key : config.keySet()) {
+        if (key.toString().startsWith(SERVICE_NAME)) {
+          return true;
+        }
+      }
+    }
+  }
+ catch (  IOException e) {
+    logger.warn("Couldn't open Configuration File '{}'",file.getAbsolutePath());
+  }
+  return false;
+}

@@ -1,8 +1,7 @@
 {
   openConnection(url);
-  super.setCookies(cookies);
   setRequestProperty("SOAPAction","getProjectInfo");
-  String response=sendQuery(emptyQuery);
+  String response=sendQuery(emptyQuery,timeout);
   closeConnection();
   WSProjectInfo projectInfo=new WSProjectInfo();
   projectInfo.encodeData(response);

@@ -1,0 +1,30 @@
+{
+  List<String> lvItemNameList=null;
+synchronized (cvScheduleMap) {
+    lvItemNameList=cvScheduleMap.get(ivAutoRefreshTimeInSecs);
+    if (lvItemNameList == null) {
+      logger.debug("Autorefresh: List {} was deleted. Terminating thread.",ivAutoRefreshTimeInSecs);
+    }
+ else {
+      logger.debug("Autorefresh: Adding {} item(s) with refresh time {} to reader queue.",lvItemNameList.size(),ivAutoRefreshTimeInSecs);
+      logger.debug("Update Task isAlive: " + ivOneWireUpdateTask.isAlive());
+      if (!ivOneWireUpdateTask.isAlive()) {
+        logger.debug("create and start a new Update Task again...");
+        OneWireUpdateTask lvNewOneWireUpdateTask=new OneWireUpdateTask(ivUpdateQueue,ivOneWireUpdateTask.getIvWantsUpdateListener());
+        ivOneWireUpdateTask=lvNewOneWireUpdateTask;
+        ivOneWireUpdateTask.start();
+      }
+synchronized (lvItemNameList) {
+        for (        String lvItemName : lvItemNameList) {
+          if (!ivUpdateQueue.contains(lvItemName)) {
+            logger.debug("add item " + lvItemName + " to updateQueue");
+            ivUpdateQueue.add(lvItemName);
+          }
+ else {
+            logger.debug("didn't add item " + lvItemName + " to updateQueue, it is alread there");
+          }
+        }
+      }
+    }
+  }
+}

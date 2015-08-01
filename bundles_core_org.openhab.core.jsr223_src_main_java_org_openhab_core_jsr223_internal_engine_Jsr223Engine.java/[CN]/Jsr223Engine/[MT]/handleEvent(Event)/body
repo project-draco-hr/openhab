@@ -1,0 +1,13 @@
+{
+  String itemName=(String)event.getProperty("item");
+  String topic=event.getTopic();
+  String[] topicParts=topic.split(TOPIC_SEPERATOR);
+  if (!(topicParts.length > 2) || !topicParts[0].equals(TOPIC_PREFIX)) {
+    return;
+  }
+  String operation=topicParts[1];
+  if (operation.equals(EventType.COMMAND.toString())) {
+    Command command=(Command)event.getProperty("command");
+    if (command != null)     receiveCommand(itemName,command);
+  }
+}

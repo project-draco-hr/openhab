@@ -1,0 +1,21 @@
+{
+  int delay=0;
+  while (!tc.isConnected()) {
+    try {
+      Thread.sleep(delay);
+      logger.debug("Connecting to {}",connection.getHost());
+      tc.connect(connection.getHost(),connection.getTelnetPort());
+    }
+ catch (    SocketException e) {
+      logger.error("Error connecting to {}",connection.getHost(),e);
+    }
+catch (    IOException e) {
+      logger.error("Error connecting to {}",connection.getHost(),e);
+    }
+catch (    InterruptedException e) {
+      logger.error("Error connecting to {}",connection.getHost(),e);
+    }
+    delay=RECONNECT_DELAY;
+  }
+  logger.debug("Denon telnet client connected to {}",connection.getHost());
+}

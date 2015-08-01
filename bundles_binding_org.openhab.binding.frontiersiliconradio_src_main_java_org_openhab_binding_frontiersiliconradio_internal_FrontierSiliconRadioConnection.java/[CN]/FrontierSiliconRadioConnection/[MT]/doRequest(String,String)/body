@@ -1,0 +1,48 @@
+{
+  for (int i=0; i < 3; i++) {
+    if (!isLoggedIn && !doLogin()) {
+      continue;
+    }
+    final String url="http://" + hostname + ":"+ port+ "/fsapi/"+ requestString+ "?pin="+ pin+ "&sid="+ sessionId+ (params == null || params.trim().length() == 0 ? "" : "&" + params);
+    logger.trace("calling url: '" + url + "'");
+    final HttpMethod method=new GetMethod(url);
+    method.getParams().setSoTimeout(SOCKET_TIMEOUT);
+    method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+    try {
+      final int statusCode=httpClient.executeMethod(method);
+      if (statusCode != HttpStatus.SC_OK) {
+        logger.warn("Method failed: " + method.getStatusLine());
+        isLoggedIn=false;
+        method.releaseConnection();
+        continue;
+      }
+      final String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
+      if (!responseBody.isEmpty()) {
+        logger.trace("got result: " + responseBody);
+      }
+ else {
+        logger.debug("got empty result");
+        isLoggedIn=false;
+        method.releaseConnection();
+        continue;
+      }
+      final FrontierSiliconRadioApiResult result=new FrontierSiliconRadioApiResult(responseBody);
+      if (result.isStatusOk())       return result;
+      isLoggedIn=false;
+      method.releaseConnection();
+      continue;
+    }
+ catch (    HttpException he) {
+      logger.error("Fatal protocol violation: {}",he.toString());
+      isLoggedIn=false;
+    }
+catch (    IOException ioe) {
+      logger.error("Fatal transport error: {}",ioe.toString());
+    }
+ finally {
+      method.releaseConnection();
+    }
+  }
+  isLoggedIn=false;
+  return null;
+}

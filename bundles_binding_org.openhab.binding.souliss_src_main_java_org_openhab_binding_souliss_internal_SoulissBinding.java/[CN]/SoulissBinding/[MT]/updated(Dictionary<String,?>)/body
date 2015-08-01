@@ -1,0 +1,26 @@
+{
+  if (config != null) {
+    Enumeration<String> enumConfig=config.keys();
+    while (enumConfig.hasMoreElements()) {
+      String sName=enumConfig.nextElement();
+      logger.info("PARAMETER: {} = {}",sName,(String)config.get(sName));
+      if (sName.equals("IP_LAN"))       SoulissNetworkParameter.IPAddressOnLAN=(String)config.get(sName);
+ else       if (sName.equals("REFRESH_DBSTRUCT_TIME"))       SoulissNetworkParameter.REFRESH_DBSTRUCT_TIME=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("REFRESH_SUBSCRIPTION_TIME"))       SoulissNetworkParameter.REFRESH_SUBSCRIPTION_TIME=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("REFRESH_HEALTY_TIME"))       SoulissNetworkParameter.REFRESH_HEALTY_TIME=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("REFRESH_MONITOR_TIME"))       SoulissNetworkParameter.REFRESH_MONITOR_TIME=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("SEND_DELAY"))       SoulissNetworkParameter.SEND_DELAY=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("SEND_MIN_DELAY"))       SoulissNetworkParameter.SEND_MIN_DELAY=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("SECURE_SEND_TIMEOUT_TO_REQUEUE"))       SoulissNetworkParameter.SECURE_SEND_TIMEOUT_TO_REQUEUE=Long.parseLong((String)config.get(sName));
+ else       if (sName.equals("SECURE_SEND_TIMEOUT_TO_REMOVE_PACKET"))       SoulissNetworkParameter.SECURE_SEND_TIMEOUT_TO_REMOVE_PACKET=Long.parseLong((String)config.get(sName));
+ else       if (sName.equals("USER_INDEX"))       SoulissNetworkParameter.UserIndex=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("NODE_INDEX"))       SoulissNetworkParameter.NodeIndex=Integer.parseInt((String)config.get(sName));
+ else       if (sName.equals("SERVERPORT")) {
+        if (config.get(sName).equals(""))         SoulissNetworkParameter.serverPort=null;
+ else         SoulissNetworkParameter.serverPort=Integer.parseInt((String)config.get(sName));
+      }
+    }
+  }
+  initialize();
+  setProperlyConfigured(true);
+}

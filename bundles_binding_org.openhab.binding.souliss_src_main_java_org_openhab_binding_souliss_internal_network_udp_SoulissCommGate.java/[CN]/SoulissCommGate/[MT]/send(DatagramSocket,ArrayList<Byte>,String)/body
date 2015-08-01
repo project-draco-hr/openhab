@@ -1,0 +1,17 @@
+{
+  int iUserIndex=SoulissNetworkParameter.UserIndex;
+  int iNodeIndex=SoulissNetworkParameter.NodeIndex;
+  ;
+  ArrayList<Byte> buf=buildVNetFrame(MACACOframe,sSoulissNodeIPAddressOnLAN,iUserIndex,iNodeIndex);
+  byte[] merd=toByteArray(buf);
+  InetAddress serverAddr;
+  try {
+    serverAddr=InetAddress.getByName(sSoulissNodeIPAddressOnLAN);
+    DatagramPacket packet=new DatagramPacket(merd,merd.length,serverAddr,ConstantsUDP.SOULISSPORT);
+    SendDispatcher.put(socket,packet);
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+    logger.error(e.getMessage());
+  }
+}

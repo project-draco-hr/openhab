@@ -1,0 +1,13 @@
+{
+  logger.debug("Connecting to {}",this.toString());
+  try {
+    connectSocket();
+  }
+ catch (  Exception unimportant) {
+  }
+  if (connectionSupervisor == null) {
+    logger.trace("Starting connection supervisor for {}",this.toString());
+    connectionSupervisor=new ConnectionSupervisor(CONNECTION_TEST_INTERVAL);
+    logger.trace("Started connection supervisor for {}",this.toString());
+  }
+}

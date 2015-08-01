@@ -1,26 +1,29 @@
 {
-  Statement statement=null;
+  PreparedStatement statement=null;
   String sqlCmd=null;
   int rowId=0;
   String itemName=item.getName();
   String tableName=sqlTables.get(itemName);
   if (tableName != null)   return tableName;
+  logger.debug("mySQL: no Table found for itemName={} get:{}",itemName,sqlTables.get(itemName));
   try {
-    sqlCmd=new String("INSERT INTO Items (ItemName) VALUES ('" + itemName + "')");
-    statement=connection.createStatement();
-    statement.executeUpdate(sqlCmd,Statement.RETURN_GENERATED_KEYS);
+    sqlCmd=new String("INSERT INTO Items (ItemName) VALUES (?)");
+    statement=connection.prepareStatement(sqlCmd,PreparedStatement.RETURN_GENERATED_KEYS);
+    statement.setString(1,itemName);
+    statement.executeUpdate();
     ResultSet resultSet=statement.getGeneratedKeys();
     if (resultSet != null && resultSet.next()) {
       rowId=resultSet.getInt(1);
     }
     if (rowId == 0) {
-      throw new SQLException("mySQL: Creating table for item '" + itemName + "' failed.");
+      throw new SQLException("mySQL: Creating table for item '{}' failed.",itemName);
     }
     tableName=new String("Item" + rowId);
     logger.debug("mySQL: new item {} is Item{}",itemName,rowId);
   }
  catch (  SQLException e) {
-    logger.error("mySQL: Could not create table for item '{}': ",itemName,e.getMessage());
+    errCnt++;
+    logger.error("mySQL: Could not create entry for '{}' in table 'Items' with statement '{}': {}",itemName,sqlCmd,e.getMessage());
   }
  finally {
     if (statement != null) {
@@ -35,22 +38,18 @@
     logger.error("mySQL: tableName was null");
     return null;
   }
-  String mysqlType=new String("DOUBLE");
-  String itemType=item.getClass().toString().toUpperCase();
-  itemType=itemType.substring(itemType.lastIndexOf('.') + 1);
-  if (sqlTypes.get(itemType) != null) {
-    mysqlType=sqlTypes.get(itemType);
-  }
+  String mysqlType=getItemType(item);
   sqlCmd=new String("CREATE TABLE " + tableName + " (Time DATETIME, Value "+ mysqlType+ ", PRIMARY KEY(Time));");
-  logger.debug("SQL: " + sqlCmd);
+  logger.debug("mySQL: query: {}",sqlCmd);
   try {
-    statement=connection.createStatement();
-    statement.executeUpdate(sqlCmd);
-    logger.debug("mySQL: Table created for item '" + itemName + "' with datatype "+ mysqlType+ " in SQL database.");
+    statement=connection.prepareStatement(sqlCmd);
+    statement.executeUpdate();
+    logger.debug("mySQL: Table created for item '{}' with datatype {} in SQL database.",itemName,mysqlType);
     sqlTables.put(itemName,tableName);
   }
  catch (  Exception e) {
-    logger.error("mySQL: Could not create table for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
+    errCnt++;
+    logger.error("mySQL: Could not create table for item '{}' with statement '{}': {}",itemName,sqlCmd,e.getMessage());
   }
  finally {
     if (statement != null) {
@@ -63,14 +62,16 @@
   }
   if (sqlTables.get(itemName) == null) {
     logger.error("mySQL: Item '{}' was not added to the table - removing index",itemName);
-    sqlCmd=new String("DELETE FROM Items WHERE ItemName='" + itemName + "'");
-    logger.debug("SQL: {}",sqlCmd);
+    sqlCmd=new String("DELETE FROM Items WHERE ItemName=?");
+    logger.debug("mySQL: query: {}",sqlCmd);
     try {
-      statement=connection.createStatement();
-      statement.executeUpdate(sqlCmd);
+      statement=connection.prepareStatement(sqlCmd);
+      statement.setString(1,itemName);
+      statement.executeUpdate();
     }
  catch (    Exception e) {
-      logger.error("mySQL: Could not remove index for item '" + itemName + "' with statement '"+ sqlCmd+ "': "+ e.getMessage());
+      errCnt++;
+      logger.error("mySQL: Could not remove index for item '{}' with statement '{}': ",itemName,sqlCmd,e.getMessage());
     }
  finally {
       if (statement != null) {

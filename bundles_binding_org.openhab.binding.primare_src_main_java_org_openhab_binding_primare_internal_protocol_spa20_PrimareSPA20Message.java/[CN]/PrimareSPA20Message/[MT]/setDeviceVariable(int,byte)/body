@@ -1,0 +1,8 @@
+{
+  String req="02 57 vn vv 10 03";
+  byte[] message=PrimareUtils.hexStringToByteArray(req.replaceAll(" ","").toLowerCase());
+  message[2]=(byte)(var_number | 0x80);
+  message[3]=var_value;
+  logger.debug(String.format("PrimareSPA20Message.setDeviceVariable %d (0x%02x) = %d (0x%02x), msg: %s",var_number,var_number,var_value,var_value,PrimareUtils.byteArrayToHex(message)));
+  return message;
+}

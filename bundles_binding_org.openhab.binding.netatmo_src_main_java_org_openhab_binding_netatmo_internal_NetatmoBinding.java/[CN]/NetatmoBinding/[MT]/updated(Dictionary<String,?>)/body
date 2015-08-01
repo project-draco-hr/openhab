@@ -36,6 +36,22 @@
  else       if (CONFIG_REFRESH_TOKEN.equals(configKeyTail)) {
         credentials.refreshToken=value;
       }
+ else       if (CONFIG_PRESSURE_UNIT.equals(configKeyTail)) {
+        try {
+          pressureUnit=NetatmoPressureUnit.fromString(value);
+        }
+ catch (        IllegalArgumentException e) {
+          throw new ConfigurationException(configKey,"the value '" + value + "' is not valid for the configKey '"+ configKey+ "'");
+        }
+      }
+ else       if (CONFIG_UNIT_SYSTEM.equals(configKeyTail)) {
+        try {
+          unitSystem=NetatmoUnitSystem.fromString(value);
+        }
+ catch (        IllegalArgumentException e) {
+          throw new ConfigurationException(configKey,"the value '" + value + "' is not valid for the configKey '"+ configKey+ "'");
+        }
+      }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");
       }

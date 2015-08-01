@@ -1,0 +1,12 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  final String[] configParts=bindingConfig.trim().split(":");
+  if (configParts.length != 2) {
+    throw new BindingConfigParseException("FrontierSiliconRadio configuration must contain of two parts separated by a ':'");
+  }
+  final String deviceId=configParts[0];
+  final String property=configParts[1];
+  final Class<? extends Item> itemType=item.getClass();
+  final FrontierSiliconRadioBindingConfig config=new FrontierSiliconRadioBindingConfig(deviceId,property,itemType);
+  addBindingConfig(item,config);
+}

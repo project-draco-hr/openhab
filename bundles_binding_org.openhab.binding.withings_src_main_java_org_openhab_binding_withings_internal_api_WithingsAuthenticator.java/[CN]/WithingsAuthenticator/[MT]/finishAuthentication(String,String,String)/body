@@ -1,0 +1,25 @@
+{
+  WithingsAccount withingsAccount=getAccount(accountId);
+  if (withingsAccount == null) {
+    logger.warn("Couldn't find Credentials of Account '{}'. Please check openhab.cfg or withings.cfg.",accountId);
+    return;
+  }
+  OAuthConsumer consumer=withingsAccount.consumer;
+  if (provider == null || consumer == null) {
+    logger.warn("Could not finish authentication. Please execute 'startAuthentication' first.");
+    return;
+  }
+  try {
+    provider.retrieveAccessToken(consumer,verificationCode);
+  }
+ catch (  OAuthException ex) {
+    logger.error(ex.getMessage(),ex);
+    printAuthenticationFailed(ex);
+    return;
+  }
+  withingsAccount.userId=userId;
+  withingsAccount.setOuathToken(consumer.getToken(),consumer.getTokenSecret());
+  withingsAccount.registerAccount(componentContext.getBundleContext());
+  withingsAccount.persist();
+  printAuthenticationSuccessful();
+}

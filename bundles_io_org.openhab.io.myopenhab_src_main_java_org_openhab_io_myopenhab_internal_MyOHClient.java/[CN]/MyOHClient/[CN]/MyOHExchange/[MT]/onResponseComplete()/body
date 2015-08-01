@@ -1,0 +1,16 @@
+{
+  int status=getResponseStatus();
+  logger.debug("Jetty request complete {} with status {}",mRequestId,status);
+  mRunningRequests.remove(mRequestId);
+  JSONObject responseJson=new JSONObject();
+  try {
+    responseJson.put("id",mRequestId);
+    if (this.getStatus() != STATUS_CANCELLING && this.getStatus() != STATUS_CANCELLED) {
+      mSocket.emit("responseFinished",responseJson);
+    }
+    logger.debug("Finished responding to request {}",mRequestId);
+  }
+ catch (  JSONException e) {
+    logger.error(e.getMessage());
+  }
+}

@@ -1,9 +1,8 @@
 {
   openConnection(url);
-  super.setCookies(cookies);
   setRequestProperty("SOAPAction","getIHCProjectSegmentationSize");
-  String response=sendQuery(emptyQuery);
-  String segmentationSize=WSBaseDataType.parseValue(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getIHCProjectSegmentationSize1");
+  String response=sendQuery(emptyQuery,timeout);
   closeConnection();
+  String segmentationSize=WSBaseDataType.parseValue(response,"/SOAP-ENV:Envelope/SOAP-ENV:Body/ns1:getIHCProjectSegmentationSize1");
   return Integer.parseInt(segmentationSize);
 }

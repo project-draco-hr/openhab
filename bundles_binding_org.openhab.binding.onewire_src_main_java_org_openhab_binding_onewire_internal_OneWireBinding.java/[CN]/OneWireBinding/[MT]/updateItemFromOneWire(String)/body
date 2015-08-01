@@ -1,0 +1,37 @@
+{
+  if (OneWireConnection.getConnection() != null) {
+    AbstractOneWireDevicePropertyBindingConfig pvBindingConfig=(AbstractOneWireDevicePropertyBindingConfig)getBindingConfig(pvItemName);
+    if (pvBindingConfig == null) {
+      logger.error("no bindingConfig found for itemName=" + pvItemName + " cannot update! It will be removed from scheduler");
+      ivOneWireReaderScheduler.removeItem(pvItemName);
+      return;
+    }
+    String lvReadValue=OneWireConnection.readFromOneWire(pvBindingConfig);
+    Item lvItem=getItem(pvItemName);
+    if (lvReadValue != null) {
+      Type lvNewType=pvBindingConfig.convertReadValueToType(lvReadValue);
+      if (lvItem != null) {
+synchronized (lvItem) {
+          State lvNewState=(State)lvNewType;
+          State lvCachedState=ivCacheItemStates.get(pvItemName);
+          if (!ivPostOnlyChangedValues || !lvNewState.equals(lvCachedState)) {
+            ivCacheItemStates.remove(pvItemName);
+            ivCacheItemStates.put(pvItemName,lvNewState);
+            eventPublisher.postUpdate(lvItem.getName(),lvNewState);
+          }
+ else {
+            logger.debug("didn't post update to eventPublisher, because state did not changed for item " + pvItemName);
+          }
+        }
+      }
+ else {
+        logger.error("There is no Item for ItemName=" + pvItemName);
+      }
+    }
+ else {
+      logger.error("Set Item for itemName=" + pvItemName + " to Undefined, because the readvalue is null");
+      ivCacheItemStates.remove(pvItemName);
+      eventPublisher.postUpdate(lvItem.getName(),UnDefType.UNDEF);
+    }
+  }
+}

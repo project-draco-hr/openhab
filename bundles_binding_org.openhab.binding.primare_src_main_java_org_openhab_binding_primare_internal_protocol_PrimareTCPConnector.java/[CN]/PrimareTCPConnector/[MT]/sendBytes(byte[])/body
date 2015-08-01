@@ -1,0 +1,19 @@
+{
+  logger.trace("Sending (hex) [{}] to {} via TCP",PrimareUtils.byteArrayToHex(msg),this.toString());
+  try {
+synchronized (oLock) {
+      outStream.write(msg);
+      outStream.flush();
+    }
+    bytesSentAt=new Date();
+    logger.trace("Sent and flushed (hex) [{}] to {} via TCP",PrimareUtils.byteArrayToHex(msg),this.toString());
+  }
+ catch (  SocketException e) {
+    connectionBroken=true;
+    throw e;
+  }
+catch (  IOException e) {
+    connectionBroken=true;
+    throw e;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  String url=statusUrl + URL_APP_COMMAND;
+  logger.trace("Refreshing URL: {}",url);
+  AppCommandRequest request=AppCommandRequest.of(CommandTx.CMD_NET_STATUS);
+  AppCommandResponse response=postDocument(url,AppCommandResponse.class,request);
+  if (response != null) {
+    CommandRx titleInfo=response.getCommands().get(0);
+    stateCache.put(DenonProperty.TRACK.getCode(),getStateForValue(titleInfo.getText("track")));
+    stateCache.put(DenonProperty.ARTIST.getCode(),getStateForValue(titleInfo.getText("artist")));
+    stateCache.put(DenonProperty.ALBUM.getCode(),getStateForValue(titleInfo.getText("album")));
+  }
+}

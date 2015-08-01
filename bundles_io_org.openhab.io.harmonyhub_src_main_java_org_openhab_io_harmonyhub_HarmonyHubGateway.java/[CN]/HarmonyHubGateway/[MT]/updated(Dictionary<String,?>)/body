@@ -1,0 +1,44 @@
+{
+  if (config != null) {
+    final Map<String,HostConfig> hostConfigs=new HashMap<String,HostConfig>();
+    for (    String key : list(config.keys())) {
+      String value=(String)config.get(key);
+      Matcher m=CONFIG_PATTERN.matcher(key);
+      if (!m.matches()) {
+        continue;
+      }
+      String qualifier=checkQualifier(m.group(2));
+      String configKey=m.group(3);
+      HostConfig hostConfig=hostConfigs.get(qualifier);
+      if (hostConfig == null) {
+        hostConfig=new HostConfig();
+        hostConfigs.put(qualifier,hostConfig);
+      }
+      if (configKey.equals("host")) {
+        hostConfig.setHost(value);
+      }
+ else       if (configKey.equals("username")) {
+        hostConfig.setUsername(value);
+      }
+ else {
+        hostConfig.setPassword(value);
+      }
+    }
+    setProperlyConfigured(false);
+    removeAllClients();
+    new Thread(new Runnable(){
+      @Override public void run(){
+        for (        Entry<String,HostConfig> entry : hostConfigs.entrySet()) {
+          final String qualifier=entry.getKey();
+          HostConfig hostConfig=entry.getValue();
+          if (!hostConfig.isValid()) {
+            continue;
+          }
+          connectClient(qualifier,hostConfig);
+        }
+        setProperlyConfigured(true);
+      }
+    }
+).start();
+  }
+}

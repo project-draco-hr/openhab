@@ -10,11 +10,11 @@
  else {
         logger.debug("writing ({}): {}",msg.getQuietTime(),msg);
 synchronized (m_reader.getRequestReplyLock()) {
-          m_ioStream.out().write(msg.getData());
+          m_ioStream.write(msg.getData());
           while (m_reader.waitForReply()) {
             Thread.sleep(WAIT_TIME);
             logger.trace("retransmitting msg: {}",msg);
-            m_ioStream.out().write(msg.getData());
+            m_ioStream.write(msg.getData());
           }
         }
         if (msg.getQuietTime() > 0) {
@@ -24,14 +24,6 @@ synchronized (m_reader.getRequestReplyLock()) {
     }
  catch (    InterruptedException e) {
       logger.error("got interrupted exception in write thread:",e);
-    }
-catch (    IOException e) {
-      logger.error("got i/o exception in write thread:",e);
-      try {
-        Thread.sleep(30000);
-      }
- catch (      InterruptedException ie) {
-      }
     }
 catch (    Exception e) {
       logger.error("got exception in write thread:",e);

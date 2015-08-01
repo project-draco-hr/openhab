@@ -1,0 +1,24 @@
+{
+  logger.debug("bindingChanged() for item {} msg received.",pvItemName);
+  if (pvProvider instanceof OneWireBindingProvider) {
+    ivCacheItemStates.remove(pvItemName);
+    OneWireBindingProvider lvBindingProvider=(OneWireBindingProvider)pvProvider;
+    OneWireBindingConfig lvBindingConfig=lvBindingProvider.getBindingConfig(pvItemName);
+    if (lvBindingConfig != null && lvBindingConfig instanceof AbstractOneWireDevicePropertyBindingConfig) {
+      AbstractOneWireDevicePropertyBindingConfig lvDeviceBindingConfig=(AbstractOneWireDevicePropertyBindingConfig)lvBindingConfig;
+      logger.debug("Initializing read of item {}.",pvItemName);
+      int lvAutoRefreshTimeInSecs=lvDeviceBindingConfig.getAutoRefreshInSecs();
+      if (lvAutoRefreshTimeInSecs > -1) {
+        ivOneWireReaderScheduler.updateOnce(pvItemName);
+      }
+      if (lvAutoRefreshTimeInSecs > 0) {
+        if (!ivOneWireReaderScheduler.scheduleUpdate(pvItemName,lvAutoRefreshTimeInSecs)) {
+          logger.warn("Clouldn't add to OneWireUpdate scheduler",lvDeviceBindingConfig);
+        }
+      }
+ else {
+        logger.debug("Didnt't add to OneWireUpdate scheduler, because refresh is <= 0: " + lvDeviceBindingConfig.toString());
+      }
+    }
+  }
+}

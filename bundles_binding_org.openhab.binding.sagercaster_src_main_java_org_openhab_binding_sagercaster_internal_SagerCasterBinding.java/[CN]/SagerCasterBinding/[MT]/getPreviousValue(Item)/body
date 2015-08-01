@@ -1,0 +1,10 @@
+{
+  DateTime now=new DateTime();
+  AbstractInstant earlier=now.minusHours(6);
+  if (persistenceService == null) {
+    return PersistenceExtensions.historicState(theItem,earlier);
+  }
+ else {
+    return PersistenceExtensions.historicState(theItem,earlier,persistenceService);
+  }
+}

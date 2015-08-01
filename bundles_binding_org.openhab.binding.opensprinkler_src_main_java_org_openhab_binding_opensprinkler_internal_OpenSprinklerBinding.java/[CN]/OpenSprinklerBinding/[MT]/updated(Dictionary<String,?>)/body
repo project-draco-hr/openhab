@@ -17,8 +17,12 @@
     }
     String numberOfStationsString=(String)config.get("numberOfStations");
     if (StringUtils.isNotBlank(numberOfStationsString)) {
-      numberOfStations=Integer.parseInt(numberOfStationsString);
-      openSprinkler.setNumberOfStations(numberOfStations);
+      if (Arrays.asList(VALID_STATION_NUMBER_LIST).contains(numberOfStationsString)) {
+        numberOfStations=Integer.parseInt(numberOfStationsString);
+      }
+ else {
+        logger.warn(numberOfStationsString + " is not a valid number of stations OpenSprinkler supports. Defaulting to 8.");
+      }
     }
     setProperlyConfigured(true);
     updateBinding();

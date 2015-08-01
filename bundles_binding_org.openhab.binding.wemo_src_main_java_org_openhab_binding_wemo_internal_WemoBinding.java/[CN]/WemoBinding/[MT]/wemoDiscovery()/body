@@ -4,62 +4,60 @@
     final int SSDP_PORT=1900;
     final int SSDP_SEARCH_PORT=1901;
     final String SSDP_IP="239.255.255.250";
-    int TIMEOUT=5000;
+    int TIMEOUT=1000;
     InetAddress localhost=InetAddress.getLocalHost();
     InetSocketAddress srcAddress=new InetSocketAddress(localhost,SSDP_SEARCH_PORT);
     InetSocketAddress dstAddress=new InetSocketAddress(InetAddress.getByName(SSDP_IP),SSDP_PORT);
     StringBuffer discoveryMessage=new StringBuffer();
     discoveryMessage.append("M-SEARCH * HTTP/1.1\r\n");
     discoveryMessage.append("HOST: " + SSDP_IP + ":"+ SSDP_PORT+ "\r\n");
-    discoveryMessage.append("ST: urn:Belkin:device:\r\n");
     discoveryMessage.append("MAN: \"ssdp:discover\"\r\n");
     discoveryMessage.append("MX: 5\r\n");
+    discoveryMessage.append("ST: urn:Belkin:service:basicevent:1\r\n");
     discoveryMessage.append("\r\n");
-    logger.debug("Request: {}",discoveryMessage.toString());
+    logger.trace("Request: {}",discoveryMessage.toString());
     byte[] discoveryMessageBytes=discoveryMessage.toString().getBytes();
     DatagramPacket discoveryPacket=new DatagramPacket(discoveryMessageBytes,discoveryMessageBytes.length,dstAddress);
     MulticastSocket multicast=null;
     try {
       multicast=new MulticastSocket(null);
       multicast.bind(srcAddress);
-      logger.debug("Source-Address = '{}'",srcAddress);
-      multicast.setTimeToLive(4);
-      logger.debug("Send multicast request.");
+      logger.trace("Source-Address = '{}'",srcAddress);
+      multicast.setTimeToLive(5);
+      logger.trace("Send multicast request.");
       multicast.send(discoveryPacket);
     }
   finally {
-      logger.debug("Multicast ends. Close connection.");
+      logger.trace("Multicast ends. Close connection.");
       multicast.disconnect();
       multicast.close();
     }
-    DatagramSocket wemoReceiveSocket=null;
+    MulticastSocket wemoReceiveSocket=null;
     DatagramPacket receivePacket=null;
     try {
-      wemoReceiveSocket=new DatagramSocket(SSDP_SEARCH_PORT);
+      wemoReceiveSocket=new MulticastSocket(SSDP_SEARCH_PORT);
+      wemoReceiveSocket.setTimeToLive(10);
       wemoReceiveSocket.setSoTimeout(TIMEOUT);
       logger.debug("Send datagram packet.");
       wemoReceiveSocket.send(discoveryPacket);
       while (true) {
         try {
           logger.debug("Receive SSDP Message.");
-          receivePacket=new DatagramPacket(new byte[1536],1536);
+          receivePacket=new DatagramPacket(new byte[2048],2048);
           wemoReceiveSocket.receive(receivePacket);
           final String message=new String(receivePacket.getData());
-          logger.debug("Recieved message: {}",message);
+          if (message.contains("Belkin")) {
+            logger.trace("Received message: {}",message);
+          }
           new Thread(new Runnable(){
             @Override public void run(){
-              String location=StringUtils.substringBetween(message,"LOCATION: ","/setup.xml");
-              if (location != null) {
-                logger.debug("Wemo device found at URL '{}'",location);
-                try {
-                  int timeout=5000;
-                  String friendlyNameResponse=HttpUtil.executeUrl("GET",location + "/setup.xml",timeout);
-                  String friendlyName=StringUtils.substringBetween(friendlyNameResponse,"<friendlyName>","</friendlyName>");
-                  logger.info("Wemo device '{}' found at '{}'",friendlyName,location);
-                  wemoConfigMap.put(friendlyName,location);
-                }
- catch (                Exception te) {
-                  logger.error("Could not find wemo friendlyName ",te);
+              if (message != null) {
+                String location=StringUtils.substringBetween(message,"LOCATION: ","/setup.xml");
+                String udn=StringUtils.substringBetween(message,"USN: uuid:","::urn:Belkin");
+                if (udn != null) {
+                  logger.trace("Save location '{}' for WeMo device with UDN '{}'",location,udn);
+                  wemoConfigMap.put(udn,location);
+                  logger.info("Wemo Device with UDN '{}' discovered",udn);
                 }
               }
             }
@@ -68,6 +66,9 @@
         }
  catch (        SocketTimeoutException e) {
           logger.debug("Message receive timed out.");
+          for (          String name : wemoConfigMap.keySet()) {
+            logger.trace(name + ":" + wemoConfigMap.get(name));
+          }
           break;
         }
       }
