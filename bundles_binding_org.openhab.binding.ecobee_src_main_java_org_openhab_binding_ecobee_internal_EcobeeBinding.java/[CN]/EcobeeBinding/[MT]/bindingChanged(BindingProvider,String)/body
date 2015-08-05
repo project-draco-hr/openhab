@@ -1,6 +1,9 @@
 {
   if (provider instanceof EcobeeBindingProvider) {
     String userid=((EcobeeBindingProvider)provider).getUserid(itemName);
-    getOAuthCredentials(userid).getLastRevisionMap().clear();
+    if (userid != null) {
+      getOAuthCredentials(userid).getLastRevisionMap().clear();
+    }
   }
+  super.bindingChanged(provider,itemName);
 }
