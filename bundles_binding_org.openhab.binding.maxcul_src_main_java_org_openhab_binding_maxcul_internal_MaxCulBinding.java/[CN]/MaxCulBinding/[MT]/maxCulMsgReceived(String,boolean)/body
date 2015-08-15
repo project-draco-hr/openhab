@@ -131,12 +131,36 @@ Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(p
 for (MaxCulBindingConfig bc : bindingConfigs) {
 String itemName=provider.getItemNameForConfig(bc);
 if (bc.getFeature() == MaxCulFeature.SWITCH) {
-if (pbMsg.getMode() == PushButtonMode.AUTO) eventPublisher.postUpdate(itemName,OnOffType.ON);
- else if (pbMsg.getMode() == PushButtonMode.ECO) eventPublisher.postUpdate(itemName,OnOffType.OFF);
+eventPublisher.postUpdate(itemName,pbMsg.getMode() == PushButtonMode.AUTO ? OnOffType.ON : OnOffType.OFF);
+}
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
+eventPublisher.postUpdate(itemName,pbMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
 }
 }
 }
 if (isBroadcast == false) this.messageHandler.sendAck(pbMsg);
+break;
+case SHUTTER_CONTACT_STATE:
+ShutterContactStateMsg shutterContactStateMsg=new ShutterContactStateMsg(data);
+shutterContactStateMsg.printMessage();
+for (MaxCulBindingProvider provider : super.providers) {
+Collection<MaxCulBindingConfig> bindingConfigs=provider.getConfigsForRadioAddr(shutterContactStateMsg.srcAddrStr);
+for (MaxCulBindingConfig bc : bindingConfigs) {
+String itemName=provider.getItemNameForConfig(bc);
+if (bc.getFeature() == MaxCulFeature.CONTACT) {
+if (shutterContactStateMsg.getState() == ShutterContactState.CLOSED) {
+eventPublisher.postUpdate(itemName,OpenClosedType.CLOSED);
+}
+ else if (shutterContactStateMsg.getState() == ShutterContactState.OPEN) {
+eventPublisher.postUpdate(itemName,OpenClosedType.OPEN);
+}
+}
+ else if (bc.getFeature() == MaxCulFeature.BATTERY) {
+eventPublisher.postUpdate(itemName,shutterContactStateMsg.getBatteryLow() ? OnOffType.ON : OnOffType.OFF);
+}
+}
+}
+if (isBroadcast == false) this.messageHandler.sendAck(shutterContactStateMsg);
 break;
 default :
 logger.debug("Unhandled message type " + msgType.toString());
