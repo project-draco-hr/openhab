@@ -1,0 +1,37 @@
+{
+  Reader reader=null;
+  this.logger.debug("get device info...");
+  try {
+    HttpURLConnection httpURLConnection;
+    httpURLConnection=(HttpURLConnection)new URL(API_URL + "device" + "?authToken="+ this.authToken+ "&id="+ deviceId).openConnection();
+    httpURLConnection.connect();
+    int responseCode=httpURLConnection.getResponseCode();
+    if (responseCode != HttpURLConnection.HTTP_OK) {
+      this.logger.error("Get device info http code: '{}'",responseCode);
+      return null;
+    }
+    InputStream inputStream=httpURLConnection.getInputStream();
+    reader=new InputStreamReader(inputStream,"UTF-8");
+    JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
+    String status=jsonObject.get("status").getAsString();
+    if (!status.equals("ok")) {
+      this.logger.error("Error while getting device info id: '{}' status '{}'",deviceId,status);
+      return null;
+    }
+    GetDeviceInfoResult result=gson.fromJson(jsonObject,GetDeviceInfoResult.class);
+    return result.device;
+  }
+ catch (  Exception ex) {
+    this.logger.error("Error getting device info  with id: '{}', detail '{}'",deviceId,ex.toString());
+    return null;
+  }
+ finally {
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+ catch (      IOException ignored) {
+      }
+    }
+  }
+}

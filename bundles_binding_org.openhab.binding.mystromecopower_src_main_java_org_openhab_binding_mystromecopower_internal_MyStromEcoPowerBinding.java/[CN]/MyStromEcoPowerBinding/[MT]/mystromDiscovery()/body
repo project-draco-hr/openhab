@@ -1,0 +1,17 @@
+{
+  List<MystromDevice> devices;
+  logger.info("Do mystrom discovery");
+  this.devicesMap.clear();
+  if (this.mystromClient.login() == false) {
+    logger.info("Invalid user or password");
+    return;
+  }
+  devices=this.mystromClient.getDevices();
+  for (  MystromDevice mystromDevice : devices) {
+    this.devicesMap.put(mystromDevice.name,mystromDevice.id);
+    if (mystromDevice.type == "mst") {
+      this.masterDevice=mystromDevice;
+    }
+    logger.info("Mystrom device name: '{}', mystrom device id:'{}'",mystromDevice.name,mystromDevice.id);
+  }
+}
