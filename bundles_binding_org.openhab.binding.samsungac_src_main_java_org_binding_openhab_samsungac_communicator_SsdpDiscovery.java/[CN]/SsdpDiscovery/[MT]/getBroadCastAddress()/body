@@ -1,12 +1,16 @@
 {
   Enumeration<NetworkInterface> interfaces=NetworkInterface.getNetworkInterfaces();
+  List<InetAddress> addresses=new ArrayList<InetAddress>();
+  addresses.add(InetAddress.getByName("255.255.255.255"));
   while (interfaces.hasMoreElements()) {
     NetworkInterface networkInterface=interfaces.nextElement();
-    if (networkInterface.isLoopback())     continue;
+    if (networkInterface.isLoopback() || !networkInterface.supportsMulticast())     continue;
     for (    InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
       InetAddress broadcast=interfaceAddress.getBroadcast();
-      if (broadcast != null)       return broadcast;
+      if (broadcast != null) {
+        addresses.add(broadcast);
+      }
     }
   }
-  return null;
+  return addresses;
 }
