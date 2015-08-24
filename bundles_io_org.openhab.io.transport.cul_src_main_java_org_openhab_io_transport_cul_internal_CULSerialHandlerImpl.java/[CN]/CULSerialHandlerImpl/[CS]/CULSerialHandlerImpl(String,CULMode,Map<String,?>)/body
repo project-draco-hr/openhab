@@ -1,15 +1,8 @@
 {
   super(deviceName,mode);
   if (properties == null)   return;
-  Integer tmpBaudRate=null;
-  Object baudRateObject=properties.get(KEY_BAUDRATE);
-  if (baudRateObject instanceof String) {
-    final String configuredBaudRate=(String)baudRateObject;
-    tmpBaudRate=baudrateFromConfig(configuredBaudRate);
-  }
- else   if (baudRateObject instanceof Integer) {
-    tmpBaudRate=(Integer)baudRateObject;
-  }
+  final String configuredBaudRate=(String)properties.get(KEY_BAUDRATE);
+  Integer tmpBaudRate=baudrateFromConfig(configuredBaudRate);
   if (tmpBaudRate != null) {
     baudRate=tmpBaudRate;
     log.info("Update config, {} = {}",KEY_BAUDRATE,baudRate);
