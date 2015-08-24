@@ -1,6 +1,9 @@
 {
   if (isConnected())   return;
- else   disconnect();
+ else {
+    logger.info("Disconnected so we'll try again");
+    disconnect();
+  }
   try {
     SSLContext ctx=SSLContext.getInstance("TLS");
     final TrustManager[] trustAllCerts=new TrustManager[]{new X509TrustManager(){
@@ -17,6 +20,7 @@
     socket=(SSLSocket)ctx.getSocketFactory().createSocket(IP,PORT);
     socket.setSoTimeout(10000);
     socket.startHandshake();
+    logger.debug("Connected again...");
   }
  catch (  Exception e) {
     throw new Exception("Cannot connect to " + IP + ":"+ PORT,e);

@@ -1,9 +1,10 @@
 {
   if (itemName != null && command != null) {
-    logger.debug("InternalReceiveCommand +'" + itemName + "':'"+ command+ "'");
+    logger.debug("InternalReceiveCommand [" + itemName + ":"+ command+ "]");
     String hostName=getAirConditionerInstance(itemName);
     AirConditioner host=nameHostMapper.get(hostName);
     if (host == null) {
+      logger.debug("Host with hostname:" + hostName + " not found...");
       return;
     }
     CommandEnum property=getProperty(itemName);
@@ -11,6 +12,6 @@
     if (cmd != null) {
       sendCommand(host,property,cmd);
     }
- else     logger.debug("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
+ else     logger.warn("Not sending for itemName: '" + itemName + "' because property not implemented: '"+ property+ "'");
   }
 }
