@@ -36,9 +36,11 @@
   nameHostMapper=hosts;
   if (nameHostMapper == null || nameHostMapper.size() == 0) {
     setProperlyConfigured(false);
-    Map<String,String> discovered=SsdpDiscovery.discover();
+    Map<String,Map<String,String>> discovered=SsdpDiscovery.discover();
     if (discovered != null && discovered.size() > 0) {
-      logger.warn("We found an air conditioner. Please put the following in your configuration file: " + "\r\n samsungac:Livingroom.host=" + discovered.get("IP") + "\r\n samsungac:Livingroom.mac="+ discovered.get("MAC_ADDR"));
+      for (      Map<String,String> ac : discovered.values()) {
+        if (ac.get("IP") != null && ac.get("MAC_ADDR") != null)         logger.warn("We found air conditioner. Please put the following in your configuration file: " + "\r\n samsungac:<ACNAME>.host=" + ac.get("IP") + "\r\n samsungac:<ACNAME>.mac="+ ac.get("MAC_ADDR"));
+      }
     }
  else {
       logger.warn("No Samsung Air Conditioner has been configured, and we could not find one either");

@@ -1,6 +1,6 @@
 {
   logger.debug("Sending request:'" + line + "'");
-  connect();
+  if (!isConnected())   login();
   BufferedWriter writer;
   try {
     writer=new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -9,7 +9,8 @@
     writer.flush();
   }
  catch (  Exception e) {
-    logger.warn("Could not write line. Disconnecting...");
+    logger.info("Could not write line. Disconnecting..., exception was: " + e);
     disconnect();
+    throw (e);
   }
 }
