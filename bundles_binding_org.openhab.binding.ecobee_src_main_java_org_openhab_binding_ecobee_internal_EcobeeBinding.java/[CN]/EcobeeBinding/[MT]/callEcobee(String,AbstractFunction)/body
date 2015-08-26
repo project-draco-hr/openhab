@@ -1,0 +1,52 @@
+{
+  EcobeeBindingProvider provider=null;
+  String selectionMatch=null;
+  for (  EcobeeBindingProvider p : this.providers) {
+    selectionMatch=p.getThermostatIdentifier(itemName);
+    if (selectionMatch != null) {
+      provider=p;
+      break;
+    }
+  }
+  if (provider == null) {
+    logger.warn("no matching binding provider found [itemName={}, function={}]",itemName,function);
+    return false;
+  }
+  final Selection selection=new Selection(selectionMatch);
+  logger.trace("Selection for function: {}",selection);
+  try {
+    logger.trace("Function to call: {}",function);
+    OAuthCredentials oauthCredentials=getOAuthCredentials(provider.getUserid(itemName));
+    if (oauthCredentials == null) {
+      logger.warn("Unable to locate credentials for item {}; aborting function call.",itemName);
+      return false;
+    }
+    if (oauthCredentials.noAccessToken()) {
+      if (!oauthCredentials.refreshTokens()) {
+        logger.warn("Calling function skipped.");
+        return false;
+      }
+    }
+    List<AbstractFunction> functions=new ArrayList<AbstractFunction>(1);
+    functions.add(function);
+    UpdateThermostatRequest request=new UpdateThermostatRequest(oauthCredentials.accessToken,selection,functions,null);
+    ApiResponse response=request.execute();
+    if (response.isError()) {
+      final Status status=response.getStatus();
+      if (status.isAccessTokenExpired()) {
+        if (oauthCredentials.refreshTokens()) {
+          return callEcobee(itemName,function);
+        }
+      }
+ else {
+        logger.error("Error calling function: {}",response);
+      }
+      return false;
+    }
+    return true;
+  }
+ catch (  Exception e) {
+    logger.error("Unable to call function",e);
+    return false;
+  }
+}

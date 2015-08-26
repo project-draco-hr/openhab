@@ -1,0 +1,11 @@
+{
+  EcobeeActionService service=EcobeeActionService.getEcobeeActionService();
+  if (service == null) {
+    throw new Exception(String.format("Ecobee Service is not configured, Action for Item %1$s not queued.",itemName));
+  }
+  EcobeeActionProvider actionProvider=service.getEcobeeActionProvider();
+  if (actionProvider == null) {
+    throw new Exception(String.format("Ecobee Action Provider is not configured, Action for Item %1$s not queued.",itemName));
+  }
+  return actionProvider;
+}
