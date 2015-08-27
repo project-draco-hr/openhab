@@ -1,0 +1,7 @@
+{
+  logger.debug("NODE {}: Creating new message for application command INDICATOR_SET",this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),3,(byte)getCommandClass().getKey(),(byte)INDICATOR_SET,(byte)value};
+  result.setMessagePayload(newPayload);
+  return result;
+}
