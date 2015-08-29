@@ -9,6 +9,9 @@
   String commandClassName=bindingConfiguration.getArguments().get("command");
   if (commandClassName != null) {
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
+    if (node.getNodeId() == this.controller.getOwnNodeId() && commandClassName == "SWITCH_ALL") {
+      commandClass=node.getCommandClass(CommandClass.getCommandClass(commandClassName));
+    }
     if (commandClass == null) {
       logger.warn("NODE {}: No command class found for item = {}. Class = {}({}), endpoint = {}. Ignoring command.",node.getNodeId(),itemName,commandClassName,CommandClass.getCommandClass(commandClassName).toString(),bindingConfiguration.getEndpoint());
       return;
