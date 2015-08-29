@@ -1,0 +1,21 @@
+{
+  int mode=serialMessage.getMessagePayloadByte(offset + 1);
+switch (mode) {
+case SWITCH_ALL_EXCLUDED:
+    logger.debug("NODE {}: Switch All report, device is not included in either All On or All Off groups.",(Object)this.getNode().getNodeId());
+  break;
+case SWITCH_ALL_INCLUDE_ON_ONLY:
+logger.debug("NODE {}: Switch All report, device included in All On group.",(Object)this.getNode().getNodeId());
+break;
+case SWITCH_ALL_INCLUDE_OFF_ONLY:
+logger.debug("NODE {}: Switch All report, device included in All Off group.",(Object)this.getNode().getNodeId());
+break;
+case SWITCH_ALL_INCLUDE_ON_OFF:
+logger.debug("NODE {}: Switch All report, device included in All On and All Off group.",(Object)this.getNode().getNodeId());
+break;
+default :
+logger.warn(String.format("Unsupported Switch All mode 0x%02X.",mode));
+}
+ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),mode);
+this.getController().notifyEventListeners(zEvent);
+}
