@@ -28,6 +28,18 @@
       if (splitDomain[2].equals("Location")) {
         node.setLocation(value);
       }
+      if (splitDomain[2].equals("Switch All")) {
+        ZWaveSwitchAllCommandClass switchAllCommandClass=(ZWaveSwitchAllCommandClass)node.getCommandClass(CommandClass.SWITCH_ALL);
+        if (switchAllCommandClass == null) {
+          logger.error("NODE {}: Error getting switchAllCommandClass in doSet",nodeId);
+          return;
+        }
+        int mode=Integer.parseInt(value);
+        PendingCfg.Add(ZWaveSwitchAllCommandClass.CommandClass.SWITCH_ALL.getKey(),node.getNodeId(),0,mode);
+        SerialMessage msg=switchAllCommandClass.setValueMessage(mode);
+        this.zController.sendData(msg);
+        this.zController.sendData(switchAllCommandClass.getValueMessage());
+      }
       ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
       nodeSerializer.SerializeNode(node);
     }
