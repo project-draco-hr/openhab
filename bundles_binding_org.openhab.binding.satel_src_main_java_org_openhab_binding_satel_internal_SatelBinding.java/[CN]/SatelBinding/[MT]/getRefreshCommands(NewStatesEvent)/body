@@ -1,5 +1,6 @@
 {
   logger.trace("Gathering refresh commands from all items");
+  boolean forceRefresh=switchForceRefresh(false);
   List<SatelMessage> commands=new ArrayList<SatelMessage>();
   for (  SatelBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
@@ -9,8 +10,7 @@
       if (message == null || commands.contains(message)) {
         continue;
       }
-      Item item=provider.getItem(itemName);
-      if (item.getState() == UnDefType.UNDEF || (nse != null && nse.isNew(message.getCommand())) || message.getCommand() == IntegraStatusCommand.COMMAND_CODE) {
+      if (forceRefresh || (nse != null && nse.isNew(message.getCommand())) || message.getCommand() == IntegraStatusCommand.COMMAND_CODE) {
         commands.add(message);
       }
     }

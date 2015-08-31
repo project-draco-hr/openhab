@@ -3,15 +3,16 @@
   if (config == null) {
     return;
   }
-  this.refreshInterval=getLongValue(config,"refresh",10000);
-  this.userCode=getStringValue(config,"user_code",null);
-  int timeout=getIntValue(config,"timeout",5000);
-  String host=getStringValue(config,"host",null);
+  ConfigurationDictionary configuration=new ConfigurationDictionary(config);
+  this.refreshInterval=configuration.getLong("refresh",10000);
+  this.userCode=configuration.getString("user_code");
+  int timeout=configuration.getInt("timeout",5000);
+  String host=configuration.getString("host");
   if (StringUtils.isNotBlank(host)) {
-    this.satelModule=new Ethm1Module(host,getIntValue(config,"port",7094),timeout,(String)config.get("encryption_key"));
+    this.satelModule=new Ethm1Module(host,configuration.getInt("port",7094),timeout,configuration.getString("encryption_key"));
   }
  else {
-    this.satelModule=new IntRSModule((String)config.get("port"),timeout);
+    this.satelModule=new IntRSModule(configuration.getString("port"),timeout);
   }
   this.satelModule.addEventListener(this);
   this.satelModule.open();

@@ -1,10 +1,16 @@
 {
+  logger.trace("Checking communication thread: {}, {}",this.thread != null,Boolean.toString(this.thread != null && this.thread.isAlive()));
   if (this.thread != null && this.thread.isAlive()) {
     long timePassed=(this.lastActivity == 0) ? 0 : System.currentTimeMillis() - this.lastActivity;
     if (timePassed > SatelModule.this.timeout) {
       logger.error("Send/receive timeout, disconnecting module.");
       stop();
       this.thread.interrupt();
+      try {
+        this.thread.join(100);
+      }
+ catch (      InterruptedException e) {
+      }
       SatelModule.this.disconnect();
     }
   }
