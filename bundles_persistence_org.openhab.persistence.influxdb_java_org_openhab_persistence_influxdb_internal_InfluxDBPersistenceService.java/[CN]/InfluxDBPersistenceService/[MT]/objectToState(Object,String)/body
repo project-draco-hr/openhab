@@ -3,36 +3,16 @@
   if (itemRegistry != null) {
     try {
       Item item=itemRegistry.getItem(itemName);
-      if (item instanceof NumberItem) {
-        return new DecimalType(valueStr);
-      }
- else       if (item instanceof ColorItem) {
-        return new HSBType(valueStr);
-      }
- else       if (item instanceof DimmerItem) {
-        return new PercentType(valueStr);
-      }
- else       if (item instanceof SwitchItem) {
-        return string2DigitalValue(valueStr).equals(DIGITAL_VALUE_OFF) ? OnOffType.OFF : OnOffType.ON;
+      if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+        return valueStr.equals(DIGITAL_VALUE_OFF) ? OnOffType.OFF : OnOffType.ON;
       }
  else       if (item instanceof ContactItem) {
-        return (string2DigitalValue(valueStr).equals(DIGITAL_VALUE_OFF)) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
-      }
- else       if (item instanceof RollershutterItem) {
-        return new PercentType(valueStr);
-      }
- else       if (item instanceof DateTimeItem) {
-        Calendar calendar=Calendar.getInstance();
-        calendar.setTimeInMillis(new BigDecimal(valueStr).longValue());
-        return new DateTimeType(calendar);
-      }
- else {
-        return new StringType(valueStr);
+        return valueStr.equals(DIGITAL_VALUE_OFF) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
       }
     }
  catch (    ItemNotFoundException e) {
       logger.warn("Could not find item '{}' in registry",itemName);
     }
   }
-  return new StringType(valueStr);
+  return new DecimalType(valueStr);
 }

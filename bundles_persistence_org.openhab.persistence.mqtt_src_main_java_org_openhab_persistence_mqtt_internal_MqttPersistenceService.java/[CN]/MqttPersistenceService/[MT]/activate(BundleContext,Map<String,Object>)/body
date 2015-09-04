@@ -1,0 +1,15 @@
+{
+  deactivate(0);
+  brokerName=getProperty(properties,"broker");
+  topic=getProperty(properties,"topic");
+  messageTemplate=getProperty(properties,"message");
+  configured=true;
+  logger.debug("Configuration updated for MQTT Persistence.");
+  if (StringUtils.isBlank(brokerName)) {
+    logger.debug("Configuration incomplete. Cannot start yet.");
+    return;
+  }
+  logger.debug("Activating MQTT Persistence");
+  publisher=new MqttPersistencePublisher(topic,messageTemplate);
+  mqttService.registerMessageProducer(brokerName,publisher);
+}

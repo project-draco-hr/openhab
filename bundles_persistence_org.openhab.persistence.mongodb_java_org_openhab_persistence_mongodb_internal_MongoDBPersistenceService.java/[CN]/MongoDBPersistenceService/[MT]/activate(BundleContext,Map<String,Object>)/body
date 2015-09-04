@@ -1,0 +1,20 @@
+{
+  url=(String)config.get("url");
+  logger.debug("MongoDB URL {}",url);
+  if (StringUtils.isBlank(url)) {
+    logger.warn("The MongoDB database URL is missing - please configure the mongodb:url parameter in openhab.cfg");
+  }
+  db=(String)config.get("database");
+  logger.debug("MongoDB database {}",db);
+  if (StringUtils.isBlank(db)) {
+    logger.warn("The MongoDB database name is missing - please configure the mongodb:database parameter in openhab.cfg");
+  }
+  collection=(String)config.get("collection");
+  logger.debug("MongoDB collection {}",collection);
+  if (StringUtils.isBlank(collection)) {
+    logger.warn("The MongoDB database collection is missing - please configure the mongodb:collection parameter in openhab.cfg");
+  }
+  disconnectFromDatabase();
+  connectToDatabase();
+  initialized=true;
+}
