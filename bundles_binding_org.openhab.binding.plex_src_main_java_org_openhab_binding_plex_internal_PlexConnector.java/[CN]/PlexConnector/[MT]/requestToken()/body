@@ -1,0 +1,21 @@
+{
+  boolean tokenPresent=!StringUtils.isEmpty(connection.getToken());
+  boolean usernamePresent=!StringUtils.isEmpty(connection.getUsername());
+  boolean passwordPresent=!StringUtils.isEmpty(connection.getPassword());
+  if (!tokenPresent && usernamePresent && passwordPresent) {
+    Map<String,String> parameters=new HashMap<String,String>();
+    String authString=Base64.encode((connection.getUsername() + ":" + connection.getPassword()).getBytes());
+    parameters.put("Authorization","Basic " + authString);
+    parameters.put("X-Plex-Client-Identifier",CLIENT_ID);
+    parameters.put("X-Plex-Product","openHAB");
+    parameters.put("X-Plex-Version",PlexActivator.getVersion().toString());
+    User user=postDocument(SIGN_IN_URL,parameters,User.class);
+    if (user != null) {
+      logger.debug("Plex login successful");
+      connection.setToken(user.getAuthenticationToken());
+    }
+ else {
+      logger.warn("Invalid credentials for Plex account");
+    }
+  }
+}
