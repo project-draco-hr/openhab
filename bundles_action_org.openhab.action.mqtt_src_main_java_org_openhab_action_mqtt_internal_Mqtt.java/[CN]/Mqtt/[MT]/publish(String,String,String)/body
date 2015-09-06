@@ -1,0 +1,15 @@
+{
+  if (!MqttActionService.isProperlyConfigured) {
+    logger.debug("Mqtt action is not yet configured - execution aborted!");
+    return false;
+  }
+  logger.debug("Message to broker: {}, topic: {}",brokerName,topic);
+  MqttMessagePublisher publisher=messagePublishers.get(brokerName);
+  if (publisher == null) {
+    publisher=new MqttMessagePublisher();
+    messagePublishers.put(brokerName,publisher);
+    mqttTransportService.registerMessageProducer(brokerName,publisher);
+  }
+  publisher.publish(topic,message);
+  return true;
+}
