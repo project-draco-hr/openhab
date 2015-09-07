@@ -1,0 +1,12 @@
+{
+  byte[] data=new byte[7];
+  data[0]=0x07;
+  data[1]=RFXComBaseMessage.PacketType.CHIME.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=(byte)(chimeSound);
+  data[7]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}

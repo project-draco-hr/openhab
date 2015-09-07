@@ -1,0 +1,17 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  uv=(data[6] & 0xFF);
+  if (subType == SubType.UV3) {
+    temperature=(short)((data[7] & 0x7F) << 8 | (data[8] & 0xFF)) * 0.1;
+    if ((data[7] & 0x80) != 0)     temperature=-temperature;
+  }
+  signalLevel=(byte)((data[9] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[9] & 0x0F);
+}
