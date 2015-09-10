@@ -18,7 +18,11 @@
     }
   }
  catch (  Exception e) {
-    logger.warn("Exception reading from Ecobee: {}",e.getMessage());
-    logger.debug("Stack trace:",e);
+    if (logger.isDebugEnabled()) {
+      logger.warn("Exception reading from Ecobee:",e);
+    }
+ else {
+      logger.warn("Exception reading from Ecobee: {}",e.getMessage());
+    }
   }
 }
