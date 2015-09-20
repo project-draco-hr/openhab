@@ -1,0 +1,34 @@
+{
+  logger.debug("modified()");
+  try {
+    PanStampBindingSettings newCfg=PanStampBindingSettings.parseConfig(configuration);
+    if (cfg == null) {
+      startup(newCfg);
+    }
+ else     if (cfg.equals(newCfg)) {
+      logger.info("Settings not changed, continuing");
+    }
+ else {
+      if (cfg.serialDiffers(newCfg)) {
+        logger.info("Serial configuration changed. Restarting panStamp binding");
+        stop();
+        startup(newCfg);
+        return;
+      }
+      if (cfg.networkDiffers(newCfg)) {
+        setupModem(newCfg);
+      }
+      if (cfg.directoriesDiffers(newCfg)) {
+        setupDirectories(newCfg);
+      }
+      if (cfg.debugDiffers(newCfg)) {
+        stopDebug();
+        startDebug(newCfg);
+      }
+    }
+    cfg=newCfg;
+  }
+ catch (  ValueException e) {
+    logger.error("Configuration error: {}",e.getMessage());
+  }
+}

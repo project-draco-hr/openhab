@@ -1,0 +1,25 @@
+{
+  try {
+    logger.debug("startNetwork()");
+    modem=new SerialModem(cfg.serialPort,cfg.serialSpeed);
+    modem.open();
+    logger.info("Opened panStamp network on serial port {} at {}bps",cfg.serialPort,cfg.serialSpeed);
+    setupModem(cfg);
+    network=Network.create(modem);
+    setupDirectories(cfg);
+    network.setDeviceStore(store);
+    logger.info("Configured binding product codes");
+    network.addListener(networkListener);
+    network.open();
+    logger.info("Opened network");
+  }
+ catch (  NetworkException e) {
+    logger.error("Error connecting to serial network on {}: {}",cfg.serialPort,e.getMessage());
+  }
+catch (  SwapException e) {
+    logger.error("Error reading modem settings for serial network on {}: {}",cfg.serialPort,e.getMessage());
+  }
+catch (  Throwable e) {
+    logger.error("Fatal error: {}",e.getMessage(),e);
+  }
+}

@@ -1,0 +1,16 @@
+{
+  String sVal=asString(name,val);
+  try {
+    int iVal;
+    if (sVal.startsWith("0x")) {
+      iVal=Integer.parseInt(sVal.replace("0x",""),16);
+    }
+ else {
+      iVal=Integer.parseInt(sVal);
+    }
+    return iVal;
+  }
+ catch (  NumberFormatException e) {
+    throw new ValueException("Invalid " + name + " '"+ sVal+ "'",e);
+  }
+}

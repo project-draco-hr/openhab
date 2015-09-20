@@ -1,0 +1,7 @@
+{
+  String pcp[]=val.split("/");
+  if (pcp.length != 2) {
+    throw new BindingConfigParseException(String.format("Malformed product code pair '%s'",val));
+  }
+  return PanStampConversions.asInt("product id",pcp[1].trim(),1,0xffff);
+}

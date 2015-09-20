@@ -1,0 +1,12 @@
+{
+  try {
+    logger.debug("addDevice({} ({}/{})",PanStampConversions.toString(dev),dev.getManufacturerId(),dev.getProductId());
+  }
+ catch (  NetworkException e) {
+    logger.error(e.getMessage());
+  }
+  dev.addListener(panStampListener);
+  for (  Register reg : dev.getRegisters()) {
+    if (!reg.isStandard())     addRegister(reg);
+  }
+}

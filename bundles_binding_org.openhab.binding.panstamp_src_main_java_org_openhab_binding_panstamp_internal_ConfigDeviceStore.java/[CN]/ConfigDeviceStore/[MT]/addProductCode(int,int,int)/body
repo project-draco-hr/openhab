@@ -1,0 +1,18 @@
+{
+  byte val[]=new byte[8];
+  val[0]=(byte)(manId >> 24);
+  val[1]=(byte)(manId >> 16);
+  val[2]=(byte)(manId >> 8);
+  val[3]=(byte)(manId);
+  val[4]=(byte)(prodId >> 24);
+  val[5]=(byte)(prodId >> 16);
+  val[6]=(byte)(prodId >> 8);
+  val[7]=(byte)(prodId);
+  if (map.containsKey(address)) {
+    byte oldVal[]=map.get(address);
+    if (Arrays.equals(oldVal,val)) {
+      logger.warn("Product code for device {} re-assigned from {}/{} to {}/{}.",address,bytesToInt(oldVal,0,4),bytesToInt(oldVal,4,4),manId,prodId);
+    }
+  }
+  map.put(address,val);
+}

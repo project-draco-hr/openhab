@@ -1,0 +1,12 @@
+{
+  PanStampBindingConfig<?> config;
+  try {
+    config=parse(item.getName(),bindingConfig);
+    addBindingConfig(item,config);
+    logger.debug("Created binding config '{}'",config);
+  }
+ catch (  ValueException e) {
+    throw new BindingConfigParseException(e.getMessage());
+  }
+  super.processBindingConfiguration(context,item,bindingConfig);
+}

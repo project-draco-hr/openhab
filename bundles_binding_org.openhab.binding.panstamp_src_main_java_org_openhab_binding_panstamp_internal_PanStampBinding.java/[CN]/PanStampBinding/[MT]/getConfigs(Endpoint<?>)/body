@@ -1,0 +1,14 @@
+{
+  List<PanStampBindingConfig<?>> configs=new ArrayList<PanStampBindingConfig<?>>();
+  Register reg=ep.getRegister();
+  PanStamp ps=reg.getDevice();
+  for (  PanStampBindingProvider prov : providers) {
+    for (    String itemName : prov.getItemNames()) {
+      PanStampBindingConfig<?> conf=prov.getConfig(itemName);
+      if ((conf.getAddress() == ps.getAddress() && (conf.getRegister() == reg.getId()) && conf.getEndpoint().equals(ep.getName()))) {
+        configs.add(conf);
+      }
+    }
+  }
+  return configs;
+}

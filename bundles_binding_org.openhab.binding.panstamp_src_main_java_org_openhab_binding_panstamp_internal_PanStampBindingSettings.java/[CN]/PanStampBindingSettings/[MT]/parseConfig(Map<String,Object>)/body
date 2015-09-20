@@ -1,0 +1,24 @@
+{
+  PanStampBindingSettings cfg=new PanStampBindingSettings();
+  cfg.serialPort=PanStampConversions.asString("serial.port",con.get("serial.port"));
+  if (con.containsKey("serial.speed")) {
+    cfg.serialSpeed=PanStampConversions.asInt("serial.speed",con.get("serial.speed"),new int[]{9600,19200,38400,57600,115200});
+  }
+  if (con.containsKey("network.channel")) {
+    cfg.networkChannel=PanStampConversions.asInt("network.channel",con.get("network.channel"),0,0xFFFF);
+  }
+  if (con.containsKey("network.id")) {
+    cfg.networkId=PanStampConversions.asInt("network.id",con.get("network.id"),0,0xFFFF);
+  }
+  if (con.containsKey("network.deviceAddress")) {
+    cfg.networkDeviceAddress=PanStampConversions.asInt("network.deviceAddress",con.get("network.deviceAddress"),0,0xFFFF);
+  }
+  if (con.containsKey("directory.xml")) {
+    cfg.xmlDir=PanStampConversions.asString("directory.xml",con.get("directory.xml"));
+  }
+  if (con.containsKey("debug.port")) {
+    cfg.debugPort=PanStampConversions.asInt("debug.port",con.get("debug.port"),1,65535);
+    cfg.debugEnabled=true;
+  }
+  return cfg;
+}
