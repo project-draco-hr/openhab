@@ -7,13 +7,8 @@
       if (serialDevice == null) {
         continue;
       }
-      if (itemName.equals(serialDevice.getStringItemName())) {
-        serialDevice.setStringItemName(null);
-      }
-      if (itemName.equals(serialDevice.getSwitchItemName())) {
-        serialDevice.setSwitchItemName(null);
-      }
-      if (serialDevice.getStringItemName() == null && serialDevice.getSwitchItemName() == null) {
+      serialDevice.removeRegEx(itemName);
+      if (serialDevice.isEmpty()) {
         serialDevice.close();
         serialDevices.remove(serialDevice.getPort());
       }
