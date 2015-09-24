@@ -1,0 +1,9 @@
+{
+  logger.debug("sendKeySequence(): Sending key sequence '{}'.",keySequence);
+  boolean sent=false;
+  for (  char key : keySequence.toCharArray()) {
+    sent=api.sendCommand(APICode.KeyStroke,String.valueOf(key));
+    if (!sent)     return sent;
+  }
+  return sent;
+}

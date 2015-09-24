@@ -1,0 +1,16 @@
+{
+  logger.debug("sendDSCAlarmCommand(): Attempting to send DSC Alarm Command: command - {} - data: {}",command,data);
+  try {
+    APICode apiCode=APICode.getAPICodeValue(command);
+    if (connectorType.equals(DSCAlarmConnectorType.SERIAL) && apiCode.equals(APICode.KeySequence)) {
+      return sendKeySequence(data);
+    }
+ else {
+      return api.sendCommand(apiCode,data);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("sendDSCAlarmCommand(): Failed to send DSC Alarm Command! - {}",e);
+    return false;
+  }
+}
