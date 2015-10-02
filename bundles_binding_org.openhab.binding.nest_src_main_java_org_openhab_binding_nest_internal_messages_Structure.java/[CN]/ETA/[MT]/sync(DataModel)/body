@@ -17,4 +17,13 @@
       }
     }
   }
+  this.cameras_by_name=new HashMap<String,Camera>();
+  if (this.camera_id_list != null) {
+    for (    String id : this.camera_id_list) {
+      Camera cam=dataModel.getDevices().getCameras_by_id().get(id);
+      if (cam != null) {
+        this.cameras_by_name.put(cam.getName(),cam);
+      }
+    }
+  }
 }
