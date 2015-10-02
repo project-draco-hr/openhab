@@ -1,0 +1,11 @@
+{
+  Integer value=provider.getInputCachedValue(address);
+  if (forceReload || value == null) {
+    logger.debug(String.format("cached value missing, reloading for [%s %d %s]",pnmasId,address,subAddress));
+    SappPnmas pnmas=provider.getPnmasMap().get(pnmasId);
+    SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
+    value=sappCentralExecuter.executeSapp74Command(pnmas.getIp(),pnmas.getPort(),(byte)address);
+    provider.setInputCachedValue(address,value);
+  }
+  return value.intValue();
+}

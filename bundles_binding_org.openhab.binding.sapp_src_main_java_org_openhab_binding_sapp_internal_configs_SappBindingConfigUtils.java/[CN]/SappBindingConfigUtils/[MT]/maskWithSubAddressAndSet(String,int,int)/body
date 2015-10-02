@@ -1,0 +1,20 @@
+{
+  if (subAddress.equals("*")) {
+    return newValue & 0xFFFF;
+  }
+ else   if (subAddress.equals("L")) {
+    return (newValue & 0x00FF) | (previousValue & 0xFF00);
+  }
+ else   if (subAddress.equals("H")) {
+    return ((newValue << 8) & 0xFF00) | (previousValue & 0x00FF);
+  }
+ else {
+    int shift=Integer.parseInt(subAddress);
+    if ((newValue & 0x0001) != 0) {
+      return previousValue | (1 << (shift - 1));
+    }
+ else {
+      return previousValue & ~(1 << (shift - 1));
+    }
+  }
+}

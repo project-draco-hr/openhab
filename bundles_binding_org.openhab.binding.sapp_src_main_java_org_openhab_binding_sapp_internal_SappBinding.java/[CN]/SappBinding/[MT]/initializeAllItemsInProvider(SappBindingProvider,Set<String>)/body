@@ -1,0 +1,9 @@
+{
+  logger.debug("Updating item state for items {}",provider.getItemNames());
+  for (  String itemName : provider.getItemNames()) {
+    if (toBeProcessed.contains(ALL_UPDATE_REQUEST_KEY) || toBeProcessed.contains(itemName)) {
+      queryAndSendActualState(provider,itemName);
+    }
+  }
+  updatePollingSwitchesState(provider);
+}
