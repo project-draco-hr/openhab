@@ -1,4 +1,6 @@
 {
+  final String itemName=item.getName();
+  logger.trace("Starting to load Souliss config for item {}",itemName);
   super.processBindingConfiguration(context,item,bindingConfig);
   String[] sNameArray=bindingConfig.split("\\:");
   String sTypical=sNameArray[0];
@@ -7,24 +9,32 @@
   byte iBit=0;
   String sUseSlot="";
   if (sNameArray.length > 3) {
-    if (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31)     sUseSlot=sNameArray[3];
+    if ((StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31) || (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T12))     sUseSlot=sNameArray[3];
  else     iBit=Byte.parseByte(sNameArray[3]);
   }
   String sNote=item.getClass().getSimpleName();
   SoulissGenericTypical soulissTypicalNew=null;
-  if (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31) {
+  if ((StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T31) || (StateTraslator.stringToSOULISSTypicalCode(sTypical) == Constants.Souliss_T12)) {
     soulissTypicalNew=SoulissTypicalsRecipients.getTypicalFromAddress(iNodeID,iSlot,0);
     if (soulissTypicalNew == null) {
       soulissTypicalNew=TypicalFactory.getClass(StateTraslator.stringToSOULISSTypicalCode(sTypical),SoulissNetworkParameter.datagramsocket,SoulissNetworkParameter.IPAddressOnLAN,iNodeID,iSlot,sNote,iBit,sUseSlot);
     }
     if (soulissTypicalNew != null) {
 switch (sUseSlot) {
-case Constants.Souliss_T31_Use_Of_Slot_SETPOINT:
-        ((SoulissT31)soulissTypicalNew).setsItemNameSetpointValue(item.getName());
-      ((SoulissT31)soulissTypicalNew).setsItemTypeSetpointValue(sNote);
+case Constants.Souliss_T12_Use_Of_Slot_AUTOMODE:
+        ((SoulissT12)soulissTypicalNew).setsItemNameAutoModeValue(item.getName());
+      ((SoulissT12)soulissTypicalNew).setsItemTypeAutoModeValue(sNote);
     break;
+case Constants.Souliss_T12_Use_Of_Slot_SWITCH:
+  ((SoulissT12)soulissTypicalNew).setsItemNameSwitchValue(item.getName());
+((SoulissT12)soulissTypicalNew).setsItemTypeSwitchValue(sNote);
+break;
+case Constants.Souliss_T31_Use_Of_Slot_SETPOINT:
+((SoulissT31)soulissTypicalNew).setsItemNameSetpointValue(item.getName());
+((SoulissT31)soulissTypicalNew).setsItemTypeSetpointValue(sNote);
+break;
 case Constants.Souliss_T31_Use_Of_Slot_MEASURED:
-  ((SoulissT31)soulissTypicalNew).setsItemNameMeasuredValue(item.getName());
+((SoulissT31)soulissTypicalNew).setsItemNameMeasuredValue(item.getName());
 ((SoulissT31)soulissTypicalNew).setsItemTypeMeasuredValue(sNote);
 break;
 case Constants.Souliss_T31_Use_Of_Slot_SETASMEASURED:
@@ -68,7 +78,7 @@ case Constants.Souliss_T31_Use_Of_Slot_POWER:
 ((SoulissT31)soulissTypicalNew).power.setNote(sNote);
 break;
 }
-logger.info("Add parameter to T31 : " + sUseSlot);
+logger.info("Add parameter to T31/T12 : " + sUseSlot);
 }
 }
 if (soulissTypicalNew == null) {
