@@ -1,0 +1,10 @@
+{
+synchronized (this) {
+    SappCommand sappCommand=new Sapp7CCommand(address);
+    sappCommand.run(ip,port);
+    if (!sappCommand.isResponseOk()) {
+      throw new SappException("command execution failed");
+    }
+    return sappCommand.getResponse().getDataAsWord();
+  }
+}

@@ -1,0 +1,8 @@
+{
+  Set<String> toBeReturned=new HashSet<String>();
+synchronized (mutex) {
+    toBeReturned.addAll(pendingUpdateRequests);
+    pendingUpdateRequests.clear();
+  }
+  return toBeReturned;
+}

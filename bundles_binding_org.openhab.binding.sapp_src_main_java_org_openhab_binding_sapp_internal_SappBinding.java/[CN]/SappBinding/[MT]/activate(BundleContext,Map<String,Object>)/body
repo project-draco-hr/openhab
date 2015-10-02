@@ -1,0 +1,49 @@
+{
+  logger.debug("sapp activate called");
+  this.bundleContext=bundleContext;
+  String refreshIntervalString=(String)configuration.get(CONFIG_KEY_REFRESH);
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+    logger.debug("set refresh interval: " + refreshInterval);
+  }
+  SappBindingProvider provider=getFirstSappBindingProvider();
+  if (provider != null) {
+    String pnmasEnabled=(String)configuration.get(CONFIG_KEY_PNMAS_ENABLED);
+    if (pnmasEnabled != null) {
+      String[] pnmasIds=pnmasEnabled.split(",");
+      for (      String pnmasId : pnmasIds) {
+        logger.debug(String.format("loading info for pnmas %s",pnmasId));
+        String ip=(String)configuration.get(String.format(CONFIG_KEY_PNMAS_ID,pnmasId));
+        if (ip == null) {
+          logger.warn(String.format("ip not found for pnmas %s",pnmasId));
+          continue;
+        }
+        int port;
+        String portString=(String)configuration.get(String.format(CONFIG_KEY_PNMAS_PORT,pnmasId));
+        if (portString == null) {
+          logger.warn(String.format("port not found for pnmas %s",pnmasId));
+          continue;
+        }
+ else {
+          try {
+            port=Integer.parseInt(portString);
+          }
+ catch (          NumberFormatException e) {
+            logger.warn(String.format("bad port number for pnmas %s",pnmasId));
+            continue;
+          }
+        }
+        if (provider.getPnmasMap().containsKey(pnmasId)) {
+          logger.warn(String.format("pnmas %s duplicated, skipping",pnmasId));
+          continue;
+        }
+        provider.getPnmasMap().put(pnmasId,new SappPnmas(ip,port));
+      }
+      for (      String pnmasKey : provider.getPnmasMap().keySet()) {
+        logger.debug(String.format("pnmas %s : %s:",pnmasKey,provider.getPnmasMap().get(pnmasKey)));
+      }
+    }
+  }
+  provider.getSappUpdatePendingRequests().replaceAllPendingUpdateRequests(ALL_UPDATE_REQUEST_KEY);
+  setProperlyConfigured(true);
+}

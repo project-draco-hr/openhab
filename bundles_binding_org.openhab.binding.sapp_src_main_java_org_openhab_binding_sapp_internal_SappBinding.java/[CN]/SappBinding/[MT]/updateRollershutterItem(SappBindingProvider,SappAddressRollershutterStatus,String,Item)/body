@@ -1,0 +1,22 @@
+{
+switch (statusAddress.getAddressType()) {
+case VIRTUAL:
+    try {
+      int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),getVirtualValue(provider,statusAddress.getPnmasId(),statusAddress.getAddress(),statusAddress.getSubAddress(),true));
+      eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? PercentType.HUNDRED : (result == statusAddress.getClosedValue() ? PercentType.ZERO : PercentType.valueOf("50")));
+    }
+ catch (    SappException e) {
+      logger.error("could not run sappcommand: " + e.getMessage());
+    }
+  break;
+case INPUT:
+logger.error("item type not yet implemented " + item.getClass().getSimpleName() + " for address type "+ statusAddress.getAddressType());
+break;
+case OUTPUT:
+logger.error("item type not yet implemented " + item.getClass().getSimpleName() + " for address type "+ statusAddress.getAddressType());
+break;
+default :
+logger.error("item type not yet implemented " + item.getClass().getSimpleName() + " for address type "+ statusAddress.getAddressType());
+break;
+}
+}
