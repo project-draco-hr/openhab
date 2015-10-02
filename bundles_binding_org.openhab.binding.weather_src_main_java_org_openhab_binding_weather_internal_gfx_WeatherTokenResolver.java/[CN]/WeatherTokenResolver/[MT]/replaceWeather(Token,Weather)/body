@@ -2,5 +2,9 @@
   if (!PropertyUtils.hasProperty(instance,token.name)) {
     throw new RuntimeException("Invalid weather token: " + token.full);
   }
-  return ObjectUtils.toString(PropertyUtils.getPropertyValue(instance,token.name));
+  Object propertyValue=PropertyUtils.getPropertyValue(instance,token.name);
+  if (token.formatter != null) {
+    return String.format(token.formatter,propertyValue);
+  }
+  return ObjectUtils.toString(propertyValue);
 }

@@ -1,18 +1,25 @@
 {
   String response=null;
+  Map<String,Map<String,String>> result=new HashMap<String,Map<String,String>>();
   MulticastSocket recSocket=setUpSocket();
   int i=0;
-  while (response == null) {
+  System.out.print("Retrieving response");
+  while (i < 10) {
     byte[] buf=new byte[2048];
     DatagramPacket input=new DatagramPacket(buf,buf.length);
     try {
+      System.out.print(".");
       recSocket.receive(input);
       response=new String(input.getData());
+      Map<String,String> parsedResponse=parseResponse(response);
+      result.put(parsedResponse.get("IP"),parsedResponse);
     }
  catch (    SocketTimeoutException e) {
       if (i >= 10)       break;
       i++;
     }
   }
-  return response;
+  System.out.print("\r\n");
+  System.out.println("Response retrieved: " + result);
+  return result;
 }

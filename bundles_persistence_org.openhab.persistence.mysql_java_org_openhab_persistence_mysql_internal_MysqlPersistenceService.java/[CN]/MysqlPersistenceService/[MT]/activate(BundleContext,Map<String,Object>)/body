@@ -1,0 +1,50 @@
+{
+  sqlTypes.put("CALLITEM","VARCHAR(200)");
+  sqlTypes.put("COLORITEM","VARCHAR(70)");
+  sqlTypes.put("CONTACTITEM","VARCHAR(6)");
+  sqlTypes.put("DATETIMEITEM","DATETIME");
+  sqlTypes.put("DIMMERITEM","TINYINT");
+  sqlTypes.put("LOCATIONITEM","VARCHAR(30)");
+  sqlTypes.put("NUMBERITEM","DOUBLE");
+  sqlTypes.put("ROLLERSHUTTERITEM","TINYINT");
+  sqlTypes.put("STRINGITEM","VARCHAR(20000)");
+  sqlTypes.put("SWITCHITEM","CHAR(3)");
+  Iterator<String> keys=config.keySet().iterator();
+  while (keys.hasNext()) {
+    String key=(String)keys.next();
+    Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+    if (!matcher.matches()) {
+      continue;
+    }
+    matcher.reset();
+    matcher.find();
+    if (!matcher.group(1).equals("sqltype"))     continue;
+    String itemType=matcher.group(2).toUpperCase() + "ITEM";
+    String value=(String)config.get(key);
+    sqlTypes.put(itemType,value);
+  }
+  url=(String)config.get("url");
+  if (StringUtils.isBlank(url)) {
+    logger.warn("The SQL database URL is missing - please configure the sql:url parameter in openhab.cfg");
+  }
+  user=(String)config.get("user");
+  if (StringUtils.isBlank(user)) {
+    logger.warn("The SQL user is missing - please configure the sql:user parameter in openhab.cfg");
+  }
+  password=(String)config.get("password");
+  if (StringUtils.isBlank(password)) {
+    logger.warn("The SQL password is missing. Attempting to connect without password. To specify a password configure the sql:password parameter in openhab.cfg.");
+  }
+  String tmpString=(String)config.get("reconnectCnt");
+  if (StringUtils.isNotBlank(tmpString)) {
+    errReconnectThreshold=Integer.parseInt(tmpString);
+  }
+  tmpString=(String)config.get("waitTimeout");
+  if (StringUtils.isNotBlank(tmpString)) {
+    waitTimeout=Integer.parseInt(tmpString);
+  }
+  disconnectFromDatabase();
+  connectToDatabase();
+  initialized=true;
+  logger.debug("mySQL configuration complete.");
+}

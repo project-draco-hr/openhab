@@ -4,6 +4,14 @@
   for (  String element : response.split(NEWLINE)) {
     if (element.contains(": "))     device.put(element.split(": ")[0],element.split(": ")[1]);
   }
-  device.put("IP",device.get("LOCATION").split("//")[1].toString());
+  if (device.size() > 0) {
+    String location=device.get("LOCATION");
+    if (location != null && location.length() > 1 && location.contains("//")) {
+      device.put("IP",device.get("LOCATION").split("//")[1].toString());
+    }
+ else {
+      device.clear();
+    }
+  }
   return device;
 }

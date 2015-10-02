@@ -13,22 +13,19 @@
       }
       String[] keyParts=key.split("\\.");
       String hostId=keyParts[0];
-      String configKey=keyParts[1];
       if (!hosts.containsKey(hostId)) {
-        hosts.put(hostId,new DaikinHost(hostId));
-      }
-      DaikinHost host=hosts.get(hostId);
-      if (configKey.equals(CONFIG_KEY_HOST)) {
-        host.setHost(value);
-      }
- else       if (configKey.equals(CONFIG_KEY_USERNAME)) {
-        host.setUsername(value);
-      }
- else       if (configKey.equals(CONFIG_KEY_PASSWORD)) {
-        host.setPassword(value);
-      }
- else {
-        throw new ConfigurationException(key,"Unrecognised configuration parameter: " + configKey);
+        int index=value.indexOf("@");
+        String connectionType=value.substring(0,index);
+        String host=value.substring(index + 1);
+        if (connectionType.toUpperCase().equals("WIRELESS")) {
+          IDaikin newHost=DaikinFactory.createWirelessDaikin(hostId,host,0);
+          hosts.put(hostId,newHost);
+        }
+ else         if (connectionType.toUpperCase().equals("WIRED")) {
+          IDaikin newHost=DaikinFactory.createWiredDaikin(hostId,host,0);
+          hosts.put(hostId,newHost);
+        }
+ else         throw new RuntimeException("Unsupported connectionType: " + connectionType);
       }
     }
     setProperlyConfigured(true);

@@ -1,0 +1,13 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  chimeSound=(int)(data[6]);
+  signalLevel=(byte)((data[7] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[7] & 0x0F);
+}

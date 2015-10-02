@@ -1,0 +1,17 @@
+{
+  MulticastSocket socket=new MulticastSocket(null);
+  try {
+    socket.bind(new InetSocketAddress(PORT));
+    socket.setTimeToLive(4);
+    byte[] data=notifyMessage.toString().getBytes();
+    socket.send(new DatagramPacket(data,data.length,new InetSocketAddress(ia,PORT)));
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    throw e;
+  }
+ finally {
+    socket.disconnect();
+    socket.close();
+  }
+}

@@ -4,7 +4,15 @@
     if (bindingConfig != null) {
       WemoBindingConfig config=new WemoBindingConfig();
       item.getName();
-      config.wemoFriendlyName=bindingConfig;
+      String[] configParts=bindingConfig.split(";");
+      if (configParts.length > 2) {
+        throw new BindingConfigParseException("wemo binding configuration must not have more than two parts");
+      }
+      config.udn=configParts[0];
+      config.channelType=configParts.length < 2 ? WemoChannelType.state : WemoChannelType.valueOf(configParts[1]);
+      logger.debug("Configuration for WeMo item '{}':",item.getName());
+      logger.debug("        UDN = '{}'",config.udn);
+      logger.debug("channelType = '{}'",config.channelType);
       addBindingConfig(item,config);
     }
  else {

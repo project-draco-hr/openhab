@@ -1,0 +1,19 @@
+{
+  logger.debug("NODE {}: Received Indicator Request",this.getNode().getNodeId());
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case INDICATOR_SET:
+    logger.debug("NODE {}: Indicator Set sent to the controller will be processed as Indicator Report",this.getNode().getNodeId());
+  processIndicatorReport(serialMessage,offset,endpoint);
+break;
+case INDICATOR_GET:
+logger.warn(String.format("Command 0x%02X not implemented.",command));
+return;
+case INDICATOR_REPORT:
+logger.trace("NODE {}: Process Indicator Report",this.getNode().getNodeId());
+processIndicatorReport(serialMessage,offset,endpoint);
+break;
+default :
+logger.warn(String.format("Unsupported Command 0x%02X for command class %s (0x%02X).",command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

@@ -18,6 +18,11 @@
     }
   }
  catch (  Exception e) {
-    logger.error("Error reading from Ecobee:",e);
+    if (logger.isDebugEnabled()) {
+      logger.warn("Exception reading from Ecobee:",e);
+    }
+ else {
+      logger.warn("Exception reading from Ecobee: {}",e.getMessage());
+    }
   }
 }

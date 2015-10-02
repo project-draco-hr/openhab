@@ -1,26 +1,28 @@
 {
   long reconnectionTime=10 * 1000;
+  boolean receivedResponse=false;
   try {
     while (!Thread.interrupted()) {
+      if (this.channel == null) {
+        long connectStartTime=System.currentTimeMillis();
+synchronized (this) {
+          this.channel=connect();
+        }
+        if (this.channel == null) {
+          this.dispatchEvent(new ConnectionStatusEvent(false));
+          Thread.sleep(reconnectionTime - System.currentTimeMillis() + connectStartTime);
+          continue;
+        }
+      }
       SatelMessage message=this.sendQueue.take(), response=null;
       SatelCommand command=this.supportedCommands.get(message.getCommand());
       if (command == null) {
         logger.error("Unsupported command: {}",message);
         continue;
       }
-      if (this.channel == null) {
-        long connectStartTime=System.currentTimeMillis();
-synchronized (this) {
-          this.channel=connect();
-        }
-        if (!this.isConnected()) {
-          Thread.sleep(reconnectionTime - System.currentTimeMillis() + connectStartTime);
-          continue;
-        }
-      }
       logger.debug("Sending message: {}",message);
       timeoutTimer.start();
-      boolean sent=writeMessage(message);
+      boolean sent=this.writeMessage(message);
       timeoutTimer.stop();
       if (sent) {
         logger.trace("Waiting for response");
@@ -29,6 +31,10 @@ synchronized (this) {
         timeoutTimer.stop();
         if (response != null) {
           logger.debug("Got response: {}",response);
+          if (!receivedResponse) {
+            receivedResponse=true;
+            this.dispatchEvent(new ConnectionStatusEvent(true));
+          }
           command.handleResponse(response);
         }
       }

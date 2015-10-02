@@ -1,0 +1,18 @@
+{
+  String insightParamsRequest=null;
+  String returnInsightParams=null;
+  try {
+    insightParamsRequest=wemoCall(itemName,"urn:Belkin:service:insight:1#GetInsightParams",getInsightParamsXML);
+    if (insightParamsRequest != null) {
+      logger.trace("insightParamsRequestResponse :");
+      logger.trace("{}",insightParamsRequest);
+      returnInsightParams=StringUtils.substringBetween(insightParamsRequest,"<InsightParams>","</InsightParams>");
+      logger.debug("New raw InsightParams '{}' for device '{}' received",returnInsightParams,itemName);
+      return returnInsightParams;
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Failed to get InsightParams for device '{}'",itemName,e);
+  }
+  return null;
+}

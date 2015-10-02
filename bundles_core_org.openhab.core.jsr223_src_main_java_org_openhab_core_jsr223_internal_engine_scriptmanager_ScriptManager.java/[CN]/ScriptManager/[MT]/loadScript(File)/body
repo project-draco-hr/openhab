@@ -1,13 +1,23 @@
 {
   Script script=null;
   try {
-    script=new Script(this,file);
-    scripts.put(file.getName(),script);
-    List<Rule> newRules=script.getRules();
-    for (    Rule rule : newRules) {
-      ruleMap.put(rule,script);
+    if (!file.isFile() || file.getName().startsWith(".") || getFileExtension(file) == null) {
+      return null;
     }
-    triggerManager.addRuleModel(newRules);
+    script=new Script(this,file);
+    if (script.getEngine() == null) {
+      logger.warn("No Engine found for File: {}",file.getName());
+      return null;
+    }
+ else {
+      logger.info("Engine found for File: {}",file.getName());
+      scripts.put(file.getName(),script);
+      List<Rule> newRules=script.getRules();
+      for (      Rule rule : newRules) {
+        ruleMap.put(rule,script);
+      }
+      triggerManager.addRuleModel(newRules);
+    }
   }
  catch (  NoSuchMethodException e) {
     logger.error("Script file misses mandotary function: getRules()",e);

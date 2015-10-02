@@ -1,0 +1,70 @@
+{
+  RrdDefConfig defaultNumeric=new RrdDefConfig("default_numeric");
+  defaultNumeric.setDef("GAUGE,60,U,U,60");
+  defaultNumeric.addArchives("AVERAGE,0.5,1,480:AVERAGE,0.5,4,360:AVERAGE,0.5,14,644:AVERAGE,0.5,60,720:AVERAGE,0.5,720,730:AVERAGE,0.5,10080,520");
+  rrdDefs.put("default_numeric",defaultNumeric);
+  RrdDefConfig defaultOther=new RrdDefConfig("default_other");
+  defaultOther.setDef("GAUGE,3600,U,U,1");
+  defaultOther.addArchives("MAX,.999,1,3600:MAX,.999,10,1440:MAX,.999,60,1440:MAX,.999,900,2880:MAX,.999,21600,1460:MAX,.999,86400,3650");
+  rrdDefs.put("default_other",defaultOther);
+  if ((config == null) || config.isEmpty()) {
+    logger.debug("using default configuration only");
+    return;
+  }
+  Iterator<String> keys=config.keySet().iterator();
+  while (keys.hasNext()) {
+    String key=keys.next();
+    if (key.equals("service.pid")) {
+      continue;
+    }
+    String[] subkeys=key.split("\\.");
+    if (subkeys.length != 2) {
+      logger.debug("config '{}' should have the format 'name.configkey'",key);
+      continue;
+    }
+    Object v=config.get(key);
+    if (v instanceof String) {
+      String value=(String)v;
+      String name=subkeys[0].toLowerCase();
+      String property=subkeys[1].toLowerCase();
+      if (StringUtils.isBlank(value)) {
+        logger.trace("Config is empty: {}",property);
+        continue;
+      }
+ else {
+        logger.trace("Processing config: {} = {}",property,value);
+      }
+      RrdDefConfig rrdDef=rrdDefs.get(name);
+      if (rrdDef == null) {
+        rrdDef=new RrdDefConfig(name);
+        rrdDefs.put(name,rrdDef);
+      }
+      try {
+        if (property.equals("def")) {
+          rrdDef.setDef(value);
+        }
+ else         if (property.equals("archives")) {
+          rrdDef.addArchives(value);
+        }
+ else         if (property.equals("items")) {
+          rrdDef.addItems(value);
+        }
+ else {
+          logger.warn("Unknown property {} : {}",property,value);
+        }
+      }
+ catch (      IllegalArgumentException e) {
+        logger.warn("Ignoring illegal configuration: {}",e.getMessage());
+      }
+    }
+  }
+  for (  RrdDefConfig rrdDef : rrdDefs.values()) {
+    if (rrdDef.isValid()) {
+      logger.debug("Created {}",rrdDef.toString());
+    }
+ else {
+      logger.info("Removing invalid defintion {}",rrdDef.toString());
+      rrdDefs.remove(rrdDef.name);
+    }
+  }
+}

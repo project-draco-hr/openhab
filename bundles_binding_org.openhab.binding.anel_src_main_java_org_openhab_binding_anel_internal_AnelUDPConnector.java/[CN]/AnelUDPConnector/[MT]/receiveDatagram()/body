@@ -8,6 +8,9 @@
     return Arrays.copyOfRange(packet.getData(),0,packet.getLength() - 1);
   }
  catch (  SocketException e) {
+    if (e.getMessage() != null && e.getMessage().equals("socket closed")) {
+      return null;
+    }
     throw new Exception(e);
   }
 catch (  IOException e) {

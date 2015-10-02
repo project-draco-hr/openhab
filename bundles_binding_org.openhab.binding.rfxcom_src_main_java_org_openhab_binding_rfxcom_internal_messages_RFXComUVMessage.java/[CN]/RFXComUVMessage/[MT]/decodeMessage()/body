@@ -1,0 +1,17 @@
+{
+  byte[] data=new byte[9];
+  data[0]=0x09;
+  data[1]=RFXComBaseMessage.PacketType.UV.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=(byte)(uv & 0xFF);
+  ;
+  short temp=(short)Math.abs(temperature * 10);
+  data[7]=(byte)((temp >> 8) & 0xFF);
+  data[8]=(byte)(temp & 0xFF);
+  if (temperature < 0)   data[7]|=0x80;
+  data[9]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}

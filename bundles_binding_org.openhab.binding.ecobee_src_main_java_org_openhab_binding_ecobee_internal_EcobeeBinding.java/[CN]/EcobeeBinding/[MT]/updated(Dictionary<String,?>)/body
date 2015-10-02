@@ -4,6 +4,10 @@
     if (isNotBlank(refreshIntervalString)) {
       refreshInterval=Long.parseLong(refreshIntervalString);
     }
+    String timeoutString=(String)config.get(CONFIG_TIMEOUT);
+    if (isNotBlank(timeoutString)) {
+      AbstractRequest.setHttpRequestTimeout(Integer.parseInt(timeoutString));
+    }
     String tempScaleString=(String)config.get(CONFIG_TEMP_SCALE);
     if (isNotBlank(tempScaleString)) {
       try {
@@ -16,7 +20,7 @@
     Enumeration<String> configKeys=config.keys();
     while (configKeys.hasMoreElements()) {
       String configKey=(String)configKeys.nextElement();
-      if (CONFIG_REFRESH.equals(configKey) || CONFIG_TEMP_SCALE.equals(configKey) || "service.pid".equals(configKey)) {
+      if (CONFIG_REFRESH.equals(configKey) || CONFIG_TIMEOUT.equals(configKey) || CONFIG_TEMP_SCALE.equals(configKey)|| "service.pid".equals(configKey)) {
         continue;
       }
       String userid;
@@ -60,6 +64,7 @@
         properlyConfigured=false;
         break;
       }
+      oauthCredentials.load();
     }
     setProperlyConfigured(properlyConfigured);
   }

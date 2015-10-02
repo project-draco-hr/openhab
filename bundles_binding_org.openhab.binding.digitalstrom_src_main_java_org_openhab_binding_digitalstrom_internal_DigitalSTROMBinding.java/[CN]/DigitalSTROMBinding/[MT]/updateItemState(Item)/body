@@ -12,23 +12,51 @@
  else       if (item instanceof NumberItem) {
         DigitalSTROMBindingConfig confItem=getConfigForItemName(item.getName());
         if (confItem != null) {
-          if (confItem.consumption != null) {
+          if (confItem.sensor != null) {
             int value=-1;
-switch (confItem.consumption) {
-case ACTIVE_POWER:
-              value=device.getPowerConsumption();
+switch (confItem.sensor) {
+case TEMPERATURE_INDOORS:
+              value=device.getTemperatureSensorValue();
             if (value != -1) {
-              state=new DecimalType(value);
+              state=new DecimalType((double)(value) / 40 - 43.15);
             }
           break;
-case OUTPUT_CURRENT:
-        value=device.getEnergyMeterValue();
+case RELATIVE_HUMIDITY_INDOORS:
+        value=device.getHumiditySensorValue();
       if (value != -1) {
-        state=new DecimalType(value);
+        state=new DecimalType((double)(value) / 40);
       }
     break;
+case TEMPERATURE_OUTDOORS:
+  value=device.getTemperatureSensorValue();
+if (value != -1) {
+  state=new DecimalType((double)(value) / 40 - 43.15);
+}
+break;
+case RELATIVE_HUMIDITY_OUTDOORS:
+value=device.getHumiditySensorValue();
+if (value != -1) {
+state=new DecimalType((double)(value) / 40);
+}
+break;
 default :
-  break;
+break;
+}
+}
+ else if (confItem.consumption != null) {
+int value=-1;
+switch (confItem.consumption) {
+case ACTIVE_POWER:
+value=device.getPowerConsumption();
+break;
+case OUTPUT_CURRENT:
+value=device.getEnergyMeterValue();
+if (value != -1) {
+state=new DecimalType(value);
+}
+break;
+default :
+break;
 }
 }
 }
@@ -53,7 +81,38 @@ state=new PercentType(100 - output);
  else if (item instanceof StringItem) {
 DigitalSTROMBindingConfig confItem=getConfigForItemName(item.getName());
 if (confItem != null) {
-if (confItem.consumption != null) {
+if (confItem.sensor != null) {
+int value=-1;
+switch (confItem.sensor) {
+case TEMPERATURE_INDOORS:
+value=device.getTemperatureSensorValue();
+if (value != -1) {
+state=new DecimalType((double)(value) / 40 - 43.15);
+}
+break;
+case RELATIVE_HUMIDITY_INDOORS:
+value=device.getHumiditySensorValue();
+if (value != -1) {
+state=new DecimalType((double)(value) / 40);
+}
+break;
+case TEMPERATURE_OUTDOORS:
+value=device.getTemperatureSensorValue();
+if (value != -1) {
+state=new DecimalType((double)(value) / 40 - 43.15);
+}
+break;
+case RELATIVE_HUMIDITY_OUTDOORS:
+value=device.getHumiditySensorValue();
+if (value != -1) {
+state=new DecimalType((double)(value) / 40);
+}
+break;
+default :
+break;
+}
+}
+ else if (confItem.consumption != null) {
 int value=-1;
 switch (confItem.consumption) {
 case ACTIVE_POWER:

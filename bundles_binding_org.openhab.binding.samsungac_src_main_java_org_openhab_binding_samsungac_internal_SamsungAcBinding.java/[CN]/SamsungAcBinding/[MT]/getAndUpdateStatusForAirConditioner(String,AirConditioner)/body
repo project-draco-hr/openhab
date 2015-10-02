@@ -1,11 +1,11 @@
 {
   Map<CommandEnum,String> status=new HashMap<CommandEnum,String>();
   try {
-    logger.debug("Getting status for ac: '" + acName + "'");
+    logger.info("Getting status for ac: '" + acName + "'");
     status=host.getStatus();
   }
  catch (  Exception e) {
-    logger.debug("Could not get status.. returning..");
+    logger.info("Could not get status.. returning.., got exception: " + e.toString());
     return;
   }
   for (  CommandEnum cmd : status.keySet()) {

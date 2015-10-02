@@ -1,0 +1,14 @@
+{
+  try {
+    for (    Class<? extends SatelBindingConfig> c : bindingConfigurationClasses) {
+      Method parseConfigMethod=c.getMethod("parseConfig",String.class);
+      SatelBindingConfig bc=(SatelBindingConfig)parseConfigMethod.invoke(null,bindingConfig);
+      if (bc != null) {
+        return bc;
+      }
+    }
+  }
+ catch (  Exception e) {
+  }
+  throw new BindingConfigParseException(String.format("Invalid binding configuration: %s",bindingConfig));
+}

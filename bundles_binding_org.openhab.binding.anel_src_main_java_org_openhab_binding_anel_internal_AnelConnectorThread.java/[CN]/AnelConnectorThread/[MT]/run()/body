@@ -12,6 +12,10 @@
     try {
       logger.trace("Listening on " + state.host + "...");
       final byte[] data=connector.receiveDatagram();
+      if (data == null) {
+        logger.info("Nothing received, this happens during shutdown or some unknown system error.");
+        continue;
+      }
       logger.trace("Received data (len={}): {}",data.length,DatatypeConverter.printString(new String(data)));
       final Map<AnelCommandType,org.openhab.core.types.State> newValues;
       long now=System.currentTimeMillis();

@@ -6,6 +6,12 @@
       this.satelModule.sendCommand(message);
     }
   }
+  if (event instanceof ConnectionStatusEvent) {
+    ConnectionStatusEvent statusEvent=(ConnectionStatusEvent)event;
+    if (statusEvent.isConnected()) {
+      switchForceRefresh(true);
+    }
+  }
   for (  SatelBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       SatelBindingConfig itemConfig=provider.getItemConfig(itemName);

@@ -1,0 +1,24 @@
+{
+  ArrayList<String> allPorts=new ArrayList<String>();
+  @SuppressWarnings("rawtypes") Enumeration portList=CommPortIdentifier.getPortIdentifiers();
+  while (portList.hasMoreElements()) {
+    CommPortIdentifier id=(CommPortIdentifier)portList.nextElement();
+    if (id.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+      allPorts.add(id.getName());
+    }
+  }
+  logger.trace("ports found from identifiers: {}",StringUtils.join(allPorts,":"));
+  if (!allPorts.contains(devName)) {
+    allPorts.add(devName);
+  }
+  String ports=System.getProperty("gnu.io.rxtx.SerialPorts");
+  if (ports != null) {
+    ArrayList<String> propPorts=new ArrayList<String>(Arrays.asList(ports.split(":")));
+    for (    String p : propPorts) {
+      if (!allPorts.contains(p))       allPorts.add(p);
+    }
+  }
+  String finalPorts=StringUtils.join(allPorts,":");
+  logger.trace("final port list: {}",finalPorts);
+  System.setProperty("gnu.io.rxtx.SerialPorts",finalPorts);
+}

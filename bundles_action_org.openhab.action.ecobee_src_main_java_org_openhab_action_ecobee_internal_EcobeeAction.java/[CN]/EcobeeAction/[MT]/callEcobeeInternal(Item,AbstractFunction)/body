@@ -1,0 +1,12 @@
+{
+  try {
+    String itemName=item.getName();
+    logger.debug("Attempting to call Ecobee function '{}' using Item '{}'",function,itemName);
+    EcobeeActionProvider actionProvider=getActionProvider(itemName);
+    return actionProvider.callEcobee(itemName,function);
+  }
+ catch (  Exception ex) {
+    logger.error(ex.getMessage(),ex);
+    return false;
+  }
+}

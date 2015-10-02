@@ -1,0 +1,30 @@
+{
+  logger.debug("mapdb persistence service activated");
+  String commitIntervalString=(String)config.get("commitinterval");
+  if (StringUtils.isNotBlank(commitIntervalString)) {
+    try {
+      commitInterval=Integer.valueOf(commitIntervalString);
+    }
+ catch (    IllegalArgumentException iae) {
+      logger.warn("couldn't parse '{}' to an integer");
+    }
+  }
+  String commitSameStateString=(String)config.get("commitsamestate");
+  if (StringUtils.isNotBlank(commitSameStateString)) {
+    try {
+      commitSameState=Boolean.valueOf(commitSameStateString);
+    }
+ catch (    IllegalArgumentException iae) {
+      logger.warn("couldn't parse '{}' to an integer");
+    }
+  }
+  File folder=new File(DB_FOLDER_NAME);
+  if (!folder.exists()) {
+    folder.mkdir();
+  }
+  File dbFile=new File(DB_FOLDER_NAME,DB_FILE_NAME);
+  db=DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
+  Serializer<MapDBItem> serializer=new MapDBitemSerializer();
+  map=db.createTreeMap("itemStore").valueSerializer(serializer).makeOrGet();
+  scheduleJob();
+}

@@ -1,6 +1,9 @@
 {
   Preferences prefs=getPrefsNode();
-  this.authToken=prefs.get(AUTH_TOKEN,null);
-  this.refreshToken=prefs.get(REFRESH_TOKEN,null);
-  this.accessToken=prefs.get(ACCESS_TOKEN,null);
+  final String savedAppKey=prefs.get(APP_KEY,null);
+  if (savedAppKey == null || savedAppKey.equals(this.appKey)) {
+    this.authToken=prefs.get(AUTH_TOKEN,null);
+    this.refreshToken=prefs.get(REFRESH_TOKEN,null);
+    this.accessToken=prefs.get(ACCESS_TOKEN,null);
+  }
 }

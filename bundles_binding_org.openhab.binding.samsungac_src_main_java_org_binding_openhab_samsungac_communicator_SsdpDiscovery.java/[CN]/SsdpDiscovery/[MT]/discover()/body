@@ -1,11 +1,23 @@
 {
-  Map<String,String> response=new HashMap<String,String>();
+  Map<String,Map<String,String>> response=new HashMap<String,Map<String,String>>();
+  System.out.println("Sending multibroadcast to all possible network interfaces...");
   try {
-    sendNotify(DISCOVER_MESSAGE);
-    response.putAll(parseResponse(retrieveResponse()));
+    List<InetAddress> ia=getBroadCastAddress();
+    for (    InetAddress i : ia) {
+      try {
+        System.out.println("Broadcasting to " + i);
+        sendNotify(DISCOVER_MESSAGE,i);
+        Map<String,Map<String,String>> resp=retrieveResponse();
+        response.putAll(resp);
+      }
+ catch (      IOException ioe) {
+        System.out.println("Could not broadcast to " + i + ", moving on to next broadcast address");
+      }
+catch (      Exception e) {
+      }
+    }
   }
  catch (  Exception e) {
-    e.printStackTrace();
   }
   return response;
 }

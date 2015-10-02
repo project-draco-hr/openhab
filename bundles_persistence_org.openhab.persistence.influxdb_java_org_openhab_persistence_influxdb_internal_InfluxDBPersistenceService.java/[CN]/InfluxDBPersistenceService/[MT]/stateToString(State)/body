@@ -1,19 +1,16 @@
 {
   String value;
-  if (state instanceof DecimalType) {
+  if (state instanceof PercentType) {
+    value=((PercentType)state).toBigDecimal().toString();
+  }
+ else   if (state instanceof DateTimeType) {
+    value=String.valueOf(((DateTimeType)state).getCalendar().getTime().getTime());
+  }
+ else   if (state instanceof DecimalType) {
     value=((DecimalType)state).toBigDecimal().toString();
   }
  else   if (state instanceof OnOffType) {
     value=((OnOffType)state) == OnOffType.ON ? DIGITAL_VALUE_ON : DIGITAL_VALUE_OFF;
-  }
- else   if (state instanceof OpenClosedType) {
-    value=((OpenClosedType)state) == OpenClosedType.OPEN ? DIGITAL_VALUE_ON : DIGITAL_VALUE_OFF;
-  }
- else   if (state instanceof HSBType) {
-    value=((HSBType)state).toString();
-  }
- else   if (state instanceof DateTimeType) {
-    value=String.valueOf(((DateTimeType)state).getCalendar().getTime().getTime());
   }
  else {
     value=state.toString();

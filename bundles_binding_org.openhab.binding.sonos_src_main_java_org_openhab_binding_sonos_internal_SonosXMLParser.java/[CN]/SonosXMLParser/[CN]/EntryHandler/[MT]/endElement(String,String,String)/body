@@ -7,7 +7,14 @@
     }
  catch (    Exception e) {
     }
-    artists.add(new SonosEntry(id,title.toString(),parentId,album.toString(),albumArtUri.toString(),creator.toString(),upnpClass.toString(),res.toString(),trackNumberVal));
+    SonosResourceMetaData md=null;
+    try {
+      md=getEmbededMetaDataFromResource(desc.toString());
+    }
+ catch (    SAXException ignore) {
+      logger.debug("Failed to parse embeded",ignore);
+    }
+    artists.add(new SonosEntry(id,title.toString(),parentId,album.toString(),albumArtUri.toString(),creator.toString(),upnpClass.toString(),res.toString(),trackNumberVal,md));
     title=new StringBuilder();
     upnpClass=new StringBuilder();
     res=new StringBuilder();
@@ -15,5 +22,6 @@
     albumArtUri=new StringBuilder();
     creator=new StringBuilder();
     trackNumber=new StringBuilder();
+    desc=new StringBuilder();
   }
 }

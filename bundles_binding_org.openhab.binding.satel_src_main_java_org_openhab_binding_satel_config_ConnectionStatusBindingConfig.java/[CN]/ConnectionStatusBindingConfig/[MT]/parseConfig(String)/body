@@ -1,0 +1,5 @@
+{
+  ConfigIterator iterator=new ConfigIterator(bindingConfig);
+  if (!"module".equalsIgnoreCase(iterator.next()))   return null;
+  return new ConnectionStatusBindingConfig(iterator.nextOfType(StatusType.class,"status type"),iterator.parseOptions());
+}

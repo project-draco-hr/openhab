@@ -1,0 +1,17 @@
+{
+  logger.trace("starting modem db builder thread");
+  while (!isComplete()) {
+    startDownload();
+    try {
+      Thread.sleep(m_timeoutMillis);
+    }
+ catch (    InterruptedException e) {
+      logger.warn("modem db builder thread interrupted");
+      break;
+    }
+    if (!isComplete()) {
+      logger.warn("modem database download unsuccessful, restarting!");
+    }
+  }
+  logger.trace("exiting modem db builder thread");
+}

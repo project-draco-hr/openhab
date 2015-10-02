@@ -43,8 +43,17 @@ case NOISE:
 case PRESSURE:
 case RAIN:
     final String requestKey=createKey(deviceId,moduleId);
-  final BigDecimal value=deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure());
+  BigDecimal value=deviceMeasureValueMap.get(requestKey).get(measureType.getMeasure());
 if (value != null) {
+  if (measureType == NetatmoMeasureType.TEMPERATURE) {
+    value=unitSystem.convertTemp(value);
+  }
+ else   if (measureType == NetatmoMeasureType.RAIN) {
+    value=unitSystem.convertRain(value);
+  }
+ else   if (measureType == NetatmoMeasureType.PRESSURE) {
+    value=pressureUnit.convertPressure(value);
+  }
   state=new DecimalType(value);
 }
 break;
@@ -74,7 +83,7 @@ case COORDINATE:
 case STATIONNAME:
 for (Device device : oauthCredentials.deviceListResponse.getDevices()) {
 if (stationPosition == null) {
-stationPosition=new PointType(new DecimalType(device.getLatitude()),new DecimalType(device.getLongitude()),new DecimalType(device.getAltitude()));
+stationPosition=new PointType(new DecimalType(device.getLatitude()),new DecimalType(device.getLongitude()),new DecimalType(Math.round(unitSystem.convertAltitude(device.getAltitude()))));
 }
 if (device.getId().equals(deviceId)) {
 switch (measureType) {
