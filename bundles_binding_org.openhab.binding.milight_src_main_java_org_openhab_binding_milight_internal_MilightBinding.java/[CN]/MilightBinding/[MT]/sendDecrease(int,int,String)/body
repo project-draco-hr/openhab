@@ -23,7 +23,7 @@ sendOff(bulb,bridgeId);
 }
  else {
 if (bulb > 5) {
-int decreasePercent=newPercent * rgbwSteps / 100;
+int decreasePercent=newPercent * (rgbwSteps - 2) / 100 + 2;
 messageBytes="4E:" + Integer.toHexString(decreasePercent) + ":55";
 logger.debug("Bulb '{}' set to '{}' dimming Steps",bulb,rgbwSteps);
 }
