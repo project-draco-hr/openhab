@@ -1,0 +1,10 @@
+{
+  List<String> parameters=new ArrayList<String>();
+  if (!StringUtils.isEmpty(connection.getToken())) {
+    parameters.add(String.format("X-Plex-Token=%s",connection.getToken()));
+  }
+  if (!parameters.isEmpty()) {
+    uri+="?" + StringUtils.join(parameters,"&");
+  }
+  return uri;
+}
