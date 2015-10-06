@@ -81,7 +81,7 @@
     }
  else     if (bulb > 5) {
       if (command.intValue() > 0 && command.intValue() < 100) {
-        int newCommand=(command.intValue() * rgbwSteps / 100);
+        int newCommand=(command.intValue() * (rgbwSteps - 2) / 100 + 2);
         Thread.sleep(100);
         String messageBytes="4E:" + Integer.toHexString(newCommand) + ":55";
         logger.debug("milight: send dimming packet '{}' to RGBW bulb channel '{}'",messageBytes,bulb);
