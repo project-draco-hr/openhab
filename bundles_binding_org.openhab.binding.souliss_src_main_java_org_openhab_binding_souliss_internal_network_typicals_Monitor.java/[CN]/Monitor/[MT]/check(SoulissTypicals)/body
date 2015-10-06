@@ -22,25 +22,28 @@ synchronized (iteratorTypicals) {
         if (typ.getType() == Constants.Souliss_T16) {
           eventPublisher.postUpdate(typ.getName(),((SoulissT16)typ).getOHStateRGB());
         }
- else {
-          if (typ.getType() == Constants.Souliss_T31) {
-            SoulissT31 typ31=(SoulissT31)typ;
-            if (typ31.getsItemNameMeasuredValue() != null)             eventPublisher.postUpdate(typ31.getsItemNameMeasuredValue(),typ31.getOHStateMeasuredValue());
-            if (typ31.getsItemNameSetpointValue() != null)             eventPublisher.postUpdate(typ31.getsItemNameSetpointValue(),typ31.getOHStateSetpointValue());
-            if (typ31.power.getName() != null)             eventPublisher.postUpdate(typ31.power.getName(),typ31.power.getOHState());
-            if (typ31.heating.getName() != null)             eventPublisher.postUpdate(typ31.heating.getName(),typ31.heating.getOHState());
-            if (typ31.cooling.getName() != null)             eventPublisher.postUpdate(typ31.cooling.getName(),typ31.cooling.getOHState());
-            if (typ31.heatingCoolingModeValue.getName() != null)             eventPublisher.postUpdate(typ31.heatingCoolingModeValue.getName(),typ31.heatingCoolingModeValue.getOHState());
-            if (typ31.fanHigh.getName() != null)             eventPublisher.postUpdate(typ31.fanHigh.getName(),typ31.fanHigh.getOHState());
-            if (typ31.fanMed.getName() != null)             eventPublisher.postUpdate(typ31.fanMed.getName(),typ31.fanMed.getOHState());
-            if (typ31.fanLow.getName() != null)             eventPublisher.postUpdate(typ31.fanLow.getName(),typ31.fanLow.getOHState());
-            if (typ31.fanAutoMode.getName() != null)             eventPublisher.postUpdate(typ31.fanAutoMode.getName(),typ31.fanAutoMode.getOHState());
-          }
- else {
-            eventPublisher.postUpdate(typ.getName(),typ.getOHState());
-          }
-          typ.resetUpdate();
+ else         if (typ.getType() == Constants.Souliss_T31) {
+          SoulissT31 typ31=(SoulissT31)typ;
+          if (typ31.getsItemNameMeasuredValue() != null)           eventPublisher.postUpdate(typ31.getsItemNameMeasuredValue(),typ31.getOHStateMeasuredValue());
+          if (typ31.getsItemNameSetpointValue() != null)           eventPublisher.postUpdate(typ31.getsItemNameSetpointValue(),typ31.getOHStateSetpointValue());
+          if (typ31.power.getName() != null)           eventPublisher.postUpdate(typ31.power.getName(),typ31.power.getOHState());
+          if (typ31.heating.getName() != null)           eventPublisher.postUpdate(typ31.heating.getName(),typ31.heating.getOHState());
+          if (typ31.cooling.getName() != null)           eventPublisher.postUpdate(typ31.cooling.getName(),typ31.cooling.getOHState());
+          if (typ31.heatingCoolingModeValue.getName() != null)           eventPublisher.postUpdate(typ31.heatingCoolingModeValue.getName(),typ31.heatingCoolingModeValue.getOHState());
+          if (typ31.fanHigh.getName() != null)           eventPublisher.postUpdate(typ31.fanHigh.getName(),typ31.fanHigh.getOHState());
+          if (typ31.fanMed.getName() != null)           eventPublisher.postUpdate(typ31.fanMed.getName(),typ31.fanMed.getOHState());
+          if (typ31.fanLow.getName() != null)           eventPublisher.postUpdate(typ31.fanLow.getName(),typ31.fanLow.getOHState());
+          if (typ31.fanAutoMode.getName() != null)           eventPublisher.postUpdate(typ31.fanAutoMode.getName(),typ31.fanAutoMode.getOHState());
         }
+ else         if (typ.getType() == Constants.Souliss_T12) {
+          SoulissT12 typ12=(SoulissT12)typ;
+          if (typ12.getOHStateAutoMode() != null)           eventPublisher.postUpdate(typ12.getsItemNameAutoModeValue(),typ12.getOHStateAutoMode());
+          if (typ12.getOHStateSwitch() != null)           eventPublisher.postUpdate(typ12.getsItemNameSwitchValue(),typ12.getOHStateSwitch());
+        }
+ else {
+          eventPublisher.postUpdate(typ.getName(),typ.getOHState());
+        }
+        typ.resetUpdate();
       }
     }
   }
