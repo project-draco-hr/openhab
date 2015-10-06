@@ -1,0 +1,12 @@
+{
+  boolean isAuthorizationError=false;
+  if (rootNode.isArray()) {
+    JsonNode node=rootNode.get(0);
+    if (node.has("error")) {
+      if (node.get("error").get("type").getIntValue() == ERROR_TYPE_UNAUTHORIZED_USER) {
+        isAuthorizationError=true;
+      }
+    }
+  }
+  return isAuthorizationError;
+}

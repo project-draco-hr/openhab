@@ -1,9 +1,13 @@
 {
   ObjectMapper mapper=new ObjectMapper();
   try {
-    settingsData=new SettingsTree(mapper.readValue(settings,Map.class));
+    JsonNode rootNode=mapper.readTree(settings);
+    if (!isAuthorizationError(rootNode)) {
+      settingsData=new SettingsTree(mapper.readValue(rootNode,Map.class));
+      isAuthorized=true;
+    }
   }
- catch (  Exception e) {
+ catch (  IOException e) {
     logger.error("Could not read Settings-Json from Hue Bridge.",e);
   }
 }
