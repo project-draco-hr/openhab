@@ -1,10 +1,15 @@
 {
-  Set<Item> items=contextMap.get(context);
+  Set<Item> items=null;
+synchronized (contextMap) {
+    items=contextMap.get(context);
+    if (items != null) {
+      contextMap.remove(context);
+    }
+  }
   if (items != null) {
     for (    Item item : items) {
       bindingConfigs.remove(item.getName());
       notifyListeners(item);
     }
-    contextMap.remove(context);
   }
 }

@@ -1,5 +1,4 @@
 {
-  super.processBindingConfiguration(context,item,bindingConfig);
   String[] configParts=bindingConfig.trim().split(",");
   if (configParts.length < 5) {
     throw new BindingConfigParseException("xPL binding configuration must contain : target,message type,schema at at least one body key/value pair");
@@ -25,4 +24,5 @@
     }
   }
   addBindingConfig(item,config);
+  super.processBindingConfiguration(context,item,bindingConfig);
 }
