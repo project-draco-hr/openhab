@@ -1,6 +1,11 @@
 {
   if (!(event instanceof ConnectionStatusEvent)) {
-    return null;
+    if (event instanceof NewStatesEvent && this.connectedSince == null) {
+      event=new ConnectionStatusEvent(true);
+    }
+ else {
+      return null;
+    }
   }
   ConnectionStatusEvent statusEvent=(ConnectionStatusEvent)event;
   boolean invertState=hasOptionEnabled(Options.INVERT_STATE);
