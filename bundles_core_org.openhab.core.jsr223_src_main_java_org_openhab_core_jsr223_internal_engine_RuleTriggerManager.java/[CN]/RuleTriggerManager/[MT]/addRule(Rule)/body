@@ -24,6 +24,15 @@
       }
       rules.add(rule);
     }
+ else     if (t instanceof UpdatedEventTrigger) {
+      UpdatedEventTrigger ueTrigger=(UpdatedEventTrigger)t;
+      Set<Rule> rules=updateEventTriggeredRules.get(ueTrigger.getItem());
+      if (rules == null) {
+        rules=new HashSet<Rule>();
+        updateEventTriggeredRules.put(ueTrigger.getItem(),rules);
+      }
+      rules.add(rule);
+    }
  else     if (t instanceof TimerTrigger) {
       timerEventTriggeredRules.add(rule);
       try {
