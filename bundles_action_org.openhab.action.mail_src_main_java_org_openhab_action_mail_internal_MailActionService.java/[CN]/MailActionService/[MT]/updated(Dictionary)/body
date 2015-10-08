@@ -16,6 +16,7 @@
     if (StringUtils.isNotBlank(popBeforeSmtpString)) {
       Mail.popBeforeSmtp=popBeforeSmtpString.equalsIgnoreCase("true");
     }
+    Mail.charset=(String)config.get("charset");
     if (StringUtils.isBlank(Mail.hostname) || StringUtils.isBlank(Mail.from)) {
       throw new ConfigurationException("mail","Parameters mail:hostname and mail:from are mandatory and must be configured. Please check your openhab.cfg!");
     }
