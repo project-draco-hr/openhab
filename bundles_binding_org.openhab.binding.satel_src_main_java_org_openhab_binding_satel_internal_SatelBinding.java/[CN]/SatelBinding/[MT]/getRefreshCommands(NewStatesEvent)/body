@@ -10,7 +10,7 @@
       if (message == null || commands.contains(message)) {
         continue;
       }
-      if (forceRefresh || (nse != null && nse.isNew(message.getCommand())) || message.getCommand() == IntegraStatusCommand.COMMAND_CODE) {
+      if (forceRefresh || !itemConfig.isItemInitialized() || (nse != null && nse.isNew(message.getCommand()))|| message.getCommand() == IntegraStatusCommand.COMMAND_CODE) {
         commands.add(message);
       }
     }
