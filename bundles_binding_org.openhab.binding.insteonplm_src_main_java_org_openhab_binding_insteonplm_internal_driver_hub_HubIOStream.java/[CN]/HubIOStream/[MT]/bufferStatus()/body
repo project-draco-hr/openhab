@@ -1,5 +1,12 @@
 {
   String result=getURL("/buffstatus.xml");
-  result=result.split("<BS>")[1].split("</BS>")[0].trim();
+  String[] parts=result.split("<BS>");
+  if (parts.length > 1) {
+    result=parts[1].split("</BS>")[0].trim();
+  }
+ else {
+    logger.error("got invalid buffer status: {}",result);
+    throw new IOException("malformed bufferstatus.xml");
+  }
   return result;
 }

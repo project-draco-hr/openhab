@@ -18,8 +18,8 @@
     return false;
   }
   if (msg.isAckOfDirect()) {
-    logger.debug("defdisp: {}:{} qs:{} cmd: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus(),cmd);
     if (isMyDirectAck(msg)) {
+      logger.debug("{}:{} qs:{} cmd: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus(),cmd);
       isConsumed=true;
       if (cmd == 0x50) {
         logger.debug("changing key to 0x19 for msg {}",msg);
@@ -34,13 +34,17 @@
     for (    DeviceFeature f : m_feature.getConnectedFeatures()) {
       MessageHandler h=f.getMsgHandlers().get(key);
       if (h == null)       h=f.getDefaultMsgHandler();
-      logger.debug("{}:{}->{} DIRECT: {}",f.getDevice().getAddress(),f.getName(),h.getClass().getSimpleName(),msg);
-      h.handleMessage(-1,cmd1,msg,f,port);
+      if (h.matches(msg)) {
+        if (!isConsumed) {
+          logger.debug("{}:{}->{} DIRECT",f.getDevice().getAddress(),f.getName(),h.getClass().getSimpleName());
+        }
+        h.handleMessage(-1,cmd1,msg,f,port);
+      }
     }
   }
   if (isConsumed) {
     m_feature.setQueryStatus(DeviceFeature.QueryStatus.QUERY_ANSWERED);
-    logger.debug("defdisp: {}:{} set status to: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus());
+    logger.debug("{}:{} set status to: {}",m_feature.getDevice().getAddress(),m_feature.getName(),m_feature.getQueryStatus());
   }
   return isConsumed;
 }

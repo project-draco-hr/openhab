@@ -1,11 +1,12 @@
 {
+  String val=m_parameters.get(key);
+  if (val == null)   return (def);
+  int ret=def;
   try {
-    if (m_parameters.get(key) != null) {
-      return Integer.parseInt(m_parameters.get(key));
-    }
+    ret=Utils.strToInt(val);
   }
  catch (  NumberFormatException e) {
     logger.error("malformed int parameter in message handler: {}",key);
   }
-  return def;
+  return ret;
 }

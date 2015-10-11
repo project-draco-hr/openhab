@@ -1,5 +1,5 @@
 {
-  if (isDuplicate(msg) || !isMybutton(msg,f)) {
+  if (!isMybutton(msg,f)) {
     return;
   }
   InsteonAddress a=f.getDevice().getAddress();
@@ -7,7 +7,8 @@
     logger.error("{}: device {}: ignoring ack of direct.",nm(),a);
   }
  else {
-    logger.info("{}: device {} was turned on. Sending poll request to get actual level",nm(),a);
+    String mode=getStringParameter("mode","REGULAR");
+    logger.info("{}: device {} was turned on {}. " + "Sending poll request to get actual level",nm(),a,mode);
     m_feature.publish(PercentType.HUNDRED,StateChangeType.ALWAYS);
     Msg m=f.makePollMsg();
     if (m != null)     f.getDevice().enqueueDelayedMessage(m,f,1000);

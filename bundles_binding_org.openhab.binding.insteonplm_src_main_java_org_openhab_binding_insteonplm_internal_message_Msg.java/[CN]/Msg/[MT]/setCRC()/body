@@ -1,0 +1,17 @@
+{
+  int crc;
+  try {
+    crc=getByte("command1") + getByte("command2");
+    byte[] bytes=getBytes("userData1",13);
+    for (    byte b : bytes) {
+      crc+=b;
+    }
+    crc=((~crc) + 1) & 0xFF;
+    setByte("userData14",(byte)(crc & 0xFF));
+  }
+ catch (  FieldException e) {
+    logger.error("got field exception on msg {}:",this,e);
+    crc=0;
+  }
+  return crc;
+}

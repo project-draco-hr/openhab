@@ -4,7 +4,7 @@ synchronized (m_requestQueue) {
       return 0L;
     }
     if (m_featureQueried != null) {
-      long dt=timeNow - (m_lastQueryTime + TIMEOUT_DIRECT_MESSAGE_REPLY);
+      long dt=timeNow - (m_lastQueryTime + m_featureQueried.getDirectAckTimeout());
       if (dt < 0) {
         logger.debug("still waiting for query reply from {} for another {} usec",m_address,-dt);
         return (timeNow + 2000L);

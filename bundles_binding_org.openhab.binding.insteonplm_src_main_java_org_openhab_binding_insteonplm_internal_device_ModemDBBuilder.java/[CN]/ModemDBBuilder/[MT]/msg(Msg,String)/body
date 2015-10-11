@@ -8,7 +8,7 @@
       }
     }
  else     if (msg.getByte("Cmd") == 0x57) {
-      updateModemDB(msg);
+      updateModemDB(msg.getAddress("LinkAddr"),m_port,msg);
       m_port.writeMessage(Msg.s_makeMessage("GetNextALLLinkRecord"));
     }
   }

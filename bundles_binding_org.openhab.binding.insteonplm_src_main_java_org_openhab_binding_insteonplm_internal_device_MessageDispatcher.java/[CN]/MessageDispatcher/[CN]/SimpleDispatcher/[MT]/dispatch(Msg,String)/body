@@ -17,7 +17,9 @@
   int key=(cmd1 & 0xFF);
   MessageHandler h=m_feature.getMsgHandlers().get(key);
   if (h == null)   h=m_feature.getDefaultMsgHandler();
-  logger.trace("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
-  h.handleMessage(-1,cmd1,msg,m_feature,port);
+  if (h.matches(msg)) {
+    logger.trace("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
+    h.handleMessage(-1,cmd1,msg,m_feature,port);
+  }
   return isConsumed;
 }

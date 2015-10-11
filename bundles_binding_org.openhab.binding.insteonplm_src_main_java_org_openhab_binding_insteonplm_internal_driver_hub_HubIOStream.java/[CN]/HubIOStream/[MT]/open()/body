@@ -3,6 +3,7 @@
   if (m_user != null && m_pass != null) {
     m_client.getCredentialsProvider().setCredentials(new AuthScope(m_host,m_port),new UsernamePasswordCredentials(m_user,m_pass));
   }
+  HttpConnectionParams.setConnectionTimeout(m_client.getParams(),5000);
   m_in=new HubInputStream();
   m_pollThread=new Thread(this);
   m_pollThread.start();

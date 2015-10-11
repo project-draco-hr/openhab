@@ -3,7 +3,7 @@
 synchronized (m_requestQueues) {
     while (m_keepRunning) {
       try {
-        while (!m_requestQueues.isEmpty()) {
+        while (m_keepRunning && !m_requestQueues.isEmpty()) {
           RequestQueue q=m_requestQueues.peek();
           long now=System.currentTimeMillis();
           long expTime=q.getExpirationTime();
@@ -30,7 +30,8 @@ synchronized (m_requestQueues) {
         m_requestQueues.wait();
       }
  catch (      InterruptedException e) {
-        logger.error("request queue thread got interrupted, continuing",e);
+        logger.error("request queue thread got interrupted, breaking..",e);
+        break;
       }
     }
   }

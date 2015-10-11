@@ -23,10 +23,12 @@ synchronized (m_reader.getRequestReplyLock()) {
       }
     }
  catch (    InterruptedException e) {
-      logger.error("got interrupted exception in write thread:",e);
+      logger.error("got interrupted exception in write thread");
+      break;
     }
 catch (    Exception e) {
       logger.error("got exception in write thread:",e);
     }
   }
+  logger.debug("exiting writer thread!");
 }
