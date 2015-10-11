@@ -12,11 +12,11 @@
       transport.on(Transport.EVENT_REQUEST_HEADERS,new Emitter.Listener(){
         @Override public void call(        Object... args){
           logger.debug("Transport.EVENT_REQUEST_HEADERS");
-          Map<String,String> headers=(Map<String,String>)args[0];
-          headers.put("uuid",mUUID);
-          headers.put("secret",mSecret);
-          headers.put("openhabversion",mOpenHABVersion);
-          headers.put("myohversion",MyOpenHABServiceImpl.myohVersion);
+          Map<String,List<String>> headers=(Map<String,List<String>>)args[0];
+          headers.put("uuid",Arrays.asList(mUUID));
+          headers.put("secret",Arrays.asList(mSecret));
+          headers.put("openhabversion",Arrays.asList(mOpenHABVersion));
+          headers.put("myohversion",Arrays.asList(MyOpenHABServiceImpl.myohVersion));
         }
       }
 );
