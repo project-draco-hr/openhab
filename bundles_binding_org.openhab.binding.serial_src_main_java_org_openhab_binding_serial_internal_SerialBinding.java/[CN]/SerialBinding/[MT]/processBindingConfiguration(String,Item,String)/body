@@ -1,13 +1,12 @@
 {
   int indexOf=bindingConfig.indexOf(',');
   String serialPart=bindingConfig;
-  Pattern pattern=null;
+  String pattern=null;
   if (indexOf != -1) {
     String substring=bindingConfig.substring(indexOf + 1);
     serialPart=bindingConfig.substring(0,indexOf);
     if (substring.startsWith("REGEX(")) {
-      substring=substring.substring(6,substring.length() - 1);
-      pattern=Pattern.compile(substring);
+      pattern=substring.substring(6,substring.length() - 1);
     }
   }
   String portConfig[]=serialPart.split("@");
@@ -18,6 +17,7 @@
   if (serialDevice == null) {
     if (baudRate > 0)     serialDevice=new SerialDevice(port,baudRate);
  else     serialDevice=new SerialDevice(port);
+    serialDevice.setTransformationService(transformationService);
     serialDevice.setEventPublisher(eventPublisher);
     try {
       serialDevice.initialize();
