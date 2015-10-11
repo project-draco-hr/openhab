@@ -1,0 +1,17 @@
+{
+  if (isConnected()) {
+    JSONObject notificationMessage=new JSONObject();
+    try {
+      notificationMessage.put("message",message);
+      notificationMessage.put("icon",icon);
+      notificationMessage.put("severity",severity);
+      mSocket.emit("lognotification",notificationMessage);
+    }
+ catch (    JSONException e) {
+      logger.error(e.getMessage());
+    }
+  }
+ else {
+    logger.debug("No connection, notification is not sent");
+  }
+}
