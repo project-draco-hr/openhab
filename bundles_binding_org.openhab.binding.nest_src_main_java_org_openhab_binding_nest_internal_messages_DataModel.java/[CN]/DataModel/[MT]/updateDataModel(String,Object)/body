@@ -3,7 +3,7 @@
   String beanProperty=property;
   do {
     Object obj=this.getProperty(beanProperty);
-    if (obj instanceof Structure || obj instanceof Thermostat || obj instanceof SmokeCOAlarm) {
+    if (obj instanceof Structure || obj instanceof Thermostat || obj instanceof SmokeCOAlarm|| obj instanceof Camera) {
       oldObject=obj;
       break;
     }
@@ -49,6 +49,17 @@
       updateDataModel.devices.smoke_co_alarms_by_name=new HashMap<String,SmokeCOAlarm>();
       updateDataModel.devices.smoke_co_alarms_by_name.put(deviceName,smokeCOAlarm);
     }
+ else     if (oldObject instanceof Camera) {
+      String deviceId=((Camera)oldObject).getDevice_id();
+      String deviceName=((Camera)oldObject).getName();
+      updateDataModel=new DataModel();
+      updateDataModel.devices=new Devices();
+      Camera camera=new Camera(null);
+      updateDataModel.devices.cameras_by_id=new HashMap<String,Camera>();
+      updateDataModel.devices.cameras_by_id.put(deviceId,camera);
+      updateDataModel.devices.cameras_by_name=new HashMap<String,Camera>();
+      updateDataModel.devices.cameras_by_name.put(deviceName,camera);
+    }
   }
   if (updateDataModel != null) {
     updateDataModel.setProperty(property,newState);
@@ -56,6 +67,7 @@
     if (updateDataModel.devices != null) {
       updateDataModel.devices.smoke_co_alarms_by_name=null;
       updateDataModel.devices.thermostats_by_name=null;
+      updateDataModel.devices.cameras_by_name=null;
     }
   }
   return updateDataModel;

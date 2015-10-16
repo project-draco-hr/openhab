@@ -13,4 +13,11 @@
       this.smoke_co_alarms_by_name.put(smoke_co_alarm.getName(),smoke_co_alarm);
     }
   }
+  this.cameras_by_name=new HashMap<String,Camera>();
+  if (this.cameras_by_id != null) {
+    for (    Camera camera : this.cameras_by_id.values()) {
+      camera.sync(dataModel);
+      this.cameras_by_name.put(camera.getName(),camera);
+    }
+  }
 }
