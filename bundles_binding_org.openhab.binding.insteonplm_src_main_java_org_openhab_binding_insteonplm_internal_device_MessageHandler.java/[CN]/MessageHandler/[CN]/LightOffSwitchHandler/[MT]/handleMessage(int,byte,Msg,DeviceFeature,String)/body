@@ -1,6 +1,7 @@
 {
-  if (!isDuplicate(msg) && isMybutton(msg,f)) {
-    logger.info("{}: device {} was switched off.",nm(),f.getDevice().getAddress());
+  if (isMybutton(msg,f)) {
+    String mode=getStringParameter("mode","REGULAR");
+    logger.info("{}: device {} was switched off {}.",nm(),f.getDevice().getAddress(),mode);
     f.publish(OnOffType.OFF,StateChangeType.ALWAYS);
   }
 }

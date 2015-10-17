@@ -1,0 +1,11 @@
+{
+  try {
+    int cmd2=(int)(msg.getByte("command2") & 0xff);
+    int upDown=(cmd2 == 0) ? 0 : 2;
+    logger.info("{}: dev {} manual state change: {}",nm(),f.getDevice().getAddress(),(upDown == 0) ? "DOWN" : "UP");
+    m_feature.publish(new DecimalType(upDown),StateChangeType.ALWAYS);
+  }
+ catch (  FieldException e) {
+    logger.error("{} error parsing {}: ",nm(),msg,e);
+  }
+}

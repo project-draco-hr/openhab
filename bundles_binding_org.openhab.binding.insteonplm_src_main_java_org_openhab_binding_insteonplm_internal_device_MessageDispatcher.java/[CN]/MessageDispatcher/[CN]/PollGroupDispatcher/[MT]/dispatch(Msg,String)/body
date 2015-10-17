@@ -1,0 +1,16 @@
+{
+  if (msg.isAllLinkCleanupAckOrNack()) {
+    return false;
+  }
+  if (handleAllLinkMessage(msg,port)) {
+    return false;
+  }
+  if (msg.isAckOfDirect()) {
+    boolean isMyAck=isMyDirectAck(msg);
+    if (isMyAck) {
+      logger.debug("{}:{} got poll ACK",m_feature.getDevice().getAddress(),m_feature.getName());
+    }
+    return (isMyAck);
+  }
+  return (false);
+}

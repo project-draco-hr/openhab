@@ -1,11 +1,14 @@
 {
+  logger.debug("stopping thread");
   if (m_queueThread != null) {
 synchronized (m_requestQueues) {
       m_keepRunning=false;
-      m_requestQueues.notify();
+      m_requestQueues.notifyAll();
     }
     try {
+      logger.debug("waiting for thread to join");
       m_queueThread.join();
+      logger.debug("request queue thread exited!");
     }
  catch (    InterruptedException e) {
       logger.error("got interrupted waiting for thread exit ",e);

@@ -2,12 +2,17 @@
   logger.debug("starting reader...");
   byte[] buffer=new byte[2 * m_readSize];
   Random rng=new Random();
-  for (int len=-1; (len=m_ioStream.read(buffer,0,m_readSize)) > 0; ) {
-    if (m_dropRandomBytes && rng.nextInt(100) < 20) {
-      len=dropBytes(buffer,len);
+  try {
+    for (int len=-1; (len=m_ioStream.read(buffer,0,m_readSize)) > 0; ) {
+      if (m_dropRandomBytes && rng.nextInt(100) < 20) {
+        len=dropBytes(buffer,len);
+      }
+      m_msgFactory.addData(buffer,len);
+      processMessages();
     }
-    m_msgFactory.addData(buffer,len);
-    processMessages();
+  }
+ catch (  InterruptedException e) {
+    logger.debug("reader thread got interrupted!");
   }
   logger.error("reader thread exiting!");
 }

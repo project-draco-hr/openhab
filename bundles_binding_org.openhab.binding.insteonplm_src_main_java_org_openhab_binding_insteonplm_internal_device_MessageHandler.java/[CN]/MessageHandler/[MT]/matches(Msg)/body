@@ -1,0 +1,22 @@
+{
+  try {
+    int ext=getIntParameter("ext",-1);
+    if (ext != -1) {
+      if ((msg.isExtended() && ext != 1) || (!msg.isExtended() && ext != 0)) {
+        return (false);
+      }
+      if (!testMatch("match_cmd1",msg,"command1")) {
+        return (false);
+      }
+    }
+    if (!testMatch("match_cmd2",msg,"command2"))     return (false);
+    if (!testMatch("match_d1",msg,"userData1"))     return (false);
+    if (!testMatch("match_d2",msg,"userData2"))     return (false);
+    if (!testMatch("match_d3",msg,"userData3"))     return (false);
+  }
+ catch (  FieldException e) {
+    logger.error("error matching message: {}",msg,e);
+    return (false);
+  }
+  return (true);
+}

@@ -6,9 +6,11 @@ synchronized (m_features) {
     for (    DeviceFeature i : m_features.values()) {
       if (i.hasListeners()) {
         Msg m=i.makePollMsg();
-        if (m != null)         l.add(new QEntry(i,m,now + delay + spacing));
+        if (m != null) {
+          l.add(new QEntry(i,m,now + delay + spacing));
+          spacing+=TIME_BETWEEN_POLL_MESSAGES;
+        }
       }
-      spacing+=TIME_BETWEEN_POLL_MESSAGES;
     }
   }
   if (l.isEmpty())   return;
