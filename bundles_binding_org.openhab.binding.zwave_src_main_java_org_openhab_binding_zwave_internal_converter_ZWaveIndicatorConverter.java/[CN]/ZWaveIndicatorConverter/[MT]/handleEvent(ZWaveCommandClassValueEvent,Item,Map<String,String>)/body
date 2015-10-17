@@ -1,9 +1,68 @@
 {
   ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event.getValue());
   if (converter == null) {
-    logger.warn("NODE {}: No converter found for item = {}, node = {} endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    logger.warn("NODE {}: No converter found for item = {}, ignoring event.",event.getNodeId(),item.getName());
     return;
   }
-  State state=converter.convertFromValueToState(event.getValue());
-  this.getEventPublisher().postUpdate(item.getName(),state);
+  if (!arguments.containsKey("bit")) {
+    logger.error("NODE {}: You must specify an Indicator bit for item = {}, ignoring event.",event.getNodeId(),item.getName());
+    return;
+  }
+  int bit=Integer.parseInt(arguments.get("bit"));
+  ZWaveIndicatorCommandClassChangeEvent e=(ZWaveIndicatorCommandClassChangeEvent)event;
+  ZWaveNode node=this.getController().getNode(event.getNodeId());
+  ZWaveIndicatorCommandClass commandClass=(ZWaveIndicatorCommandClass)node.getCommandClass(CommandClass.INDICATOR);
+  if (commandClass == null) {
+    logger.warn("NODE {}: Indicator command Class not supported for Item = {}, ignoring event.",event.getNodeId(),item.getName());
+    return;
+  }
+  boolean madeChanges=false;
+  int indicator=(Integer)e.getValue();
+  logger.warn(String.format("NODE %d: Processing Indicator Event for Item %s indicator = 0x%02X, bit = %d.",event.getNodeId(),item.getName(),indicator,bit));
+  int isOn=(((byte)indicator) >> bit) & 0x01;
+  if (pending.containsKey(item.getName())) {
+    if (pending.get(item.getName()).containsKey(bit)) {
+      logger.warn(String.format("NODE %d: There are pending changes to Item %s bit = %d",event.getNodeId(),item.getName(),bit));
+      if (pending.get(item.getName()).get(bit) == PENDING_ON && isOn == OFF) {
+        byte buttonMask=(byte)(0x01 << bit);
+        indicator=(byte)(indicator | buttonMask);
+        HashMap<Integer,Integer> h=new HashMap<Integer,Integer>();
+        h.put(bit,NO_PENDING_CHANGES);
+        pending.put(item.getName(),h);
+        madeChanges=true;
+        logger.warn(String.format("NODE %d: Item %s indicator = 0x%02X, Set bit = %d to ON - DONE",event.getNodeId(),item.getName(),indicator,bit));
+      }
+      if (pending.get(item.getName()).get(bit) == PENDING_OFF && isOn == ON) {
+        byte buttonMask=(byte)~(0x01 << bit);
+        indicator=(byte)(indicator & buttonMask);
+        HashMap<Integer,Integer> h=new HashMap<Integer,Integer>();
+        h.put(bit,NO_PENDING_CHANGES);
+        pending.put(item.getName(),h);
+        madeChanges=true;
+        logger.warn(String.format("NODE %d: Item %s indicator = 0x%02X, Set bit = %d to OFF - DONE",event.getNodeId(),item.getName(),indicator,bit));
+      }
+      if (madeChanges) {
+        isOn=(((byte)indicator) >> bit) & 0x01;
+        SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage(indicator),commandClass,0);
+        if (serialMessage == null) {
+          logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel());
+          return;
+        }
+        this.getController().sendData(serialMessage);
+        logger.warn(String.format("NODE %d: Item %s indicator = 0x%02X, Send pending operations to node",event.getNodeId(),item.getName(),indicator,bit));
+      }
+    }
+ else {
+      logger.warn(String.format("NODE %d: No pending indicator changes to Item %s bit = %d",event.getNodeId(),item.getName(),bit));
+    }
+  }
+ else {
+    logger.warn(String.format("NODE %d: No pending Indicator changes to Item %s bit = %d",event.getNodeId(),item.getName(),bit));
+  }
+  if (isOn == ON) {
+    this.getEventPublisher().postUpdate(item.getName(),converter.convertFromValueToState(0xFF));
+  }
+ else {
+    this.getEventPublisher().postUpdate(item.getName(),converter.convertFromValueToState(0x00));
+  }
 }

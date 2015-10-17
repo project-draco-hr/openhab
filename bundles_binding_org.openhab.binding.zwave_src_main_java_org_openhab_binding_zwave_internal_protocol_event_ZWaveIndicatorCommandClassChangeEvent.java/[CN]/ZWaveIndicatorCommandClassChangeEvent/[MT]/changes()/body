@@ -1,0 +1,12 @@
+{
+  ArrayList<Integer> changesList=new ArrayList<Integer>();
+  int newIndicator=((Integer)this.getValue()).intValue();
+  int changes=currentIndicator ^ newIndicator;
+  for (int i=0; i < 8; i++) {
+    if ((changes & 0x01) == 0x01) {
+      changesList.add(i);
+    }
+    changes=changes >> 1;
+  }
+  return changesList;
+}
