@@ -1,6 +1,8 @@
 {
-  logger.debug("influxdb persistence service activated");
   disconnect();
+  if (config == null) {
+    logger.warn("The configuration for influxdb is missing fix openhab.cfg");
+  }
   url=(String)config.get("url");
   if (StringUtils.isBlank(url)) {
     url=DEFAULT_URL;
