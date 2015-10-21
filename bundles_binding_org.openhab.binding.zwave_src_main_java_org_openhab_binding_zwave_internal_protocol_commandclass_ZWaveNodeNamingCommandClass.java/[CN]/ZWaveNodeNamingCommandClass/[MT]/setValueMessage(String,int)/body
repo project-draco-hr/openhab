@@ -1,0 +1,22 @@
+{
+  logger.debug("NODE {}: Creating new message for application command NAME_SET to {}",this.getNode().getNodeId(),str);
+  byte[] nameBuffer=null;
+  try {
+    nameBuffer=str.getBytes("UTF-8");
+  }
+ catch (  UnsupportedEncodingException e) {
+    e.printStackTrace();
+    return null;
+  }
+  int len=nameBuffer.length;
+  if (len > 16) {
+    len=16;
+  }
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.SendData,SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),(byte)((byte)len + 3),(byte)getCommandClass().getKey(),(byte)command,(byte)ENCODING_UTF16};
+  byte[] msg=new byte[newPayload.length + len];
+  System.arraycopy(newPayload,0,msg,0,newPayload.length);
+  System.arraycopy(nameBuffer,0,msg,newPayload.length,len);
+  result.setMessagePayload(msg);
+  return result;
+}
