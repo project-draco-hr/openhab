@@ -1,0 +1,22 @@
+{
+  boolean setupOK=false;
+  if (this.serialPort == null) {
+    String[] deviceIdParts=connectionParams.split(":");
+    if (deviceIdParts.length == 1) {
+      logger.debug("Using default speed: " + this.serialSpeed);
+      this.serialDevice=deviceIdParts[0];
+    }
+ else     if (deviceIdParts.length == 2) {
+      this.serialDevice=deviceIdParts[0];
+      this.serialSpeed=Integer.parseInt(deviceIdParts[1]);
+    }
+ else {
+      return false;
+    }
+    setupOK=this.serialConnect();
+  }
+ else {
+    logger.debug("Port is already setup");
+  }
+  return setupOK;
+}

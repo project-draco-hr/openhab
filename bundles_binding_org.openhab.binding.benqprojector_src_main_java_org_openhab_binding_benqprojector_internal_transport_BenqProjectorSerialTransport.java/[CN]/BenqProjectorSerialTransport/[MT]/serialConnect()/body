@@ -1,0 +1,16 @@
+{
+  logger.debug("Running connection setup");
+  try {
+    logger.debug("Setting up socket connection to " + this.serialDevice);
+    this.serialPort=new NRSerialPort(this.serialDevice,this.serialSpeed);
+    this.serialPort.connect();
+    this.projectorReader=new BufferedReader(new InputStreamReader(this.serialPort.getInputStream()));
+    this.projectorWriter=new PrintWriter(this.serialPort.getOutputStream(),true);
+    logger.debug("Serial connection setup successfully!");
+    return true;
+  }
+ catch (  Exception e) {
+    logger.error("Unable to connect to device: " + this.serialDevice,e);
+  }
+  return false;
+}
