@@ -6,9 +6,19 @@
     if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
       setCallbackPeriod(tfConfig.getCallbackPeriod());
     }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("slowI2C"))) {
+      setSlowI2C(true);
+    }
   }
   try {
     tinkerforgeDevice=new BrickletTemperature(uid,getIpConnection());
+    if (isSlowI2C()) {
+      logger.debug("setting I2C slow mode");
+      tinkerforgeDevice.setI2CMode(BrickletTemperature.I2C_MODE_SLOW);
+    }
+ else {
+      logger.debug("working with I2C fast mode");
+    }
     tinkerforgeDevice.setResponseExpected(BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD,false);
     tinkerforgeDevice.setTemperatureCallbackPeriod(callbackPeriod);
     listener=new TemperatureListener();
