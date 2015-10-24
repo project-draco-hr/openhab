@@ -1,0 +1,58 @@
+{
+  boolean success=false;
+  if (MailActionService.isProperlyConfigured) {
+    Email email=new SimpleEmail();
+    if (attachmentUrlList != null && !attachmentUrlList.isEmpty()) {
+      email=new MultiPartEmail();
+      for (      String attachmentUrl : attachmentUrlList) {
+        try {
+          EmailAttachment attachment=new EmailAttachment();
+          attachment.setURL(new URL(attachmentUrl));
+          attachment.setDisposition(EmailAttachment.ATTACHMENT);
+          String fileName=attachmentUrl.replaceFirst(".*/([^/?]+).*","$1");
+          attachment.setName(StringUtils.isNotBlank(fileName) ? fileName : "Attachment");
+          ((MultiPartEmail)email).attach(attachment);
+        }
+ catch (        MalformedURLException e) {
+          logger.error("Invalid attachment url.",e);
+        }
+catch (        EmailException e) {
+          logger.error("Error adding attachment to email.",e);
+        }
+      }
+    }
+    email.setHostName(hostname);
+    email.setSmtpPort(port);
+    email.setTLS(tls);
+    if (StringUtils.isNotBlank(username)) {
+      if (popBeforeSmtp) {
+        email.setPopBeforeSmtp(true,hostname,username,password);
+      }
+ else {
+        email.setAuthenticator(new DefaultAuthenticator(username,password));
+      }
+    }
+    try {
+      if (StringUtils.isNotBlank(charset)) {
+        email.setCharset(charset);
+      }
+      email.setFrom(from);
+      String[] toList=to.split(";");
+      for (      String toAddress : toList) {
+        email.addTo(toAddress);
+      }
+      if (!StringUtils.isEmpty(subject))       email.setSubject(subject);
+      if (!StringUtils.isEmpty(message))       email.setMsg(message);
+      email.send();
+      logger.debug("Sent email to '{}' with subject '{}'.",to,subject);
+      success=true;
+    }
+ catch (    EmailException e) {
+      logger.error("Could not send e-mail to '" + to + "'.",e);
+    }
+  }
+ else {
+    logger.error("Cannot send e-mail because of missing configuration settings. The current settings are: " + "Host: '{}', port '{}', from '{}', useTLS: {}, username: '{}', password '{}'",new Object[]{hostname,String.valueOf(port),from,String.valueOf(tls),username,password});
+  }
+  return success;
+}
