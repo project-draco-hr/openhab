@@ -1,0 +1,13 @@
+{
+  final String userid=provider.getUserid(itemName);
+  final OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+  if (oauthCredentials != null) {
+    final String deviceId=provider.getDeviceId(itemName);
+    final String moduleId=provider.getModuleId(itemName);
+    final String requestKey=createKey(deviceId,moduleId,scale);
+    if (!requests.containsKey(requestKey)) {
+      requests.put(requestKey,new MeasurementRequest(oauthCredentials.accessToken,deviceId,moduleId,scale));
+    }
+    requests.get(requestKey).addMeasure(measureType);
+  }
+}
