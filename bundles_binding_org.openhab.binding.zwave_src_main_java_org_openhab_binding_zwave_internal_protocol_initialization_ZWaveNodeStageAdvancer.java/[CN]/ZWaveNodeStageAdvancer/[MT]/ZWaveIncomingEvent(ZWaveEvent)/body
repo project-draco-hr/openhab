@@ -56,12 +56,24 @@ break;
 }
 logger.trace("NODE {}: Node Status event during initialisation processed",statusEvent.getNodeId());
 }
- else if (event instanceof ZWaveCommandClassValueEvent) {
-logger.debug("NODE {}: CC event during initialisation stage {}",event.getNodeId(),currentStage);
+ else if (event instanceof ZWaveNodeInfoEvent) {
+logger.debug("NODE {}: {} NIF event during initialisation stage {}",event.getNodeId(),node.getNodeId(),currentStage);
 if (node.getNodeId() != event.getNodeId() || currentStage != ZWaveNodeInitStage.PING) {
 return;
 }
-logger.debug("NODE {}: CC event during initialisation stage IDLE",event.getNodeId());
+logger.debug("NODE {}: NIF event during initialisation stage PING - advancing",event.getNodeId());
 setCurrentStage(currentStage.getNextStage());
+logger.debug("NODE {}: NIF event during initialisation stage PING - now {} - next",event.getNodeId(),currentStage);
+advanceNodeStage(null);
+}
+ else if (event instanceof ZWaveCommandClassValueEvent) {
+logger.debug("NODE {}: {} CC event during initialisation stage {}",event.getNodeId(),node.getNodeId(),currentStage);
+if (node.getNodeId() != event.getNodeId() || currentStage != ZWaveNodeInitStage.PING) {
+return;
+}
+logger.debug("NODE {}: CC event during initialisation stage PING - advancing",event.getNodeId());
+setCurrentStage(currentStage.getNextStage());
+logger.debug("NODE {}: CC event during initialisation stage PING - now {} - next",event.getNodeId(),currentStage);
+advanceNodeStage(null);
 }
 }
