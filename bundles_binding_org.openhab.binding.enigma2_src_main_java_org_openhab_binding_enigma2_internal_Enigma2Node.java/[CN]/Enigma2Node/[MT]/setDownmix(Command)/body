@@ -1,0 +1,9 @@
+{
+  if (command instanceof OnOffType) {
+    String enable=(OnOffType)command == OnOffType.ON ? "True" : "False";
+    HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_DOWNMIX + "?enable="+ enable,this.timeOut);
+  }
+ else {
+    logger.error("Unsupported command type: {}",command.getClass().getName());
+  }
+}
