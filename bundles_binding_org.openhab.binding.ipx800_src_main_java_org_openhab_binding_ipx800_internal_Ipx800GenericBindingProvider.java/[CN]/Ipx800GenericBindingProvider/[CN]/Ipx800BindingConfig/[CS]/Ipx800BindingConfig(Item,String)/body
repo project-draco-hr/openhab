@@ -1,0 +1,32 @@
+{
+  this.item=item;
+  try {
+    Pattern ITEM_PATTERN=Pattern.compile("^(?<device>[^>:]+?):(?<slot>[^>]+?)(?<extra>:[^>]+)*(>(?<to>[^>]+))?$");
+    final Matcher matcher=ITEM_PATTERN.matcher(config);
+    if (matcher.matches()) {
+      deviceName=matcher.group("device");
+      slotField=matcher.group("slot");
+      if (matcher.group("to") != null) {
+        toSlotField=matcher.group("to");
+        if (toSlotField.contains(":")) {
+          String[] slots=toSlotField.split(":");
+          toDeviceName=slots[0];
+          toSlotField=slots[1];
+          if (slots.length >= 3) {
+            toPulse=slots[2].equals("p");
+          }
+        }
+      }
+      String mExtra=matcher.group("extra");
+      if (mExtra != null) {
+        extra=mExtra.substring(1);
+      }
+    }
+ else {
+      throw new BindingConfigParseException("Bad Ipx800 item configuration");
+    }
+  }
+ catch (  PatternSyntaxException e) {
+    logger.error(e.getMessage());
+  }
+}

@@ -1,0 +1,16 @@
+{
+  int inputs=Ipx800PortType.INPUT.getPortPerDevice() * (1 + this.config.getX880length());
+  int analogs=Ipx800PortType.ANALOG.getPortPerDevice() * (1 + this.config.getX400length());
+  int counters=Ipx800PortType.COUNTER.getPortPerDevice();
+  portList=new Vector<Ipx800Port>();
+  for (int i=0; i < inputs; i++) {
+    portList.add(new Ipx800Port(Ipx800PortType.INPUT,i + 1,this));
+    portList.add(new Ipx800Port(Ipx800PortType.OUPUT,i + 1,this));
+  }
+  for (int i=0; i < analogs; i++) {
+    portList.add(new Ipx800Port(Ipx800PortType.ANALOG,i + 1,this));
+  }
+  for (int i=0; i < counters; i++) {
+    portList.add(new Ipx800Port(Ipx800PortType.COUNTER,i + 1,this));
+  }
+}
