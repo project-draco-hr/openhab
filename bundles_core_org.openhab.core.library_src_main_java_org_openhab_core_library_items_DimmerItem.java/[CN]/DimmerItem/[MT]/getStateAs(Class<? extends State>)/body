@@ -1,25 +1,19 @@
 {
-  if (typeClass != null && typeClass.isInstance(state)) {
+  if (state.getClass() == typeClass) {
     return state;
   }
-  if (typeClass == OnOffType.class) {
+ else   if (typeClass == OnOffType.class) {
     return state.equals(PercentType.ZERO) ? OnOffType.OFF : OnOffType.ON;
   }
-  if (typeClass == PercentType.class) {
-    if (state instanceof OnOffType) {
-      return state == OnOffType.ON ? PercentType.HUNDRED : PercentType.ZERO;
-    }
-    if (state instanceof DecimalType) {
-      return new PercentType(((DecimalType)state).toBigDecimal());
-    }
-  }
-  if (typeClass == DecimalType.class) {
+ else   if (typeClass == DecimalType.class) {
     if (state instanceof PercentType) {
       return new DecimalType(((PercentType)state).toBigDecimal().divide(new BigDecimal(100),8,RoundingMode.UP));
     }
-    if (state instanceof OnOffType) {
-      return state == OnOffType.ON ? new DecimalType(100) : DecimalType.ZERO;
+  }
+ else   if (typeClass == PercentType.class) {
+    if (state instanceof DecimalType) {
+      return new PercentType(((DecimalType)state).toBigDecimal().multiply(new BigDecimal(100)));
     }
   }
-  return null;
+  return super.getStateAs(typeClass);
 }
