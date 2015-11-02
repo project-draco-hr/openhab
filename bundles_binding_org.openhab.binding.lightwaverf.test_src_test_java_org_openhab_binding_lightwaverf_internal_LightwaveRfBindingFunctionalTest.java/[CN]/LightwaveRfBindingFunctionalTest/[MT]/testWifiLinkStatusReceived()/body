@@ -1,0 +1,19 @@
+{
+  String message="*!{\"trans\":452,\"mac\":\"ab:cd:ef\",\"time\":1447712274,\"type\":\"hub\",\"prod\":\"wfl\",\"fw\":\"U2.91Y\"," + "\"uptime\":1386309,\"timeZone\":0,\"lat\":52.48,\"long\":-87.89,\"duskTime\":1447690400," + "\"dawnTime\":1447659083,\"tmrs\":0,\"evns\":1,\"run\":0,\"macs\":8,\"ip\":\"192.168.0.1\",\"devs\":0}";
+  List<ItemConfigAndExpectedState> itemConfigAndExpectedStates=new LinkedList<ItemConfigAndExpectedState>();
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new StringItem("WIFILINK_IP"),"serial=wifilink,type=WIFILINK_IP",new StringType("192.168.0.1")));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new StringItem("WIFILINK_FIRMWARE"),"serial=wifilink,type=WIFILINK_FIRMWARE",new StringType("U2.91Y")));
+  Calendar duskCal=Calendar.getInstance();
+  duskCal.setTime(new Date(1447690400000L));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new DateTimeItem("WIFILINK_DUSK_TIME"),"serial=wifilink,type=WIFILINK_DUSK_TIME",new DateTimeType(duskCal)));
+  Calendar dawnCal=Calendar.getInstance();
+  dawnCal.setTime(new Date(1447659083000L));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new DateTimeItem("WIFILINK_DAWN_TIME"),"serial=wifilink,type=WIFILINK_DAWN_TIME",new DateTimeType(dawnCal)));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new NumberItem("WIFILINK_UPTIME"),"serial=wifilink,type=WIFILINK_UPTIME",new DecimalType("1386309")));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new StringItem("WIFILINK_LONGITUDE"),"serial=wifilink,type=WIFILINK_LONGITUDE",new StringType("-87.89")));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new StringItem("WIFILINK_LATITUDE"),"serial=wifilink,type=WIFILINK_LATITUDE",new StringType("52.48")));
+  Calendar cal=Calendar.getInstance();
+  cal.setTime(new Date(1447712274000L));
+  itemConfigAndExpectedStates.add(new ItemConfigAndExpectedState(new NumberItem("TIME"),"serial=wifilink,type=UPDATETIME",new DateTimeType(cal)));
+  testReceivingACommandAndVerify(itemConfigAndExpectedStates,message);
+}

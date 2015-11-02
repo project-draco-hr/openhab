@@ -5,6 +5,8 @@
   when(mockBindingProvider.getBindingItemsForSerial("655432")).thenReturn(Arrays.asList("Battery","Temp"));
   when(mockBindingProvider.getTypeForItemName("Battery")).thenReturn(LightwaveRfType.HEATING_BATTERY);
   when(mockBindingProvider.getTypeForItemName("Temp")).thenReturn(LightwaveRfType.HEATING_CURRENT_TEMP);
+  when(mockBindingProvider.getDirection("Battery")).thenReturn(LightwaveRfItemDirection.IN_AND_OUT);
+  when(mockBindingProvider.getDirection("Temp")).thenReturn(LightwaveRfItemDirection.IN_AND_OUT);
   LightwaveRfBinding binding=new LightwaveRfBinding();
   binding.addBindingProvider(mockBindingProvider);
   binding.setEventPublisher(mockEventPublisher);

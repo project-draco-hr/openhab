@@ -2,7 +2,7 @@
 switch (type) {
 case HEATING_BATTERY:
     return new DecimalType(getBatteryLevel());
-case HEATING_SIGNAL:
+case SIGNAL:
   return new DecimalType(getSignal());
 case HEATING_CURRENT_TEMP:
 return new DecimalType(getCurrentTemperature());
@@ -10,8 +10,11 @@ case HEATING_SET_TEMP:
 return new DecimalType(getCurrentTargetTemperature());
 case HEATING_MODE:
 return new StringType(getState());
-case HEATING_UPDATETIME:
+case HEATING_OUTPUT:
+return new PercentType(getOutput());
+case UPDATETIME:
 Calendar cal=Calendar.getInstance();
+cal.setTime(getTime());
 return new DateTimeType(cal);
 case VERSION:
 return new StringType(getVersion());

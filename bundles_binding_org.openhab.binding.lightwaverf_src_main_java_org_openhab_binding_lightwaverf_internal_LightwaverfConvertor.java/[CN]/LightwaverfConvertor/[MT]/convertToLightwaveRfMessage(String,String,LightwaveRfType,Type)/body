@@ -2,7 +2,7 @@
   int messageId=getAndIncrementMessageId();
 switch (deviceType) {
 case HEATING_BATTERY:
-case HEATING_SIGNAL:
+case SIGNAL:
 case HEATING_CURRENT_TEMP:
 case HEATING_MODE:
 case VERSION:
@@ -21,6 +21,29 @@ if (command instanceof OnOffType) {
 }
  else {
   throw new RuntimeException("Unsupported Command: " + command);
+}
+case RELAY:
+if (command instanceof DecimalType) {
+int state=((DecimalType)command).intValue();
+return new LightwaveRfRelayCommand(messageId,roomId,deviceId,state);
+}
+ else {
+throw new RuntimeException("Unsupported Command: " + command);
+}
+case MOOD:
+if (command instanceof DecimalType) {
+int state=((DecimalType)command).intValue();
+return new LightwaveRfMoodCommand(messageId,roomId,state);
+}
+ else {
+throw new RuntimeException("Unsupported Command: " + command);
+}
+case ALL_OFF:
+if (command instanceof OnOffType) {
+return new LightwaveRfAllOffCommand(messageId,roomId);
+}
+ else {
+throw new RuntimeException("Unsupported Command: " + command);
 }
 default :
 throw new IllegalArgumentException(deviceType + " : is unexpected");

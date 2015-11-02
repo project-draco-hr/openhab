@@ -2,11 +2,12 @@
   when(mockBindingProvider.getRoomId("MySwitch")).thenReturn("2");
   when(mockBindingProvider.getDeviceId("MySwitch")).thenReturn("3");
   when(mockBindingProvider.getTypeForItemName("MySwitch")).thenReturn(LightwaveRfType.SWITCH);
+  when(mockBindingProvider.getDirection("MySwitch")).thenReturn(LightwaveRfItemDirection.IN_AND_OUT);
   when(mockLightwaveRfConvertor.convertToLightwaveRfMessage("2","3",LightwaveRfType.SWITCH,OnOffType.ON)).thenReturn(mockLightwaveRfCommand);
   LightwaveRfBinding binding=new LightwaveRfBinding();
   binding.addBindingProvider(mockBindingProvider);
-  binding.setLightaveRfSender(mockLightwaveRfSender);
+  binding.setWifiLink(mockWifiLink);
   binding.setLightwaveRfConvertor(mockLightwaveRfConvertor);
   binding.internalReceiveCommand("MySwitch",OnOffType.ON);
-  verify(mockLightwaveRfSender).sendLightwaveCommand(mockLightwaveRfCommand);
+  verify(mockWifiLink).sendLightwaveCommand(mockLightwaveRfCommand);
 }

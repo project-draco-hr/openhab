@@ -1,0 +1,14 @@
+{
+  String message=null;
+  try {
+    message=receiveUDP();
+    if (message != null) {
+      notifyMessage(message);
+    }
+  }
+ catch (  IOException e) {
+    if (!(running == false && receiveSocket.isClosed())) {
+      logger.error("Error receiving message",e);
+    }
+  }
+}

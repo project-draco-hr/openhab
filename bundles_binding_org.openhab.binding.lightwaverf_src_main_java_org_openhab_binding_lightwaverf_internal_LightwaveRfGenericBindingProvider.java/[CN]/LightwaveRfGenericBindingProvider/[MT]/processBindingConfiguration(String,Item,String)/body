@@ -6,6 +6,13 @@
     LightwaveRfType type=null;
     int poll=-1;
     String serialId=null;
+    LightwaveRfItemDirection direction=LightwaveRfItemDirection.IN_AND_OUT;
+    if (bindingConfig.startsWith("<")) {
+      direction=LightwaveRfItemDirection.IN_ONLY;
+    }
+ else     if (bindingConfig.startsWith(">")) {
+      direction=LightwaveRfItemDirection.OUT_ONLY;
+    }
     Matcher roomMatcher=ROOM_REG_EXP.matcher(bindingConfig);
     if (roomMatcher.matches()) {
       roomId=roomMatcher.group(1);
@@ -26,8 +33,8 @@
     if (pollMatcher.matches()) {
       poll=Integer.valueOf(pollMatcher.group(1));
     }
-    LightwaveRfBindingConfig config=new LightwaveRfBindingConfig(roomId,deviceId,serialId,type,poll);
-    logger.info("ConfigString[{}] Room[{}] Device[{}] Serial[{}] Type[{}] Poll[{}]",bindingConfig,roomId,deviceId,serialId,type,poll);
+    LightwaveRfBindingConfig config=new LightwaveRfBindingConfig(roomId,deviceId,serialId,type,poll,direction);
+    logger.info("ConfigString[{}] Room[{}] Device[{}] Serial[{}] Type[{}] Poll[{}]",new Object[]{bindingConfig,roomId,deviceId,serialId,type,poll});
     addBindingConfig(item,config);
   }
  catch (  Exception e) {

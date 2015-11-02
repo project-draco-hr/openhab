@@ -1,49 +1,43 @@
 {
+  String ipString=(String)configuration.get("ip");
+  if (StringUtils.isNotBlank(ipString)) {
+    LIGHTWAVE_IP=ipString;
+  }
+  String recieverPortsString=(String)configuration.get("receiveport");
+  if (StringUtils.isNotBlank(recieverPortsString)) {
+    LIGHTWAVE_PORTS_TO_RECEIVE_ON=Integer.parseInt(recieverPortsString);
+  }
+  String portTwoString=(String)configuration.get("sendport");
+  if (StringUtils.isNotBlank(portTwoString)) {
+    LIGHTWAVE_PORT_TO_SEND_TO=Integer.parseInt(portTwoString);
+  }
+  String sendRegistrationMessageString=(String)configuration.get("registeronstartup");
+  if (StringUtils.isNotBlank(sendRegistrationMessageString)) {
+    SEND_REGISTER_ON_STARTUP=Boolean.parseBoolean(sendRegistrationMessageString);
+  }
+  String sendDelayString=(String)configuration.get("senddelay");
+  if (StringUtils.isNotBlank(sendDelayString)) {
+    TIME_BETWEEN_SENT_MESSAGES_MS=Integer.parseInt(sendDelayString);
+  }
+  String okTimeoutString=(String)configuration.get("okTimeout");
+  if (StringUtils.isNotBlank(okTimeoutString)) {
+    TIMEOUT_FOR_OK_MESSAGES_MS=Integer.parseInt(okTimeoutString);
+  }
+  logger.info("LightwaveBinding: IP[{}]",LIGHTWAVE_IP);
+  logger.info("LightwaveBinding: ReceivePort[{}]",LIGHTWAVE_PORTS_TO_RECEIVE_ON);
+  logger.info("LightwaveBinding: Send Port[{}]",LIGHTWAVE_PORT_TO_SEND_TO);
+  logger.info("LightwaveBinding: Register On Startup[{}]",SEND_REGISTER_ON_STARTUP);
+  logger.info("LightwaveBinding: Send Delay [{}]",TIME_BETWEEN_SENT_MESSAGES_MS);
+  logger.info("LightwaveBinding: Timeout for Ok Messages [{}]",TIMEOUT_FOR_OK_MESSAGES_MS);
+  messageConvertor=new LightwaverfConvertor();
   try {
-    String ipString=(String)configuration.get("ip");
-    if (StringUtils.isNotBlank(ipString)) {
-      LIGHTWAVE_IP=ipString;
-    }
-    String portOneString=(String)configuration.get("receiveport");
-    if (StringUtils.isNotBlank(portOneString)) {
-      LIGHTWAVE_PORT_TO_RECEIVE_ON=Integer.parseInt(portOneString);
-    }
-    String portTwoString=(String)configuration.get("sendport");
-    if (StringUtils.isNotBlank(portTwoString)) {
-      LIGHTWAVE_PORT_TO_SEND_TO=Integer.parseInt(portTwoString);
-    }
-    String sendRegistrationMessageString=(String)configuration.get("registeronstartup");
-    if (StringUtils.isNotBlank(sendRegistrationMessageString)) {
-      SEND_REGISTER_ON_STARTUP=Boolean.parseBoolean(sendRegistrationMessageString);
-    }
-    String sendDelayString=(String)configuration.get("senddelay");
-    if (StringUtils.isNotBlank(sendDelayString)) {
-      TIME_BETWEEN_SENT_MESSAGES_MS=Integer.parseInt(sendDelayString);
-    }
-    String okTimeoutString=(String)configuration.get("okTimeout");
-    if (StringUtils.isNotBlank(okTimeoutString)) {
-      TIMEOUT_FOR_OK_MESSAGES_MS=Integer.parseInt(okTimeoutString);
-    }
-    logger.info("LightwaveBinding: IP[{}]",LIGHTWAVE_IP);
-    logger.info("LightwaveBinding: ReceivePort[{}]",LIGHTWAVE_PORT_TO_RECEIVE_ON);
-    logger.info("LightwaveBinding: Send Port[{}]",LIGHTWAVE_PORT_TO_SEND_TO);
-    logger.info("LightwaveBinding: Register On Startup[{}]",SEND_REGISTER_ON_STARTUP);
-    logger.info("LightwaveBinding: Send Delay [{}]",TIME_BETWEEN_SENT_MESSAGES_MS);
-    logger.info("LightwaveBinding: Timeout for Ok Messages [{}]",TIMEOUT_FOR_OK_MESSAGES_MS);
-    messageConvertor=new LightwaverfConvertor();
-    receiverOnReceiverPort=new LightwaveRFReceiver(messageConvertor,LIGHTWAVE_PORT_TO_RECEIVE_ON);
-    receiverOnSendPort=new LightwaveRFReceiver(messageConvertor,LIGHTWAVE_PORT_TO_SEND_TO);
-    sender=new LightwaveRFSender(LIGHTWAVE_IP,LIGHTWAVE_PORT_TO_SEND_TO,TIME_BETWEEN_SENT_MESSAGES_MS,TIMEOUT_FOR_OK_MESSAGES_MS);
-    receiverOnReceiverPort.addListener(this);
-    receiverOnSendPort.addListener(this);
-    receiverOnReceiverPort.addListener(sender);
-    receiverOnReceiverPort.start();
-    receiverOnSendPort.start();
-    sender.start();
+    wifiLink=new LightwaveRfWifiLink(LIGHTWAVE_IP,LIGHTWAVE_PORT_TO_SEND_TO,LIGHTWAVE_PORTS_TO_RECEIVE_ON,messageConvertor,TIME_BETWEEN_SENT_MESSAGES_MS,TIMEOUT_FOR_OK_MESSAGES_MS);
+    wifiLink.addListener(this);
+    wifiLink.start();
     if (SEND_REGISTER_ON_STARTUP) {
-      sender.sendLightwaveCommand(messageConvertor.getRegistrationCommand());
+      wifiLink.sendLightwaveCommand(messageConvertor.getRegistrationCommand());
     }
-    heatPoller=new LightwaveRfHeatPoller(sender,messageConvertor);
+    heatPoller=new LightwaveRfHeatPoller(wifiLink,messageConvertor);
     for (    LightwaveRfBindingProvider provider : providers) {
       Collection<String> itemNames=provider.getItemNames();
       registerHeatingPollers(provider,itemNames);

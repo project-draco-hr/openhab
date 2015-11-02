@@ -1,0 +1,13 @@
+{
+  DatagramPacket sentPacket=new DatagramPacket(new byte[1024],1024);
+  CyclicBarrier barrier=new CyclicBarrier(2);
+  doAnswer(waitIndefinitely()).when(mockReceiveSocket).receive(any(DatagramPacket.class));
+  doAnswer(waitIndefinitely()).when(mockReceiveSocket2).receive(any(DatagramPacket.class));
+  doAnswer(transmitAnswer(sentPacket,barrier)).when(mockTransmitSocket).send(any(DatagramPacket.class));
+  bindingProvider.processBindingConfiguration(CONTEXT,item,itemConfig);
+  binding.addBindingProvider(bindingProvider);
+  binding.activateForTesting();
+  binding.internalReceiveCommand(item.getName(),command);
+  barrier.await(1000,TimeUnit.MILLISECONDS);
+  return sentPacket;
+}

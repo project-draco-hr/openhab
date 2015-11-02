@@ -1,0 +1,12 @@
+{
+  return new Answer<DatagramPacket>(){
+    public DatagramPacket answer(    InvocationOnMock invocation) throws InterruptedException, BrokenBarrierException {
+      Object[] args=invocation.getArguments();
+      ((DatagramPacket)args[0]).setData(data.getBytes());
+      latch.await();
+      latch.reset();
+      return null;
+    }
+  }
+;
+}

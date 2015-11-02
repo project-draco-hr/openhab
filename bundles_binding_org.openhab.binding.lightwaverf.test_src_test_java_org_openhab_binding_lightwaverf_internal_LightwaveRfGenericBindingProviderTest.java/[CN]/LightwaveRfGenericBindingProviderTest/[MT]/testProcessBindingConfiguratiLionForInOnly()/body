@@ -1,0 +1,10 @@
+{
+  LightwaveRfGenericBindingProvider bingindProvider=new LightwaveRfGenericBindingProvider();
+  bingindProvider.processBindingConfiguration(context,new SwitchItem("MySwitch"),"<room=3,device=4,type=SWITCH");
+  assertEquals(Arrays.asList("MySwitch"),bingindProvider.getBindingItemsForRoomDevice("3","4"));
+  assertEquals(Arrays.asList("MySwitch"),bingindProvider.getItemNames());
+  assertEquals("3",bingindProvider.getRoomId("MySwitch"));
+  assertEquals("4",bingindProvider.getDeviceId("MySwitch"));
+  assertEquals(LightwaveRfType.SWITCH,bingindProvider.getTypeForItemName("MySwitch"));
+  assertEquals(LightwaveRfItemDirection.IN_ONLY,bingindProvider.getDirection("MySwitch"));
+}

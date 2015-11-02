@@ -1,0 +1,10 @@
+{
+  try {
+    Matcher matcher=regExp.matcher(message);
+    matcher.matches();
+    return matcher.group(1);
+  }
+ catch (  IllegalStateException e) {
+    throw new LightwaveRfMessageException("Error parsing message for regExp[" + regExp + "] message["+ message+ "]",e);
+  }
+}

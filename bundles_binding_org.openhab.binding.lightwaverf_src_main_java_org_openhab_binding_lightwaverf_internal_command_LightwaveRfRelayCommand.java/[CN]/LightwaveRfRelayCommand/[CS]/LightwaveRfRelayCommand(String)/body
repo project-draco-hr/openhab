@@ -1,0 +1,25 @@
+{
+  try {
+    Matcher matcher=REG_EXP.matcher(message);
+    matcher.matches();
+    this.messageId=new LightwaveRfGeneralMessageId(Integer.valueOf(matcher.group(1)));
+    this.roomId=matcher.group(2);
+    this.deviceId=matcher.group(3);
+    String function=matcher.group(4);
+    if (STOP_FUNCTION.equals(function)) {
+      state=0;
+    }
+ else     if (OPEN_FUNCTION.equals(function)) {
+      state=1;
+    }
+ else     if (CLOSE_FUNCTION.equals(function)) {
+      state=-1;
+    }
+ else {
+      throw new LightwaveRfMessageException("Received Message has invalid function[" + function + "]: "+ message);
+    }
+  }
+ catch (  Exception e) {
+    throw new LightwaveRfMessageException("Error converting message: " + message,e);
+  }
+}

@@ -1,5 +1,4 @@
 {
-  String context="";
   LightwaveRfGenericBindingProvider bingindProvider=new LightwaveRfGenericBindingProvider();
   bingindProvider.processBindingConfiguration(context,new DimmerItem("MyDimmer"),"room=1,device=2,type=DIMMER");
   assertEquals(Arrays.asList("MyDimmer"),bingindProvider.getBindingItemsForRoomDevice("1","2"));
@@ -7,4 +6,5 @@
   assertEquals("1",bingindProvider.getRoomId("MyDimmer"));
   assertEquals("2",bingindProvider.getDeviceId("MyDimmer"));
   assertEquals(LightwaveRfType.DIMMER,bingindProvider.getTypeForItemName("MyDimmer"));
+  assertEquals(LightwaveRfItemDirection.IN_AND_OUT,bingindProvider.getDirection("MySwitch"));
 }

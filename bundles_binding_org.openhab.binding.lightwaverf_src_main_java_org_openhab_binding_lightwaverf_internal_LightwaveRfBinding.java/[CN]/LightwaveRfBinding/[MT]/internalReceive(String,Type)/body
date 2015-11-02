@@ -1,7 +1,13 @@
 {
-  String roomId=getRoomId(itemName);
-  String deviceId=getDeviceId(itemName);
-  LightwaveRfType deviceType=getType(itemName);
-  LightwaveRFCommand lightwaverfMessageString=messageConvertor.convertToLightwaveRfMessage(roomId,deviceId,deviceType,command);
-  sender.sendLightwaveCommand(lightwaverfMessageString);
+  LightwaveRfItemDirection direction=getDirection(itemName);
+  if (direction == LightwaveRfItemDirection.IN_AND_OUT || direction == LightwaveRfItemDirection.OUT_ONLY) {
+    String roomId=getRoomId(itemName);
+    String deviceId=getDeviceId(itemName);
+    LightwaveRfType deviceType=getType(itemName);
+    LightwaveRFCommand lightwaverfMessageString=messageConvertor.convertToLightwaveRfMessage(roomId,deviceId,deviceType,command);
+    wifiLink.sendLightwaveCommand(lightwaverfMessageString);
+  }
+ else {
+    logger.debug("Not sending command[" + command + "] to item["+ itemName+ "] as it is IN_ONLY");
+  }
 }

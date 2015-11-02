@@ -1,0 +1,10 @@
+{
+  for (  LightwaveRfStringMessageListener messageListener : listeners) {
+    try {
+      messageListener.messageReceived(message);
+    }
+ catch (    Exception e) {
+      logger.error("Unexpected error when notifying listeners of this message[" + message + "] message hasn't been processed",e);
+    }
+  }
+}
