@@ -11,6 +11,10 @@
     token.formatter=StringUtils.substringBetween(token.name,"(",")");
     token.name=StringUtils.substringBefore(token.name,"(");
   }
+  if (StringUtils.contains(token.full,"[")) {
+    token.unit=Unit.parse(StringUtils.substringBetween(token.full,"[","]"));
+    token.name=StringUtils.substringBefore(token.name,"[");
+  }
   if (!token.isValid()) {
     throw new RuntimeException("Invalid weather token: " + token.full);
   }

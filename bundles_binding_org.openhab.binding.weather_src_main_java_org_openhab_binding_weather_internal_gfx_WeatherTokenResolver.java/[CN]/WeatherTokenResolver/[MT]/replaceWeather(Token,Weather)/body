@@ -3,6 +3,9 @@
     throw new RuntimeException("Invalid weather token: " + token.full);
   }
   Object propertyValue=PropertyUtils.getPropertyValue(instance,token.name);
+  if (token.unit != null && propertyValue instanceof Double) {
+    propertyValue=UnitUtils.convertUnit((Double)propertyValue,token.unit,token.name);
+  }
   if (token.formatter != null) {
     return String.format(token.formatter,propertyValue);
   }
