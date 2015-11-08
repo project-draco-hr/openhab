@@ -1,0 +1,18 @@
+{
+  logger.trace("onBitUpdate with data='{}' for type '{}'...",data,slotType.name());
+  if (slotType == Ipx800PortType.INPUT || slotType == Ipx800PortType.OUPUT) {
+    if (data.length() != slotType.getMaxSlots()) {
+      logger.error("Received data doesn't match expected size");
+      return;
+    }
+  }
+  if (slotNumber >= 0) {
+    logger.trace("... for slot '{}'",slotNumber);
+    postUpdate(data,slotType,slotNumber);
+  }
+ else {
+    for (int i=0; i < data.length(); i++) {
+      postUpdate(data.substring(i),slotType,i + 1);
+    }
+  }
+}

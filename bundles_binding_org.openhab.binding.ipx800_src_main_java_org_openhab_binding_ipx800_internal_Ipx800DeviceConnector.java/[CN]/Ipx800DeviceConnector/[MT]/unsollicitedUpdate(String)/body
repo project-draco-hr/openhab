@@ -1,0 +1,26 @@
+{
+  final Pattern VALIDATION_PATTERN=Pattern.compile("I=(\\d{32})&O=(\\d{32})&([AC]\\d{1,2}=\\d+&)*[^I]*");
+  final Matcher matcher=VALIDATION_PATTERN.matcher(data);
+  while (matcher.find()) {
+    String completeCommand=matcher.group();
+    logger.debug("Command : " + completeCommand);
+    for (    String command : completeCommand.split("&")) {
+      int sepIndex=command.indexOf("=");
+      if (sepIndex == -1) {
+        continue;
+      }
+      String prefix=command.substring(0,sepIndex);
+      Ipx800PortType slotType=Ipx800PortType.getSlotByPrefix(prefix.substring(0,1));
+      if (slotType == null) {
+        logger.error("Not supported type for now '{}'",prefix);
+        continue;
+      }
+      if (sepIndex == 1) {
+        onBitUpdate(command.substring(sepIndex + 1),slotType);
+      }
+ else {
+        onBitUpdate(command.substring(sepIndex + 1),slotType,Integer.parseInt(prefix.substring(1)));
+      }
+    }
+  }
+}

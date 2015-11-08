@@ -1,0 +1,11 @@
+{
+  disconnect();
+  logger.debug("Connecting {}@ {}:{}...",config.name,config.host,config.port);
+  client=new Socket(config.host,Integer.parseInt(config.port));
+  client.setSoTimeout(keepaliveTimeout);
+  client.getInputStream().skip(client.getInputStream().available());
+  in=new BufferedReader(new InputStreamReader(client.getInputStream()));
+  out=new PrintWriter(client.getOutputStream(),true);
+  connected=true;
+  logger.debug("Connected to {}@ {}:{}",config.name,config.host,config.port);
+}

@@ -1,0 +1,41 @@
+{
+  interrupted=false;
+  while (!interrupted) {
+    try {
+      waitingKeepaliveResponse=false;
+      failedKeepalive=0;
+      connect();
+      String command;
+      while (!interrupted) {
+        if (failedKeepalive > maxKeepAliveFailure) {
+          throw new IOException("Max keep alive attempts has been reached");
+        }
+        try {
+          command=in.readLine();
+          if (command.equals("0") || command.equals("1")) {
+            logger.trace("Keepalive response ok");
+          }
+ else {
+            logger.debug("Receiving {}",command);
+          }
+          waitingKeepaliveResponse=false;
+          unsollicitedUpdate(command);
+          expectedResponse=ResponseType.NONE;
+        }
+ catch (        SocketTimeoutException e) {
+          sendKeepalive();
+        }
+      }
+      disconnect();
+    }
+ catch (    IOException e) {
+      logger.error(e.getMessage() + " will retry in " + reconnectTimeout+ "ms");
+    }
+    try {
+      Thread.sleep(reconnectTimeout);
+    }
+ catch (    InterruptedException e) {
+      logger.error(e.getMessage());
+    }
+  }
+}

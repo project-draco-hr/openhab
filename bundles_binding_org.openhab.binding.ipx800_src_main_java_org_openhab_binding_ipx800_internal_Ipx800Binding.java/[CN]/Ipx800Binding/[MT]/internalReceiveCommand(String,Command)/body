@@ -1,0 +1,14 @@
+{
+  logger.debug("Received command item='{}', command='{}'",itemName,command.toString());
+  for (  Ipx800DeviceConnector device : devices.values()) {
+    for (    Ipx800Port slot : device.getAllPorts()) {
+      Ipx800Item itemSlot=slot.getItemSlot(itemName);
+      if (itemSlot != null) {
+        itemSlot.setState((State)command);
+        if (itemSlot instanceof Ipx800OutputItem) {
+          device.setOutput((Ipx800OutputItem)itemSlot);
+        }
+      }
+    }
+  }
+}

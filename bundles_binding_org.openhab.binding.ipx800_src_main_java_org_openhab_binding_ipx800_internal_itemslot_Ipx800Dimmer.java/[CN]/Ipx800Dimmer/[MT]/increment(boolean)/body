@@ -1,0 +1,16 @@
+{
+  if (lastState == PercentType.HUNDRED) {
+    lastState=PercentType.ZERO;
+  }
+ else {
+    if (lastState.intValue() + steps >= 100) {
+      lastState=PercentType.HUNDRED;
+    }
+ else {
+      lastState=new PercentType(lastState.intValue() + steps);
+    }
+  }
+  if (propagate) {
+    this.postState();
+  }
+}

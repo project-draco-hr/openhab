@@ -1,0 +1,18 @@
+{
+  if (prov.getItemNames().contains(itemName)) {
+    try {
+      createInternalItem(itemName,prov);
+    }
+ catch (    Ipx800UnknownDeviceException e) {
+      logger.error("Item {} will be ignored",itemName);
+    }
+  }
+ else {
+    logger.debug("Removing item {}",itemName);
+    for (    String deviceName : devices.keySet()) {
+      for (      Ipx800Port slot : devices.get(deviceName).getAllPorts()) {
+        slot.destroyItem(itemName);
+      }
+    }
+  }
+}

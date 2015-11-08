@@ -1,0 +1,20 @@
+{
+  if (name.isEmpty() || portString.isEmpty()) {
+    return new Ipx800DeviceAndPort(null,null);
+  }
+  int extDelta=0;
+  Ipx800DeviceConnector device=devices.get(name);
+  if (device == null) {
+    for (    Ipx800DeviceConnector dev : devices.values()) {
+      extDelta=dev.getExtensionDelta(name);
+      if (extDelta != 0) {
+        device=dev;
+        break;
+      }
+    }
+    if (extDelta == 0) {
+      throw new Ipx800UnknownDeviceException("Device '" + name + "' doesn't exist, please check your config/items");
+    }
+  }
+  return new Ipx800DeviceAndPort(device,device.getPort(portString,extDelta));
+}
