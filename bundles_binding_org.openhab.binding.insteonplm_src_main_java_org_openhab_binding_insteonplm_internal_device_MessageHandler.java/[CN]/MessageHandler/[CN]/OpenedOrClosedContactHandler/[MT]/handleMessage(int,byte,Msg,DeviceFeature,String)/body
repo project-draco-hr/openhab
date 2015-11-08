@@ -1,15 +1,28 @@
 {
-  if (cmd1 != 0x11)   return;
   try {
     byte cmd2=msg.getByte("command2");
+switch (cmd1) {
+case 0x11:
 switch (cmd2) {
 case 0x02:
-      m_feature.publish(OpenClosedType.CLOSED,StateChangeType.CHANGED);
-    break;
+        m_feature.publish(OpenClosedType.CLOSED,StateChangeType.CHANGED);
+      break;
 case 0x01:
-  m_feature.publish(OpenClosedType.OPEN,StateChangeType.CHANGED);
+case 0x04:
+    m_feature.publish(OpenClosedType.OPEN,StateChangeType.CHANGED);
+  break;
+default :
+break;
+}
+break;
+case 0x13:
+switch (cmd2) {
+case 0x04:
+m_feature.publish(OpenClosedType.CLOSED,StateChangeType.CHANGED);
 break;
 default :
+break;
+}
 break;
 }
 }
