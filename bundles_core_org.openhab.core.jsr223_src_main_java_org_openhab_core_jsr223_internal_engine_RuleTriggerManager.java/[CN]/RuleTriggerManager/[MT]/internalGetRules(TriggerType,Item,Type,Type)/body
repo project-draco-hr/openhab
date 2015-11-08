@@ -13,7 +13,6 @@ case TIMER:
 return timerEventTriggeredRules;
 case UPDATE:
 case CHANGE:
-case COMMAND:
 if (newType instanceof State) {
 for (Rule rule : rules) {
   for (  EventTrigger t : rule.getEventTrigger()) {
@@ -22,6 +21,18 @@ for (Rule rule : rules) {
       break;
     }
   }
+}
+}
+break;
+case COMMAND:
+if (newType instanceof Command) {
+for (Rule rule : rules) {
+for (EventTrigger t : rule.getEventTrigger()) {
+if (t.evaluate(item,null,null,(Command)newType,triggerType)) {
+  result.add(rule);
+  break;
+}
+}
 }
 }
 break;
