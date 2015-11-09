@@ -1,0 +1,52 @@
+{
+  logger.info("Command received ({}, {})",itemName,command);
+  SonanceBindingProvider provider=findFirstMatchingBindingProvider(itemName);
+  String group=provider.getGroup(itemName);
+  String ip=provider.getIP(itemName);
+  int port=provider.getPort(itemName);
+  Socket s=null;
+  try {
+    s=new Socket(ip,port);
+    DataOutputStream outToServer=new DataOutputStream(s.getOutputStream());
+    BufferedReader i=new BufferedReader(new InputStreamReader(s.getInputStream()));
+    if (provider.isMute(itemName)) {
+      if (command.equals(OnOffType.OFF)) {
+        sendMuteCommand(itemName,SonanceConsts.MUTE_ON + group,outToServer,i);
+      }
+ else       if (command.equals(OnOffType.ON)) {
+        sendMuteCommand(itemName,SonanceConsts.MUTE_OFF + group,outToServer,i);
+      }
+ else {
+        logger.error("I don't know what to do with the command \"{}\"",command);
+      }
+    }
+ else     if (provider.isPower(itemName)) {
+      if (command.equals(OnOffType.OFF)) {
+        sendPowerCommand(itemName,SonanceConsts.POWER_OFF,outToServer,i);
+      }
+ else       if (command.equals(OnOffType.ON)) {
+        sendPowerCommand(itemName,SonanceConsts.POWER_ON,outToServer,i);
+      }
+ else {
+        logger.error("I don't know what to do with the command \"{}\"",command);
+      }
+    }
+ else     if (provider.isVolume(itemName))     if (command.equals(UpDownType.UP))     sendVolumeCommand(itemName,SonanceConsts.VOLUME_UP + group,outToServer,i);
+ else     if (command.equals(UpDownType.DOWN))     sendVolumeCommand(itemName,SonanceConsts.VOLUME_DOWN + group,outToServer,i);
+ else {
+      try {
+        setVolumeCommand(itemName,group,Integer.parseInt(command.toString()),outToServer,i,ip + ":" + port);
+      }
+ catch (      NumberFormatException nfe) {
+        logger.error("I don't know what to do with the command \"{}\"",command);
+      }
+    }
+    s.close();
+  }
+ catch (  IOException e) {
+    logger.debug("IO Exception when sending command. Exception: {}",e.getMessage());
+  }
+ finally {
+    closeSilently(s);
+  }
+}

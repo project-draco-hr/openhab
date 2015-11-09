@@ -1,0 +1,17 @@
+{
+  char[] cbuf=new char[50];
+  logger.debug("Sending mute command {}",command);
+  outToServer.write(hexStringToByteArray(command));
+  i.read(cbuf,0,50);
+  String result=new String(cbuf);
+  logger.trace("Received this result: {}",result);
+  if (result.contains("Mute=on") || result.contains("MuteOn")) {
+    eventPublisher.postUpdate(itemName,OnOffType.OFF);
+    logger.debug("Setting mute item {} on OFF",itemName);
+  }
+ else   if (result.contains("Mute=off") || result.contains("MuteOff")) {
+    eventPublisher.postUpdate(itemName,OnOffType.ON);
+    logger.debug("Setting mute item {} on ON",itemName);
+  }
+ else   logger.error("Error sending mute command {}, received this: {}",command,result);
+}
