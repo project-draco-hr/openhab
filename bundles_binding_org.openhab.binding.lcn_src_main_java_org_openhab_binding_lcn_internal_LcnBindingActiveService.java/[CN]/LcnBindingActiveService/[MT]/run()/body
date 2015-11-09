@@ -1,0 +1,13 @@
+{
+  logger.info(THREAD_NAME + " has been started");
+  while (!this.threadTreminate) {
+    try {
+      this.callback.execute();
+    }
+ catch (    RuntimeException ex) {
+      logger.error("Error while executing background thread " + THREAD_NAME,ex);
+    }
+  }
+  this.thread=null;
+  logger.info(THREAD_NAME + " has been shut down");
+}

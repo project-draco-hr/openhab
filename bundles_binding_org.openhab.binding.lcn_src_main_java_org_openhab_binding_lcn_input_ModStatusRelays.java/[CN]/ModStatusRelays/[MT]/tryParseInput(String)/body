@@ -1,0 +1,12 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  try {
+    Matcher matcher=PckParser.PATTERN_STATUS_RELAYS.matcher(input);
+    if (matcher.matches()) {
+      ret.add(new ModStatusRelays(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),PckParser.getBooleanValue(Integer.parseInt(matcher.group("byteValue")))));
+    }
+  }
+ catch (  IllegalArgumentException ex) {
+  }
+  return ret;
+}

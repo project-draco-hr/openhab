@@ -1,0 +1,34 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LED":
+      if ((matcher=PATTERN_LED.matcher(header.getRestInput())).matches()) {
+        int ledId=Integer.parseInt(matcher.group("ledId")) - 1;
+        if (ledId < 12) {
+          LcnDefs.LedStatus state;
+switch (matcher.group("action").toUpperCase()) {
+case "OFF":
+            state=LcnDefs.LedStatus.OFF;
+          break;
+case "ON":
+        state=LcnDefs.LedStatus.ON;
+      break;
+case "BLINK":
+    state=LcnDefs.LedStatus.BLINK;
+  break;
+case "FLICKER":
+state=LcnDefs.LedStatus.FLICKER;
+break;
+default :
+throw new Error();
+}
+return new Led(header.getAddr(),ledId,state);
+}
+}
+break;
+}
+}
+return null;
+}

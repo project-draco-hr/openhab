@@ -1,0 +1,26 @@
+{
+  String result=null;
+  Matcher matcher=PATTERN_MAPPING.matcher(lcnTarget);
+  if (!matcher.matches()) {
+    result=lcnTarget;
+  }
+ else {
+    matcher.reset();
+    matcher.find();
+    String s1=matcher.group(1);
+    String s2=matcher.group(2);
+    TransformationService transformationService=TransformationHelper.getTransformationService(LcnBindingActivator.getContext(),s1);
+    if (transformationService != null) {
+      try {
+        result=transformationService.transform(s2,openHABcmd);
+      }
+ catch (      TransformationException e) {
+        result=lcnTarget;
+      }
+    }
+ else {
+      result=lcnTarget;
+    }
+  }
+  return result;
+}

@@ -1,0 +1,24 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    try {
+      Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "REL":
+case "ADD":
+case "SUB":
+        if ((matcher=PATTERN_REL.matcher(header.getRestInput())).matches()) {
+          double value=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("value")).doubleValue();
+          if (header.getCmd().equalsIgnoreCase("SUB")) {
+            value=-value;
+          }
+          return new OutputDimRel(header.getAddr(),Integer.parseInt(matcher.group("outputId")) - 1,value);
+        }
+      break;
+  }
+}
+ catch (ParseException ex) {
+}
+}
+return null;
+}

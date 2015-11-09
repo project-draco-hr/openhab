@@ -1,0 +1,8 @@
+{
+  if (!addr.isGroup() && wantsAck) {
+    this.updateModuleData((LcnAddrMod)addr).queuePckCommandWithAck(data,this,this.sets.getTimeout(),System.nanoTime());
+  }
+ else {
+    this.queue(new SendData.PckSendData(addr,wantsAck,data));
+  }
+}

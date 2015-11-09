@@ -1,0 +1,27 @@
+{
+  HashSet<String> removeIds=new HashSet<String>();
+  for (  Connection conn : this.connectionsById.values()) {
+    ConnectionSettings sets=this.callback.getAllSets().get(conn.getSets().getId().toUpperCase());
+    if (sets != null) {
+      if (!sets.equals(conn.getSets())) {
+        removeIds.add(conn.getSets().getId());
+      }
+    }
+ else {
+      removeIds.add(conn.getSets().getId());
+    }
+  }
+  for (  String id : removeIds) {
+    this.disconnectAndRemove(id);
+  }
+  for (  ConnectionSettings sets : this.callback.getAllSets().values()) {
+    if (!this.connectionsById.containsKey(sets.getId().toUpperCase())) {
+      Connection conn=new Connection(sets,this);
+      this.add(conn);
+      conn.beginConnect();
+    }
+  }
+  for (  Connection conn : this.connectionsById.values()) {
+    conn.update();
+  }
+}

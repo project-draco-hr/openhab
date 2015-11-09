@@ -1,0 +1,16 @@
+{
+  if (!this.addr.isGroup()) {
+    long currTime=System.nanoTime();
+    ModInfo info=conn.updateModuleData((LcnAddrMod)this.addr);
+    if (this.outputId == -1) {
+      if (!info.requestSwAge.isActive()) {
+        info.requestSwAge.nextRequestIn(0,currTime);
+      }
+    }
+ else {
+      if (!info.requestStatusOutputs.get(this.outputId).isActive()) {
+        info.requestStatusOutputs.get(this.outputId).nextRequestIn(0,currTime);
+      }
+    }
+  }
+}

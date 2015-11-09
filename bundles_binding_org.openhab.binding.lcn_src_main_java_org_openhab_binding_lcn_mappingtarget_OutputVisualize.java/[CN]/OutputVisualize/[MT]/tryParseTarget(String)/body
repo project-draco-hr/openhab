@@ -1,0 +1,14 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "OUTPUT_STATUS":
+      if ((matcher=PATTERN_OUTPUT_STATUS.matcher(header.getRestInput())).matches()) {
+        return new OutputVisualize((LcnAddrMod)header.getAddr(),Integer.parseInt(matcher.group("outputId")) - 1);
+      }
+    break;
+}
+}
+return null;
+}

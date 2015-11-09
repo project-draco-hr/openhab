@@ -1,0 +1,9 @@
+{
+  conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.controlLed(this.ledId,this.state));
+  if (!this.addr.isGroup()) {
+    ModInfo info=conn.getModInfo((LcnAddrMod)this.addr);
+    if (info != null) {
+      info.requestStatusLedsAndLogicOps.nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  final Object sync=new Object();
+  long lastCloseDetectTime=System.nanoTime();
+  while (!this.threadTreminate) {
+    long currTime=System.nanoTime();
+    try {
+      int timeoutMSec=DETECT_CLOSED_CHANNELS_INTERVAL_MSEC - (int)((currTime - lastCloseDetectTime) / 1000000L);
+      if (timeoutMSec <= 0 || this.selector.select(timeoutMSec) == 0) {
+synchronized (sync) {
+          this.callback.runOnRefreshThreadAsync(new LcnBindingNotification(){
+            public void execute(){
+              for (              Connection conn : ConnectionManager.this.connectionsById.values()) {
+                if (!conn.isChannelConnected() && !conn.isChannelConnecting()) {
+                  logger.warn(String.format("Channel \"%s\" was closed unexpectedly (reconnecting...).",conn.getSets().getId()));
+                  conn.beginReconnect(RECONNECT_INTERVAL_MSEC);
+                }
+              }
+synchronized (sync) {
+                sync.notify();
+              }
+            }
+          }
+);
+          sync.wait();
+        }
+        lastCloseDetectTime=currTime;
+      }
+ else {
+        Iterator<SelectionKey> iter=this.selector.selectedKeys().iterator();
+        while (iter.hasNext()) {
+          final SelectionKey key=iter.next();
+synchronized (sync) {
+            this.callback.runOnRefreshThreadAsync(new LcnBindingNotification(){
+              public void execute(){
+                Connection conn=(Connection)key.attachment();
+                try {
+                  if (key.isConnectable()) {
+                    conn.finishConnect();
+                  }
+ else                   if (key.isReadable()) {
+                    conn.readAndProcess();
+                  }
+                }
+ catch (                IOException ex) {
+                  logger.warn(String.format("Cannot process channel \"%s\" (reconnecting...): %s",conn.getSets().getId(),ex.getMessage()));
+                  conn.beginReconnect(RECONNECT_INTERVAL_MSEC);
+                }
+synchronized (sync) {
+                  sync.notify();
+                }
+              }
+            }
+);
+            sync.wait();
+          }
+          iter.remove();
+        }
+      }
+synchronized (this.channelRegisterSync) {
+      }
+    }
+ catch (    InterruptedException ex) {
+    }
+catch (    IOException ex) {
+      logger.error("Selection failure: " + ex.getMessage());
+    }
+  }
+}

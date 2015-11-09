@@ -1,0 +1,23 @@
+{
+  boolean sent=false;
+  for (int tableId=0; tableId < 4; ++tableId) {
+    for (int keyId=0; keyId < 8; ++keyId) {
+      if (this.keys[tableId][keyId]) {
+        if (tableId == 0) {
+          conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.lockKeyTabATemporary(this.time,this.timeUnit,this.keys[tableId]));
+          sent=true;
+        }
+ else {
+          logger.error(String.format("Locking keys from table %s (temporary) is not supported.",tableId == 1 ? "B" : tableId == 2 ? "C" : "D"));
+        }
+        break;
+      }
+    }
+  }
+  if (sent && !this.addr.isGroup()) {
+    ModInfo info=conn.getModInfo((LcnAddrMod)this.addr);
+    if (info != null) {
+      info.requestStatusLockedKeys.nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
+  }
+}

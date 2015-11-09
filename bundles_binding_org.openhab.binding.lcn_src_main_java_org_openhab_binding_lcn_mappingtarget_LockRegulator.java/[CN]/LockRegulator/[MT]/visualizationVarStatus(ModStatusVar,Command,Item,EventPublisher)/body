@@ -1,0 +1,11 @@
+{
+  LcnDefs.Var var=this.regId == 0 ? LcnDefs.Var.R1VARSETPOINT : LcnDefs.Var.R2VARSETPOINT;
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && pchkInput.getVar() == var && item.getAcceptedDataTypes().contains(OnOffType.class)) {
+    State reportedState=pchkInput.getValue().isLockedRegulator() ? OnOffType.ON : OnOffType.OFF;
+    if (cmd == reportedState) {
+      eventPublisher.postUpdate(item.getName(),reportedState);
+      return true;
+    }
+  }
+  return false;
+}

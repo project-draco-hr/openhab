@@ -1,0 +1,50 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LOCK":
+      if ((matcher=PATTERN_LOCK_KEYS.matcher(header.getRestInput())).matches()) {
+        LcnDefs.KeyLockStateModifier[] states=new LcnDefs.KeyLockStateModifier[8];
+        int tableId;
+switch (matcher.group("table").toUpperCase()) {
+case "A":
+          tableId=0;
+        break;
+case "B":
+      tableId=1;
+    break;
+case "C":
+  tableId=2;
+break;
+case "D":
+tableId=3;
+break;
+default :
+throw new Error();
+}
+for (int i=0; i < 8; ++i) {
+switch (matcher.group("states").toUpperCase().charAt(i)) {
+case '1':
+states[i]=LcnDefs.KeyLockStateModifier.ON;
+break;
+case '0':
+states[i]=LcnDefs.KeyLockStateModifier.OFF;
+break;
+case 'T':
+states[i]=LcnDefs.KeyLockStateModifier.TOGGLE;
+break;
+case '-':
+states[i]=LcnDefs.KeyLockStateModifier.NOCHANGE;
+break;
+default :
+throw new Error();
+}
+}
+return new LockKeys(header.getAddr(),tableId,states);
+}
+break;
+}
+}
+return null;
+}

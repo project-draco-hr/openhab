@@ -1,0 +1,24 @@
+{
+  int id=LcnDefs.Var.toVarId(var);
+  if (id != -1) {
+    if (is2013) {
+      return String.format("Z-%03d%04d",id + 1,4090);
+    }
+ else {
+      if (id == 0) {
+        return "ZS30000";
+      }
+ else {
+        throw new IllegalArgumentException();
+      }
+    }
+  }
+  id=LcnDefs.Var.toSetPointId(var);
+  if (id != -1) {
+    int b1=id << 6;
+    b1|=0x20;
+    int b2=0;
+    return String.format("X2%03d%03d%03d",30,b1,b2);
+  }
+  throw new IllegalArgumentException();
+}

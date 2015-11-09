@@ -1,0 +1,24 @@
+{
+  this.disconnect();
+  try {
+    SocketChannel channel=SocketChannel.open();
+    channel.configureBlocking(false);
+synchronized (this.callback.getChannelRegisterSync()) {
+      this.callback.getSelector().wakeup();
+      channel.register(this.callback.getSelector(),SelectionKey.OP_CONNECT,this);
+    }
+    logger.info(String.format("Connecting channel \"%s\".",channel));
+    String resolvedAddress=InetAddress.getByName(sets.getAddress()).getHostAddress();
+    if (channel.connect(new InetSocketAddress(resolvedAddress,sets.getPort()))) {
+      this.onConnected();
+    }
+    this.channel=channel;
+    this.isChannelConnecting=true;
+  }
+ catch (  UnknownHostException ex) {
+    logger.warn(String.format("Unable to resolve host: %s",ex.getMessage()));
+  }
+catch (  IOException ex) {
+    logger.warn(String.format("Unable to set up a new SocketChannel: %s",ex.getMessage()));
+  }
+}

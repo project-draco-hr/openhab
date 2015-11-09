@@ -1,0 +1,13 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr)) {
+    if (item.getAcceptedDataTypes().contains(OpenClosedType.class)) {
+      eventPublisher.postUpdate(item.getName(),pchkInput.getState(this.binSensorId) ? OpenClosedType.CLOSED : OpenClosedType.OPEN);
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(OnOffType.class)) {
+      eventPublisher.postUpdate(item.getName(),pchkInput.getState(this.binSensorId) ? OnOffType.ON : OnOffType.OFF);
+      return true;
+    }
+  }
+  return false;
+}

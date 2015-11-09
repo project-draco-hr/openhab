@@ -1,0 +1,28 @@
+{
+  String id=(String)config.get("id" + (counter + 1));
+  id=id == null ? "" : id.trim();
+  String addressWithOptPort=(String)config.get("address" + (counter + 1));
+  addressWithOptPort=addressWithOptPort == null ? "" : addressWithOptPort.trim();
+  String username=(String)config.get("username" + (counter + 1));
+  username=username == null ? "" : username.trim();
+  String password=(String)config.get("password" + (counter + 1));
+  password=password == null ? "" : password.trim();
+  String mode=(String)config.get("mode" + (counter + 1));
+  mode=mode == null ? "" : mode.trim();
+  if (id.isEmpty() || addressWithOptPort.isEmpty() || username.isEmpty()|| password.isEmpty()|| mode.isEmpty()) {
+    return null;
+  }
+  String dataRequestTimeout=(String)config.get("timeout" + (counter + 1));
+  dataRequestTimeout=dataRequestTimeout == null ? Long.valueOf(DEFAULT_TIMEOUT_MSEC).toString() : dataRequestTimeout.trim();
+  try {
+    String address=addressWithOptPort.contains(":") ? addressWithOptPort.split(":")[0] : addressWithOptPort;
+    int port=addressWithOptPort.contains(":") ? Integer.parseInt(addressWithOptPort.split(":")[1]) : 4114;
+    LcnDefs.OutputPortDimMode dimMode=mode.equalsIgnoreCase("percent200") || mode.equalsIgnoreCase("native200") ? LcnDefs.OutputPortDimMode.STEPS200 : LcnDefs.OutputPortDimMode.STEPS50;
+    LcnDefs.OutputPortStatusMode statusMode=mode.equalsIgnoreCase("percent50") || mode.equalsIgnoreCase("percent200") ? LcnDefs.OutputPortStatusMode.PERCENT : LcnDefs.OutputPortStatusMode.NATIVE;
+    int timeout=Integer.parseInt(dataRequestTimeout);
+    return new ConnectionSettings(id,address,port,username,password,dimMode,statusMode,timeout);
+  }
+ catch (  NumberFormatException ex) {
+  }
+  return null;
+}

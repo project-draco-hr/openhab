@@ -1,0 +1,43 @@
+{
+  if (swAge >= 0x170206) {
+    int id=LcnDefs.Var.toVarId(var);
+    if (id != -1) {
+      return String.format("MWT%03d",id + 1);
+    }
+    id=LcnDefs.Var.toSetPointId(var);
+    if (id != -1) {
+      return String.format("MWS%03d",id + 1);
+    }
+    id=LcnDefs.Var.toThrsRegisterId(var);
+    if (id != -1) {
+      return String.format("SE%03d",id + 1);
+    }
+    id=LcnDefs.Var.toS0Id(var);
+    if (id != -1) {
+      return String.format("MWC%03d",id + 1);
+    }
+    throw new IllegalArgumentException();
+  }
+ else {
+switch (var) {
+case VAR1ORTVAR:
+      return "MWV";
+case VAR2ORR1VAR:
+    return "MWTA";
+case VAR3ORR2VAR:
+  return "MWTB";
+case R1VARSETPOINT:
+return "MWSA";
+case R2VARSETPOINT:
+return "MWSB";
+case THRS1:
+case THRS2:
+case THRS3:
+case THRS4:
+case THRS5:
+return "SL1";
+default :
+throw new IllegalArgumentException();
+}
+}
+}
