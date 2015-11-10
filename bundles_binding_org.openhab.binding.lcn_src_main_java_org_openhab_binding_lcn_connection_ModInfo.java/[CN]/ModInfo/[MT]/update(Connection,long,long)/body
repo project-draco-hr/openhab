@@ -1,0 +1,61 @@
+{
+  RequestStatus r;
+  if ((r=this.requestSwAge).shouldSendNextRequest(timeoutMSec,currTime)) {
+    conn.queue(this.addr,false,PckGenerator.requestSn());
+    r.onRequestSent(currTime);
+  }
+  for (int i=0; i < 4; ++i) {
+    if ((r=this.requestStatusOutputs.get(i)).shouldSendNextRequest(timeoutMSec,currTime)) {
+      conn.queue(this.addr,false,PckGenerator.requestOutputStatus(i));
+      r.onRequestSent(currTime);
+    }
+  }
+  if ((r=this.requestStatusRelays).shouldSendNextRequest(timeoutMSec,currTime)) {
+    conn.queue(this.addr,false,PckGenerator.requestRelaysStatus());
+    r.onRequestSent(currTime);
+  }
+  if ((r=this.requestStatusBinSensors).shouldSendNextRequest(timeoutMSec,currTime)) {
+    conn.queue(this.addr,false,PckGenerator.requestBinSensorsStatus());
+    r.onRequestSent(currTime);
+  }
+  if (this.swAge != -1) {
+    if (this.requestStatusVars.isEmpty()) {
+      for (      LcnDefs.Var var : LcnDefs.Var.values()) {
+        if (var != LcnDefs.Var.UNKNOWN) {
+          this.requestStatusVars.put(var,new RequestStatus(swAge >= 0x170206 ? MAX_STATUS_EVENTBASED_VALUEAGE_MSEC : MAX_STATUS_POLLED_VALUEAGE_MSEC,NUM_TRIES));
+        }
+      }
+    }
+    if (this.lastRequestedVarWithoutTypeInResponse != LcnDefs.Var.UNKNOWN) {
+      if (this.requestStatusVars.get(this.lastRequestedVarWithoutTypeInResponse).isTimeout(timeoutMSec,currTime)) {
+        this.lastRequestedVarWithoutTypeInResponse=LcnDefs.Var.UNKNOWN;
+      }
+    }
+    for (    Map.Entry<LcnDefs.Var,RequestStatus> kv : this.requestStatusVars.entrySet()) {
+      if ((r=kv.getValue()).shouldSendNextRequest(timeoutMSec,currTime)) {
+        boolean hasTypeInResponse=LcnDefs.Var.hasTypeInResponse(kv.getKey(),this.swAge);
+        if (hasTypeInResponse || this.lastRequestedVarWithoutTypeInResponse == LcnDefs.Var.UNKNOWN) {
+          try {
+            conn.queue(this.addr,false,PckGenerator.requestVarStatus(kv.getKey(),this.swAge));
+            r.onRequestSent(currTime);
+            if (!hasTypeInResponse) {
+              this.lastRequestedVarWithoutTypeInResponse=kv.getKey();
+            }
+          }
+ catch (          IllegalArgumentException ex) {
+            r.reset();
+          }
+        }
+      }
+    }
+  }
+  if ((r=this.requestStatusLedsAndLogicOps).shouldSendNextRequest(timeoutMSec,currTime)) {
+    conn.queue(this.addr,false,PckGenerator.requestLedsAndLogicOpsStatus());
+    r.onRequestSent(currTime);
+  }
+  if ((r=this.requestStatusLockedKeys).shouldSendNextRequest(timeoutMSec,currTime)) {
+    conn.queue(this.addr,false,PckGenerator.requestKeyLocksStatus());
+    r.onRequestSent(currTime);
+  }
+  this.tryProcessNextCommandWithAck(conn,timeoutMSec,currTime);
+}

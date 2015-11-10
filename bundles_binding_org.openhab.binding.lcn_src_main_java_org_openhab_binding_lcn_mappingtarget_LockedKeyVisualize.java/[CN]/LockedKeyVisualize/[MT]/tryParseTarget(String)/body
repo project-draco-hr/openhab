@@ -1,0 +1,31 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LOCK_STATE":
+      if ((matcher=PATTERN_LOCK_STATE.matcher(header.getRestInput())).matches()) {
+        int tableId;
+switch (matcher.group("table").toUpperCase()) {
+case "A":
+          tableId=0;
+        break;
+case "B":
+      tableId=1;
+    break;
+case "C":
+  tableId=2;
+break;
+case "D":
+tableId=3;
+break;
+default :
+throw new Error();
+}
+return new LockedKeyVisualize((LcnAddrMod)header.getAddr(),tableId,Integer.parseInt(matcher.group("keyId")) - 1);
+}
+break;
+}
+}
+return null;
+}

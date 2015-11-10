@@ -1,0 +1,26 @@
+{
+  int id=LcnDefs.Var.toVarId(var);
+  if (id != -1) {
+    if (id == 0) {
+      return String.format("Z%s%d",value >= 0 ? "A" : "S",Math.abs(value));
+    }
+ else {
+      return String.format("Z%s%03d%d",value >= 0 ? "+" : "-",id + 1,Math.abs(value));
+    }
+  }
+  id=LcnDefs.Var.toSetPointId(var);
+  if (id != -1) {
+    return String.format("RE%sS%s%s%d",id == 0 ? "A" : "B",type == LcnDefs.RelVarRef.CURRENT ? "A" : "P",value >= 0 ? "+" : "-",Math.abs(value));
+  }
+  int registerId=LcnDefs.Var.toThrsRegisterId(var);
+  id=LcnDefs.Var.toThrsId(var);
+  if (registerId != -1 && id != -1) {
+    if (is2013) {
+      return String.format("SS%s%04d%sR%d%d",type == LcnDefs.RelVarRef.CURRENT ? "R" : "E",Math.abs(value),value >= 0 ? "A" : "S",registerId + 1,id + 1);
+    }
+ else     if (registerId == 0) {
+      return String.format("SS%s%04d%s%s%s%s%s%s",type == LcnDefs.RelVarRef.CURRENT ? "R" : "E",Math.abs(value),value >= 0 ? "A" : "S",id == 0 ? "1" : "0",id == 1 ? "1" : "0",id == 2 ? "1" : "0",id == 3 ? "1" : "0",id == 4 ? "1" : "0");
+    }
+  }
+  throw new IllegalArgumentException();
+}

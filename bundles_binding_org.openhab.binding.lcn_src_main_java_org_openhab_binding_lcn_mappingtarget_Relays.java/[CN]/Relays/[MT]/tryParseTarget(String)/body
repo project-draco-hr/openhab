@@ -1,0 +1,33 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "RELAYS":
+      if ((matcher=PATTERN_RELAYS.matcher(header.getRestInput())).matches()) {
+        LcnDefs.RelayStateModifier[] states=new LcnDefs.RelayStateModifier[8];
+        for (int i=0; i < 8; ++i) {
+switch (matcher.group("states").toUpperCase().charAt(i)) {
+case '1':
+            states[i]=LcnDefs.RelayStateModifier.ON;
+          break;
+case '0':
+        states[i]=LcnDefs.RelayStateModifier.OFF;
+      break;
+case 'T':
+    states[i]=LcnDefs.RelayStateModifier.TOGGLE;
+  break;
+case '-':
+states[i]=LcnDefs.RelayStateModifier.NOCHANGE;
+break;
+default :
+throw new Error();
+}
+}
+return new Relays(header.getAddr(),states);
+}
+break;
+}
+}
+return null;
+}

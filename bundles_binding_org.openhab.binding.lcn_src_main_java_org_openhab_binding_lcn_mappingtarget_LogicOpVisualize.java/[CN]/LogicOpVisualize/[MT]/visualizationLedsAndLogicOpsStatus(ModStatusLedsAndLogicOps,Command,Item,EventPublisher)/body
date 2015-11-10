@@ -1,0 +1,41 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr)) {
+    if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      int n;
+switch (pchkInput.getLogicOpState(this.logicOpId)) {
+case NOT:
+        n=0;
+      break;
+case OR:
+    n=1;
+  break;
+case AND:
+n=2;
+break;
+default :
+throw new Error();
+}
+eventPublisher.postUpdate(item.getName(),new DecimalType(n));
+return true;
+}
+ else if (item.getAcceptedDataTypes().contains(StringType.class)) {
+String s;
+switch (pchkInput.getLogicOpState(this.logicOpId)) {
+case NOT:
+s=this.stateTexts[0];
+break;
+case OR:
+s=this.stateTexts[1];
+break;
+case AND:
+s=this.stateTexts[2];
+break;
+default :
+throw new Error();
+}
+eventPublisher.postUpdate(item.getName(),new StringType(s));
+return true;
+}
+}
+return false;
+}

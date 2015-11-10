@@ -1,0 +1,15 @@
+{
+  if (!this.properlyConfigured) {
+    logger.trace("{} won't be started because it isn't yet properly configured.",THREAD_NAME);
+    return;
+  }
+  this.threadTreminate=false;
+  if (!this.isRunning()) {
+    this.thread=new Thread(this,THREAD_NAME);
+    this.thread.setDaemon(true);
+    this.thread.start();
+  }
+ else {
+    logger.trace("{} is already started > calling start() changed nothing.",THREAD_NAME);
+  }
+}

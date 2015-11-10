@@ -1,0 +1,10 @@
+{
+  conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.lockRegulator(this.regId,this.state));
+  if (!this.addr.isGroup() && !this.state) {
+    LcnDefs.Var var=this.regId == 0 ? LcnDefs.Var.R1VARSETPOINT : LcnDefs.Var.R2VARSETPOINT;
+    ModInfo info=conn.getModInfo((LcnAddrMod)this.addr);
+    if (info != null && LcnDefs.Var.shouldPollStatusAfterRegulatorLock(info.getSwAge(),this.state) && info.requestStatusVars.containsKey(var)) {
+      info.requestStatusVars.get(var).nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
+  }
+}

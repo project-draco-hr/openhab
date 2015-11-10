@@ -1,0 +1,12 @@
+{
+  int id=LcnDefs.Var.toSetPointId(var);
+  if (id != -1) {
+    int b1=id << 6;
+    b1|=0x20;
+    value-=1000;
+    b1|=(value >> 8) & 0x0f;
+    int b2=value & 0xff;
+    return String.format("X2%03d%03d%03d",30,b1,b2);
+  }
+  throw new IllegalArgumentException();
+}

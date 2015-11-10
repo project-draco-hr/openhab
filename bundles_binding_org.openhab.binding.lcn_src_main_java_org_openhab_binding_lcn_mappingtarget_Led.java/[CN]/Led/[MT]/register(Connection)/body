@@ -1,0 +1,8 @@
+{
+  if (!this.addr.isGroup()) {
+    ModInfo info=conn.updateModuleData((LcnAddrMod)this.addr);
+    if (!info.requestStatusLedsAndLogicOps.isActive()) {
+      info.requestStatusLedsAndLogicOps.nextRequestIn(0,System.nanoTime());
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  try {
+    int n;
+    if ((n=this.channel.read(this.readBuffer)) == -1) {
+      throw new IOException("Connection was closed by foreign host.");
+    }
+    this.readBuffer.flip();
+    int aPos=this.readBuffer.position();
+    String s=new String(this.readBuffer.array(),aPos,n,LcnDefs.LCN_ENCODING);
+    int pos1=0, pos2=s.indexOf(PckGenerator.TERMINATION,pos1);
+    while (pos2 != -1) {
+      this.callback.onInputReceived(s.substring(pos1,pos2),this);
+      aPos+=s.substring(pos1,pos2 + 1).getBytes(LcnDefs.LCN_ENCODING).length;
+      pos1=pos2 + 1;
+      pos2=s.indexOf(PckGenerator.TERMINATION,pos1);
+    }
+    this.readBuffer.limit(this.readBuffer.capacity());
+    this.readBuffer.position(n - aPos);
+  }
+ catch (  UnsupportedEncodingException ex) {
+    logger.warn(String.format("Unable to decode input from channel \"%s\": %s",this.sets.getId(),ex.getMessage()));
+  }
+}

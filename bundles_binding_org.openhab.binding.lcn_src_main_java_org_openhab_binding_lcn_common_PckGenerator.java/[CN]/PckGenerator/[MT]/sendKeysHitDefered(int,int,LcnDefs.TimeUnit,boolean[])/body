@@ -1,0 +1,55 @@
+{
+  if (tableId < 0 || tableId > 3 || keys.length != 8) {
+    throw new IllegalArgumentException();
+  }
+  String ret="TV";
+switch (tableId) {
+case 0:
+    ret+="A";
+  break;
+case 1:
+ret+="B";
+break;
+case 2:
+ret+="C";
+break;
+case 3:
+ret+="D";
+break;
+default :
+throw new IllegalArgumentException();
+}
+ret+=String.format("%03d",time);
+switch (timeUnit) {
+case SECONDS:
+if (time < 1 || time > 60) {
+throw new IllegalArgumentException();
+}
+ret+="S";
+break;
+case MINUTES:
+if (time < 1 || time > 90) {
+throw new IllegalArgumentException();
+}
+ret+="M";
+break;
+case HOURS:
+if (time < 1 || time > 50) {
+throw new IllegalArgumentException();
+}
+ret+="H";
+break;
+case DAYS:
+if (time < 1 || time > 45) {
+throw new IllegalArgumentException();
+}
+ret+="D";
+break;
+default :
+throw new Error();
+}
+for (int i=0; i < 8; ++i) {
+ret+=keys[i] ? "1" : "0";
+}
+return ret;
+}

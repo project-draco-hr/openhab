@@ -1,0 +1,16 @@
+{
+  for (  Mapping mapping : this.mappings) {
+    if (mapping.connId.equalsIgnoreCase(conn.getSets().getId())) {
+      if (!mapping.hasInitialData()) {
+        for (        LcnAddrMod addr : this.getRelatedModules()) {
+          ModInfo info=conn.getModInfo(addr);
+          if (info != null) {
+            info.resetNotCachedStatusRequests();
+          }
+        }
+        mapping.setInitialData(true);
+      }
+      mapping.getTarget().register(conn);
+    }
+  }
+}
