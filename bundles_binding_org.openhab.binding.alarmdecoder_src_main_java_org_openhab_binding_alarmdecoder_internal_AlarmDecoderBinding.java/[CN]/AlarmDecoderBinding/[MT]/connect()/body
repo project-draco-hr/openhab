@@ -10,7 +10,7 @@
       startMsgReader();
     }
  else     if (this.m_serialDeviceName != null) {
-      System.setProperty("gnu.io.rxtx.SerialPorts",m_serialDeviceName);
+      updateSerialProperties(m_serialDeviceName);
       CommPortIdentifier ci=CommPortIdentifier.getPortIdentifier(m_serialDeviceName);
       CommPort cp=ci.open("openhabalarmdecoder",10000);
       if (cp == null) {
@@ -22,7 +22,7 @@
  else {
         throw new IllegalStateException("unknown port type");
       }
-      m_port.setSerialPortParams(19200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+      m_port.setSerialPortParams(m_portSpeed,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
       m_port.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
       m_port.disableReceiveFraming();
       m_port.disableReceiveThreshold();
