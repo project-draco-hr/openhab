@@ -7,7 +7,7 @@
     }
     try {
       if (oauthCredentials.firstExecution) {
-        processDeviceList(oauthCredentials);
+        processGetStationsData(oauthCredentials);
       }
       DeviceMeasureValueMap deviceMeasureValueMap=processMeasurements(oauthCredentials);
       if (deviceMeasureValueMap == null) {
@@ -22,17 +22,19 @@
           State state=null;
 switch (measureType) {
 case MODULENAME:
-            if (moduleId == null)             for (            Device device : oauthCredentials.deviceListResponse.getDevices()) {
+            if (moduleId == null)             for (            Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
               if (device.getId().equals(deviceId)) {
                 state=new StringType(device.getModuleName());
                 break;
               }
             }
  else {
-              for (              Module module : oauthCredentials.deviceListResponse.getModules()) {
-                if (module.getId().equals(moduleId)) {
-                  state=new StringType(module.getModuleName());
-                  break;
+              for (              Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
+                for (                Module module : device.getModules()) {
+                  if (module.getId().equals(moduleId)) {
+                    state=new StringType(module.getModuleName());
+                    break;
+                  }
                 }
               }
             }
@@ -94,18 +96,20 @@ case DATE_MAX_CO2:
 break;
 case BATTERYVP:
 case RFSTATUS:
-for (Module module : oauthCredentials.deviceListResponse.getModules()) {
+for (Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
+for (Module module : device.getModules()) {
 if (module.getId().equals(moduleId)) {
 switch (measureType) {
 case BATTERYVP:
-  state=new DecimalType(module.getBatteryLevel());
-break;
+    state=new DecimalType(module.getBatteryLevel());
+  break;
 case RFSTATUS:
 state=new DecimalType(module.getRfLevel());
 break;
 case MODULENAME:
 state=new StringType(module.getModuleName());
 break;
+}
 }
 }
 }
@@ -116,7 +120,7 @@ case LONGITUDE:
 case WIFISTATUS:
 case COORDINATE:
 case STATIONNAME:
-for (Device device : oauthCredentials.deviceListResponse.getDevices()) {
+for (Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
 if (stationPosition == null) {
 DecimalType altitude=DecimalType.ZERO;
 if (device.getAltitude() != null) {
