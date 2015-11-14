@@ -1,0 +1,12 @@
+{
+  for (int tableId=0; tableId < 4; ++tableId) {
+    for (int keyId=0; keyId < 8; ++keyId) {
+      if (this.keys[tableId][keyId]) {
+        LcnDefs.SendKeyCommand[] cmds=new LcnDefs.SendKeyCommand[]{LcnDefs.SendKeyCommand.DONTSEND,LcnDefs.SendKeyCommand.DONTSEND,LcnDefs.SendKeyCommand.DONTSEND,LcnDefs.SendKeyCommand.DONTSEND};
+        cmds[tableId]=this.cmd;
+        conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.sendKeys(cmds,this.keys[tableId]));
+        break;
+      }
+    }
+  }
+}

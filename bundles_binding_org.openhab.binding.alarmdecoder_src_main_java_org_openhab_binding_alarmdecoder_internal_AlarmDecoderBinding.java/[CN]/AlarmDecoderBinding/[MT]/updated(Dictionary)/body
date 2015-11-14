@@ -2,6 +2,7 @@
   if (config == null) {
     throw new ConfigurationException("alarmdecoder:connect","no config!");
   }
+  logger.debug("config updated!");
   try {
     m_connectString=(String)config.get("connect");
     if (m_connectString == null) {
@@ -14,11 +15,8 @@
     if (parts[0].equals("tcp")) {
       parseTcpConfig(parts);
     }
- else     if (parts[0].equals("serial")) {
-      if (parts.length != 2) {
-        throw new ConfigurationException("alarmdecoder:connect","serial device name cannot have :");
-      }
-      m_serialDeviceName=parts[1];
+ else     if (parts[0].startsWith("serial")) {
+      parseSerialConfig(parts);
     }
  else {
       throw new ConfigurationException("alarmdecoder:connect","invalid parameter " + parts[0]);

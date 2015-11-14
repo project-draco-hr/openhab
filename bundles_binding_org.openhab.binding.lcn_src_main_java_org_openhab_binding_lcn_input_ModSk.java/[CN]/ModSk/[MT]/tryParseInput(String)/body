@@ -1,0 +1,8 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  Matcher matcher=PckParser.PATTERN_SK_RESPONSE.matcher(input);
+  if (matcher.matches()) {
+    ret.add(new ModSk(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),Integer.parseInt(matcher.group("id"))));
+  }
+  return ret;
+}

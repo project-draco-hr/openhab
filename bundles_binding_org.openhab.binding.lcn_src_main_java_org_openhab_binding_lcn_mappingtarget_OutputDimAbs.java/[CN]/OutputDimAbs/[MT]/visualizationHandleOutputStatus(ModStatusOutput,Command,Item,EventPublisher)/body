@@ -1,0 +1,16 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && pchkInput.getOutputId() == this.outputId) {
+    if (this.percent == -1 && item.getAcceptedDataTypes().contains(PercentType.class)) {
+      eventPublisher.postUpdate(item.getName(),new PercentType((int)Math.round(pchkInput.getPercent())));
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(OnOffType.class)) {
+      State reportedState=pchkInput.getPercent() != 0 ? OnOffType.ON : OnOffType.OFF;
+      if (cmd == reportedState) {
+        eventPublisher.postUpdate(item.getName(),reportedState);
+        return true;
+      }
+    }
+  }
+  return false;
+}

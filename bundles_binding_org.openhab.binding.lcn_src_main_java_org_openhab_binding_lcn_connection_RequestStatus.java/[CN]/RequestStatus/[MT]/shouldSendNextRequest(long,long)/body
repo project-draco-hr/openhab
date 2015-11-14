@@ -1,0 +1,11 @@
+{
+  if (this.isActive) {
+    if (this.nextRequestTimeStamp != 0 && currTime >= this.nextRequestTimeStamp) {
+      return true;
+    }
+    if (this.isTimeout(timeoutMSec,currTime)) {
+      return this.numRetriesLeft > 0;
+    }
+  }
+  return false;
+}

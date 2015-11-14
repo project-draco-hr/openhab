@@ -1,0 +1,27 @@
+{
+  if (this.isChannelConnected()) {
+    try {
+      this.sendBuffer.clear();
+      Iterator<SendData> iter=this.sendQueue.iterator();
+      while (iter.hasNext()) {
+        try {
+          if (!((SendData)iter.next()).write(this.sendBuffer,this.localSegId))           break;
+        }
+ catch (        UnsupportedEncodingException ex) {
+        }
+        iter.remove();
+      }
+    }
+ catch (    BufferOverflowException ex) {
+    }
+    try {
+      this.sendBuffer.flip();
+      if (this.channel.write(this.sendBuffer) != this.sendBuffer.limit()) {
+        logger.warn(String.format("Data loss while writing to channel \"%s\".",this.sets.getAddress()));
+      }
+    }
+ catch (    IOException ex) {
+      logger.warn(String.format("Writing to channel \"%s\" failed: %s",this.sets.getAddress(),ex.getMessage()));
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && item.getAcceptedDataTypes().contains(OnOffType.class)) {
+    if (this.state == pchkInput.getLedState(this.ledId)) {
+      eventPublisher.postUpdate(item.getName(),cmd == OnOffType.ON ? OnOffType.ON : OnOffType.OFF);
+      return true;
+    }
+  }
+  return false;
+}

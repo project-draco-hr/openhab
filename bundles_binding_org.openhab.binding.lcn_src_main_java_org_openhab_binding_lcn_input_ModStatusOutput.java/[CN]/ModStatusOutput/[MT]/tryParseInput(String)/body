@@ -1,0 +1,11 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  Matcher matcher;
+  if ((matcher=PckParser.PATTERN_STATUS_OUTPUT_PERCENT.matcher(input)).matches()) {
+    ret.add(new ModStatusOutput(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),Integer.parseInt(matcher.group("outputId")) - 1,(double)Integer.parseInt(matcher.group("percent"))));
+  }
+ else   if ((matcher=PckParser.PATTERN_STATUS_OUTPUT_NATIVE.matcher(input)).matches()) {
+    ret.add(new ModStatusOutput(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),Integer.parseInt(matcher.group("outputId")) - 1,(double)Integer.parseInt(matcher.group("value")) / 2));
+  }
+  return ret;
+}

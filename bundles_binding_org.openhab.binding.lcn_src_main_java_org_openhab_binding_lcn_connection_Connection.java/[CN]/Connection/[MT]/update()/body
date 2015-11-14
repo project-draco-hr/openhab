@@ -1,0 +1,28 @@
+{
+  long currTime=System.nanoTime();
+  if (this.reconnectTimestamp != 0 && currTime >= this.reconnectTimestamp) {
+    this.beginConnect();
+    this.reconnectTimestamp=0;
+  }
+ else {
+    if (this.isChannelConnected()) {
+      if (currTime - this.lastPingTimeStamp > PING_INTERVAL_MSEC * 1000000L) {
+        this.queue(PckGenerator.ping(++this.pingCounter));
+        this.lastPingTimeStamp=currTime;
+      }
+      if (this.statusSegmentScan.shouldSendNextRequest(this.sets.getTimeout(),currTime)) {
+        this.queue(new LcnAddrGrp(3,3),false,PckGenerator.segmentCouplerScan());
+        this.statusSegmentScan.onRequestSent(currTime);
+      }
+ else       if (this.statusSegmentScan.isFailed(this.sets.getTimeout(),currTime)) {
+        this.setLocalSegId(0);
+      }
+    }
+    this.callback.updateItems(this);
+    if (this.isReady()) {
+      for (      Map.Entry<LcnAddrMod,ModInfo> entry : this.modData.entrySet()) {
+        entry.getValue().update(this,this.sets.getTimeout(),currTime);
+      }
+    }
+  }
+}

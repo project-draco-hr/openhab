@@ -1,0 +1,9 @@
+{
+  if (this.addr.getSegId() != 3 && localSegId == -1) {
+    return false;
+  }
+  buffer.put(PckGenerator.generateAddressHeader(this.addr,localSegId,this.wantsAck).getBytes(LcnDefs.LCN_ENCODING));
+  buffer.put(this.data);
+  buffer.put(PckGenerator.TERMINATION.getBytes(LcnDefs.LCN_ENCODING));
+  return true;
+}

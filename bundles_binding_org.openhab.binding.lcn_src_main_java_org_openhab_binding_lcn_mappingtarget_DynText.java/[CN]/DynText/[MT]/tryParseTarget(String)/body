@@ -1,0 +1,14 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "DYNTEXT":
+      if ((matcher=PATTERN_DYNTEXT.matcher(header.getRestInput())).matches()) {
+        return new DynText(header.getAddr(),Integer.parseInt(matcher.group("rowId")) - 1,matcher.group("text"));
+      }
+    break;
+}
+}
+return null;
+}

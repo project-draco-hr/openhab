@@ -1,0 +1,15 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LOCK_REGULATOR":
+case "UNLOCK_REGULATOR":
+      if ((matcher=PATTERN_REGULATOR_LOCK_UNLOCK.matcher(header.getRestInput())).matches()) {
+        return new LockRegulator(header.getAddr(),Integer.parseInt(matcher.group("regId")) - 1,header.getCmd().equalsIgnoreCase("LOCK_REGULATOR"));
+      }
+    break;
+}
+}
+return null;
+}

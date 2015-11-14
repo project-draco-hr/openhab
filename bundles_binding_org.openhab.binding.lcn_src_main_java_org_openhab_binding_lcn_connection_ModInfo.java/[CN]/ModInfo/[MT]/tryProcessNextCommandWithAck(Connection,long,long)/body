@@ -1,0 +1,16 @@
+{
+  if (this.requestCurrPckCommandWithAck.isFailed(timeoutMSec,currTime)) {
+    this.pckCommandsWithAck.pollFirst();
+    this.requestCurrPckCommandWithAck.reset();
+  }
+  if (!this.pckCommandsWithAck.isEmpty() && !this.requestCurrPckCommandWithAck.isActive()) {
+    this.requestCurrPckCommandWithAck.nextRequestIn(0,currTime);
+  }
+  ByteBuffer data=this.requestCurrPckCommandWithAck.shouldSendNextRequest(timeoutMSec,currTime) ? this.pckCommandsWithAck.peekFirst() : null;
+  if (data == null) {
+    return false;
+  }
+  conn.queue(new SendData.PckSendData(this.addr,true,data));
+  this.requestCurrPckCommandWithAck.onRequestSent(currTime);
+  return true;
+}

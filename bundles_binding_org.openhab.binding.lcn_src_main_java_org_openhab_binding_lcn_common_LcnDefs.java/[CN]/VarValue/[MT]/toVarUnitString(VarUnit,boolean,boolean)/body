@@ -1,0 +1,68 @@
+{
+  String ret;
+  if (useLcnSpecialValues && this.nativeValue == 0xffff) {
+    ret="---";
+  }
+ else   if (useLcnSpecialValues && (this.nativeValue & 0xff00) == 0x8100) {
+    ret="---";
+  }
+ else   if (useLcnSpecialValues && (this.nativeValue & 0xff00) == 0x7f00) {
+    ret="--- (!!!)";
+  }
+ else {
+    VarValue v=new VarValue(isLockableRegulatorSource ? this.nativeValue & 0x7fff : this.nativeValue);
+switch (unit) {
+case NATIVE:
+      ret=new DecimalFormat("0").format(v.toNative());
+    break;
+case CELSIUS:
+  ret=new DecimalFormat("0.0").format(v.toCelsius());
+break;
+case KELVIN:
+ret=new DecimalFormat("0.0").format(v.toKelvin());
+break;
+case FAHRENHEIT:
+ret=new DecimalFormat("0.0").format(v.toFahrenheit());
+break;
+case LUX_T:
+if (v.toNative() > 1152) {
+ret="---";
+}
+ else {
+ret=new DecimalFormat("0").format(v.toLuxT());
+}
+case LUX_I:
+if (v.toNative() > 1152) {
+ret="---";
+}
+ else {
+ret=new DecimalFormat("0").format(v.toLuxI());
+}
+break;
+case METERPERSECOND:
+ret=new DecimalFormat("0").format(v.toMetersPerSec());
+break;
+case PERCENT:
+ret=new DecimalFormat("0").format(v.toPercent());
+break;
+case PPM:
+ret=new DecimalFormat("0").format(v.toPpm());
+break;
+case VOLT:
+ret=new DecimalFormat("0").format(v.toVolt());
+break;
+case AMPERE:
+ret=new DecimalFormat("0").format(v.toAmpere());
+break;
+case DEGREE:
+ret=new DecimalFormat("0.0").format(v.toDegree());
+break;
+default :
+throw new Error();
+}
+if (isLockableRegulatorSource && this.isLockedRegulator()) {
+ret="(" + ret + ")";
+}
+}
+return ret;
+}

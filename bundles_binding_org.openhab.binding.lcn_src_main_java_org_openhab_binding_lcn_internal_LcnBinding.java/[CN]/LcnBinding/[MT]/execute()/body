@@ -1,0 +1,19 @@
+{
+  this.connections.update();
+  this.connections.flush();
+  try {
+    long startTime=System.nanoTime();
+    int timeoutMSec=REFRESH_INTERVAL_MSEC;
+    while (timeoutMSec >= 0 && this.notificationsSem.tryAcquire(timeoutMSec,TimeUnit.MILLISECONDS)) {
+      LcnBindingNotification notification;
+synchronized (this.notifications) {
+        notification=this.notifications.pollFirst();
+      }
+      notification.execute();
+      this.connections.flush();
+      timeoutMSec=REFRESH_INTERVAL_MSEC - (int)((System.nanoTime() - startTime) / 1000000L);
+    }
+  }
+ catch (  InterruptedException ex) {
+  }
+}

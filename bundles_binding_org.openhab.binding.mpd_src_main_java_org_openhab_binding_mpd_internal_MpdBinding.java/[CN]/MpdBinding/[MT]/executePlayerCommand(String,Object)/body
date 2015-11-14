@@ -11,6 +11,8 @@
     try {
       pCommand=PlayerCommandTypeMapping.fromString(playerCommand);
       MPDPlayer player=daemon.getMPDPlayer();
+      MPDPlaylist playlist=daemon.getMPDPlaylist();
+      MPDDatabase db=daemon.getMPDDatabase();
 switch (pCommand) {
 case PAUSE:
         player.pause();
@@ -32,6 +34,22 @@ player.playNext();
 break;
 case PREV:
 player.playPrev();
+break;
+case PLAYSONG:
+logger.debug("Searching for Song {}",(String)commandParams);
+Collection<MPDSong> songs=db.find(ScopeType.TITLE,(String)commandParams);
+Iterator<MPDSong> it=songs.iterator();
+if (it.hasNext() == true) {
+MPDSong song=(MPDSong)it.next();
+logger.debug("Song found: {}",song.getFile());
+MPDFile file=new MPDFile();
+file.setPath(song.getFile());
+playlist.clearPlaylist();
+playlist.addFileOrDirectory(file);
+}
+ else {
+logger.debug("Song not found: {}",(String)commandParams);
+}
 break;
 case ENABLE:
 case DISABLE:

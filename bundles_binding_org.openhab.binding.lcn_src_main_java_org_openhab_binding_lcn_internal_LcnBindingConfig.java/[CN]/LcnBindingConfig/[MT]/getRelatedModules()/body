@@ -1,0 +1,12 @@
+{
+  HashSet<LcnAddrMod> ret=new HashSet<LcnAddrMod>();
+  for (  Mapping mapping : this.mappings) {
+    if (mapping.getTarget() instanceof TargetWithLcnAddr) {
+      LcnAddr addr=((TargetWithLcnAddr)mapping.getTarget()).getAddr();
+      if (!addr.isGroup()) {
+        ret.add((LcnAddrMod)addr);
+      }
+    }
+  }
+  return ret;
+}

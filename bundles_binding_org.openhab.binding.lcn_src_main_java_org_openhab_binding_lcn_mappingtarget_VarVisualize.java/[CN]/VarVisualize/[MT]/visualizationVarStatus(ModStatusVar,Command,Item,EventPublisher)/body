@@ -1,0 +1,14 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && pchkInput.getVar() == this.var) {
+    if (item.getAcceptedDataTypes().contains(StringType.class)) {
+      String value=pchkInput.getValue().toVarUnitString(this.unit,LcnDefs.Var.isLockableRegulatorSource(this.var),LcnDefs.Var.useLcnSpecialValues(this.var));
+      eventPublisher.postUpdate(item.getName(),new StringType(value));
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      eventPublisher.postUpdate(item.getName(),new DecimalType(pchkInput.getValue().toVarUnit(this.unit,LcnDefs.Var.isLockableRegulatorSource(this.var))));
+      return true;
+    }
+  }
+  return false;
+}

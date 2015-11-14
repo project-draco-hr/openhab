@@ -1,0 +1,55 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    try {
+      Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "ON":
+case "OFF":
+        if ((matcher=PATTERN_ONOFF.matcher(header.getRestInput())).matches()) {
+          int outputId=matcher.group("outputId").equalsIgnoreCase("ALL") ? -1 : Integer.parseInt(matcher.group("outputId")) - 1;
+          double value=header.getCmd().equalsIgnoreCase("ON") ? 100 : 0;
+          double ramp=0;
+          if (matcher.group("ramp") != null) {
+            if (LcnDefs.TimeUnit.parse(matcher.group("timeUnit")) != LcnDefs.TimeUnit.SECONDS) {
+              throw new IllegalArgumentException();
+            }
+            ramp=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("ramp")).doubleValue();
+          }
+          return new OutputDimAbs(header.getAddr(),outputId,value,(int)(ramp * 1000));
+        }
+      break;
+case "DIM":
+    if ((matcher=PATTERN_DIM.matcher(header.getRestInput())).matches()) {
+      int outputId=matcher.group("outputId").equalsIgnoreCase("ALL") ? -1 : Integer.parseInt(matcher.group("outputId")) - 1;
+      double value=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("value")).doubleValue();
+      double ramp=0;
+      if (matcher.group("ramp") != null) {
+        if (LcnDefs.TimeUnit.parse(matcher.group("timeUnit")) != LcnDefs.TimeUnit.SECONDS) {
+          throw new IllegalArgumentException();
+        }
+        ramp=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("ramp")).doubleValue();
+      }
+      return new OutputDimAbs(header.getAddr(),outputId,value,(int)(ramp * 1000));
+    }
+ else     if ((matcher=PATTERN_DIMI.matcher(header.getRestInput())).matches()) {
+      int outputId=matcher.group("outputId").equalsIgnoreCase("ALL") ? -1 : Integer.parseInt(matcher.group("outputId")) - 1;
+      double ramp=0;
+      if (matcher.group("ramp") != null) {
+        if (LcnDefs.TimeUnit.parse(matcher.group("timeUnit")) != LcnDefs.TimeUnit.SECONDS) {
+          throw new IllegalArgumentException();
+        }
+        ramp=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("ramp")).doubleValue();
+      }
+      return new OutputDimAbs(header.getAddr(),outputId,-1,(int)(ramp * 1000));
+    }
+  break;
+}
+}
+ catch (ParseException ex) {
+}
+catch (IllegalArgumentException ex) {
+}
+}
+return null;
+}

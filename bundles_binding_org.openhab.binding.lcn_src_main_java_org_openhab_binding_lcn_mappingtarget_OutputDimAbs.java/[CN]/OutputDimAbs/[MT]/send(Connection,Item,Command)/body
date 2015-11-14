@@ -1,0 +1,21 @@
+{
+  double value=this.percent;
+  if (value == -1 && cmd instanceof PercentType) {
+    value=((PercentType)cmd).doubleValue();
+  }
+  if (value >= 0 && value <= 100) {
+    if (this.outputId == -1) {
+      boolean is1805=false;
+      if (!this.addr.isGroup()) {
+        ModInfo info=conn.getModInfo((LcnAddrMod)this.addr);
+        if (info != null) {
+          is1805=info.getSwAge() >= 0x180501;
+        }
+      }
+      conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.dimAllOutputs(value,LcnDefs.timeToRampValue(this.rampMSec),is1805));
+    }
+ else {
+      conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.dimOutput(this.outputId,value,LcnDefs.timeToRampValue(this.rampMSec)));
+    }
+  }
+}

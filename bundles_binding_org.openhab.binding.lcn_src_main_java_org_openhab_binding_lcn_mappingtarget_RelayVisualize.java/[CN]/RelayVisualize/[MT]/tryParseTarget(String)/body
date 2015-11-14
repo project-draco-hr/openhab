@@ -1,0 +1,14 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "RELAY_STATE":
+      if ((matcher=PATTERN_RELAY_STATE.matcher(header.getRestInput())).matches()) {
+        return new RelayVisualize((LcnAddrMod)header.getAddr(),Integer.parseInt(matcher.group("relayId")) - 1);
+      }
+    break;
+}
+}
+return null;
+}

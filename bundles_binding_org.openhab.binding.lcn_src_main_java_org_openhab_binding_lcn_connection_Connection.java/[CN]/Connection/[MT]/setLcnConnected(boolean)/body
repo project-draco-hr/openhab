@@ -1,0 +1,13 @@
+{
+  if (isLcnConnected) {
+    if (!this.statusSegmentScan.isActive()) {
+      this.statusSegmentScan.nextRequestIn(0,System.nanoTime());
+    }
+  }
+ else {
+    this.localSegId=-1;
+    this.statusSegmentScan.reset();
+    this.modData.clear();
+  }
+  this.isLcnConnected=isLcnConnected;
+}

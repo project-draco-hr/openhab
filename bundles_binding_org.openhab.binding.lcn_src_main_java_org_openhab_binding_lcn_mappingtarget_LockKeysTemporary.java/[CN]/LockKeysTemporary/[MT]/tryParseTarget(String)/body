@@ -1,0 +1,43 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    try {
+      Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LOCK":
+        if ((matcher=PATTERN_LOCKKEYS_TEMPORARY.matcher(header.getRestInput())).matches()) {
+          boolean[][] keys=new boolean[][]{new boolean[8],new boolean[8],new boolean[8],new boolean[8]};
+          String s=matcher.group("keys");
+          for (int i=0; i < s.length(); i+=2) {
+            String key=s.substring(i,i + 2).toUpperCase();
+            int tableId;
+switch (key.charAt(0)) {
+case 'A':
+              tableId=0;
+            break;
+case 'B':
+          tableId=1;
+        break;
+case 'C':
+      tableId=2;
+    break;
+case 'D':
+  tableId=3;
+break;
+default :
+throw new Error();
+}
+int keyId=Integer.parseInt(key.substring(1,2)) - 1;
+keys[tableId][keyId]=true;
+}
+LcnDefs.TimeUnit timeUnit=LcnDefs.TimeUnit.parse(matcher.group("timeUnit"));
+return new LockKeysTemporary(header.getAddr(),keys,Integer.parseInt(matcher.group("time")),timeUnit);
+}
+break;
+}
+}
+ catch (IllegalArgumentException ex) {
+}
+}
+return null;
+}

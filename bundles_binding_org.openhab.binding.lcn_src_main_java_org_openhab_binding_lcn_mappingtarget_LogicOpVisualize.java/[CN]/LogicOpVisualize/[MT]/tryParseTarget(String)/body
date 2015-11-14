@@ -1,0 +1,21 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "LOGICOP_STATE":
+      if ((matcher=PATTERN_LOGICOP.matcher(header.getRestInput())).matches()) {
+        String[] stateTexts=new String[]{"not","or","and"};
+        for (int i=0; i < 3; ++i) {
+          String s=matcher.group(String.format("text%d",i));
+          if (s != null) {
+            stateTexts[i]=s;
+          }
+        }
+        return new LogicOpVisualize((LcnAddrMod)header.getAddr(),Integer.parseInt(matcher.group("logicOpId")) - 1,stateTexts);
+      }
+    break;
+}
+}
+return null;
+}

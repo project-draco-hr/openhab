@@ -1,0 +1,11 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  Matcher matcher;
+  if ((matcher=PckParser.PATTERN_ACK_POS.matcher(input)).matches()) {
+    ret.add(new ModAck(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),-1));
+  }
+ else   if ((matcher=PckParser.PATTERN_ACK_NEG.matcher(input)).matches()) {
+    ret.add(new ModAck(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),Integer.parseInt(matcher.group("code"))));
+  }
+  return ret;
+}

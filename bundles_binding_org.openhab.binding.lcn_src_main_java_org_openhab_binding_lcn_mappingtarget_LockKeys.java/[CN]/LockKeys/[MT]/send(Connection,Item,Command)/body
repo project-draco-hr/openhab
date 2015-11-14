@@ -1,0 +1,9 @@
+{
+  conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.lockKeys(this.tableId,this.states));
+  if (!this.addr.isGroup()) {
+    ModInfo info=conn.getModInfo((LcnAddrMod)this.addr);
+    if (info != null) {
+      info.requestStatusLockedKeys.nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
+  }
+}

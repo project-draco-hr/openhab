@@ -1,0 +1,41 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+    try {
+switch (header.getCmd().toUpperCase()) {
+case "VAR_VALUE":
+        if ((matcher=PATTERN_VAR_VALUE.matcher(header.getRestInput())).matches()) {
+          LcnDefs.Var var=LcnDefs.Var.varIdToVar(Integer.parseInt(matcher.group("varId")) - 1);
+          LcnDefs.VarUnit unit=matcher.group("unit") != null ? LcnDefs.VarUnit.parse(matcher.group("unit")) : LcnDefs.VarUnit.NATIVE;
+          return new VarVisualize((LcnAddrMod)header.getAddr(),var,unit);
+        }
+      break;
+case "SETPOINT_VALUE":
+    if ((matcher=PATTERN_SETPOINT_VALUE.matcher(header.getRestInput())).matches()) {
+      LcnDefs.Var var=LcnDefs.Var.setPointIdToVar(Integer.parseInt(matcher.group("regId")) - 1);
+      LcnDefs.VarUnit unit=matcher.group("unit") != null ? LcnDefs.VarUnit.parse(matcher.group("unit")) : LcnDefs.VarUnit.NATIVE;
+      return new VarVisualize((LcnAddrMod)header.getAddr(),var,unit);
+    }
+  break;
+case "THRESHOLD_VALUE":
+if ((matcher=PATTERN_THRESHOLD_VALUE.matcher(header.getRestInput())).matches()) {
+  LcnDefs.Var var=LcnDefs.Var.thrsIdToVar(Integer.parseInt(matcher.group("registerId")) - 1,Integer.parseInt(matcher.group("thrsId")) - 1);
+  LcnDefs.VarUnit unit=matcher.group("unit") != null ? LcnDefs.VarUnit.parse(matcher.group("unit")) : LcnDefs.VarUnit.NATIVE;
+  return new VarVisualize((LcnAddrMod)header.getAddr(),var,unit);
+}
+break;
+case "S0_VALUE":
+if ((matcher=PATTERN_S0INPUT_VALUE.matcher(header.getRestInput())).matches()) {
+LcnDefs.Var var=LcnDefs.Var.s0IdToVar(Integer.parseInt(matcher.group("s0Id")) - 1);
+LcnDefs.VarUnit unit=matcher.group("unit") != null ? LcnDefs.VarUnit.parse(matcher.group("unit")) : LcnDefs.VarUnit.NATIVE;
+return new VarVisualize((LcnAddrMod)header.getAddr(),var,unit);
+}
+break;
+}
+}
+ catch (IllegalArgumentException ex) {
+}
+}
+return null;
+}

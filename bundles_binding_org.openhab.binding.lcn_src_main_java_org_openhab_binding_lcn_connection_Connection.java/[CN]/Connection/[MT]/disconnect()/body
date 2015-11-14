@@ -1,0 +1,14 @@
+{
+  if (this.channel != null) {
+    this.channel.keyFor(this.callback.getSelector()).cancel();
+    this.callback.getSelector().wakeup();
+    try {
+      logger.debug("...resetting channel...");
+      this.channel.close();
+    }
+ catch (    IOException e) {
+      logger.error(String.format("An exception occurred while closing a channel: %s",e.getMessage()));
+    }
+    this.clearRuntimeData();
+  }
+}

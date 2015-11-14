@@ -1,0 +1,15 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && item.getAcceptedDataTypes().contains(OnOffType.class)) {
+    for (int i=0; i < 8; ++i) {
+      if (this.states[i] == LcnDefs.KeyLockStateModifier.ON || this.states[i] == LcnDefs.KeyLockStateModifier.OFF) {
+        State reportedState=pchkInput.getState(this.tableId,i) ? OnOffType.ON : OnOffType.OFF;
+        if ((this.states[i] == LcnDefs.KeyLockStateModifier.ON ? OnOffType.ON : OnOffType.OFF) == reportedState) {
+          eventPublisher.postUpdate(item.getName(),reportedState);
+          return true;
+        }
+        break;
+      }
+    }
+  }
+  return false;
+}

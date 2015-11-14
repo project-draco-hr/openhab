@@ -1,0 +1,8 @@
+{
+  this.isChannelConnecting=false;
+  this.lastPingTimeStamp=System.nanoTime();
+synchronized (this.callback.getChannelRegisterSync()) {
+    this.callback.getSelector().wakeup();
+    this.channel.register(this.callback.getSelector(),SelectionKey.OP_READ,this);
+  }
+}

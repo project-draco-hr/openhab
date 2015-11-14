@@ -1,0 +1,47 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr)) {
+    if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      int n;
+switch (pchkInput.getLedState(this.ledId)) {
+case OFF:
+        n=0;
+      break;
+case ON:
+    n=1;
+  break;
+case BLINK:
+n=2;
+break;
+case FLICKER:
+n=3;
+break;
+default :
+throw new Error();
+}
+eventPublisher.postUpdate(item.getName(),new DecimalType(n));
+return true;
+}
+ else if (item.getAcceptedDataTypes().contains(StringType.class)) {
+String s;
+switch (pchkInput.getLedState(this.ledId)) {
+case OFF:
+s=this.stateTexts[0];
+break;
+case ON:
+s=this.stateTexts[1];
+break;
+case BLINK:
+s=this.stateTexts[2];
+break;
+case FLICKER:
+s=this.stateTexts[3];
+break;
+default :
+throw new Error();
+}
+eventPublisher.postUpdate(item.getName(),new StringType(s));
+return true;
+}
+}
+return false;
+}
