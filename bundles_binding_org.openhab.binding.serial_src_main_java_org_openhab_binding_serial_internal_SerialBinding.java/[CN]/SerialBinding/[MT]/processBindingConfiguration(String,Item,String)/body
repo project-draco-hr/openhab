@@ -2,11 +2,15 @@
   int indexOf=bindingConfig.indexOf(',');
   String serialPart=bindingConfig;
   String pattern=null;
+  boolean base64=false;
   if (indexOf != -1) {
     String substring=bindingConfig.substring(indexOf + 1);
     serialPart=bindingConfig.substring(0,indexOf);
     if (substring.startsWith("REGEX(")) {
       pattern=substring.substring(6,substring.length() - 1);
+    }
+    if (substring.equals("BASE64")) {
+      base64=true;
     }
   }
   String portConfig[]=serialPart.split("@");
@@ -31,7 +35,7 @@ catch (    Throwable e) {
     itemMap.put(item.getName(),port);
     serialDevices.put(port,serialDevice);
   }
-  serialDevice.addRegEx(item.getName(),item.getClass(),pattern);
+  serialDevice.addConfig(item.getName(),item.getClass(),pattern,base64);
   Set<String> itemNames=contextMap.get(context);
   if (itemNames == null) {
     itemNames=new HashSet<String>();
