@@ -1,0 +1,14 @@
+{
+  boolean changed=false;
+  if (state instanceof OnOffType) {
+    OnOffType commandState=(OnOffType)state;
+    if (!lastState.equals(commandState)) {
+      changed=true;
+      lastState=commandState;
+    }
+  }
+  if (changed && fromItem != null) {
+    fromItem.updateStateToCore(lastState);
+  }
+  return changed;
+}

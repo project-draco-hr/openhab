@@ -1,0 +1,29 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  try {
+    Matcher matcher;
+    if ((matcher=PckParser.PATTERN_STATUS_VAR.matcher(input)).matches()) {
+      ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.varIdToVar(Integer.parseInt(matcher.group("id")) - 1),LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group("value")))));
+    }
+ else     if ((matcher=PckParser.PATTERN_STATUS_SETVAR.matcher(input)).matches()) {
+      ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.setPointIdToVar(Integer.parseInt(matcher.group("id")) - 1),LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group("value")))));
+    }
+ else     if ((matcher=PckParser.PATTERN_STATUS_THRS.matcher(input)).matches()) {
+      ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.thrsIdToVar(Integer.parseInt(matcher.group("registerId")) - 1,Integer.parseInt(matcher.group("thrsId")) - 1),LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group("value")))));
+    }
+ else     if ((matcher=PckParser.PATTERN_STATUS_S0INPUT.matcher(input)).matches()) {
+      ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.s0IdToVar(Integer.parseInt(matcher.group("id")) - 1),LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group("value")))));
+    }
+ else     if ((matcher=PckParser.PATTERN_VAR_GENERIC.matcher(input)).matches()) {
+      ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.UNKNOWN,LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group("value")))));
+    }
+ else     if ((matcher=PckParser.PATTERN_THRS5.matcher(input)).matches()) {
+      for (int thrsId=0; thrsId < 5; ++thrsId) {
+        ret.add(new ModStatusVar(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),LcnDefs.Var.thrsIdToVar(0,thrsId),LcnDefs.VarValue.fromNative(Integer.parseInt(matcher.group(String.format("value%d",thrsId + 1))))));
+      }
+    }
+  }
+ catch (  IllegalArgumentException ex) {
+  }
+  return ret;
+}

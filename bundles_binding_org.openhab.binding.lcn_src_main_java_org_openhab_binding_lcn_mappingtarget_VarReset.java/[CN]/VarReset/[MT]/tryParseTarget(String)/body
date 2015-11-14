@@ -1,0 +1,20 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "VAR_RESET":
+case "VAR_RESET_OLD":
+      if ((matcher=PATTERN_VAR_RESET.matcher(header.getRestInput())).matches()) {
+        return new VarReset(header.getAddr(),LcnDefs.Var.varIdToVar(Integer.parseInt(matcher.group("varId")) - 1),header.getCmd().toUpperCase().endsWith("_OLD"));
+      }
+    break;
+case "SETPOINT_RESET":
+  if ((matcher=PATTERN_SETPOINT_RESET.matcher(header.getRestInput())).matches()) {
+    return new VarReset(header.getAddr(),LcnDefs.Var.setPointIdToVar(Integer.parseInt(matcher.group("regId")) - 1),header.getCmd().toUpperCase().endsWith("_OLD"));
+  }
+break;
+}
+}
+return null;
+}

@@ -1,6 +1,7 @@
 {
-  int value=serialMessage.getMessagePayloadByte(offset + 1);
-  logger.debug(String.format("NODE %d: Indicator report, value = 0x%02X",this.getNode().getNodeId(),value));
-  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);
+  int newIndicator=serialMessage.getMessagePayloadByte(offset + 1);
+  logger.debug(String.format("NODE %d: Indicator report, value = 0x%02X",this.getNode().getNodeId(),newIndicator));
+  ZWaveIndicatorCommandClassChangeEvent zEvent=new ZWaveIndicatorCommandClassChangeEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),newIndicator,indicator);
+  indicator=newIndicator;
   this.getController().notifyEventListeners(zEvent);
 }

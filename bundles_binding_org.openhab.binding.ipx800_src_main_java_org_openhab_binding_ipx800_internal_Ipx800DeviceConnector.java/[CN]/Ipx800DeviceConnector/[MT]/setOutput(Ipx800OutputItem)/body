@@ -1,0 +1,12 @@
+{
+  org.openhab.core.types.State state=item.getState();
+  Ipx800Port port=item.getPort();
+  if (item.isPulseMode()) {
+    logger.debug("Sending {} to {} in pulse mode",state,port);
+    out.format("Set%02d%dp" + ENDL,port.getPortNumber(),state == OnOffType.ON ? 1 : 0);
+  }
+ else {
+    logger.debug("Sending {} to {}",state,port);
+    out.format("Set%02d%d" + ENDL,port.getPortNumber(),state == OnOffType.ON ? 1 : 0);
+  }
+}

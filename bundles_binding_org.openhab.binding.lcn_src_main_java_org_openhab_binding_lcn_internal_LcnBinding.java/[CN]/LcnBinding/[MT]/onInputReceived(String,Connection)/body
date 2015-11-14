@@ -1,0 +1,14 @@
+{
+  logger.debug(String.format("Channel \"%s\" received input: %s",conn.getSets().getId(),input));
+  for (  Input pchkInput : Input.parse(input)) {
+    pchkInput.process(conn);
+    for (    LcnGenericBindingProvider provider : this.providers) {
+      for (      String itemName : provider.getItemNamesForPchkInput(pchkInput)) {
+        LcnBindingConfig itemConfig=provider.getLcnItemConfig(itemName);
+        if (itemConfig != null) {
+          itemConfig.processInput(pchkInput,conn,this.eventPublisher);
+        }
+      }
+    }
+  }
+}

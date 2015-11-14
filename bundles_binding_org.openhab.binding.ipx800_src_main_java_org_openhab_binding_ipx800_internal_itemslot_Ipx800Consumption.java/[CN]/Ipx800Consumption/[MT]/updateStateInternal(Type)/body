@@ -1,0 +1,17 @@
+{
+  boolean changed=false;
+  if (state instanceof DecimalType) {
+    int value=((DecimalType)state).intValue();
+    if (currentValue != 0 && value != currentValue) {
+      lastTimestamp=currentTimestamp;
+      currentTimestamp=new Date().getTime();
+      isVirtualUpdate=false;
+      restartTimer();
+      if (lastTimestamp != 0) {
+        changed=true;
+      }
+    }
+    currentValue=value;
+  }
+  return changed;
+}

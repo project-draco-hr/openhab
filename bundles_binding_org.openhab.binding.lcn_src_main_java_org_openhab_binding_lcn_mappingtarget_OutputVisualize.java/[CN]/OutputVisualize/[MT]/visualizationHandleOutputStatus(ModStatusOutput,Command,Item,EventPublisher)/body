@@ -1,0 +1,22 @@
+{
+  if (pchkInput.getLogicalSourceAddr().equals(this.addr) && pchkInput.getOutputId() == this.outputId) {
+    if (item.getAcceptedDataTypes().contains(StringType.class)) {
+      String value=new DecimalFormat("0.#").format(pchkInput.getPercent());
+      eventPublisher.postUpdate(item.getName(),new StringType(value));
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(PercentType.class)) {
+      eventPublisher.postUpdate(item.getName(),new PercentType((int)Math.round(pchkInput.getPercent())));
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(DecimalType.class)) {
+      eventPublisher.postUpdate(item.getName(),new DecimalType(pchkInput.getPercent()));
+      return true;
+    }
+ else     if (item.getAcceptedDataTypes().contains(OnOffType.class)) {
+      eventPublisher.postUpdate(item.getName(),pchkInput.getPercent() != 0 ? OnOffType.ON : OnOffType.OFF);
+      return true;
+    }
+  }
+  return false;
+}

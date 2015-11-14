@@ -1,0 +1,31 @@
+{
+  LcnDefs.VarValue value=this.value;
+  if (value == null && cmd instanceof DecimalType) {
+    value=LcnDefs.VarValue.fromVarUnit(((DecimalType)cmd).doubleValue(),this.unit,true);
+  }
+  if (value != null) {
+    try {
+      boolean is2013=!this.forceOld;
+      ModInfo info=null;
+      if (!this.addr.isGroup()) {
+        info=conn.getModInfo((LcnAddrMod)this.addr);
+        if (info != null) {
+          is2013=info.getSwAge() >= 0x170206;
+        }
+      }
+      if (LcnDefs.Var.toVarId(this.var) != -1) {
+        conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.varReset(this.var,is2013));
+        conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.varRel(this.var,LcnDefs.RelVarRef.CURRENT,value.toNative(),is2013));
+      }
+ else {
+        conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.varAbs(this.var,value.toNative()));
+      }
+      if (info != null && LcnDefs.Var.shouldPollStatusAfterCommand(this.var,is2013) && info.requestStatusVars.containsKey(this.var)) {
+        info.requestStatusVars.get(this.var).nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+      }
+    }
+ catch (    IllegalArgumentException ex) {
+      logger.warn(String.format("Variable of type %s does not support \"set absolute\" commands.",this.var));
+    }
+  }
+}

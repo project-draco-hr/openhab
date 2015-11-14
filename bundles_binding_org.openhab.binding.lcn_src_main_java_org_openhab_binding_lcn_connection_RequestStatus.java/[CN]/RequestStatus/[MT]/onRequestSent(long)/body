@@ -1,0 +1,18 @@
+{
+  if (!this.isActive) {
+    throw new Error();
+  }
+  if (this.currRequestTimeStamp == 0) {
+    this.numRetriesLeft=this.numTries - 1;
+  }
+ else   if (this.numRetriesLeft > 0) {
+    --this.numRetriesLeft;
+  }
+  this.currRequestTimeStamp=currTime;
+  if (this.maxAgeMSec != -1) {
+    this.nextRequestIn(this.maxAgeMSec,currTime);
+  }
+ else {
+    this.nextRequestTimeStamp=0;
+  }
+}

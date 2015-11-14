@@ -1,0 +1,16 @@
+{
+  if (parts.length != 2) {
+    throw new ConfigurationException("alarmdecoder:connect","serial device name cannot have :");
+  }
+  m_serialDeviceName=parts[1];
+  String[] p=parts[0].split("@");
+  if (p.length == 2) {
+    try {
+      m_portSpeed=Integer.parseInt(p[1]);
+    }
+ catch (    NumberFormatException e) {
+      throw new ConfigurationException("alarmdecoder:connect","serial port speed must be integer");
+    }
+  }
+  logger.debug("serial port configuration: speed: {} device: {}",m_portSpeed,m_serialDeviceName);
+}

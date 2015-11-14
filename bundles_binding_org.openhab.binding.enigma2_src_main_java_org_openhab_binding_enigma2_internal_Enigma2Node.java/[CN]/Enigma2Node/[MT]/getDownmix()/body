@@ -1,0 +1,5 @@
+{
+  String content=HttpUtil.executeUrl(GET,createUserPasswordHostnamePrefix() + SUFFIX_DOWNMIX,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,"e2state");
+  return content.toLowerCase().equals("true") ? OnOffType.ON.name() : OnOffType.OFF.name();
+}

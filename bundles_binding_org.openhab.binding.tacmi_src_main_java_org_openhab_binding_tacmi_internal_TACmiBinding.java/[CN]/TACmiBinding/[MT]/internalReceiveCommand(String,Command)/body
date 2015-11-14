@@ -1,0 +1,31 @@
+{
+  logger.debug("internalReceiveCommand({},{}) is called!",itemName,command);
+  for (  TACmiBindingProvider provider : providers) {
+    int canNode=provider.getCanNode(itemName);
+    String portType=provider.getPortType(itemName);
+    int portNumber=provider.getPortNumber(itemName);
+    logger.trace("Type: {}, portNumber: {}, command: {}",portType,portNumber,command.toString());
+    byte[] messageBytes;
+    if (portType.equals("d") && portNumber == 1 && command instanceof OnOffType) {
+      boolean state=OnOffType.ON.equals(command) ? true : false;
+      DigitalMessage message=new DigitalMessage((byte)canNode,state);
+      messageBytes=message.getRaw();
+    }
+ else     if (portType.equals("a") && (portNumber - 1) % 4 == 0 && command instanceof DecimalType) {
+      TACmiMeasureType measureType=provider.getMeasureType(itemName);
+      AnalogMessage message=new AnalogMessage((byte)canNode,1,(DecimalType)command,measureType);
+      messageBytes=message.getRaw();
+    }
+ else {
+      logger.info("Not sending command: portType: {}, portNumber: {}, command: {}",portType,portNumber,command.toString());
+      return;
+    }
+    DatagramPacket packet=new DatagramPacket(messageBytes,messageBytes.length,cmiAddress,TACmiBinding.cmiPort);
+    try {
+      clientSocket.send(packet);
+    }
+ catch (    IOException e) {
+      logger.warn("Error sending message: {}, {}",e.getClass().getName(),e.getMessage());
+    }
+  }
+}

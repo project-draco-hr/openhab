@@ -1,0 +1,10 @@
+{
+  for (int tableId=0; tableId < 4; ++tableId) {
+    for (int keyId=0; keyId < 8; ++keyId) {
+      if (this.keys[tableId][keyId]) {
+        conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.sendKeysHitDefered(tableId,this.time,this.timeUnit,this.keys[tableId]));
+        break;
+      }
+    }
+  }
+}

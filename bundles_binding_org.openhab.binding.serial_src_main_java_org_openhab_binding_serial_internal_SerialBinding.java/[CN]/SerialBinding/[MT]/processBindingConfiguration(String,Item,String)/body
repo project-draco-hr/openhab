@@ -1,5 +1,15 @@
 {
-  String portConfig[]=bindingConfig.split("@");
+  int indexOf=bindingConfig.indexOf(',');
+  String serialPart=bindingConfig;
+  String pattern=null;
+  if (indexOf != -1) {
+    String substring=bindingConfig.substring(indexOf + 1);
+    serialPart=bindingConfig.substring(0,indexOf);
+    if (substring.startsWith("REGEX(")) {
+      pattern=substring.substring(6,substring.length() - 1);
+    }
+  }
+  String portConfig[]=serialPart.split("@");
   String port=portConfig[0];
   int baudRate=0;
   if (portConfig.length > 1)   baudRate=Integer.parseInt(portConfig[1]);
@@ -7,6 +17,7 @@
   if (serialDevice == null) {
     if (baudRate > 0)     serialDevice=new SerialDevice(port,baudRate);
  else     serialDevice=new SerialDevice(port);
+    serialDevice.setTransformationService(transformationService);
     serialDevice.setEventPublisher(eventPublisher);
     try {
       serialDevice.initialize();
@@ -20,22 +31,7 @@ catch (    Throwable e) {
     itemMap.put(item.getName(),port);
     serialDevices.put(port,serialDevice);
   }
-  if (item instanceof StringItem) {
-    if (serialDevice.getStringItemName() == null) {
-      serialDevice.setStringItemName(item.getName());
-    }
- else {
-      throw new BindingConfigParseException("There is already another StringItem assigned to serial port " + port);
-    }
-  }
- else {
-    if (serialDevice.getSwitchItemName() == null) {
-      serialDevice.setSwitchItemName(item.getName());
-    }
- else {
-      throw new BindingConfigParseException("There is already another SwitchItem assigned to serial port " + port);
-    }
-  }
+  serialDevice.addRegEx(item.getName(),item.getClass(),pattern);
   Set<String> itemNames=contextMap.get(context);
   if (itemNames == null) {
     itemNames=new HashSet<String>();

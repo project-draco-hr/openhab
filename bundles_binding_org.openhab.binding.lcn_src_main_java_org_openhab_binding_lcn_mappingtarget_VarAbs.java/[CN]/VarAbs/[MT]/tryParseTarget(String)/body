@@ -1,0 +1,38 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,true);
+  if (header != null) {
+    try {
+      Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "VAR":
+case "VAR_OLD":
+        if ((matcher=PATTERN_VAR_ABS.matcher(header.getRestInput())).matches()) {
+          double value=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("value")).doubleValue();
+          LcnDefs.VarUnit unit=matcher.group("modifier") == null ? LcnDefs.VarUnit.NATIVE : LcnDefs.VarUnit.parse(matcher.group("modifier"));
+          return new VarAbs(header.getAddr(),LcnDefs.Var.varIdToVar(Integer.parseInt(matcher.group("varId")) - 1),unit,LcnDefs.VarValue.fromVarUnit(value,unit,true),header.getCmd().toUpperCase().endsWith("_OLD"));
+        }
+ else         if ((matcher=PATTERN_VAR_ABSI.matcher(header.getRestInput())).matches()) {
+          LcnDefs.VarUnit unit=matcher.group("modifier") == null ? LcnDefs.VarUnit.NATIVE : LcnDefs.VarUnit.parse(matcher.group("modifier"));
+          return new VarAbs(header.getAddr(),LcnDefs.Var.varIdToVar(Integer.parseInt(matcher.group("varId")) - 1),unit,null,header.getCmd().toUpperCase().endsWith("_OLD"));
+        }
+      break;
+case "SETPOINT":
+    if ((matcher=PATTERN_SETPOINT_ABS.matcher(header.getRestInput())).matches()) {
+      double value=NumberFormat.getInstance(Locale.GERMANY).parse(matcher.group("value")).doubleValue();
+      LcnDefs.VarUnit unit=matcher.group("modifier") == null ? LcnDefs.VarUnit.NATIVE : LcnDefs.VarUnit.parse(matcher.group("modifier"));
+      return new VarAbs(header.getAddr(),LcnDefs.Var.setPointIdToVar(Integer.parseInt(matcher.group("regId")) - 1),unit,LcnDefs.VarValue.fromVarUnit(value,unit,true),false);
+    }
+ else     if ((matcher=PATTERN_SETPOINT_ABSI.matcher(header.getRestInput())).matches()) {
+      LcnDefs.VarUnit unit=matcher.group("modifier") == null ? LcnDefs.VarUnit.NATIVE : LcnDefs.VarUnit.parse(matcher.group("modifier"));
+      return new VarAbs(header.getAddr(),LcnDefs.Var.setPointIdToVar(Integer.parseInt(matcher.group("regId")) - 1),unit,null,false);
+    }
+  break;
+}
+}
+ catch (ParseException ex) {
+}
+catch (IllegalArgumentException ex) {
+}
+}
+return null;
+}

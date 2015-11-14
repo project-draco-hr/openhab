@@ -1,0 +1,14 @@
+{
+  CmdAndAddressRet header=CmdAndAddressRet.parse(input,false);
+  if (header != null) {
+    Matcher matcher;
+switch (header.getCmd().toUpperCase()) {
+case "REGULATOR_LOCK_STATE":
+      if ((matcher=PATTERN_LOCK_STATE.matcher(header.getRestInput())).matches()) {
+        return new LockedRegulatorVisualize((LcnAddrMod)header.getAddr(),Integer.parseInt(matcher.group("regId")) - 1);
+      }
+    break;
+}
+}
+return null;
+}

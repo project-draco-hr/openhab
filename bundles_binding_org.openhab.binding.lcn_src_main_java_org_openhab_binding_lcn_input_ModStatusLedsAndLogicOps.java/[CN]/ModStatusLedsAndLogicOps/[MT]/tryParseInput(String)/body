@@ -1,0 +1,43 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  Matcher matcher=PckParser.PATTERN_STATUS_LEDSANDLOGICOPS.matcher(input);
+  if (matcher.matches()) {
+    LcnDefs.LedStatus[] statesLeds=new LcnDefs.LedStatus[12];
+    for (int i=0; i < 12; ++i) {
+switch (matcher.group("ledStates").toUpperCase().charAt(i)) {
+case 'A':
+        statesLeds[i]=LcnDefs.LedStatus.OFF;
+      break;
+case 'E':
+    statesLeds[i]=LcnDefs.LedStatus.ON;
+  break;
+case 'B':
+statesLeds[i]=LcnDefs.LedStatus.BLINK;
+break;
+case 'F':
+statesLeds[i]=LcnDefs.LedStatus.FLICKER;
+break;
+default :
+throw new Error();
+}
+}
+LcnDefs.LogicOpStatus[] statesLogicOps=new LcnDefs.LogicOpStatus[4];
+for (int i=0; i < 4; ++i) {
+switch (matcher.group("logicOpStates").toUpperCase().charAt(i)) {
+case 'N':
+statesLogicOps[i]=LcnDefs.LogicOpStatus.NOT;
+break;
+case 'T':
+statesLogicOps[i]=LcnDefs.LogicOpStatus.OR;
+break;
+case 'V':
+statesLogicOps[i]=LcnDefs.LogicOpStatus.AND;
+break;
+default :
+throw new Error();
+}
+}
+ret.add(new ModStatusLedsAndLogicOps(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),statesLeds,statesLogicOps));
+}
+return ret;
+}

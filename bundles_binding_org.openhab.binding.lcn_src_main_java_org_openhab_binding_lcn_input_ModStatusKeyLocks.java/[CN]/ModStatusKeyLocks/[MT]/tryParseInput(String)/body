@@ -1,0 +1,17 @@
+{
+  LinkedList<Input> ret=new LinkedList<Input>();
+  try {
+    Matcher matcher=PckParser.PATTERN_STATUS_KEYLOCKS.matcher(input);
+    if (matcher.matches()) {
+      boolean[][] states=new boolean[4][];
+      for (int i=0; i < 4; ++i) {
+        String s=matcher.group(String.format("table%d",i));
+        states[i]=s != null ? PckParser.getBooleanValue(Integer.parseInt(s)) : new boolean[8];
+      }
+      ret.add(new ModStatusKeyLocks(new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("modId"))),states));
+    }
+  }
+ catch (  IllegalArgumentException ex) {
+  }
+  return ret;
+}

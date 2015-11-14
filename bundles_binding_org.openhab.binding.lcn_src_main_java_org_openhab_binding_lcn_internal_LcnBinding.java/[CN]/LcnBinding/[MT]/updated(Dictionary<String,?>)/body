@@ -1,0 +1,14 @@
+{
+  logger.info("Loading LCN configuration...");
+  this.connectionSettings.clear();
+  int counter=0;
+  ConnectionSettings sets;
+  while ((sets=ConnectionSettings.tryParse(config,counter)) != null) {
+    this.connectionSettings.put(sets.getId().toUpperCase(),sets);
+    ++counter;
+  }
+  logger.info("LCN configuration loaded.");
+  if (this.providers.size() > 0) {
+    this.activeService.setProperlyConfigured(true);
+  }
+}

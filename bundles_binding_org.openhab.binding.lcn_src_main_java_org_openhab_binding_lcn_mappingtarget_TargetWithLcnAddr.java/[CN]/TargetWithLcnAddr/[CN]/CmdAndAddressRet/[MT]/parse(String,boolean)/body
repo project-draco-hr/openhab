@@ -1,0 +1,12 @@
+{
+  Matcher matcher;
+  if ((matcher=PATTERN.matcher(input)).matches()) {
+    boolean isGroup=matcher.group("type") != null && matcher.group("type").equalsIgnoreCase("G");
+    if (isGroup && !allowGroup) {
+      logger.error(String.format("Binding does not allow LCN group addresses: %s",input));
+      return null;
+    }
+    return new CmdAndAddressRet(matcher.group("rest"),matcher.group("cmd"),isGroup ? new LcnAddrGrp(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("id"))) : new LcnAddrMod(Integer.parseInt(matcher.group("segId")),Integer.parseInt(matcher.group("id"))));
+  }
+  return null;
+}

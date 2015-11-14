@@ -1,0 +1,45 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  Matcher matcher=PATTERN_BINDING_GENERAL.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException(bindingConfig + "' contains no valid binding!");
+  }
+  matcher.reset();
+  LcnBindingConfig bc=new LcnBindingConfig(item);
+  while (matcher.find()) {
+    String binding=matcher.group(1);
+    if (binding != null && !binding.trim().isEmpty()) {
+      String openHabCmd=null;
+      String connId, lcnTarget;
+      Matcher openHabMatcher=PATTERN_BINDING_WITH_OPENHAB.matcher(binding);
+      Matcher pureMatcher=PATTERN_BINDING_PURE.matcher(binding);
+      if (openHabMatcher.matches()) {
+        openHabCmd=openHabMatcher.group(1);
+        connId=openHabMatcher.group(2);
+        lcnTarget=openHabMatcher.group(3);
+      }
+ else       if (pureMatcher.matches()) {
+        connId=pureMatcher.group(1);
+        lcnTarget=pureMatcher.group(2);
+      }
+ else {
+        throw new BindingConfigParseException("Invalid binding configuration for " + binding + "!");
+      }
+      String lcnShort=resolveMappings(lcnTarget,openHabCmd);
+      if (lcnShort == null || lcnShort.equals(openHabCmd)) {
+        lcnShort=lcnTarget;
+      }
+      Command cmd=openHabCmd == null ? TypeParser.parseCommand(new StringItem("").getAcceptedCommandTypes(),"") : openHabCmd.equals("%i") ? new StringType("%i") : TypeParser.parseCommand(item.getAcceptedCommandTypes(),openHabCmd);
+      bc.add(new LcnBindingConfig.Mapping(cmd,connId,lcnShort));
+    }
+  }
+  this.addBindingConfig(item,bc);
+  for (  LcnAddrMod addr : bc.getRelatedModules()) {
+    HashSet<String> l=this.itemNamesByModulCache.get(addr);
+    if (l == null) {
+      l=new HashSet<String>();
+      this.itemNamesByModulCache.put(addr,l);
+    }
+    l.add(item.getName());
+  }
+}

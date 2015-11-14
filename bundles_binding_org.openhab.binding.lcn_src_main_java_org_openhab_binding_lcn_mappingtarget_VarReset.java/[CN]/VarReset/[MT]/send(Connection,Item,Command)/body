@@ -1,0 +1,19 @@
+{
+  try {
+    boolean is2013=!this.forceOld;
+    ModInfo info=null;
+    if (!this.addr.isGroup()) {
+      info=conn.getModInfo((LcnAddrMod)this.addr);
+      if (info != null) {
+        is2013=info.getSwAge() >= 0x170206;
+      }
+    }
+    conn.queue(this.addr,!this.addr.isGroup(),PckGenerator.varReset(this.var,is2013));
+    if (info != null && LcnDefs.Var.shouldPollStatusAfterCommand(this.var,is2013) && info.requestStatusVars.containsKey(this.var)) {
+      info.requestStatusVars.get(this.var).nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
+  }
+ catch (  IllegalArgumentException ex) {
+    logger.warn(String.format("Variable of type %s does not support \"reset to 0\" commands.",this.var));
+  }
+}

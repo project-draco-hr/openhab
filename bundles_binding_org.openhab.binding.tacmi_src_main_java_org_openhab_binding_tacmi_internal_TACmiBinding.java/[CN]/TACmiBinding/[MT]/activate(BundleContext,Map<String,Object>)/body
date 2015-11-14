@@ -1,0 +1,24 @@
+{
+  this.bundleContext=bundleContext;
+  String refreshIntervalString=(String)configuration.get("refresh");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+  }
+  try {
+    cmiAddress=InetAddress.getByName((String)configuration.get("cmiAddress"));
+  }
+ catch (  UnknownHostException e1) {
+    logger.error("Failed to get IP of CMI from configuration");
+    setProperlyConfigured(false);
+    return;
+  }
+  try {
+    clientSocket=new DatagramSocket(cmiPort);
+  }
+ catch (  SocketException e) {
+    logger.error("Failed to create Socket for receiving UDP packts from CMI");
+    setProperlyConfigured(true);
+    return;
+  }
+  setProperlyConfigured(true);
+}

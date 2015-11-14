@@ -1,12 +1,15 @@
 {
   final List<BigDecimal> values=response.getBody().get(0).getValues().get(0);
-  final Map<String,BigDecimal> valueMap=new HashMap<String,BigDecimal>();
+  Map<String,BigDecimal> valueMap=deviceMeasureValueMap.get(request.getKey());
+  if (valueMap == null) {
+    valueMap=new HashMap<String,BigDecimal>();
+    deviceMeasureValueMap.put(request.getKey(),valueMap);
+    deviceMeasureValueMap.timeStamp=new DateTimeType(response.getTimeStamp());
+  }
   int index=0;
   for (  final String measure : request.getMeasures()) {
     final BigDecimal value=values.get(index);
     valueMap.put(measure,value);
     index++;
   }
-  deviceMeasureValueMap.put(request.getKey(),valueMap);
-  deviceMeasureValueMap.timeStamp=new DateTimeType(response.getTimeStamp());
 }

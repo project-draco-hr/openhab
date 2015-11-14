@@ -1,0 +1,14 @@
+{
+  long newest;
+  long oldest;
+  if (isVirtualUpdate) {
+    newest=new Date().getTime();
+    oldest=currentTimestamp;
+  }
+ else {
+    newest=currentTimestamp;
+    oldest=lastTimestamp;
+  }
+  int value=(int)(unit * (this.period.time * 1000) / (newest - oldest));
+  return new DecimalType(value);
+}

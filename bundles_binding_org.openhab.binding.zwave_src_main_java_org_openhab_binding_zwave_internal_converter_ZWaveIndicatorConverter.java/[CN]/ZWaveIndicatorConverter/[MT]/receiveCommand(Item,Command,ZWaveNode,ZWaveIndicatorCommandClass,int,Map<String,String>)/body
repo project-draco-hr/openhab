@@ -4,12 +4,33 @@
     logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring command.",node.getNodeId(),item.getName(),endpointId);
     return;
   }
-  SerialMessage serialMessage=node.encapsulate(commandClass.setValueMessage((Integer)converter.convertFromCommandToValue(item,command)),commandClass,endpointId);
+  if (!arguments.containsKey("bit")) {
+    logger.error("NODE {}: You must specify an Indicator bit for item = {}, endpoint = {}, ignoring command.",node.getNodeId(),item.getName(),endpointId);
+    return;
+  }
+  int bit=Integer.parseInt(arguments.get("bit"));
+  if (!(command instanceof OnOffType)) {
+    return;
+  }
+  if (command == OnOffType.ON) {
+    HashMap<Integer,Integer> h=new HashMap<Integer,Integer>();
+    h.put(bit,PENDING_ON);
+    pending.put(item.getName(),h);
+    logger.warn(String.format("NODE %d: Item %s Set bit = %d to ON - PENDING",node.getNodeId(),item.getName(),bit));
+  }
+ else {
+    logger.warn(String.format("NODE %d: Item %s Set bit = %d to OFF - PENDING",node.getNodeId(),item.getName(),bit));
+    HashMap<Integer,Integer> h=new HashMap<Integer,Integer>();
+    h.put(bit,PENDING_OFF);
+    pending.put(item.getName(),h);
+  }
+  SerialMessage serialMessage=node.encapsulate(commandClass.getValueMessage(),commandClass,endpointId);
   if (serialMessage == null) {
     logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
     return;
   }
   this.getController().sendData(serialMessage);
+  logger.warn(String.format("NODE %d: Item %s bit = %d Get current Indicator State",node.getNodeId(),item.getName(),bit));
   if (command instanceof State) {
     this.getEventPublisher().postUpdate(item.getName(),(State)command);
   }
