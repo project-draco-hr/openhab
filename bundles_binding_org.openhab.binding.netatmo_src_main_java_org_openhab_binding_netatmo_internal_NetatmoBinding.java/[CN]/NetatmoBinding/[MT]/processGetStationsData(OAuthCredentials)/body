@@ -1,0 +1,21 @@
+{
+  logger.debug("Request: {}",oauthCredentials.getStationsDataRequest);
+  logger.debug("Response: {}",oauthCredentials.getStationsDataResponse);
+  if (oauthCredentials.getStationsDataResponse.isError()) {
+    final NetatmoError error=oauthCredentials.getStationsDataResponse.getError();
+    if (error.isAccessTokenExpired() || error.isTokenNotVaid()) {
+      logger.debug("Token is expired or is not valid, refreshing: code = {} message = {}",error.getCode(),error.getMessage());
+      oauthCredentials.refreshAccessToken();
+      execute();
+    }
+ else {
+      logger.error("Error processing device list: code = {} message = {}",error.getCode(),error.getMessage());
+      throw new NetatmoException(error.getMessage());
+    }
+    return;
+  }
+ else {
+    processGetStationsDataResponse(oauthCredentials.getStationsDataResponse);
+    oauthCredentials.firstExecution=false;
+  }
+}

@@ -1,0 +1,38 @@
+{
+  int value;
+  int minima;
+  int spread;
+  int threshold0;
+  int threshold1;
+  int threshold2;
+  int threshold3;
+  if (this.type.equalsIgnoreCase(TYPE_MODULE_1)) {
+    threshold0=BATTERY_MODULE_1_THRESHOLD_0;
+    threshold1=BATTERY_MODULE_1_THRESHOLD_1;
+    threshold2=BATTERY_MODULE_1_THRESHOLD_2;
+    threshold3=BATTERY_MODULE_1_THRESHOLD_3;
+  }
+ else   if (this.type.equalsIgnoreCase(TYPE_MODULE_2)) {
+    threshold0=BATTERY_MODULE_2_THRESHOLD_0;
+    threshold1=BATTERY_MODULE_2_THRESHOLD_1;
+    threshold2=BATTERY_MODULE_2_THRESHOLD_2;
+    threshold3=BATTERY_MODULE_2_THRESHOLD_3;
+  }
+ else   if (this.type.equalsIgnoreCase(TYPE_MODULE_3)) {
+    threshold0=BATTERY_MODULE_3_THRESHOLD_0;
+    threshold1=BATTERY_MODULE_3_THRESHOLD_1;
+    threshold2=BATTERY_MODULE_3_THRESHOLD_2;
+    threshold3=BATTERY_MODULE_3_THRESHOLD_3;
+  }
+ else {
+    threshold0=BATTERY_MODULE_4_THRESHOLD_0;
+    threshold1=BATTERY_MODULE_4_THRESHOLD_1;
+    threshold2=BATTERY_MODULE_4_THRESHOLD_2;
+    threshold3=BATTERY_MODULE_4_THRESHOLD_3;
+  }
+  value=Math.min(this.batteryVp,threshold0);
+  minima=threshold3 + threshold2 - threshold1;
+  spread=threshold0 - minima;
+  double percent=100 * (value - minima) / spread;
+  return new Double(percent);
+}

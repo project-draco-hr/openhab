@@ -1,0 +1,12 @@
+{
+  final GetStationsDataRequestStub request=createRequest("/getstationsdata.json");
+  final GetStationsDataResponse response=request.execute();
+  assertFalse(response.isError());
+  assertEquals("https://api.netatmo.net/api/getstationsdata?access_token=" + ACCESS_TOKEN,request.getQuery());
+  assertEquals("ok",response.getStatus());
+  final List<Device> devices=response.getDevices();
+  assertEquals(1,devices.size());
+  final Device device=devices.get(0);
+  final List<Module> modules=device.getModules();
+  assertEquals(4,modules.size());
+}
