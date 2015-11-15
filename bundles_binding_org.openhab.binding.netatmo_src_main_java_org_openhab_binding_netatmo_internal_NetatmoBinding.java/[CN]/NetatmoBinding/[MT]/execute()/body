@@ -59,6 +59,10 @@ case MAX_NOISE:
 case MIN_CO2:
 case MAX_CO2:
 case SUM_RAIN:
+case WINDSTRENGTH:
+case WINDANGLE:
+case GUSTSTRENGTH:
+case GUSTANGLE:
 {
       BigDecimal value=getValue(deviceMeasureValueMap,measureType,createKey(deviceId,moduleId,scale));
       if (value != null) {
@@ -70,6 +74,9 @@ case SUM_RAIN:
         }
  else         if (NetatmoMeasureType.isPressure(measureType)) {
           value=pressureUnit.convertPressure(value);
+        }
+ else         if (NetatmoMeasureType.isWind(measureType)) {
+          value=unitSystem.convertWind(value);
         }
         state=new DecimalType(value);
       }
@@ -85,6 +92,7 @@ case DATE_MIN_NOISE:
 case DATE_MAX_NOISE:
 case DATE_MIN_CO2:
 case DATE_MAX_CO2:
+case DATE_MAX_GUST:
 {
   final BigDecimal value=getValue(deviceMeasureValueMap,measureType,createKey(deviceId,moduleId,scale));
   if (value != null) {
