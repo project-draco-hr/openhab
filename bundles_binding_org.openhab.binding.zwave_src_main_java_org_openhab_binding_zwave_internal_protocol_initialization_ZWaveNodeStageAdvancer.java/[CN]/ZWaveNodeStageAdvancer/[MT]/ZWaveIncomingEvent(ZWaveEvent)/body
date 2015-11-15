@@ -56,4 +56,16 @@ break;
 }
 logger.trace("NODE {}: Node Status event during initialisation processed",statusEvent.getNodeId());
 }
+ else if (event instanceof ZWaveNodeInfoEvent) {
+logger.debug("NODE {}: {} NIF event during initialisation stage {}",event.getNodeId(),node.getNodeId(),currentStage);
+if (node.getNodeId() != event.getNodeId()) {
+return;
+}
+if (currentStage == ZWaveNodeInitStage.PING) {
+logger.debug("NODE {}: NIF event during initialisation stage PING - advancing",event.getNodeId());
+setCurrentStage(currentStage.getNextStage());
+}
+logger.debug("NODE {}: NIF event during initialisation stage {}",event.getNodeId(),currentStage);
+advanceNodeStage(null);
+}
 }
