@@ -1,0 +1,13 @@
+{
+  String sResponse="";
+  final String GET_ALL_LOGICAL_DEVICE_STATES_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"GetAllLogicalDeviceStatesRequest\" Version=\"%s\" RequestId=\"%s\" SessionId=\"%s\" BasedOnConfigVersion=\"%s\" />",RWESmarthomeSession.getFirmwareVersion(),rweSmarthomeSession.getRequestId(),rweSmarthomeSession.getSessionId(),rweSmarthomeSession.getCurrentConfigurationVersion());
+  sResponse=rweSmarthomeSession.executeRequest(GET_ALL_LOGICAL_DEVICE_STATES_REQUEST,"/cmd");
+  try {
+    GetAllLogicalDeviceStatesXMLResponse entitiesXMLRes=new GetAllLogicalDeviceStatesXMLResponse(IOUtils.toInputStream(sResponse,"UTF8"));
+  }
+ catch (  IOException e) {
+    throw new RWESmarthomeSessionExpiredException(e);
+  }
+  logger.debug("Refresh LD Response: " + sResponse);
+  return sResponse;
+}

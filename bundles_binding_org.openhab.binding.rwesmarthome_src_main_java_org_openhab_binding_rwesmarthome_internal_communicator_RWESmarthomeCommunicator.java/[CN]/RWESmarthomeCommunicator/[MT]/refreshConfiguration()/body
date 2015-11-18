@@ -1,0 +1,15 @@
+{
+  String sResponse="";
+  final String GET_CONFIGURATION_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"GetEntitiesRequest\" Version=\"%s\" RequestId=\"%s\" SessionId=\"%s\">\n" + "<EntityType>Configuration</EntityType>" + "</BaseRequest>",RWESmarthomeSession.getFirmwareVersion(),rweSmarthomeSession.getRequestId(),rweSmarthomeSession.getSessionId());
+  sResponse=rweSmarthomeSession.executeRequest(GET_CONFIGURATION_REQUEST,"/cmd");
+  try {
+    GetEntitiesXMLResponse entitiesXMLRes=new GetEntitiesXMLResponse(IOUtils.toInputStream(sResponse,"UTF8"));
+    rweSmarthomeSession.setLocations(entitiesXMLRes.getLocations());
+    rweSmarthomeSession.setLogicalDevices(entitiesXMLRes.getLogicalDevices());
+    rweSmarthomeSession.setCurrentConfigurationVersion(entitiesXMLRes.getConfigurationVersion());
+  }
+ catch (  IOException e) {
+    throw new RWESmarthomeSessionExpiredException(e);
+  }
+  return sResponse;
+}

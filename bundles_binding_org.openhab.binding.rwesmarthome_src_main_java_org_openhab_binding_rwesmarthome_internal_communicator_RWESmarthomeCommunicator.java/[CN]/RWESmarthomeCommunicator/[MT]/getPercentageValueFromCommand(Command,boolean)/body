@@ -1,0 +1,20 @@
+{
+  Integer val;
+  if (command.equals(OnOffType.ON) || command.equals(UpDownType.DOWN)) {
+    val=100;
+  }
+ else   if (command.equals(OnOffType.OFF) || command.equals(UpDownType.UP)) {
+    val=0;
+  }
+ else   if (command instanceof IncreaseDecreaseType || command instanceof StopMoveType) {
+    logger.info("Command '{}' not implemented for dimmer/rollershutter. Must be handled within a rule, see binding documentation.",command.toString());
+    return null;
+  }
+ else {
+    val=new Integer(command.toString());
+  }
+  if (inverted || command instanceof UpDownType) {
+    val=100 - val;
+  }
+  return val;
+}

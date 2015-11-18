@@ -1,0 +1,9 @@
+{
+  String sResponse=getNotificationsRequest();
+  if (sResponse.contains("LogoutNotification") || sResponse.contains("ConfigurationChangedNotification")) {
+    NotificationsXMLResponse notXmlRes=new NotificationsXMLResponse(IOUtils.toInputStream(sResponse));
+  }
+  GetAllLogicalDeviceStatesXMLResponse logDevXmlRes=new GetAllLogicalDeviceStatesXMLResponse(IOUtils.toInputStream(sResponse));
+  logger.trace("Notifications: {}",sResponse);
+  return sResponse;
+}

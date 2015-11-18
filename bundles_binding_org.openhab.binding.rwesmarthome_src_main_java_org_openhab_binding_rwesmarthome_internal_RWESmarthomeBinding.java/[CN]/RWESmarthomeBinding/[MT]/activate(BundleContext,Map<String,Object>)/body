@@ -1,0 +1,12 @@
+{
+  logger.debug("activate is called.");
+  context.setProviders(providers);
+  String refreshIntervalString=(String)configuration.get("poll.interval");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+  }
+  context.getConfig().parse(configuration);
+  logger.debug(context.getConfig().toString());
+  communicator.start();
+  setProperlyConfigured(true);
+}

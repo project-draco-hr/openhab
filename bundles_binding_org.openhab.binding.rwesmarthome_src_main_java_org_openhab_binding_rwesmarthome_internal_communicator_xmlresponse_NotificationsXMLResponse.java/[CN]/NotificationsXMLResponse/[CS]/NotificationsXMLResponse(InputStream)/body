@@ -1,0 +1,29 @@
+{
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  try {
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    Document doc=db.parse(is);
+    Element docEle=doc.getDocumentElement();
+    NodeList nl=docEle.getElementsByTagName("LogoutNotification");
+    if (nl != null && nl.getLength() > 0) {
+      Element el=(Element)nl.item(0);
+      String reason=getTextValueFromAttribute(el,"Reason");
+      throw new LogoutNotificationException("Logged out from Notifications. Reason:" + reason);
+    }
+    nl=docEle.getElementsByTagName("ConfigurationChangedNotification");
+    if (nl != null && nl.getLength() > 0) {
+      Element el=(Element)nl.item(0);
+      String configVersion=getTextValueFromAttribute(el,"ConfigurationVersion");
+      throw new ConfigurationChangedException("Configuration changed to version " + configVersion);
+    }
+  }
+ catch (  SAXException ex) {
+    Logger.getLogger(NotificationsXMLResponse.class.getName()).log(Level.SEVERE,null,ex);
+  }
+catch (  IOException ex) {
+    Logger.getLogger(NotificationsXMLResponse.class.getName()).log(Level.SEVERE,null,ex);
+  }
+catch (  ParserConfigurationException ex) {
+    Logger.getLogger(NotificationsXMLResponse.class.getName()).log(Level.SEVERE,null,ex);
+  }
+}

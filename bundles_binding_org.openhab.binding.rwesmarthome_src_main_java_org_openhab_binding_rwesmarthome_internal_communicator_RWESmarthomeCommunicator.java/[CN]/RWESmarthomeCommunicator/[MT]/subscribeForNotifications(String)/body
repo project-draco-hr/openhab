@@ -1,0 +1,7 @@
+{
+  String sResponse="";
+  final String NOTIFICATION_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"NotificationRequest\" Version=\"%s\" RequestId=\"%s\" SessionId=\"%s\">" + "<Action>Subscribe</Action>" + "<NotificationType>%s</NotificationType>"+ "</BaseRequest>",RWESmarthomeSession.getFirmwareVersion(),rweSmarthomeSession.getRequestId(),rweSmarthomeSession.getSessionId(),notificationType);
+  logger.debug("REQ: " + NOTIFICATION_REQUEST);
+  sResponse=rweSmarthomeSession.executeRequest(NOTIFICATION_REQUEST,"/cmd");
+  logger.debug("SubscribeForNotification-Response: " + sResponse);
+}

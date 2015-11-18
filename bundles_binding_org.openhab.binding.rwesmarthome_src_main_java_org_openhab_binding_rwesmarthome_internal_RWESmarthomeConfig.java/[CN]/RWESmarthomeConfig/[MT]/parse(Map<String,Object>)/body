@@ -1,0 +1,18 @@
+{
+  valid=false;
+  host=(String)configuration.get(CONFIG_KEY_RWESMARTHOME_HOST);
+  if (StringUtils.isBlank(host)) {
+    throw new ConfigurationException("rwesmarthome","Parameter host is mandatory and must be configured. Please check your openhab.cfg!");
+  }
+  username=(String)configuration.get(CONFIG_KEY_RWESMARTHOME_USERNAME);
+  if (StringUtils.isBlank(username)) {
+    throw new ConfigurationException("rwesmarthome","Parameter username is mandatory and must be configured. Please check your openhab.cfg!");
+  }
+  password=(String)configuration.get(CONFIG_KEY_RWESMARTHOME_PASSWORD);
+  if (StringUtils.isBlank(password)) {
+    throw new ConfigurationException("rwesmarthome","Parameter password is mandatory and must be configured. Please check your openhab.cfg!");
+  }
+  aliveInterval=parseInt(configuration,CONFIG_KEY_ALIVE_INTERVAL,DEFAULT_ALIVE_INTERVAL);
+  bindingChangedInterval=parseInt(configuration,CONFIG_KEY_BINDING_CHANGED_INTERVAL,DEFAULT_BINDING_CHANGED_INTERVAL);
+  valid=true;
+}

@@ -1,0 +1,42 @@
+{
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  try {
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    Document dom=db.parse(is);
+    Element docEle=dom.getDocumentElement();
+    configurationVersion=getTextValueFromAttribute(docEle,"ConfigurationVersion");
+    NodeList nlLocations=docEle.getElementsByTagName("LC");
+    locations=new ConcurrentHashMap<String,Location>(5);
+    if (nlLocations != null && nlLocations.getLength() > 0) {
+      for (int i=0; i < nlLocations.getLength(); i++) {
+        Element locEl=(Element)nlLocations.item(i);
+        Location loc=new Location(getTextValueFromElements(locEl,"Id"),getTextValueFromElements(locEl,"Name"));
+        locations.put(loc.getId(),loc);
+      }
+    }
+    NodeList nlLogicalDevices=docEle.getElementsByTagName("LD");
+    logicalDevices=new ConcurrentHashMap<String,LogicalDevice>(5);
+    if (nlLogicalDevices != null && nlLogicalDevices.getLength() > 0) {
+      for (int i=0; i < nlLogicalDevices.getLength(); i++) {
+        Element logDevEl=(Element)nlLogicalDevices.item(i);
+        LogicalDevice logDev=new LogicalDevice(getTextValueFromElements(logDevEl,"Id"),locations.get(getTextValueFromAttribute(logDevEl,"LCID")),getTextValueFromAttribute(logDevEl,"xsi:type"),getTextValueFromAttribute(logDevEl,"Name"));
+        if (LogicalDevice.Type_GenericActuator.equals(logDev.getType())) {
+          if ("Value".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_Value);
+ else           if ("EmailNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_Email);
+ else           if ("SMSNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_SMS);
+ else           if ("NextTimeEvent".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_SunriseSunset);
+        }
+        logicalDevices.put(logDev.getId(),logDev);
+      }
+    }
+  }
+ catch (  SAXException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+catch (  IOException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+catch (  ParserConfigurationException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+}

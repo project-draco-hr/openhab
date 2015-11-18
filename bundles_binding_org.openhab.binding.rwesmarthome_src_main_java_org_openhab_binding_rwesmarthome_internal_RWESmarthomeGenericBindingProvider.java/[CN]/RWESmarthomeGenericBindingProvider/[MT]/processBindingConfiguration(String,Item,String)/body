@@ -1,0 +1,44 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  RWESmarthomeBindingConfig config=new RWESmarthomeBindingConfig();
+  bindingConfig=StringUtils.trimToEmpty(bindingConfig);
+  String[] configstrings=bindingConfig.split("[,]");
+  Pattern patternForId=Pattern.compile("^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$");
+  Pattern patternForParam=Pattern.compile("^(temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm)$");
+  for (  String configstring : configstrings) {
+    String[] configParts=StringUtils.trimToEmpty(configstring).split("[=]");
+    if (configParts.length != 2) {
+      throw new BindingConfigParseException("Each entry must have a key and a value");
+    }
+    String key=StringUtils.trim(configParts[0]);
+    String value=StringUtils.trim(configParts[1]);
+    if ("id".equalsIgnoreCase(key)) {
+      if (!patternForId.matcher(value).matches()) {
+        throw new BindingConfigParseException("id '" + value + "' is not a valid logicalDeviceId. Valid example: 12345a67-890b-1c23-de45-f67890123456");
+      }
+      config.setDeviceId(value);
+    }
+ else     if ("param".equalsIgnoreCase(key)) {
+      if (!patternForParam.matcher(value).matches()) {
+        throw new BindingConfigParseException("Invalid configuration: 'param' must be one of the following: temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm");
+      }
+      config.setDeviceParam(value);
+    }
+ else {
+      logger.warn("Invalid configuration key '%s' - only 'id' and 'param' are allowed!",key,value);
+      throw new BindingConfigParseException("Invalid configuration key '" + key + "'");
+    }
+  }
+  if (config.getDeviceId() == null) {
+    throw new BindingConfigParseException("Invalid configuration: id is missing!");
+  }
+  if (config.getDeviceParam() == null) {
+    throw new BindingConfigParseException("Invalid configuration: param is missing!");
+  }
+  logger.info("Adding item {} with {}",item.getName(),config.toString());
+  items.put(item.getName(),item);
+  itemMapById.put(config.getDeviceId(),item);
+  itemMapByIdAndParam.put(config.getDeviceId(),config.getDeviceParam(),item);
+  addBindingConfig(item,config);
+  this.context.setBindingChanged(true);
+}

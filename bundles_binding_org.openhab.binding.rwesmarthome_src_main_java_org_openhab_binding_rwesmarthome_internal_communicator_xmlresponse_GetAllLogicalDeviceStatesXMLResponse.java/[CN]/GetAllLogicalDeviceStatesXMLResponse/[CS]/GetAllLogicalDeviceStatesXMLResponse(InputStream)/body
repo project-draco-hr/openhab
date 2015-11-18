@@ -1,0 +1,199 @@
+{
+  RWESmarthomeBindingProvider provider=context.getProviders().iterator().next();
+  DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+  try {
+    DocumentBuilder db=dbf.newDocumentBuilder();
+    Document dom=db.parse(is);
+    Element docEle=dom.getDocumentElement();
+    NodeList nodelist=docEle.getElementsByTagName("LogicalDeviceState");
+    if (nodelist != null && nodelist.getLength() > 0) {
+      for (int i=0; i < nodelist.getLength(); i++) {
+        Element element=(Element)nodelist.item(i);
+        String deviceId=getTextValueFromAttribute(element,"LID");
+        String deviceType=getTextValueFromAttribute(element,"xsi:type");
+        if (LogicalDevice.Type_RoomTemperatureSensorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"temperature");
+          if (itemName != null) {
+            context.getEventPublisher().postUpdate(itemName,new DecimalType(getDoubleValueFromAttribute(element,"Temperature")));
+            logger.debug("Updated item '{}' to '{}'",itemName,getDoubleValueFromAttribute(element,"Temperature"));
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"temperature");
+          }
+        }
+ else         if (LogicalDevice.Type_RoomTemperatureActuatorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"settemperature");
+          if (itemName != null) {
+            State newState=new DecimalType(getDoubleValueFromAttribute(element,"PtTmp"));
+            if (!isEcho(itemName,newState.format("%.1f").replace(",","."))) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"settemperature");
+          }
+          itemName=provider.getItemNameByIdAndParam(deviceId,"operationmodeauto");
+          if (itemName != null) {
+            State newState=getTextValueFromAttribute(element,"OpnMd").equals(RoomTemperatureActuator.OPERATION_MODE_AUTO) ? OnOffType.ON : OnOffType.OFF;
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"operationmodeauto");
+          }
+        }
+ else         if (LogicalDevice.Type_SwitchActuatorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"switch");
+          if (itemName != null) {
+            State newState=getBooleanValueFromAttribute(element,"IsOn") ? OnOffType.ON : OnOffType.OFF;
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"switch");
+          }
+        }
+ else         if (LogicalDevice.Type_WindowDoorSensorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"contact");
+          if (itemName != null) {
+            context.getEventPublisher().postUpdate(itemName,getBooleanValueFromElements(element,"IsOpen") ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+            logger.debug("Updated item '{}' to '{}'",itemName,getBooleanValueFromElements(element,"IsOpen"));
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"contact");
+          }
+        }
+ else         if (LogicalDevice.Type_LuminanceSensorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"luminance");
+          if (itemName != null) {
+            context.getEventPublisher().postUpdate(itemName,new DecimalType(getIntValueFromElements(element,"Luminance")));
+            logger.debug("Updated item '{}' to '{}'",itemName,getIntValueFromElements(element,"Luminance"));
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"luminance");
+          }
+        }
+ else         if (LogicalDevice.Type_RoomHumiditySensorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"humidity");
+          if (itemName != null) {
+            context.getEventPublisher().postUpdate(itemName,new DecimalType(getDoubleValueFromAttribute(element,"Humidity")));
+            logger.debug("Updated item '{}' to '{}'",itemName,getDoubleValueFromAttribute(element,"Humidity"));
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"humidity");
+          }
+        }
+ else         if (LogicalDevice.Type_RollerShutterActuatorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"rollershutter");
+          if (itemName != null) {
+            State newState=new PercentType(getIntValueFromElements(element,"ShutterLevel"));
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"rollershutter");
+          }
+          itemName=provider.getItemNameByIdAndParam(deviceId,"rollershutterinverted");
+          if (itemName != null) {
+            State newState=new PercentType(100 - getIntValueFromElements(element,"ShutterLevel"));
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"rollershutterinverted");
+          }
+        }
+ else         if (LogicalDevice.Type_DimmerActuatorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"dimmer");
+          if (itemName != null) {
+            State newState=new PercentType(getIntValueFromAttribute(element,"DmLvl"));
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"dimmer");
+          }
+          itemName=provider.getItemNameByIdAndParam(deviceId,"dimmerinverted");
+          if (itemName != null) {
+            State newState=new PercentType(100 - getIntValueFromAttribute(element,"DmLvl"));
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"dimmerinverted");
+          }
+        }
+ else         if (LogicalDevice.Type_SmokeDetectionSensorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"smokedetector");
+          if (itemName != null) {
+            context.getEventPublisher().postUpdate(itemName,getBooleanValueFromElements(element,"IsSmokeAlarm") ? new StringType("ON") : new StringType("OFF"));
+            logger.debug("Updated item '{}' to '{}'",itemName,getBooleanValueFromElements(element,"IsSmokeAlarm"));
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"smokedetector");
+          }
+        }
+ else         if (LogicalDevice.Type_AlarmActuatorState.equals(deviceType)) {
+          String itemName=provider.getItemNameByIdAndParam(deviceId,"alarm");
+          if (itemName != null) {
+            State newState=getBooleanValueFromElements(element,"IsOn") ? OnOffType.ON : OnOffType.OFF;
+            if (!isEcho(itemName,newState.toString())) {
+              context.getEventPublisher().postUpdate(itemName,newState);
+              logger.debug("Updated item '{}' to '{}'",itemName,newState);
+            }
+          }
+ else {
+            logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"alarm");
+          }
+        }
+ else         if (LogicalDevice.Type_GenericDeviceState.equals(deviceType)) {
+          NodeList pptnodes=element.getElementsByTagName("Ppt");
+          HashMap<String,String> cache=new HashMap<String,String>();
+          for (int j=0; j < pptnodes.getLength(); j++) {
+            String name=getTextValueFromAttribute((Element)pptnodes.item(j),"Name");
+            String value=getTextValueFromAttribute((Element)pptnodes.item(j),"Value");
+            cache.put(name,value);
+          }
+          if (cache.get("Value") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"variable");
+            if (itemName != null) {
+              State newState="True".equals(cache.get("Value")) ? OnOffType.ON : OnOffType.OFF;
+              if (!isEcho(itemName,newState.toString())) {
+                context.getEventPublisher().postUpdate(itemName,newState);
+                logger.debug("Updated item '{}' to '{}'",itemName,newState);
+              }
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"variable");
+            }
+          }
+        }
+ else {
+          logger.debug("Updated itemtype {} [{}] not supported - ignored.",deviceType,deviceId);
+        }
+      }
+    }
+  }
+ catch (  SAXException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+catch (  IOException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+catch (  ParserConfigurationException ex) {
+    logger.debug(ex.getMessage(),ex);
+  }
+}
