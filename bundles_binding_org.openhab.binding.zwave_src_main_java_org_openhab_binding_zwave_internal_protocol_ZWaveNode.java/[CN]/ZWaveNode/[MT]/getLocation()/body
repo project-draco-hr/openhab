@@ -1,3 +1,7 @@
 {
-  return location;
+  ZWaveNodeNamingCommandClass commandClass=(ZWaveNodeNamingCommandClass)getCommandClass(CommandClass.NODE_NAMING);
+  if (commandClass == null) {
+    return this.location;
+  }
+  return commandClass.getLocation();
 }

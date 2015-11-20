@@ -1,3 +1,9 @@
 {
-  this.location=location;
+  ZWaveNodeNamingCommandClass commandClass=(ZWaveNodeNamingCommandClass)getCommandClass(CommandClass.NODE_NAMING);
+  if (commandClass == null) {
+    this.location=location;
+    return;
+  }
+  SerialMessage m=commandClass.setLocationMessage(location);
+  this.controller.sendData(m);
 }

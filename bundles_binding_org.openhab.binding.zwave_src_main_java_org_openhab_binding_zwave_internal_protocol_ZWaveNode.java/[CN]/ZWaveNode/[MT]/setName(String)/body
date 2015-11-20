@@ -1,3 +1,9 @@
 {
-  this.name=name;
+  ZWaveNodeNamingCommandClass commandClass=(ZWaveNodeNamingCommandClass)getCommandClass(CommandClass.NODE_NAMING);
+  if (commandClass == null) {
+    this.name=name;
+    return;
+  }
+  SerialMessage m=commandClass.setNameMessage(name);
+  this.controller.sendData(m);
 }

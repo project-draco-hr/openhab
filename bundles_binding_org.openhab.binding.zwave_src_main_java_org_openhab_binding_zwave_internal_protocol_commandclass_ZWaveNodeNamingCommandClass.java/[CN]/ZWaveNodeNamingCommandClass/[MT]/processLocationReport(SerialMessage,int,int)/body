@@ -1,0 +1,6 @@
+{
+  location=getString(serialMessage,offset);
+  logger.info("NODE {}: Node location: {}",this.getNode().getNodeId(),location);
+  ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),location);
+  this.getController().notifyEventListeners(zEvent);
+}
