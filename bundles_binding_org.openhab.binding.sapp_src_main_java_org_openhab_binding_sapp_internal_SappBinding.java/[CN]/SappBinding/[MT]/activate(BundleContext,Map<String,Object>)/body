@@ -1,10 +1,9 @@
 {
   logger.debug("sapp activate called");
-  this.bundleContext=bundleContext;
   String refreshIntervalString=(String)configuration.get(CONFIG_KEY_REFRESH);
   if (StringUtils.isNotBlank(refreshIntervalString)) {
     refreshInterval=Long.parseLong(refreshIntervalString);
-    logger.debug("set refresh interval: " + refreshInterval);
+    logger.debug("set refresh interval: {}",refreshInterval);
   }
   SappBindingProvider provider=getFirstSappBindingProvider();
   if (provider != null) {
@@ -12,16 +11,16 @@
     if (pnmasEnabled != null) {
       String[] pnmasIds=pnmasEnabled.split(",");
       for (      String pnmasId : pnmasIds) {
-        logger.debug(String.format("loading info for pnmas %s",pnmasId));
+        logger.debug("loading info for pnmas {}",pnmasId);
         String ip=(String)configuration.get(String.format(CONFIG_KEY_PNMAS_ID,pnmasId));
         if (ip == null) {
-          logger.warn(String.format("ip not found for pnmas %s",pnmasId));
+          logger.warn("ip not found for pnmas {}",pnmasId);
           continue;
         }
         int port;
         String portString=(String)configuration.get(String.format(CONFIG_KEY_PNMAS_PORT,pnmasId));
         if (portString == null) {
-          logger.warn(String.format("port not found for pnmas %s",pnmasId));
+          logger.warn("port not found for pnmas {}",pnmasId);
           continue;
         }
  else {
@@ -29,18 +28,18 @@
             port=Integer.parseInt(portString);
           }
  catch (          NumberFormatException e) {
-            logger.warn(String.format("bad port number for pnmas %s",pnmasId));
+            logger.warn("bad port number for pnmas {}",pnmasId);
             continue;
           }
         }
         if (provider.getPnmasMap().containsKey(pnmasId)) {
-          logger.warn(String.format("pnmas %s duplicated, skipping",pnmasId));
+          logger.warn("pnmas {} duplicated, skipping",pnmasId);
           continue;
         }
         provider.getPnmasMap().put(pnmasId,new SappPnmas(ip,port));
       }
       for (      String pnmasKey : provider.getPnmasMap().keySet()) {
-        logger.debug(String.format("pnmas %s : %s:",pnmasKey,provider.getPnmasMap().get(pnmasKey)));
+        logger.debug("pnmas {} : {}:",pnmasKey,provider.getPnmasMap().get(pnmasKey));
       }
     }
   }

@@ -3,93 +3,94 @@
   if (provider == null) {
     logger.error("cannot find a provider, skipping command");
   }
-  Item item=provider.getItem(itemName);
-  logger.debug("found item " + item);
-  if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
-    SappBindingConfigSwitchItem sappBindingConfigSwitchItem=(SappBindingConfigSwitchItem)provider.getBindingConfig(itemName);
-    logger.debug("found binding " + sappBindingConfigSwitchItem);
-    if (sappBindingConfigSwitchItem.isPollerSuspender()) {
-      if (pollingEnabled) {
-        pollingEnabled=false;
-        updatePollingSwitchesState(provider);
+  try {
+    Item item=itemRegistry.getItem(itemName);
+    logger.debug("found item {}",item);
+    if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+      SappBindingConfigSwitchItem sappBindingConfigSwitchItem=(SappBindingConfigSwitchItem)provider.getBindingConfig(itemName);
+      logger.debug("found binding {}",sappBindingConfigSwitchItem);
+      if (sappBindingConfigSwitchItem.isPollerSuspender()) {
+        if (pollingEnabled) {
+          pollingEnabled=false;
+          updatePollingSwitchesState(provider);
+        }
+ else {
+          provider.getSappUpdatePendingRequests().replaceAllPendingUpdateRequests(ALL_UPDATE_REQUEST_KEY);
+          pollingEnabled=true;
+        }
       }
  else {
-        provider.getSappUpdatePendingRequests().replaceAllPendingUpdateRequests(ALL_UPDATE_REQUEST_KEY);
-        pollingEnabled=true;
-      }
-    }
- else {
-      SappAddressOnOffControl controlAddress=sappBindingConfigSwitchItem.getControl();
-      if (!provider.getPnmasMap().containsKey(controlAddress.getPnmasId())) {
-        logger.error(String.format("bad pnmas id (%s) in binding (%s) ... skipping",controlAddress.getPnmasId(),sappBindingConfigSwitchItem));
-        return;
-      }
-      try {
-        if (command instanceof OnOffType) {
+        SappAddressOnOffControl controlAddress=sappBindingConfigSwitchItem.getControl();
+        if (!provider.getPnmasMap().containsKey(controlAddress.getPnmasId())) {
+          logger.error("bad pnmas id ({}) in binding ({}) ... skipping",controlAddress.getPnmasId(),sappBindingConfigSwitchItem);
+          return;
+        }
+        try {
+          if (command instanceof OnOffType) {
 switch (controlAddress.getAddressType()) {
 case VIRTUAL:
 {
-              int previousValue=getVirtualValue(provider,controlAddress.getPnmasId(),controlAddress.getAddress(),controlAddress.getSubAddress(),false);
-              int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(controlAddress.getSubAddress(),command.equals(OnOffType.ON) ? controlAddress.getOnValue() : controlAddress.getOffValue(),previousValue);
-              SappPnmas pnmas=provider.getPnmasMap().get(controlAddress.getPnmasId());
-              SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
-              sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),controlAddress.getAddress(),newValue);
-              provider.setVirtualCachedValue(controlAddress.getAddress(),newValue);
-              updateState(controlAddress.getPnmasId(),SappAddressType.VIRTUAL,controlAddress.getAddress(),newValue,provider);
-              break;
-            }
+                int previousValue=getVirtualValue(provider,controlAddress.getPnmasId(),controlAddress.getAddress(),controlAddress.getSubAddress(),false);
+                int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(controlAddress.getSubAddress(),command.equals(OnOffType.ON) ? controlAddress.getOnValue() : controlAddress.getOffValue(),previousValue);
+                SappPnmas pnmas=provider.getPnmasMap().get(controlAddress.getPnmasId());
+                SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
+                sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),controlAddress.getAddress(),newValue);
+                provider.setVirtualCachedValue(controlAddress.getAddress(),newValue);
+                updateState(controlAddress.getPnmasId(),SappAddressType.VIRTUAL,controlAddress.getAddress(),newValue,provider);
+                break;
+              }
 default :
-          logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ controlAddress.getAddressType()+ " type");
-        break;
+            logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),controlAddress.getAddressType());
+          break;
+      }
+    }
+ else {
+      logger.error("command {} not applicable",command.getClass().getSimpleName());
     }
   }
- else {
-    logger.error("command " + command.getClass().getSimpleName() + " not applicable");
+ catch (  SappException e) {
+    logger.error("could not run sappcommand",e);
   }
-}
- catch (SappException e) {
-  logger.error("could not run sappcommand: " + e.getMessage());
-}
 }
 }
  else if (item instanceof NumberItem) {
 SappBindingConfigNumberItem sappBindingConfigNumberItem=(SappBindingConfigNumberItem)provider.getBindingConfig(itemName);
-logger.debug("found binding " + sappBindingConfigNumberItem);
+logger.debug("found binding {}",sappBindingConfigNumberItem);
 SappAddressDecimal address=sappBindingConfigNumberItem.getStatus();
 if (!provider.getPnmasMap().containsKey(address.getPnmasId())) {
-logger.error(String.format("bad pnmas id (%s) in binding (%s) ... skipping",address.getPnmasId(),sappBindingConfigNumberItem));
-return;
+  logger.error("bad pnmas id ({}) in binding ({}) ... skipping",address.getPnmasId(),sappBindingConfigNumberItem);
+  return;
 }
 try {
-if (command instanceof DecimalType) {
+  if (command instanceof DecimalType) {
 switch (address.getAddressType()) {
 case VIRTUAL:
 {
-      int previousValue=getVirtualValue(provider,address.getPnmasId(),address.getAddress(),address.getSubAddress(),false);
-      int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((DecimalType)command).doubleValue()),previousValue);
-      SappPnmas pnmas=provider.getPnmasMap().get(address.getPnmasId());
-      SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
-      sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),address.getAddress(),newValue);
-      provider.setVirtualCachedValue(address.getAddress(),newValue);
-      updateState(address.getPnmasId(),SappAddressType.VIRTUAL,address.getAddress(),newValue,provider);
-      break;
-    }
+        int previousValue=getVirtualValue(provider,address.getPnmasId(),address.getAddress(),address.getSubAddress(),false);
+        int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((DecimalType)command).doubleValue()),previousValue);
+        SappPnmas pnmas=provider.getPnmasMap().get(address.getPnmasId());
+        SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
+        sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),address.getAddress(),newValue);
+        provider.setVirtualCachedValue(address.getAddress(),newValue);
+        updateState(address.getPnmasId(),SappAddressType.VIRTUAL,address.getAddress(),newValue,provider);
+        break;
+      }
 default :
-  logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ address.getAddressType()+ " type");
-break;
+    logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),address.getAddressType());
+  break;
 }
 }
  else {
-logger.error("command " + command.getClass().getSimpleName() + " not applicable");
+logger.error("command {} not applicable",command.getClass().getSimpleName());
 }
 }
  catch (SappException e) {
-logger.error("could not run sappcommand: " + e.getMessage());
+logger.error("could not run sappcommand",e);
 }
 }
  else if (item instanceof RollershutterItem) {
 SappBindingConfigRollershutterItem sappBindingConfigRollershutterItem=(SappBindingConfigRollershutterItem)provider.getBindingConfig(itemName);
-logger.debug("found binding " + sappBindingConfigRollershutterItem);
+logger.debug("found binding {}",sappBindingConfigRollershutterItem);
 SappAddressRollershutterControl controlAddress=null;
 if (command instanceof UpDownType && ((UpDownType)command) == UpDownType.UP) {
 controlAddress=sappBindingConfigRollershutterItem.getUpControl();
@@ -102,41 +103,41 @@ controlAddress=sappBindingConfigRollershutterItem.getStopControl();
 }
 if (controlAddress != null) {
 if (!provider.getPnmasMap().containsKey(controlAddress.getPnmasId())) {
-logger.error(String.format("bad pnmas id (%s) in binding (%s) ... skipping",controlAddress.getPnmasId(),sappBindingConfigRollershutterItem));
+logger.error("bad pnmas id ({}) in binding ({}) ... skipping",controlAddress.getPnmasId(),sappBindingConfigRollershutterItem);
 return;
 }
 try {
 switch (controlAddress.getAddressType()) {
 case VIRTUAL:
 {
-int previousValue=getVirtualValue(provider,controlAddress.getPnmasId(),controlAddress.getAddress(),controlAddress.getSubAddress(),false);
-int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(controlAddress.getSubAddress(),controlAddress.getActivateValue(),previousValue);
-SappPnmas pnmas=provider.getPnmasMap().get(controlAddress.getPnmasId());
-SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
-sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),controlAddress.getAddress(),newValue);
-provider.setVirtualCachedValue(controlAddress.getAddress(),newValue);
-updateState(controlAddress.getPnmasId(),SappAddressType.VIRTUAL,controlAddress.getAddress(),newValue,provider);
-break;
+  int previousValue=getVirtualValue(provider,controlAddress.getPnmasId(),controlAddress.getAddress(),controlAddress.getSubAddress(),false);
+  int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(controlAddress.getSubAddress(),controlAddress.getActivateValue(),previousValue);
+  SappPnmas pnmas=provider.getPnmasMap().get(controlAddress.getPnmasId());
+  SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
+  sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),controlAddress.getAddress(),newValue);
+  provider.setVirtualCachedValue(controlAddress.getAddress(),newValue);
+  updateState(controlAddress.getPnmasId(),SappAddressType.VIRTUAL,controlAddress.getAddress(),newValue,provider);
+  break;
 }
 default :
-logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ controlAddress.getAddressType()+ " type");
+logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),controlAddress.getAddressType());
 break;
 }
 }
  catch (SappException e) {
-logger.error("could not run sappcommand: " + e.getMessage());
+logger.error("could not run sappcommand",e);
 }
 }
  else {
-logger.error("command " + command.getClass().getSimpleName() + " not applicable");
+logger.error("command {} not applicable",command.getClass().getSimpleName());
 }
 }
  else if (item instanceof DimmerItem) {
 SappBindingConfigDimmerItem sappBindingConfigDimmerItem=(SappBindingConfigDimmerItem)provider.getBindingConfig(itemName);
-logger.debug("found binding " + sappBindingConfigDimmerItem);
+logger.debug("found binding {}",sappBindingConfigDimmerItem);
 SappAddressDimmer address=sappBindingConfigDimmerItem.getStatus();
 if (!provider.getPnmasMap().containsKey(address.getPnmasId())) {
-logger.error(String.format("bad pnmas id (%s) in binding (%s) ... skipping",address.getPnmasId(),sappBindingConfigDimmerItem));
+logger.error("bad pnmas id ({}) in binding ({}) ... skipping",address.getPnmasId(),sappBindingConfigDimmerItem);
 return;
 }
 try {
@@ -154,7 +155,7 @@ updateState(address.getPnmasId(),SappAddressType.VIRTUAL,address.getAddress(),ne
 break;
 }
 default :
-logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ address.getAddressType()+ " type");
+logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),address.getAddressType());
 break;
 }
 }
@@ -172,7 +173,7 @@ updateState(address.getPnmasId(),SappAddressType.VIRTUAL,address.getAddress(),ne
 break;
 }
 default :
-logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ address.getAddressType()+ " type");
+logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),address.getAddressType());
 break;
 }
 }
@@ -190,19 +191,23 @@ updateState(address.getPnmasId(),SappAddressType.VIRTUAL,address.getAddress(),ne
 break;
 }
 default :
-logger.error("cannot run " + command.getClass().getSimpleName() + " on "+ address.getAddressType()+ " type");
+logger.error("cannot run {} on type {}",command.getClass().getSimpleName(),address.getAddressType());
 break;
 }
 }
  else {
-logger.error("command " + command.getClass().getSimpleName() + " not applicable");
+logger.error("command {} not applicable",command.getClass().getSimpleName());
 }
 }
  catch (SappException e) {
-logger.error("could not run sappcommand: " + e.getMessage());
+logger.error("could not run sappcommand",e);
 }
 }
  else {
-logger.error("unimplemented item type: " + item.getClass().getSimpleName());
+logger.error("unimplemented item type: {}",item.getClass().getSimpleName());
+}
+}
+ catch (ItemNotFoundException e) {
+logger.error("Item {} not found",itemName);
 }
 }

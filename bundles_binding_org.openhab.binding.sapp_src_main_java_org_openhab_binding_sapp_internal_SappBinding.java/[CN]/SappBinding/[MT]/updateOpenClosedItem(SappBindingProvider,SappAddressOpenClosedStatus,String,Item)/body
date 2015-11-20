@@ -6,7 +6,7 @@ case VIRTUAL:
       eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
     }
  catch (    SappException e) {
-      logger.error("could not run sappcommand: " + e.getMessage());
+      logger.error("could not run sappcommand",e);
     }
   break;
 case INPUT:
@@ -15,7 +15,7 @@ try {
   eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
 }
  catch (SappException e) {
-  logger.error("could not run sappcommand: " + e.getMessage());
+  logger.error("could not run sappcommand",e);
 }
 break;
 case OUTPUT:
@@ -24,11 +24,11 @@ int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress
 eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
 }
  catch (SappException e) {
-logger.error("could not run sappcommand: " + e.getMessage());
+logger.error("could not run sappcommand",e);
 }
 break;
 default :
-logger.error("item type not yet implemented " + item.getClass().getSimpleName() + " for address type "+ statusAddress.getAddressType());
+logger.error("item type not yet implemented {} for address type {}",item.getClass().getSimpleName(),statusAddress.getAddressType());
 break;
 }
 }
