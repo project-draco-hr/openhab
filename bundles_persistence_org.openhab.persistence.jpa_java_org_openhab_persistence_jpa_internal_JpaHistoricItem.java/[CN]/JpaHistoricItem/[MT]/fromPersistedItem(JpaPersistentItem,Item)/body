@@ -1,0 +1,44 @@
+{
+  State state;
+  if (item instanceof NumberItem) {
+    state=new DecimalType(Double.valueOf(pItem.getValue()));
+  }
+ else   if (item instanceof DimmerItem) {
+    state=new PercentType(Integer.valueOf(pItem.getValue()));
+  }
+ else   if (item instanceof SwitchItem) {
+    state=OnOffType.valueOf(pItem.getValue());
+  }
+ else   if (item instanceof ContactItem) {
+    state=OpenClosedType.valueOf(pItem.getValue());
+  }
+ else   if (item instanceof RollershutterItem) {
+    state=PercentType.valueOf(pItem.getValue());
+  }
+ else   if (item instanceof ColorItem) {
+    state=new HSBType(pItem.getValue());
+  }
+ else   if (item instanceof DateTimeItem) {
+    Calendar cal=Calendar.getInstance();
+    cal.setTime(new Date(Long.valueOf(pItem.getValue())));
+    state=new DateTimeType(cal);
+  }
+ else   if (item instanceof LocationItem) {
+    PointType pType=null;
+    String[] comps=pItem.getValue().split(";");
+    if (comps.length >= 2) {
+      pType=new PointType(new DecimalType(comps[0]),new DecimalType(comps[1]));
+      if (comps.length == 3) {
+        pType.setAltitude(new DecimalType(comps[2]));
+      }
+    }
+    state=pType;
+  }
+ else   if (item instanceof CallItem) {
+    state=new CallType(pItem.getValue());
+  }
+ else {
+    state=new StringType(pItem.getValue());
+  }
+  return new JpaHistoricItem(item.getName(),state,pItem.getTimestamp());
+}

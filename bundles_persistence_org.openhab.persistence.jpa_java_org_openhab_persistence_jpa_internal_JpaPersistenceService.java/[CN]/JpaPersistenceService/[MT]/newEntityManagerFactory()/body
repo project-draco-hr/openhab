@@ -12,6 +12,10 @@
   if (JpaConfiguration.dbUserName != null && JpaConfiguration.dbPassword == null) {
     logger.warn("JPA persistence - it is recommended to use a password to protect data store");
   }
+  if (JpaConfiguration.dbSyncMapping != null && !StringUtils.isBlank(JpaConfiguration.dbSyncMapping)) {
+    logger.warn("You are settings openjpa.jdbc.SynchronizeMappings, I hope you know what you're doing!");
+    properties.put("openjpa.jdbc.SynchronizeMappings",JpaConfiguration.dbSyncMapping);
+  }
   EntityManagerFactory fac=Persistence.createEntityManagerFactory(getPersistenceUnitName(),properties);
   logger.debug("Creating EntityManagerFactory...done");
   return fac;
