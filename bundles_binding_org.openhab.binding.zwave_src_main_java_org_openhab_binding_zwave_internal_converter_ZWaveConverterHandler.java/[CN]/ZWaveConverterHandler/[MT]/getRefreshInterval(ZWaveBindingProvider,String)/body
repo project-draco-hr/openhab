@@ -9,6 +9,9 @@
     if (commandClassName.equalsIgnoreCase("info")) {
       return infoConverter.getRefreshInterval();
     }
+    if (node.getNodeId() == this.controller.getOwnNodeId() && commandClassName.equalsIgnoreCase("switch_all")) {
+      return 0;
+    }
     commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
     if (commandClass == null) {
       logger.warn("No command class found for item = {}, command class name = {}, using 0 refresh interval.",itemName,commandClassName);

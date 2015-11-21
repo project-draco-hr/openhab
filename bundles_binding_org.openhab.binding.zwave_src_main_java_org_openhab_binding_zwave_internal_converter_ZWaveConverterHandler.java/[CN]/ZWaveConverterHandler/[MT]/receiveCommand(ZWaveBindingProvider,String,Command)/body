@@ -8,10 +8,15 @@
   ZWaveCommandClass commandClass;
   String commandClassName=bindingConfiguration.getArguments().get("command");
   if (commandClassName != null) {
-    commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
-    if (commandClass == null) {
-      logger.warn("NODE {}: No command class found for item = {}. Class = {}({}), endpoint = {}. Ignoring command.",node.getNodeId(),itemName,commandClassName,CommandClass.getCommandClass(commandClassName).toString(),bindingConfiguration.getEndpoint());
-      return;
+    if (node.getNodeId() == this.controller.getOwnNodeId() && commandClassName.equalsIgnoreCase("switch_all")) {
+      commandClass=ZWaveCommandClass.getInstance(0x27,node,this.controller);
+    }
+ else {
+      commandClass=node.resolveCommandClass(CommandClass.getCommandClass(commandClassName),bindingConfiguration.getEndpoint());
+      if (commandClass == null) {
+        logger.warn("NODE {}: No command class found for item = {}. Class = {}({}), endpoint = {}. Ignoring command.",node.getNodeId(),itemName,commandClassName,CommandClass.getCommandClass(commandClassName).toString(),bindingConfiguration.getEndpoint());
+        return;
+      }
     }
   }
  else {

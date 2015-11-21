@@ -1,0 +1,15 @@
+{
+  Enumeration<Integer> nodeIds=this.zwaveNodes.keys();
+  while (nodeIds.hasMoreElements()) {
+    Integer nodeId=nodeIds.nextElement();
+    ZWaveNode node=this.getNode(nodeId);
+    ZWaveSwitchAllCommandClass switchAllCommandClass=(ZWaveSwitchAllCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.SWITCH_ALL);
+    if (switchAllCommandClass != null) {
+      logger.debug("NODE {}: Supports Switch All Command Class Sending AllOn Message",(Object)nodeId);
+      switchAllCommandClass.setNode(node);
+      switchAllCommandClass.setController(this);
+      this.enqueue(switchAllCommandClass.allOnMessage());
+      continue;
+    }
+  }
+}

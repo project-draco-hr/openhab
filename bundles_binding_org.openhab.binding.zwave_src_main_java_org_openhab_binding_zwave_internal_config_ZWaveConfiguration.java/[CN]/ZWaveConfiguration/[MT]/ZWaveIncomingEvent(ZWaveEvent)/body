@@ -20,6 +20,13 @@
     PendingCfg.Remove(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),event.getNodeId());
     return;
   }
+  if (event instanceof ZWaveSwitchAllCommandClass.ZWaveSwitchAllModeEvent) {
+    ZWaveSwitchAllCommandClass.ZWaveSwitchAllModeEvent e=(ZWaveSwitchAllCommandClass.ZWaveSwitchAllModeEvent)event;
+    ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
+    nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
+    PendingCfg.Remove(ZWaveCommandClass.CommandClass.SWITCH_ALL.getKey(),e.getNodeId());
+    return;
+  }
   if (event instanceof ZWaveInclusionEvent) {
     handleInclusionEvent((ZWaveInclusionEvent)event);
   }

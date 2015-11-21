@@ -1,0 +1,7 @@
+{
+  logger.debug("NODE {}: Switch All - Creating All Off message.",(Object)this.getNode().getNodeId());
+  SerialMessage result=new SerialMessage(this.getNode().getNodeId(),SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessageType.Request,SerialMessage.SerialMessageClass.SendData,SerialMessage.SerialMessagePriority.Set);
+  byte[] newPayload={(byte)this.getNode().getNodeId(),2,(byte)this.getCommandClass().getKey(),(byte)SWITCH_ALL_OFF};
+  result.setMessagePayload(newPayload);
+  return result;
+}
