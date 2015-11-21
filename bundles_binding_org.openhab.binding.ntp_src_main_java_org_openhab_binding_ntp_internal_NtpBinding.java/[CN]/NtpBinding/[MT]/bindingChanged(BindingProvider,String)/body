@@ -1,0 +1,8 @@
+{
+  NtpGenericBindingProvider ntpBindingProvider=(NtpGenericBindingProvider)provider;
+  if (ntpBindingProvider.providesBindingFor(itemName)) {
+    long networkTimeInMillis=getTime(hostname);
+    updateTime(ntpBindingProvider,itemName,networkTimeInMillis);
+  }
+  super.bindingChanged(provider,itemName);
+}
