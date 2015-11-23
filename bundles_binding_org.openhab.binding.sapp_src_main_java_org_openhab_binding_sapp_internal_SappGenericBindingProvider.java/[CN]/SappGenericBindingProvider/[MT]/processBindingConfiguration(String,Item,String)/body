@@ -1,0 +1,32 @@
+{
+  logger.debug("processing binding configuration for context {}",context);
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig != null) {
+    if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+      SappBindingConfigSwitchItem sappBindingConfigSwitchItem=new SappBindingConfigSwitchItem(item,bindingConfig);
+      addBindingConfig(item,sappBindingConfigSwitchItem);
+    }
+ else     if (item instanceof ContactItem) {
+      SappBindingConfigContactItem sappBindingConfigContactItem=new SappBindingConfigContactItem(item,bindingConfig);
+      addBindingConfig(item,sappBindingConfigContactItem);
+    }
+ else     if (item instanceof NumberItem) {
+      SappBindingConfigNumberItem sappBindingConfigNumberItem=new SappBindingConfigNumberItem(item,bindingConfig);
+      addBindingConfig(item,sappBindingConfigNumberItem);
+    }
+ else     if (item instanceof RollershutterItem) {
+      SappBindingConfigRollershutterItem sappBindingConfigRollershutterItem=new SappBindingConfigRollershutterItem(item,bindingConfig);
+      addBindingConfig(item,sappBindingConfigRollershutterItem);
+    }
+ else     if (item instanceof DimmerItem) {
+      SappBindingConfigDimmerItem sappBindingConfigDimmerItem=new SappBindingConfigDimmerItem(item,bindingConfig);
+      addBindingConfig(item,sappBindingConfigDimmerItem);
+    }
+ else {
+      throw new BindingConfigParseException("item '" + item.getName() + "' is of type '"+ item.getClass().getSimpleName()+ " - not yet implemented, please check your *.items configuration");
+    }
+  }
+ else {
+    logger.warn("bindingConfig is NULL (item={}) -> processing bindingConfig aborted!",item);
+  }
+}

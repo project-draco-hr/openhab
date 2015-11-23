@@ -1,0 +1,69 @@
+{
+  logger.debug("Updating {} {} with new value {}",sappAddressType,addressToUpdate,newState);
+  for (  String itemName : provider.getItemNames()) {
+    try {
+      Item item=itemRegistry.getItem(itemName);
+      if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+        SappBindingConfigSwitchItem sappBindingConfigSwitchItem=(SappBindingConfigSwitchItem)provider.getBindingConfig(itemName);
+        if (!sappBindingConfigSwitchItem.isPollerSuspender()) {
+          SappAddressOnOffStatus statusAddress=sappBindingConfigSwitchItem.getStatus();
+          if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
+            logger.debug("found binding to update {}",sappBindingConfigSwitchItem);
+            int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
+            eventPublisher.postUpdate(itemName,result == statusAddress.getOnValue() ? OnOffType.ON : OnOffType.OFF);
+          }
+        }
+      }
+ else       if (item instanceof ContactItem) {
+        SappBindingConfigContactItem sappBindingConfigContactItem=(SappBindingConfigContactItem)provider.getBindingConfig(itemName);
+        SappAddressOpenClosedStatus statusAddress=sappBindingConfigContactItem.getStatus();
+        if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
+          logger.debug("found binding to update {}",sappBindingConfigContactItem);
+          int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
+          eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+        }
+      }
+ else       if (item instanceof NumberItem) {
+        SappBindingConfigNumberItem sappBindingConfigNumberItem=(SappBindingConfigNumberItem)provider.getBindingConfig(itemName);
+        SappAddressDecimal address=sappBindingConfigNumberItem.getStatus();
+        if (address.getAddressType() == sappAddressType && address.getPnmasId().equals(pnmasId) && addressToUpdate == address.getAddress()) {
+          logger.debug("found binding to update {}",sappBindingConfigNumberItem);
+          int result=SappBindingConfigUtils.maskWithSubAddress(address.getSubAddress(),newState);
+          eventPublisher.postUpdate(itemName,new DecimalType(address.scaledValue(result)));
+        }
+      }
+ else       if (item instanceof RollershutterItem) {
+        SappBindingConfigRollershutterItem sappBindingConfigRollershutterItem=(SappBindingConfigRollershutterItem)provider.getBindingConfig(itemName);
+        SappAddressRollershutterStatus statusAddress=sappBindingConfigRollershutterItem.getStatus();
+        if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
+          logger.debug("found binding to update {}",sappBindingConfigRollershutterItem);
+          int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
+          eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? PercentType.HUNDRED : (result == statusAddress.getClosedValue() ? PercentType.ZERO : PercentType.valueOf("50")));
+        }
+      }
+ else       if (item instanceof DimmerItem) {
+        SappBindingConfigDimmerItem sappBindingConfigDimmerItem=(SappBindingConfigDimmerItem)provider.getBindingConfig(itemName);
+        SappAddressDimmer statusAddress=sappBindingConfigDimmerItem.getStatus();
+        if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
+          logger.debug("found binding to update {}",sappBindingConfigDimmerItem);
+          int result=(int)statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState));
+          if (result <= PercentType.ZERO.intValue()) {
+            eventPublisher.postUpdate(itemName,PercentType.ZERO);
+          }
+ else           if (result >= PercentType.HUNDRED.intValue()) {
+            eventPublisher.postUpdate(itemName,PercentType.HUNDRED);
+          }
+ else {
+            eventPublisher.postUpdate(itemName,PercentType.valueOf(String.valueOf(result)));
+          }
+        }
+      }
+ else {
+        logger.error("unimplemented item type: {}",item.getClass().getSimpleName());
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("Item {} not found",itemName);
+    }
+  }
+}

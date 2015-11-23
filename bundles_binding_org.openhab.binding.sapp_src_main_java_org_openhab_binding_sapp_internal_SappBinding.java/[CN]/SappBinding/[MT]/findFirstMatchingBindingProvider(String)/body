@@ -1,0 +1,10 @@
+{
+  for (  SappBindingProvider provider : providers) {
+    logger.debug("found provider: {}",provider.getClass());
+    if (!provider.providesBindingFor(itemName)) {
+      continue;
+    }
+    return provider;
+  }
+  return null;
+}

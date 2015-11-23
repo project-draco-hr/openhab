@@ -1,0 +1,11 @@
+{
+  super(item.getName());
+  String[] bindingConfigParts=bindingConfig.split("/");
+  if (bindingConfigParts.length != 4) {
+    throw new BindingConfigParseException(errorMessage(bindingConfig));
+  }
+  this.status=parseSappAddressStatus(bindingConfigParts[0]);
+  this.upControl=parseSappAddressControl(bindingConfigParts[1]);
+  this.downControl=parseSappAddressControl(bindingConfigParts[2]);
+  this.stopControl=parseSappAddressControl(bindingConfigParts[3]);
+}

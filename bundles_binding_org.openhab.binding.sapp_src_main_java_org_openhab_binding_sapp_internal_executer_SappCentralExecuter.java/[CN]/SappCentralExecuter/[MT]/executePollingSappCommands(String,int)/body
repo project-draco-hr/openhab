@@ -1,0 +1,38 @@
+{
+synchronized (this) {
+    PollingResult pollingResult=new PollingResult();
+    SappConnection sappConnection=null;
+    try {
+      sappConnection=new SappConnection(ip,port);
+      sappConnection.openConnection();
+      SappCommand sappCommand;
+      sappCommand=new Sapp80Command();
+      sappCommand.run(sappConnection);
+      if (!sappCommand.isResponseOk()) {
+        throw new SappException("Sapp80Command command execution failed");
+      }
+      pollingResult.changedOutputs=sappCommand.getResponse().getDataAsByteWordMap();
+      sappCommand=new Sapp81Command();
+      sappCommand.run(sappConnection);
+      if (!sappCommand.isResponseOk()) {
+        throw new SappException("Sapp81Command command execution failed");
+      }
+      pollingResult.changedInputs=sappCommand.getResponse().getDataAsByteWordMap();
+      sappCommand=new Sapp82Command();
+      sappCommand.run(sappConnection);
+      if (!sappCommand.isResponseOk()) {
+        throw new SappException("Sapp82Command command execution failed");
+      }
+      pollingResult.changedVirtuals=sappCommand.getResponse().getDataAsWordWordMap();
+      return pollingResult;
+    }
+ catch (    IOException e) {
+      throw new SappException(e.getMessage());
+    }
+ finally {
+      if (sappConnection != null) {
+        sappConnection.closeConnection();
+      }
+    }
+  }
+}

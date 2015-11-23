@@ -1,0 +1,17 @@
+{
+  logger.debug("Updating poller switch states");
+  for (  String itemName : provider.getItemNames()) {
+    try {
+      Item item=itemRegistry.getItem(itemName);
+      if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+        SappBindingConfigSwitchItem sappBindingConfigSwitchItem=(SappBindingConfigSwitchItem)provider.getBindingConfig(itemName);
+        if (sappBindingConfigSwitchItem.isPollerSuspender()) {
+          eventPublisher.postUpdate(itemName,pollingEnabled ? OnOffType.ON : OnOffType.OFF);
+        }
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("Item {} not found",itemName);
+    }
+  }
+}

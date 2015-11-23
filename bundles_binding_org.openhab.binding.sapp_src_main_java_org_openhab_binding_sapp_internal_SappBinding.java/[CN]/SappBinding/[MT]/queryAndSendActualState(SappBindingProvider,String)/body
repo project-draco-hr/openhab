@@ -1,0 +1,39 @@
+{
+  logger.debug("querying and sending item {}",itemName);
+  try {
+    Item item=itemRegistry.getItem(itemName);
+    if (item instanceof SwitchItem && !(item instanceof DimmerItem)) {
+      SappBindingConfigSwitchItem sappBindingConfigSwitchItem=(SappBindingConfigSwitchItem)provider.getBindingConfig(itemName);
+      SappAddressOnOffStatus statusAddress=sappBindingConfigSwitchItem.getStatus();
+      if (!sappBindingConfigSwitchItem.isPollerSuspender()) {
+        updateOnOffItem(provider,statusAddress,itemName,item);
+      }
+    }
+ else     if (item instanceof ContactItem) {
+      SappBindingConfigContactItem sappBindingConfigContactItem=(SappBindingConfigContactItem)provider.getBindingConfig(itemName);
+      SappAddressOpenClosedStatus statusAddress=sappBindingConfigContactItem.getStatus();
+      updateOpenClosedItem(provider,statusAddress,itemName,item);
+    }
+ else     if (item instanceof NumberItem) {
+      SappBindingConfigNumberItem sappBindingConfigNumberItem=(SappBindingConfigNumberItem)provider.getBindingConfig(itemName);
+      SappAddressDecimal statusAddress=sappBindingConfigNumberItem.getStatus();
+      updateDecimalItem(provider,statusAddress,itemName,item);
+    }
+ else     if (item instanceof RollershutterItem) {
+      SappBindingConfigRollershutterItem sappBindingConfigRollershutterItem=(SappBindingConfigRollershutterItem)provider.getBindingConfig(itemName);
+      SappAddressRollershutterStatus statusAddress=sappBindingConfigRollershutterItem.getStatus();
+      updateRollershutterItem(provider,statusAddress,itemName,item);
+    }
+ else     if (item instanceof DimmerItem) {
+      SappBindingConfigDimmerItem sappBindingConfigDimmerItem=(SappBindingConfigDimmerItem)provider.getBindingConfig(itemName);
+      SappAddressDimmer statusAddress=sappBindingConfigDimmerItem.getStatus();
+      updateDimmerItem(provider,statusAddress,itemName,item);
+    }
+ else {
+      logger.error("unimplemented item type: {}",item.getClass().getSimpleName());
+    }
+  }
+ catch (  ItemNotFoundException e) {
+    logger.error("Item {} not found",itemName);
+  }
+}

@@ -1,0 +1,17 @@
+{
+  super(item.getName());
+  if ("P".equals(bindingConfig)) {
+    pollerSuspender=true;
+    this.status=null;
+    this.control=null;
+  }
+ else {
+    pollerSuspender=false;
+    String[] bindingConfigParts=bindingConfig.split("/");
+    if (bindingConfigParts.length != 2) {
+      throw new BindingConfigParseException(errorMessage(bindingConfig));
+    }
+    this.status=parseSappAddressStatus(bindingConfigParts[0]);
+    this.control=parseSappAddressControl(bindingConfigParts[1]);
+  }
+}
