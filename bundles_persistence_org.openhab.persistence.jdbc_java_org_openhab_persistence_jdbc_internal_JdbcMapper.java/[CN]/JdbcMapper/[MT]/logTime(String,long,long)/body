@@ -1,0 +1,21 @@
+{
+  if (conf.enableLogTime) {
+    conf.timerCount++;
+    int timerDiff=(int)(timerStop - timerStart);
+    if (timerDiff < afterAccessMin) {
+      afterAccessMin=timerDiff;
+    }
+    if (timerDiff > afterAccessMax) {
+      afterAccessMax=timerDiff;
+    }
+    conf.timeAverage50arr.add(timerDiff);
+    conf.timeAverage100arr.add(timerDiff);
+    conf.timeAverage200arr.add(timerDiff);
+    if (conf.timerCount == 1)     conf.timer1000=System.currentTimeMillis();
+    if (conf.timerCount == 1001) {
+      conf.time1000Statements=Math.round(((int)(System.currentTimeMillis() - conf.timer1000)) / 1000);
+      conf.timerCount=0;
+    }
+    logger.info("JDBC::logTime: '{}':\n afterAccess     = {} ms\n timeAverage50  = {} ms\n timeAverage100 = {} ms\n timeAverage200 = {} ms\n afterAccessMin  = {} ms\n afterAccessMax  = {} ms\n 1000Statements = {} sec\n statementCount = {}\n",me,timerDiff,conf.timeAverage50arr.getAverageInteger(),conf.timeAverage100arr.getAverageInteger(),conf.timeAverage200arr.getAverageInteger(),afterAccessMin,afterAccessMax,conf.time1000Statements,conf.timerCount);
+  }
+}

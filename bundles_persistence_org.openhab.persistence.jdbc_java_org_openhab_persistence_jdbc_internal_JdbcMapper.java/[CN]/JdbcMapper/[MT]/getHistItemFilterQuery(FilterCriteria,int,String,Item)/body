@@ -1,0 +1,13 @@
+{
+  logger.debug("JDBC::getHistItemFilterQuery filter='{}' numberDecimalcount='{}' table='{}' item='{}' itemName='{}'",(filter != null),numberDecimalcount,table,item,item.getName());
+  if (table != null) {
+    long timerStart=System.currentTimeMillis();
+    List<HistoricItem> r=conf.getDBDAO().doGetHistItemFilterQuery(item,filter,numberDecimalcount,table,item.getName());
+    logTime("insertItemValue",timerStart,System.currentTimeMillis());
+    return r;
+  }
+ else {
+    logger.error("JDBC::getHistItemFilterQuery: TABLE is NULL, cannot get Data from not existing Table.");
+  }
+  return null;
+}

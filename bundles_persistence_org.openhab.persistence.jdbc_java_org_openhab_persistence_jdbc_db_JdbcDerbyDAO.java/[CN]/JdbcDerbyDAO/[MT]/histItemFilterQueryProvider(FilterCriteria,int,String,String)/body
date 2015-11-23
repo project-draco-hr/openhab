@@ -1,0 +1,31 @@
+{
+  logger.debug("JDBC::getHistItemFilterQueryProvider filter = {}, numberDecimalcount = {}, table = {}, simpleName = {}",filter.toString(),numberDecimalcount,table,simpleName);
+  SimpleDateFormat jdbcDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  String filterString="";
+  if (filter.getBeginDate() != null) {
+    filterString+=filterString.isEmpty() ? " WHERE" : " AND";
+    filterString+=" TIME>'" + jdbcDateFormat.format(filter.getBeginDate()) + "'";
+  }
+  if (filter.getEndDate() != null) {
+    filterString+=filterString.isEmpty() ? " WHERE" : " AND";
+    filterString+=" TIME<'" + jdbcDateFormat.format(filter.getEndDate().getTime()) + "'";
+  }
+  filterString+=(filter.getOrdering() == Ordering.ASCENDING) ? " ORDER BY time ASC" : " ORDER BY time DESC";
+  if (filter.getPageSize() != 0x7fffffff) {
+    filterString+=" OFFSET " + filter.getPageSize() + " ROWS FETCH FIRST "+ (filter.getPageNumber() * filter.getPageSize() + 1)+ " ROWS ONLY";
+  }
+  String queryString="SELECT time,";
+  if ("NUMBERITEM".equalsIgnoreCase(simpleName) && numberDecimalcount > -1) {
+    queryString+="CAST(value 0.";
+    for (int i=0; i < numberDecimalcount; i++)     queryString+="0";
+    queryString+="5 AS DECIMAL(31," + numberDecimalcount + "))";
+  }
+ else {
+    queryString+="SELECT time, value FROM " + table;
+  }
+  if (!filterString.isEmpty()) {
+    queryString+=filterString;
+  }
+  logger.debug("JDBC::query queryString = {}",queryString);
+  return queryString;
+}

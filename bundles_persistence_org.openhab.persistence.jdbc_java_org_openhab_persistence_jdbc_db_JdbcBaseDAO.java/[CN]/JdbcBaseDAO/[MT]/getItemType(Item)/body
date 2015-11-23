@@ -1,0 +1,22 @@
+{
+  Item item=i;
+  String def="STRINGITEM";
+  if (i instanceof GroupItem) {
+    item=((GroupItem)i).getBaseItem();
+    if (item == null) {
+      logger.debug("JDBC::getItemType: Cannot detect ItemType for {} because the GroupItems' base type isn't set in *.items File.",i.getName());
+      item=((GroupItem)i).getMembers().get(0);
+      if (item == null) {
+        logger.debug("JDBC::getItemType: No ItemType found for first Child-Member of GroupItem {}, use ItemType for STRINGITEM as Fallback",i.getName());
+        return def;
+      }
+    }
+  }
+  String itemType=item.getClass().getSimpleName().toUpperCase();
+  logger.debug("JDBC::getItemType: Try to use ItemType {} for Item {}",itemType,i.getName());
+  if (sqlTypes.get(itemType) == null) {
+    logger.warn("JDBC::getItemType: No sqlType found for ItemType {}, use ItemType for STRINGITEM as Fallback for {}",itemType,i.getName());
+    return def;
+  }
+  return itemType;
+}

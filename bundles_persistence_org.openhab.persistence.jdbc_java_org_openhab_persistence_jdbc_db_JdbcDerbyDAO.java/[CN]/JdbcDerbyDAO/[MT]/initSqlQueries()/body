@@ -1,0 +1,8 @@
+{
+  logger.debug("JDBC::initSqlQueries: '{}'",this.getClass().getSimpleName());
+  SQL_PING_DB="values 1";
+  SQL_IF_TABLE_EXISTS="SELECT * FROM SYS.SYSTABLES WHERE TABLENAME='#searchTable#'";
+  SQL_CREATE_ITEMS_TABLE_IF_NOT="CREATE TABLE #itemsManageTable# ( ItemId INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), #colname# #coltype# NOT NULL)";
+  SQL_CREATE_ITEM_TABLE="CREATE TABLE #tableName# (time TIMESTAMP NOT NULL, value #dbType#, PRIMARY KEY(time))";
+  SQL_INSERT_ITEM_VALUE="INSERT INTO #tableName# (TIME, VALUE) VALUES( CURRENT_TIMESTAMP, CAST( ? as #dbType#) )";
+}

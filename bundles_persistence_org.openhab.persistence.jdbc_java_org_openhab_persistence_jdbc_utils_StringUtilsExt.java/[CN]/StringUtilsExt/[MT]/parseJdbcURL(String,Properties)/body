@@ -1,0 +1,69 @@
+{
+  Properties props;
+  if (def == null) {
+    props=new Properties();
+  }
+ else {
+    props=new Properties(def);
+  }
+  if (url == null || url.length() < 9) {
+    return props;
+  }
+  if (url.contains("\\"))   url=url.replaceAll("\\\\","/");
+  if (url.contains(";")) {
+    url=url.replaceFirst(";","?");
+    url=url.replaceAll(";","&");
+  }
+  if (url.split(":").length < 3 || url.indexOf("/") == -1) {
+    logger.error("parseJdbcURL: URI '{}' is not well formated, expected uri like 'jdbc:dbShortcut:/path'",url);
+    props.put("parseValid","false");
+    return props;
+  }
+  String[] protAndDb=stringBeforeSubstr(url,":",1).split(":");
+  if (!"jdbc".equals(protAndDb[0])) {
+    logger.error("parseJdbcURL: URI '{}' is not well formated, expected suffix 'jdbc' found '{}'",url,protAndDb[0]);
+    props.put("parseValid","false");
+    return props;
+  }
+  props.put("parseValid","true");
+  props.put("dbShortcut",protAndDb[1]);
+  URI dbURI=null;
+  try {
+    dbURI=new URI(stringAfterSubstr(url,":",1));
+    if (dbURI.getScheme() != null) {
+      props.put("scheme",dbURI.getScheme());
+      dbURI=new URI(stringAfterSubstr(url,":",2));
+    }
+  }
+ catch (  URISyntaxException e) {
+    logger.error("parseJdbcURL: URI '{}' is not well formated URISyntaxException: {}",url,e);
+    return props;
+  }
+  if (dbURI.getQuery() != null) {
+    String[] q=dbURI.getQuery().split("&");
+    for (int i=0; i < q.length; i++) {
+      String[] t=q[i].split("=");
+      props.put(t[0],t[1]);
+    }
+    props.put("pathQuery",dbURI.getQuery());
+  }
+  String path="";
+  if (dbURI.getPath() != null) {
+    String gp=dbURI.getPath();
+    String st="/";
+    if (gp.indexOf("/") <= 1) {
+      if (substrPos(gp,st).size() > 1) {
+        path=stringBeforeLastSubstr(gp,st) + st;
+      }
+ else {
+        path=stringBeforeSubstr(gp,st) + st;
+      }
+    }
+    if (dbURI.getScheme() != null && dbURI.getScheme().length() == 1)     path=dbURI.getScheme() + ":" + path;
+    props.put("serverPath",path);
+  }
+  if (dbURI.getPath() != null)   props.put("databaseName",stringAfterLastSubstr(dbURI.getPath(),"/"));
+  if (dbURI.getPort() != -1)   props.put("portNumber",dbURI.getPort() + "");
+  if (dbURI.getHost() != null)   props.put("serverName",dbURI.getHost());
+  return props;
+}

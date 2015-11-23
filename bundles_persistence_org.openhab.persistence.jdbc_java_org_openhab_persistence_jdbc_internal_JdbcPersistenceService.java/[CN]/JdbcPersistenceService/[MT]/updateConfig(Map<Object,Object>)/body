@@ -1,0 +1,12 @@
+{
+  logger.debug("JDBC::updateConfig");
+  conf=new JdbcConfiguration(configuration);
+  if (checkDBAcessability()) {
+    checkDBSchema();
+    initialized=true;
+  }
+ else {
+    initialized=false;
+  }
+  logger.debug("JDBC::updateConfig: configuration complete for service={}.",getName());
+}

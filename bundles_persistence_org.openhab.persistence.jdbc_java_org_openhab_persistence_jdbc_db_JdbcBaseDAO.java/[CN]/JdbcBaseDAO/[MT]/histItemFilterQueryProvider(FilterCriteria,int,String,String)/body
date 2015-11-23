@@ -1,0 +1,23 @@
+{
+  logger.debug("JDBC::getHistItemFilterQueryProvider filter = {}, numberDecimalcount = {}, table = {}, simpleName = {}",filter.toString(),numberDecimalcount,table,simpleName);
+  SimpleDateFormat jdbcDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  String filterString="";
+  if (filter.getBeginDate() != null) {
+    filterString+=filterString.isEmpty() ? " WHERE" : " AND";
+    filterString+=" TIME>'" + jdbcDateFormat.format(filter.getBeginDate()) + "'";
+  }
+  if (filter.getEndDate() != null) {
+    filterString+=filterString.isEmpty() ? " WHERE" : " AND";
+    filterString+=" TIME<'" + jdbcDateFormat.format(filter.getEndDate().getTime()) + "'";
+  }
+  filterString+=(filter.getOrdering() == Ordering.ASCENDING) ? " ORDER BY time ASC" : " ORDER BY time DESC ";
+  if (filter.getPageSize() != 0x7fffffff) {
+    filterString+=" LIMIT " + filter.getPageNumber() * filter.getPageSize() + "," + filter.getPageSize();
+  }
+  String queryString="NUMBERITEM".equalsIgnoreCase(simpleName) && numberDecimalcount > -1 ? "SELECT time, ROUND(value," + numberDecimalcount + ") FROM "+ table : "SELECT time, value FROM " + table;
+  if (!filterString.isEmpty()) {
+    queryString+=filterString;
+  }
+  logger.debug("JDBC::query queryString = {}",queryString);
+  return queryString;
+}

@@ -1,0 +1,17 @@
+{
+  logger.debug("JDBC::pingDB");
+  boolean ret=false;
+  long timerStart=System.currentTimeMillis();
+  if (openConnection()) {
+    if (conf.getDbName() == null) {
+      String dbName=conf.getDBDAO().doGetDB();
+      conf.setDbName(dbName);
+      ret=dbName.length() > 0;
+    }
+ else {
+      ret=conf.getDBDAO().doPingDB() > 0;
+    }
+  }
+  logTime("pingDB",timerStart,System.currentTimeMillis());
+  return ret;
+}

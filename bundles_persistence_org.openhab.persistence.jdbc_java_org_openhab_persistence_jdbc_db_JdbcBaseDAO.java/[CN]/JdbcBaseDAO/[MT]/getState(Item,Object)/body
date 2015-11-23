@@ -1,0 +1,43 @@
+{
+  String clazz=v.getClass().getSimpleName();
+  logger.debug("JDBC::ItemResultHandler::handleResult getState value = '{}', getClass = '{}', clazz = '{}'",v.toString(),v.getClass(),clazz);
+  if (item instanceof NumberItem) {
+    String it=getSqlTypes().get("NUMBERITEM");
+    if (it.toUpperCase().contains("DOUBLE")) {
+      return new DecimalType(((Number)v).doubleValue());
+    }
+ else     if (it.toUpperCase().contains("DECIMAL") || it.toUpperCase().contains("NUMERIC")) {
+      return new DecimalType((BigDecimal)v);
+    }
+ else     if (it.toUpperCase().contains("INT")) {
+      return new DecimalType(((Integer)v).intValue());
+    }
+    return DecimalType.valueOf(((String)v).toString());
+  }
+ else   if (item instanceof ColorItem) {
+    return HSBType.valueOf(((String)v).toString());
+  }
+ else   if (item instanceof DimmerItem) {
+    return new PercentType(objectAsInteger(v));
+  }
+ else   if (item instanceof SwitchItem) {
+    return OnOffType.valueOf(((String)v).toString().trim());
+  }
+ else   if (item instanceof ContactItem) {
+    return OpenClosedType.valueOf(((String)v).toString().trim());
+  }
+ else   if (item instanceof RollershutterItem) {
+    return new PercentType(objectAsInteger(v));
+  }
+ else   if (item instanceof DateTimeItem) {
+    Calendar calendar=Calendar.getInstance();
+    calendar.setTimeInMillis(objectAsLong(v));
+    return new DateTimeType(calendar);
+  }
+ else   if (item instanceof StringItem) {
+    return StringType.valueOf(((String)v).toString());
+  }
+ else {
+    return StringType.valueOf(((String)v).toString());
+  }
+}
