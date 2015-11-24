@@ -1,0 +1,16 @@
+{
+  logger.debug("modified called");
+  if (configuration != null) {
+    setProperlyConfigured(false);
+    communicator.stop();
+    context.getConfig().parse(configuration);
+    logger.info(context.getConfig().toString());
+    if (context.getConfig().isValid()) {
+      communicator.start();
+      setProperlyConfigured(true);
+    }
+  }
+ else {
+    logger.info("RWE Smarthome binding configuration is not present. Please check your configuration file or if not needed remove the RWE Smarthome binding addon.");
+  }
+}

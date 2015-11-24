@@ -1,0 +1,24 @@
+{
+  logger.info("Starting RWE Smarthome communicator");
+  try {
+    RWEClient client=new RWEHTTPClient();
+    rweSmarthomeSession=new RWESmarthomeSession(client);
+    context.setRweSmarthomeSession(rweSmarthomeSession);
+    rweSmarthomeSession.logon(context.getConfig().getUsername(),context.getConfig().getPassword(),context.getConfig().getHost());
+    logger.info("Login successful.");
+    refreshConfiguration();
+    logger.info("Configuration refreshed: " + rweSmarthomeSession.getCurrentConfigurationVersion());
+    logFoundDevices();
+    runPoller=true;
+    subscribeForDeviceStateChanges();
+    logger.info("Subscribed for devicestate changes.");
+    subscribeForConfigurationChanges();
+    logger.info("Subscribed for configuration changes.");
+    lastEventTime=System.currentTimeMillis();
+    this.context.setBindingChanged(true);
+  }
+ catch (  Exception e) {
+    logger.error("Could not start RWE Smarthome communicator: " + e.getMessage(),e);
+    stop();
+  }
+}

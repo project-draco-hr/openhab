@@ -1,0 +1,18 @@
+{
+  try {
+    refreshLogicalDeviceStates();
+    logger.info("LogicalDevice states refreshed.");
+  }
+ catch (  RWESmarthomeSessionExpiredException e) {
+    logger.info("Session expired!" + e.getMessage());
+    try {
+      rweSmarthomeSession.logon(context.getConfig().getUsername(),context.getConfig().getPassword(),context.getConfig().getHost());
+      logger.info("Login successful.");
+      context.setBindingChanged(true);
+    }
+ catch (    Exception e1) {
+      logger.error("Could not recover session with RWE Smarthome: " + e1.getMessage(),e1);
+      stop();
+    }
+  }
+}

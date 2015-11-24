@@ -1,0 +1,27 @@
+{
+  logger.trace("execute() method is called!");
+  long timeSinceLastEvent=(System.currentTimeMillis() - communicator.getLastEventTime()) / 1000;
+  if (timeSinceLastEvent > context.getConfig().getAliveInterval()) {
+    logger.info("No event since {} seconds, refreshing RweSmarthome server connections",timeSinceLastEvent);
+    communicator.stop();
+    communicator.start();
+  }
+  if (context.getBindingChanged()) {
+    lastBindingChangedTime=System.currentTimeMillis();
+    context.setBindingChanged(false);
+  }
+  if (lastBindingChangedTime > 0) {
+    long timeSinceBindingChanged=(System.currentTimeMillis() - lastBindingChangedTime) / 1000;
+    if (timeSinceBindingChanged > context.getConfig().getBindingChangedInterval()) {
+      logger.info("Binding changed - reload RWE Smarthome data");
+      communicator.loadDeviceStates();
+      lastBindingChangedTime=0;
+    }
+  }
+  communicator.poll();
+  if (logger.isTraceEnabled()) {
+    for (    String key : context.getIgnoreEventList().keySet()) {
+      logger.trace("Ignorelist: {} {} (age: {} ms)",key,context.getIgnoreEventList().get(key),System.currentTimeMillis() - context.getIgnoreEventList().get(key));
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  this.hostname=hostname;
+  clientId=UUID.randomUUID().toString();
+  requestId=generateRequestId();
+  passwordEncrypted=generateHashFromPassword(password);
+  final String LOGIN_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"LoginRequest\" Version=\"%s\" RequestId=\"%s\" UserName=\"%s\" Password=\"%s\" />",FIRMWARE_VERSION,requestId,username,passwordEncrypted);
+  String sResponse="";
+  try {
+    sResponse=executeRequest(LOGIN_REQUEST,"/cmd",true);
+    sessionId=XMLUtil.XPathValueFromString(sResponse,"/BaseResponse/@SessionId");
+    if (sessionId == null || "".equals(sessionId)) {
+      throw new LoginFailedException(String.format("LoginFailed: Authentication with user '%s' was not possible. Session ID is empty.",username));
+    }
+    currentConfigurationVersion=XMLUtil.XPathValueFromString(sResponse,"/BaseResponse/@CurrentConfigurationVersion");
+  }
+ catch (  ParserConfigurationException ex) {
+    throw new SHTechnicalException("ParserConfigurationException:" + ex.getMessage(),ex);
+  }
+catch (  SAXException ex) {
+    throw new SHTechnicalException("SAXException:" + ex.getMessage(),ex);
+  }
+catch (  XPathExpressionException ex) {
+    throw new SHTechnicalException("XPathExpressionException:" + ex.getMessage(),ex);
+  }
+catch (  IOException ex) {
+    throw new SHTechnicalException(String.format("IOException. Communication with host '%s' was not possible or interrupted: %s",hostname,ex.getMessage()),ex);
+  }
+catch (  RWESmarthomeSessionExpiredException e) {
+    logger.error("SessionExpiredException while login?!? Should never exist...");
+    throw new SHTechnicalException("SessionExpiredException while login?!? Should never exist...");
+  }
+}

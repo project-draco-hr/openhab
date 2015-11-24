@@ -1,0 +1,7 @@
+{
+  final String CHANGE_VARIABLE_STATE_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"SetActuatorStatesRequest\" Version=\"%s\" RequestId=\"%s\" SessionId=\"%s\" BasedOnConfigVersion=\"%s\">" + "<ActuatorStates>" + "<LogicalDeviceState xsi:type=\"GenericDeviceState\" LID=\"%s\">"+ "<Ppts>"+ "<Ppt xsi:type=\"BooleanProperty\" Name=\"Value\" Value=\"%s\" />"+ "</Ppts>"+ "</LogicalDeviceState>"+ "</ActuatorStates>"+ "</BaseRequest>",RWESmarthomeSession.getFirmwareVersion(),rweSmarthomeSession.getRequestId(),rweSmarthomeSession.getSessionId(),rweSmarthomeSession.getCurrentConfigurationVersion(),deviceId,on);
+  String response=rweSmarthomeSession.executeRequest(CHANGE_VARIABLE_STATE_REQUEST,"/cmd");
+  if (!response.contains("Result=\"Ok\"")) {
+    logger.warn("Response not ok: " + response);
+  }
+}

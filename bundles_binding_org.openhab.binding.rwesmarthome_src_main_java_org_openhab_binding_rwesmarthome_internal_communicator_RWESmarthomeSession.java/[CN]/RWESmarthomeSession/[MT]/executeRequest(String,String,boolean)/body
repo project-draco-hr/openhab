@@ -1,0 +1,22 @@
+{
+  if (!login && "".equals(sessionId)) {
+    throw new RWESmarthomeSessionExpiredException();
+  }
+  String sReturn="";
+  try {
+    sReturn=client.execute(hostname,clientId,request,command);
+    if (sReturn.contains("IllegalSessionId")) {
+      logger.info("Session expired!");
+      sessionId="";
+      throw new RWESmarthomeSessionExpiredException(sReturn);
+    }
+    logger.trace("XMLResponse:" + sReturn);
+  }
+ catch (  ClientProtocolException ex) {
+    logger.error(ex.getClass().getSimpleName(),ex);
+  }
+catch (  IOException ex) {
+    logger.error(ex.getClass().getSimpleName(),ex);
+  }
+  return sReturn;
+}

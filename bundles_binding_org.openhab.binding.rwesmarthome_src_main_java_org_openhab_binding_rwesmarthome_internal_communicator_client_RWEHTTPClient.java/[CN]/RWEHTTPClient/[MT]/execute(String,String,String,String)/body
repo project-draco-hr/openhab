@@ -1,0 +1,21 @@
+{
+  HttpClient httpclient=httpHelper.getNewHttpClient();
+  HttpPost httpPost=new HttpPost("https://" + hostname + command);
+  httpPost.addHeader("ClientId",clientId);
+  httpPost.addHeader("Connection","Keep-Alive");
+  HttpResponse response;
+  StringEntity se=new StringEntity(request,HTTP.UTF_8);
+  se.setContentType("text/xml");
+  httpPost.setEntity(se);
+  logger.trace("executing request: " + httpPost.getURI().toString());
+  logger.trace("REQ:" + request);
+  response=httpclient.execute(httpPost);
+  logger.trace("Response: " + response.toString());
+  if (response.getStatusLine().getStatusCode() == 401) {
+    logger.info("401 Unauthorized returned - Session expired!");
+    throw new RWESmarthomeSessionExpiredException("401 Unauthorized returned - Session expired!");
+  }
+  HttpEntity entity1=response.getEntity();
+  InputStream in=entity1.getContent();
+  return InputStream2String.copyFromInputStream(in,"UTF-8");
+}

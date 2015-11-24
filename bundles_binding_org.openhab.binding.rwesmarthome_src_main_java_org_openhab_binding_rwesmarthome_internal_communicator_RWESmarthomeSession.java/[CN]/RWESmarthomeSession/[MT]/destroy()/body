@@ -1,0 +1,11 @@
+{
+  final String LOGOUT_REQUEST=String.format("<BaseRequest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"LogoutRequest\" Version=\"%s\" RequestId=\"%s\" SessionId=\"%s\" />",FIRMWARE_VERSION,requestId,getSessionId());
+  try {
+    logger.debug("Destroying session...");
+    executeRequest(LOGOUT_REQUEST,"/cmd");
+    logger.debug("Session destroyed.");
+  }
+ catch (  RWESmarthomeSessionExpiredException e) {
+  }
+  sessionId="";
+}

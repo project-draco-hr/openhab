@@ -1,0 +1,17 @@
+{
+  String ignoreEventListKey=itemName + newState;
+  for (  String key : context.getIgnoreEventList().keySet()) {
+    if ((System.currentTimeMillis() - context.getIgnoreEventList().get(key)) > 15000) {
+      context.getIgnoreEventList().remove(key);
+      logger.debug("Ignorelist: removed ghost entry '{}'",key);
+    }
+  }
+  if (context.getIgnoreEventList().remove(ignoreEventListKey) != null) {
+    logger.debug("We sent this event (item='{}', command='{}') to RWE, so we don't handle it again -> ignore!",itemName,newState);
+    return true;
+  }
+ else {
+    logger.debug("Event (item='{}', command='{}') is not an echo!",itemName,newState);
+    return false;
+  }
+}
