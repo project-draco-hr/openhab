@@ -7,11 +7,7 @@
   logger.debug("Got time from {}: {}",hostname,SDF.format(new Date(networkTimeInMillis)));
   for (  NtpBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      TimeZone timeZone=provider.getTimeZone(itemName);
-      Locale locale=provider.getLocale(itemName);
-      Calendar calendar=Calendar.getInstance(timeZone,locale);
-      calendar.setTimeInMillis(networkTimeInMillis);
-      eventPublisher.postUpdate(itemName,new DateTimeType(calendar));
+      updateTime(provider,itemName,networkTimeInMillis);
     }
   }
 }
