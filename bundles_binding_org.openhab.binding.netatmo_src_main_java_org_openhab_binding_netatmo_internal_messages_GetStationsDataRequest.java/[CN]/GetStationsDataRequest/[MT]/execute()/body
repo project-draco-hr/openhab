@@ -1,13 +1,11 @@
 {
-  final String url=prepare();
-  logger.debug(url);
+  final String content=String.format(CONTENT,this.accessToken);
   String json=null;
   try {
-    json=executeQuery(url);
-    final GetStationsDataResponse response=JSON.readValue(json,GetStationsDataResponse.class);
-    return response;
+    json=executeQuery(content);
+    return JSON.readValue(json,GetStationsDataResponse.class);
   }
  catch (  final Exception e) {
-    throw newException("Could not execute get stations data request!",e,url,json);
+    throw newException("Could not execute get stations data request!",e,URL,content,json);
   }
 }

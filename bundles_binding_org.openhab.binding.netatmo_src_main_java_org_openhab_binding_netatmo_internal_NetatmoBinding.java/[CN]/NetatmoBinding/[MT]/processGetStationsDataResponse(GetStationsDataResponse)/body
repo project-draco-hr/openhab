@@ -41,7 +41,8 @@
         measurements=deviceMeasurements.get(deviceId);
       }
       if (measurements != null) {
-        measurements.remove(measureType.getMeasure());
+        String measure=measureType != NetatmoMeasureType.WINDSTRENGTH ? measureType.getMeasure() : WIND;
+        measurements.remove(measure);
       }
     }
   }
@@ -57,6 +58,9 @@
     final String moduleId=entry.getKey();
     final Module module=moduleMap.get(moduleId);
     for (    String measurement : entry.getValue()) {
+      if (measurement.equals(WIND)) {
+        measurement=NetatmoMeasureType.WINDSTRENGTH.toString().toLowerCase();
+      }
       message.append("\t" + mainDeviceMap.get(moduleId) + "#"+ moduleId+ "#"+ measurement+ " ("+ module.getModuleName()+ ")\n");
     }
   }

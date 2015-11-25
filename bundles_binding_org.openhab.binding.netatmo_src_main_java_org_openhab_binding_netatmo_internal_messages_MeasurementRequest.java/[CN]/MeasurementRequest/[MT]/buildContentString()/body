@@ -1,0 +1,21 @@
+{
+  final StringBuilder contentBuilder=new StringBuilder();
+  contentBuilder.append("access_token=");
+  contentBuilder.append(this.accessToken);
+  contentBuilder.append("&scale=" + scale.getScale());
+  contentBuilder.append("&date_end=last");
+  contentBuilder.append("&device_id=");
+  contentBuilder.append(this.deviceId);
+  if (this.moduleId != null) {
+    contentBuilder.append("&module_id=");
+    contentBuilder.append(this.moduleId);
+  }
+  contentBuilder.append("&type=");
+  for (final Iterator<String> i=this.measures.iterator(); i.hasNext(); ) {
+    contentBuilder.append(i.next());
+    if (i.hasNext()) {
+      contentBuilder.append(",");
+    }
+  }
+  return contentBuilder.toString();
+}
