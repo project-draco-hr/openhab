@@ -1,14 +1,13 @@
 {
   logger.debug("JDBC::getHistItemFilterQueryProvider filter = {}, numberDecimalcount = {}, table = {}, simpleName = {}",filter.toString(),numberDecimalcount,table,simpleName);
-  SimpleDateFormat jdbcDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   String filterString="";
   if (filter.getBeginDate() != null) {
     filterString+=filterString.isEmpty() ? " WHERE" : " AND";
-    filterString+=" TIME>'" + jdbcDateFormat.format(filter.getBeginDate()) + "'";
+    filterString+=" TIME>'" + jdbcDateFormat.print(new DateTime(filter.getBeginDate().getTime())) + "'";
   }
   if (filter.getEndDate() != null) {
     filterString+=filterString.isEmpty() ? " WHERE" : " AND";
-    filterString+=" TIME<'" + jdbcDateFormat.format(filter.getEndDate().getTime()) + "'";
+    filterString+=" TIME<'" + jdbcDateFormat.print(new DateTime(filter.getEndDate().getTime())) + "'";
   }
   filterString+=(filter.getOrdering() == Ordering.ASCENDING) ? " ORDER BY time ASC" : " ORDER BY time DESC";
   if (filter.getPageSize() != 0x7fffffff) {

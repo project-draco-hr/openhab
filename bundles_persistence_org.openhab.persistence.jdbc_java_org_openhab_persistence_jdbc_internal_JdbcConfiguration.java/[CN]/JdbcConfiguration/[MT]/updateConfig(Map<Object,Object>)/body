@@ -11,7 +11,8 @@
   }
   serviceName=parsedURL.getProperty("dbShortcut");
   logger.debug("JDBC::updateConfig: found serviceName = '{}'",serviceName);
-  if (StringUtils.isBlank(serviceName)) {
+  if (StringUtils.isBlank(serviceName) || serviceName.length() < 2) {
+    serviceName="no";
     logger.error("JDBC::updateConfig: url Required database url like 'jdbc:<service>:<host>[:<port>;<attributes>]' - please configure the jdbc:url parameter in openhab.cfg");
   }
   String ddp=DB_DAO_PACKAGE + serviceName.toUpperCase().charAt(0) + serviceName.toLowerCase().substring(1)+ "DAO";
@@ -57,10 +58,10 @@ catch (  ClassNotFoundException e) {
   }
   String password=(String)configuration.get("password");
   if (StringUtils.isBlank(password)) {
-    logger.error("JDBC::updateConfig: SQL password is missing. Attempting to connect without password. To specify a password configure the jdbc:password parameter in openhab.cfg.");
+    logger.error("JDBC::updateConfig: SQL password is missing. Attempting to connect without password. " + "To specify a password configure the jdbc:password parameter in openhab.cfg.");
   }
  else {
-    logger.debug("JDBC::updateConfig:  password={}{}...",password.subSequence(0,3),password.length() - 3);
+    logger.debug("JDBC::updateConfig:  password=<masked> password.length={}",password.length());
     dBDAO.databaseProps.setProperty("dataSource.password",password);
   }
   String et=(String)configuration.get("reconnectCnt");
@@ -117,14 +118,6 @@ catch (  ClassNotFoundException e) {
   if (StringUtils.isNotBlank(ds)) {
     dBDAO.databaseProps.setProperty("dataSourceClassName",ds);
   }
-  String warn="" + "\n\n\t!!!\n\tTo avoid this error, place a appropriate JDBC driver file for serviceName '{}' in addons directory.\n" + "\tCopy missing JDBC-Driver-jar to your OpenHab/addons Folder.\n\t!!!\n"+ "\tDOWNLOAD: \n";
-  if (serviceName.equals("derby"))   warn+="\tDerby:     Tested version: derby-10.11.1.1.jar               http://mvnrepository.com/artifact/org.apache.derby/derby\n";
- else   if (serviceName.equals("h2"))   warn+="\tH2:        Tested version: h2-1.4.189.jar                    http://mvnrepository.com/artifact/com.h2database/h2\n";
- else   if (serviceName.equals("hsqldb"))   warn+="\tHSQLDB:    Tested version: hsqldb-2.3.3.jar                  http://mvnrepository.com/artifact/org.hsqldb/hsqldb\n";
- else   if (serviceName.equals("mariadb"))   warn+="\tMariaDB:   Tested version: mariadb-java-client-1.2.0.jar     http://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client\n";
- else   if (serviceName.equals("mysql"))   warn+="\tMySQL      Tested version: mysql-connector-java-5.1.36.jar   http://mvnrepository.com/artifact/mysql/mysql-connector-java\n";
- else   if (serviceName.equals("postgresql"))   warn+="\tPostgreSQL:Tested version: postgresql-9.4-1201-jdbc41.jar    http://mvnrepository.com/artifact/org.postgresql/postgresql\n";
- else   if (serviceName.equals("sqlite"))   warn+="\tSQLite:    Tested version: sqlite-jdbc-3.8.11.1.jar          http://mvnrepository.com/artifact/org.xerial/sqlite-jdbc\n";
   driverAvailable=true;
   String dn=dBDAO.databaseProps.getProperty("driverClassName");
   if (dn == null) {
@@ -141,6 +134,14 @@ catch (  ClassNotFoundException e) {
  catch (  ClassNotFoundException e) {
     driverAvailable=false;
     logger.error("JDBC::updateConfig: could NOT load JDBC-driverClassName or JDBC-dataSourceClassName ClassNotFoundException: '{}'",e.getMessage());
+    String warn="" + "\n\n\t!!!\n\tTo avoid this error, place a appropriate JDBC driver file for serviceName '{}' in addons directory.\n" + "\tCopy missing JDBC-Driver-jar to your OpenHab/addons Folder.\n\t!!!\n"+ "\tDOWNLOAD: \n";
+    if (serviceName.equals("derby"))     warn+="\tDerby:     version >= 10.11.1.1 from          http://mvnrepository.com/artifact/org.apache.derby/derby\n";
+ else     if (serviceName.equals("h2"))     warn+="\tH2:        version >= 1.4.189 from            http://mvnrepository.com/artifact/com.h2database/h2\n";
+ else     if (serviceName.equals("hsqldb"))     warn+="\tHSQLDB:    version >= 2.3.3 from              http://mvnrepository.com/artifact/org.hsqldb/hsqldb\n";
+ else     if (serviceName.equals("mariadb"))     warn+="\tMariaDB:   version >= 1.2.0 from              http://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client\n";
+ else     if (serviceName.equals("mysql"))     warn+="\tMySQL:     version >= 5.1.36 from             http://mvnrepository.com/artifact/mysql/mysql-connector-java\n";
+ else     if (serviceName.equals("postgresql"))     warn+="\tPostgreSQL:version >= 9.4-1201-jdbc41 from    http://mvnrepository.com/artifact/org.postgresql/postgresql\n";
+ else     if (serviceName.equals("sqlite"))     warn+="\tSQLite:    version >= 3.8.11.1 from           http://mvnrepository.com/artifact/org.xerial/sqlite-jdbc\n";
     logger.warn(warn,serviceName);
   }
   logger.debug("JDBC::updateConfig: configuration complete. service={}",getName());
