@@ -1,0 +1,16 @@
+{
+  final FilterCriteria filter=new FilterCriteria();
+  filter.setEndDate(new Date());
+  filter.setItemName(alias);
+  filter.setOrdering(FilterCriteria.Ordering.DESCENDING);
+  filter.setPageSize(1);
+  final Iterable<HistoricItem> query=this.query(filter);
+  final Iterator<HistoricItem> iterator=query.iterator();
+  if (iterator.hasNext()) {
+    CaldavItem caldavItem=(CaldavItem)iterator.next();
+    if (!isOff(caldavItem.getState())) {
+      return caldavItem;
+    }
+  }
+  return null;
+}

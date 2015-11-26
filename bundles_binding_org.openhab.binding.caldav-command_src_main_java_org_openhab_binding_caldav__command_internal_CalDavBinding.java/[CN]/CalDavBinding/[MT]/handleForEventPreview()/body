@@ -1,0 +1,12 @@
+{
+  CalDavBindingProvider provider=getCalDavBindingProvider();
+  if (provider == null) {
+    logger.error("cannot find any provider");
+    return;
+  }
+  List<CalDavEvent> events=calDavLoader.getEvents(new CalDavQuery(this.readCalendars,DateTime.now()));
+  for (  String configItemName : provider.getItemNames()) {
+    final CalDavNextEventConfig config=provider.getConfig(configItemName);
+    this.updateItemState(config,events);
+  }
+}

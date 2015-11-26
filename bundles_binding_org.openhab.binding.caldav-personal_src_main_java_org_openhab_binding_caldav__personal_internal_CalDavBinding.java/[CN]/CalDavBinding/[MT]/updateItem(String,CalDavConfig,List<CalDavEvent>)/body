@@ -1,0 +1,61 @@
+{
+  if (config.getType() == Type.PRESENCE) {
+    List<CalDavEvent> subList=getActiveEvents(events);
+    subList=this.removeWithMatchingPlace(subList);
+    if (subList.size() == 0) {
+      eventPublisher.sendCommand(itemName,OnOffType.OFF);
+    }
+ else {
+      eventPublisher.sendCommand(itemName,OnOffType.ON);
+    }
+  }
+ else {
+    List<CalDavEvent> subList=new ArrayList<CalDavEvent>();
+    if (config.getType() == Type.EVENT) {
+      subList=getAllEvents(events);
+    }
+ else     if (config.getType() == Type.ACTIVE) {
+      subList=getActiveEvents(events);
+    }
+ else     if (config.getType() == Type.UPCOMING) {
+      subList=getUpcomingEvents(events);
+    }
+    if (config.getEventNr() > subList.size()) {
+      logger.debug("no event found for {}, setting to UNDEF",itemName);
+      eventPublisher.postUpdate(itemName,org.openhab.core.types.UnDefType.UNDEF);
+      return;
+    }
+    logger.debug("found {} events for config: {}",subList.size(),config);
+    CalDavEvent event=subList.get(config.getEventNr() - 1);
+    logger.trace("found event {} for config {}",event.getShortName(),config);
+    State command=null;
+switch (config.getValue()) {
+case NAME:
+      command=new StringType(event.getName());
+    break;
+case DESCRIPTION:
+  command=new StringType(event.getContent());
+break;
+case PLACE:
+command=new StringType(event.getLocation());
+break;
+case START:
+command=new DateTimeType(FORMATTER.print(event.getStart()));
+break;
+case END:
+command=new DateTimeType(FORMATTER.print(event.getEnd()));
+break;
+case TIME:
+String startEnd=DF.print(event.getStart()) + " - " + DF.print(event.getEnd());
+command=new StringType(startEnd);
+break;
+case NAMEANDTIME:
+String startEnd2=DF.print(event.getStart()) + " - " + DF.print(event.getEnd());
+String name=event.getName();
+command=new StringType(name + " @ " + startEnd2);
+}
+logger.debug("sending command {} for item {}",command,itemName);
+eventPublisher.postUpdate(itemName,command);
+logger.trace("command {} successfuly send",command);
+}
+}

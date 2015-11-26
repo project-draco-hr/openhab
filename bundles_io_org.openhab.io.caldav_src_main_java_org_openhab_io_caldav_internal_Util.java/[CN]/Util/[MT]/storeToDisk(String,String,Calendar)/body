@@ -1,0 +1,16 @@
+{
+  try {
+    FileOutputStream fout=new FileOutputStream(getCacheFile(calendarId,filename));
+    CalendarOutputter outputter=new CalendarOutputter();
+    outputter.setValidating(false);
+    outputter.output(calendar,fout);
+    fout.flush();
+    fout.close();
+  }
+ catch (  IOException e) {
+    log.error("cannot store event '{}' to disk",filename);
+  }
+catch (  ValidationException e) {
+    log.error("cannot store event '{}' to disk",filename);
+  }
+}

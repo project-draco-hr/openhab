@@ -1,0 +1,9 @@
+{
+  final List<EventUtils.EventContent> parseContent=EventUtils.parseContent(event,this.itemRegistry,scope);
+  for (  EventUtils.EventContent eventContent : parseContent) {
+    if (disabledItems.contains(eventContent.getItem().getName())) {
+      continue;
+    }
+    eventPublisher.sendCommand(eventContent.getItem().getName(),eventContent.getCommand());
+  }
+}

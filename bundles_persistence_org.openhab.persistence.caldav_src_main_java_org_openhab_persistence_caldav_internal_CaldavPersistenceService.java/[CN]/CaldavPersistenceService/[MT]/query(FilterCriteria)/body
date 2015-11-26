@@ -1,0 +1,112 @@
+{
+  List<CalDavEvent> events=calDavLoader.getEvents(new CalDavQuery(calendarId));
+  List<HistoricItem> outList=new ArrayList<HistoricItem>();
+  for (  CalDavEvent calDavEvent : events) {
+    if (filter.getBeginDate() != null && calDavEvent.getEnd().toDate().before(filter.getBeginDate())) {
+      continue;
+    }
+    if (filter.getEndDate() != null && calDavEvent.getStart().toDate().after(filter.getEndDate())) {
+      continue;
+    }
+    Item item=null;
+    try {
+      item=this.itemRegistry.getItem(filter.getItemName());
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("item {} could not be found",filter.getItemName());
+      continue;
+    }
+    final List<EventUtils.EventContent> parseContent=EventUtils.parseContent(calDavEvent,item);
+    for (    EventUtils.EventContent eventContent : parseContent) {
+      if (filter.getBeginDate() != null && eventContent.getTime().toDate().before(filter.getBeginDate())) {
+        continue;
+      }
+      if (filter.getEndDate() != null && eventContent.getTime().toDate().after(filter.getEndDate())) {
+        continue;
+      }
+      final State eventState=eventContent.getState();
+      if (filter.getState() != null && filter.getOperator() != null) {
+switch (filter.getOperator()) {
+case EQ:
+{
+            if (!filter.getState().equals(eventState))             continue;
+            break;
+          }
+case NEQ:
+{
+          if (filter.getState().equals(eventState))           continue;
+          break;
+        }
+case LTE:
+{
+        if (eventState instanceof DecimalType && filter.getState() instanceof DecimalType) {
+          if (((DecimalType)eventState).longValue() > ((DecimalType)filter.getState()).longValue()) {
+            continue;
+          }
+        }
+ else {
+          continue;
+        }
+        break;
+      }
+case GTE:
+{
+      if (eventState instanceof DecimalType && filter.getState() instanceof DecimalType) {
+        if (((DecimalType)eventState).longValue() < ((DecimalType)filter.getState()).longValue()) {
+          continue;
+        }
+      }
+ else {
+        continue;
+      }
+      break;
+    }
+case LT:
+{
+    if (eventState instanceof DecimalType && filter.getState() instanceof DecimalType) {
+      if (((DecimalType)eventState).longValue() >= ((DecimalType)filter.getState()).longValue()) {
+        continue;
+      }
+    }
+ else {
+      continue;
+    }
+    break;
+  }
+case GT:
+{
+  if (eventState instanceof DecimalType && filter.getState() instanceof DecimalType) {
+    if (((DecimalType)eventState).longValue() <= ((DecimalType)filter.getState()).longValue()) {
+      continue;
+    }
+  }
+ else {
+    continue;
+  }
+  break;
+}
+}
+}
+final CaldavItem caldavItem=new CaldavItem(filter.getItemName(),eventState,eventContent.getTime().toDate());
+caldavItem.setEvent(calDavEvent);
+outList.add(caldavItem);
+}
+}
+Collections.sort(outList,new Comparator<HistoricItem>(){
+@Override public int compare(HistoricItem arg0,HistoricItem arg1){
+if (filter.getOrdering().equals(FilterCriteria.Ordering.ASCENDING)) {
+return (int)(arg0.getTimestamp().getTime() - arg1.getTimestamp().getTime());
+}
+ else {
+return (int)(arg1.getTimestamp().getTime() - arg0.getTimestamp().getTime());
+}
+}
+}
+);
+if (outList.size() < filter.getPageNumber() * filter.getPageSize()) {
+return Collections.emptyList();
+}
+outList=outList.subList(filter.getPageNumber() * filter.getPageSize(),Math.min((filter.getPageNumber() * filter.getPageSize()) + filter.getPageSize(),outList.size()));
+logger.trace("result size for query: {}",outList.size());
+return outList;
+}

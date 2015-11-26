@@ -1,0 +1,10 @@
+{
+  if (!calendars.contains(event.getCalendarId())) {
+    return;
+  }
+  if (event.getStart().isBeforeNow()) {
+    return;
+  }
+  logger.debug("adding event to map: {}",event.getShortName());
+  this.updateItemsForEvent();
+}

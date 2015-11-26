@@ -1,0 +1,7 @@
+{
+  if (provider.getItemNames().contains(itemName)) {
+    final CalDavNextEventConfig config=((CalDavBindingProvider)provider).getConfig(itemName);
+    List<CalDavEvent> events=calDavLoader.getEvents(new CalDavQuery(this.readCalendars,DateTime.now()));
+    this.updateItemState(config,events);
+  }
+}

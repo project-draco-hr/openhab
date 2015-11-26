@@ -1,0 +1,21 @@
+{
+  if (config != null) {
+    String calendarIdString=(String)config.get("calendarId");
+    if (StringUtils.isNotBlank(calendarIdString)) {
+      calendarId=calendarIdString;
+    }
+    String durationString=(String)config.get("duration");
+    if (StringUtils.isNotBlank(durationString)) {
+      try {
+        duration=Integer.parseInt(durationString);
+      }
+ catch (      NumberFormatException e) {
+        logger.error("cannot convert to int: {}",durationString);
+      }
+    }
+    String singleEventsString=(String)config.get("singleEvents");
+    if (StringUtils.isNotBlank(singleEventsString)) {
+      singleEvents=Boolean.parseBoolean(singleEventsString);
+    }
+  }
+}
