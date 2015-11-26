@@ -1,12 +1,15 @@
 {
 switch (syncMode) {
 case DROPBOX_TO_LOCAL:
-    schedule(DropboxSynchronizer.downloadInterval,false);
-  break;
+    logger.debug("scheduling DROPBOX_TO_LOCAL download interval: {}",DropboxSynchronizer.downloadInterval);
+  schedule(DropboxSynchronizer.downloadInterval,false);
+break;
 case LOCAL_TO_DROPBOX:
+logger.debug("scheduling LOCAL_TO_DROPBOX upload interval: {}",DropboxSynchronizer.uploadInterval);
 schedule(DropboxSynchronizer.uploadInterval,true);
 break;
 case BIDIRECTIONAL:
+logger.debug("scheduling BIDIRECTIONAL download interval: {}, upload interval: {}",DropboxSynchronizer.downloadInterval,DropboxSynchronizer.uploadInterval);
 schedule(DropboxSynchronizer.downloadInterval,false);
 schedule(DropboxSynchronizer.uploadInterval,true);
 break;
