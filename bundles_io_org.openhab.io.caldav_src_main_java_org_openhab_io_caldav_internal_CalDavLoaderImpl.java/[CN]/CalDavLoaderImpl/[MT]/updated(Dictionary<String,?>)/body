@@ -1,0 +1,81 @@
+{
+  if (config != null) {
+    CompatibilityHints.setHintEnabled(CompatibilityHints.KEY_RELAXED_PARSING,true);
+    Map<String,CalDavConfig> configMap=new HashMap<String,CalDavConfig>();
+    Enumeration<String> iter=config.keys();
+    while (iter.hasMoreElements()) {
+      String key=iter.nextElement();
+      log.trace("configuration parameter: " + key);
+      if (key.equals("service.pid")) {
+        continue;
+      }
+ else       if (key.equals(PROP_TIMEZONE)) {
+        log.debug("overriding default timezone {} with {}",defaultTimeZone,config.get(key));
+        defaultTimeZone=DateTimeZone.forID(config.get(key) + "");
+        if (defaultTimeZone == null) {
+          throw new ConfigurationException(PROP_TIMEZONE,"invalid timezone value: " + config.get(key));
+        }
+        log.debug("found timeZone: {}",defaultTimeZone);
+        continue;
+      }
+      String[] keys=key.split(":");
+      if (keys.length != 2) {
+        throw new ConfigurationException(key,"unknown identifier");
+      }
+      String id=keys[0];
+      String paramKey=keys[1];
+      CalDavConfig calDavConfig=configMap.get(id);
+      if (calDavConfig == null) {
+        calDavConfig=new CalDavConfig();
+        configMap.put(id,calDavConfig);
+      }
+      String value=config.get(key) + "";
+      calDavConfig.setKey(id);
+      if (paramKey.equals(PROP_USERNAME)) {
+        calDavConfig.setUsername(value);
+      }
+ else       if (paramKey.equals(PROP_PASSWORD)) {
+        calDavConfig.setPassword(value);
+      }
+ else       if (paramKey.equals(PROP_URL)) {
+        calDavConfig.setUrl(value);
+      }
+ else       if (paramKey.equals(PROP_RELOAD_INTERVAL)) {
+        calDavConfig.setReloadMinutes(Integer.parseInt(value));
+      }
+ else       if (paramKey.equals(PROP_PRELOAD_TIME)) {
+        calDavConfig.setPreloadMinutes(Integer.parseInt(value));
+      }
+ else       if (paramKey.equals(PROP_HISTORIC_LOAD_TIME)) {
+        calDavConfig.setHistoricLoadMinutes(Integer.parseInt(value));
+      }
+ else       if (paramKey.equals(PROP_DISABLE_CERTIFICATE_VERIFICATION)) {
+        calDavConfig.setDisableCertificateVerification(BooleanUtils.toBoolean(value));
+      }
+    }
+    for (    String id : configMap.keySet()) {
+      if (configMap.get(id).getUrl() == null) {
+        throw new ConfigurationException(PROP_URL,PROP_URL + " must be set");
+      }
+      if (configMap.get(id).getUsername() == null) {
+        throw new ConfigurationException(PROP_USERNAME,PROP_USERNAME + " must be set");
+      }
+      if (configMap.get(id).getPassword() == null) {
+        throw new ConfigurationException(PROP_PASSWORD,PROP_PASSWORD + " must be set");
+      }
+      log.trace("config for id '{}': {}",id,configMap.get(id));
+    }
+    for (    CalDavConfig calDavConfig : configMap.values()) {
+      final CalendarRuntime eventRuntime=new CalendarRuntime();
+      eventRuntime.setConfig(calDavConfig);
+      File cachePath=Util.getCachePath(calDavConfig.getKey());
+      if (!cachePath.exists() && !cachePath.mkdirs()) {
+        log.error("cannot create directory (" + CACHE_PATH + ") for calendar caching (missing rights?)");
+        continue;
+      }
+      EventStorage.getInstance().getEventCache().put(calDavConfig.getKey(),eventRuntime);
+    }
+    setProperlyConfigured(true);
+    this.startLoading();
+  }
+}

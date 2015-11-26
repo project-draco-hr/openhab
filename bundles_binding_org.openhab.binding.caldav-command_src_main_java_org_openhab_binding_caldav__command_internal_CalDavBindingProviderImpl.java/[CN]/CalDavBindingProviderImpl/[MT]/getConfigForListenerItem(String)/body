@@ -1,0 +1,13 @@
+{
+  List<CalDavNextEventConfig> list=new ArrayList<CalDavNextEventConfig>();
+  for (  BindingConfig bindingConfig : this.bindingConfigs.values()) {
+    if (!(bindingConfig instanceof CalDavNextEventConfig)) {
+      continue;
+    }
+    CalDavNextEventConfig config=(CalDavNextEventConfig)bindingConfig;
+    if (config.getItemNameToListenTo().equals(item)) {
+      list.add(config);
+    }
+  }
+  return list;
+}

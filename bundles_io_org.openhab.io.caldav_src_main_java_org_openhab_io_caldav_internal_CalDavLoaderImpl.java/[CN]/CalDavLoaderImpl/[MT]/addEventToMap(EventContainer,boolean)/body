@@ -1,0 +1,87 @@
+{
+  CalendarRuntime calendarRuntime=EventStorage.getInstance().getEventCache().get(eventContainer.getCalendarId());
+  ConcurrentHashMap<String,EventContainer> eventContainerMap=calendarRuntime.getEventMap();
+  if (eventContainerMap.containsKey(eventContainer.getEventId())) {
+    EventContainer eventContainerOld=eventContainerMap.get(eventContainer.getEventId());
+    if (eventContainer.getLastChanged().isAfter(eventContainerOld.getLastChanged())) {
+      log.debug("event is already in event map and newer -> delete the old one, reschedule timer");
+      for (      String timerKey : eventContainerOld.getTimerMap()) {
+        try {
+          this.scheduler.deleteJob(JobKey.jobKey(timerKey));
+        }
+ catch (        SchedulerException e) {
+          log.error("cannot cancel event with job-id: " + timerKey,e);
+        }
+      }
+      eventContainerOld.getTimerMap().clear();
+      eventContainerMap.put(eventContainer.getEventId(),eventContainer);
+      for (      EventNotifier notifier : eventListenerList) {
+        for (        CalDavEvent event : eventContainerOld.getEventList()) {
+          log.trace("notify listener... {}",notifier);
+          try {
+            notifier.eventRemoved(event);
+          }
+ catch (          Exception e) {
+            log.error("error while invoking listener",e);
+          }
+        }
+      }
+      for (      EventNotifier notifier : eventListenerList) {
+        for (        CalDavEvent event : eventContainer.getEventList()) {
+          log.trace("notify listener... {}",notifier);
+          try {
+            notifier.eventLoaded(event);
+          }
+ catch (          Exception e) {
+            log.error("error while invoking listener",e);
+          }
+        }
+      }
+      if (createTimer) {
+        int index=0;
+        for (        CalDavEvent event : eventContainer.getEventList()) {
+          if (event.getEnd().isAfterNow()) {
+            try {
+              createJob(eventContainer,event,index);
+            }
+ catch (            SchedulerException e) {
+              log.error("cannot create jobs for event: " + event.getShortName());
+            }
+          }
+          index++;
+        }
+      }
+    }
+ else {
+    }
+  }
+ else {
+    eventContainerMap.put(eventContainer.getEventId(),eventContainer);
+    log.trace("listeners for events: {}",eventListenerList.size());
+    for (    EventNotifier notifier : eventListenerList) {
+      for (      CalDavEvent event : eventContainer.getEventList()) {
+        log.trace("notify listener... {}",notifier);
+        try {
+          notifier.eventLoaded(event);
+        }
+ catch (        Exception e) {
+          log.error("error while invoking listener",e);
+        }
+      }
+    }
+    if (createTimer) {
+      int index=0;
+      for (      CalDavEvent event : eventContainer.getEventList()) {
+        if (event.getEnd().isAfterNow()) {
+          try {
+            createJob(eventContainer,event,index);
+          }
+ catch (          SchedulerException e) {
+            log.error("cannot create jobs for event: " + event.getShortName());
+          }
+        }
+        index++;
+      }
+    }
+  }
+}

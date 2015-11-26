@@ -1,0 +1,45 @@
+{
+  if (item.getState() instanceof UnDefType) {
+    return;
+  }
+  if (alias == null)   alias=item.getName();
+  State state=item.getState();
+  logger.trace("persisting item: {}",item);
+  if (!singleEvents) {
+    final CaldavItem lastOn=this.findLastOn(alias,state);
+    if (lastOn != null) {
+      if (isOff(item.getState())) {
+        CalDavEvent event=lastOn.getEvent();
+        event.setLastChanged(DateTime.now());
+        String offContent=EventUtils.createEnd(alias,state);
+        event.setContent(event.getContent() + "\n" + offContent);
+        event.setEnd(DateTime.now());
+        logger.debug("existing event found, updated for persistence: {}",event);
+        this.calDavLoader.addEvent(event);
+      }
+ else {
+        CalDavEvent event=lastOn.getEvent();
+        event.setLastChanged(DateTime.now());
+        String offContent=EventUtils.createBetween(alias,state);
+        event.setContent(event.getContent() + "\n" + offContent);
+        logger.debug("existing event found, updated for persistence: {}",event);
+        this.calDavLoader.addEvent(event);
+      }
+      return;
+    }
+  }
+  logger.debug("creating new event");
+  CalDavEvent event=new CalDavEvent();
+  final String id=UUID.randomUUID().toString();
+  event.setId(id);
+  event.setName(alias);
+  event.setLastChanged(DateTime.now());
+  event.setContent(EventUtils.createBegin(alias,state));
+  DateTime now=DateTime.now();
+  event.setStart(now);
+  event.setEnd(now.plusMinutes(duration));
+  event.setCalendarId(calendarId);
+  event.setFilename("openHAB-" + id);
+  logger.debug("new event for persistence created: {}",event);
+  this.calDavLoader.addEvent(event);
+}

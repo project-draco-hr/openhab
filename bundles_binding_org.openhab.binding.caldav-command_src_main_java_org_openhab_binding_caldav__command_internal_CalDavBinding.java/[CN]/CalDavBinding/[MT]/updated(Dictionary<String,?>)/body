@@ -1,0 +1,12 @@
+{
+  if (properties != null) {
+    logger.debug("reading configuration data...");
+    String read=(String)properties.get(KEY_READ_CALENDARS);
+    if (read != null) {
+      for (      String value : read.split(",")) {
+        this.readCalendars.add(value.trim());
+      }
+    }
+    this.reloadCurrentLoadedEvents();
+  }
+}

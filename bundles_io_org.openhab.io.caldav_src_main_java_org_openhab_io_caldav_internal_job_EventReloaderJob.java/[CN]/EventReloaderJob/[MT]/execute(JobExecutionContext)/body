@@ -1,0 +1,26 @@
+{
+  try {
+    final String config=context.getJobDetail().getJobDataMap().getString(KEY_CONFIG);
+    CalendarRuntime eventRuntime=EventStorage.getInstance().getEventCache().get(config);
+    log.debug("loading events for config: " + config);
+    List<String> oldEventIds=new ArrayList<String>();
+    for (    EventContainer eventContainer : eventRuntime.getEventMap().values()) {
+      oldEventIds.add(eventContainer.getFilename());
+    }
+    CalDavLoaderImpl.INSTANCE.loadEvents(eventRuntime,oldEventIds);
+    removeDeletedEvents(config,oldEventIds);
+    for (    EventNotifier notifier : CalDavLoaderImpl.INSTANCE.getEventListenerList()) {
+      try {
+        notifier.calendarReloaded(config);
+      }
+ catch (      Exception e) {
+        log.error("error while invoking listener",e);
+      }
+    }
+    printAllEvents();
+  }
+ catch (  Exception e) {
+    log.error("error while loading calendar entries: " + e.getMessage(),e);
+    throw new JobExecutionException("error while loading calendar entries",e,false);
+  }
+}

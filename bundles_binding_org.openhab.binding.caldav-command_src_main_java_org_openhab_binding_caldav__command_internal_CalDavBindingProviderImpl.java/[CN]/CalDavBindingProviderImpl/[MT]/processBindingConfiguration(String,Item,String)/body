@@ -1,0 +1,25 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig == null) {
+    logger.debug("binding-configuration is currently not set for item: {}",item.getName());
+  }
+  String itemName=null;
+  Matcher mItemName=Pattern.compile(REGEX_ITEM_NAME).matcher(bindingConfig);
+  if (mItemName.find()) {
+    itemName=mItemName.group(1);
+  }
+  String typeString=null;
+  Matcher mType=Pattern.compile(REGEX_TYPE).matcher(bindingConfig);
+  if (mType.find()) {
+    typeString=mType.group(1);
+  }
+  CalDavType type=null;
+  try {
+    type=CalDavType.valueOf(typeString);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("cannot read required parameter 'type' for item: " + item.getName());
+  }
+  logger.debug("adding item: {}",item.getName());
+  this.addBindingConfig(item,new CalDavNextEventConfig(item.getName(),itemName,type));
+}

@@ -1,0 +1,20 @@
+{
+  CalDavBindingProvider bindingProvider=null;
+  for (  CalDavBindingProvider bindingProvider_ : this.providers) {
+    bindingProvider=bindingProvider_;
+  }
+  if (bindingProvider == null) {
+    logger.error("no binding provider found");
+    return;
+  }
+  Map<Integer,List<CalDavEvent>> eventCache=new HashMap<Integer,List<CalDavEvent>>();
+  for (  String item : bindingProvider.getItemNames()) {
+    CalDavConfig config=bindingProvider.getConfig(item);
+    List<CalDavEvent> events=eventCache.get(config.getCalendar().hashCode());
+    if (events == null) {
+      events=this.calDavLoader.getEvents(new CalDavQuery(config.getCalendar(),DateTime.now(),Sort.ASCENDING));
+      eventCache.put(config.getCalendar().hashCode(),events);
+    }
+    this.updateItem(item,config,events);
+  }
+}

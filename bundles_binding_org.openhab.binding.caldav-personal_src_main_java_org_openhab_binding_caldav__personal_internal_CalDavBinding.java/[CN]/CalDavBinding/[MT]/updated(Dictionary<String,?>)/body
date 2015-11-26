@@ -1,0 +1,19 @@
+{
+  if (properties != null) {
+    logger.debug("loading configuration...");
+    String usedCalendars=(String)properties.get(PARAM_USED_CALENDARS);
+    if (usedCalendars != null) {
+      for (      String cal : usedCalendars.split(",")) {
+        this.calendars.add(cal.trim());
+      }
+    }
+    String homeIdentifiers=(String)properties.get(PARAM_HOME_IDENTIFIERS);
+    if (homeIdentifiers != null) {
+      for (      String homeIdent : homeIdentifiers.split(",")) {
+        this.homeIdentifier.add(homeIdent.trim().toLowerCase());
+      }
+    }
+    logger.debug("loading configuration done");
+    this.reloadCurrentLoadedEvents();
+  }
+}

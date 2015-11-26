@@ -1,0 +1,47 @@
+{
+  String itemName=config.getItemNameToListenTo();
+  String itemNamePreview=config.getItemName();
+  logger.trace("update item state for item: {}",itemName);
+  Command state=null;
+  DateTime time=null;
+  if (calDavLoader == null) {
+    logger.warn("caldav loader is not set");
+    return;
+  }
+  for (  CalDavEvent calDavEvent : events) {
+    try {
+      final Item item=this.itemRegistry.getItem(itemName);
+      final List<EventUtils.EventContent> parseContent=EventUtils.parseContent(calDavEvent,item);
+      for (      EventUtils.EventContent eventContent : parseContent) {
+        if (!eventContent.getTime().isBefore(DateTime.now()) && (time == null || time.isAfter(eventContent.getTime()))) {
+          time=eventContent.getTime();
+          state=eventContent.getCommand();
+        }
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.error("item {} could not be found",itemName);
+    }
+  }
+  if (time == null) {
+    eventPublisher.postUpdate(itemNamePreview,org.openhab.core.types.UnDefType.UNDEF);
+    return;
+  }
+  CalDavType type=config.getType();
+  logger.trace("handling event of type: {}",type);
+  if (type == CalDavType.VALUE) {
+    logger.debug("setting value for '{}' to: {}",itemNamePreview,state);
+    eventPublisher.sendCommand(itemNamePreview,state);
+  }
+ else   if (type == CalDavType.DATE) {
+    Command c=new DateTimeType(FORMATTER.print(time));
+    logger.debug("setting value for '{}' to: {}",itemNamePreview,c);
+    eventPublisher.sendCommand(itemNamePreview,c);
+  }
+ else   if (type == CalDavType.DISABLE) {
+    return;
+  }
+ else {
+    logger.warn("unhandled type: {}",type);
+  }
+}

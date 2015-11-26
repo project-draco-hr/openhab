@@ -1,0 +1,35 @@
+{
+  final CalendarRuntime eventRuntime=EventStorage.getInstance().getEventCache().get(calendarKey);
+  for (  String filename : oldMap) {
+    EventContainer eventContainer=eventRuntime.getEventContainerByFilename(filename);
+    if (eventContainer == null) {
+      log.error("cannot find event container for filename: {}",filename);
+      continue;
+    }
+    for (    String jobId : eventContainer.getTimerMap()) {
+      try {
+        CalDavLoaderImpl.INSTANCE.getScheduler().deleteJob(JobKey.jobKey(jobId));
+      }
+ catch (      SchedulerException e) {
+        log.error("cannot delete job '{}'",jobId);
+      }
+    }
+    eventContainer.getTimerMap().clear();
+    for (    EventNotifier notifier : CalDavLoaderImpl.INSTANCE.getEventListenerList()) {
+      for (      CalDavEvent event : eventContainer.getEventList()) {
+        try {
+          notifier.eventRemoved(event);
+        }
+ catch (        Exception e) {
+          log.error("error while invoking listener",e);
+        }
+      }
+    }
+    ConcurrentHashMap<String,EventContainer> eventContainerMap=eventRuntime.getEventMap();
+    if (eventContainer != null) {
+      this.removeFromDisk(eventContainer);
+      log.debug("remove deleted event: {}",eventContainer.getEventId());
+      eventContainerMap.remove(eventContainer.getEventId());
+    }
+  }
+}

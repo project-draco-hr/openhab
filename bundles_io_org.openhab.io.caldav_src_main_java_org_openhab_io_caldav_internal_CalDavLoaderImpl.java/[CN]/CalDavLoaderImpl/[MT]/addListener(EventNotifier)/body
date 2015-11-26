@@ -1,0 +1,10 @@
+{
+  this.eventListenerList.add(notifier);
+  for (  CalendarRuntime calendarRuntime : EventStorage.getInstance().getEventCache().values()) {
+    for (    EventContainer eventContainer : calendarRuntime.getEventMap().values()) {
+      for (      CalDavEvent event : eventContainer.getEventList()) {
+        notifier.eventLoaded(event);
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  log.trace("quering events for filter: {}",query);
+  final ArrayList<CalDavEvent> eventList=new ArrayList<CalDavEvent>();
+  if (query.getCalendarIds() != null) {
+    for (    String calendarId : query.getCalendarIds()) {
+      final CalendarRuntime eventRuntime=EventStorage.getInstance().getEventCache().get(calendarId);
+      if (eventRuntime == null) {
+        log.debug("calendar id {} not found",calendarId);
+        continue;
+      }
+      for (      EventContainer eventContainer : eventRuntime.getEventMap().values()) {
+        for (        CalDavEvent calDavEvent : eventContainer.getEventList()) {
+          if (query.getFrom() != null) {
+            if (calDavEvent.getEnd().isBefore(query.getFrom())) {
+              continue;
+            }
+          }
+          if (query.getTo() != null) {
+            if (calDavEvent.getStart().isAfter(query.getTo())) {
+              continue;
+            }
+          }
+          eventList.add(calDavEvent);
+        }
+      }
+    }
+  }
+  if (query.getSort() != null) {
+    Collections.sort(eventList,new Comparator<CalDavEvent>(){
+      @Override public int compare(      CalDavEvent arg0,      CalDavEvent arg1){
+        if (query.getSort().equals(CalDavQuery.Sort.ASCENDING)) {
+          return (int)(arg0.getStart().compareTo(arg1.getStart()));
+        }
+ else         if (query.getSort().equals(CalDavQuery.Sort.DESCENDING)) {
+          return (int)(arg1.getStart().compareTo(arg0.getStart()));
+        }
+ else {
+          return 0;
+        }
+      }
+    }
+);
+  }
+  log.debug("return event list for {} with {} entries",query,eventList.size());
+  return eventList;
+}
