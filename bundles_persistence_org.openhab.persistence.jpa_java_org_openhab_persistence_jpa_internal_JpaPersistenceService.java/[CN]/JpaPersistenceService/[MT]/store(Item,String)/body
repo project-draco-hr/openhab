@@ -1,7 +1,7 @@
 {
   logger.debug("Storing item: " + item.getName());
   if (item.getState() instanceof UnDefType) {
-    logger.debug("This item is of undefined type. Cannot perist it!");
+    logger.debug("This item is of undefined type. Cannot persist it!");
     return;
   }
   if (!JpaConfiguration.isInitialized) {
@@ -11,7 +11,9 @@
   String name=(alias != null) ? alias : item.getName();
   JpaPersistentItem pItem=new JpaPersistentItem();
   try {
-    pItem.setValue(StateHelper.toString(item.getState()));
+    String newValue=StateHelper.toString(item.getState());
+    pItem.setValue(newValue);
+    logger.debug("Stored new value: {}",newValue);
   }
  catch (  Exception e1) {
     logger.error("Error on converting state value to string: {}",e1.getMessage());

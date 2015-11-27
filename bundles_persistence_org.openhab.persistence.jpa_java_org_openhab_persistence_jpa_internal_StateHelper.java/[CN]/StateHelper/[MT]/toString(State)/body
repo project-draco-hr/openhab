@@ -5,5 +5,9 @@
   if (state instanceof DecimalType) {
     return String.valueOf(((DecimalType)state).doubleValue());
   }
+  if (state instanceof PointType) {
+    PointType pType=(PointType)state;
+    return String.format(Locale.ENGLISH,"%f;%f;%f",pType.getLatitude().doubleValue(),pType.getLongitude().doubleValue(),pType.getAltitude().doubleValue());
+  }
   return state.toString();
 }
