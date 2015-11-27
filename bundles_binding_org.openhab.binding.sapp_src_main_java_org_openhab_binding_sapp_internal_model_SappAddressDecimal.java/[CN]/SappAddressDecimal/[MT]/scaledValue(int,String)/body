@@ -1,0 +1,16 @@
+{
+  double toScaleValue;
+  if (subAddress.equals(SappBindingConfigUtils.WORD_MASK_S) && value > 0x7FFF) {
+    toScaleValue=value - 0xFFFF - 1;
+  }
+ else   if (subAddress.equals(SappBindingConfigUtils.LOW_MASK_S) && value > 0x7F) {
+    toScaleValue=value - 0xFF - 1;
+  }
+ else   if (subAddress.equals(SappBindingConfigUtils.HIGH_MASK_S) && value > 0x7F) {
+    toScaleValue=value - 0xFF - 1;
+  }
+ else {
+    toScaleValue=value;
+  }
+  return (((double)(toScaleValue - originalMinScale)) * ((double)(maxScale - minScale)) / ((double)(originalMaxScale - originalMinScale))) + ((double)minScale);
+}
