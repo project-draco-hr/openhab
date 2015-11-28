@@ -5,8 +5,10 @@
     return;
   }
   State state=converter.convertFromValueToState(event.getValue());
-  if (((DecimalType)state).intValue() == 99) {
-    state=new PercentType(100);
+  if (converter instanceof IntegerPercentTypeConverter) {
+    if (((DecimalType)state).intValue() == 99) {
+      state=new PercentType(100);
+    }
   }
   if ("true".equalsIgnoreCase(arguments.get("invert_state"))) {
     if (converter instanceof IntegerUpDownTypeConverter) {
