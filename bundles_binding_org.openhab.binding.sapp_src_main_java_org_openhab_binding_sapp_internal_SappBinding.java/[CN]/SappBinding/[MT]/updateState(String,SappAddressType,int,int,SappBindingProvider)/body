@@ -29,7 +29,7 @@
         if (address.getAddressType() == sappAddressType && address.getPnmasId().equals(pnmasId) && addressToUpdate == address.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigNumberItem);
           int result=SappBindingConfigUtils.maskWithSubAddress(address.getSubAddress(),newState);
-          eventPublisher.postUpdate(itemName,new DecimalType(address.scaledValue(result)));
+          eventPublisher.postUpdate(itemName,new DecimalType(address.scaledValue(result,address.getSubAddress())));
         }
       }
  else       if (item instanceof RollershutterItem) {
@@ -46,7 +46,7 @@
         SappAddressDimmer statusAddress=sappBindingConfigDimmerItem.getStatus();
         if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigDimmerItem);
-          int result=(int)statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState));
+          int result=(int)statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState),statusAddress.getSubAddress());
           if (result <= PercentType.ZERO.intValue()) {
             eventPublisher.postUpdate(itemName,PercentType.ZERO);
           }
