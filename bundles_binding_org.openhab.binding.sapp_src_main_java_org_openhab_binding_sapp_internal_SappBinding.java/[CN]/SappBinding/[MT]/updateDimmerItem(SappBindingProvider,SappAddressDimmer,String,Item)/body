@@ -2,7 +2,7 @@
 switch (statusAddress.getAddressType()) {
 case VIRTUAL:
     try {
-      int result=(int)statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),getVirtualValue(provider,statusAddress.getPnmasId(),statusAddress.getAddress(),statusAddress.getSubAddress(),true)),statusAddress.getSubAddress());
+      int result=statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),getVirtualValue(provider,statusAddress.getPnmasId(),statusAddress.getAddress(),statusAddress.getSubAddress(),true)),statusAddress.getSubAddress()).round(new MathContext(0,RoundingMode.HALF_EVEN)).intValue();
       if (result <= PercentType.ZERO.intValue()) {
         eventPublisher.postUpdate(itemName,PercentType.ZERO);
       }

@@ -46,7 +46,7 @@
         SappAddressDimmer statusAddress=sappBindingConfigDimmerItem.getStatus();
         if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigDimmerItem);
-          int result=(int)statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState),statusAddress.getSubAddress());
+          int result=statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState),statusAddress.getSubAddress()).round(new MathContext(0,RoundingMode.HALF_EVEN)).intValue();
           if (result <= PercentType.ZERO.intValue()) {
             eventPublisher.postUpdate(itemName,PercentType.ZERO);
           }

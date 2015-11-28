@@ -1,16 +1,15 @@
 {
-  double toScaleValue;
+  BigDecimal toScaleValue=new BigDecimal(value);
   if (subAddress.equals(SappBindingConfigUtils.WORD_MASK_S) && value > 0x7FFF) {
-    toScaleValue=value - 0xFFFF - 1;
+    toScaleValue=(toScaleValue.subtract(new BigDecimal(0xFFFF))).subtract(BigDecimal.ONE);
   }
  else   if (subAddress.equals(SappBindingConfigUtils.LOW_MASK_S) && value > 0x7F) {
-    toScaleValue=value - 0xFF - 1;
+    toScaleValue=(toScaleValue.subtract(new BigDecimal(0xFF))).subtract(BigDecimal.ONE);
   }
  else   if (subAddress.equals(SappBindingConfigUtils.HIGH_MASK_S) && value > 0x7F) {
-    toScaleValue=value - 0xFF - 1;
+    toScaleValue=(toScaleValue.subtract(new BigDecimal(0xFF))).subtract(BigDecimal.ONE);
   }
- else {
-    toScaleValue=value;
-  }
-  return (((double)(toScaleValue - originalMinScale)) * ((double)(maxScale - minScale)) / ((double)(originalMaxScale - originalMinScale))) + ((double)minScale);
+  BigDecimal originalScale=new BigDecimal(originalMaxScale - originalMinScale);
+  BigDecimal scale=new BigDecimal(maxScale - minScale);
+  return toScaleValue.subtract(new BigDecimal(originalMinScale)).multiply(scale).divide(originalScale,MathContext.DECIMAL128).add(new BigDecimal(minScale));
 }

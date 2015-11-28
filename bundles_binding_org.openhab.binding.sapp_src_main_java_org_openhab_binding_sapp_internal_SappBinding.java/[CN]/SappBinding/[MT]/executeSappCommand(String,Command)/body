@@ -67,7 +67,7 @@ switch (address.getAddressType()) {
 case VIRTUAL:
 {
         int previousValue=getVirtualValue(provider,address.getPnmasId(),address.getAddress(),address.getSubAddress(),false);
-        int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((DecimalType)command).doubleValue()),previousValue);
+        int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((DecimalType)command).toBigDecimal()),previousValue);
         SappPnmas pnmas=provider.getPnmasMap().get(address.getPnmasId());
         SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
         sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),address.getAddress(),newValue);
@@ -182,7 +182,7 @@ switch (address.getAddressType()) {
 case VIRTUAL:
 {
 int previousValue=getVirtualValue(provider,address.getPnmasId(),address.getAddress(),address.getSubAddress(),false);
-int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((PercentType)command).doubleValue()),previousValue);
+int newValue=SappBindingConfigUtils.maskWithSubAddressAndSet(address.getSubAddress(),address.backScaledValue(((PercentType)command).toBigDecimal()),previousValue);
 SappPnmas pnmas=provider.getPnmasMap().get(address.getPnmasId());
 SappCentralExecuter sappCentralExecuter=SappCentralExecuter.getInstance();
 sappCentralExecuter.executeSapp7DCommand(pnmas.getIp(),pnmas.getPort(),address.getAddress(),newValue);
