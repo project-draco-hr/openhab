@@ -1,0 +1,54 @@
+{
+  String itemType=getItemType(item);
+  logger.debug("JDBC::storeItemValueProvider: item '{}' as Type '{}' in '{}' with state '{}'",item.getName(),itemType,vo.getTableName(),item.getState().toString());
+  logger.debug("JDBC::storeItemValueProvider: getState: '{}'",item.getState().toString());
+  if ("COLORITEM".equals(itemType)) {
+    vo.setValueTypes(getSqlTypes().get(itemType),java.lang.String.class);
+    vo.setValue(item.getState().toString());
+  }
+ else   if ("NUMBERITEM".equals(itemType)) {
+    String it=getSqlTypes().get(itemType);
+    if (it.toUpperCase().contains("DOUBLE")) {
+      vo.setValueTypes(it,java.lang.Double.class);
+      Number newVal=((DecimalType)item.getState());
+      logger.debug("JDBC::storeItemValueProvider: newVal.doubleValue: '{}'",newVal.doubleValue());
+      vo.setValue(newVal.doubleValue());
+    }
+ else     if (it.toUpperCase().contains("DECIMAL") || it.toUpperCase().contains("NUMERIC")) {
+      vo.setValueTypes(it,java.math.BigDecimal.class);
+      DecimalType newVal=((DecimalType)item.getState());
+      logger.debug("JDBC::storeItemValueProvider: newVal.toBigDecimal: '{}'",newVal.toBigDecimal());
+      vo.setValue(newVal.toBigDecimal());
+    }
+ else     if (it.toUpperCase().contains("INT")) {
+      vo.setValueTypes(it,java.lang.Integer.class);
+      Number newVal=((DecimalType)item.getState());
+      logger.debug("JDBC::storeItemValueProvider: newVal.intValue: '{}'",newVal.intValue());
+      vo.setValue(newVal.intValue());
+    }
+ else {
+      vo.setValueTypes(it,java.lang.String.class);
+      logger.warn("JDBC::storeItemValueProvider: item.getState().toString(): '{}'",item.getState().toString());
+      vo.setValue(item.getState().toString());
+    }
+  }
+ else   if ("ROLLERSHUTTERITEM".equals(itemType) || "DIMMERITEM".equals(itemType)) {
+    vo.setValueTypes(getSqlTypes().get(itemType),java.lang.Integer.class);
+    Number newVal=((DecimalType)item.getState());
+    logger.debug("JDBC::storeItemValueProvider: newVal.intValue: '{}'",newVal.intValue());
+    vo.setValue(newVal.intValue());
+  }
+ else   if ("DATETIMEITEM".equals(itemType)) {
+    vo.setValueTypes(getSqlTypes().get(itemType),java.sql.Date.class);
+    Calendar x=((DateTimeType)item.getState()).getCalendar();
+    java.sql.Date d=new java.sql.Date(x.getTimeInMillis());
+    logger.debug("JDBC::storeItemValueProvider: DateTimeItem: '{}'",d);
+    vo.setValue(d);
+  }
+ else {
+    vo.setValueTypes(getSqlTypes().get(itemType),java.lang.String.class);
+    logger.debug("JDBC::storeItemValueProvider: other: item.getState().toString(): '{}'",item.getState().toString());
+    vo.setValue(item.getState().toString());
+  }
+  return vo;
+}

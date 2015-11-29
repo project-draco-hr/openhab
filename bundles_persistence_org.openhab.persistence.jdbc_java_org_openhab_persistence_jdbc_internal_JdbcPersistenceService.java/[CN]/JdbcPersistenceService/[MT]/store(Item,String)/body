@@ -1,0 +1,13 @@
+{
+  if (item.getState() instanceof UnDefType) {
+    logger.warn("JDBC::store: ignore Item because it is UnDefType");
+    return;
+  }
+  if (!checkDBAcessability()) {
+    logger.warn("JDBC::store:  No connection to database. Can not persist item '{}'! Will retry connecting to database when error count:{} equals errReconnectThreshold:{}",item,errCnt,conf.getErrReconnectThreshold());
+    return;
+  }
+  long timerStart=System.currentTimeMillis();
+  storeItemValue(item);
+  logger.debug("JDBC: Stored item '{}' as '{}' in SQL database at {} in {}ms.",item.getName(),item.getState().toString(),(new java.util.Date()).toString(),System.currentTimeMillis() - timerStart);
+}

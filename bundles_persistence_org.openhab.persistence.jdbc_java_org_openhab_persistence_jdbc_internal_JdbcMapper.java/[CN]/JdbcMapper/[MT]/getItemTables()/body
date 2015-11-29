@@ -1,0 +1,9 @@
+{
+  logger.debug("JDBC::getItemTables");
+  long timerStart=System.currentTimeMillis();
+  ItemsVO vo=new ItemsVO();
+  vo.setJdbcUriDatabaseName(conf.getDbName());
+  List<ItemsVO> vol=conf.getDBDAO().doGetItemTables(vo);
+  logTime("getItemTables",timerStart,System.currentTimeMillis());
+  return vol;
+}

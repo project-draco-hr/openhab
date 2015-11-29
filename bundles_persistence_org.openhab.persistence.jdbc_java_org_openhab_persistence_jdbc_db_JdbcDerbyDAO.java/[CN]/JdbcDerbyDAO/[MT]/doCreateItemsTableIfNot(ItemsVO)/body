@@ -1,0 +1,10 @@
+{
+  boolean tableExists=doIfTableExists(vo);
+  if (tableExists) {
+    String sql=StringUtilsExt.replaceArrayMerge(SQL_CREATE_ITEMS_TABLE_IF_NOT,new String[]{"#itemsManageTable#","#colname#","#coltype#"},new String[]{vo.getItemsManageTable().toUpperCase(),vo.getColname(),vo.getColtype()});
+    logger.debug("JDBC::doCreateItemsTableIfNot tableExists={} therefore sql={}",sql);
+    Yank.execute(sql,null);
+  }
+ else   logger.debug("JDBC::doCreateItemsTableIfNot tableExists={}, did no CREATE TABLE",tableExists);
+  return vo;
+}

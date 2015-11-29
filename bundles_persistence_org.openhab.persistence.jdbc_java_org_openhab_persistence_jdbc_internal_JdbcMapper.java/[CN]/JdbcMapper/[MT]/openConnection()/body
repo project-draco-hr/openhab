@@ -1,0 +1,15 @@
+{
+  logger.debug("JDBC::openConnection isDriverAvailable: {}",conf.isDriverAvailable());
+  if (conf.isDriverAvailable() && !conf.isDbConnected()) {
+    logger.warn("JDBC::openConnection: setupDataSource.");
+    Yank.setupDataSource(conf.getHikariConfiguration());
+    conf.setDbConnected(true);
+    return true;
+  }
+ else   if (!conf.isDriverAvailable()) {
+    logger.warn("JDBC::openConnection: no driver available!");
+    initialized=false;
+    return false;
+  }
+  return true;
+}

@@ -1,0 +1,15 @@
+{
+  createItemsTableIfNot(new ItemsVO());
+  if (conf.getRebuildTableNames()) {
+    formatTableNames();
+  }
+ else {
+    List<ItemsVO> al;
+    errCnt=0;
+    al=getItemIDTableNames();
+    for (int i=0; i < al.size(); i++) {
+      String t=getTableName(al.get(i).getItemid(),al.get(i).getItemname());
+      sqlTables.put(al.get(i).getItemname(),t);
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  int rowId=0;
+  ItemsVO isvo;
+  ItemVO ivo;
+  String itemName=item.getName();
+  String tableName=sqlTables.get(itemName);
+  if (tableName != null) {
+    return tableName;
+  }
+  logger.debug("JDBC::getTable: no Table found for itemName={} in sqlTables",itemName);
+  isvo=new ItemsVO();
+  isvo.setItemname(itemName);
+  isvo=createNewEntryInItemsTable(isvo);
+  rowId=isvo.getItemid();
+  if (rowId == 0) {
+    logger.error("JDBC::getTable: Creating table for item '" + itemName + "' failed.");
+  }
+  logger.debug("JDBC::getTable: getTableName with rowId={} itemName={}",rowId,itemName);
+  tableName=getTableName(rowId,itemName);
+  if (tableName == null) {
+    logger.error("JDBC::getTable: tableName was null, could not create a table for item '{}'",itemName);
+    return null;
+  }
+  String dataType=conf.getDBDAO().getDataType(item);
+  ivo=new ItemVO(tableName,itemName);
+  ivo.setDbType(dataType);
+  ivo=createItemTable(ivo);
+  logger.debug("JDBC::getTable: Table created for item '{}' with dataType {} in SQL database.",itemName,dataType);
+  sqlTables.put(itemName,tableName);
+  if (sqlTables.get(itemName) == null) {
+    logger.error("JDBC::getTable: Item '{}' was not added to the table - removing index",itemName);
+    isvo=new ItemsVO();
+    isvo.setItemname(itemName);
+    deleteItemsEntry(isvo);
+  }
+  return tableName;
+}

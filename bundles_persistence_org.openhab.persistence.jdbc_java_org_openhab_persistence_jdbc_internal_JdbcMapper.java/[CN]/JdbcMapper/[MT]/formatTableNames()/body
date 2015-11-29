@@ -1,0 +1,45 @@
+{
+  boolean tmpinit=initialized;
+  if (tmpinit)   initialized=false;
+  List<ItemsVO> al;
+  HashMap<Integer,String> tableIds=new HashMap<Integer,String>();
+  al=getItemIDTableNames();
+  for (int i=0; i < al.size(); i++) {
+    String t=getTableName(al.get(i).getItemid(),al.get(i).getItemname());
+    sqlTables.put(al.get(i).getItemname(),t);
+    tableIds.put(al.get(i).getItemid(),t);
+  }
+  al=getItemTables();
+  String oldName="";
+  String newName="";
+  List<ItemVO> oldNewTablenames=new ArrayList<ItemVO>();
+  for (int i=0; i < al.size(); i++) {
+    int id=-1;
+    oldName=al.get(i).getTable_name();
+    logger.warn("JDBC::formatTableNames: found Table Name= {}",oldName);
+    if (oldName.startsWith(conf.getTableNamePrefix()) && !oldName.contains("_")) {
+      id=Integer.parseInt(oldName.substring(conf.getTableNamePrefix().length()));
+      logger.warn("JDBC::formatTableNames: found Table with Prefix '{}' Name= {} id={}",conf.getTableNamePrefix(),oldName,(id));
+    }
+ else     if (oldName.contains("_")) {
+      id=Integer.parseInt(oldName.substring(oldName.lastIndexOf("_") + 1));
+      logger.warn("JDBC::formatTableNames: found Table Name= {} id={}",oldName,(id));
+    }
+    logger.warn("JDBC::formatTableNames: found Table id= {}",id);
+    newName=tableIds.get(id);
+    logger.warn("JDBC::formatTableNames: found Table newName= {}",newName);
+    if (newName != null) {
+      if (!oldName.equalsIgnoreCase(newName)) {
+        oldNewTablenames.add(new ItemVO(oldName,newName));
+        logger.warn("JDBC::formatTableNames: Table '{}' will be renamed to '{}'",oldName,newName);
+      }
+ else       logger.warn("JDBC::formatTableNames: Table oldName='{}' newName='{}' nothing to rename",oldName,newName);
+    }
+ else {
+      logger.error("JDBC::formatTableNames: Table '{}' could NOT be renamed to '{}'",oldName,newName);
+      break;
+    }
+  }
+  updateItemTableNames(oldNewTablenames);
+  initialized=tmpinit;
+}

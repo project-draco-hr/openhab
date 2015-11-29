@@ -1,0 +1,10 @@
+{
+  logger.debug("JDBC::updateItemTableNamesProvider namesList.size = {}",namesList.size());
+  String queryString="";
+  for (int i=0; i < namesList.size(); i++) {
+    ItemVO it=namesList.get(i);
+    queryString+="ALTER TABLE " + it.getTableName() + " RENAME TO "+ it.getNewTableName()+ ";";
+  }
+  logger.debug("JDBC::query queryString = {}",queryString);
+  return queryString;
+}

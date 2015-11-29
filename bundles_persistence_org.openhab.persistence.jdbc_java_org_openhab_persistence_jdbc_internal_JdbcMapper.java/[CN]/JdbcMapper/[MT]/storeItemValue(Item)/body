@@ -1,0 +1,13 @@
+{
+  logger.debug("JDBC::storeItemValue: Item={}",item.toString());
+  String tableName=getTable(item);
+  if (tableName == null) {
+    logger.error("JDBC::store: Unable to store item '{}'.",item.getName());
+    return item;
+  }
+  long timerStart=System.currentTimeMillis();
+  conf.getDBDAO().doStoreItemValue(item,new ItemVO(tableName,null));
+  logTime("storeItemValue",timerStart,System.currentTimeMillis());
+  errCnt=0;
+  return item;
+}

@@ -1,0 +1,8 @@
+{
+  logger.debug("JDBC::createNewEntryInItemsTable");
+  long timerStart=System.currentTimeMillis();
+  Long i=conf.getDBDAO().doCreateNewEntryInItemsTable(vo);
+  vo.setItemid(i.intValue());
+  logTime("doCreateNewEntryInItemsTable",timerStart,System.currentTimeMillis());
+  return vo;
+}
