@@ -1,0 +1,5 @@
+{
+  BigDecimal originalScale=new BigDecimal(originalMaxScale - originalMinScale);
+  BigDecimal scale=new BigDecimal(maxScale - minScale);
+  return value.subtract(new BigDecimal(minScale)).multiply(originalScale).divide(scale,MathContext.DECIMAL128).add(new BigDecimal(originalMinScale)).round(new MathContext(0,RoundingMode.HALF_EVEN)).intValue();
+}
