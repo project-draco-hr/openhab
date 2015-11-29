@@ -10,7 +10,7 @@
   if (sensorType != null && SensorType.getSensorType(Integer.parseInt(sensorType)) != sensorEvent.getSensorType()) {
     return;
   }
-  Object val=event.getValue();
+  BigDecimal val=(BigDecimal)event.getValue();
   if (sensorScale != null && Integer.parseInt(sensorScale) != sensorEvent.getSensorScale()) {
     int intType=Integer.parseInt(sensorType);
     SensorType senType=SensorType.getSensorType(intType);
@@ -21,12 +21,10 @@
 switch (senType) {
 case TEMPERATURE:
         if (sensorEvent.getSensorScale() == 0) {
-          double c=((BigDecimal)val).doubleValue();
-          val=new BigDecimal((c * 9.0 / 5.0) + 32.0);
+          val=val.multiply(ONE_POINT_EIGHT).add(THIRTY_TWO);
         }
  else         if (sensorEvent.getSensorScale() == 1) {
-          double f=((BigDecimal)val).doubleValue();
-          val=new BigDecimal((f - 32.0) * 5.0 / 9.0);
+          val=val.subtract(THIRTY_TWO).divide(ONE_POINT_EIGHT,MathContext.DECIMAL32);
         }
       break;
 default :
