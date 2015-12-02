@@ -1,0 +1,25 @@
+{
+  String hwid=(String)config.get(SiteWhereConfiguration.CONFIG_DEFAULT_HARDWARE_ID);
+  if (hwid != null) {
+    setDefaultHardwareId(hwid);
+  }
+  String spec=(String)config.get(SiteWhereConfiguration.CONFIG_SPECIFICATION_TOKEN);
+  if (spec != null) {
+    setDeviceSpecificationToken(spec);
+  }
+  Connection conn=new Connection();
+  String host=(String)config.get(SiteWhereConfiguration.CONFIG_MQTT_HOST);
+  if (host != null) {
+    conn.setMqttHost(host);
+  }
+  String port=(String)config.get(SiteWhereConfiguration.CONFIG_MQTT_PORT);
+  if (port != null) {
+    try {
+      conn.setMqttPort(Integer.parseInt(port));
+    }
+ catch (    NumberFormatException e) {
+      logger.warn("SiteWhere MQTT port was non-numeric: " + port);
+    }
+  }
+  setConnection(conn);
+}
