@@ -4,7 +4,11 @@
     logger.info("Stopped CometVisu API");
   }
   if (discoveryService != null) {
-    discoveryService.unregisterService(getDefaultServiceDescription());
-    discoveryService.unregisterService(getSSLServiceDescription());
+    if (httpPort > 0) {
+      discoveryService.unregisterService(getDefaultServiceDescription());
+    }
+    if (httpSSLPort > 0) {
+      discoveryService.unregisterService(getSSLServiceDescription());
+    }
   }
 }
