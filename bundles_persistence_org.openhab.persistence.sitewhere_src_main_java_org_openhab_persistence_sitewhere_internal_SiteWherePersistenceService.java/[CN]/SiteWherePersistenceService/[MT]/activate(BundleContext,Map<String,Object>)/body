@@ -1,0 +1,15 @@
+{
+  LOGGER.trace("Activate method called on persistence service.");
+  if (!isConfigured()) {
+    SiteWhereConfiguration configuration=new SiteWhereConfiguration(config,LOGGER);
+    setConfiguration(configuration);
+    try {
+      if (validateSiteWhereAgent()) {
+        setConfigured(true);
+      }
+    }
+ catch (    Throwable t) {
+      LOGGER.error("Error connecting to SiteWhere.",t);
+    }
+  }
+}

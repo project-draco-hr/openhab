@@ -1,0 +1,19 @@
+{
+switch (ack.getState()) {
+case ALREADY_REGISTERED:
+{
+      LOGGER.info("SiteWhere found existing registration for openHAB device.");
+      break;
+    }
+case NEW_REGISTRATION:
+{
+    LOGGER.info("SiteWhere created a new registration for openHAB device.");
+    break;
+  }
+case REGISTRATION_ERROR:
+{
+  LOGGER.error("SiteWhere was unable to register openHAB device. " + ack.getErrorMessage());
+  break;
+}
+}
+}

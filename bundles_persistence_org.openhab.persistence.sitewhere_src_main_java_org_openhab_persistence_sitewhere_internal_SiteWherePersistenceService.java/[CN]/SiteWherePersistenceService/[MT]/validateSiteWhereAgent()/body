@@ -1,0 +1,26 @@
+{
+  LOGGER.info("About to connect using SiteWhere Agent...");
+  LOGGER.info("Sending event to device with hardware id: " + getConfiguration().getDefaultHardwareId());
+  LOGGER.info("If no device registered, using specification: " + getConfiguration().getDeviceSpecificationToken());
+  LOGGER.info("MQTT Host: " + getConfiguration().getConnection().getMqttHost());
+  LOGGER.info("MQTT Port: " + getConfiguration().getConnection().getMqttPort());
+  Properties props=new Properties();
+  props.setProperty(IAgentConfiguration.COMMAND_PROCESSOR_CLASSNAME,"");
+  props.setProperty(IAgentConfiguration.DEVICE_SPECIFICATION_TOKEN,getConfiguration().getDeviceSpecificationToken());
+  props.setProperty(IAgentConfiguration.DEVICE_HARDWARE_ID,getConfiguration().getDefaultHardwareId());
+  props.setProperty(IAgentConfiguration.MQTT_HOSTNAME,getConfiguration().getConnection().getMqttHost());
+  props.setProperty(IAgentConfiguration.MQTT_PORT,String.valueOf(getConfiguration().getConnection().getMqttPort()));
+  this.agent=new Agent();
+  agent.load(props);
+  this.sitewhere=new OpenHabCommandProcessor(eventPublisher);
+  try {
+    agent.start(sitewhere);
+    setAgentConnected(true);
+    return true;
+  }
+ catch (  SiteWhereAgentException e) {
+    setAgentConnected(false);
+    LOGGER.error("Unable to start SiteWhere MQTT agent.",e);
+    return false;
+  }
+}

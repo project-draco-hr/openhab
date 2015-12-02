@@ -1,0 +1,36 @@
+{
+  if (isAgentConnected()) {
+    String hwid=getConfiguration().getDefaultHardwareId();
+    try {
+      State state=item.getState();
+      if (state instanceof PercentType) {
+        addDeviceMeasurement(hwid,item,((PercentType)state).toBigDecimal().doubleValue());
+      }
+ else       if (state instanceof DecimalType) {
+        addDeviceMeasurement(hwid,item,((DecimalType)state).toBigDecimal().doubleValue());
+      }
+ else       if (state instanceof DateTimeType) {
+        addDeviceAlert(hwid,item,(DateTimeType)state);
+      }
+ else       if (state instanceof OnOffType) {
+        addDeviceAlert(hwid,item,(OnOffType)state);
+      }
+ else       if (state instanceof OpenClosedType) {
+        addDeviceAlert(hwid,item,(OpenClosedType)state);
+      }
+ else       if (state instanceof StringType) {
+        addDeviceAlert(hwid,item,(StringType)state);
+      }
+ else       if (state instanceof PointType) {
+        addDeviceLocation(hwid,item,(PointType)state);
+      }
+ else {
+        LOGGER.debug("Unable to store item of type: " + item.getState().getClass().getSimpleName());
+        return;
+      }
+    }
+ catch (    SiteWhereAgentException e) {
+      LOGGER.warn("Unable to store item: " + item.getName(),e);
+    }
+  }
+}
