@@ -17,11 +17,11 @@
     }
     value=StringUtils.replace(value,"${itemName}",getItemName());
     if (getMessageType().equals(MessageType.COMMAND)) {
-      Command command=getCommand(value);
+      Command command=getCommand(value,this.acceptedCommandTypes);
       eventPublisher.postCommand(getItemName(),command);
     }
  else {
-      State state=getState(value);
+      State state=getState(value,this.acceptedDataTypes);
       eventPublisher.postUpdate(getItemName(),state);
     }
   }

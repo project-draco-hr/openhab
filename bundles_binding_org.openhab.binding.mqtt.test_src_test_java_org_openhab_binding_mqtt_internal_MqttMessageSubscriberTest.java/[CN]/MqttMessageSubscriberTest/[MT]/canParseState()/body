@@ -1,7 +1,11 @@
 {
+  LocationItem locationItem=new LocationItem("LocationItem");
+  StringItem stringItem=new StringItem("StringItem");
+  SwitchItem switchItem=new SwitchItem("SwitchItem");
   MqttMessageSubscriber subscriber=new MqttMessageSubscriber("mybroker:/mytopic:state:default");
-  assertEquals(OnOffType.ON,subscriber.getState("ON"));
-  assertEquals(StringType.valueOf(""),subscriber.getState(""));
-  assertEquals(StringType.valueOf("test"),subscriber.getState("test"));
-  assertEquals(StringType.valueOf("{\"person\"{\"name\":\"me\"}}"),subscriber.getState("{\"person\"{\"name\":\"me\"}}"));
+  assertEquals(OnOffType.ON,subscriber.getState("ON",switchItem.getAcceptedDataTypes()));
+  assertEquals(StringType.valueOf(""),subscriber.getState("",stringItem.getAcceptedDataTypes()));
+  assertEquals(StringType.valueOf("test"),subscriber.getState("test",stringItem.getAcceptedDataTypes()));
+  assertEquals(StringType.valueOf("{\"person\"{\"name\":\"me\"}}"),subscriber.getState("{\"person\"{\"name\":\"me\"}}",stringItem.getAcceptedDataTypes()));
+  assertEquals(PointType.valueOf("53.3239919,-6.5258807"),subscriber.getState(PointType.valueOf("53.3239919,-6.5258807").toString(),locationItem.getAcceptedDataTypes()));
 }
