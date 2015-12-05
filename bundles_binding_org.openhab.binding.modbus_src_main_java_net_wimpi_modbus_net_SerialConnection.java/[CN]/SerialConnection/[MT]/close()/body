@@ -2,15 +2,17 @@
   if (!m_Open) {
     return;
   }
-  if (m_SerialPort != null) {
-    try {
-      m_Transport.close();
-      m_SerialIn.close();
-    }
- catch (    IOException e) {
-      logger.error(e.getMessage());
-    }
-    m_SerialPort.close();
+  try {
+    m_Transport.close();
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
+  }
+  try {
+    m_SerialIn.close();
+  }
+ catch (  IOException e) {
+    logger.error(e.getMessage());
   }
   m_Open=false;
 }

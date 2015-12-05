@@ -1,8 +1,11 @@
 {
-  if (!m_Connected) {
+  if (!isConnected()) {
     logger.debug("connect()");
     m_Socket=new Socket(m_Address,m_Port);
     setTimeout(m_Timeout);
+    m_Socket.setReuseAddress(true);
+    m_Socket.setSoLinger(true,1);
+    m_Socket.setKeepAlive(true);
     prepareTransport();
     m_Connected=true;
   }
