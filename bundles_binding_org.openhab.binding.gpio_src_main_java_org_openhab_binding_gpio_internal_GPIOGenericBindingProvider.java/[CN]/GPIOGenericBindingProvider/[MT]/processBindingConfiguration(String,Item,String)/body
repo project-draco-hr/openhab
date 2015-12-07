@@ -27,6 +27,16 @@
         throw new BindingConfigParseException("Unsupported, not numeric value for pin number (" + value + ") in configuration string '"+ bindingConfig+ "'");
       }
     }
+ else     if (key.compareToIgnoreCase("force") == 0) {
+      config.pinForce=false;
+      if (value.compareToIgnoreCase("yes") == 0 || value.compareToIgnoreCase("true") == 0) {
+        config.pinForce=true;
+      }
+ else       if (value.compareToIgnoreCase("no") != 0 && value.compareToIgnoreCase("false") != 0) {
+        logger.error("Unsupported value for force (" + value + ") in configuration string '"+ bindingConfig+ "'");
+        throw new BindingConfigParseException("Unsupported value for force (" + value + ") in configuration string '"+ bindingConfig+ "'");
+      }
+    }
  else     if (key.compareToIgnoreCase("debounce") == 0) {
       try {
         config.debounceInterval=Long.parseLong(value);
