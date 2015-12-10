@@ -1,0 +1,14 @@
+{
+synchronized (pvItem) {
+    State lvNewState=(State)pvNewType;
+    State lvCachedState=ivCacheItemStates.get(pvItem.getName());
+    if (!ivPostOnlyChangedValues || !lvNewState.equals(lvCachedState)) {
+      ivCacheItemStates.remove(pvItem.getName());
+      ivCacheItemStates.put(pvItem.getName(),lvNewState);
+      eventPublisher.postUpdate(pvItem.getName(),lvNewState);
+    }
+ else {
+      logger.debug("didn't post update to eventPublisher, because state did not changed for item " + pvItem.getName());
+    }
+  }
+}
