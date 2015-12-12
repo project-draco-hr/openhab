@@ -8,15 +8,25 @@
     logger.debug("Setting up Event Bus State Subscriber for topic {}",topic);
     stateSubscriber=new MqttMessageSubscriber(brokerName + ":" + topic+ ":state:default"){
       @Override public void processMessage(      String topic,      byte[] message){
+        String itemName=getItemNameFromTopic(getTopic(),topic);
+        if (itemRegistry == null) {
+          logger.error("Unable to lookup item {} for update; dropping",itemName);
+          return;
+        }
         State state;
         try {
-          state=getState(new String(message));
+          Item item=itemRegistry.getItem(itemName);
+          state=getState(new String(message),item.getAcceptedDataTypes());
         }
- catch (        Exception e) {
+ catch (        ItemNotFoundException e) {
+          logger.debug("Unable to find item {} for update; dropping",itemName);
+          return;
+        }
+catch (        Exception e) {
           logger.error("Error parsing state from message.",e);
           return;
         }
-        eventPublisher.postUpdate(getItemNameFromTopic(getTopic(),topic),state);
+        eventPublisher.postUpdate(itemName,state);
       }
     }
 ;

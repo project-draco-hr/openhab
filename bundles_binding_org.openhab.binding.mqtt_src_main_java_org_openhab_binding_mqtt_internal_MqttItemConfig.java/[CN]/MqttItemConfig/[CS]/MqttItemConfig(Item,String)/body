@@ -10,7 +10,7 @@
       configContent=config.substring(firstPos + 1,lastPos);
     }
     if (type.equals("<")) {
-      MqttMessageSubscriber subscribeConfig=new MqttMessageSubscriber(configContent);
+      MqttMessageSubscriber subscribeConfig=new MqttMessageSubscriber(configContent,item);
       subscribeConfigurations.add(subscribeConfig);
     }
  else     if (type.equals(">")) {
@@ -18,8 +18,8 @@
       publishConfigurations.add(publishConfig);
     }
  else {
-      throw new BindingConfigParseException("Invalid mqtt binding configuration '" + configContent + "' for item "+ itemName);
+      throw new BindingConfigParseException("Invalid mqtt binding configuration '" + configContent + "' for item "+ item.getName());
     }
   }
-  logger.debug("Loaded MQTT config for item '{}' : {} subscribers, {} publishers",new Object[]{itemName,subscribeConfigurations.size(),publishConfigurations.size()});
+  logger.debug("Loaded MQTT config for item '{}' : {} subscribers, {} publishers",new Object[]{item.getName(),subscribeConfigurations.size(),publishConfigurations.size()});
 }

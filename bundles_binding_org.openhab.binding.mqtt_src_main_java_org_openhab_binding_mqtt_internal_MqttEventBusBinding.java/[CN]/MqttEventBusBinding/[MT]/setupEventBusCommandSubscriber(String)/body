@@ -8,15 +8,25 @@
     logger.debug("Setting up Event Bus Command Subscriber for topic {}",topic);
     commandSubscriber=new MqttMessageSubscriber(brokerName + ":" + topic+ ":command:default"){
       @Override public void processMessage(      String topic,      byte[] message){
+        String itemName=getItemNameFromTopic(getTopic(),topic);
+        if (itemRegistry == null) {
+          logger.error("Unable to lookup item {} for command; dropping",itemName);
+          return;
+        }
         Command command;
         try {
-          command=getCommand(new String(message));
+          Item item=itemRegistry.getItem(itemName);
+          command=getCommand(new String(message),item.getAcceptedCommandTypes());
         }
- catch (        Exception e) {
+ catch (        ItemNotFoundException e) {
+          logger.debug("Unable to find item {} for command; dropping",itemName);
+          return;
+        }
+catch (        Exception e) {
           logger.error("Error parsing command from message.",e);
           return;
         }
-        eventPublisher.postCommand(getItemNameFromTopic(getTopic(),topic),command);
+        eventPublisher.postCommand(itemName,command);
       }
     }
 ;
