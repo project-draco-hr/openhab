@@ -1,13 +1,14 @@
 {
   Reader reader=null;
-  this.logger.info("get devices...");
+  logger.info("get devices...");
   try {
+    String url=API_URL + "devices" + "?authToken="+ this.authToken;
     HttpURLConnection httpURLConnection;
-    httpURLConnection=(HttpURLConnection)new URL(API_URL + "devices" + "?authToken="+ this.authToken).openConnection();
+    httpURLConnection=(HttpURLConnection)new URL(url).openConnection();
     httpURLConnection.connect();
     int responseCode=httpURLConnection.getResponseCode();
     if (responseCode != HttpURLConnection.HTTP_OK) {
-      this.logger.error("Get devices http code: '{}'",responseCode);
+      logger.error("Get devices http code: '{}'",responseCode);
       return new ArrayList<MystromDevice>();
     }
     InputStream inputStream=httpURLConnection.getInputStream();
@@ -15,15 +16,15 @@
     JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
     String status=jsonObject.get("status").getAsString();
     if (!status.equals("ok")) {
-      this.logger.error("Error while getting devices: '{}'",status);
+      logger.error("Error while getting devices: '{}'",status);
       return new ArrayList<MystromDevice>();
     }
     GetDevicesResult result=gson.fromJson(jsonObject,GetDevicesResult.class);
-    this.logger.info("Devices discovery sucessfull, found '{}' devices",result.devices.size());
+    logger.info("Devices discovery sucessfull, found '{}' devices",result.devices.size());
     return result.devices;
   }
  catch (  Exception ex) {
-    this.logger.error("Error getting devices: '{}'",ex.toString());
+    logger.error("Error getting devices: '{}'",ex.toString());
     return new ArrayList<MystromDevice>();
   }
  finally {

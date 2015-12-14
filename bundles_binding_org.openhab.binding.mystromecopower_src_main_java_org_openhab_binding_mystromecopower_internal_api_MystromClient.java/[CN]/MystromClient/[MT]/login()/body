@@ -1,9 +1,10 @@
 {
   Reader reader=null;
-  this.logger.debug("Do login for user '{}'",this.userName);
+  logger.debug("Do login for user '{}'",this.userName);
   try {
+    String url=API_URL + "auth?email=" + this.userName+ "&password="+ this.password;
     HttpURLConnection httpURLConnection;
-    httpURLConnection=(HttpURLConnection)new URL(API_URL + "auth?email=" + this.userName+ "&password="+ this.password).openConnection();
+    httpURLConnection=(HttpURLConnection)new URL(url).openConnection();
     InputStream inputStream=httpURLConnection.getInputStream();
     reader=new InputStreamReader(inputStream,"UTF-8");
     JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
@@ -11,12 +12,12 @@
     if (!status.equals("ok")) {
       return false;
     }
-    this.logger.debug("Logon successfull");
-    this.authToken=jsonObject.get("authToken").getAsString();
+    logger.debug("Logon successfull");
+    authToken=jsonObject.get("authToken").getAsString();
     return true;
   }
  catch (  Exception ex) {
-    this.logger.error("Error do logon: '{}'",ex.toString());
+    logger.error("Error do logon: '{}'",ex.toString());
     return false;
   }
  finally {
