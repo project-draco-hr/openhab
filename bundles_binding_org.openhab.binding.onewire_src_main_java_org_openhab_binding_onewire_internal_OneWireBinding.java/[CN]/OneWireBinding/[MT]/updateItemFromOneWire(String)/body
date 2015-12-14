@@ -11,27 +11,21 @@
     if (lvReadValue != null) {
       Type lvNewType=pvBindingConfig.convertReadValueToType(lvReadValue);
       if (lvItem != null) {
-synchronized (lvItem) {
-          State lvNewState=(State)lvNewType;
-          State lvCachedState=ivCacheItemStates.get(pvItemName);
-          if (!ivPostOnlyChangedValues || !lvNewState.equals(lvCachedState)) {
-            ivCacheItemStates.remove(pvItemName);
-            ivCacheItemStates.put(pvItemName,lvNewState);
-            eventPublisher.postUpdate(lvItem.getName(),lvNewState);
-          }
- else {
-            logger.debug("didn't post update to eventPublisher, because state did not changed for item " + pvItemName);
-          }
-        }
+        postUpdate(lvItem,lvNewType);
       }
  else {
         logger.error("There is no Item for ItemName=" + pvItemName);
       }
     }
  else {
-      logger.error("Set Item for itemName=" + pvItemName + " to Undefined, because the readvalue is null");
-      ivCacheItemStates.remove(pvItemName);
-      eventPublisher.postUpdate(lvItem.getName(),UnDefType.UNDEF);
+      String lvLogText="Set Item for itemName=" + pvItemName + " to Undefined, because the readvalue is null";
+      if (pvBindingConfig.isIgnoreReadErrors()) {
+        logger.debug(lvLogText);
+      }
+ else {
+        logger.error(lvLogText);
+      }
+      postUpdate(lvItem,UnDefType.UNDEF);
     }
   }
 }
