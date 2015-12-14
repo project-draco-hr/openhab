@@ -102,7 +102,16 @@
  else     if (deviceConfig.getCommandType().equals(BindingType.rgb)) {
       logger.debug("milight: item is of type rgb");
       if (command instanceof HSBType) {
-        sendColor(command,bridgeId,bulb);
+        HSBType hsbCommand=(HSBType)command;
+        DecimalType saturation=hsbCommand.getSaturation();
+        if (saturation.equals(0)) {
+          sendOn(bulb,bridgeId);
+          Thread.sleep(100);
+          sendWhiteMode(bulb,bridgeId);
+        }
+ else {
+          sendColor(command,bridgeId,bulb);
+        }
       }
       if (command instanceof PercentType) {
         sendPercent(bulb,rgbwSteps,bridgeId,(PercentType)command,BindingType.brightness);
