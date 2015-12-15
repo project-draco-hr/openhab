@@ -1,0 +1,14 @@
+{
+  if (tokenFile == null) {
+    File tokenPath=null;
+    String userdata=System.getProperty("smarthome.userdata");
+    if (StringUtils.isEmpty(userdata)) {
+      tokenPath=new File("etc");
+    }
+ else {
+      tokenPath=new File(userdata);
+    }
+    tokenFile=new File(tokenPath,TOKEN_FILE);
+  }
+  return tokenFile;
+}
