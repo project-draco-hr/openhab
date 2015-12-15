@@ -4,6 +4,12 @@
       @Override public void updateReceived(      String command){
         processUpdate(command);
       }
+      @Override public void listenerConnected(){
+        getInitialState();
+      }
+      @Override public void listenerDisconnected(){
+        sendUpdate(DenonProperty.POWER.getCode(),OnOffType.OFF);
+      }
     }
 );
     listener.start();
