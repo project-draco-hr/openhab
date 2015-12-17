@@ -1,0 +1,31 @@
+{
+  if (properties == null) {
+    return;
+  }
+  Map<String,SerialDeviceConfig> configs=prepareConfiguration(properties);
+  for (  Map.Entry<String,SerialDeviceConfig> config : configs.entrySet()) {
+    if (serialDevices.containsKey(config.getKey())) {
+      SerialDevice device=serialDevices.get(config.getKey());
+      if (!config.equals(device.getConfig())) {
+        device.close();
+        prepareSerialDevice(config.getValue());
+      }
+    }
+ else {
+      prepareSerialDevice(config.getValue());
+    }
+  }
+  for (  String name : serialDevices.keySet()) {
+    if (!configs.containsKey(name)) {
+      SerialDevice device=serialDevices.get(name);
+      device.close();
+      serialDevices.remove(name);
+    }
+  }
+  if (serialDevices.size() > 0) {
+    setProperlyConfigured(true);
+  }
+ else {
+    setProperlyConfigured(false);
+  }
+}

@@ -10,7 +10,10 @@
           if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
             logger.debug("found binding to update {}",sappBindingConfigSwitchItem);
             int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
-            eventPublisher.postUpdate(itemName,result == statusAddress.getOnValue() ? OnOffType.ON : OnOffType.OFF);
+            State stateToSet=result == statusAddress.getOnValue() ? OnOffType.ON : OnOffType.OFF;
+            if (!stateToSet.equals(item.getState())) {
+              eventPublisher.postUpdate(itemName,stateToSet);
+            }
           }
         }
       }
@@ -20,7 +23,10 @@
         if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigContactItem);
           int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
-          eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED);
+          State stateToSet=result == statusAddress.getOpenValue() ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+          if (!stateToSet.equals(item.getState())) {
+            eventPublisher.postUpdate(itemName,stateToSet);
+          }
         }
       }
  else       if (item instanceof NumberItem) {
@@ -29,7 +35,10 @@
         if (address.getAddressType() == sappAddressType && address.getPnmasId().equals(pnmasId) && addressToUpdate == address.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigNumberItem);
           int result=SappBindingConfigUtils.maskWithSubAddress(address.getSubAddress(),newState);
-          eventPublisher.postUpdate(itemName,new DecimalType(address.scaledValue(result,address.getSubAddress())));
+          State stateToSet=new DecimalType(address.scaledValue(result,address.getSubAddress()));
+          if (!stateToSet.equals(item.getState())) {
+            eventPublisher.postUpdate(itemName,stateToSet);
+          }
         }
       }
  else       if (item instanceof RollershutterItem) {
@@ -38,7 +47,10 @@
         if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigRollershutterItem);
           int result=SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState);
-          eventPublisher.postUpdate(itemName,result == statusAddress.getOpenValue() ? PercentType.HUNDRED : (result == statusAddress.getClosedValue() ? PercentType.ZERO : PercentType.valueOf("50")));
+          State stateToSet=result == statusAddress.getOpenValue() ? PercentType.HUNDRED : (result == statusAddress.getClosedValue() ? PercentType.ZERO : PercentType.valueOf("50"));
+          if (!stateToSet.equals(item.getState())) {
+            eventPublisher.postUpdate(itemName,stateToSet);
+          }
         }
       }
  else       if (item instanceof DimmerItem) {
@@ -47,14 +59,18 @@
         if (statusAddress.getAddressType() == sappAddressType && statusAddress.getPnmasId().equals(pnmasId) && addressToUpdate == statusAddress.getAddress()) {
           logger.debug("found binding to update {}",sappBindingConfigDimmerItem);
           int result=statusAddress.scaledValue(SappBindingConfigUtils.maskWithSubAddress(statusAddress.getSubAddress(),newState),statusAddress.getSubAddress()).round(new MathContext(0,RoundingMode.HALF_EVEN)).intValue();
+          State stateToSet;
           if (result <= PercentType.ZERO.intValue()) {
-            eventPublisher.postUpdate(itemName,PercentType.ZERO);
+            stateToSet=PercentType.ZERO;
           }
  else           if (result >= PercentType.HUNDRED.intValue()) {
-            eventPublisher.postUpdate(itemName,PercentType.HUNDRED);
+            stateToSet=PercentType.HUNDRED;
           }
  else {
-            eventPublisher.postUpdate(itemName,PercentType.valueOf(String.valueOf(result)));
+            stateToSet=PercentType.valueOf(String.valueOf(result));
+          }
+          if (!stateToSet.equals(item.getState())) {
+            eventPublisher.postUpdate(itemName,stateToSet);
           }
         }
       }

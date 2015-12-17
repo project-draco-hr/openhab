@@ -1,0 +1,14 @@
+{
+  for (  Map.Entry<String,BindingConfig> bindingConfig : bindingConfigs.entrySet()) {
+    if (bindingConfig.getValue().equals(config)) {
+      for (      Map.Entry<String,Set<Item>> context : contextMap.entrySet()) {
+        for (        Item item : context.getValue()) {
+          if (item.getName().equals(bindingConfig.getKey())) {
+            return item;
+          }
+        }
+      }
+    }
+  }
+  return null;
+}

@@ -8,15 +8,7 @@
       MPDPlayer player=daemon.getMPDPlayer();
       MPDSong curSong=player.getCurrentSong();
       MPDSong curSongCache=songInfoCache.get(playerId);
-      if (curSongCache != null) {
-        if (curSong.getId() != curSongCache.getId()) {
-          songInfoCache.put(playerId,curSong);
-          songChanged(playerId,curSong);
-        }
- else {
-        }
-      }
- else {
+      if (!songsEqual(curSong,curSongCache)) {
         songInfoCache.put(playerId,curSong);
         songChanged(playerId,curSong);
       }

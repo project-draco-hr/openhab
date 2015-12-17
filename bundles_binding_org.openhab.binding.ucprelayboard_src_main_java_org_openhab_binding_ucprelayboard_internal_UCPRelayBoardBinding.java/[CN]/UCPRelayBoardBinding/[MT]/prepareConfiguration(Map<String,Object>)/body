@@ -1,0 +1,35 @@
+{
+  Map<String,SerialDeviceConfig> configs=new HashMap<String,SerialDeviceConfig>();
+  for (  String key : properties.keySet()) {
+    Object property=properties.get(key);
+    if (!(property instanceof String)) {
+      continue;
+    }
+    String value=StringUtils.trimToNull((String)property);
+    if ("refresh".equals(key)) {
+      try {
+        refreshInterval=Long.parseLong(value);
+      }
+ catch (      NumberFormatException ignored) {
+      }
+      continue;
+    }
+    String[] split=StringUtils.split(key,".");
+    if (split.length != 3 || value == null || !"board".equals(split[0])) {
+      continue;
+    }
+    SerialDeviceConfig config=configs.get(split[1]);
+    if (config == null) {
+      config=new SerialDeviceConfig();
+      config.setName(split[1]);
+      configs.put(split[1],config);
+    }
+    if ("port".equals(split[2])) {
+      config.setPort(value);
+    }
+ else     if ("baud".equals(split[2])) {
+      config.setBaud(Integer.valueOf(value));
+    }
+  }
+  return configs;
+}

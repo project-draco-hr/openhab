@@ -5,7 +5,7 @@
   if (StringUtils.isEmpty(bindingConfig)) {
     throw new BindingConfigParseException("Missing mqtt binding configuration for item " + itemName);
   }
-  final MqttItemConfig itemConfig=new MqttItemConfig(itemName,bindingConfig);
+  final MqttItemConfig itemConfig=new MqttItemConfig(item,bindingConfig);
   for (  MqttMessageSubscriber subscriber : itemConfig.getMessageSubscribers()) {
     subscriber.setItemName(item.getName());
     mqttService.registerMessageConsumer(subscriber.getBroker(),subscriber);

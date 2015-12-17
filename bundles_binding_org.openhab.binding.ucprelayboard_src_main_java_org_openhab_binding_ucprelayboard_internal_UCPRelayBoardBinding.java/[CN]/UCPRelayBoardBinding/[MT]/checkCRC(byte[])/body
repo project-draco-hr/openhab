@@ -1,0 +1,10 @@
+{
+  final byte[] tab=Arrays.copyOfRange(response,1,4);
+  final byte crc=DowCRC.compute(tab);
+  if (crc != response[4]) {
+    return false;
+  }
+ else {
+    return true;
+  }
+}

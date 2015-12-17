@@ -1,7 +1,7 @@
 {
   try {
-    String accessToken=loadToken(tokenFile,"accesstoken");
-    String accessTokenSecret=loadToken(tokenFile,"accesstokensecret");
+    String accessToken=loadToken(getTokenFile(),"accesstoken");
+    String accessTokenSecret=loadToken(getTokenFile(),"accesstokensecret");
     if (StringUtils.isEmpty(accessToken) || StringUtils.isEmpty(accessTokenSecret)) {
       RequestToken requestToken=Twitter.client.getOAuthRequestToken();
       logger.info("################################################################################################");
@@ -37,8 +37,8 @@
       AccessToken token=Twitter.client.getOAuthAccessToken(requestToken,authPin);
       accessToken=token.getToken();
       accessTokenSecret=token.getTokenSecret();
-      saveToken(tokenFile,"accesstoken",accessToken);
-      saveToken(tokenFile,"accesstokensecret",accessTokenSecret);
+      saveToken(getTokenFile(),"accesstoken",accessToken);
+      saveToken(getTokenFile(),"accesstokensecret",accessTokenSecret);
     }
     return new AccessToken(accessToken,accessTokenSecret);
   }

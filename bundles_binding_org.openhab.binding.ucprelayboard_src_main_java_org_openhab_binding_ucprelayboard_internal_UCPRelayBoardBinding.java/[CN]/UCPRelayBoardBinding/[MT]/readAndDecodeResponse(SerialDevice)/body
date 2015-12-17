@@ -1,0 +1,13 @@
+{
+  byte response[]=serialDevice.readBytes(new byte[5]);
+  if (validateResponse(response)) {
+    for (int relay=0; relay < 8; relay++) {
+      Item item=getItemForRelay(serialDevice,relay);
+      if (item != null) {
+        UCPRelayConfig config=getRelayConfigForItem(item.getName());
+        State state=getRelayState(response,relay,config);
+        eventPublisher.postUpdate(item.getName(),state);
+      }
+    }
+  }
+}
