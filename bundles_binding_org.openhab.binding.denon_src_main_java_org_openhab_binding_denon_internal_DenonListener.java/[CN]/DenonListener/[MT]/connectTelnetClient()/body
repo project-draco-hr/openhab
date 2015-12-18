@@ -1,19 +1,19 @@
 {
+  disconnect();
   int delay=0;
   while (!tc.isConnected()) {
     try {
       Thread.sleep(delay);
       logger.debug("Connecting to {}",connection.getHost());
       tc.connect(connection.getHost(),connection.getTelnetPort());
+      callback.listenerConnected();
+      connected=true;
     }
- catch (    SocketException e) {
-      logger.error("Error connecting to {}",connection.getHost(),e);
-    }
-catch (    IOException e) {
-      logger.error("Error connecting to {}",connection.getHost(),e);
+ catch (    IOException e) {
+      logger.debug("Cannot connect to {}",connection.getHost(),e);
     }
 catch (    InterruptedException e) {
-      logger.error("Error connecting to {}",connection.getHost(),e);
+      logger.debug("Interrupted while connecting to {}",connection.getHost(),e);
     }
     delay=RECONNECT_DELAY;
   }

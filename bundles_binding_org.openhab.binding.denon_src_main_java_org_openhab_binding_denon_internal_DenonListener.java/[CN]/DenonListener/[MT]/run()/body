@@ -1,23 +1,37 @@
 {
   while (running) {
-    if (!tc.isConnected()) {
+    if (!connected) {
       connectTelnetClient();
     }
-    boolean end_loop=false;
-    BufferedReader reader=new BufferedReader(new InputStreamReader(tc.getInputStream()));
+    InputStream is=tc.getInputStream();
+    PrintWriter out=new PrintWriter(tc.getOutputStream(),true);
+    int readCount=0;
+    byte[] buffer=new byte[4096];
     do {
       try {
-        String line=reader.readLine();
-        if (!StringUtils.isBlank(line)) {
-          logger.trace("Received from {}: {}",connection.getHost(),line);
-          callback.updateReceived(line);
+        readCount=is.read(buffer);
+        if (readCount > -1) {
+          String line=StringUtils.trim(new String(buffer,0,readCount));
+          if (!StringUtils.isBlank(line)) {
+            logger.trace("Received from {}: {}",connection.getHost(),line);
+            callback.updateReceived(line);
+          }
+        }
+ else {
+          throw new IOException("Telnet connection disconnected");
         }
       }
- catch (      IOException e) {
-        logger.warn("Error in telnet connection",e);
-        end_loop=true;
+ catch (      SocketTimeoutException e) {
+        logger.trace("Socket timeout");
+        out.print(" ");
+        out.flush();
+      }
+catch (      IOException e) {
+        callback.listenerDisconnected();
+        logger.debug("Error in telnet connection",e);
+        connected=false;
       }
     }
- while (running && end_loop == false);
+ while (running && connected);
   }
 }
