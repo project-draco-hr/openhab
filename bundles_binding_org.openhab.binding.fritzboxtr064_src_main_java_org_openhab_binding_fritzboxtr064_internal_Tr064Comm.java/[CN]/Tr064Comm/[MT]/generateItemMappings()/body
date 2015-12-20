@@ -1,0 +1,177 @@
+{
+  if (_alServices.isEmpty()) {
+    readAllServices();
+  }
+  ItemMap imMacOnline=new ItemMap("maconline","GetSpecificHostEntry","LanDeviceHosts-com:serviceId:Hosts1","NewMACAddress","NewActive");
+  imMacOnline.setSoapValueParser(new SoapValueParser(){
+    @Override public String parseValueFromSoapMessage(    SOAPMessage sm,    ItemMap mapping,    String request){
+      logger.debug("Parsing FritzBox response for maconline");
+      String value="";
+      try {
+        SOAPBody sbResponse=sm.getSOAPBody();
+        if (sbResponse.hasFault()) {
+          SOAPFault sf=sbResponse.getFault();
+          Detail detail=sf.getDetail();
+          if (detail != null) {
+            NodeList nlErrorCode=detail.getElementsByTagName("errorCode");
+            Node nErrorCode=nlErrorCode.item(0);
+            String errorCode=nErrorCode.getTextContent();
+            if (errorCode.equals("714")) {
+              value="MAC not known to FritzBox!";
+              logger.debug(value);
+            }
+ else {
+              logger.error("Error received from FritzBox: {}. SOAP request was: {}",soapToString(sm),request);
+              value="ERROR";
+            }
+          }
+        }
+ else {
+          SOAPBody sb=sm.getSOAPBody();
+          NodeList nlActive=sb.getElementsByTagName(mapping.getReadDataOutName());
+          if (nlActive.getLength() > 0) {
+            Node nActive=nlActive.item(0);
+            value=nActive.getTextContent();
+            logger.debug("parsed as {}",value);
+          }
+        }
+      }
+ catch (      SOAPException e) {
+        logger.error("Error parsing SOAP response from FritzBox: {}",e.getMessage());
+      }
+      return value;
+    }
+  }
+);
+  _alItemMap.add(imMacOnline);
+  _alItemMap.add(new ItemMap("modelName","GetInfo","DeviceInfo-com:serviceId:DeviceInfo1","","NewModelName"));
+  _alItemMap.add(new ItemMap("wanip","GetExternalIPAddress","urn:WANPPPConnection-com:serviceId:WANPPPConnection1","","NewExternalIPAddress"));
+  ItemMap imWifi24Switch=new ItemMap("wifi24Switch","GetInfo","urn:WLANConfiguration-com:serviceId:WLANConfiguration1","","NewEnable");
+  imWifi24Switch.setWriteServiceCommand("SetEnable");
+  imWifi24Switch.setWriteDataInName("NewEnable");
+  _alItemMap.add(imWifi24Switch);
+  ItemMap imWifi50Switch=new ItemMap("wifi50Switch","GetInfo","urn:WLANConfiguration-com:serviceId:WLANConfiguration2","","NewEnable");
+  imWifi50Switch.setWriteServiceCommand("SetEnable");
+  imWifi50Switch.setWriteDataInName("NewEnable");
+  ItemMap imWifiGuestSwitch=new ItemMap("wifiGuestSwitch","GetInfo","urn:WLANConfiguration-com:serviceId:WLANConfiguration3","","NewEnable");
+  imWifiGuestSwitch.setWriteServiceCommand("SetEnable");
+  imWifiGuestSwitch.setWriteDataInName("NewEnable");
+  Tr064Service svc5GHzWifi=determineServiceByItemMapping(imWifi50Switch);
+  Tr064Service svcGuestWifi=determineServiceByItemMapping(imWifiGuestSwitch);
+  if (svc5GHzWifi != null && svcGuestWifi != null) {
+    _alItemMap.add(imWifi50Switch);
+    _alItemMap.add(imWifiGuestSwitch);
+    logger.debug("Found 2,4 Ghz, 5Ghz and Guest Wifi");
+  }
+  if (svc5GHzWifi != null && svcGuestWifi == null) {
+    imWifiGuestSwitch.setServiceId("urn:WLANConfiguration-com:serviceId:WLANConfiguration2");
+    _alItemMap.add(imWifiGuestSwitch);
+    logger.debug("Found 2,4 Ghz and Guest Wifi");
+  }
+  if (svc5GHzWifi == null && svcGuestWifi == null) {
+    logger.debug("Found 2,4 Ghz Wifi");
+  }
+  ItemMap imPhonebook=new ItemMap("phonebook","GetPhonebook","urn:X_AVM-DE_OnTel-com:serviceId:X_AVM-DE_OnTel1","NewPhonebookID","NewPhonebookURL");
+  _alItemMap.add(imPhonebook);
+  ItemMap imTamSwitch=new ItemMap("tamSwitch","GetInfo","urn:X_AVM-DE_TAM-com:serviceId:X_AVM-DE_TAM1","NewIndex","NewEnable");
+  imTamSwitch.setWriteServiceCommand("SetEnable");
+  imTamSwitch.setWriteDataInName("NewEnable");
+  imTamSwitch.setWriteDataInNameAdditional("NewIndex");
+  _alItemMap.add(imTamSwitch);
+  ItemMap imTamNewMessages=new ItemMap("tamNewMessages","GetMessageList","urn:X_AVM-DE_TAM-com:serviceId:X_AVM-DE_TAM1","NewIndex","NewURL");
+  imTamNewMessages.setSoapValueParser(new SoapValueParser(){
+    @Override public String parseValueFromSoapMessage(    SOAPMessage sm,    ItemMap mapping,    String request){
+      String value="";
+      logger.debug("Parsing FritzBox response for TAM messages: {}",soapToString(sm));
+      try {
+        SOAPBody sbResponse=sm.getSOAPBody();
+        if (sbResponse.hasFault()) {
+          SOAPFault sf=sbResponse.getFault();
+          Detail detail=sf.getDetail();
+          if (detail != null) {
+            logger.error("Error received from fbox while parsing TAM message info: {}. ",soapToString(sm));
+            value="ERROR";
+          }
+        }
+ else {
+          NodeList nlDataOutNodes=sm.getSOAPPart().getElementsByTagName(mapping.getReadDataOutName());
+          if (nlDataOutNodes != null & nlDataOutNodes.getLength() > 0) {
+            String url=nlDataOutNodes.item(0).getTextContent();
+            Document xmlTamInfo=getFboxXmlResponse(url);
+            logger.debug("Parsing xml message TAM info {}",Helper.documentToString(xmlTamInfo));
+            NodeList nlNews=xmlTamInfo.getElementsByTagName("New");
+            int newMessages=0;
+            for (int i=0; i < nlNews.getLength(); i++) {
+              if (nlNews.item(i).getTextContent().equals("1")) {
+                newMessages++;
+              }
+            }
+            value=Integer.toString(newMessages);
+            logger.debug("Parsed new messages as: {}",value);
+          }
+ else {
+            logger.error("FritzBox returned unexpected response. Could not find expected datavalue {} in response {}",mapping.getReadDataOutName(),soapToString(sm));
+          }
+        }
+      }
+ catch (      SOAPException e) {
+        logger.error("Error parsing SOAP response from FritzBox");
+        e.printStackTrace();
+      }
+      return value;
+    }
+  }
+);
+  _alItemMap.add(imTamNewMessages);
+  ItemMap imMissedCalls=new ItemMap("missedCallsInDays","GetCallList","urn:X_AVM-DE_OnTel-com:serviceId:X_AVM-DE_OnTel1","NewDays","NewCallListURL");
+  imMissedCalls.setSoapValueParser(new SoapValueParser(){
+    @Override public String parseValueFromSoapMessage(    SOAPMessage sm,    ItemMap mapping,    String request){
+      String value="";
+      logger.debug("Parsing FritzBox response for call list: {}",soapToString(sm));
+      String days="3";
+      String[] itemConfig=request.split(":");
+      if (itemConfig.length == 2) {
+        days=itemConfig[1];
+      }
+      try {
+        SOAPBody sbResponse=sm.getSOAPBody();
+        if (sbResponse.hasFault()) {
+          SOAPFault sf=sbResponse.getFault();
+          Detail detail=sf.getDetail();
+          if (detail != null) {
+            logger.error("Error received from FritzBox while parsing call list: {}",soapToString(sm));
+            value="ERROR";
+          }
+        }
+ else {
+          NodeList nlDataOutNodes=sm.getSOAPPart().getElementsByTagName(mapping.getReadDataOutName());
+          if (nlDataOutNodes != null & nlDataOutNodes.getLength() > 0) {
+            String url=nlDataOutNodes.item(0).getTextContent();
+            url=url + "&days=" + days;
+            logger.debug("Downloading call list using url {}",url);
+            Document xmlTamInfo=getFboxXmlResponse(url);
+            logger.debug("Parsing xml message call list info {}",Helper.documentToString(xmlTamInfo));
+            NodeList nlTypes=xmlTamInfo.getElementsByTagName("Type");
+            int missedCalls=0;
+            for (int i=0; i < nlTypes.getLength(); i++) {
+              if (nlTypes.item(i).getTextContent().equals("2")) {
+                missedCalls++;
+              }
+            }
+            value=Integer.toString(missedCalls);
+            logger.debug("Parsed new messages as: {}",value);
+          }
+ else {
+            logger.error("FritzBox returned unexpected response. Could not find expected datavalue {} in response {}",mapping.getReadDataOutName(),soapToString(sm));
+          }
+        }
+      }
+ catch (      SOAPException e) {
+        logger.error("Error parsing SOAP response from FritzBox: {}",e.getMessage());
+      }
+      return value;
+    }
+  }
+);
+  _alItemMap.add(imMissedCalls);
+}

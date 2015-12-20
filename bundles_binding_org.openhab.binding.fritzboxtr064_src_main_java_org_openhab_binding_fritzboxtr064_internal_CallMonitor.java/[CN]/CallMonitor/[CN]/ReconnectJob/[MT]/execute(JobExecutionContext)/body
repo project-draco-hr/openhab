@@ -1,0 +1,13 @@
+{
+  Logger logger=LoggerFactory.getLogger(FritzboxTr064Binding.class);
+  logger.info("Fritzbox Reconnect Job executed");
+  _instance.stopThread();
+  _instance._monitorThread=_instance.new CallMonitorThread();
+  try {
+    sleep(5000L);
+  }
+ catch (  InterruptedException e) {
+  }
+  logger.debug("Reconnect Job starts new monitor Thread");
+  _instance._monitorThread.start();
+}

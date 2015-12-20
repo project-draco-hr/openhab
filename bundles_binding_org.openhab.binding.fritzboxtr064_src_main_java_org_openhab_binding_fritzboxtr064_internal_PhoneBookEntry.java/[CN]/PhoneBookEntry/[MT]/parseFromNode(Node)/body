@@ -1,0 +1,23 @@
+{
+  boolean success=false;
+  XPath xPath=XPathFactory.newInstance().newXPath();
+  logger.debug(Helper.nodeToString(xmlNode));
+  try {
+    this._name=(String)xPath.evaluate("person/realName",xmlNode,XPathConstants.STRING);
+    this._uniqueid=(String)xPath.evaluate("uniqueid",xmlNode,XPathConstants.STRING);
+    this._businessTel=(String)xPath.evaluate("telephony/number[@type='work']",xmlNode,XPathConstants.STRING);
+    this._privateTel=(String)xPath.evaluate("telephony/number[@type='home']",xmlNode,XPathConstants.STRING);
+    this._mobileTel=(String)xPath.evaluate("telephony/number[@type='mobile']",xmlNode,XPathConstants.STRING);
+    this._fax=(String)xPath.evaluate("telephony/number[@type='fax']",xmlNode,XPathConstants.STRING);
+  }
+ catch (  XPathExpressionException e) {
+    logger.error("Could not parse Phonebook Entry ",e);
+  }
+  if (!this._uniqueid.isEmpty()) {
+    success=true;
+  }
+ else {
+    logger.warn("Could not parse phone book entry: {}",Helper.nodeToString(xmlNode));
+  }
+  return success;
+}

@@ -1,0 +1,12 @@
+{
+  String ip="";
+  Pattern pat=Pattern.compile("(https?://)([^:^/]*)(:\\d*)?(.*)?");
+  Matcher m=pat.matcher(url);
+  if (m.find()) {
+    ip=m.group(2);
+  }
+ else {
+    logger.error("Cannot get IP from FritzBox URL:  {}",url);
+  }
+  return ip;
+}

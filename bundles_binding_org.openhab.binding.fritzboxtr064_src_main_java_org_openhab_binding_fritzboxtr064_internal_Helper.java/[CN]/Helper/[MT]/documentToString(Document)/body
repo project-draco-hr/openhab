@@ -1,0 +1,15 @@
+{
+  String strMsg="";
+  OutputFormat format=new OutputFormat(doc);
+  format.setIndenting(true);
+  ByteArrayOutputStream baos=new ByteArrayOutputStream();
+  XMLSerializer serializer=new XMLSerializer(baos,format);
+  try {
+    serializer.serialize(doc);
+    strMsg=baos.toString("UTF-8");
+  }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+  return strMsg;
+}

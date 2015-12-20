@@ -1,0 +1,9 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig == null) {
+    throw new BindingConfigParseException("binding Config String in *.cfg is null for " + item.getName());
+  }
+  FritzboxTr064BindingConfig config=new FritzboxTr064BindingConfig(item.getClass(),bindingConfig);
+  addBindingConfig(item,config);
+  logger.debug("Adding item {} with config {}",item.getName(),config.getConfigString());
+}

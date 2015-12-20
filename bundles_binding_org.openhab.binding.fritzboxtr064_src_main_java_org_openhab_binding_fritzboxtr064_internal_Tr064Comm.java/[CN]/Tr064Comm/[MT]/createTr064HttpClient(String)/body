@@ -1,0 +1,34 @@
+{
+  CloseableHttpClient hc=null;
+  URIBuilder uriFbox=null;
+  try {
+    uriFbox=new URIBuilder(fboxUrl);
+  }
+ catch (  URISyntaxException e) {
+    logger.error("Invalid FritzBox URL! {}",e.getMessage());
+    return null;
+  }
+  _httpClientContext=HttpClientContext.create();
+  CookieStore cookieStore=new BasicCookieStore();
+  _httpClientContext.setCookieStore(cookieStore);
+  HttpHost target=new HttpHost(uriFbox.getHost(),uriFbox.getPort(),uriFbox.getScheme());
+  CredentialsProvider credp=new BasicCredentialsProvider();
+  credp.setCredentials(new AuthScope(target.getHostName(),target.getPort()),new UsernamePasswordCredentials(_user,_pw));
+  AuthCache authCache=new BasicAuthCache();
+  DigestScheme digestAuth=new DigestScheme();
+  digestAuth.overrideParamter("realm","HTTPS Access");
+  digestAuth.overrideParamter("nonce","");
+  authCache.put(target,digestAuth);
+  _httpClientContext.setAuthCache(authCache);
+  SSLContextBuilder sslContextBuilder=new SSLContextBuilder();
+  SSLConnectionSocketFactory sslsf=null;
+  try {
+    sslContextBuilder.loadTrustMaterial(null,new TrustSelfSignedStrategy());
+    sslsf=new SSLConnectionSocketFactory(sslContextBuilder.build(),null,null,new NoopHostnameVerifier());
+  }
+ catch (  Exception ex) {
+    logger.error(ex.getMessage());
+  }
+  hc=HttpClientBuilder.create().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credp).build();
+  return hc;
+}

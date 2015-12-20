@@ -1,0 +1,32 @@
+{
+  this.bundleContext=bundleContext;
+  logger.debug("FritzBox TR064 Binding activated!");
+  String refreshIntervalString=(String)configuration.get("refresh");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+    logger.debug("Custom refresh interval set to " + refreshInterval);
+  }
+  String fboxurl=(String)configuration.get("url");
+  String fboxuser=(String)configuration.get("user");
+  String fboxpw=(String)configuration.get("pass");
+  if (fboxurl == null) {
+    logger.warn("Fritzbox URL was not provided in config. Shutting down binding.");
+    setProperlyConfigured(false);
+    return;
+  }
+  if (fboxuser == null) {
+    logger.warn("Fritzbox User was not provided in config. Using default username.");
+  }
+  if (fboxpw == null) {
+    logger.warn("Fritzbox Password was not provided in config. Shutting down binding.");
+    setProperlyConfigured(false);
+    return;
+  }
+  this._pw=fboxpw;
+  this._user=fboxuser;
+  this._url=fboxurl;
+  if (_fboxComm == null) {
+    _fboxComm=new Tr064Comm(_url,_user,_pw);
+  }
+  setProperlyConfigured(true);
+}

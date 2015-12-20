@@ -1,0 +1,26 @@
+{
+  Document xml=getFboxXmlResponse(_url + "/" + TR064DOWNLOADFILE);
+  if (xml == null) {
+    logger.error("Could not read xml response services");
+    return;
+  }
+  NodeList nlServices=xml.getElementsByTagName("service");
+  Node currentNode=null;
+  XPath xPath=XPathFactory.newInstance().newXPath();
+  for (int i=0; i < nlServices.getLength(); i++) {
+    currentNode=nlServices.item(i);
+    Tr064Service trS=new Tr064Service();
+    try {
+      trS.setControlUrl((String)xPath.evaluate("controlURL",currentNode,XPathConstants.STRING));
+      trS.setEventSubUrl((String)xPath.evaluate("eventSubURL",currentNode,XPathConstants.STRING));
+      trS.setScpdurl((String)xPath.evaluate("SCPDURL",currentNode,XPathConstants.STRING));
+      trS.setServiceId((String)xPath.evaluate("serviceId",currentNode,XPathConstants.STRING));
+      trS.setServiceType((String)xPath.evaluate("serviceType",currentNode,XPathConstants.STRING));
+    }
+ catch (    XPathExpressionException e) {
+      logger.debug("Could not parse service {}",currentNode.getTextContent());
+      e.printStackTrace();
+    }
+    _alServices.add(trS);
+  }
+}
