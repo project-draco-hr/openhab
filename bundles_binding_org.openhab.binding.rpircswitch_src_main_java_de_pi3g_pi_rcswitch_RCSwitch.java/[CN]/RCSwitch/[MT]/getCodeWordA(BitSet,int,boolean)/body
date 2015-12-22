@@ -1,0 +1,28 @@
+{
+  int nReturnPos=0;
+  char[] sReturn=new char[12];
+  String[] code=new String[]{"FFFFF","0FFFF","F0FFF","FF0FF","FFF0F","FFFF0"};
+  if (channelCode < 1 || channelCode > 5) {
+    return "";
+  }
+  for (int i=0; i < 5; i++) {
+    if (!switchGroupAddress.get(i)) {
+      sReturn[nReturnPos++]='F';
+    }
+ else {
+      sReturn[nReturnPos++]='0';
+    }
+  }
+  for (int i=0; i < 5; i++) {
+    sReturn[nReturnPos++]=code[channelCode].charAt(i);
+  }
+  if (status) {
+    sReturn[nReturnPos++]='0';
+    sReturn[nReturnPos++]='F';
+  }
+ else {
+    sReturn[nReturnPos++]='F';
+    sReturn[nReturnPos++]='0';
+  }
+  return new String(sReturn);
+}
