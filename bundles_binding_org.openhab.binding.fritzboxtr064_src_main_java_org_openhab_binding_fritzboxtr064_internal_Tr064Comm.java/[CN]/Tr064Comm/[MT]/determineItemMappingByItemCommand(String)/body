@@ -1,0 +1,15 @@
+{
+  ItemMap foundMapping=null;
+  Iterator<ItemMap> itMap=_alItemMap.iterator();
+  while (itMap.hasNext()) {
+    ItemMap currentMap=itMap.next();
+    if (itemCommand.equals(currentMap.getItemCommand())) {
+      foundMapping=currentMap;
+      break;
+    }
+  }
+  if (foundMapping == null) {
+    logger.error("No mapping found for item command {}",itemCommand);
+  }
+  return foundMapping;
+}

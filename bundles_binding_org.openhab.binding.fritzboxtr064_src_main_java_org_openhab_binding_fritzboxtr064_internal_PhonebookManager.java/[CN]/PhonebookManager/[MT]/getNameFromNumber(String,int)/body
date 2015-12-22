@@ -1,0 +1,51 @@
+{
+  logger.info("Trying to resolve number {} to name comparing {} characters",number,compareCount);
+  String name=null;
+  Iterator<PhoneBookEntry> it=_alEntries.iterator();
+  while (it.hasNext()) {
+    PhoneBookEntry pbe=it.next();
+    StringBuilder sbAskNumber=new StringBuilder(number);
+    sbAskNumber.reverse();
+    String numberToCompare="";
+    StringBuilder sbPhonebookNumber=new StringBuilder(pbe.getBusinessTel());
+    sbPhonebookNumber.reverse();
+    if (compareCount <= sbAskNumber.length()) {
+      numberToCompare=sbAskNumber.substring(0,compareCount);
+    }
+ else {
+      numberToCompare=sbAskNumber.substring(0,sbAskNumber.length());
+    }
+    if (sbPhonebookNumber.toString().startsWith(numberToCompare)) {
+      logger.info("found name match {} in phonebook by comparing {} with {} ",pbe.getName(),sbPhonebookNumber.toString(),numberToCompare);
+      name=pbe.getName() + " (Work)";
+      break;
+    }
+    sbPhonebookNumber=new StringBuilder(pbe.getPrivateTel());
+    sbPhonebookNumber.reverse();
+    if (compareCount <= sbAskNumber.length()) {
+      numberToCompare=sbAskNumber.substring(0,compareCount);
+    }
+ else {
+      numberToCompare=sbAskNumber.substring(0,sbAskNumber.length());
+    }
+    if (sbPhonebookNumber.toString().startsWith(numberToCompare)) {
+      logger.info("found name match {} in phonebook by comparing {} with {} ",pbe.getName(),sbPhonebookNumber.toString(),numberToCompare);
+      name=pbe.getName() + " (Home)";
+      break;
+    }
+    sbPhonebookNumber=new StringBuilder(pbe.getMobileTel());
+    sbPhonebookNumber.reverse();
+    if (compareCount <= sbAskNumber.length()) {
+      numberToCompare=sbAskNumber.substring(0,compareCount);
+    }
+ else {
+      numberToCompare=sbAskNumber.substring(0,sbAskNumber.length());
+    }
+    if (sbPhonebookNumber.toString().startsWith(numberToCompare)) {
+      logger.info("found name match {} in phonebook by comparing {} with {} ",pbe.getName(),sbPhonebookNumber.toString(),numberToCompare);
+      name=pbe.getName() + " (Mobile)";
+      break;
+    }
+  }
+  return name;
+}

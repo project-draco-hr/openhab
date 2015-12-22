@@ -1,0 +1,12 @@
+{
+  logger.trace("internalReceiveCommand({},{}) is called!",itemName,command);
+  if (_fboxComm == null) {
+    _fboxComm=new Tr064Comm(_url,_user,_pw);
+  }
+  for (  FritzboxTr064BindingProvider provider : providers) {
+    FritzboxTr064BindingConfig conf=provider.getBindingConfigByItemName(itemName);
+    if (conf != null) {
+      _fboxComm.setTr064Value(conf.getConfigString(),command);
+    }
+  }
+}

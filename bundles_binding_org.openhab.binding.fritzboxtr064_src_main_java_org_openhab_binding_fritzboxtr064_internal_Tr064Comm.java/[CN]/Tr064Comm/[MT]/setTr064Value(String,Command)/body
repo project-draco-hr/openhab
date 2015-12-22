@@ -1,0 +1,51 @@
+{
+  String[] itemConfig=request.split(":");
+  String itemCommand=itemConfig[0];
+  ItemMap itemMap=determineItemMappingByItemCommand(itemCommand);
+  Tr064Service tr064service=determineServiceByItemMapping(itemMap);
+  SOAPBodyElement bodyData=null;
+  try {
+    MessageFactory mf=MessageFactory.newInstance();
+    SOAPMessage msg=mf.createMessage();
+    SOAPBody body=msg.getSOAPBody();
+    QName bodyName=new QName(tr064service.getServiceType(),itemMap.getWriteServiceCommand(),"u");
+    bodyData=body.addBodyElement(bodyName);
+    if (itemConfig.length > 1) {
+      String dataInValueAdd=itemConfig[1];
+      QName dataNode=new QName(itemMap.getWriteDataInNameAdditional());
+      SOAPElement beDataNode=bodyData.addChildElement(dataNode);
+      beDataNode.addTextNode(dataInValueAdd);
+    }
+    String setDataInValue=cmd.toString().equalsIgnoreCase("on") ? "1" : "0";
+    QName dataNode=new QName(itemMap.getWriteDataInName());
+    SOAPElement beDataNode=bodyData.addChildElement(dataNode);
+    beDataNode.addTextNode(setDataInValue);
+    logger.debug("SOAP Msg to send to FritzBox for setting data: {}",soapToString(msg));
+  }
+ catch (  Exception e) {
+    logger.error("Error constructing request SOAP msg for setting parameter. {}",e.getMessage());
+    logger.debug("Request was: {}. Command was: {}.",request,cmd.toString());
+  }
+  if (bodyData == null) {
+    logger.error("Could not determine data to be sent to FritzBox!");
+    return;
+  }
+  SOAPMessage smTr064Request=constructTr064Msg(bodyData);
+  String soapActionHeader=tr064service.getServiceType() + "#" + itemMap.getWriteServiceCommand();
+  SOAPMessage response=readSoapResponse(soapActionHeader,smTr064Request,_url + tr064service.getControlUrl());
+  if (response == null) {
+    logger.error("Error retrieving SOAP response from FritzBox");
+    return;
+  }
+  logger.debug("SOAP response from FritzBox: {}",soapToString(response));
+  try {
+    if (response.getSOAPBody().getFault() != null) {
+      logger.error("Error received from FritzBox while trying to set parameter");
+      logger.debug("Soap Response was: {}",soapToString(response));
+    }
+  }
+ catch (  SOAPException e) {
+    logger.error("Could not parse soap response from FritzBox while setting parameter. {}",e.getMessage());
+    logger.debug("Soap Response was: {}",soapToString(response));
+  }
+}

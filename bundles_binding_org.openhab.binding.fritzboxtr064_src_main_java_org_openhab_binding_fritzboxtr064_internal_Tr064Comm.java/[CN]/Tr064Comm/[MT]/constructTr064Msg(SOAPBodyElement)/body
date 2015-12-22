@@ -1,0 +1,28 @@
+{
+  SOAPMessage soapMsg=null;
+  try {
+    MessageFactory msgFac;
+    msgFac=MessageFactory.newInstance();
+    soapMsg=msgFac.createMessage();
+    soapMsg.setProperty(SOAPMessage.WRITE_XML_DECLARATION,"true");
+    soapMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING,"UTF-8");
+    SOAPPart part=soapMsg.getSOAPPart();
+    String namespace="s";
+    SOAPEnvelope envelope=part.getEnvelope();
+    envelope.setPrefix(namespace);
+    envelope.removeNamespaceDeclaration("SOAP-ENV");
+    envelope.addNamespaceDeclaration(namespace,"http://schemas.xmlsoap.org/soap/envelope/");
+    Name nEncoding=envelope.createName("encodingStyle",namespace,"http://schemas.xmlsoap.org/soap/encoding/");
+    envelope.addAttribute(nEncoding,"http://schemas.xmlsoap.org/soap/encoding/");
+    SOAPHeader header=envelope.getHeader();
+    header.setPrefix(namespace);
+    SOAPBody body=envelope.getBody();
+    body.setPrefix(namespace);
+    body.addChildElement(bodyData);
+  }
+ catch (  Exception e) {
+    logger.error("Error creating SOAP message for fbox request with data {}",bodyData);
+    e.printStackTrace();
+  }
+  return soapMsg;
+}

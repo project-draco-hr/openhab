@@ -1,0 +1,40 @@
+{
+  SOAPMessage response=null;
+  HttpPost postSoap=new HttpPost(serviceUrl);
+  postSoap.addHeader("SOAPAction",soapActionHeader);
+  HttpEntity entBody=null;
+  HttpResponse resp=null;
+  try {
+    entBody=new StringEntity(soapToString(request),ContentType.create("text/xml","UTF-8"));
+    postSoap.setEntity(entBody);
+    resp=_httpClient.execute(postSoap,_httpClientContext);
+    StatusLine slResponse=resp.getStatusLine();
+    HttpEntity heResponse=resp.getEntity();
+    if (slResponse.getStatusCode() == 401) {
+      logger.error("Could not read response from FritzBox. Unauthorized! Check User/PW in config. Create user for tr064 requests");
+      return null;
+    }
+    response=MessageFactory.newInstance().createMessage(null,heResponse.getContent());
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("Encoding not supported: {}",e.getMessage().toString());
+    return null;
+  }
+catch (  ClientProtocolException e) {
+    logger.error("Client Protocol not supported: {}",e.getMessage().toString());
+    return null;
+  }
+catch (  IOException e) {
+    logger.error("Cannot send/receive: {}",e.getMessage().toString());
+    return null;
+  }
+catch (  UnsupportedOperationException e) {
+    logger.error("Operation unsupported: {}",e.getMessage().toString());
+    return null;
+  }
+catch (  SOAPException e) {
+    logger.error("SOAP Error: {}",e.getMessage().toString());
+    return null;
+  }
+  return response;
+}

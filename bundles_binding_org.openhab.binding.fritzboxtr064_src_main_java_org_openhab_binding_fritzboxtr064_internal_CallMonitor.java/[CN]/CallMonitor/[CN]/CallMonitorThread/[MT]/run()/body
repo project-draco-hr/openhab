@@ -1,0 +1,63 @@
+{
+  logger.debug("Callmonitor Thread [{}] is interrupted: {}",Thread.currentThread().getId(),_interrupted);
+  while (!_interrupted) {
+    if (_ip != null) {
+      BufferedReader reader=null;
+      try {
+        logger.info("Callmonitor Thread [{}] attempting connection to FritzBox on {}:{}..",Thread.currentThread().getId(),_ip,_port);
+        _socket=new Socket(_ip,_port);
+        reader=new BufferedReader(new InputStreamReader(_socket.getInputStream()));
+        _reconnectTime=60000L;
+      }
+ catch (      Exception e) {
+        logger.warn("Error attempting to connect to FritzBox. Retrying in {}s",_reconnectTime / 1000L,e);
+        try {
+          Thread.sleep(_reconnectTime);
+        }
+ catch (        InterruptedException ex) {
+          _interrupted=true;
+        }
+        _reconnectTime+=60000L;
+      }
+      if (reader != null) {
+        logger.info("Connected to FritzBox on {}:{}",_ip,_port);
+        while (!_interrupted) {
+          try {
+            String line=reader.readLine();
+            if (line != null) {
+              logger.debug("Received raw call string from fbox: {}",line);
+              CallEvent ce=new CallEvent(line);
+              if (ce.parseRawEvent()) {
+                handleCallEvent(ce);
+              }
+ else {
+                logger.error("Call Event could not be parsed!");
+              }
+              try {
+                sleep(100L);
+              }
+ catch (              InterruptedException e) {
+              }
+            }
+          }
+ catch (          IOException e) {
+            if (_interrupted) {
+              logger.info("Lost connection to Fritzbox because of interrupt");
+            }
+ else {
+              logger.error("Lost connection to FritzBox",e);
+            }
+            break;
+          }
+ finally {
+            try {
+              sleep(5000L);
+            }
+ catch (            InterruptedException e) {
+            }
+          }
+        }
+      }
+    }
+  }
+}

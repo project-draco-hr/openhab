@@ -1,0 +1,14 @@
+{
+  Scheduler sched=null;
+  try {
+    sched=StdSchedulerFactory.getDefaultScheduler();
+    JobKey jobKey=jobKey("Reconnect","FritzBox");
+    if (sched.checkExists(jobKey)) {
+      logger.debug("Found reconnection job. Shutting down...");
+      sched.deleteJob(jobKey);
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Error shutting down reconnect job: {}",e.getLocalizedMessage());
+  }
+}

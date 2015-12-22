@@ -1,0 +1,21 @@
+{
+  try {
+    String cronPattern="0 0 0/2 * * ?";
+    Scheduler sched=StdSchedulerFactory.getDefaultScheduler();
+    JobKey jobKey=jobKey("Reconnect","FritzBox");
+    TriggerKey triggerKey=triggerKey("Reconnect","FritzBox");
+    if (sched.checkExists(jobKey)) {
+      logger.debug("reconnection job already exists");
+    }
+ else {
+      CronScheduleBuilder scheduleBuilder=CronScheduleBuilder.cronSchedule(cronPattern);
+      JobDetail job=newJob(ReconnectJob.class).withIdentity(jobKey).build();
+      CronTrigger trigger=newTrigger().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
+      sched.scheduleJob(job,trigger);
+      logger.debug("Scheduled reconnection job to FritzBox: {}",cronPattern);
+    }
+  }
+ catch (  SchedulerException e) {
+    logger.warn("Could not create daily reconnection job",e);
+  }
+}

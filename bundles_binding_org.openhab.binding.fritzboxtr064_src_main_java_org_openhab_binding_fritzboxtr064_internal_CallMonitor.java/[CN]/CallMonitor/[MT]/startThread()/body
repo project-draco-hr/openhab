@@ -1,0 +1,10 @@
+{
+  logger.debug("Starting monitor Thread...");
+  if (_monitorThread != null) {
+    logger.warn("Old monitor Thread was still running");
+    _monitorThread.interrupt();
+    _monitorThread=null;
+  }
+  _monitorThread=new CallMonitorThread();
+  _monitorThread.start();
+}

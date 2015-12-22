@@ -1,0 +1,63 @@
+{
+  String callerName="";
+  if (_pbm != null) {
+    if (ce.getExternalNo() == null || ce.getExternalNo().isEmpty()) {
+      logger.debug("no external number provided by fbox. Will not resolve name");
+    }
+ else {
+      logger.debug("resolving name for number {}",ce.getExternalNo());
+      callerName=_pbm.getNameFromNumber(ce.getExternalNo(),7);
+      if (callerName == null) {
+        callerName="Name not found for " + ce.getExternalNo();
+      }
+ else {
+        logger.debug("external number resolved to: {}",callerName);
+      }
+    }
+  }
+  logger.debug("Searching item to pass call event: {}",ce.getCallType());
+  for (  FritzboxTr064BindingProvider provider : _providers) {
+    for (    String itemName : provider.getItemNames()) {
+      FritzboxTr064BindingConfig conf=provider.getBindingConfigByItemName(itemName);
+      Class<? extends Item> itemType=conf.getItemType();
+      org.openhab.core.types.State state=null;
+      String configString=conf.getConfigString();
+      String externalInfo=null;
+      if (configString.startsWith("callmonitor") && configString.contains("resolveName")) {
+        logger.debug("name resolving requested in item {}. Setting external no. to",itemName,callerName);
+        externalInfo=callerName;
+      }
+ else {
+        logger.debug("NO name resolving requested in item {}. Setting external no. to",itemName,callerName);
+        externalInfo=ce.getExternalNo();
+      }
+      if (ce.getCallType().equals("DISCONNECT")) {
+        if (configString.startsWith("callmonitor_ringing") || configString.startsWith("callmonitor_active") || configString.startsWith("callmonitor_outgoing")) {
+          state=itemType.isAssignableFrom(SwitchItem.class) ? OnOffType.OFF : CallType.EMPTY;
+        }
+      }
+ else       if (ce.getCallType().equals("RING")) {
+        if (configString.startsWith("callmonitor_ringing")) {
+          state=itemType.isAssignableFrom(SwitchItem.class) ? OnOffType.ON : new CallType(ce.getInternalNo(),externalInfo);
+        }
+      }
+ else       if (ce.getCallType().equals("CONNECT")) {
+        if (configString.startsWith("callmonitor_active")) {
+          state=itemType.isAssignableFrom(SwitchItem.class) ? OnOffType.ON : new CallType(externalInfo,ce.getInternalNo());
+        }
+      }
+ else       if (ce.getCallType().equals("CALL")) {
+        if (configString.startsWith("callmonitor_outgoing")) {
+          state=itemType.isAssignableFrom(SwitchItem.class) ? OnOffType.ON : new CallType(externalInfo,ce.getInternalNo());
+        }
+      }
+      if (state != null) {
+        logger.debug("Dispatching call type {} to item {} as {}",ce.getCallType(),itemName,state.toString());
+        _eventPublisher.postUpdate(itemName,state);
+      }
+ else {
+        logger.debug("Could not determine state for item {}. Not relevant!",itemName);
+      }
+    }
+  }
+}

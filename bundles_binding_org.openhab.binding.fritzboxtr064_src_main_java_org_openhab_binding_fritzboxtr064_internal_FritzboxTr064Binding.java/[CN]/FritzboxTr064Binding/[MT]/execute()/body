@@ -1,0 +1,49 @@
+{
+  logger.trace("FritzboxTr064 executing...");
+  for (  FritzboxTr064BindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      FritzboxTr064BindingConfig conf=provider.getBindingConfigByItemName(itemName);
+      if (conf.getConfigString().startsWith("callmonitor")) {
+        if (_callMonitor == null) {
+          logger.debug("call monitor is not running. Configured items require call monitor -> Starting call monitor...");
+          if (_pbm == null) {
+            logger.debug("Downloading phonebooks");
+            _pbm=new PhonebookManager(_fboxComm);
+            _pbm.downloadPhonebooks();
+          }
+          _callMonitor=new CallMonitor(_url,eventPublisher,providers,_pbm);
+          _callMonitor.setupReconnectJob();
+          _callMonitor.startThread();
+        }
+        continue;
+      }
+      String tr064result=_fboxComm.getTr064Value(conf.getConfigString());
+      if (tr064result == null) {
+        tr064result="ERR";
+      }
+      Class<? extends Item> itemType=conf.getItemType();
+      if (itemType.isAssignableFrom(StringItem.class)) {
+        eventPublisher.postUpdate(itemName,new StringType(tr064result));
+      }
+ else       if (itemType.isAssignableFrom(ContactItem.class)) {
+        State newState=tr064result.equals("1") ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+        eventPublisher.postUpdate(itemName,newState);
+      }
+ else       if (itemType.isAssignableFrom(SwitchItem.class)) {
+        State newState=tr064result.equals("1") ? OnOffType.ON : OnOffType.OFF;
+        eventPublisher.postUpdate(itemName,newState);
+      }
+ else       if (itemType.isAssignableFrom(NumberItem.class)) {
+        int val=0;
+        try {
+          val=Integer.parseInt(tr064result);
+        }
+ catch (        NumberFormatException ex) {
+          val=-1;
+        }
+        State newState=new DecimalType(val);
+        eventPublisher.postUpdate(itemName,newState);
+      }
+    }
+  }
+}

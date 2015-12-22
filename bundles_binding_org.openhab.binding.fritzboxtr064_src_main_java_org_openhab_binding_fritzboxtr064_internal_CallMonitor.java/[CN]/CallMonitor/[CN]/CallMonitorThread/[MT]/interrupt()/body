@@ -1,0 +1,15 @@
+{
+  _interrupted=true;
+  if (_socket != null) {
+    try {
+      _socket.close();
+      logger.debug("Socket to FritzBox closed");
+    }
+ catch (    IOException e) {
+      logger.warn("Existing connection to FritzBox cannot be closed",e);
+    }
+  }
+ else {
+    logger.debug("Socket to FritzBox not open. Not closing.");
+  }
+}

@@ -1,0 +1,23 @@
+{
+  Document tr064response=null;
+  HttpGet httpGet=new HttpGet(url);
+  try {
+    CloseableHttpResponse resp=_httpClient.execute(httpGet,_httpClientContext);
+    int responseCode=resp.getStatusLine().getStatusCode();
+    if (responseCode == 200) {
+      HttpEntity entity=resp.getEntity();
+      DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
+      DocumentBuilder db=dbf.newDocumentBuilder();
+      tr064response=db.parse(entity.getContent());
+      EntityUtils.consume(entity);
+    }
+ else {
+      logger.error("Failed to receive valid response from httpGet");
+    }
+  }
+ catch (  Exception e) {
+    e.printStackTrace();
+    logger.error("Failed to receive valid response from httpGet");
+  }
+  return tr064response;
+}
