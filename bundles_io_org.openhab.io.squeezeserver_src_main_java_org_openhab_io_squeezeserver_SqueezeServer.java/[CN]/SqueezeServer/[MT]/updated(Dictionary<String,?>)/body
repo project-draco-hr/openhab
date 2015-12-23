@@ -3,7 +3,8 @@
   host=null;
   cliPort=DEFAULT_CLI_PORT;
   webPort=DEFAULT_WEB_PORT;
-  language=DEFAULT_LANGUAGE;
+  ttsUrl=DEFAULT_TTS_URL;
+  ttsMaxSentenceLength=DEFAULT_TTS_MAX_SENTENCE_LENGTH;
   playersById.clear();
   playersByMacAddress.clear();
   if (config == null || config.isEmpty()) {
@@ -18,7 +19,8 @@
     }
     Matcher serverMatcher=SERVER_CONFIG_PATTERN.matcher(key);
     Matcher playerMatcher=PLAYER_CONFIG_PATTERN.matcher(key);
-    Matcher languageMatcher=LANGUAGE_CONFIG_PATTERN.matcher(key);
+    Matcher ttsUrlMatcher=TTS_URL_CONFIG_PATTERN.matcher(key);
+    Matcher ttsMaxSentenceLengthMatcher=TTS_MAX_SENTENCE_LENGTH_CONFIG_PATTERN.matcher(key);
     String value=(String)config.get(key);
     if (serverMatcher.matches()) {
       String serverConfig=serverMatcher.group(2);
@@ -39,8 +41,11 @@
       playersById.put(playerId.toLowerCase(),player);
       playersByMacAddress.put(macAddress.toLowerCase(),player);
     }
- else     if (languageMatcher.matches() && StringUtils.isNotBlank(value)) {
-      language=value;
+ else     if (ttsUrlMatcher.matches() && StringUtils.isNotBlank(value)) {
+      ttsUrl=value;
+    }
+ else     if (ttsMaxSentenceLengthMatcher.matches() && StringUtils.isNotBlank(value)) {
+      ttsMaxSentenceLength=Integer.valueOf(value);
     }
  else {
       logger.warn("Unexpected or unsupported configuration: " + key + ". Ignoring.");

@@ -35,7 +35,7 @@
     currPlaylistIndex=0;
     logger.trace("Shuffle Changed! Set Current Playing Index to 0");
   }
-  List<String> sentences=getSentences(message,MAX_SENTENCE_LENGTH);
+  List<String> sentences=getSentences(message,squeezeServer.getTtsMaxSentenceLength());
   for (  String sentence : sentences) {
     logger.trace("Sending sentence to " + playerId + " ("+ sentence+ ")");
     String encodedSentence;
@@ -48,7 +48,7 @@
     }
     encodedSentence=encodedSentence.replace("+","%20");
     logger.trace("Encoded sentence " + encodedSentence);
-    String url=String.format(GOOGLE_TRANSLATE_URL,squeezeServer.language()) + encodedSentence;
+    String url=String.format(squeezeServer.getTtsUrl(),encodedSentence);
     SqueezeboxSentenceListener listener=new SqueezeboxSentenceListener(playerId);
     squeezeServer.addPlayerEventListener(listener);
     logger.trace("Adding URL to current playlist '{}' to play",url);
