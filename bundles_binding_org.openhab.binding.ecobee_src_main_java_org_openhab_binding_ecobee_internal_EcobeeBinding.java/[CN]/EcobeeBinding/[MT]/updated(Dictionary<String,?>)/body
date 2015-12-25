@@ -1,9 +1,11 @@
 {
   if (config != null) {
+    String granularityString=(String)config.get(CONFIG_GRANULARITY);
+    granularity=isNotBlank(granularityString) ? Long.parseLong(granularityString) : DEFAULT_GRANULARITY;
     String refreshIntervalString=(String)config.get(CONFIG_REFRESH);
-    if (isNotBlank(refreshIntervalString)) {
-      refreshInterval=Long.parseLong(refreshIntervalString);
-    }
+    refreshInterval=isNotBlank(refreshIntervalString) ? Long.parseLong(refreshIntervalString) : DEFAULT_REFRESH;
+    String quickPollIntervalString=(String)config.get(CONFIG_QUICKPOLL);
+    quickPollInterval=isNotBlank(quickPollIntervalString) ? Long.parseLong(quickPollIntervalString) : DEFAULT_QUICKPOLL;
     String timeoutString=(String)config.get(CONFIG_TIMEOUT);
     if (isNotBlank(timeoutString)) {
       AbstractRequest.setHttpRequestTimeout(Integer.parseInt(timeoutString));
@@ -20,7 +22,7 @@
     Enumeration<String> configKeys=config.keys();
     while (configKeys.hasMoreElements()) {
       String configKey=(String)configKeys.nextElement();
-      if (CONFIG_REFRESH.equals(configKey) || CONFIG_TIMEOUT.equals(configKey) || CONFIG_TEMP_SCALE.equals(configKey)|| "service.pid".equals(configKey)) {
+      if (CONFIG_GRANULARITY.equals(configKey) || CONFIG_REFRESH.equals(configKey) || CONFIG_QUICKPOLL.equals(configKey)|| CONFIG_TIMEOUT.equals(configKey)|| CONFIG_TEMP_SCALE.equals(configKey)|| "service.pid".equals(configKey)) {
         continue;
       }
       String userid;

@@ -13,7 +13,7 @@
     return;
   }
   if (!provider.isOutBound(itemName)) {
-    logger.warn("attempt to update non-outbound item skipped [itemName={}, newState={}]",itemName,newState);
+    logger.debug("attempt to update non-outbound item skipped [itemName={}, newState={}]",itemName,newState);
     return;
   }
   final Selection selection=new Selection(selectionMatch);
@@ -48,6 +48,9 @@
  else {
         logger.error("Error updating thermostat(s): {}",response);
       }
+    }
+ else {
+      oauthCredentials.schedulePoll(this.quickPollInterval);
     }
   }
  catch (  Exception e) {
