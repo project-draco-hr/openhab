@@ -1,0 +1,25 @@
+{
+  if (itemName != null) {
+    RPiRcSwitchBindingConfig config=this.getConfigForItemName(itemName);
+    if (config == null) {
+      LOGGER.error("No configuration for Raspberry Pi RC Switch available.");
+      return;
+    }
+    if (command instanceof OnOffType) {
+      if (this.transmitter != null) {
+        if (OnOffType.ON.equals(command)) {
+          this.transmitter.switchOn(config.getGroupAddress(),config.getDeviceAddress());
+        }
+ else {
+          this.transmitter.switchOff(config.getGroupAddress(),config.getDeviceAddress());
+        }
+      }
+ else {
+        LOGGER.error("Transmitter has not been initialized. Please configure it correctly in your OpenHAB configuration.");
+      }
+    }
+ else {
+      LOGGER.error("Only On/Off commands are supported.");
+    }
+  }
+}

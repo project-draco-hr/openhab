@@ -1,0 +1,24 @@
+{
+  int nReturnPos=0;
+  char[] sReturn=new char[13];
+  String[] code=new String[]{"FFFF","0FFF","F0FF","FF0F","FFF0"};
+  if (nAddressCode < 1 || nAddressCode > 4 || nChannelCode < 1 || nChannelCode > 4) {
+    return "";
+  }
+  for (int i=0; i < 4; i++) {
+    sReturn[nReturnPos++]=code[nAddressCode].charAt(i);
+  }
+  for (int i=0; i < 4; i++) {
+    sReturn[nReturnPos++]=code[nChannelCode].charAt(i);
+  }
+  sReturn[nReturnPos++]='F';
+  sReturn[nReturnPos++]='F';
+  sReturn[nReturnPos++]='F';
+  if (bStatus) {
+    sReturn[nReturnPos++]='F';
+  }
+ else {
+    sReturn[nReturnPos++]='0';
+  }
+  return new String(sReturn);
+}

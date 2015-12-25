@@ -1,0 +1,24 @@
+{
+  LOGGER.debug("New configuration received");
+  if (config != null) {
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=(String)keys.nextElement();
+      if ("service.pid".equals(key)) {
+        continue;
+      }
+      Object o=config.get("gpioPin");
+      if (o instanceof String) {
+        String pinAddressString=(String)o;
+        try {
+          int pinAddress=Integer.parseInt(pinAddressString);
+          PinImpl gpioPin=new PinImpl(RaspiGpioProvider.NAME,pinAddress,"GPIO_" + pinAddress,EnumSet.of(PinMode.DIGITAL_INPUT,PinMode.DIGITAL_OUTPUT),PinPullResistance.all());
+          this.transmitter=new RCSwitch(gpioPin);
+        }
+ catch (        NumberFormatException e) {
+          LOGGER.error("Invalid configuration. Please provide an Integer value in the 'gpioPin' configuration");
+        }
+      }
+    }
+  }
+}

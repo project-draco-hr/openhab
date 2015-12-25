@@ -1,0 +1,23 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (item instanceof SwitchItem) {
+    String groupAddressString=StringUtils.substringBefore(bindingConfig,":");
+    String deviceAddressString=StringUtils.substringAfter(bindingConfig,":");
+    if (deviceAddressString == null || deviceAddressString.isEmpty() || groupAddressString == null || groupAddressString.isEmpty()) {
+      LOGGER.error("The item configuration '" + bindingConfig + "' is invalid. Valid format is <group-address>:<device-address>.");
+      return;
+    }
+    try {
+      BitSet groupAddress=RCSwitch.getSwitchGroupAddress(groupAddressString);
+      int deviceAddress=Integer.parseInt(deviceAddressString);
+      RPiRcSwitchBindingConfig config=new RPiRcSwitchBindingConfig(groupAddress,deviceAddress);
+      this.addBindingConfig(item,config);
+    }
+ catch (    IndexOutOfBoundsException e) {
+      LOGGER.error("The group address '" + groupAddressString + "' is invalid. The group address must have 5 bits, e.g. 10101.");
+    }
+catch (    NumberFormatException e) {
+      LOGGER.error("The device address '" + deviceAddressString + "' is invalid. The device address must be an Integer value, e.g. 4.");
+    }
+  }
+}
