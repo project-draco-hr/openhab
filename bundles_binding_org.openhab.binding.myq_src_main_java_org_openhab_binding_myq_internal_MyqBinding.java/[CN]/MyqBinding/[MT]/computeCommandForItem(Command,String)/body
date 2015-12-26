@@ -1,0 +1,33 @@
+{
+  MyqBindingConfig deviceConfig=getConfigForItemName(itemName);
+  if (invalidCredentials || deviceConfig == null) {
+    return;
+  }
+  try {
+    GarageDoorData garageStatus=myqOnlineData.getGarageData();
+    GarageDoorDevice garageopener=garageStatus.getDevice(deviceConfig.deviceIndex);
+    if (garageopener != null) {
+      if (command.equals(OnOffType.ON) || command.equals(UpDownType.UP)) {
+        myqOnlineData.executeGarageDoorCommand(garageopener.getDeviceId(),1);
+        beginRapidPoll(true);
+      }
+ else       if (command.equals(OnOffType.OFF) || command.equals(UpDownType.DOWN)) {
+        myqOnlineData.executeGarageDoorCommand(garageopener.getDeviceId(),0);
+        beginRapidPoll(true);
+      }
+ else {
+        logger.warn("Unknown command {}",command);
+      }
+    }
+ else {
+      logger.warn("no MyQ device found with index: {}",deviceConfig.deviceIndex);
+    }
+  }
+ catch (  InvalidLoginException e) {
+    logger.error("Could not log in, please check your credentials.",e);
+    invalidCredentials=true;
+  }
+catch (  IOException e) {
+    logger.error("Could not connect to MyQ service",e);
+  }
+}
