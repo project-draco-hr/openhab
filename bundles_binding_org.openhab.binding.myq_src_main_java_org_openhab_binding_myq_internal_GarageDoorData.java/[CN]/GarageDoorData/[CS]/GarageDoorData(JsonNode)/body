@@ -1,0 +1,29 @@
+{
+  if (rootNode.has("Devices")) {
+    JsonNode node=rootNode.get("Devices");
+    if (node.isArray()) {
+      logger.trace("Chamberlain MyQ Devices:");
+      int arraysize=node.size();
+      for (int i=0; i < arraysize; i++) {
+        int deviceId=node.get(i).get("MyQDeviceId").asInt();
+        String deviceName=node.get(i).get("SerialNumber").asText();
+        String deviceType=node.get(i).get("MyQDeviceTypeName").asText();
+        if (DEVICE_TYPE_PATTERN.matcher(deviceType).matches()) {
+          JsonNode attributes=node.get(i).get("Attributes");
+          if (attributes.isArray()) {
+            int attributesSize=attributes.size();
+            for (int j=0; j < attributesSize; j++) {
+              String attributeName=attributes.get(j).get("AttributeDisplayName").asText();
+              if (attributeName.contains("doorstate")) {
+                int doorstate=attributes.get(j).get("Value").asInt();
+                logger.trace("DeviceID: {} DeviceName: {} DeviceType: {} Doorstate : ",deviceId,deviceName,deviceType,doorstate);
+                devices.add(new GarageDoorDevice(deviceId,deviceType,deviceName,doorstate));
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

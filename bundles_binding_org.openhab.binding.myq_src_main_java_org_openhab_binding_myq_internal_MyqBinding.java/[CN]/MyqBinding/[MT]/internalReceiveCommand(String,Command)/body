@@ -1,0 +1,10 @@
+{
+  super.internalReceiveCommand(itemName,command);
+  logger.debug("MyQ binding received command '{}' for item '{}'",command,itemName);
+  if (myqOnlineData != null) {
+    computeCommandForItem(command,itemName);
+  }
+ else {
+    logger.warn("Command '{}' for item '{}' not sent",command,itemName);
+  }
+}

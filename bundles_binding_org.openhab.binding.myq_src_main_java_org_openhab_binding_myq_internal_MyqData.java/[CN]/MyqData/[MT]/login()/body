@@ -1,0 +1,7 @@
+{
+  logger.debug("attempting to login");
+  String url=String.format("%s/api/user/validate?appId=%s&SecurityToken=null&username=%s&password=%s",WEBSITE,enc(appId),enc(userName),enc(password));
+  JsonNode data=request("GET",url,null,null,true);
+  LoginData login=new LoginData(data);
+  sercurityToken=login.getSecurityToken();
+}

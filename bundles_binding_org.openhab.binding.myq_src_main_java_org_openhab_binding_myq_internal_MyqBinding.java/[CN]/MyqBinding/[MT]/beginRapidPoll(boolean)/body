@@ -1,0 +1,10 @@
+{
+  if (restart && pollResetFuture != null) {
+    pollResetFuture.cancel(true);
+    pollResetFuture=null;
+  }
+  if (pollResetFuture == null || pollResetFuture.isCancelled()) {
+    schedulePoll(RAPID_REFRESH);
+    scheduleFuturePollReset();
+  }
+}

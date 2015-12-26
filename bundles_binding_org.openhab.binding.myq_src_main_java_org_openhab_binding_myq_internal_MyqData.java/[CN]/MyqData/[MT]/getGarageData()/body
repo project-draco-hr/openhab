@@ -1,0 +1,6 @@
+{
+  logger.debug("Retreiveing door data");
+  String url=String.format("%s/api/v4/userdevicedetails/get?appId=%s&SecurityToken=%s",WEBSITE,enc(appId),enc(getSecurityToken()));
+  JsonNode data=request("GET",url,null,null,true);
+  return new GarageDoorData(data);
+}

@@ -1,0 +1,84 @@
+{
+  if (invalidCredentials || this.myqOnlineData == null) {
+    logger.debug("Invalid Account Credentials");
+    return;
+  }
+  try {
+    GarageDoorData garageStatus=myqOnlineData.getGarageData();
+    for (    MyqBindingProvider provider : providers) {
+      for (      String mygItemName : provider.getInBindingItemNames()) {
+        MyqBindingConfig deviceConfig=getConfigForItemName(mygItemName);
+        if (deviceConfig != null) {
+          GarageDoorDevice garageopener=garageStatus.getDevice(deviceConfig.deviceIndex);
+          if (garageopener != null) {
+            State newState=UnDefType.UNDEF;
+            for (            Class<? extends State> type : deviceConfig.acceptedDataTypes) {
+              if (OpenClosedType.class == type) {
+                if (garageopener.getStatus() == GarageDoorStatus.CLOSED) {
+                  newState=OpenClosedType.CLOSED;
+                  break;
+                }
+ else {
+                  newState=OpenClosedType.OPEN;
+                  break;
+                }
+              }
+ else               if (UpDownType.class == type) {
+                if (garageopener.getStatus() == GarageDoorStatus.CLOSED) {
+                  newState=UpDownType.DOWN;
+                  break;
+                }
+ else                 if (garageopener.getStatus() == GarageDoorStatus.OPEN) {
+                  newState=UpDownType.UP;
+                  break;
+                }
+              }
+ else               if (OnOffType.class == type) {
+                if (garageopener.getStatus() == GarageDoorStatus.CLOSED) {
+                  newState=OnOffType.OFF;
+                  break;
+                }
+ else {
+                  newState=OnOffType.ON;
+                  break;
+                }
+              }
+ else               if (PercentType.class == type) {
+switch (garageopener.getStatus()) {
+case OPEN:
+                  newState=PercentType.ZERO;
+                break;
+case CLOSED:
+              newState=PercentType.HUNDRED;
+            break;
+case CLOSING:
+case OPENING:
+case PARTIAL:
+          newState=new PercentType(50);
+        break;
+default :
+      break;
+  }
+}
+ else if (StringType.class == type) {
+  newState=new StringType(garageopener.getStatus().getLabel());
+  break;
+}
+}
+eventPublisher.postUpdate(mygItemName,newState);
+if (garageopener.getStatus().inMotion()) {
+beginRapidPoll(false);
+}
+}
+}
+}
+}
+}
+ catch (InvalidLoginException e) {
+logger.error("Could not log in, please check your credentials.",e);
+invalidCredentials=true;
+}
+catch (IOException e) {
+logger.error("Could not connect to MyQ service",e);
+}
+}

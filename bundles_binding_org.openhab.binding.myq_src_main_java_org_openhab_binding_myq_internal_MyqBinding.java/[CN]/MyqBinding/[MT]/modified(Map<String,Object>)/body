@@ -1,0 +1,22 @@
+{
+  String refreshIntervalString=(String)configuration.get("refresh");
+  if (StringUtils.isNotBlank(refreshIntervalString)) {
+    refreshInterval=Long.parseLong(refreshIntervalString);
+  }
+  String usernameString=(String)configuration.get("username");
+  String passwordString=(String)configuration.get("password");
+  String appId=(String)configuration.get("appId");
+  if (StringUtils.isBlank(appId)) {
+    appId=MyqData.DEFAULT_APP_ID;
+  }
+  int timeout=MyqData.DEFAUALT_TIMEOUT;
+  String timeoutString=(String)configuration.get("timeout");
+  if (StringUtils.isNotBlank(timeoutString)) {
+    timeout=Integer.parseInt(timeoutString);
+  }
+  if (StringUtils.isNotBlank(usernameString) && StringUtils.isNotBlank(passwordString)) {
+    myqOnlineData=new MyqData(usernameString,passwordString,appId,timeout);
+    invalidCredentials=false;
+    schedulePoll(refreshInterval);
+  }
+}

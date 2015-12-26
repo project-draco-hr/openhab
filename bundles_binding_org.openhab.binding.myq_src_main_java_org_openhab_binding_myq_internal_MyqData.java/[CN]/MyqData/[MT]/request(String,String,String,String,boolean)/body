@@ -1,0 +1,36 @@
+{
+  logger.debug("Requsting URL {}",url);
+  String dataString=executeUrl(method,url,header,payload == null ? null : IOUtils.toInputStream(payload),payloadType,timeout);
+  logger.debug("Received MyQ  JSON: {}",dataString);
+  if (dataString == null) {
+    throw new IOException("Null response from MyQ server");
+  }
+  try {
+    ObjectMapper mapper=new ObjectMapper();
+    JsonNode rootNode=mapper.readTree(dataString);
+    int returnCode=rootNode.get("ReturnCode").asInt();
+    logger.debug("myq ReturnCode: {}",returnCode);
+    MyQResponseCode rc=MyQResponseCode.fromCode(returnCode);
+switch (rc) {
+case OK:
+{
+        return rootNode;
+      }
+case ACCOUNT_INVALID:
+case ACCOUNT_NOT_FOUND:
+case ACCOUNT_LOCKED:
+case ACCOUNT_LOCKED_PENDING:
+    throw new InvalidLoginException(rc.getDesc());
+case LOGIN_ERROR:
+  if (retry) {
+    login();
+    return request(method,url,payload,payloadType,false);
+  }
+default :
+throw new IOException("Request Failed: " + rc.getDesc());
+}
+}
+ catch (JsonProcessingException e) {
+throw new IOException("Could not parse response",e);
+}
+}
