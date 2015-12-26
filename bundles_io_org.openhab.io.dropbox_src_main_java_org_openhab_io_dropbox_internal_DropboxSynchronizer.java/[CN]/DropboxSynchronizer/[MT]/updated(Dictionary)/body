@@ -20,6 +20,7 @@
     if (isNotBlank(contentDirString)) {
       DropboxSynchronizer.contentDir=contentDirString;
     }
+    logger.debug("contentdir: {}",contentDir);
     String uploadIntervalString=(String)config.get("uploadInterval");
     if (isNotBlank(uploadIntervalString)) {
       DropboxSynchronizer.uploadInterval=uploadIntervalString;
@@ -48,6 +49,7 @@
       downloadFilterElements=Arrays.asList(newFilterElements);
     }
     isProperlyConfigured=true;
+    logger.debug("bundle is properly configured: activating synchronizer");
     activateSynchronizer();
   }
 }

@@ -2,7 +2,7 @@
   logger.debug("Started synchronization from local to Dropbox ...");
   Map<String,Long> dropboxEntries=new HashMap<String,Long>();
   WithChildren metadata=client.getMetadataWithChildren("/");
-  File dropboxEntryFile=new File(contentDir + DROPBOX_ENTRIES_FILE_NAME);
+  File dropboxEntryFile=new File(DBX_FOLDER + DROPBOX_ENTRIES_FILE_NAME);
   if (!dropboxEntryFile.exists() || !metadata.hash.equals(lastHash)) {
     collectDropboxEntries(client,dropboxEntries,"/");
     serializeDropboxEntries(dropboxEntryFile,dropboxEntries);
