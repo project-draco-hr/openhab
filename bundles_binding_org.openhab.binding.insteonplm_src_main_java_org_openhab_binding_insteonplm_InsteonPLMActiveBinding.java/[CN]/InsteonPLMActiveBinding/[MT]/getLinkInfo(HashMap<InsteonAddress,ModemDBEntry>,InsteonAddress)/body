@@ -1,0 +1,20 @@
+{
+  ModemDBEntry dbe=dbes.get(a);
+  ArrayList<Byte> controls=dbe.getControls();
+  ArrayList<Byte> responds=dbe.getRespondsTo();
+  StringBuffer buf=new StringBuffer("the modem");
+  if (!controls.isEmpty()) {
+    buf.append(" controls groups [");
+    buf.append(toGroupString(controls));
+    buf.append("]");
+  }
+  if (!responds.isEmpty()) {
+    if (!controls.isEmpty()) {
+      buf.append(" and");
+    }
+    buf.append(" responds to groups [");
+    buf.append(toGroupString(responds));
+    buf.append("]");
+  }
+  return buf.toString();
+}
