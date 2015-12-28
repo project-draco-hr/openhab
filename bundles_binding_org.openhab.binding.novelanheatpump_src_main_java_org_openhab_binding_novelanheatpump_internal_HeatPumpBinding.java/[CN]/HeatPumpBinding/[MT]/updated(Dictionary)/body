@@ -1,13 +1,25 @@
 {
   if (config != null) {
-    String ip=(String)config.get("ip");
-    if (StringUtils.isNotBlank(ip) && !ip.equals(HeatPumpBinding.ip)) {
-      HeatPumpBinding.ip=ip;
+    boolean properlyConfigured=true;
+    long refreshInterval=DEFAULT_REFRESH_INTERVAL;
+    int port=DEFAULT_PORT;
+    String ip=null;
+    try {
       String refreshIntervalString=(String)config.get("refresh");
-      if (StringUtils.isNotBlank(refreshIntervalString)) {
-        refreshInterval=Long.parseLong(refreshIntervalString);
-      }
-      setProperlyConfigured(true);
+      refreshInterval=isNotBlank(refreshIntervalString) ? Long.parseLong(refreshIntervalString) : DEFAULT_REFRESH_INTERVAL;
+      ip=(String)config.get("ip");
+      properlyConfigured=properlyConfigured && isNotBlank(ip);
+      String portString=(String)config.get("port");
+      port=isNumeric(portString) ? Integer.parseInt(portString) : DEFAULT_PORT;
     }
+ catch (    NumberFormatException ex) {
+      properlyConfigured=false;
+    }
+    if (properlyConfigured) {
+      this.refreshInterval=refreshInterval;
+      HeatPumpBinding.ip=ip;
+      HeatPumpBinding.port=port;
+    }
+    setProperlyConfigured(properlyConfigured);
   }
 }
