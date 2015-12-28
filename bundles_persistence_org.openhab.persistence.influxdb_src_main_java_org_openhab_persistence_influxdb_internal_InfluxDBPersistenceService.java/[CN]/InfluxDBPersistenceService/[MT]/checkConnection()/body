@@ -1,0 +1,27 @@
+{
+  boolean dbStatus=false;
+  if (!connected) {
+    logger.error("checkConnection: database is not connected");
+    dbStatus=false;
+  }
+ else {
+    try {
+      Pong pong=influxDB.ping();
+      String version=pong.getVersion();
+      if (version != null && !version.contains("unknown")) {
+        dbStatus=true;
+        logger.debug("database status is OK, version is {}",version);
+      }
+ else {
+        logger.error("database ping error, version is: \"{}\" response time was \"{}\"",version,pong.getResponseTime());
+        dbStatus=false;
+      }
+    }
+ catch (    RuntimeException e) {
+      dbStatus=false;
+      logger.error("database connection failed",e);
+      handleDatabaseException(e);
+    }
+  }
+  return dbStatus;
+}
