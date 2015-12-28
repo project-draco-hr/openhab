@@ -7,6 +7,7 @@
   for (  InsteonAddress k : dbes.keySet()) {
     logger.debug("modem db entry: {}",k);
   }
+  HashSet<InsteonAddress> addrs=new HashSet<InsteonAddress>();
   for (  InsteonDevice dev : m_devices.values()) {
     InsteonAddress a=dev.getAddress();
     if (!dbes.containsKey(a)) {
@@ -14,12 +15,18 @@
     }
  else {
       if (!dev.hasModemDBEntry()) {
-        logger.info("device {}     found in the modem database!",a);
+        addrs.add(a);
+        logger.info("device {} found in the modem database and {}.",a,getLinkInfo(dbes,a));
         dev.setHasModemDBEntry(true);
       }
       if (dev.getStatus() != DeviceStatus.POLLING) {
         Poller.s_instance().startPolling(dev,dbes.size());
       }
+    }
+  }
+  for (  InsteonAddress k : dbes.keySet()) {
+    if (!addrs.contains(k) && !k.equals(dbes.get(k).getPort().getAddress())) {
+      logger.info("device {} found in the modem database, but is not configured as an item and {}.",k,getLinkInfo(dbes,k));
     }
   }
   m_driver.unlockModemDBEntries();
