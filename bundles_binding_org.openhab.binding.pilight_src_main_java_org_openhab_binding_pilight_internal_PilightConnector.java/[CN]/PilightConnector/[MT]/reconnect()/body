@@ -1,4 +1,5 @@
 {
+  disconnect();
   int delay=0;
   while (!isConnected()) {
     try {
@@ -17,14 +18,14 @@
         connection.setSocket(socket);
       }
  else {
-        logger.error("pilight client not accepted: {}",response.getStatus());
+        logger.debug("pilight client not accepted: {}",response.getStatus());
       }
     }
  catch (    IOException e) {
-      logger.error(e.getMessage(),e);
+      logger.debug(e.getMessage(),e);
     }
 catch (    InterruptedException e) {
-      logger.error(e.getMessage(),e);
+      logger.debug(e.getMessage(),e);
     }
     delay=RECONNECT_DELAY;
   }

@@ -18,7 +18,6 @@
               logger.trace("Response success: " + response.isSuccess());
             }
  else             if (line.equals("1")) {
-              connection.getSocket().close();
               throw new IOException("Connection to pilight lost");
             }
  else {
@@ -32,9 +31,11 @@
       }
     }
  catch (    IOException e) {
-      logger.error("Error in pilight listener thread",e);
+      logger.debug("Error in pilight listener thread",e);
     }
-    reconnect();
+    logger.info("Disconnected from pilight server at {}:{}",connection.getHostname(),connection.getPort());
+    if (running) {
+      reconnect();
+    }
   }
-  cleanup();
 }
