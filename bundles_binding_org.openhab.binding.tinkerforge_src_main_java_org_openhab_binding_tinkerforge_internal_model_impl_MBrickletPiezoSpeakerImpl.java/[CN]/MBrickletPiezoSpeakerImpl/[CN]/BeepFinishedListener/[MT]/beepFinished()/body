@@ -1,0 +1,29 @@
+{
+  try {
+    logger.debug("currentTone {}",currentTone);
+    if (currentTone >= sequenceLength) {
+      round++;
+      logger.debug("round {} repeat {}",round,repeats);
+      if (round < repeats) {
+        currentTone=0;
+      }
+ else {
+        logger.debug("beep done");
+        setSwitchState(OnOffValue.OFF);
+        return;
+      }
+    }
+ else {
+      logger.debug("currenTone {}, sequenceLength {}",currentTone,sequenceLength);
+    }
+    logger.debug("beep duration {} frequency {}",durations[currentTone],frequencies[currentTone]);
+    tinkerforgeDevice.beep(durations[currentTone],frequencies[currentTone]);
+    currentTone++;
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(mbricklet,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(mbricklet,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

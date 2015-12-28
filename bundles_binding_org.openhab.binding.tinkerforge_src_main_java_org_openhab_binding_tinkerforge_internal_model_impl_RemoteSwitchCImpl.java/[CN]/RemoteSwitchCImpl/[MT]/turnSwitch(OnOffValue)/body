@@ -6,10 +6,22 @@
   if (getDeviceCode() != null && systemCode != null) {
     short switchTo=state == OnOffValue.ON ? BrickletRemoteSwitch.SWITCH_TO_ON : BrickletRemoteSwitch.SWITCH_TO_OFF;
     try {
-      if (getRepeats() != null) {
-        getMbrick().getTinkerforgeDevice().setRepeats(getRepeats());
+      int maxRetries=20;
+      int trial=0;
+      while (tinkerforgeDevice.getSwitchingState() == BrickletRemoteSwitch.SWITCHING_STATE_BUSY && trial < maxRetries) {
+        trial++;
+        logger.trace("waiting for ready state {}",trial);
+        Thread.sleep(50);
       }
-      getMbrick().getTinkerforgeDevice().switchSocketC(getSystemCode().charAt(0),getDeviceCode(),switchTo);
+      if (trial == maxRetries) {
+        logger.error("remote switch doesn't go to ready state in spite of {} retries.",trial);
+        return;
+      }
+      if (getRepeats() != null) {
+        tinkerforgeDevice.setRepeats(getRepeats());
+      }
+      logger.debug("switching socket C with systemCode {}, deviceCode {} to {}",getSystemCode().charAt(0),getDeviceCode(),switchTo);
+      tinkerforgeDevice.switchSocketC(getSystemCode().charAt(0),getDeviceCode(),switchTo);
       setSwitchState(state);
     }
  catch (    TimeoutException e) {
@@ -17,6 +29,9 @@
     }
 catch (    NotConnectedException e) {
       TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+    }
+catch (    InterruptedException e) {
+      logger.warn("retry was interrupted");
     }
   }
  else {

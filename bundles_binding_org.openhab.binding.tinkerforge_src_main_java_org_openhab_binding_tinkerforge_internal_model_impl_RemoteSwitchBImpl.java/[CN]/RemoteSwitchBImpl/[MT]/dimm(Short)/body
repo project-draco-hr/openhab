@@ -1,0 +1,67 @@
+{
+  if (newDimmValue == null) {
+    logger.error("newDimmValue must not be null");
+    return;
+  }
+  logger.trace("new dimm value {}",newDimmValue);
+  if (newDimmValue > getMaxValue().shortValue()) {
+    if (absDimmValue != null && absDimmValue < getMaxValue().shortValue()) {
+      newDimmValue=getMaxValue().shortValue();
+    }
+ else {
+      logger.trace("max dim value already reached");
+      return;
+    }
+  }
+ else   if (newDimmValue < getMinValue().shortValue()) {
+    if (absDimmValue != null && absDimmValue > getMinValue().shortValue()) {
+      newDimmValue=getMinValue().shortValue();
+    }
+ else {
+      logger.trace("min dim value already reached");
+      return;
+    }
+  }
+  logger.debug("newDimmValue {}",newDimmValue);
+  int maxRetries=20;
+  int trial=0;
+  try {
+    while (tinkerforgeDevice.getSwitchingState() == BrickletRemoteSwitch.SWITCHING_STATE_BUSY && trial < maxRetries) {
+      trial++;
+      logger.trace("waiting for ready state {}",trial);
+      Thread.sleep(50);
+    }
+    if (trial == maxRetries) {
+      logger.error("remote switch doesn't go to ready state in spite of {} retries.",trial);
+      return;
+    }
+    PercentValue dimmState;
+    if (newDimmValue == getMinValue().shortValue()) {
+      dimmState=new PercentValue(BigDecimal.ZERO);
+      logger.debug("switching socket B with address {}, unit {} to {}",getAddress(),getUnit(),BrickletRemoteSwitch.SWITCH_TO_OFF);
+      tinkerforgeDevice.switchSocketB(getAddress(),getUnit(),BrickletRemoteSwitch.SWITCH_TO_OFF);
+    }
+ else     if (newDimmValue == getMaxValue().shortValue()) {
+      dimmState=new PercentValue(new BigDecimal(100));
+      logger.debug("switching socket B with address {}, unit {} to {}",getAddress(),getUnit(),BrickletRemoteSwitch.SWITCH_TO_ON);
+      tinkerforgeDevice.switchSocketB(getAddress(),getUnit(),BrickletRemoteSwitch.SWITCH_TO_ON);
+    }
+ else {
+      logger.debug("*** newValue {}",(new BigDecimal(newDimmValue).divide(getMaxValue(),2,RoundingMode.HALF_UP).multiply(new BigDecimal(100))));
+      dimmState=new PercentValue(new BigDecimal(newDimmValue).divide(getMaxValue(),2,RoundingMode.HALF_UP).multiply(new BigDecimal(100)));
+      getMbrick().getTinkerforgeDevice().dimSocketB(getAddress(),getUnit(),newDimmValue);
+    }
+    logger.debug("new dimmState is {}",dimmState);
+    absDimmValue=newDimmValue;
+    setSensorValue(dimmState);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+catch (  InterruptedException e) {
+    logger.warn("retry was interrupted");
+  }
+}

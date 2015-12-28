@@ -1,0 +1,24 @@
+{
+  Short currAcceleration;
+  Acceleration acceleration;
+  try {
+    acceleration=tinkerforgeDevice.getAcceleration();
+    if (getDirection() == AccelerometerCoordinate.X) {
+      currAcceleration=acceleration.x;
+    }
+ else     if (getDirection() == AccelerometerCoordinate.Y) {
+      currAcceleration=acceleration.y;
+    }
+ else {
+      currAcceleration=acceleration.z;
+    }
+    DecimalValue value=Tools.calculate1000(currAcceleration);
+    setSensorValue(value);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

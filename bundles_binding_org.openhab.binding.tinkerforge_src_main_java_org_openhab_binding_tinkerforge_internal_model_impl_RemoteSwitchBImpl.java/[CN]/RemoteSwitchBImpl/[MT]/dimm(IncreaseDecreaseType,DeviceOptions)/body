@@ -1,73 +1,30 @@
 {
   logger.trace("dimmer increase increaseDecrease {} opts {}",increaseDecrease,opts);
+  short defaultStep=1;
   if (opts == null) {
-    logger.error("options are missing");
-    return;
+    logger.debug("no step option, defaulting step to {}",defaultStep);
   }
+  Short step=Tools.getShortOpt(ConfigOptsDimmable.STEP.toString(),opts,defaultStep);
   if (increaseDecrease == null) {
     logger.error("increaseDecrease may not be null!");
     return;
   }
-  Short step=Tools.getShortOpt(ConfigOptsDimmable.STEP.toString(),opts);
-  if (step == null) {
-    logger.error("dimmer option step is missing, items configuration has to be fixed!");
-    return;
-  }
-  Short max=Tools.getShortOpt(ConfigOptsDimmable.MAX.toString(),opts);
-  if (max == null) {
-    max=15;
-  }
-  logger.debug("max {}",max);
-  Short min=Tools.getShortOpt(ConfigOptsDimmable.MIN.toString(),opts);
-  if (min == null) {
-    min=0;
-  }
-  logger.debug("min {}",min);
   Short newDimmValue=null;
   if (increaseDecrease.equals(IncreaseDecreaseType.INCREASE)) {
-    newDimmValue=(short)(this.targetDimmvalue + step);
+    if (absDimmValue == null) {
+      newDimmValue=step;
+    }
+ else {
+      newDimmValue=(short)(getSensorValue().shortValue() + step);
+    }
   }
  else   if (increaseDecrease.equals(IncreaseDecreaseType.DECREASE)) {
-    newDimmValue=(short)(this.targetDimmvalue - step);
-  }
-  if (newDimmValue > max) {
-    if (targetDimmvalue < max) {
-      newDimmValue=max;
+    if (absDimmValue == null) {
+      newDimmValue=0;
     }
  else {
-      logger.trace("max dim value already reached");
-      return;
+      newDimmValue=(short)(absDimmValue - step);
     }
   }
- else   if (newDimmValue < min) {
-    if (targetDimmvalue > min) {
-      newDimmValue=min;
-    }
- else {
-      logger.trace("min dim value already reached");
-      return;
-    }
-  }
-  OnOffValue state=newDimmValue == 0 ? OnOffValue.OFF : OnOffValue.ON;
-  logger.debug("newDimmValue {}",newDimmValue);
-  if (getAddress() != null && getUnit() != null) {
-    try {
-      if (getRepeats() != null) {
-        getMbrick().getTinkerforgeDevice().setRepeats(getRepeats());
-      }
-      getMbrick().getTinkerforgeDevice().dimSocketB(getAddress(),getUnit(),newDimmValue);
-      setSwitchState(state);
-      setSensorValue(new DecimalValue(newDimmValue));
-      targetDimmvalue=newDimmValue;
-    }
- catch (    TimeoutException e) {
-      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
-    }
-catch (    NotConnectedException e) {
-      TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
-    }
-  }
- else {
-    logger.error("{} missing configuration for subid {} device will not switch",LoggerConstants.TFINITSUB,getSubId());
-  }
+  dimm(newDimmValue);
 }

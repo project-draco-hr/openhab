@@ -1,0 +1,54 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("gain"))) {
+      Short gainConfig=tfConfig.getGain();
+switch (gainConfig) {
+case 0:
+        this.gain=0;
+      break;
+case 1:
+    this.gain=1;
+  break;
+case 2:
+this.gain=2;
+break;
+default :
+logger.error("invalid gain value {}; using default gain",gainConfig);
+break;
+}
+}
+if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("integrationTime"))) {
+Short integrationTimeConfig=tfConfig.getIntegrationTime();
+switch (integrationTimeConfig) {
+case 0:
+this.integrationTime=0;
+break;
+case 1:
+this.integrationTime=1;
+break;
+case 2:
+this.integrationTime=2;
+break;
+case 3:
+this.integrationTime=3;
+break;
+case 4:
+this.integrationTime=4;
+break;
+default :
+logger.error("invalid integrationTime value {}; using default integrationTime",integrationTimeConfig);
+break;
+}
+}
+}
+try {
+tinkerforgeDevice=new BrickletColor(getUid(),getIpConnection());
+tinkerforgeDevice.setConfig(gain,integrationTime);
+}
+ catch (TimeoutException e) {
+TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+}
+catch (NotConnectedException e) {
+TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+}
+}

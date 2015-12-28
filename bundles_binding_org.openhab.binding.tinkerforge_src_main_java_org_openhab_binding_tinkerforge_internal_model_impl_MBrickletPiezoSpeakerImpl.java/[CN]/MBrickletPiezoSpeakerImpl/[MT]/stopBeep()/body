@@ -1,0 +1,19 @@
+{
+  if (beepFinishedListener != null) {
+    tinkerforgeDevice.removeBeepFinishedListener(beepFinishedListener);
+    beepFinishedListener=null;
+  }
+  if (morseFinishedListener != null) {
+    tinkerforgeDevice.removeMorseCodeFinishedListener(morseFinishedListener);
+    morseFinishedListener=null;
+  }
+  try {
+    tinkerforgeDevice.beep(0,0);
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

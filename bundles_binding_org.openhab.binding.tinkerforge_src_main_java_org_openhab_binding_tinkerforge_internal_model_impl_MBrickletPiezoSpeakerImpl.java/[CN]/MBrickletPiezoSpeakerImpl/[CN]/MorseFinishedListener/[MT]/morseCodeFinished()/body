@@ -1,0 +1,29 @@
+{
+  try {
+    logger.debug("currentSequence {}",currentSequence);
+    if (currentSequence >= sequenceLength) {
+      round++;
+      logger.debug("round {} repeat {}",round,repeats);
+      if (round < repeats) {
+        currentSequence=0;
+      }
+ else {
+        logger.debug("beep done");
+        setSwitchState(OnOffValue.OFF);
+        return;
+      }
+    }
+ else {
+      logger.debug("currentSequence {}, sequenceLength {}",currentSequence,sequenceLength);
+    }
+    logger.debug("morse code {} frequency {}",morseCodes[currentSequence],frequencies[currentSequence]);
+    tinkerforgeDevice.morseCode(morseCodes[currentSequence],frequencies[currentSequence]);
+    currentSequence++;
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(mbricklet,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(mbricklet,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

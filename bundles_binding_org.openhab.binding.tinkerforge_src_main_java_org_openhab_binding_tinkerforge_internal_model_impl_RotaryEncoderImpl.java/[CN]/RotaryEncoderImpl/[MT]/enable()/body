@@ -1,0 +1,25 @@
+{
+  setCallbackPeriod(10);
+  if (tfConfig != null) {
+    logger.trace("got configuration");
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("callbackPeriod"))) {
+      logger.trace("found callbackPeriod");
+      setCallbackPeriod(tfConfig.getCallbackPeriod());
+    }
+  }
+  logger.trace("callbackPeriod is {}",getCallbackPeriod());
+  tinkerforgeDevice=getMbrick().getTinkerforgeDevice();
+  tinkerforgeDevice.setResponseExpected(BrickletRotaryEncoder.FUNCTION_SET_COUNT_CALLBACK_PERIOD,false);
+  try {
+    tinkerforgeDevice.setCountCallbackPeriod(getCallbackPeriod());
+    listener=new CountListener();
+    tinkerforgeDevice.addCountListener(listener);
+    fetchSensorValue();
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

@@ -1,0 +1,14 @@
+{
+  if (ecosystem == null) {
+    logger.error("tfClearLCD action failed ecosystem is null");
+    return false;
+  }
+  MBaseDevice mDevice=ecosystem.getDevice(uid,null);
+  if (mDevice instanceof MBrickletLCD20x4) {
+    return ((MBrickletLCD20x4)mDevice).clear();
+  }
+ else {
+    logger.error("no lcd device found with uid {}",uid);
+    return false;
+  }
+}
