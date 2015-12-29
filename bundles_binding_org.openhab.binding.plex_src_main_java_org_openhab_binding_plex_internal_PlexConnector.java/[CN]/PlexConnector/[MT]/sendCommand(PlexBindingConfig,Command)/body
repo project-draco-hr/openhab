@@ -1,17 +1,24 @@
 {
-  String url=null;
+  String cmd=null;
   String property=config.getProperty();
-  if (property.equals(PlexBindingConstants.PROPERTY_VOLUME)) {
-    url=getVolumeCommand(config,command);
+  if (property.equals(PlexProperty.VOLUME.getName())) {
+    cmd=getVolumeCommand(config,command);
   }
- else   if (property.equals(PlexBindingConstants.PROPERTY_PROGRESS)) {
-    url=getProgressCommand(config,command);
+ else   if (property.equals(PlexProperty.PROGRESS.getName())) {
+    cmd=getProgressCommand(config,command);
   }
  else {
-    url=config.getProperty();
+    cmd=config.getProperty();
   }
-  if (url != null) {
-    url=playerUrl + url;
-    internalSendCommand(config.getMachineIdentifier(),url);
+  if (cmd != null) {
+    Server host=getHost(config.getMachineIdentifier());
+    if (host != null && !isBlank(host.getHost())) {
+      String uri=String.format("http://%s:%s/player/%s",host.getHost(),host.getPort(),cmd);
+      uri=appendParametersForCommand(uri,config.getMachineIdentifier());
+      internalSendCommand(config.getMachineIdentifier(),uri);
+    }
+ else {
+      logger.debug("Cannot send command, host is unknown for machine ID {}",config.getMachineIdentifier());
+    }
   }
 }

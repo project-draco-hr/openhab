@@ -20,11 +20,12 @@ catch (  IOException e) {
     String type=update.getType();
     if (type.equals("playing") && update.getChildren().size() == 1) {
       Child child=update.getChildren().get(0);
-      if (!StringUtils.isBlank(child.getSessionKey())) {
+      if (!isBlank(child.getSessionKey())) {
         String sessionKey=child.getSessionKey();
+        String key=child.getKey();
         String state=child.getState();
-        PlexSession session=getSession(sessionKey);
-        if (!StringUtils.isEmpty(state) && session != null) {
+        PlexSession session=getSession(sessionKey,key);
+        if (!isEmpty(state) && session != null) {
           PlexPlayerState playerState=PlexPlayerState.of(state);
           session.setState(playerState);
           session.setViewOffset(child.getViewOffset());

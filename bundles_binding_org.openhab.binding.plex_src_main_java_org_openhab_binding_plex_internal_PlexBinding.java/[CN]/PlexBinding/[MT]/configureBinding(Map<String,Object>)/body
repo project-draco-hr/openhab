@@ -1,0 +1,24 @@
+{
+  PlexConnectionProperties connectionProperties=new PlexConnectionProperties();
+  connectionProperties.setHost((String)configuration.get("host"));
+  connectionProperties.setToken((String)configuration.get("token"));
+  connectionProperties.setUsername((String)configuration.get("username"));
+  connectionProperties.setPassword((String)configuration.get("password"));
+  String port=(String)configuration.get("port");
+  if (isNotBlank(port) && isNumeric(port)) {
+    connectionProperties.setPort(Integer.valueOf(port));
+  }
+  String refresh=(String)configuration.get("refresh");
+  if (isNotBlank(refresh) && isNumeric(refresh)) {
+    refreshInterval=Long.parseLong(refresh);
+  }
+  logger.debug("Plex config, server at {}:{}",connectionProperties.getHost(),connectionProperties.getPort());
+  if (isNotBlank(connectionProperties.getHost())) {
+    connect(connectionProperties);
+    setProperlyConfigured(true);
+  }
+ else {
+    logger.warn("No host configured for Plex binding");
+    setProperlyConfigured(false);
+  }
+}

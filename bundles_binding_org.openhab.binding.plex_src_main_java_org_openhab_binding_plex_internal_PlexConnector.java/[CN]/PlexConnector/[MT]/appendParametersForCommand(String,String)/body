@@ -1,0 +1,17 @@
+{
+  List<String> parameters=new ArrayList<String>();
+  if (!isEmpty(machineIdentifier)) {
+    PlexSession session=getSessionByMachineId(machineIdentifier);
+    if (session != null) {
+      String type="video";
+      if ("track".equals(session.getType())) {
+        type="music";
+      }
+      parameters.add(String.format("%s=%s","type",type));
+    }
+  }
+  if (!parameters.isEmpty()) {
+    uri+=(!uri.contains("?") ? "?" : "&") + StringUtils.join(parameters,"&");
+  }
+  return uri;
+}

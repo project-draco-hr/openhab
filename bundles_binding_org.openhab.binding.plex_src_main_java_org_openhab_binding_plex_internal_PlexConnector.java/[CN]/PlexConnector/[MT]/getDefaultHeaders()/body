@@ -1,0 +1,15 @@
+{
+  Map<String,Collection<String>> headers=new HashMap<String,Collection<String>>();
+  headers.put("X-Plex-Client-Identifier",Arrays.asList(CLIENT_ID));
+  headers.put("X-Plex-Product",Arrays.asList("openHAB"));
+  headers.put("X-Plex-Version",Arrays.asList(PlexActivator.getVersion().toString()));
+  headers.put("X-Plex-Device",Arrays.asList(SystemUtils.JAVA_RUNTIME_NAME));
+  headers.put("X-Plex-Device-Name",Arrays.asList("openHAB"));
+  headers.put("X-Plex-Provides",Arrays.asList("controller"));
+  headers.put("X-Plex-Platform",Arrays.asList("Java"));
+  headers.put("X-Plex-Platform-Version",Arrays.asList(SystemUtils.JAVA_VERSION));
+  if (!isBlank(connection.getToken())) {
+    headers.put("X-Plex-Token",Arrays.asList(connection.getToken()));
+  }
+  return headers;
+}

@@ -7,6 +7,9 @@
     for (    Entry<String,String> entry : parameters.entrySet()) {
       connection.addRequestProperty(entry.getKey(),entry.getValue());
     }
+    for (    Entry<String,Collection<String>> entry : getDefaultHeaders().entrySet()) {
+      connection.addRequestProperty(entry.getKey(),StringUtils.join(entry.getValue(),", "));
+    }
     JAXBContext jc=JAXBContext.newInstance(type);
     InputStream xml=connection.getInputStream();
     @SuppressWarnings("unchecked") T obj=(T)jc.createUnmarshaller().unmarshal(xml);

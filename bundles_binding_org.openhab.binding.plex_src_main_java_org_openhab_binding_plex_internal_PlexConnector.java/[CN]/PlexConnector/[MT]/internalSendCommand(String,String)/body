@@ -1,6 +1,7 @@
 {
   logger.debug("Calling url {}",url);
-  client.prepareGet(url).setHeader("X-Plex-Target-Client-Identifier",machineIdentifier).execute(new AsyncCompletionHandler<Response>(){
+  BoundRequestBuilder builder=client.prepareGet(url).setHeaders(getDefaultHeaders()).setHeader("X-Plex-Target-Client-Identifier",machineIdentifier);
+  builder.execute(new AsyncCompletionHandler<Response>(){
     @Override public Response onCompleted(    Response response) throws Exception {
       if (response.getStatusCode() != 200) {
         logger.error("Error while sending command to Plex: {}\r\n{}",response.getStatusText(),response.getResponseBody());

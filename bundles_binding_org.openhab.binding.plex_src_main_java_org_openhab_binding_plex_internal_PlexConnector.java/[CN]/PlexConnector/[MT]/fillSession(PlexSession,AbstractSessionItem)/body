@@ -1,0 +1,11 @@
+{
+  Player player=item.getPlayer();
+  session.setSessionKey(item.getSessionKey());
+  session.setState(PlexPlayerState.of(player.getState()));
+  if (!isBlank(item.getGrandparentTitle()))   session.setTitle(item.getGrandparentTitle() + " - " + item.getTitle());
+ else   session.setTitle(item.getTitle());
+  session.setType(item.getType());
+  session.setMachineIdentifier(player.getMachineIdentifier());
+  if (isNumeric(item.getDuration()))   session.setDuration(Integer.valueOf(item.getDuration()));
+  session.setKey(item.getKey());
+}

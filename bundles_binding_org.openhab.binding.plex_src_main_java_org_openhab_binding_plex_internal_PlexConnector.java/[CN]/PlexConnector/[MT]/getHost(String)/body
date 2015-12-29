@@ -1,0 +1,11 @@
+{
+  if (clientCache == null || new Date().getTime() - lastClientCacheUpdate.getTime() > CACHE_VALID_TIME || clientCache.getServer(machineIdentifier) == null) {
+    lastClientCacheUpdate=new Date();
+    clientCache=getDocument(clientsUrl,MediaContainer.class);
+  }
+  Server server=clientCache.getServer(machineIdentifier);
+  if (server != null) {
+    return server;
+  }
+  return null;
+}
