@@ -1,0 +1,32 @@
+{
+  Reader reader=null;
+  logger.debug("Do login for user '{}'",this.userName);
+  try {
+    String url=API_URL + "auth?email=" + this.userName+ "&password="+ this.password;
+    HttpURLConnection httpURLConnection;
+    httpURLConnection=(HttpURLConnection)new URL(url).openConnection();
+    InputStream inputStream=httpURLConnection.getInputStream();
+    reader=new InputStreamReader(inputStream,"UTF-8");
+    JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
+    String status=jsonObject.get("status").getAsString();
+    if (!status.equals("ok")) {
+      return false;
+    }
+    logger.debug("Logon successfull");
+    authToken=jsonObject.get("authToken").getAsString();
+    return true;
+  }
+ catch (  Exception ex) {
+    logger.error("Error do logon: '{}'",ex.toString());
+    return false;
+  }
+ finally {
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+ catch (      IOException ignored) {
+      }
+    }
+  }
+}

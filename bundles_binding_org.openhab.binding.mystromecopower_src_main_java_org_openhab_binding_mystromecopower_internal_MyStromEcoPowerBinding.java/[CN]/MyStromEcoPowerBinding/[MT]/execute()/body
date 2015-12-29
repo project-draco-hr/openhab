@@ -1,0 +1,32 @@
+{
+  logger.debug("execute() method is called!");
+  if (this.devicesMap.isEmpty()) {
+    return;
+  }
+  for (  MyStromEcoPowerBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      logger.debug("Mystrom eco power switch '{}' state will be updated",itemName);
+      String friendlyName=provider.getMystromFriendlyName(itemName);
+      String id=this.devicesMap.get(friendlyName);
+      if (id != null) {
+        MystromDevice device;
+        device=this.mystromClient.getDeviceInfo(id);
+        if (device != null) {
+          if (provider.getIsSwitch(itemName)) {
+            State state=device.state.equals("on") ? OnOffType.ON : OnOffType.OFF;
+            eventPublisher.postUpdate(itemName,state);
+          }
+          if (provider.getIsStringItem(itemName)) {
+            eventPublisher.postUpdate(itemName,new StringType(device.state));
+          }
+          if (provider.getIsNumberItem(itemName)) {
+            eventPublisher.postUpdate(itemName,new DecimalType(device.power));
+          }
+        }
+      }
+ else {
+        logger.warn("The device itemName '{}' not found on discovery verify device is not offline",itemName);
+      }
+    }
+  }
+}

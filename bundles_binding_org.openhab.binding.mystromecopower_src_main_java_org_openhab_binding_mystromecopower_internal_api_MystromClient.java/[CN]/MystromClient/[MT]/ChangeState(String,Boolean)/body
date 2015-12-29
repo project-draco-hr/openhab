@@ -1,0 +1,34 @@
+{
+  Reader reader=null;
+  logger.debug("Change state for device id '{}', new state is on: '{}'",deviceId,newStateIsOn);
+  try {
+    String url=API_URL + "device/switch" + "?authToken="+ this.authToken+ "&id="+ deviceId+ "&on="+ newStateIsOn.toString();
+    HttpURLConnection httpURLConnection;
+    httpURLConnection=(HttpURLConnection)new URL(url).openConnection();
+    InputStream inputStream=httpURLConnection.getInputStream();
+    reader=new InputStreamReader(inputStream,"UTF-8");
+    JsonObject jsonObject=(JsonObject)jsonParser.parse(reader);
+    String status=jsonObject.get("status").getAsString();
+    if (!status.equals("ok")) {
+      String error=jsonObject.get("error").getAsString();
+      logger.error("Unable to switch state for device '{}' error '{}'",deviceId,error);
+      return false;
+    }
+    String newState=jsonObject.get("state").getAsString();
+    logger.debug("Switch state for device '{}' successfull, state is '{}'",deviceId,newState);
+    return true;
+  }
+ catch (  Exception ex) {
+    logger.error("Error set state: '{}'",ex.toString());
+    return false;
+  }
+ finally {
+    if (reader != null) {
+      try {
+        reader.close();
+      }
+ catch (      IOException ignored) {
+      }
+    }
+  }
+}

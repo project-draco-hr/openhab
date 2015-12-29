@@ -1,0 +1,38 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String userName=(String)config.get("userName");
+    if (StringUtils.isNotBlank(userName)) {
+      this.userName=userName;
+    }
+ else {
+      throw new ConfigurationException("userName","The userName to connect to myStrom must be specified in config file");
+    }
+    String password=(String)config.get("password");
+    if (StringUtils.isNotBlank(password)) {
+      this.password=password;
+    }
+ else {
+      throw new ConfigurationException("password","The password to connect to myStrom must be specified in config file");
+    }
+    if (this.devMode) {
+      this.mystromClient=new MockMystromClient();
+    }
+ else {
+      this.mystromClient=new MystromClient(this.userName,this.password,logger);
+    }
+    if (ChangeStateJob.MystromClient == null) {
+      ChangeStateJob.MystromClient=this.mystromClient;
+    }
+    setProperlyConfigured(true);
+    try {
+      this.mystromDiscovery();
+    }
+ catch (    IOException e) {
+      logger.error("Error doing discovery of your devices",e);
+    }
+  }
+}

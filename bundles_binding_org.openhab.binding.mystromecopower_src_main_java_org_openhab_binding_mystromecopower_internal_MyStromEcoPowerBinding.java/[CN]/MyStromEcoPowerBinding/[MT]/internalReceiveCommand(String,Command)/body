@@ -1,0 +1,48 @@
+{
+  logger.debug("internalReceiveCommand() is called!");
+  String deviceId=null;
+  for (  MyStromEcoPowerBindingProvider provider : providers) {
+    String switchFriendlyName=provider.getMystromFriendlyName(itemName);
+    deviceId=this.devicesMap.get(switchFriendlyName);
+    logger.debug("item '{}' is configured as '{}'",itemName,switchFriendlyName);
+    if (deviceId != null) {
+      if (provider.getIsSwitch(itemName)) {
+        try {
+          logger.debug("Command '{}' is about to be send to item '{}'",command,itemName);
+          if (OnOffType.ON.equals(command) || OnOffType.OFF.equals(command)) {
+            boolean onOff=OnOffType.ON.equals(command);
+            logger.debug("command '{}' transformed to '{}'",command,onOff ? "on" : "off");
+            boolean actualState=this.mystromClient.getDeviceInfo(deviceId).state == "on";
+            if (onOff == actualState) {
+              String scheduledCommand=deviceId + ";" + onOff;
+              logger.debug("Schedule command: " + scheduledCommand);
+              JobDetail job=JobBuilder.newJob(org.openhab.binding.mystromecopower.internal.util.ChangeStateJob.class).usingJobData(org.openhab.binding.mystromecopower.internal.util.ChangeStateJob.JOB_DATA_CONTENT_KEY,scheduledCommand).withIdentity(itemName,"MYSTROMECOPOWER").build();
+              Date dateTrigger=new Date(System.currentTimeMillis() + 5000L);
+              Trigger trigger=newTrigger().forJob(job).withIdentity(itemName + "_" + dateTrigger+ "_trigger","MYSTROMECOPOWER").startAt(dateTrigger).build();
+              this.scheduler.scheduleJob(job,trigger);
+            }
+ else {
+              if (deviceId != this.masterDevice.id) {
+                if (!this.mystromClient.ChangeState(deviceId,onOff)) {
+                  eventPublisher.postUpdate(itemName,onOff ? OnOffType.OFF : OnOffType.ON);
+                }
+              }
+ else {
+                if (OnOffType.OFF.equals(command)) {
+                  logger.debug("Restart master device");
+                  this.mystromClient.RestartMaster(deviceId);
+                }
+              }
+            }
+          }
+        }
+ catch (        Exception e) {
+          logger.error("Failed to send '{}' command",command,e);
+        }
+      }
+    }
+ else {
+      logger.error("Unable to send command to '{}' device is not in discovery table",itemName);
+    }
+  }
+}

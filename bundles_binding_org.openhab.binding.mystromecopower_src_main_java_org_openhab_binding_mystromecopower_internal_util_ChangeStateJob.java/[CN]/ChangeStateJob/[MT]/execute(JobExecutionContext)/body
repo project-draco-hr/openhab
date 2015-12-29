@@ -1,0 +1,15 @@
+{
+  String content=(String)context.getJobDetail().getJobDataMap().get(JOB_DATA_CONTENT_KEY);
+  if (StringUtils.isNotBlank(content)) {
+    String deviceId=content.split(";")[0];
+    String state=content.split(";")[1];
+    boolean setToOn=state == "on";
+    logger.debug("About to execute ChangeStateJob with arguments {} {}",deviceId,state);
+    try {
+      MystromClient.ChangeState(deviceId,setToOn);
+    }
+ catch (    Exception e) {
+      throw new JobExecutionException("Executing command '" + deviceId + " "+ state+ "' throws an Exception. Job will be refired immediately.",e,true);
+    }
+  }
+}
