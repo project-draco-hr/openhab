@@ -1,0 +1,10 @@
+{
+  try {
+    byte cmd2=msg.getByte("command2");
+    return (int)Math.round(((cmd2 >> 4) & 0x0f) * (100 / 15d));
+  }
+ catch (  FieldException e) {
+    logger.error("Can't access command2 byte",e);
+    return 0;
+  }
+}
