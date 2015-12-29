@@ -1,0 +1,19 @@
+{
+  String[] configParts=bindingConfig.trim().split("#");
+  if (configParts.length != 2)   throw new BindingConfigParseException("Two parameters needed (Host#Block)");
+  String[] hostParts=configParts[0].trim().split("@");
+  if (hostParts.length != 2)   throw new BindingConfigParseException("Host paramter must contain device and gateway (deviceHost@gatewayHost)");
+  OctollerBindingConfig config=new OctollerBindingConfig();
+  config.DeviceHost=hostParts[0].trim();
+  config.GatewayHost=hostParts[1].trim();
+  if (configParts[1].length() > 2 && configParts[1].startsWith("'") && configParts[1].endsWith("'"))   config.BlockName=configParts[1].substring(1,configParts[1].length() - 1).trim();
+ else {
+    try {
+      config.BlockID=Integer.parseInt(configParts[1]);
+    }
+ catch (    Exception ex) {
+      throw new BindingConfigParseException("Block parameter must be nummeric or the block name in single quotation marks");
+    }
+  }
+  addBindingConfig(item,config);
+}
