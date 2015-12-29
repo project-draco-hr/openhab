@@ -1,8 +1,13 @@
 {
-  if (connection.getDelay() != null) {
-    delayedUpdateCall(action);
+  if (isConnected()) {
+    if (connection.getDelay() != null) {
+      delayedUpdateCall(action);
+    }
+ else {
+      doUpdateCall(action);
+    }
   }
  else {
-    doUpdateCall(action);
+    logger.debug("Cannot send command, not connected to pilight");
   }
 }
