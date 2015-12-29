@@ -2,13 +2,15 @@
   try {
     final CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(port);
     if (portIdentifier != null) {
-      serialPort=(SerialPort)portIdentifier.open("openhab-ebus",5000);
+      serialPort=(SerialPort)portIdentifier.open("org.openhab.binding.ebus",2000);
       serialPort.setSerialPortParams(2400,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
-      serialPort.enableReceiveTimeout(10000);
       serialPort.disableReceiveThreshold();
+      serialPort.enableReceiveTimeout(10000);
+      serialPort.addEventListener(this);
+      serialPort.notifyOnDataAvailable(true);
       outputStream=serialPort.getOutputStream();
       inputStream=serialPort.getInputStream();
-      return true;
+      return super.connect();
     }
   }
  catch (  NoSuchPortException e) {
@@ -20,5 +22,9 @@ catch (  PortInUseException e) {
 catch (  UnsupportedCommOperationException e) {
     logger.error(e.toString(),e);
   }
+catch (  TooManyListenersException e) {
+    logger.error("Too many listeners error!",e);
+  }
+  serialPort=null;
   return false;
 }

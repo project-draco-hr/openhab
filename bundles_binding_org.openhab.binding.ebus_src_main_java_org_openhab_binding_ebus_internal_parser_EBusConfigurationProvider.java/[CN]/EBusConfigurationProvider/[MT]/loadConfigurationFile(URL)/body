@@ -1,10 +1,20 @@
 {
   final ObjectMapper mapper=new ObjectMapper();
   final InputStream inputStream=url.openConnection().getInputStream();
-  final ArrayList<Map<String,Object>> loadedTelegramRegistry=(ArrayList<Map<String,Object>>)mapper.readValue(inputStream,List.class);
-  for (Iterator<Map<String,Object>> iterator=loadedTelegramRegistry.iterator(); iterator.hasNext(); ) {
-    Map<String,Object> object=iterator.next();
+  final List<TelegramConfiguration> loadedTelegramRegistry=mapper.readValue(inputStream,new TypeReference<List<TelegramConfiguration>>(){
+  }
+);
+  for (Iterator<TelegramConfiguration> iterator=loadedTelegramRegistry.iterator(); iterator.hasNext(); ) {
+    TelegramConfiguration object=iterator.next();
     transformDataTypes(object);
+    String filter=object.getFilterPattern().toString();
+    String fileComment=StringUtils.substringAfterLast(url.getFile(),"/") + " >>> " + object.getComment();
+    if (loadedFilters.containsKey(filter)) {
+      logger.info("Identical filter already loaded ... {} AND {}",loadedFilters.get(filter),fileComment);
+    }
+ else {
+      loadedFilters.put(filter,fileComment);
+    }
   }
   if (loadedTelegramRegistry != null && !loadedTelegramRegistry.isEmpty()) {
     telegramRegistry.addAll(loadedTelegramRegistry);

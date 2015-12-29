@@ -1,12 +1,18 @@
 {
   super.deactivate();
-  logger.debug("eBus binding has been stopped.");
-  if (connector != null && connector.isAlive()) {
-    connector.interrupt();
-    connector=null;
-  }
+  stopConnector();
   if (commandProcessor != null) {
     commandProcessor.deactivate();
     commandProcessor=null;
   }
+  if (debugWriter != null) {
+    try {
+      debugWriter.close();
+    }
+ catch (    IOException e) {
+      logger.error("io error",e);
+    }
+    debugWriter=null;
+  }
+  logger.debug("eBus binding has been stopped.");
 }

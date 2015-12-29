@@ -1,0 +1,75 @@
+{
+  if (configurationProvider == null || configurationProvider.isEmpty()) {
+    logger.debug("eBUS configuration provider not ready, can't get send data yet.");
+    return null;
+  }
+  byte[] buffer=null;
+  TelegramConfiguration commandCfg=configurationProvider.getCommandById(commandId);
+  if (commandCfg != null) {
+    if (dst == null && StringUtils.isNotEmpty(commandCfg.getDst())) {
+      dst=EBusUtils.toByte((String)commandCfg.getDst());
+    }
+    if (dst == null) {
+      logger.error("Unable to send command, destination adress is missing. Set \"dst\" in item.cfg ...");
+      return null;
+    }
+    byte[] bytesData=EBusUtils.toByteArray((String)commandCfg.getData());
+    byte[] bytesCmd=EBusUtils.toByteArray((String)commandCfg.getCommand());
+    buffer=new byte[bytesData.length + 6];
+    buffer[0]=src;
+    buffer[1]=dst;
+    buffer[4]=(byte)bytesData.length;
+    System.arraycopy(bytesCmd,0,buffer,2,bytesCmd.length);
+    if (values == null || values.isEmpty()) {
+      logger.trace("No setter-values for eBUS telegram, used default data ...");
+      System.arraycopy(bytesData,0,buffer,5,bytesData.length);
+      return buffer;
+    }
+    Map<String,TelegramValue> valuesConfig=commandCfg.getValues();
+    if (valuesConfig == null || valuesConfig.isEmpty()) {
+      logger.warn("No values configurated in json cfg ...");
+      return null;
+    }
+    for (    Entry<String,Object> entry : values.entrySet()) {
+      TelegramValue valueEntry=valuesConfig.get(entry.getKey());
+      if (valueEntry == null) {
+        logger.warn("Unable to set value key \"{}\" in command \"{}.{}\", can't compose telegram ...",entry.getKey(),commandId);
+        return null;
+      }
+      String type=valueEntry.getType();
+      int pos=valueEntry.getPos() - 1;
+      BigDecimal value=NumberUtils.toBigDecimal(entry.getValue());
+      if (valueEntry.getMax() != null && value.compareTo(valueEntry.getMax()) == 1) {
+        throw new RuntimeException("Value larger than allowed!");
+      }
+      if (valueEntry.getMin() != null && value.compareTo(valueEntry.getMin()) == -1) {
+        throw new RuntimeException("Value smaller than allowed!");
+      }
+      if (value != null && valueEntry.getFactor() != null) {
+        value=value.divide(valueEntry.getFactor());
+      }
+      byte[] encode=EBusCodecUtils.encode(type,value);
+      if (encode.length == 0) {
+        logger.warn("eBUS codec encoder returns empty buffer ...");
+        return null;
+      }
+      System.arraycopy(encode,0,bytesData,pos - 5,encode.length);
+    }
+    for (    Entry<String,TelegramValue> value : valuesConfig.entrySet()) {
+      if (StringUtils.equals(value.getValue().getType(),"crc-kw")) {
+        byte b=0;
+        int pos=(Integer)value.getValue().getPos() - 6;
+        for (int i=0; i < bytesData.length; i++) {
+          if (i != pos) {
+            b=EBusUtils.crc8(bytesData[i],b,(byte)0x5C);
+          }
+        }
+        bytesData[pos]=b;
+      }
+    }
+    bytesData=EBusUtils.encodeEBusData(bytesData);
+    System.arraycopy(bytesData,0,buffer,5,bytesData.length);
+    return buffer;
+  }
+  return null;
+}

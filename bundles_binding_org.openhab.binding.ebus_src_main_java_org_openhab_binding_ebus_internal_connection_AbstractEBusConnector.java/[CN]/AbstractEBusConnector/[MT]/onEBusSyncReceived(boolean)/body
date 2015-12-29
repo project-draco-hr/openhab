@@ -1,0 +1,16 @@
+{
+  if (inputBuffer.position() == 1 && inputBuffer.get(0) == EBusTelegram.SYN) {
+    logger.trace("Auto-SYN byte received");
+  }
+ else   if (inputBuffer.position() == 2 && inputBuffer.get(0) == EBusTelegram.SYN) {
+    logger.warn("Collision on eBUS detected (SYN DATA SYNC Sequence) ...");
+  }
+ else   if (inputBuffer.position() < 5) {
+    logger.trace("Telegram to small, skip! Buffer: {}",EBusUtils.toHexDumpString(inputBuffer));
+  }
+ else {
+    byte[] receivedTelegram=Arrays.copyOf(inputBuffer.array(),inputBuffer.position());
+    onEBusTelegramReceived(receivedTelegram);
+  }
+  inputBuffer.clear();
+}

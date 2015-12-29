@@ -1,0 +1,20 @@
+{
+  if (threadPool == null) {
+    logger.warn("ThreadPool not ready!");
+    return;
+  }
+  threadPool.execute(new Runnable(){
+    @Override public void run(){
+      final EBusTelegram telegram=EBusUtils.processEBusData(receivedTelegram);
+      if (telegram != null) {
+        for (        EBusConnectorEventListener listener : listeners) {
+          listener.onTelegramReceived(telegram);
+        }
+      }
+ else {
+        logger.debug("Received telegram was invalid, skip!");
+      }
+    }
+  }
+);
+}

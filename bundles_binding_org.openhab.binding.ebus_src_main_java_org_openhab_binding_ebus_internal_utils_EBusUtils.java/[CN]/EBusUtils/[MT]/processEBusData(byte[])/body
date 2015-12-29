@@ -16,7 +16,7 @@
         uc_crc=crc8_tab(b,uc_crc);
         if (b != (byte)0xA9) {
           nnPos++;
-          buffer.put(expandByte(data,i));
+          buffer.put(decodeEBusData(data,i));
         }
         if (nnPos == nn) {
           nnPos=i;
@@ -27,22 +27,33 @@
     int crcPos=nnPos + 1;
     byte crc=data[crcPos];
     if (crc != uc_crc) {
-      logger.warn("EBus telegram sender-crc invalid, skip data! Data: {}",toHexDumpString(data));
+      if (logger.isTraceEnabled()) {
+        logger.trace("EBus telegram master-crc invalid, skip data! Data: {}");
+        logger.trace(" -> DATA: {}",toHexDumpString(data));
+      }
       return null;
     }
     buffer.put(crc);
     buffer.put(data[crcPos + 1]);
     if (data[crcPos + 1] == EBusTelegram.SYN) {
-      if (data[1] == EBusTelegram.BROADCAST) {
+      if (data[1] == EBusTelegram.BROADCAST_ADDRESS) {
         return new EBusTelegram(buffer);
       }
+      if (logger.isTraceEnabled()) {
+        logger.debug("No answer from slave, skip data!");
+        logger.trace(" -> DATA: {}",toHexDumpString(data));
+      }
+      return null;
     }
     if ((data[crcPos + 1] == EBusTelegram.ACK_OK || data[crcPos + 1] == EBusTelegram.ACK_FAIL) && data[crcPos + 2] == EBusTelegram.SYN) {
       buffer.put(data[crcPos + 2]);
       return new EBusTelegram(buffer);
     }
     if (data[crcPos + 1] != EBusTelegram.ACK_OK && data[crcPos + 1] != EBusTelegram.ACK_FAIL) {
-      logger.warn("Unexpect ack value in EBus telegram, skip data!");
+      if (logger.isTraceEnabled()) {
+        logger.trace("Unexpect ACK value in eBUS telegram, skip data!");
+        logger.trace(" -> DATA: {}",toHexDumpString(data));
+      }
       return null;
     }
     int nn2Pos=crcPos + 2;
@@ -54,14 +65,17 @@
         byte b=data[i];
         uc_crc=crc8_tab(b,uc_crc);
         if (b != (byte)0xA9) {
-          buffer.put(expandByte(data,i));
+          buffer.put(decodeEBusData(data,i));
         }
       }
     }
     crc=data[data.length - 3];
     buffer.put(data,data.length - 3,3);
     if (crc != uc_crc) {
-      logger.warn("EBus telegram answer-crc invalid, skip data!");
+      if (logger.isTraceEnabled()) {
+        logger.trace("eBUS telegram answer-crc invalid, skip data!");
+        logger.trace(" -> DATA: {}",toHexDumpString(data));
+      }
       return null;
     }
     return new EBusTelegram(buffer);

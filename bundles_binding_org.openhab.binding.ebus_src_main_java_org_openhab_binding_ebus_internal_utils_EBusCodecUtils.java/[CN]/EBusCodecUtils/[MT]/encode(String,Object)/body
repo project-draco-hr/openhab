@@ -1,0 +1,33 @@
+{
+  if (value instanceof Number) {
+    Number n=(Number)value;
+    if (type.equals("data1b")) {
+      return new byte[]{encodeDATA1b(n.byteValue())};
+    }
+ else     if (type.equals("data1c")) {
+      return new byte[]{encodeDATA1c(n.floatValue())};
+    }
+ else     if (type.equals("data2b")) {
+      return encodeDATA2b(n.floatValue());
+    }
+ else     if (type.equals("data2c")) {
+      return encodeDATA2c(n.floatValue());
+    }
+ else     if (type.equals("word") || type.equals("uint")) {
+      return encodeWord(n.shortValue());
+    }
+ else     if (type.equals("int")) {
+      return encodeInt(n.shortValue());
+    }
+ else     if (type.equals("byte") || type.equals("uchar")) {
+      return new byte[]{encodeUChar(n.byteValue())};
+    }
+ else     if (type.equals("char")) {
+      return new byte[]{encodeChar(n.byteValue())};
+    }
+ else     if (type.equals("bcd")) {
+      return new byte[]{encodeBCD(n.byteValue())};
+    }
+  }
+  throw new RuntimeException("Unable to encode data type " + type + ", maybe currently not supported ...");
+}
