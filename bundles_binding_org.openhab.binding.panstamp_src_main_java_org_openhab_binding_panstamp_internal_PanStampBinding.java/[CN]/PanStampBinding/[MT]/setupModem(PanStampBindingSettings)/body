@@ -1,0 +1,21 @@
+{
+  try {
+    ModemSetup setup=modem.getSetup();
+    if (cfg.networkId != -1) {
+      setup.setNetworkID(cfg.networkId);
+    }
+    if (cfg.networkDeviceAddress != -1) {
+      setup.setDeviceAddress(cfg.networkDeviceAddress);
+    }
+    if (cfg.networkChannel != -1) {
+      setup.setChannel(cfg.networkChannel);
+    }
+    if ((cfg.networkId != -1) || (cfg.networkChannel != -1) || (cfg.networkDeviceAddress != -1)) {
+      modem.setSetup(setup);
+      logger.info("Modem setup updated to address {}, channel {}, and network ID {}",setup.getDeviceAddress(),setup.getChannel(),setup.getNetworkID());
+    }
+  }
+ catch (  SwapException e) {
+    logger.error("Error configuring network: {}",e.getMessage());
+  }
+}

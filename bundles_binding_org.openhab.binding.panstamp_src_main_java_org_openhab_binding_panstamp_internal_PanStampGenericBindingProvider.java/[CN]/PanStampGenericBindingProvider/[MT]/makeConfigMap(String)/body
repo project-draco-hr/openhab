@@ -1,0 +1,12 @@
+{
+  Map<String,String> map=new HashMap<String,String>();
+  String parts[]=config.split(",");
+  for (  String part : parts) {
+    String kvp[]=part.split("=");
+    if (kvp.length != 2) {
+      throw new BindingConfigParseException(String.format("Malformed key/value pair '%s'",part));
+    }
+    map.put(kvp[0].trim(),kvp[1].trim());
+  }
+  return map;
+}

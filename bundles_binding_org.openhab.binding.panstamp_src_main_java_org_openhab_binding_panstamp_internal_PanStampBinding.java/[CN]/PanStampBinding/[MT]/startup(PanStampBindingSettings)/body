@@ -1,0 +1,29 @@
+{
+  store=new ConfigDeviceStore();
+  for (  PanStampBindingProvider prov : providers) {
+    prov.addBindingChangeListener(bindingChangeListener);
+    for (    String itemName : prov.getItemNames()) {
+      PanStampBindingConfig<?> conf=prov.getConfig(itemName);
+      updateProductCode(conf);
+      logger.debug("found item {} on startup -> {}",itemName,conf);
+    }
+  }
+  startNetwork(cfg);
+  startDebug(cfg);
+  if (network != null) {
+    for (    PanStampBindingProvider prov : providers) {
+      for (      String itemName : prov.getItemNames()) {
+        PanStampBindingConfig<?> conf=prov.getConfig(itemName);
+        if (!network.hasDevice(conf.getAddress())) {
+          try {
+            network.addDevice(new PanStamp(network,conf.getAddress()));
+            logger.debug("Added device {} to network",conf.getAddress());
+          }
+ catch (          NetworkException e) {
+            logger.error(e.getMessage());
+          }
+        }
+      }
+    }
+  }
+}

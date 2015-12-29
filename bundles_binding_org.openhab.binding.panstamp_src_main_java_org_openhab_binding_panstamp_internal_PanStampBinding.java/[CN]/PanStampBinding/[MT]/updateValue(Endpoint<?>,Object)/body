@@ -1,0 +1,21 @@
+{
+  List<PanStampBindingConfig<?>> confs=getConfigs(ep);
+  for (  PanStampBindingConfig<?> conf : confs) {
+    try {
+      State state;
+      if (!conf.getUnit().equals("")) {
+        state=PanStampConversions.toState(ep,ep.getValue(conf.getUnit()));
+      }
+ else {
+        state=PanStampConversions.toState(ep,ep.getValue());
+      }
+      eventPublisher.postUpdate(conf.getItemName(),state);
+    }
+ catch (    ValueException e) {
+      logger.error(e.getMessage());
+    }
+catch (    NetworkException e) {
+      logger.error(e.getMessage());
+    }
+  }
+}

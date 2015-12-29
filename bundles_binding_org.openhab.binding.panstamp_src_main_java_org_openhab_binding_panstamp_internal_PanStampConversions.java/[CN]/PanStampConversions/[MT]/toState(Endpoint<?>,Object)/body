@@ -1,0 +1,14 @@
+{
+switch (ep.getType()) {
+case STRING:
+    return new StringType(val.toString());
+case NUMBER:
+  return new DecimalType(((Double)val));
+case INTEGER:
+return new DecimalType(((Long)val));
+case BINARY:
+return ((Boolean)val) ? OnOffType.ON : OnOffType.OFF;
+default :
+throw new ValueException(String.format("Unsupported panStamp endpoint type '%s' for endpoint %s. BUG!",ep.getType(),toString(ep)));
+}
+}

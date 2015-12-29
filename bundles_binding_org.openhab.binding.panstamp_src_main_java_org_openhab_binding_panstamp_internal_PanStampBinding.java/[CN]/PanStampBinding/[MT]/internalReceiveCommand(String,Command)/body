@@ -1,0 +1,67 @@
+{
+  logger.debug("internalReceiveCommand({},{})",itemName,command);
+  List<PanStampBindingConfig<?>> confs=getConfigs(itemName);
+  for (  PanStampBindingConfig<?> conf : confs) {
+    try {
+      PanStamp dev;
+      if (!network.hasDevice(conf.getAddress())) {
+        dev=new PanStamp(network,conf.getAddress());
+        network.addDevice(dev);
+      }
+ else {
+        dev=network.getDevice(conf.getAddress());
+      }
+      if (dev.hasRegister(conf.getRegister())) {
+        Register reg=dev.getRegister(conf.getRegister());
+        if (reg.hasEndpoint(conf.getEndpoint())) {
+          Endpoint<Object> ep=reg.getEndpoint(conf.getEndpoint());
+          if (ep.isOutput()) {
+            Object val=null;
+switch (ep.getType()) {
+case BINARY:
+              val=PanStampConversions.toBoolean(command);
+            break;
+case INTEGER:
+          val=PanStampConversions.toLong(command);
+        break;
+case NUMBER:
+      val=PanStampConversions.toDouble(command);
+    break;
+case STRING:
+  val=PanStampConversions.toString(command);
+break;
+default :
+logger.error("Unsupported panStamp endpoint type '{}' for endpoint {}. BUG!",ep.getType(),PanStampConversions.toString(ep));
+}
+if (val != null) {
+if (!conf.getUnit().equals("")) {
+ep.setValue(conf.getUnit(),val);
+}
+ else {
+ep.setValue(val);
+}
+}
+}
+ else {
+logger.error("Internal update received for input-only endpoint {}",PanStampConversions.toString(ep));
+}
+}
+ else {
+logger.error("No endpoint '{}' found for register '{}' on panStamp '{}' linked to item '{}'",conf.getEndpoint(),conf.getRegister(),conf.getAddress(),itemName);
+}
+}
+ else {
+logger.error("No register '{}' found on panStamp '{}' linked to item '{}'",conf.getRegister(),conf.getAddress(),itemName);
+}
+}
+ catch (EndpointNotFoundException e) {
+logger.error(e.getMessage());
+}
+catch (NetworkException e) {
+logger.error(e.getMessage());
+}
+catch (ValueException e) {
+logger.error(e.getMessage());
+}
+}
+}

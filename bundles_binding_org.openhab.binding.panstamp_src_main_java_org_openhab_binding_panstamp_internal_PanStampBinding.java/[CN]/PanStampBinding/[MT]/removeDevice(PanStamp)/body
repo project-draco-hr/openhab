@@ -1,0 +1,12 @@
+{
+  try {
+    logger.debug("removeDevice({} ({}/{}))",PanStampConversions.toString(dev),dev.getManufacturerId(),dev.getProductId());
+  }
+ catch (  NetworkException e) {
+    logger.error(e.getMessage());
+  }
+  dev.removeListener(panStampListener);
+  for (  Register reg : dev.getRegisters()) {
+    if (!reg.isStandard())     removeRegister(reg);
+  }
+}

@@ -1,0 +1,11 @@
+{
+  if (cfg.debugEnabled) {
+    try {
+      debugServer=new TcpServer(network.getSWAPModem(),cfg.debugPort);
+      logger.info("TCP Debug enabled on port {}",cfg.debugPort);
+    }
+ catch (    TcpException e) {
+      logger.error("Error creating debug service:  {}" + e.getMessage());
+    }
+  }
+}

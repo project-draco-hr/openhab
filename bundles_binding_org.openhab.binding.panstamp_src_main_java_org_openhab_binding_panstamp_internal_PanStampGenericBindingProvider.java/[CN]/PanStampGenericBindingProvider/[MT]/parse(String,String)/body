@@ -1,0 +1,5 @@
+{
+  Map<String,String> confMap=makeConfigMap(config);
+  String unit=confMap.get("unit");
+  return new PanStampBindingConfig(itemName,PanStampConversions.asInt("device address",confMap.get("address"),1,0xffff),parseManufacturerId(confMap.get("productCode")),parseProductId(confMap.get("productCode")),PanStampConversions.asInt("register",confMap.get("register"),1,0xff),parseEndpoint(confMap.get("endpoint")),(unit != null) ? parseUnit(unit) : "");
+}

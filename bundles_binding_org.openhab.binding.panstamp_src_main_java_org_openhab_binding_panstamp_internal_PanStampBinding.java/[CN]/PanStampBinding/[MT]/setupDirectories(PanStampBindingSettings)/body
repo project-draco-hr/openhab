@@ -1,0 +1,16 @@
+{
+  File xmlDir=new File(cfg.xmlDir);
+  if (xmlDir.exists() && xmlDir.isDirectory() && xmlDir.canRead()) {
+    File devFile=new File(xmlDir,"devices.xml");
+    if (devFile.exists() && devFile.canRead() && devFile.isFile()) {
+      network.setDeviceLibrary(new CompoundDeviceLibrary(new FileLibrary(xmlDir),new ClassLoaderLibrary()));
+      logger.info("Configured XML directory to {}",cfg.xmlDir);
+    }
+ else {
+      logger.error("devices.xml in XML directory {} can not be read",cfg.xmlDir);
+    }
+  }
+ else {
+    logger.error("XML directory {} can not be read",cfg.xmlDir);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  if (val == null)   throw new BindingConfigParseException(String.format("Undefined endpoint name"));
+  if (val.startsWith("'") && val.endsWith("'")) {
+    val=val.replace("'","");
+  }
+  if (val.equals("")) {
+    throw new BindingConfigParseException(String.format("Empty endpoint name"));
+  }
+  return val;
+}
