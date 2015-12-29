@@ -6,6 +6,9 @@
     this.brightness=settings.getBrightness(this.deviceId);
     this.hue=settings.getHue(this.deviceId);
     this.saturation=settings.getSaturation(this.deviceId);
+    if (settings.getModelId(this.deviceId).equalsIgnoreCase(OSRAM_PAR16_MODELID)) {
+      this.isOsramPar16=true;
+    }
   }
  else {
     logger.warn("Not a valid id on the bridge: " + deviceId);

@@ -1,10 +1,20 @@
 {
   this.isOn=powerOn;
   if (powerOn) {
-    executeMessage("{\"on\":true}");
+    if (this.isOsramPar16) {
+      executeMessage("{\"on\":true,\"bri\":254}");
+    }
+ else {
+      executeMessage("{\"on\":true}");
+    }
   }
  else {
-    executeMessage("{\"on\":false}");
+    if (this.isOsramPar16) {
+      executeMessage("{\"on\":false,\"transitiontime\":0}");
+    }
+ else {
+      executeMessage("{\"on\":false}");
+    }
   }
   return true;
 }

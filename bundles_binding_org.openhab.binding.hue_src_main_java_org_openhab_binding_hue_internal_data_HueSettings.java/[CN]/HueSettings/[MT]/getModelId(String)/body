@@ -1,0 +1,8 @@
+{
+  if (settingsData == null) {
+    logger.error("Hue bridge settings not initialized correctly.");
+    return null;
+  }
+  Object modelId=settingsData.node("lights").node(deviceId).value("modelid");
+  return modelId != null ? modelId.toString() : null;
+}
