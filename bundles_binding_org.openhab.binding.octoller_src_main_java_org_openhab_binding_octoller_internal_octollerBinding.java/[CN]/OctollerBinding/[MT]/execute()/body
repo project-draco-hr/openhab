@@ -1,0 +1,19 @@
+{
+  logger.debug("execute() method is called!");
+  for (  OctollerBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      OctollerBindingConfig config=(OctollerBindingConfig)provider.getConfig(itemName);
+      if (config == null)       continue;
+      try {
+        Connection con=new Connection(config.GatewayHost);
+        String result=con.doCommand(con.buildCommandString(config,"",""));
+        con.processResultToPublisher(eventPublisher,itemName,result);
+        con.close();
+        logger.debug("OctollerBinding: Got state from " + itemName + " -> "+ result);
+      }
+ catch (      Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
