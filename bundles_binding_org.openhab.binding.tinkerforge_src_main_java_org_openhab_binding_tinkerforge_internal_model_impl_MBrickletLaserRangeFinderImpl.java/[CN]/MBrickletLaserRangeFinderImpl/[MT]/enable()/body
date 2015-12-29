@@ -1,0 +1,43 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("distanceAverageLength"))) {
+      Short distanceAverageLength=tfConfig.getDistanceAverageLength();
+      logger.debug("distanceAverageLength {}",distanceAverageLength);
+      setDistanceAverageLength(distanceAverageLength);
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("velocityAverageLength"))) {
+      Short velocityAverageLength=tfConfig.getVelocityAverageLength();
+      logger.debug("velocityAverageLength {}",velocityAverageLength);
+      setVelocityAverageLength(velocityAverageLength);
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("mode"))) {
+      Short mode=tfConfig.getMode();
+      logger.debug("mode {}",mode);
+      setMode(mode);
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("enableLaserOnStartup"))) {
+      boolean enableLaser=tfConfig.getEnableLaserOnStartup();
+      logger.debug("enable laser on startup {}",enableLaser);
+      setEnableLaserOnStartup(enableLaser);
+    }
+ else {
+      boolean enableLaser=tfConfig.getEnableLaserOnStartup();
+      logger.debug("enable laser on startup {}",enableLaser);
+    }
+  }
+  try {
+    tinkerforgeDevice=new BrickletLaserRangeFinder(getUid(),getIpConnection());
+    tinkerforgeDevice.setMode(getMode());
+    tinkerforgeDevice.setMovingAverage(getDistanceAverageLength(),getVelocityAverageLength());
+    if (getEnableLaserOnStartup()) {
+      logger.debug("enabling laser");
+      tinkerforgeDevice.enableLaser();
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

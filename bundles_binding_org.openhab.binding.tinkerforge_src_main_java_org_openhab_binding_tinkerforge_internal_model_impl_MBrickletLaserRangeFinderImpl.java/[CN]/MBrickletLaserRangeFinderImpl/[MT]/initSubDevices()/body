@@ -1,0 +1,24 @@
+{
+  ModelFactory factory=ModelFactory.eINSTANCE;
+  LaserRangeFinderDistance distance=factory.createLaserRangeFinderDistance();
+  distance.setUid(getUid());
+  String subIdDistance="distance";
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdDistance);
+  distance.setSubId(subIdDistance);
+  distance.init();
+  distance.setMbrick(this);
+  LaserRangeFinderVelocity velocity=factory.createLaserRangeFinderVelocity();
+  velocity.setUid(getUid());
+  String subIdVelocity="velocity";
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdVelocity);
+  velocity.setSubId(subIdVelocity);
+  velocity.init();
+  velocity.setMbrick(this);
+  LaserRangeFinderLaser laser=factory.createLaserRangeFinderLaser();
+  laser.setUid(getUid());
+  String subIdLaser="laser";
+  logger.debug("{} addSubDevice {}",LoggerConstants.TFINIT,subIdLaser);
+  laser.setSubId(subIdLaser);
+  laser.init();
+  laser.setMbrick(this);
+}

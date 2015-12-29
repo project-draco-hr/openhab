@@ -1,5 +1,5 @@
 {
-  logger.trace("postUpdate for uid {} subid {}",uid,subId);
+  logger.trace("postUpdate called for uid {} subid {}",uid,subId);
   Map<String,TinkerforgeBindingProvider> providerMap=getBindingProviders(uid,subId);
   if (providerMap.size() == 0) {
     logger.debug("{} found no item for uid {}, subid {}",LoggerConstants.TFMODELUPDATE,uid,subId);
@@ -54,8 +54,17 @@
       }
     }
  else     if (sensorValue instanceof PercentValue) {
-      if (itemType.isAssignableFrom(RollershutterItem.class) || itemType.isAssignableFrom(DimmerItem.class)) {
+      if (itemType.isAssignableFrom(SwitchItem.class)) {
+        value=((PercentValue)sensorValue).toBigDecimal().compareTo(BigDecimal.ZERO) == 1 ? OnOffType.ON : OnOffType.OFF;
+        logger.debug("switch found {}",itemName);
+      }
+ else       if (itemType.isAssignableFrom(RollershutterItem.class) || itemType.isAssignableFrom(DimmerItem.class)) {
         value=new PercentType(((PercentValue)sensorValue).toBigDecimal());
+        logger.debug("Rollershutter or dimmer found {} {}",itemName);
+      }
+ else       if (itemType.isAssignableFrom(ContactItem.class)) {
+        value=((PercentValue)sensorValue).toBigDecimal().compareTo(BigDecimal.ZERO) == -1 ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+        logger.debug("contact found {}",itemName);
       }
  else {
         continue;

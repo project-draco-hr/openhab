@@ -1,0 +1,17 @@
+{
+  setDigitalState(digitalState);
+  try {
+    if (digitalState == HighLowValue.LOW) {
+      tinkerforgeDevice.lightOff();
+    }
+ else {
+      tinkerforgeDevice.lightOn();
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

@@ -8,7 +8,7 @@
     ohtfDevice.setTfConfig(servoConfiguration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
- else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_joystick.name())|| deviceType.equals(TypeKey.bricklet_halleffect.name())|| deviceType.equals(TypeKey.bricklet_linear_poti.name())|| deviceType.equals(TypeKey.ptc_resistance.name())|| deviceType.equals(TypeKey.ptc_temperature.name())|| deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
+ else   if (deviceType.equals(TypeKey.bricklet_distance_ir.name()) || deviceType.equals(TypeKey.bricklet_humidity.name()) || deviceType.equals(TypeKey.bricklet_barometer.name())|| deviceType.equals(TypeKey.bricklet_ambient_light.name())|| deviceType.equals(TypeKey.ambient_temperature.name())|| deviceType.equals(TypeKey.bricklet_soundintensity.name())|| deviceType.equals(TypeKey.voltageCurrent_voltage.name())|| deviceType.equals(TypeKey.voltageCurrent_current.name())|| deviceType.equals(TypeKey.voltageCurrent_power.name())|| deviceType.equals(TypeKey.bricklet_joystick.name())|| deviceType.equals(TypeKey.bricklet_halleffect.name())|| deviceType.equals(TypeKey.bricklet_linear_poti.name())|| deviceType.equals(TypeKey.ptc_resistance.name())|| deviceType.equals(TypeKey.ptc_temperature.name())|| deviceType.equals(TypeKey.industrial020ma_sensor.name())|| deviceType.equals(TypeKey.rotary_encoder.name())|| deviceType.equals(TypeKey.bricklet_dustdetector.name())|| deviceType.equals(TypeKey.color_color.name())|| deviceType.equals(TypeKey.color_temperature.name())|| deviceType.equals(TypeKey.color_illuminance.name())|| deviceType.equals(TypeKey.industrial_dual_analogin_channel.name())|| deviceType.equals(TypeKey.accelerometer_direction.name())|| deviceType.equals(TypeKey.laser_range_finder_distance.name())|| deviceType.equals(TypeKey.laser_range_finder_velocity.name())) {
     logger.debug("{} setting base config",LoggerConstants.CONFIG);
     TFBaseConfiguration tfBaseConfiguration=modelFactory.createTFBaseConfiguration();
     if (deviceType.equals(TypeKey.bricklet_barometer)) {
@@ -17,9 +17,33 @@
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
+ else     if (deviceType.equals(TypeKey.industrial_dual_analogin_channel.name())) {
+      OHTFDevice<TFBaseConfiguration,IndustrialDualAnalogInSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDualAnalogInSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
  else     if (deviceType.equals(TypeKey.ambient_temperature.name())) {
       OHTFDevice<TFBaseConfiguration,TemperatureIRSubIds> ohtfDevice=modelFactory.createOHTFDevice();
       ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(TemperatureIRSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.color_color.name())) {
+      OHTFDevice<TFBaseConfiguration,ColorBrickletSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(ColorBrickletSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.color_temperature.name())) {
+      OHTFDevice<TFBaseConfiguration,ColorBrickletSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(ColorBrickletSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.color_illuminance.name())) {
+      OHTFDevice<TFBaseConfiguration,ColorBrickletSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(ColorBrickletSubIds.values()));
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
@@ -38,6 +62,24 @@
  else     if (deviceType.equals(TypeKey.industrial020ma_sensor.name())) {
       OHTFDevice<TFBaseConfiguration,IndustrialDual020mASubIds> ohtfDevice=modelFactory.createOHTFDevice();
       ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDual020mASubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.rotary_encoder.name())) {
+      OHTFDevice<TFBaseConfiguration,RotaryEncoderSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(RotaryEncoderSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.accelerometer_direction.name())) {
+      OHTFDevice<TFBaseConfiguration,AccelerometerSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(AccelerometerSubIds.values()));
+      ohtfDevice.setTfConfig(tfBaseConfiguration);
+      fillupConfig(ohtfDevice,deviceConfig);
+    }
+ else     if (deviceType.equals(TypeKey.laser_range_finder_distance.name()) || deviceType.equals(TypeKey.laser_range_finder_velocity.name())) {
+      OHTFDevice<TFBaseConfiguration,LaserRangeFinderSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+      ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LaserRangeFinderSubIds.values()));
       ohtfDevice.setTfConfig(tfBaseConfiguration);
       fillupConfig(ohtfDevice,deviceConfig);
     }
@@ -194,6 +236,13 @@
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.rotary_encoder_button.name())) {
+    ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
+    OHTFDevice<ButtonConfiguration,RotaryEncoderSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(RotaryEncoderSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else   if (deviceType.equals(TypeKey.lcd_button.name())) {
     ButtonConfiguration configuration=modelFactory.createButtonConfiguration();
     OHTFDevice<ButtonConfiguration,LCDButtonSubIds> ohtfDevice=modelFactory.createOHTFDevice();
@@ -269,10 +318,99 @@
     ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDigitalOutSubIDs.values()));
     fillupConfig(ohtfDevice,deviceConfig);
   }
+ else   if (deviceType.equals(TypeKey.bricklet_ambient_lightv2.name())) {
+    logger.debug("{} setting AmbientLightV2Configuration device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.trace("{} deviceType {}",LoggerConstants.CONFIG,deviceType);
+    AmbientLightV2Configuration configuration=modelFactory.createAmbientLightV2Configuration();
+    OHTFDevice<AmbientLightV2Configuration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_loadcell.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,LoadCellSubIds.values());
+    OHTFDevice<?,LoadCellSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LoadCellSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.loadcell_weight.name())) {
+    logger.debug("{} setting LoadCellConfiguration device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,LoadCellSubIds.values());
+    LoadCellConfiguration configuration=modelFactory.createLoadCellConfiguration();
+    OHTFDevice<LoadCellConfiguration,LoadCellSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LoadCellSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.loadcell_led.name())) {
+    logger.debug("{} setting no tfConfig device_type {}",LoggerConstants.CONFIG,deviceType);
+    logger.debug("{} setting subdevice ids to {}",LoggerConstants.CONFIG,LoadCellSubIds.values());
+    OHTFDevice<?,LoadCellSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LoadCellSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
  else   if (deviceType.equals(TypeKey.bricklet_temperature.name())) {
     TFTemperatureConfiguration configuration=modelFactory.createTFTemperatureConfiguration();
     OHTFDevice<TFTemperatureConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
     ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_color.name())) {
+    BrickletColorConfiguration configuration=modelFactory.createBrickletColorConfiguration();
+    OHTFDevice<BrickletColorConfiguration,ColorBrickletSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(ColorBrickletSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_industrial_dual_analogin.name())) {
+    BrickletIndustrialDualAnalogInConfiguration configuration=modelFactory.createBrickletIndustrialDualAnalogInConfiguration();
+    OHTFDevice<BrickletIndustrialDualAnalogInConfiguration,IndustrialDualAnalogInSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(IndustrialDualAnalogInSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_analogin.name())) {
+    TFAnalogInConfiguration configuration=modelFactory.createTFAnalogInConfiguration();
+    OHTFDevice<TFAnalogInConfiguration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_analoginv2.name())) {
+    TFAnalogInV2Configuration configuration=modelFactory.createTFAnalogInV2Configuration();
+    OHTFDevice<TFAnalogInV2Configuration,NoSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(NoSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.accelerometer_led.name())) {
+    OHTFDevice<?,AccelerometerSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(AccelerometerSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.accelerometer_temperature.name())) {
+    OHTFDevice<?,AccelerometerSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(AccelerometerSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_accelerometer.name())) {
+    BrickletAccelerometerConfiguration configuration=modelFactory.createBrickletAccelerometerConfiguration();
+    OHTFDevice<BrickletAccelerometerConfiguration,AccelerometerSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(AccelerometerSubIds.values()));
+    ohtfDevice.setTfConfig(configuration);
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.laser_range_finder_laser.name())) {
+    OHTFDevice<?,LaserRangeFinderSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LaserRangeFinderSubIds.values()));
+    fillupConfig(ohtfDevice,deviceConfig);
+  }
+ else   if (deviceType.equals(TypeKey.bricklet_laser_range_finder.name())) {
+    LaserRangeFinderConfiguration configuration=modelFactory.createLaserRangeFinderConfiguration();
+    OHTFDevice<LaserRangeFinderConfiguration,LaserRangeFinderSubIds> ohtfDevice=modelFactory.createOHTFDevice();
+    ohtfDevice.getSubDeviceIds().addAll(Arrays.asList(LaserRangeFinderSubIds.values()));
     ohtfDevice.setTfConfig(configuration);
     fillupConfig(ohtfDevice,deviceConfig);
   }

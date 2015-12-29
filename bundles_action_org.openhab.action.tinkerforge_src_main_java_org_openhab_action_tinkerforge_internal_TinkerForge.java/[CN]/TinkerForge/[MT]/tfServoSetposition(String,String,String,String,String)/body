@@ -1,17 +1,4 @@
 {
-  if (context.getEcosystem() != null) {
-    MBaseDevice mDevice=context.getEcosystem().getDevice(uid,num);
-    if (mDevice instanceof MServo) {
-      logger.trace("servo setPoint action");
-      return ((MServo)mDevice).setPoint(Short.parseShort(position),Integer.parseInt(velocity),Integer.parseInt(acceleration));
-    }
- else {
-      logger.trace("no servo device found with uid {}, num {}",uid,num);
-      return false;
-    }
-  }
- else {
-    logger.error("Action failed ecosystem is null");
-  }
-  return false;
+  logger.trace("servo setPoint (from string args) action");
+  return context.tfServoSetposition(uid,num,position,velocity,acceleration);
 }

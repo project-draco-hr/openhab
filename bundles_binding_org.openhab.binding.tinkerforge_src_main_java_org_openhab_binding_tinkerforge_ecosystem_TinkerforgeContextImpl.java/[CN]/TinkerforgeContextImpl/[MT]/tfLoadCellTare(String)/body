@@ -1,0 +1,16 @@
+{
+  if (ecosystem == null) {
+    logger.error("tfLoadCellTare action failed ecosystem is null");
+    return false;
+  }
+  MBaseDevice mDevice=ecosystem.getDevice(uid,"weight");
+  if (mDevice instanceof LoadCellWeight) {
+    logger.trace("load cell tare action");
+    ((LoadCellWeight)mDevice).tare();
+    return true;
+  }
+ else {
+    logger.error("no Load Cell Bricklet found for uid {}",uid);
+    return false;
+  }
+}

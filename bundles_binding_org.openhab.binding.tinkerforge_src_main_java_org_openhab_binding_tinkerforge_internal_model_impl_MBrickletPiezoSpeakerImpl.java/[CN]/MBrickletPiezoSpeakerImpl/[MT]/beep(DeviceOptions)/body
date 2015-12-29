@@ -1,0 +1,89 @@
+{
+  try {
+    Long[] durations=null;
+    Integer[] frequencies=null;
+    String[] morseCodes=null;
+    Long repeats=null;
+    Mode mode;
+    if (beepFinishedListener != null) {
+      logger.trace("removing beepFinishedListener");
+      tinkerforgeDevice.removeBeepFinishedListener(beepFinishedListener);
+      beepFinishedListener=null;
+      tinkerforgeDevice.beep(0,0);
+    }
+    if (morseFinishedListener != null) {
+      logger.trace("removing morseFinishedListener");
+      tinkerforgeDevice.removeMorseCodeFinishedListener(morseFinishedListener);
+      morseFinishedListener=null;
+      tinkerforgeDevice.beep(0,0);
+    }
+    if (opts != null) {
+      String modestr=Tools.getStringOpt(MODE,opts);
+      if (modestr == null) {
+        logger.error("mode is missing");
+        return;
+      }
+      if (modestr.toLowerCase().equals(BEEP)) {
+        mode=Mode.BEEP;
+        durations=getDurations(Tools.getStringOpt(DURATIONS,opts));
+        frequencies=getFrequencies(Tools.getStringOpt(FREQUENCIES,opts));
+        repeats=Tools.getLongOpt(REPEAT,opts,1L);
+        logger.debug("repeats {}",repeats);
+        if (durations == null || frequencies == null) {
+          logger.error("durations and frequencies have values when mode is beep");
+          return;
+        }
+ else         if (durations.length != frequencies.length) {
+          logger.error("every frequence needs a duration value and vice versa: frequencies count {}, durationscount {}",frequencies.length,durations.length);
+          return;
+        }
+      }
+ else       if (modestr.toLowerCase().equals(MORSE)) {
+        mode=Mode.MORSE;
+        frequencies=getFrequencies(Tools.getStringOpt(FREQUENCIES,opts));
+        morseCodes=getMorseCodes(Tools.getStringOpt(MORSECODES,opts));
+        repeats=Tools.getLongOpt(REPEAT,opts,1L);
+        logger.debug("repeats {}",repeats);
+        if (morseCodes == null || frequencies == null) {
+          logger.error("morseCodes and frequencies have values when mode is morse");
+          return;
+        }
+ else         if (morseCodes.length != frequencies.length) {
+          logger.error("every morseCodes needs a frequency value and vice versa: morseCodes count {}, frequencies {}",morseCodes.length,frequencies.length);
+          return;
+        }
+      }
+ else {
+        logger.error("unknown mode string {}",modestr);
+        return;
+      }
+    }
+ else {
+      logger.error("item configuration is missing");
+      return;
+    }
+    if (mode == Mode.BEEP) {
+      logger.debug("sending beeps");
+      logger.debug("adding new BeepFinishedListener");
+      beepFinishedListener=new BeepFinishedListener(this,durations,frequencies,repeats);
+      tinkerforgeDevice.addBeepFinishedListener(beepFinishedListener);
+      logger.debug("trigger beeping");
+      tinkerforgeDevice.beep(durations[0],frequencies[0]);
+    }
+ else {
+      logger.debug("sending morse codes");
+      logger.debug("adding new MorseFinishedListener");
+      morseFinishedListener=new MorseFinishedListener(this,morseCodes,frequencies,repeats);
+      tinkerforgeDevice.addMorseCodeFinishedListener(morseFinishedListener);
+      logger.debug("trigger beeping");
+      logger.debug(" morse code");
+      tinkerforgeDevice.morseCode(morseCodes[0],frequencies[0]);
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

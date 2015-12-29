@@ -1,0 +1,16 @@
+{
+  if (ecosystem == null) {
+    logger.error("tfRotaryEncoderClear action failed ecosystem is null");
+    return false;
+  }
+  MBaseDevice mDevice=ecosystem.getDevice(uid,"encoder");
+  if (mDevice instanceof RotaryEncoder) {
+    logger.trace("rotary encoder clear action");
+    ((RotaryEncoder)mDevice).clear();
+    return true;
+  }
+ else {
+    logger.error("no Rotary Ecoder found for uid {}",uid);
+    return false;
+  }
+}

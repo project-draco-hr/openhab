@@ -1,0 +1,19 @@
+{
+  try {
+    logger.debug("led got {}",state);
+    if (state == HighLowValue.HIGH) {
+      logger.debug("switching led on");
+      tinkerforgeDevice.ledOn();
+    }
+ else {
+      logger.debug("switching led off");
+      tinkerforgeDevice.ledOff();
+    }
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

@@ -1,0 +1,15 @@
+{
+  if (ecosystem == null) {
+    logger.error("tfDCMotorSetspeed action failed ecosystem is null");
+    return false;
+  }
+  MBaseDevice mDevice=ecosystem.getDevice(uid,null);
+  if (mDevice instanceof MBrickDC) {
+    logger.trace("dc speed setPoint action");
+    return ((MBrickDC)mDevice).setSpeed(Short.parseShort(speed),Integer.parseInt(acceleration),drivemode);
+  }
+ else {
+    logger.trace("no Brick DC device found for uid {}",uid);
+    return false;
+  }
+}

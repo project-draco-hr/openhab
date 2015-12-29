@@ -1,0 +1,29 @@
+{
+  if (tfConfig != null) {
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("dataRate"))) {
+      Short dataRate=tfConfig.getDataRate();
+      logger.debug("dataRate {}",dataRate);
+      setDataRate(dataRate);
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("fullScale"))) {
+      Short fullScale=tfConfig.getFullScale();
+      logger.debug("fullScale {}",fullScale);
+      setFullScale(fullScale);
+    }
+    if (tfConfig.eIsSet(tfConfig.eClass().getEStructuralFeature("filterBandwidth"))) {
+      Short filterBandwidth=tfConfig.getFilterBandwidth();
+      logger.debug("filterBandwidth {}",filterBandwidth);
+      setFilterBandwidth(filterBandwidth);
+    }
+  }
+  try {
+    tinkerforgeDevice=new BrickletAccelerometer(getUid(),getIpConnection());
+    tinkerforgeDevice.setConfiguration(getDataRate(),getFullScale(),getFilterBandwidth());
+  }
+ catch (  TimeoutException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);
+  }
+catch (  NotConnectedException e) {
+    TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_NOT_CONNECTION_EXCEPTION,e);
+  }
+}

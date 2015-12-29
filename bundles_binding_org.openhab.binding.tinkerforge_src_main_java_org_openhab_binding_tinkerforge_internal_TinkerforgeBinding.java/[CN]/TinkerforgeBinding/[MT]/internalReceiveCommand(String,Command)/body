@@ -55,6 +55,11 @@
  else             if (command instanceof PercentType) {
               if (mDevice instanceof SetPointActor) {
                 ((SetPointActor<?>)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
+                logger.debug("found SetpointActor");
+              }
+ else               if (mDevice instanceof PercentTypeActor) {
+                ((PercentTypeActor)mDevice).setValue(((PercentType)command),provider.getDeviceOptions(itemName));
+                logger.debug("found PercentType actor");
               }
  else {
                 logger.error("found no percenttype actor");
