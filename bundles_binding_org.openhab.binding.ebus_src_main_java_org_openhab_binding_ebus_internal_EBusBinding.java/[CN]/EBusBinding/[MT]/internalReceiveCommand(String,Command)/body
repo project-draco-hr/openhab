@@ -1,7 +1,6 @@
 {
-  final String type=command.toString().toLowerCase();
   for (  EBusBindingProvider provider : providers) {
-    byte[] data=commandProcessor.composeSendData(provider,itemName,type);
-    connector.send(data);
+    byte[] data=commandProcessor.composeSendData(provider,itemName,command);
+    connector.addToSendQueue(data);
   }
 }

@@ -4,11 +4,16 @@
     socket.setSoTimeout(20000);
     socket.setKeepAlive(true);
     socket.setTcpNoDelay(true);
+    socket.setTrafficClass((byte)0x10);
+    socket.setSendBufferSize(1);
     inputStream=socket.getInputStream();
     outputStream=socket.getOutputStream();
-    return true;
+    return super.connect();
   }
- catch (  Exception e) {
+ catch (  ConnectException e) {
+    logger.error(e.toString());
+  }
+catch (  Exception e) {
     logger.error(e.toString(),e);
   }
   return false;

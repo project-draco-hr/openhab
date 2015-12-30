@@ -1,0 +1,53 @@
+{
+  Number n=null;
+  Number repVal=0;
+  if (type.equals("data1b")) {
+    n=decodeDATA1b(data[0]);
+    repVal=-128;
+  }
+ else   if (type.equals("data1c")) {
+    n=decodeDATA1c(data[0]);
+    repVal=255;
+  }
+ else   if (type.equals("data2b")) {
+    n=decodeDATA2b(data);
+    repVal=-128;
+  }
+ else   if (type.equals("data2c")) {
+    n=decodeDATA2c(data);
+    repVal=-2048;
+  }
+ else   if (type.equals("word") || type.equals("uint")) {
+    n=decodeWord(data);
+    repVal=65535;
+  }
+ else   if (type.equals("char")) {
+    n=encodeChar(data[0]);
+    repVal=255;
+  }
+ else   if (type.equals("int")) {
+    n=decodeInt(data);
+    repVal=32768;
+  }
+ else   if (type.equals("byte") || type.equals("uchar")) {
+    n=decodeUChar(data[0]);
+    repVal=255;
+  }
+ else   if (type.equals("bcd")) {
+    n=decodeBCD(data[0]);
+    repVal=255;
+  }
+ else {
+    throw new RuntimeException("Unable to encode data type \"" + type + "\", maybe currently not supported ...");
+  }
+  if (replaceValue != null) {
+    repVal=replaceValue;
+  }
+  BigDecimal b=NumberUtils.toBigDecimal(n);
+  BigDecimal c=NumberUtils.toBigDecimal(repVal);
+  if (b != null && c != null && b.compareTo(c) == 0) {
+    logger.trace("Replace value found, skip value ...");
+    n=null;
+  }
+  return n;
+}
