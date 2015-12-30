@@ -1,0 +1,7 @@
+{
+  Collection<? extends Device> devices=message.getDevices(configurations);
+  for (  Device device : devices) {
+    Device testDevice=testDevices.get(device.getRFAddress());
+    assertEquals("Error set incorrectly in Device",testDevice.isError(),device.isError());
+  }
+}

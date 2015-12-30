@@ -1,0 +1,7 @@
+{
+  Collection<? extends Device> devices=message.getDevices(configurations);
+  assertEquals("Incorrect number of devices created",testDevices.size(),devices.size());
+  for (  Device device : devices) {
+    assertTrue("Unexpected device created: " + device.getRFAddress(),testDevices.containsKey(device.getRFAddress()));
+  }
+}
