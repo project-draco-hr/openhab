@@ -1,0 +1,24 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    String hostString=(String)config.get("host");
+    if (StringUtils.isNotBlank(hostString)) {
+      host=hostString;
+    }
+    String portString=(String)config.get("port");
+    if (StringUtils.isNotBlank(portString)) {
+      port=Integer.parseInt(portString);
+    }
+    String timeoutString=(String)config.get("timeout");
+    if (StringUtils.isNotBlank(timeoutString)) {
+      timeout=Long.parseLong(timeoutString);
+    }
+    packetlistener.stopListener();
+    packetlistener.initializeReceiver(host,port,timeout);
+    new Thread(packetlistener).start();
+    setProperlyConfigured(true);
+  }
+}
