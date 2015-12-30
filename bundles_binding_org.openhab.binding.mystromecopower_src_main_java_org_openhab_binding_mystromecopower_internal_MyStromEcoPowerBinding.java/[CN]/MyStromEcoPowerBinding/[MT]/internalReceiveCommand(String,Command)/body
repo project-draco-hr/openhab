@@ -22,13 +22,13 @@
               this.scheduler.scheduleJob(job,trigger);
             }
  else {
-              if (deviceId != this.masterDevice.id) {
+              if (this.masterDevice == null || (this.masterDevice != null && deviceId != this.masterDevice.id)) {
                 if (!this.mystromClient.ChangeState(deviceId,onOff)) {
                   eventPublisher.postUpdate(itemName,onOff ? OnOffType.OFF : OnOffType.ON);
                 }
               }
  else {
-                if (OnOffType.OFF.equals(command)) {
+                if (this.masterDevice != null && OnOffType.OFF.equals(command)) {
                   logger.debug("Restart master device");
                   this.mystromClient.RestartMaster(deviceId);
                 }
