@@ -10,12 +10,9 @@
   final Map<String,Object> valueRegistryShortKeys=new HashMap<String,Object>();
   final ByteBuffer byteBuffer=telegram.getBuffer();
   final String bufferString=EBusUtils.toHexDumpString(byteBuffer).toString();
-  final List<TelegramConfiguration> matchedTelegramRegistry=configurationProvider.getCommandsByFilter(bufferString);
+  final List<Map<String,Object>> matchedTelegramRegistry=configurationProvider.getCommandsByFilter(bufferString);
   loggerAnalyses.debug(bufferString);
   if (matchedTelegramRegistry.isEmpty()) {
-    if (debugWriter != null && (debugWriteMode.contains("unknown") || debugWriteMode.contains("all"))) {
-      debugWriter.writeTelegram(telegram,"<unknown>");
-    }
     loggerAnalyses.debug("  >>> Unknown ----------------------------------------");
     if (loggerBrutforce.isTraceEnabled()) {
       loggerBrutforce.trace(bufferString);
@@ -23,27 +20,20 @@
     }
     return null;
   }
-  for (  TelegramConfiguration registryEntry : matchedTelegramRegistry) {
+  for (  Map<String,Object> registryEntry : matchedTelegramRegistry) {
     int debugLevel=0;
-    String idKey=StringUtils.defaultString(registryEntry.getId());
-    String classKey=StringUtils.defaultString(registryEntry.getClazz());
-    if (registryEntry.getDebug() != null) {
-      debugLevel=registryEntry.getDebug();
-      if (debugWriter != null && debugWriteMode.contains("debug")) {
-        debugWriter.writeTelegram(telegram,"DEBUG:" + (String)registryEntry.getComment());
-      }
+    String classKey=registryEntry.containsKey("class") ? (String)registryEntry.get("class") : "";
+    if (registryEntry.containsKey("debug")) {
+      debugLevel=((Integer)registryEntry.get("debug"));
     }
-    if (debugWriter != null && debugWriteMode.equals("all")) {
-      debugWriter.writeTelegram(telegram,registryEntry.getComment());
-    }
-    Map<String,TelegramValue> values=registryEntry.getValues();
-    loggerAnalyses.debug("  >>> {}",StringUtils.defaultIfEmpty(registryEntry.getComment(),"<No comment available>"));
-    TelegramValue settings=null;
-    for (    Entry<String,TelegramValue> entry : values.entrySet()) {
-      String uniqueKey=(classKey != "" ? classKey + "." : "") + (idKey != "" ? idKey + "." : "") + entry.getKey();
+    @SuppressWarnings("unchecked") Map<String,Map<String,Object>> values=(Map<String,Map<String,Object>>)registryEntry.get("values");
+    loggerAnalyses.debug("  >>> {}",registryEntry.containsKey("comment") ? registryEntry.get("comment") : "<No comment available>");
+    Map<String,Object> settings=null;
+    for (    Entry<String,Map<String,Object>> entry : values.entrySet()) {
+      String uniqueKey=(classKey != "" ? classKey + "." : "") + entry.getKey();
       settings=entry.getValue();
       Object value=getValue(byteBuffer,entry.getValue());
-      if (settings.getCsript() != null) {
+      if (settings.containsKey("cscript")) {
         try {
           HashMap<String,Object> bindings=new HashMap<String,Object>();
           bindings.put(entry.getKey(),value);
@@ -56,43 +46,30 @@
           break;
         }
       }
-      String label=StringUtils.defaultString(settings.getLabel());
+      String label=(String)(settings.containsKey("label") ? settings.get("label") : "");
       String format=String.format("%-35s%-10s%s",uniqueKey,value,label);
-      String alias=null;
-      if (settings.getMapping() != null) {
-        Map<String,String> mapping=settings.getMapping();
-        alias=mapping.get(value.toString());
-      }
       if (debugLevel >= 2) {
         loggerAnalyses.debug("    >>> " + format);
-        if (alias != null)         loggerAnalyses.debug("      >>> " + alias);
       }
  else {
         loggerAnalyses.trace("    >>> " + format);
-        if (alias != null)         loggerAnalyses.trace("      >>> " + alias);
       }
       valueRegistry.put(uniqueKey,value);
       valueRegistryShortKeys.put(entry.getKey(),value);
-      if (values.size() == 1) {
-        if (!StringUtils.isEmpty(classKey) && !StringUtils.isEmpty(idKey)) {
-          uniqueKey=classKey + "." + idKey;
-          valueRegistry.put(uniqueKey,value);
-        }
-      }
     }
-    if (registryEntry.getComputedValues() == null)     continue;
-    Map<String,TelegramValue> cvalues=registryEntry.getComputedValues();
-    for (    Entry<String,TelegramValue> entry : cvalues.entrySet()) {
-      String uniqueKey=(classKey != "" ? classKey + "." : "") + (idKey != "" ? idKey + "." : "") + entry.getKey();
+    if (!registryEntry.containsKey("computed_values"))     continue;
+    @SuppressWarnings("unchecked") Map<String,Map<String,Object>> cvalues=(Map<String,Map<String,Object>>)registryEntry.get("computed_values");
+    for (    Entry<String,Map<String,Object>> entry : cvalues.entrySet()) {
+      String uniqueKey=(classKey != "" ? classKey + "." : "") + entry.getKey();
       HashMap<String,Object> bindings=new HashMap<String,Object>();
       bindings.putAll(valueRegistryShortKeys);
       bindings.putAll(valueRegistry);
       Object value;
       try {
         value=evaluateScript(entry,bindings);
-        valueRegistry.put(uniqueKey,value);
+        valueRegistry.put(entry.getKey(),value);
         if (debugLevel >= 2) {
-          String label=StringUtils.defaultString(settings.getLabel());
+          String label=(String)(settings.containsKey("label") ? settings.get("label") : "");
           String format=String.format("%-35s%-10s%s",uniqueKey,value,label);
           loggerAnalyses.debug("    >>> " + format);
         }
