@@ -1,0 +1,23 @@
+{
+  Map<String,String> doubleEntries=new HashMap<String,String>();
+  for (  Map<String,?> entryMap : configurationMap) {
+    StringBuilder sb=new StringBuilder();
+    String unid=(String)(entryMap.containsKey("command") ? entryMap.get("command") + " XX " + entryMap.get("data") : entryMap.get("filter"));
+    if (doubleEntries.containsKey(unid)) {
+      sb.append("Combination of command and data already existing [" + doubleEntries.get(unid) + "]... "+ unid+ "\n");
+    }
+ else {
+      doubleEntries.put(unid,(String)entryMap.get("comment"));
+    }
+    if (!entryMap.containsKey("comment") || entryMap.get("comment").equals("")) {
+      sb.append("No comment item ...\n");
+    }
+    if (entryMap.containsKey("debug")) {
+      sb.append("Remove debug switch ...\n");
+    }
+    if (sb.length() > 0) {
+      System.err.println("Error/Warning on item " + entryMap.get("comment"));
+      System.err.println(sb.toString());
+    }
+  }
+}

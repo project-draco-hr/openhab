@@ -1,0 +1,48 @@
+{
+  if (configurationProvider == null || configurationProvider.isEmpty()) {
+    logger.debug("eBus configuration provider not ready, can't get send data yet.");
+    return null;
+  }
+  byte[] data=null;
+  String cmd=provider.getCommand(itemName);
+  Byte dst=provider.getTelegramDestination(itemName);
+  Byte src=provider.getTelegramSource(itemName);
+  HashMap<String,Object> values=null;
+  if (StringUtils.isEmpty(cmd)) {
+    String id=provider.getId(itemName);
+    if (!StringUtils.isEmpty(id)) {
+      String[] split=StringUtils.split(id,".");
+      if (split.length > 1) {
+        cmd=split[0] + "." + split[1];
+      }
+    }
+  }
+  if (src == null) {
+    src=connector.getSenderId();
+  }
+  if (command == null) {
+    data=composeEBusTelegram(cmd,dst,src,values);
+  }
+ else {
+    String setValue=provider.getSet(itemName);
+    int index=StringUtils.lastIndexOf(setValue,".");
+    String cmdId=StringUtils.left(setValue,index);
+    String valueName=StringUtils.substring(setValue,index + 1);
+    Object value=StateUtils.convertFromState(command);
+    if (value != null) {
+      values=new HashMap<String,Object>();
+      values.put(valueName,value);
+    }
+    data=composeEBusTelegram(cmdId,dst,src,values);
+  }
+  if (data == null) {
+    String type=command != null ? command.toString().toLowerCase() : null;
+    if (StringUtils.isNotEmpty(type)) {
+      data=provider.getTelegramData(itemName,type);
+    }
+  }
+  if (data == null) {
+    data=provider.getTelegramData(itemName);
+  }
+  return data;
+}

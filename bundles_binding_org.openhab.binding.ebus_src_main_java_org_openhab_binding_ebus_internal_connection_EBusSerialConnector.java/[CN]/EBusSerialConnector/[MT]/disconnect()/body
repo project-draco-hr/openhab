@@ -1,8 +1,21 @@
 {
-  super.disconnect();
-  if (serialPort != null) {
-    serialPort.close();
-    serialPort=null;
+  if (serialPort == null)   return true;
+  Thread shutdownThread=new Thread(new Runnable(){
+    @Override public void run(){
+      IOUtils.closeQuietly(inputStream);
+      IOUtils.closeQuietly(outputStream);
+      if (serialPort != null) {
+        serialPort.close();
+        serialPort=null;
+      }
+    }
+  }
+,"eBUS serial shutdown thread");
+  shutdownThread.start();
+  try {
+    shutdownThread.join(2000);
+  }
+ catch (  InterruptedException e) {
   }
   return true;
 }

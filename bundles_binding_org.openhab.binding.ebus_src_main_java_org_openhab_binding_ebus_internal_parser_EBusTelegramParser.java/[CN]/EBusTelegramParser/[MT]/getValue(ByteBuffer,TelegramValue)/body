@@ -1,0 +1,42 @@
+{
+  String type=telegramValue.getType().toLowerCase();
+  int pos=telegramValue.getPos() != null ? telegramValue.getPos() : -1;
+  Object value=null;
+  if (pos > byteBuffer.position()) {
+    logger.warn("eBus buffer pos error! Can happen ...");
+  }
+  if (type.equals("uint"))   type="word";
+  if (type.equals("byte"))   type="uchar";
+  byte[] bytes=null;
+  if (type.equals("data2b") || type.equals("data2c") || type.equals("word")) {
+    bytes=new byte[]{byteBuffer.get(pos),byteBuffer.get(pos - 1)};
+  }
+ else {
+    bytes=new byte[]{byteBuffer.get(pos - 1)};
+  }
+  if (type.equals("bit")) {
+    int bit=telegramValue.getBit();
+    value=bytes[0];
+    boolean isSet=((Byte)value >> bit & 0x1) == 1;
+    value=isSet;
+  }
+ else {
+    value=NumberUtils.toBigDecimal(EBusCodecUtils.decode(type,bytes,telegramValue.getReplaceValue()));
+  }
+  if (value instanceof BigDecimal) {
+    BigDecimal b=(BigDecimal)value;
+    if (b != null && telegramValue.getFactor() != null) {
+      logger.trace("Value multiplied ...");
+      value=b=b.multiply(telegramValue.getFactor());
+    }
+    if (telegramValue.getMin() != null && b != null && b.compareTo(telegramValue.getMin()) == -1) {
+      logger.trace("Minimal value reached, skip value ...");
+      value=b=null;
+    }
+ else     if (telegramValue.getMax() != null && b != null && b.compareTo(telegramValue.getMax()) == 1) {
+      logger.trace("Maximal value reached, skip value ...");
+      value=b=null;
+    }
+  }
+  return value;
+}

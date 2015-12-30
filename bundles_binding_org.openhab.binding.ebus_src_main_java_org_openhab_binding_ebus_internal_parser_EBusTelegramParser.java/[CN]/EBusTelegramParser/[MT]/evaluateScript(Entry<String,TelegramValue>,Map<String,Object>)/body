@@ -1,0 +1,14 @@
+{
+  Object value=null;
+  if (entry.getValue().getCsript() != null) {
+    CompiledScript cscript=entry.getValue().getCsript();
+    Bindings bindings=cscript.getEngine().createBindings();
+    bindings.putAll(scopeValues);
+    value=cscript.eval(bindings);
+  }
+  value=ObjectUtils.defaultIfNull(NumberUtils.toBigDecimal(value),value);
+  if (value instanceof BigDecimal) {
+    ((BigDecimal)value).setScale(2,BigDecimal.ROUND_HALF_UP);
+  }
+  return value;
+}
