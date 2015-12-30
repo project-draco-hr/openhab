@@ -5,24 +5,17 @@
   if (refreshRate > 0) {
     final Runnable r=new Runnable(){
       @Override public void run(){
-        try {
-          byte[] data=composeSendData(eBusProvider,itemName,null);
-          if (data != null && data.length > 0) {
-            if (connector == null) {
-              logger.warn("eBus connector not ready, can't send data yet!");
-            }
- else {
-              connector.addToSendQueue(data);
-            }
+        byte[] data=composeSendData(eBusProvider,itemName,null);
+        if (data != null && data.length > 0) {
+          if (connector == null) {
+            logger.warn("eBus connector not ready, can't send data yet!");
           }
  else {
-            if (configurationProvider != null && !configurationProvider.isEmpty()) {
-              logger.warn("No data to send for item {}! Check your item configuration.",itemName);
-            }
+            connector.send(data);
           }
         }
- catch (        Exception e) {
-          logger.error("Error while running runnable ...",e);
+ else {
+          logger.warn("No data to send for item {}! Check your item configuration.",itemName);
         }
       }
     }

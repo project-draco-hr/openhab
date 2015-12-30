@@ -4,24 +4,24 @@
   loggerBrutforce.trace("    " + format);
   loggerBrutforce.trace("    -----------------------------------------------------------------------------");
   for (int i=0; i < data.length; i++) {
-    Object word=i == data.length - 1 ? "---" : EBusCodecUtils.decodeWord(new byte[]{data[i + 1],data[i]});
-    Object data2b=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA2b(new byte[]{data[i + 1],data[i]});
-    Object data2c=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA2c(new byte[]{data[i + 1],data[i]});
-    Object data1c=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA1c(data[i + 1]);
-    int bcd=EBusCodecUtils.decodeBCD(data[i]);
+    Object word=i == data.length - 1 ? "---" : EBusUtils.decodeWORD(data[i + 1],data[i]);
+    Object data2b=i == data.length - 1 ? "---" : EBusUtils.decodeDATA2b(data[i + 1],data[i]);
+    Object data2c=i == data.length - 1 ? "---" : EBusUtils.decodeDATA2c(data[i + 1],data[i]);
+    Object data1c=i == data.length - 1 ? "---" : EBusUtils.decodeDATA1c(data[i + 1]);
+    int bcd=EBusUtils.decodeBCD(data[i]);
     int uint=data[i] & 0xFF;
     format=String.format("%-4s%-13s%-13s%-13s%-13s%-13s%-13s",i + 6,word,uint,data2b,data2c,data1c,bcd);
     loggerBrutforce.trace("    " + format);
   }
-  if (telegram.getType() == EBusTelegram.TYPE_MASTER_SLAVE) {
+  if (telegram.getType() == EBusTelegram.MASTER_SLAVE) {
     data=telegram.getSlaveData();
     loggerBrutforce.trace("    ---------------------------------- Answer ----------------------------------");
     for (int i=0; i < data.length; i++) {
-      Object word=i == data.length - 1 ? "---" : EBusCodecUtils.decodeWord(new byte[]{data[i + 1],data[i]});
-      Object data2b=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA2b(new byte[]{data[i + 1],data[i]});
-      Object data2c=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA2c(new byte[]{data[i + 1],data[i]});
-      Object data1c=i == data.length - 1 ? "---" : EBusCodecUtils.decodeDATA1c(data[i + 1]);
-      int bcd=EBusCodecUtils.decodeBCD(data[i]);
+      Object word=i == data.length - 1 ? "---" : EBusUtils.decodeWORD(data[i + 1],data[i]);
+      Object data2b=i == data.length - 1 ? "---" : EBusUtils.decodeDATA2b(data[i + 1],data[i]);
+      Object data2c=i == data.length - 1 ? "---" : EBusUtils.decodeDATA2c(data[i + 1],data[i]);
+      Object data1c=i == data.length - 1 ? "---" : EBusUtils.decodeDATA1c(data[i + 1]);
+      int bcd=EBusUtils.decodeBCD(data[i]);
       int uint=data[i] & 0xFF;
       format=String.format("%-4s%-13s%-13s%-13s%-13s%-13s%-13s",i + 6,word,uint,data2b,data2c,data1c,bcd);
       loggerBrutforce.trace("    " + format);

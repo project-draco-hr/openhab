@@ -1,0 +1,13 @@
+{
+  if (data == null || data.length == 0) {
+    logger.debug("Send data is empty, skip");
+    return false;
+  }
+  byte crc=0;
+  for (int i=0; i < data.length - 1; i++) {
+    byte b=data[i];
+    crc=EBusUtils.crc8_tab(b,crc);
+  }
+  data[data.length - 1]=crc;
+  return outputQueue.add(data);
+}

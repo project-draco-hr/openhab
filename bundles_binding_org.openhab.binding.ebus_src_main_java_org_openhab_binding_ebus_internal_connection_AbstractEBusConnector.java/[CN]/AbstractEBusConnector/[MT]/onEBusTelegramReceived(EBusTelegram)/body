@@ -1,0 +1,14 @@
+{
+  if (threadPool == null) {
+    logger.warn("ThreadPool not ready!");
+    return;
+  }
+  threadPool.execute(new Runnable(){
+    @Override public void run(){
+      for (      EBusConnectorEventListener listener : listeners) {
+        listener.onTelegramReceived(telegram);
+      }
+    }
+  }
+);
+}
