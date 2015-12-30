@@ -5,7 +5,6 @@
     throw new BindingConfigParseException("MAX!Cube configuration requires at least serial number for a MAX!Cube device.");
   }
   MaxCubeBindingConfig config=new MaxCubeBindingConfig();
-  item.getName();
   config.serialNumber=configParts[0];
   for (int i=1; i < configParts.length; i++) {
     String[] bindingToken=configParts[i].split("=");
@@ -21,6 +20,9 @@
       }
  else       if (bindingToken[1].toLowerCase().equals("battery")) {
         config.bindingType=BindingType.BATTERY;
+      }
+ else       if (bindingToken[1].toLowerCase().equals("connectionerror")) {
+        config.bindingType=BindingType.CONNECTION_ERROR;
       }
     }
   }

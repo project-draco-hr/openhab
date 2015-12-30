@@ -121,21 +121,21 @@ catch (      Exception e) {
         Device device=findDevice(serialNumber,devices);
         if (device == null) {
           logger.info("Cannot find MAX!cube device with serial number '{}'",serialNumber);
-          if (logger.isDebugEnabled()) {
-            StringBuilder sb=new StringBuilder();
-            sb.append("Available MAX! devices are:");
-            for (            Device d : devices) {
-              sb.append("\n\t");
-              sb.append(d.getSerialNumber());
-            }
-            logger.debug(sb.toString());
-          }
+          logAvailableMaxDevices();
           continue;
         }
-        if (provider.getBindingType(itemName) == BindingType.BATTERY && device.battery().isChargeUpdated()) {
-          eventPublisher.postUpdate(itemName,device.battery().getCharge());
+        if (provider.getBindingType(itemName) == BindingType.BATTERY) {
+          if (device.battery().isChargeUpdated()) {
+            eventPublisher.postUpdate(itemName,device.battery().getCharge());
+          }
         }
- else         if (provider.getBindingType(itemName) != BindingType.BATTERY) {
+ else         if (provider.getBindingType(itemName) == BindingType.CONNECTION_ERROR) {
+          if (device.isErrorUpdated()) {
+            OnOffType connectionError=device.isError() ? OnOffType.ON : OnOffType.OFF;
+            eventPublisher.postUpdate(itemName,connectionError);
+          }
+        }
+ else {
 switch (device.getType()) {
 case HeatingThermostatPlus:
 case HeatingThermostat:

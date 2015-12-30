@@ -1,3 +1,7 @@
 {
-  this.error=error;
+  errorUpdated=(this.error == null) || (this.error != newError);
+  this.error=newError;
+  if (newError) {
+    logger.warn("Connection error occurred between cube and device '{}'",this.toString());
+  }
 }
