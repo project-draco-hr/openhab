@@ -2,6 +2,7 @@
   String value=(String)config.get(key);
   if (StringUtils.isEmpty(value)) {
     setProperlyConfigured(false);
+    logger.debug("Error, configuration option " + key + " is mandatory");
     throw new ConfigurationException(key,"Configuration option " + key + " is mandatory");
   }
   return value;
