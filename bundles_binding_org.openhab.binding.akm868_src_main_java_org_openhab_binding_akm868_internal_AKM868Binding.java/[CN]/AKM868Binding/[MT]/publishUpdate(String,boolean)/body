@@ -1,0 +1,10 @@
+{
+  for (  AKM868BindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      if (provider.getId(itemName).equals(id) && provider.getChannel(itemName).equals("0")) {
+        logger.debug("Publishing state for {} - state: {} ",itemName,provider.getId(itemName));
+        eventPublisher.postUpdate(itemName,isPresent == true ? OnOffType.ON : OnOffType.OFF);
+      }
+    }
+  }
+}
