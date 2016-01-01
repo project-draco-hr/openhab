@@ -1,0 +1,15 @@
+{
+  char[] cbuf=new char[50];
+  logger.debug("Sending volume command {}",command);
+  outToServer.write(hexStringToByteArray(command));
+  i.read(cbuf,0,50);
+  Matcher m=volumePattern.matcher(new String(cbuf));
+  if (m.find()) {
+    String volume=m.group(1);
+    eventPublisher.postUpdate(itemName,new DecimalType(volume));
+    logger.debug("Setting volume for item {} on {}",itemName,volume);
+  }
+ else {
+    logger.error("Error sending regular volume command {}, received this: {}",command,new String(cbuf));
+  }
+}

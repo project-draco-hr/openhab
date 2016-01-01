@@ -1,0 +1,47 @@
+{
+  if (!bindingsExist()) {
+    logger.debug("There is no existing Sonance binding configuration => refresh cycle aborted!");
+    return;
+  }
+  logger.info("Refreshing all items");
+  List<String> offlineEndPoints=new ArrayList<String>();
+  for (  SonanceBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      String group=provider.getGroup(itemName);
+      String ip=provider.getIP(itemName);
+      int port=provider.getPort(itemName);
+      String key=ip + ":" + port;
+      if (!offlineEndPoints.contains(key)) {
+        try {
+          if (!socketCache.containsKey(key)) {
+            socketCache.put(key,new Socket(ip,port));
+            outputStreamCache.put(key,new DataOutputStream(socketCache.get(key).getOutputStream()));
+            bufferedReaderCache.put(key,new BufferedReader(new InputStreamReader(socketCache.get(key).getInputStream())));
+            logger.debug("New socket created ({}:{})",ip,port);
+          }
+          if (provider.isMute(itemName)) {
+            sendMuteCommand(itemName,SonanceConsts.MUTE_QUERY + group,outputStreamCache.get(key),bufferedReaderCache.get(key));
+          }
+ else           if (provider.isVolume(itemName)) {
+            sendVolumeCommand(itemName,SonanceConsts.VOLUME_QUERY + group,outputStreamCache.get(key),bufferedReaderCache.get(key));
+          }
+        }
+ catch (        UnknownHostException e) {
+          logger.error("UnknownHostException occured when connecting to amplifier {}:{}.",ip,port);
+        }
+catch (        IOException e) {
+          logger.debug("Amplifier ({},{}) is offline, status can't be updated at this moment.",ip,port);
+          try {
+            socketCache.get(key).close();
+          }
+ catch (          Exception ex) {
+          }
+          socketCache.remove(key);
+          outputStreamCache.remove(key);
+          bufferedReaderCache.remove(key);
+          offlineEndPoints.add(key);
+        }
+      }
+    }
+  }
+}

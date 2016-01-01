@@ -1,0 +1,12 @@
+{
+  super.bindingChanged(provider,itemName);
+  for (  Map.Entry<String,Socket> entry : socketCache.entrySet())   try {
+    entry.getValue().close();
+  }
+ catch (  IOException e) {
+    logger.error("Can't close a socket when binding changed.");
+  }
+  socketCache.clear();
+  outputStreamCache.clear();
+  bufferedReaderCache.clear();
+}
