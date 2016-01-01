@@ -1,0 +1,30 @@
+{
+  logger.debug("influxdb persistence service activated");
+  disconnect();
+  password=(String)config.get("password");
+  if (isBlank(password)) {
+    isProperlyConfigured=false;
+    logger.error("influxdb:password","The password is missing. To specify a password configure the password parameter in openhab.cfg.");
+    return;
+  }
+  url=(String)config.get("url");
+  if (isBlank(url)) {
+    url=DEFAULT_URL;
+    logger.debug("using default url {}",DEFAULT_URL);
+  }
+  user=(String)config.get("user");
+  if (isBlank(user)) {
+    user=DEFAULT_USER;
+    logger.debug("using default user {}",DEFAULT_USER);
+  }
+  dbName=(String)config.get("db");
+  if (isBlank(dbName)) {
+    dbName=DEFAULT_DB;
+    logger.debug("using default db name {}",DEFAULT_DB);
+  }
+  isProperlyConfigured=true;
+  connect();
+  if (!checkConnection()) {
+    logger.error("database connection does not work for now, will retry to use the database.");
+  }
+}

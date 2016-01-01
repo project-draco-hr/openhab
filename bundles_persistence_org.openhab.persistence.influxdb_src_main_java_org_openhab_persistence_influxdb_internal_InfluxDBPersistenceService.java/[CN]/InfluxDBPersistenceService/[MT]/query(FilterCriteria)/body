@@ -1,0 +1,121 @@
+{
+  logger.debug("got a query");
+  if (!isProperlyConfigured) {
+    logger.warn("Configuration for influxdb not yet loaded or broken.");
+    return Collections.emptyList();
+  }
+  if (!isConnected()) {
+    logger.warn("InfluxDB is not yet connected");
+    return Collections.emptyList();
+  }
+  List<HistoricItem> historicItems=new ArrayList<HistoricItem>();
+  StringBuffer query=new StringBuffer();
+  query.append("select ");
+  query.append(VALUE_COLUMN_NAME);
+  query.append(" ");
+  query.append("from ");
+  if (filter.getItemName() != null) {
+    query.append(filter.getItemName());
+  }
+ else {
+    query.append("/.*/");
+  }
+  logger.trace("Filter: itemname: {}, ordering: {}, state: {},  operator: {}, getBeginDate: {}, getEndDate: {}, getPageSize: {}, getPageNumber: {}",filter.getItemName(),filter.getOrdering().toString(),filter.getState(),filter.getOperator(),filter.getBeginDate(),filter.getEndDate(),filter.getPageSize(),filter.getPageNumber());
+  if ((filter.getState() != null && filter.getOperator() != null) || filter.getBeginDate() != null || filter.getEndDate() != null) {
+    query.append(" where ");
+    boolean foundState=false;
+    boolean foundBeginDate=false;
+    if (filter.getState() != null && filter.getOperator() != null) {
+      String value=stateToString(filter.getState());
+      if (value != null) {
+        foundState=true;
+        query.append(VALUE_COLUMN_NAME);
+        query.append(" ");
+        query.append(filter.getOperator().toString());
+        query.append(" ");
+        query.append(value);
+      }
+    }
+    if (filter.getBeginDate() != null) {
+      foundBeginDate=true;
+      if (foundState) {
+        query.append(" and");
+      }
+      query.append(" ");
+      query.append(TIME_COLUMN_NAME);
+      query.append(" > ");
+      query.append(getTimeFilter(filter.getBeginDate()));
+      query.append(" ");
+    }
+    if (filter.getEndDate() != null) {
+      if (foundState || foundBeginDate) {
+        query.append(" and");
+      }
+      query.append(" ");
+      query.append(TIME_COLUMN_NAME);
+      query.append(" < ");
+      query.append(getTimeFilter(filter.getEndDate()));
+      query.append(" ");
+    }
+  }
+  if (filter.getOrdering() == Ordering.DESCENDING) {
+    query.append(String.format(" ORDER BY %s DESC",TIME_COLUMN_NAME));
+    logger.debug("descending ordering ");
+  }
+  int limit=(filter.getPageNumber() + 1) * filter.getPageSize();
+  query.append(" limit " + limit);
+  logger.trace("appending limit {}",limit);
+  int totalEntriesAffected=((filter.getPageNumber() + 1) * filter.getPageSize());
+  int startEntryNum=totalEntriesAffected - (totalEntriesAffected - (filter.getPageSize() * filter.getPageNumber()));
+  logger.trace("startEntryNum {}",startEntryNum);
+  logger.debug("query string: {}",query.toString());
+  Query influxdbQuery=new Query(query.toString(),dbName);
+  List<Result> results=Collections.emptyList();
+  results=influxDB.query(influxdbQuery,timeUnit).getResults();
+  for (  Result result : results) {
+    List<Series> seriess=result.getSeries();
+    if (result.getError() != null) {
+      logger.error(result.getError());
+      continue;
+    }
+    if (seriess == null) {
+      logger.debug("query returned no series");
+    }
+ else {
+      for (      Series series : seriess) {
+        logger.trace("series {}",series.toString());
+        String historicItemName=series.getName();
+        List<List<Object>> valuess=series.getValues();
+        if (valuess == null) {
+          logger.debug("query returned no values");
+        }
+ else {
+          List<String> columns=series.getColumns();
+          logger.trace("columns {}",columns);
+          Integer timestampColumn=null;
+          Integer valueColumn=null;
+          for (int i=0; i < columns.size(); i++) {
+            String columnName=columns.get(i);
+            if (columnName.equals(TIME_COLUMN_NAME)) {
+              timestampColumn=i;
+            }
+ else             if (columnName.equals(VALUE_COLUMN_NAME)) {
+              valueColumn=i;
+            }
+          }
+          if (valueColumn == null || timestampColumn == null) {
+            throw new RuntimeException("missing column");
+          }
+          for (int i=0; i < valuess.size(); i++) {
+            Double rawTime=(Double)valuess.get(i).get(timestampColumn);
+            Date time=new Date(rawTime.longValue());
+            State value=objectToState(valuess.get(i).get(valueColumn),historicItemName);
+            logger.trace("adding historic item {}: time {} value {}",historicItemName,time,value);
+            historicItems.add(new InfluxdbItem(historicItemName,value,time));
+          }
+        }
+      }
+    }
+  }
+  return historicItems;
+}
