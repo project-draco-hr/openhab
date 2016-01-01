@@ -1,0 +1,14 @@
+{
+  LightwaveRfSetHeatingTemperatureCommand tempCommand=new LightwaveRfSetHeatingTemperatureCommand("768,!R3DhF*tP18.0");
+  final LightwaveRfCommandOk okCommand=new LightwaveRfCommandOk("768,OK");
+  final LightwaveRFSenderThread senderThread=new LightwaveRFSenderThread(mockSocket,"192.168.1.1",8000,120000);
+  executor.schedule(new Runnable(){
+    @Override public void run(){
+      senderThread.okMessageReceived(okCommand);
+    }
+  }
+,1000,TimeUnit.MILLISECONDS);
+  senderThread.sendLightwaveCommand(tempCommand);
+  senderThread.run();
+  verify(mockSocket,times(1)).send(any(DatagramPacket.class));
+}

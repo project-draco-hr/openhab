@@ -1,0 +1,31 @@
+{
+  try {
+    LightwaveRFCommand command=messageConvertor.convertFromLightwaveRfMessage(message);
+switch (command.getMessageType()) {
+case OK:
+      notifyOkListners((LightwaveRfCommandOk)command);
+    break;
+case ROOM_DEVICE:
+  notifyRoomDeviceListners((LightwaveRfRoomDeviceMessage)command);
+break;
+case ROOM:
+notifyRoomListners((LightwaveRfRoomMessage)command);
+break;
+case HEAT_REQUEST:
+notifyHeatRequest((LightwaveRfHeatInfoRequest)command);
+break;
+case SERIAL:
+notifySerialListners((LightwaveRfSerialMessage)command);
+break;
+case VERSION:
+notifyVersionListners((LightwaveRfVersionMessage)command);
+break;
+case NOT_PROCESSED:
+default :
+break;
+}
+}
+ catch (LightwaveRfMessageException e) {
+logger.error("Error converting message: " + message);
+}
+}

@@ -1,0 +1,13 @@
+{
+  this.messageConvertor=messageConvertor;
+  this.timeBetweenCommandMs=timeBetweenCommandMs;
+  this.receiveSocket=receiveSocket;
+  this.receiveSocket2=receiveSocket2;
+  this.transmitSocket=transmitSocket;
+  this.receiverThread=new LightwaveRFReceiverThread(receiveSocket);
+  this.senderThread=new LightwaveRFSenderThread(transmitSocket,lightwaveWifiLinkIp,lightwaveWifiLinkTransmitPort,timeoutForOkMessagesMs);
+  this.receiverForWifiLinkThread=new LightwaveRFReceiverThread(receiveSocket2);
+  receiverThread.addListener(this);
+  receiverForWifiLinkThread.addListener(this);
+  addListener(senderThread);
+}

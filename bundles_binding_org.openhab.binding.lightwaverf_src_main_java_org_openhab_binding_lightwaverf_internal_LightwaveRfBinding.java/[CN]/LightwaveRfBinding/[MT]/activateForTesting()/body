@@ -1,0 +1,9 @@
+{
+  wifiLink.addListener(this);
+  wifiLink.start();
+  heatPoller=new LightwaveRfHeatPoller(wifiLink,messageConvertor);
+  for (  LightwaveRfBindingProvider provider : providers) {
+    Collection<String> itemNames=provider.getItemNames();
+    registerHeatingPollers(provider,itemNames);
+  }
+}

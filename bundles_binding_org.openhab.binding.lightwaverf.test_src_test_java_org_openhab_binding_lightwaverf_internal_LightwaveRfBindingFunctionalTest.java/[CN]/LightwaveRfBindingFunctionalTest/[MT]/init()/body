@@ -1,0 +1,10 @@
+{
+  MockitoAnnotations.initMocks(this);
+  binding=new LightwaveRfBinding();
+  bindingProvider=new LightwaveRfGenericBindingProvider();
+  messageConvertor=new LightwaverfConvertor();
+  wifiLink=new LightwaveRfWifiLink(WIFILINK_IP,TRANSMIT_PORT,mockReceiveSocket,mockReceiveSocket2,mockTransmitSocket,messageConvertor,TIME_BETWEEN_COMMANDS_MS,TIMEOUT_OK_MESSAGES_MS);
+  binding.setLightwaveRfConvertor(messageConvertor);
+  binding.setWifiLink(wifiLink);
+  binding.setEventPublisher(mockEventPublisher);
+}

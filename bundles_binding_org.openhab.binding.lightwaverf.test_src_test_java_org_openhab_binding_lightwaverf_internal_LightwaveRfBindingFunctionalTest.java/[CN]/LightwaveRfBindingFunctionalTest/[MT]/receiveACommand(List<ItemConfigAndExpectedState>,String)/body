@@ -1,0 +1,17 @@
+{
+  CyclicBarrier sendMessageBarrier=new CyclicBarrier(2);
+  CountDownLatch messageProcessedCountdownLatch=new CountDownLatch(itemConfigAndExpectedStates.size());
+  doAnswer(sendMessageOnceUnlatched(messageToReceive,sendMessageBarrier)).when(mockReceiveSocket).receive(any(DatagramPacket.class));
+  doAnswer(waitIndefinitely()).when(mockReceiveSocket2).receive(any(DatagramPacket.class));
+  doAnswer(waitIndefinitely()).when(mockTransmitSocket).send(any(DatagramPacket.class));
+  for (  ItemConfigAndExpectedState t : itemConfigAndExpectedStates) {
+    doAnswer(unlatchWhenEventReceivedOrTimeout(messageProcessedCountdownLatch)).when(mockEventPublisher).postUpdate(t.getItem().getName(),t.getExpectedState());
+  }
+  for (  ItemConfigAndExpectedState t : itemConfigAndExpectedStates) {
+    bindingProvider.processBindingConfiguration(CONTEXT,t.getItem(),t.getItemConfig());
+  }
+  binding.addBindingProvider(bindingProvider);
+  binding.activateForTesting();
+  sendMessageBarrier.await();
+  messageProcessedCountdownLatch.await(1000,TimeUnit.MILLISECONDS);
+}

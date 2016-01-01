@@ -1,0 +1,14 @@
+{
+  LightwaveRfWifiLinkStatusMessage message=new LightwaveRfWifiLinkStatusMessage(messageString);
+  Calendar dawnTime=Calendar.getInstance();
+  dawnTime.setTime(new Date(1447659083000L));
+  Calendar duskTime=Calendar.getInstance();
+  duskTime.setTime(new Date(1447690400000L));
+  assertEquals(new DateTimeType(dawnTime),message.getState(LightwaveRfType.WIFILINK_DAWN_TIME));
+  assertEquals(new DateTimeType(duskTime),message.getState(LightwaveRfType.WIFILINK_DUSK_TIME));
+  assertEquals(new StringType("52.48"),message.getState(LightwaveRfType.WIFILINK_LATITUDE));
+  assertEquals(new StringType("-87.89"),message.getState(LightwaveRfType.WIFILINK_LONGITUDE));
+  assertEquals(new StringType("U2.91Y"),message.getState(LightwaveRfType.WIFILINK_FIRMWARE));
+  assertEquals(new StringType("192.168.0.1"),message.getState(LightwaveRfType.WIFILINK_IP));
+  assertEquals(new DecimalType(1386309),message.getState(LightwaveRfType.WIFILINK_UPTIME));
+}

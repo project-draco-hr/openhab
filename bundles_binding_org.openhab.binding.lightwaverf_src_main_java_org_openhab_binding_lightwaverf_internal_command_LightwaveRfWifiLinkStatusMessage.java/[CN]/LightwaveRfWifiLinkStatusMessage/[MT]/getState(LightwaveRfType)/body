@@ -1,0 +1,28 @@
+{
+switch (type) {
+case WIFILINK_IP:
+    return new StringType(ip);
+case WIFILINK_FIRMWARE:
+  return new StringType(firmware);
+case WIFILINK_DUSK_TIME:
+Calendar calDusk=Calendar.getInstance();
+calDusk.setTime(duskTime);
+return new DateTimeType(calDusk);
+case WIFILINK_DAWN_TIME:
+Calendar calDawn=Calendar.getInstance();
+calDawn.setTime(dawnTime);
+return new DateTimeType(calDawn);
+case WIFILINK_UPTIME:
+return new DecimalType(uptime);
+case WIFILINK_LONGITUDE:
+return new StringType(longitude);
+case WIFILINK_LATITUDE:
+return new StringType(latitude);
+case UPDATETIME:
+Calendar cal=Calendar.getInstance();
+cal.setTime(getTime());
+return new DateTimeType(cal);
+default :
+return null;
+}
+}
