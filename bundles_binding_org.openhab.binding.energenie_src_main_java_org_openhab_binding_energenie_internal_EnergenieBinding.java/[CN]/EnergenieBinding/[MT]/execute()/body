@@ -8,7 +8,7 @@
       }
       try {
         String pmsId=deviceConfig.getDeviceId();
-        int pmsSocketId=deviceConfig.getSocketMeasurementNumber();
+        int pmsSocketId=deviceConfig.getSocketNumber();
         String pmsIp=pmsIpConfig.get(pmsId);
         String pmsPw=pmsPasswordConfig.get(pmsId);
         String url="http://" + pmsIp + "/login.html";
@@ -17,15 +17,37 @@
         String loginResponseString=null;
         try {
           loginResponseString=HttpUtil.executeUrl("POST",url,urlContent,"TEXT/PLAIN",timeout);
-          if (deviceConfig.getItemType() == "Switch") {
-            processSwitchItem(loginResponseString,pmsSocketId,itemName);
+          String stateResponseSearch="var sockstates =";
+          int findState=loginResponseString.lastIndexOf(stateResponseSearch);
+          if (findState > 0) {
+            logger.trace("searchstring sockstates found at position {}",findState);
+            String slicedResponse=loginResponseString.substring(findState + 18,findState + 25);
+            logger.trace("transformed state response = {}",slicedResponse);
+            try {
+              String[] parts=slicedResponse.split(",");
+              String itemState=parts[pmsSocketId - 1];
+              logger.trace("Response for item {} = {}",itemName,itemState);
+              if (itemState.equals("0")) {
+                State state=OnOffType.valueOf("OFF");
+                logger.trace("transformed state for item {} = {}",itemName,state);
+                eventPublisher.postUpdate(itemName,state);
+              }
+              if (itemState.equals("1")) {
+                State state=OnOffType.valueOf("ON");
+                logger.trace("transformed state for item {} = {}",itemName,state);
+                eventPublisher.postUpdate(itemName,state);
+              }
+            }
+ catch (            Exception te) {
+              logger.error("Response transformation throws exception ",te);
+            }
           }
- else           if (deviceConfig.getItemType() == "Number") {
-            processNumberItem(deviceConfig,loginResponseString,pmsSocketId,itemName);
+ else {
+            logger.trace("searchstring sockstates not found");
           }
         }
  catch (        Exception e) {
-          logger.error("Failed to Login/logout from ip {}",pmsIp);
+          logger.error("Failed to logout from ip {}",pmsIp);
         }
         sendLogOut(pmsId);
       }
