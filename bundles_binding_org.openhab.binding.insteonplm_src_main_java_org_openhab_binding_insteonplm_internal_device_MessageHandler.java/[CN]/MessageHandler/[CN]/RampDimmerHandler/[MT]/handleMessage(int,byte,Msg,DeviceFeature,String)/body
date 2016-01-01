@@ -1,0 +1,21 @@
+{
+  if (isMybutton(msg,f)) {
+    if (cmd1 == onCmd) {
+      int level=getLevel(msg);
+      logger.info("{}: device {} was switched on using ramp to level {}.",nm(),f.getDevice().getAddress(),level);
+      if (level == 100) {
+        f.publish(OnOffType.ON,StateChangeType.ALWAYS);
+      }
+ else {
+        f.publish(new PercentType(level),StateChangeType.ALWAYS);
+      }
+    }
+ else     if (cmd1 == offCmd) {
+      logger.info("{}: device {} was switched off using ramp.",nm(),f.getDevice().getAddress());
+      f.publish(new PercentType(0),StateChangeType.ALWAYS);
+    }
+  }
+ else {
+    logger.debug("ignored message: {}",isMybutton(msg,f));
+  }
+}
