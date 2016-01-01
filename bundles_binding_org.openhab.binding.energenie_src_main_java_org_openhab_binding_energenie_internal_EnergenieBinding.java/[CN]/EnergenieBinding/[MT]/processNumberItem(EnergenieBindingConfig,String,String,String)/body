@@ -1,0 +1,56 @@
+{
+  String stateResponseSearch="";
+  int start=0, stop=0, divisor=1;
+  double value=0.0;
+  ChannelTypeDef channelType=ChannelTypeDef.valueOf(pwmChannelType);
+switch (channelType) {
+case VOLTAGE:
+    stateResponseSearch="var V  = ";
+  start=9;
+stop=20;
+divisor=10;
+break;
+case CURRENT:
+stateResponseSearch="var I  = ";
+start=9;
+stop=20;
+divisor=100;
+break;
+case POWER:
+stateResponseSearch="var P=";
+start=6;
+stop=20;
+divisor=466;
+break;
+case ENERGY:
+stateResponseSearch="var E=";
+start=6;
+stop=20;
+divisor=25600;
+break;
+case NONE:
+break;
+default :
+break;
+}
+int findState=loginResponseString.lastIndexOf(stateResponseSearch);
+if (findState > 0) {
+logger.trace("searchstring {} found at position {}",stateResponseSearch,findState);
+String slicedResponseTmp=loginResponseString.substring(findState + start,findState + stop);
+logger.trace("transformed state response = {}",slicedResponseTmp);
+String[] slicedResponse=slicedResponseTmp.split(";");
+logger.trace("transformed state response = {} - {}",slicedResponse[0],slicedResponse[1]);
+if (Double.parseDouble(slicedResponse[0]) / 1 == Double.parseDouble(slicedResponse[0])) {
+value=Double.parseDouble(slicedResponse[0]) / divisor;
+}
+ else {
+value=-1.0;
+}
+logger.trace("transformed state for item {} = {}",itemName,value);
+State newState=new DecimalType(value);
+eventPublisher.postUpdate(itemName,newState);
+}
+ else {
+logger.trace("searchstring %s not found",stateResponseSearch);
+}
+}
