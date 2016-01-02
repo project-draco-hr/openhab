@@ -10,10 +10,11 @@
     String slaveValueType=modbusSlaves.get(slaveName).getValueType();
     double rawDataMultiplier=modbusSlaves.get(slaveName).getRawDataMultiplier();
     State newState=extractStateFromRegisters(registers,config.readRegister,slaveValueType);
-    if (config.getItem() instanceof SwitchItem) {
-      newState=newState.equals(DecimalType.ZERO) ? OnOffType.OFF : OnOffType.ON;
+    State newStateBoolean=provider.getConfig(itemName).translateBoolean2State(!newState.equals(DecimalType.ZERO));
+    if (!UnDefType.UNDEF.equals(newStateBoolean)) {
+      newState=newStateBoolean;
     }
-    if ((rawDataMultiplier != 1) && (config.getItem() instanceof NumberItem)) {
+ else     if ((rawDataMultiplier != 1) && (config.getItem() instanceof NumberItem)) {
       double tmpValue=(double)((DecimalType)newState).doubleValue() * rawDataMultiplier;
       newState=new DecimalType(String.valueOf(tmpValue));
     }
