@@ -1,0 +1,30 @@
+{
+  logger.debug("internalReceiveCommand({},{}) is called!",itemName,command);
+  if (providesBindingFor(itemName)) {
+    for (    SallegraBindingProvider provider : providers) {
+      SallegraBindingConfig bindingConfig=provider.getBindingConfigFor(itemName);
+      if (bindingConfig != null) {
+        SallegraNode node=sallegraNodes.get(bindingConfig.getModuleName());
+        if (node == null) {
+          logger.error("Invalid deviceId {}",bindingConfig.getModuleName());
+        }
+switch (bindingConfig.getCmdId()) {
+case RELAY:
+          node.setRelay(command,bindingConfig.getCmdValue());
+        break;
+case DIMMER:
+      node.setDimmer(command,bindingConfig.getCmdValue());
+    break;
+case INPUT:
+  logger.error("You can't set anything on the Sallegra Input Module");
+break;
+default :
+logger.error("Unknown cmdId \"{}\"",bindingConfig.getCmdId());
+}
+}
+}
+}
+ else {
+logger.trace("No provider found for this item");
+}
+}

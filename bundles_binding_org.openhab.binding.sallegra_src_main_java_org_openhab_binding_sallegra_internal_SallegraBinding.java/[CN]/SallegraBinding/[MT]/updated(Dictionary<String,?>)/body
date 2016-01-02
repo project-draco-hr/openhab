@@ -1,0 +1,29 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    Enumeration<String> keys=config.keys();
+    while (keys.hasMoreElements()) {
+      String key=keys.nextElement();
+      String[] keyElements=key.split("\\.");
+      String deviceId=keyElements[0];
+      if (keyElements.length >= 2) {
+        SallegraNode node=sallegraNodes.get(deviceId);
+        if (node == null) {
+          node=new SallegraNode();
+          sallegraNodes.put(deviceId,node);
+        }
+        String option=keyElements[1];
+        if (option.equals("password")) {
+          node.setPassword((String)config.get(key));
+        }
+ else         if (option.equals("hostname")) {
+          node.setHostName((String)config.get(key));
+        }
+      }
+    }
+    setProperlyConfigured(checkProperlyConfigured());
+  }
+}

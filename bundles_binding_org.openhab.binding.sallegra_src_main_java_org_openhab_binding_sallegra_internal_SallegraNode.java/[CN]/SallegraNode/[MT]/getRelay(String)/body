@@ -1,0 +1,12 @@
+{
+  String URL=createURL() + "/" + XML_PATH+ "?"+ SUFFIX_PASSWORD+ getPassword();
+  String content=HttpUtil.executeUrl(GET,URL,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,SUFFIX_RELAY + number);
+  int status=Integer.parseInt(XmlUtils.getContentOfElement(content,"State"));
+  if (status == 1) {
+    return "ON";
+  }
+ else {
+    return "OFF";
+  }
+}

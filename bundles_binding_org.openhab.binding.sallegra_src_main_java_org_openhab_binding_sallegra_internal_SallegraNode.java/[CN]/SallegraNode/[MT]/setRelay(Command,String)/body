@@ -1,0 +1,15 @@
+{
+  if (command instanceof OnOffType) {
+    if (((OnOffType)command) == OnOffType.ON) {
+      String URL=createURL() + "/" + XML_PATH+ "?"+ SUFFIX_PASSWORD+ getPassword()+ "&"+ SUFFIX_RELAY+ number+ "="+ "1";
+      HttpUtil.executeUrl(GET,URL,this.timeOut);
+    }
+ else {
+      String URL=createURL() + "/" + XML_PATH+ "?"+ SUFFIX_PASSWORD+ getPassword()+ "&"+ SUFFIX_RELAY+ number+ "="+ "0";
+      HttpUtil.executeUrl(GET,URL,this.timeOut);
+    }
+  }
+ else {
+    logger.error("Unsupported command type");
+  }
+}

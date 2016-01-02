@@ -1,0 +1,26 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  if (bindingConfig == null || item == null) {
+    logger.error("invalid null input, item={}, bindingConfig={}",item,bindingConfig);
+    return;
+  }
+  String strippedBindingConfig=bindingConfig.replace("[","").replace("]","").trim();
+  String[] configpart=strippedBindingConfig.split(":");
+  SallegraBindingConfig config=null;
+  if (configpart.length == 3) {
+    SallegraCommand cmdId=null;
+    try {
+      cmdId=SallegraCommand.valueOf(configpart[1].toUpperCase());
+    }
+ catch (    IllegalArgumentException e) {
+      throw new BindingConfigParseException("Unknown command: " + configpart[1]);
+    }
+    config=new SallegraBindingConfig(configpart[0],cmdId,configpart[2]);
+    config.setItem(item.getName());
+  }
+ else {
+    throw new BindingConfigParseException("Configuration must have at at least 2 or 3 configpart separated by ':'");
+  }
+  logger.debug("Found \"{}\" binding config for deviceId \"{}\". Command is \"{}\" and value is \"{}\"",configpart[0],configpart[1],configpart.length > 2 ? configpart[2] : "-");
+  addBindingConfig(item,config);
+}
