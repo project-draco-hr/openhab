@@ -1,5 +1,8 @@
 {
   if (config.isDisableCertificateVerification()) {
+    if (config.getUrl().startsWith(HTTP_URL_PREFIX)) {
+      log.error("do not use '{}' if no ssl is used",CalDavLoaderImpl.PROP_DISABLE_CERTIFICATE_VERIFICATION);
+    }
     HttpClientBuilder httpClientBuilder=HttpClientBuilder.create().setHostnameVerifier(new AllowAllHostnameVerifier());
     try {
       httpClientBuilder.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null,new TrustStrategy(){

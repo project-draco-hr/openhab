@@ -1,14 +1,6 @@
 {
-  if (INSTANCE != null) {
+  if (instance != null) {
     throw new IllegalStateException("something went wrong, the loader service should be singleton");
   }
-  INSTANCE=this;
-  try {
-    scheduler=new StdSchedulerFactory().getScheduler();
-    scheduler.clear();
-  }
- catch (  SchedulerException e) {
-    log.error("cannot get job-scheduler",e);
-    throw new IllegalStateException("cannot get job-scheduler",e);
-  }
+  instance=this;
 }

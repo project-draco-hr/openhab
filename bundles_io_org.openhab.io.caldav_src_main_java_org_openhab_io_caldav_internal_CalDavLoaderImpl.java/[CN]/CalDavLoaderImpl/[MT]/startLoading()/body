@@ -3,39 +3,18 @@
     return;
   }
   log.trace("starting execution...");
+  int i=0;
   for (  final CalendarRuntime eventRuntime : EventStorage.getInstance().getEventCache().values()) {
     try {
-      log.debug("reload cached events for config: {}",eventRuntime.getConfig().getKey());
-      for (      File fileCalendarKeys : new File(CACHE_PATH).listFiles()) {
-        if (!eventRuntime.getConfig().getKey().equals(Util.getFilename(fileCalendarKeys.getName()))) {
-          continue;
-        }
-        final Collection<File> icsFiles=FileUtils.listFiles(fileCalendarKeys,new String[]{"ics"},false);
-        for (        File icsFile : icsFiles) {
-          try {
-            FileInputStream fis=new FileInputStream(icsFile);
-            loadEvents(Util.getFilename(icsFile.getAbsolutePath()),new org.joda.time.DateTime(icsFile.lastModified()),fis,eventRuntime.getConfig(),new ArrayList<String>(),true);
-          }
- catch (          IOException e) {
-            log.error("cannot load events for file: " + icsFile,e);
-          }
-catch (          ParserException e) {
-            log.error("cannot load events for file: " + icsFile,e);
-          }
-        }
-        break;
-      }
-    }
- catch (    Throwable e) {
-      log.error("cannot load events",e);
-    }
-    try {
-      JobDetail job=JobBuilder.newJob().ofType(EventReloaderJob.class).usingJobData(EventReloaderJob.KEY_CONFIG,eventRuntime.getConfig().getKey()).build();
-      SimpleTrigger jobTrigger=TriggerBuilder.newTrigger().withIdentity(JOB_NAME_EVENT_RELOADER + "-" + eventRuntime.getConfig().getKey(),JOB_NAME_EVENT_RELOADER).startAt(new Date()).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(eventRuntime.getConfig().getReloadMinutes())).build();
-      this.scheduler.scheduleJob(job,jobTrigger);
+      JobDetail job=JobBuilder.newJob().ofType(EventReloaderJob.class).usingJobData(EventReloaderJob.KEY_CONFIG,eventRuntime.getConfig().getKey()).withIdentity(eventRuntime.getConfig().getKey(),JOB_NAME_EVENT_RELOADER).storeDurably().build();
+      this.scheduler.addJob(job,false);
+      SimpleTrigger jobTrigger=TriggerBuilder.newTrigger().forJob(job).withIdentity(eventRuntime.getConfig().getKey(),JOB_NAME_EVENT_RELOADER).startAt(DateBuilder.futureDate(10 + i,IntervalUnit.SECOND)).withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(eventRuntime.getConfig().getReloadMinutes())).build();
+      this.scheduler.scheduleJob(jobTrigger);
+      log.info("reload job scheduled for: {}",eventRuntime.getConfig().getKey());
     }
  catch (    SchedulerException e) {
       log.error("cannot schedule calendar-reloader",e);
     }
+    i+=10;
   }
 }
