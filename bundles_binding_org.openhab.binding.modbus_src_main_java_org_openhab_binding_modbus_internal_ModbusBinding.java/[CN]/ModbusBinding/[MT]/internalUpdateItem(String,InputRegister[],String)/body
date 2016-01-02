@@ -9,7 +9,7 @@
     }
     String slaveValueType=modbusSlaves.get(slaveName).getValueType();
     double rawDataMultiplier=modbusSlaves.get(slaveName).getRawDataMultiplier();
-    State newState=extractStateFromRegisters(registers,config.readRegister,slaveValueType);
+    State newState=extractStateFromRegisters(registers,config.readIndex,slaveValueType);
     State newStateBoolean=provider.getConfig(itemName).translateBoolean2State(!newState.equals(DecimalType.ZERO));
     if (!UnDefType.UNDEF.equals(newStateBoolean)) {
       newState=newStateBoolean;

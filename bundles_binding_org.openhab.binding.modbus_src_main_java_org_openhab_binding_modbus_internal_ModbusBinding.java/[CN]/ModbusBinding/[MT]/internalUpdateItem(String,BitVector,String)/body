@@ -3,7 +3,7 @@
     if (provider.providesBindingFor(itemName)) {
       ModbusBindingConfig config=provider.getConfig(itemName);
       if (config.slaveName.equals(slaveName)) {
-        boolean state=coils.getBit(config.readRegister);
+        boolean state=coils.getBit(config.readIndex);
         State currentState=provider.getConfig(itemName).getItemState();
         State newState=provider.getConfig(itemName).translateBoolean2State(state);
         if (!newState.equals(currentState)) {
