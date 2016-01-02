@@ -49,6 +49,9 @@
  else       if (paramKey.equals(PROP_HISTORIC_LOAD_TIME)) {
         calDavConfig.setHistoricLoadMinutes(Integer.parseInt(value));
       }
+ else       if (paramKey.equals(PROP_LAST_MODIFIED_TIMESTAMP_VALID)) {
+        calDavConfig.setLastModifiedFileTimeStampValid(BooleanUtils.toBoolean(value));
+      }
  else       if (paramKey.equals(PROP_DISABLE_CERTIFICATE_VERIFICATION)) {
         calDavConfig.setDisableCertificateVerification(BooleanUtils.toBoolean(value));
       }
@@ -70,12 +73,11 @@
       eventRuntime.setConfig(calDavConfig);
       File cachePath=Util.getCachePath(calDavConfig.getKey());
       if (!cachePath.exists() && !cachePath.mkdirs()) {
-        log.error("cannot create directory (" + CACHE_PATH + ") for calendar caching (missing rights?)");
+        log.error("cannot create directory ({}) for calendar caching (missing rights?)",cachePath.getAbsoluteFile());
         continue;
       }
       EventStorage.getInstance().getEventCache().put(calDavConfig.getKey(),eventRuntime);
     }
     setProperlyConfigured(true);
-    this.startLoading();
   }
 }
