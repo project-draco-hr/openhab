@@ -8,25 +8,14 @@
     }
     for (    String jobId : eventContainer.getTimerMap()) {
       try {
-        String group;
-        if (jobId.startsWith(CalDavLoaderImpl.JOB_NAME_EVENT_START)) {
-          group=CalDavLoaderImpl.JOB_NAME_EVENT_START;
-        }
- else         if (jobId.startsWith(CalDavLoaderImpl.JOB_NAME_EVENT_END)) {
-          group=CalDavLoaderImpl.JOB_NAME_EVENT_END;
-        }
- else {
-          throw new SchedulerException("unknown job id: " + jobId);
-        }
-        boolean deleteJob=CalDavLoaderImpl.instance.getScheduler().deleteJob(JobKey.jobKey(jobId,group));
-        log.debug("old job ({}) deleted? {}",jobId,deleteJob);
+        CalDavLoaderImpl.INSTANCE.getScheduler().deleteJob(JobKey.jobKey(jobId));
       }
  catch (      SchedulerException e) {
         log.error("cannot delete job '{}'",jobId);
       }
     }
     eventContainer.getTimerMap().clear();
-    for (    EventNotifier notifier : CalDavLoaderImpl.instance.getEventListenerList()) {
+    for (    EventNotifier notifier : CalDavLoaderImpl.INSTANCE.getEventListenerList()) {
       for (      CalDavEvent event : eventContainer.getEventList()) {
         try {
           notifier.eventRemoved(event);

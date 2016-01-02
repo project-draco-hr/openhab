@@ -1,20 +1,14 @@
 {
-  final String triggerStart=JOB_NAME_EVENT_START + "-" + event.getShortName()+ "-"+ index;
-  final boolean startJobTriggerDeleted=this.scheduler.unscheduleJob(TriggerKey.triggerKey(triggerStart,JOB_NAME_EVENT_START));
-  final boolean startJobDeleted=this.scheduler.deleteJob(JobKey.jobKey(triggerStart,JOB_NAME_EVENT_START));
-  log.trace("old start job ({}) deleted? {}/{}",triggerStart,startJobDeleted,startJobTriggerDeleted);
+  final String triggerStart=JOB_NAME_EVENT_START + "-" + event.getShortName();
   Date startDate=event.getStart().toDate();
-  JobDetail jobStart=JobBuilder.newJob().ofType(EventJob.class).usingJobData(EventJob.KEY_CONFIG,eventContainer.getCalendarId()).usingJobData(EventJob.KEY_EVENT,eventContainer.getEventId()).usingJobData(EventJob.KEY_REC_INDEX,index).usingJobData(EventJob.KEY_EVENT_TRIGGER,EventTrigger.BEGIN.name()).storeDurably(false).withIdentity(triggerStart,JOB_NAME_EVENT_START).build();
+  JobDetail jobStart=JobBuilder.newJob().ofType(EventJob.class).usingJobData(EventJob.KEY_CONFIG,eventContainer.getCalendarId()).usingJobData(EventJob.KEY_EVENT,eventContainer.getEventId()).usingJobData(EventJob.KEY_REC_INDEX,index).usingJobData(EventJob.KEY_EVENT_TRIGGER,EventTrigger.BEGIN.name()).build();
   Trigger jobTriggerStart=TriggerBuilder.newTrigger().withIdentity(triggerStart,JOB_NAME_EVENT_START).startAt(startDate).build();
   this.scheduler.scheduleJob(jobStart,jobTriggerStart);
   eventContainer.getTimerMap().add(triggerStart);
   log.debug("begin timer scheduled for event '{}' @ {}",event.getShortName(),startDate);
-  final String triggerEnd=JOB_NAME_EVENT_END + "-" + event.getShortName()+ "-"+ index;
-  final boolean endJobTriggerDeleted=this.scheduler.unscheduleJob(TriggerKey.triggerKey(triggerEnd,JOB_NAME_EVENT_END));
-  final boolean endJobDeleted=this.scheduler.deleteJob(JobKey.jobKey(triggerEnd,JOB_NAME_EVENT_END));
-  log.trace("old end job ({}) deleted? {}/{}",triggerEnd,endJobDeleted,endJobTriggerDeleted);
+  final String triggerEnd=JOB_NAME_EVENT_END + "-" + event.getShortName();
   Date endDate=event.getEnd().toDate();
-  JobDetail jobEnd=JobBuilder.newJob().ofType(EventJob.class).usingJobData(EventJob.KEY_CONFIG,eventContainer.getCalendarId()).usingJobData(EventJob.KEY_EVENT,eventContainer.getEventId()).usingJobData(EventJob.KEY_REC_INDEX,index).usingJobData(EventJob.KEY_EVENT_TRIGGER,EventTrigger.END.name()).storeDurably(false).withIdentity(triggerEnd,JOB_NAME_EVENT_END).build();
+  JobDetail jobEnd=JobBuilder.newJob().ofType(EventJob.class).usingJobData(EventJob.KEY_CONFIG,eventContainer.getCalendarId()).usingJobData(EventJob.KEY_EVENT,eventContainer.getEventId()).usingJobData(EventJob.KEY_REC_INDEX,index).usingJobData(EventJob.KEY_EVENT_TRIGGER,EventTrigger.END.name()).build();
   Trigger jobTriggerEnd=TriggerBuilder.newTrigger().withIdentity(triggerEnd,JOB_NAME_EVENT_END).startAt(endDate).build();
   this.scheduler.scheduleJob(jobEnd,jobTriggerEnd);
   eventContainer.getTimerMap().add(triggerEnd);

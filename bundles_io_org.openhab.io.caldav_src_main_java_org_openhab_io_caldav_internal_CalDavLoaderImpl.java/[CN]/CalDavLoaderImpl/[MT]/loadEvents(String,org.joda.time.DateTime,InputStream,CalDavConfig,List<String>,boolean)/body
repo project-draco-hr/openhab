@@ -4,9 +4,10 @@
   final UnfoldingReader uin=new UnfoldingReader(in,50,true);
   Calendar calendar=builder.build(uin);
   uin.close();
+  log.trace("calendar: {}",calendar);
   EventContainer eventContainer=new EventContainer(config.getKey());
   eventContainer.setFilename(filename);
-  eventContainer.setLastChanged(lastResourceChangeFS);
+  eventContainer.setLastChanged(lastChanged);
   org.joda.time.DateTime loadFrom=org.joda.time.DateTime.now().minusMinutes(config.getHistoricLoadMinutes());
   org.joda.time.DateTime loadTo=org.joda.time.DateTime.now().plusMinutes(config.getPreloadMinutes());
   final ComponentList<CalendarComponent> vEventComponents=calendar.getComponents(Component.VEVENT);
@@ -16,32 +17,10 @@
     }
     return;
   }
-  org.joda.time.DateTime lastModifedVEventOverAll=null;
   for (  CalendarComponent comp : vEventComponents) {
     VEvent vEvent=(VEvent)comp;
     log.trace("loading event: " + vEvent.getUid().getValue() + ":"+ vEvent.getSummary().getValue());
-    org.joda.time.DateTime lastModifedVEvent=lastResourceChangeFS;
-    if (vEvent.getLastModified() != null) {
-      lastModifedVEvent=new org.joda.time.DateTime(vEvent.getLastModified().getDateTime());
-    }
-    if (!config.isLastModifiedFileTimeStampValid()) {
-      if (lastModifedVEventOverAll == null || lastModifedVEvent.isAfter(lastModifedVEventOverAll)) {
-        lastModifedVEventOverAll=lastModifedVEvent;
-      }
-      if (eventContainer != null && !lastModifedVEvent.isBefore(eventContainer.getLastChanged())) {
-        if (eventContainer.getCalculatedUntil() != null && vEventComponents.size() == 1 && eventContainer.getCalculatedUntil().isAfter(org.joda.time.DateTime.now().plusMinutes(config.getReloadMinutes()))) {
-          log.trace("skipping resource processing {}, not changed",filename);
-          continue;
-        }
-        if (eventContainer.isHistoricEvent()) {
-          log.trace("skipping resource processing {}, not changed",filename);
-          continue;
-        }
-      }
-    }
-    Period period=new Period(new DateTime(loadFrom.toDate()),new DateTime(loadTo.toDate()));
-    PeriodList periods=vEvent.calculateRecurrenceSet(period);
-    periods=periods.normalise();
+    PeriodList periods=vEvent.calculateRecurrenceSet(new Period(new DateTime(loadFrom.toDate()),new DateTime(loadTo.toDate())));
     String eventId=vEvent.getUid().getValue();
     final String eventName=vEvent.getSummary().getValue();
     if (periods.size() > 0) {
@@ -53,10 +32,42 @@
     eventContainer.setEventId(eventId);
     eventContainer.setCalculatedUntil(loadTo);
     for (    Period p : periods) {
-      org.joda.time.DateTime start=getDateTime("start",p.getStart(),p.getRangeStart());
-      org.joda.time.DateTime end=getDateTime("end",p.getEnd(),p.getRangeEnd());
+      org.joda.time.DateTime start=null;
+      org.joda.time.DateTime end=null;
+      if (p.getStart().getTimeZone() == null) {
+        if (p.getStart().isUtc()) {
+          log.trace("start is without timezone, but UTC");
+          start=new org.joda.time.DateTime(p.getRangeStart(),DateTimeZone.UTC).toLocalDateTime().toDateTime(defaultTimeZone);
+        }
+ else {
+          log.trace("start is without timezone, not UTC");
+          start=new LocalDateTime(p.getRangeStart()).toDateTime();
+        }
+      }
+ else       if (DateTimeZone.getAvailableIDs().contains(p.getStart().getTimeZone().getID())) {
+        log.trace("start is with known timezone: {}",p.getStart().getTimeZone().getID());
+        start=new org.joda.time.DateTime(p.getRangeStart(),DateTimeZone.forID(p.getStart().getTimeZone().getID()));
+      }
+ else {
+        log.trace("start is with unknown timezone: {}",p.getStart().getTimeZone().getID());
+        start=new org.joda.time.DateTime(p.getRangeStart(),defaultTimeZone);
+      }
+      if (p.getEnd().getTimeZone() == null) {
+        if (p.getStart().isUtc()) {
+          end=new org.joda.time.DateTime(p.getRangeEnd(),DateTimeZone.UTC).toLocalDateTime().toDateTime(defaultTimeZone);
+        }
+ else {
+          end=new LocalDateTime(p.getRangeEnd()).toDateTime();
+        }
+      }
+ else       if (DateTimeZone.getAvailableIDs().contains(p.getEnd().getTimeZone().getID())) {
+        end=new org.joda.time.DateTime(p.getRangeEnd(),DateTimeZone.forID(p.getEnd().getTimeZone().getID()));
+      }
+ else {
+        end=new org.joda.time.DateTime(p.getRangeEnd(),defaultTimeZone);
+      }
       CalDavEvent event=new CalDavEvent(eventName,vEvent.getUid().getValue(),config.getKey(),start,end);
-      event.setLastChanged(lastModifedVEvent);
+      event.setLastChanged(lastChanged);
       if (vEvent.getLocation() != null) {
         event.setLocation(vEvent.getLocation().getValue());
       }
@@ -68,10 +79,7 @@
       eventContainer.getEventList().add(event);
     }
   }
-  if (lastModifedVEventOverAll != null && !config.isLastModifiedFileTimeStampValid()) {
-    eventContainer.setLastChanged(lastModifedVEventOverAll);
-  }
-  CalDavLoaderImpl.instance.addEventToMap(eventContainer,true);
+  addEventToMap(eventContainer,true);
   if (!readFromFile) {
     Util.storeToDisk(config.getKey(),filename,calendar);
   }
