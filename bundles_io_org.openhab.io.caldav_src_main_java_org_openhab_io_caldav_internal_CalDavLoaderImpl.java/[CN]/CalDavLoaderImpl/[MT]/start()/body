@@ -1,0 +1,14 @@
+{
+  super.start();
+  if (this.isProperlyConfigured()) {
+    try {
+      scheduler=new StdSchedulerFactory().getScheduler();
+      this.removeAllJobs();
+    }
+ catch (    SchedulerException e) {
+      log.error("cannot get job-scheduler",e);
+      throw new IllegalStateException("cannot get job-scheduler",e);
+    }
+    this.startLoading();
+  }
+}
