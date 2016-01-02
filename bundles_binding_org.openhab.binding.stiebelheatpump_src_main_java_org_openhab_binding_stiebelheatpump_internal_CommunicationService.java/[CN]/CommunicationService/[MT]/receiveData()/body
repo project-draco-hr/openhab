@@ -1,0 +1,28 @@
+{
+  byte singleByte;
+  int numBytesReadTotal;
+  int retry;
+  buffer=new byte[INPUT_BUFFER_LENGTH];
+  retry=0;
+  numBytesReadTotal=0;
+  boolean endOfMessage=false;
+  while (!endOfMessage & retry < MAXRETRIES) {
+    try {
+      singleByte=connector.get();
+    }
+ catch (    Exception e) {
+      retry++;
+      continue;
+    }
+    buffer[numBytesReadTotal]=singleByte;
+    numBytesReadTotal++;
+    if (numBytesReadTotal > 4 && buffer[numBytesReadTotal - 2] == DataParser.ESCAPE && buffer[numBytesReadTotal - 1] == DataParser.END) {
+      endOfMessage=true;
+      logger.debug("reached end of response message.");
+      break;
+    }
+  }
+  byte[] responseBuffer=new byte[numBytesReadTotal];
+  System.arraycopy(buffer,0,responseBuffer,0,numBytesReadTotal);
+  return responseBuffer;
+}

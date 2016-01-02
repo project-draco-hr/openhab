@@ -1,0 +1,29 @@
+{
+  if (communicationInUse)   return;
+  logger.debug("Refresh heat pump sensor and status values ...");
+  communicationInUse=true;
+  CommunicationService communicationService=null;
+  try {
+    communicationService=new CommunicationService(connector,heatPumpConfiguration);
+    Map<String,String> data=new HashMap<String,String>();
+    Map<String,String> allData=new HashMap<String,String>();
+    data=communicationService.getStatus();
+    allData.putAll(data);
+    for (    Map.Entry<String,String> entry : data.entrySet()) {
+      logger.debug("Data {} has value {}",entry.getKey(),entry.getValue());
+    }
+    data=communicationService.getSensors();
+    allData.putAll(data);
+    for (    Map.Entry<String,String> entry : data.entrySet()) {
+      logger.debug("Data {} has value {}",entry.getKey(),entry.getValue());
+    }
+    publishValues(allData);
+  }
+ catch (  StiebelHeatPumpException e) {
+    logger.error("Could not read data from heat pump! " + e.toString());
+  }
+ finally {
+    communicationService.finalizer();
+    communicationInUse=false;
+  }
+}

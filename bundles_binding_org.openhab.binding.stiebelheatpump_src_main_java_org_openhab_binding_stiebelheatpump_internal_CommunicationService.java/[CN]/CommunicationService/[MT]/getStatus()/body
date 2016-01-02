@@ -1,0 +1,16 @@
+{
+  logger.debug("Loading Status");
+  Map<String,String> data=new HashMap<String,String>();
+  for (  Request request : heatPumpStatusConfiguration) {
+    logger.debug("Loading data for request {} ...",request.getName());
+    try {
+      Map<String,String> newData=readData(request);
+      data.putAll(newData);
+      Thread.sleep(WAITING_TIME_BETWEEN_REQUESTS);
+    }
+ catch (    InterruptedException e) {
+      throw new StiebelHeatPumpException(e.toString());
+    }
+  }
+  return data;
+}

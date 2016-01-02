@@ -1,0 +1,37 @@
+{
+  logger.debug("Received command {} for item {}",command,itemName);
+  int retry=0;
+  while (communicationInUse & (retry < DEFAULT_SERIAL_TIMEOUT)) {
+    try {
+      Thread.sleep(CommunicationService.WAITING_TIME_BETWEEN_REQUESTS);
+    }
+ catch (    InterruptedException e) {
+      logger.debug("Could not get access to heatpump ! : {}",e.toString());
+    }
+    retry++;
+  }
+  if (communicationInUse)   return;
+  for (  StiebelHeatPumpBindingProvider provider : providers) {
+    for (    String name : provider.getItemNames()) {
+      if (!name.equals(itemName)) {
+        continue;
+      }
+      String parameter=provider.getParameter(name);
+      logger.debug("Found item {} with heat pump parameter {} in providers",itemName,parameter);
+      try {
+        Map<String,String> data=new HashMap<String,String>();
+        communicationInUse=true;
+        CommunicationService communicationService=new CommunicationService(connector,heatPumpConfiguration);
+        data=communicationService.setData(command.toString(),parameter);
+        communicationService.finalizer();
+        publishValues(data);
+      }
+ catch (      StiebelHeatPumpException e) {
+        logger.error("Could not set new value!");
+      }
+ finally {
+        communicationInUse=false;
+      }
+    }
+  }
+}

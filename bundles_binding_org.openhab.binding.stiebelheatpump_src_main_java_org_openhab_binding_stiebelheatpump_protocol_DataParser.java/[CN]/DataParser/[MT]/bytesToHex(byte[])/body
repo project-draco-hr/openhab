@@ -1,0 +1,23 @@
+{
+  int dwords=bytes.length / 4 + 1;
+  char[] hexChars=new char[bytes.length * 3 + dwords * 4];
+  int position=0;
+  for (int j=0; j < bytes.length; j++) {
+    int v=bytes[j] & 0xFF;
+    if (j % 4 == 0) {
+      String str="(" + String.format("%02d",j) + ")";
+      char[] charArray=str.toCharArray();
+      for (      char character : charArray) {
+        hexChars[position]=character;
+        position++;
+      }
+    }
+    hexChars[position]=hexArray[v >>> 4];
+    position++;
+    hexChars[position]=hexArray[v & 0x0F];
+    position++;
+    hexChars[position]=' ';
+    position++;
+  }
+  return new String(hexChars);
+}

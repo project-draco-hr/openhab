@@ -1,0 +1,26 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    @Override public boolean matches(    Request r){
+      return r.getName() == "CurrentValues";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x48,(byte)0xfb,(byte)0x01,(byte)0xaa,(byte)0x00,(byte)0x72,(byte)0x01,(byte)0x3a,(byte)0x00,(byte)0xa2,(byte)0x02,(byte)0xdc,(byte)0x01,(byte)0xce,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x59,(byte)0x01,(byte)0x73,(byte)0x11,(byte)0x18,(byte)0x27,(byte)0x27,(byte)0xf4,(byte)0xca,(byte)0x0c,(byte)0x22,(byte)0x1d,(byte)0x00,(byte)0x00,(byte)0x57,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x00,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("42.6",data.get("CollectorTemperatur"));
+  Assert.assertEquals("11.4",data.get("OutsideTemperature"));
+  Assert.assertEquals("31.4",data.get("FlowTemperature"));
+  Assert.assertEquals("16.2",data.get("ReturnTemperature"));
+  Assert.assertEquals("73.2",data.get("HotGasTemperature"));
+  Assert.assertEquals("46.2",data.get("CylinderTemperature"));
+  Assert.assertEquals("8.9",data.get("EvaporatorTemperature"));
+  Assert.assertEquals("37.1",data.get("CondenserTemperature"));
+  Assert.assertEquals("8.9",data.get("EvaporatorTemperature"));
+  Assert.assertEquals("12",data.get("ExtractFanSpeed"));
+  Assert.assertEquals("34",data.get("SupplyFanSpeed"));
+  Assert.assertEquals("29",data.get("ExhaustFanSpeed"));
+  Assert.assertEquals("8.7",data.get("FilteredOutsideTemperature"));
+}

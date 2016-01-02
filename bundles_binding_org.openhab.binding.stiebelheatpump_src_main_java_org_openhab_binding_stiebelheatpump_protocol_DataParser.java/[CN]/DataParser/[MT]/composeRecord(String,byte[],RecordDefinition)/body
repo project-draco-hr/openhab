@@ -1,0 +1,39 @@
+{
+  short newValue=0;
+  if (recordDefinition.getDataType() != Type.Settings) {
+    logger.warn("The record {} can not be set as it is not a setable value!",recordDefinition.getName());
+    throw new StiebelHeatPumpException("record is not a setting!");
+  }
+  double number=Double.parseDouble(value);
+  if (number > recordDefinition.getMax() || number < recordDefinition.getMin()) {
+    logger.warn("The record {} can not be set to value {} as allowed range is {}<-->{} !",recordDefinition.getName(),value,recordDefinition.getMax(),recordDefinition.getMin());
+    throw new StiebelHeatPumpException("invalid value !");
+  }
+  response[1]=SET;
+  if (recordDefinition.getScale() != 1.0) {
+    number=number / recordDefinition.getScale();
+    newValue=(short)number;
+  }
+  if (recordDefinition.getBitPosition() > 0) {
+    byte[] abyte=new byte[]{response[recordDefinition.getPosition()]};
+    abyte=setBit(abyte,recordDefinition.getBitPosition(),newValue);
+    response[recordDefinition.getPosition()]=abyte[0];
+    return response;
+  }
+switch (recordDefinition.getLength()) {
+case 1:
+    byte newByteValue=(byte)number;
+  response[recordDefinition.getPosition()]=newByteValue;
+break;
+case 2:
+byte[] newByteValues=shortToByte(newValue);
+int position=recordDefinition.getPosition();
+response[position]=newByteValues[1];
+response[position + 1]=newByteValues[0];
+break;
+}
+response[2]=this.calculateChecksum(response);
+response=this.addDuplicatedBytes(response);
+logger.debug("Updated record {} at position {} to value {}.",recordDefinition.getName(),recordDefinition.getPosition(),value);
+return response;
+}

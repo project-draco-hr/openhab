@@ -1,0 +1,19 @@
+{
+  Request request=new Request();
+  request.setRequestByte(requestByte);
+  byte requestMessage[]=createRequestMessage(request);
+  if (!establishRequest(requestMessage)) {
+    logger.info("Could not get response for request byte {} ...");
+    return;
+  }
+  try {
+    connector.write(DataParser.ESCAPE);
+    byte[] response=receiveData();
+    logger.info("Received response from heatpump: {}",DataParser.bytesToHex(response));
+    return;
+  }
+ catch (  Exception e) {
+    logger.error("Could not get data from heat pump! {}",e.toString());
+  }
+  return;
+}

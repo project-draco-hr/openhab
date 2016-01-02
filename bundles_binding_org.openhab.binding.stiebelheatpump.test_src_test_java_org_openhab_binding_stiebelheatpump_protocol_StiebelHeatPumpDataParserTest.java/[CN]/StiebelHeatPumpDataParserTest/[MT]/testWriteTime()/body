@@ -1,0 +1,49 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    @Override public boolean matches(    Request r){
+      return r.getName() == "Time";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0x79,(byte)0xfc,(byte)0x00,(byte)0x02,(byte)0x0a,(byte)0x21,(byte)0x24,(byte)0x0e,(byte)0x00,(byte)0x03,(byte)0x1a,(byte)0x10,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("2",data.get("WeekDay"));
+  Assert.assertEquals("10",data.get("Hours"));
+  Assert.assertEquals("33",data.get("Minutes"));
+  Assert.assertEquals("36",data.get("Seconds"));
+  Assert.assertEquals("14",data.get("Year"));
+  Assert.assertEquals("3",data.get("Month"));
+  Assert.assertEquals("26",data.get("Day"));
+  byte[] resultingBytes=new byte[]{(byte)0x01,(byte)0x80,(byte)0xf1,(byte)0xfc,(byte)0x00,(byte)0x02,(byte)0x0a,(byte)0x22,(byte)0x1b,(byte)0x0e,(byte)0x00,(byte)0x03,(byte)0x1a,(byte)0x10,(byte)0x03};
+  Request request=result.get(0);
+  RecordDefinition recordDefinition=null;
+  for (  RecordDefinition record : request.getRecordDefinitions()) {
+    if (record.getName() == "Minutes") {
+      recordDefinition=record;
+      break;
+    }
+  }
+  byte[] newResponse=parser.composeRecord("34",response,recordDefinition);
+  for (  RecordDefinition record : request.getRecordDefinitions()) {
+    if (record.getName() == "Seconds") {
+      recordDefinition=record;
+      break;
+    }
+  }
+  Throwable e=null;
+  try {
+    newResponse=parser.composeRecord("90",newResponse,recordDefinition);
+  }
+ catch (  Throwable ex) {
+    e=ex;
+  }
+  Assert.assertTrue(e instanceof StiebelHeatPumpException);
+  newResponse=parser.composeRecord("27",newResponse,recordDefinition);
+  newResponse[2]=parser.calculateChecksum(newResponse);
+  for (int i=0; i < newResponse.length; i++) {
+    Assert.assertEquals(resultingBytes[i],newResponse[i]);
+  }
+}

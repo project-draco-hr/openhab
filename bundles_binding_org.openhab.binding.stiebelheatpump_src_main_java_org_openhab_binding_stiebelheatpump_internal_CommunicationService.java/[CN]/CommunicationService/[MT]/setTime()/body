@@ -1,0 +1,98 @@
+{
+  startCommunication();
+  Map<String,String> data=new HashMap<String,String>();
+  Request timeRequest=null;
+  for (  Request request : heatPumpSettingConfiguration) {
+    if (request.getName().equals("Time")) {
+      timeRequest=request;
+      break;
+    }
+  }
+  if (timeRequest == null) {
+    logger.warn("Could not find request definition for time settings! Skip setting time.");
+    return data;
+  }
+  logger.debug("Loading current time data ...");
+  try {
+    byte[] requestMessage=createRequestMessage(timeRequest);
+    byte[] response=getData(requestMessage);
+    DateTime dt=DateTime.now();
+    logger.debug("Current time is : {}",dt.toString());
+    String weekday=Integer.toString(dt.getDayOfWeek() - 1);
+    String day=Integer.toString(dt.getDayOfMonth());
+    String month=Integer.toString(dt.getMonthOfYear());
+    String year=Integer.toString(dt.getYearOfCentury());
+    String seconds=Integer.toString(dt.getSecondOfMinute());
+    String hours=Integer.toString(dt.getHourOfDay());
+    String minutes=Integer.toString(dt.getMinuteOfHour());
+    data=parser.parseRecords(response,timeRequest);
+    boolean updateRequired=false;
+    for (    Map.Entry<String,String> entry : data.entrySet()) {
+      String entryName=entry.getKey();
+      String entryValue=entry.getValue();
+      RecordDefinition currentRecord=null;
+      for (      RecordDefinition record : timeRequest.getRecordDefinitions()) {
+        if (record.getName().equals(entryName)) {
+          currentRecord=record;
+          break;
+        }
+      }
+      if (entryName.equals("WeekDay") && !entryValue.equals(weekday)) {
+        updateRequired=true;
+        response=parser.composeRecord(weekday,response,currentRecord);
+        logger.debug("WeekDay needs update from {} to {}",entryValue,weekday);
+        continue;
+      }
+      if (entryName.equals("Hours") && !entryValue.equals(hours)) {
+        updateRequired=true;
+        response=parser.composeRecord(hours,response,currentRecord);
+        logger.debug("Hours needs update from {} to {}",entryValue,hours);
+        continue;
+      }
+      if (entryName.equals("Minutes") && !entryValue.equals(minutes)) {
+        updateRequired=true;
+        response=parser.composeRecord(minutes,response,currentRecord);
+        logger.debug("Minutes needs update from {} to {}",entryValue,minutes);
+        continue;
+      }
+      if (entryName.equals("Seconds") && !entryValue.equals(seconds)) {
+        updateRequired=true;
+        response=parser.composeRecord(seconds,response,currentRecord);
+        logger.debug("Seconds needs update from {} to {}",entryValue,seconds);
+        continue;
+      }
+      if (entryName.equals("Year") && !entryValue.equals(year)) {
+        updateRequired=true;
+        response=parser.composeRecord(year,response,currentRecord);
+        logger.debug("Year needs update from {} to {}",entryValue,year);
+        continue;
+      }
+      if (entryName.equals("Month") && !entryValue.equals(month)) {
+        updateRequired=true;
+        response=parser.composeRecord(month,response,currentRecord);
+        logger.debug("Month needs update from {} to {}",entryValue,month);
+        continue;
+      }
+      if (entryName.equals("Day") && !entryValue.equals(day)) {
+        updateRequired=true;
+        response=parser.composeRecord(day,response,currentRecord);
+        logger.debug("Day needs update from {} to {}",entryValue,day);
+        continue;
+      }
+    }
+    if (updateRequired) {
+      Thread.sleep(WAITING_TIME_BETWEEN_REQUESTS);
+      logger.info("Time need update. Set time to " + dt.toString());
+      setData(response);
+      Thread.sleep(WAITING_TIME_BETWEEN_REQUESTS);
+      response=getData(requestMessage);
+      data=parser.parseRecords(response,timeRequest);
+      dt=DateTime.now();
+      logger.debug("Current time is : {}",dt.toString());
+    }
+    return data;
+  }
+ catch (  InterruptedException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+}

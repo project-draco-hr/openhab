@@ -1,0 +1,13 @@
+{
+  if (data.length < 5) {
+    throw new StiebelHeatPumpException("no valid byte[] for calulation of checksum!");
+  }
+  int checkSum=0, i=0;
+  for (i=0; i < data.length - 2; i++) {
+    if (i == 2) {
+      continue;
+    }
+    checkSum+=(short)(data[i] & 0xFF);
+  }
+  return shortToByte((short)checkSum)[0];
+}

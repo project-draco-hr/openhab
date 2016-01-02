@@ -1,0 +1,41 @@
+{
+  JAXBContext context;
+  BufferedWriter writer=null;
+  try {
+    writer=new BufferedWriter(new FileWriter(xmlFileLocation));
+  }
+ catch (  IOException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+  try {
+    context=JAXBContext.newInstance(Requests.class);
+  }
+ catch (  JAXBException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+  Marshaller m;
+  try {
+    m=context.createMarshaller();
+  }
+ catch (  JAXBException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+  try {
+    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+  }
+ catch (  PropertyException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+  try {
+    m.marshal(new Requests(requests),writer);
+  }
+ catch (  JAXBException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+  try {
+    writer.close();
+  }
+ catch (  IOException e) {
+    throw new StiebelHeatPumpException(e.toString());
+  }
+}

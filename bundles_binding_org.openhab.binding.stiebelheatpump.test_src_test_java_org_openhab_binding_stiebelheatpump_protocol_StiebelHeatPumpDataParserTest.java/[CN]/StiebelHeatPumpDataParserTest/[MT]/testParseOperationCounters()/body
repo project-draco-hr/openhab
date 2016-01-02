@@ -1,0 +1,18 @@
+{
+  List<Request> result=Requests.searchIn(configuration,new Matcher<Request>(){
+    @Override public boolean matches(    Request r){
+      return r.getName() == "OperationCounters";
+    }
+  }
+);
+  byte[] response=new byte[]{(byte)0x01,(byte)0x00,(byte)0xea,(byte)0x09,(byte)0x00,(byte)0x1a,(byte)0x00,(byte)0x19,(byte)0x0c,(byte)0x77,(byte)0x02,(byte)0x28,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x03};
+  response=parser.fixDuplicatedBytes(response);
+  Assert.assertEquals(response[3],result.get(0).getRequestByte());
+  Assert.assertEquals(response[2],parser.calculateChecksum(response));
+  Map<String,String> data=parser.parseRecords(response,result.get(0));
+  Assert.assertEquals("26",data.get("CompressorA"));
+  Assert.assertEquals("25",data.get("CompressorB"));
+  Assert.assertEquals("3191",data.get("HeatingMode"));
+  Assert.assertEquals("552",data.get("DHWMode"));
+  Assert.assertEquals("0",data.get("CoolingMode"));
+}

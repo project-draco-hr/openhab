@@ -1,0 +1,50 @@
+{
+  Request updateRequest=null;
+  RecordDefinition updateRecord=null;
+  Map<String,String> data=new HashMap<String,String>();
+  if (parameter != null) {
+    for (    Request request : heatPumpSettingConfiguration) {
+      for (      RecordDefinition record : request.getRecordDefinitions()) {
+        if (record.getName().equalsIgnoreCase(parameter)) {
+          updateRecord=record;
+          updateRequest=request;
+          logger.debug("Found valid record definition {} in request {}:{}",record.getName(),request.getName(),request.getDescription());
+          break;
+        }
+      }
+    }
+  }
+  if (updateRecord == null || updateRequest == null) {
+    logger.warn("Could not find valid record definition for {}",parameter);
+    return data;
+  }
+  try {
+    byte[] requestMessage=createRequestMessage(updateRequest);
+    byte[] response=getData(requestMessage);
+    data=parser.parseRecords(response,updateRequest);
+    String currentState=data.get(updateRecord.getName());
+    if (currentState.equals(value)) {
+      logger.debug("Current State for {} is already {}.",parameter,value);
+      return data;
+    }
+    byte[] requestUpdateMessage=parser.composeRecord(value,response,updateRecord);
+    logger.debug("Setting new value [{}] for parameter [{}]",value,parameter);
+    Thread.sleep(WAITING_TIME_BETWEEN_REQUESTS);
+    response=setData(requestUpdateMessage);
+    if (parser.setDataCheck(response)) {
+      logger.debug("Updated parameter {} successfully.",parameter);
+    }
+ else {
+      logger.debug("Update for parameter {} failed!",parameter);
+    }
+  }
+ catch (  StiebelHeatPumpException e) {
+    logger.error("Stiebel heat pump communication error during update of value! " + e.toString());
+  }
+catch (  InterruptedException e) {
+    e.printStackTrace();
+  }
+ finally {
+  }
+  return data;
+}

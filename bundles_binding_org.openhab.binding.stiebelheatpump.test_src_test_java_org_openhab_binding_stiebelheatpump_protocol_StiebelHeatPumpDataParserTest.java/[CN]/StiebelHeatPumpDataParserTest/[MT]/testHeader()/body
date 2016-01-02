@@ -1,0 +1,10 @@
+{
+  try {
+    Assert.assertFalse(parser.headerCheck(new byte[]{(byte)0x01,(byte)0x01,(byte)0xfe,(byte)0xfc,(byte)0x10,(byte)0x03}));
+    Assert.assertTrue(parser.headerCheck(new byte[]{(byte)0x01,(byte)0x00,(byte)0xcc,(byte)0xfd,(byte)0x00,(byte)0xce,(byte)0x10,(byte)0x03}));
+    Assert.assertFalse(parser.headerCheck(new byte[]{(byte)0x01,(byte)0x03,(byte)0x80,(byte)0x7c,(byte)0x10,(byte)0x03}));
+  }
+ catch (  Exception e) {
+    Assert.fail("unexpected exception");
+  }
+}
