@@ -1,45 +1,15 @@
 {
-  final String config=context.getJobDetail().getJobDataMap().getString(KEY_CONFIG);
-  CalendarRuntime eventRuntime=EventStorage.getInstance().getEventCache().get(config);
-  if (!cachedEventsLoaded.containsKey(config)) {
-    try {
-      log.debug("reload cached events for config: {}",eventRuntime.getConfig().getKey());
-      for (      File fileCalendarKeys : new File(CalDavLoaderImpl.CACHE_PATH).listFiles()) {
-        if (!eventRuntime.getConfig().getKey().equals(Util.getFilename(fileCalendarKeys.getName()))) {
-          continue;
-        }
-        final Collection<File> icsFiles=FileUtils.listFiles(fileCalendarKeys,new String[]{"ics"},false);
-        for (        File icsFile : icsFiles) {
-          try {
-            FileInputStream fis=new FileInputStream(icsFile);
-            loadEvents(Util.getFilename(icsFile.getAbsolutePath()),new org.joda.time.DateTime(icsFile.lastModified()),fis,eventRuntime.getConfig(),new ArrayList<String>(),true);
-          }
- catch (          IOException e) {
-            log.error("cannot load events for file: " + icsFile,e);
-          }
-catch (          ParserException e) {
-            log.error("cannot load events for file: " + icsFile,e);
-          }
-        }
-        break;
-      }
-    }
- catch (    Throwable e) {
-      log.error("cannot load events",e);
-    }
- finally {
-      cachedEventsLoaded.put(config,true);
-    }
-  }
   try {
+    final String config=context.getJobDetail().getJobDataMap().getString(KEY_CONFIG);
+    CalendarRuntime eventRuntime=EventStorage.getInstance().getEventCache().get(config);
     log.debug("loading events for config: " + config);
     List<String> oldEventIds=new ArrayList<String>();
     for (    EventContainer eventContainer : eventRuntime.getEventMap().values()) {
       oldEventIds.add(eventContainer.getFilename());
     }
-    loadEvents(eventRuntime,oldEventIds);
+    CalDavLoaderImpl.INSTANCE.loadEvents(eventRuntime,oldEventIds);
     removeDeletedEvents(config,oldEventIds);
-    for (    EventNotifier notifier : CalDavLoaderImpl.instance.getEventListenerList()) {
+    for (    EventNotifier notifier : CalDavLoaderImpl.INSTANCE.getEventListenerList()) {
       try {
         notifier.calendarReloaded(config);
       }
@@ -47,6 +17,7 @@ catch (          ParserException e) {
         log.error("error while invoking listener",e);
       }
     }
+    printAllEvents();
   }
  catch (  Exception e) {
     log.error("error while loading calendar entries: " + e.getMessage(),e);

@@ -5,7 +5,7 @@
     log.error("cannot find config for calendar id: {}",calDavEvent.getCalendarId());
   }
   Sardine sardine=Util.getConnection(config);
-  Calendar calendar=Util.createCalendar(calDavEvent,defaultTimeZone);
+  Calendar calendar=Util.createCalendar(calDavEvent,this.defaultTimeZone);
   try {
     final String fullIcsFile=config.getUrl() + "/" + calDavEvent.getFilename()+ ".ics";
     if (calendarRuntime.getEventContainerByFilename(calDavEvent.getFilename()) != null) {
