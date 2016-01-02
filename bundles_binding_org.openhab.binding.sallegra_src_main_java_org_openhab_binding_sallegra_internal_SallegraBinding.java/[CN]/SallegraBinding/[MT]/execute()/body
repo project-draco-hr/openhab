@@ -1,0 +1,31 @@
+{
+  for (  SallegraBindingProvider provider : providers) {
+    Collection<String> names=provider.getItemNames();
+    for (    String name : names) {
+      logger.debug("Name {}",name);
+      SallegraBindingConfig bindingConfig=provider.getBindingConfigFor(name);
+      String deviceId=bindingConfig.getModuleName();
+      if (sallegraNodes.containsKey(deviceId)) {
+        SallegraNode node=sallegraNodes.get(deviceId);
+        String value=null;
+switch (bindingConfig.getCmdId()) {
+case RELAY:
+          value=node.getRelay(bindingConfig.getCmdValue());
+        break;
+case DIMMER:
+      value=node.getDimmer(bindingConfig.getCmdValue());
+    break;
+case INPUT:
+  value=node.getInput(bindingConfig.getCmdValue());
+break;
+}
+if (value != null) {
+postUpdate(provider,bindingConfig,value);
+}
+}
+ else {
+logger.error("Unknown deviceId \"{}\"",deviceId);
+}
+}
+}
+}

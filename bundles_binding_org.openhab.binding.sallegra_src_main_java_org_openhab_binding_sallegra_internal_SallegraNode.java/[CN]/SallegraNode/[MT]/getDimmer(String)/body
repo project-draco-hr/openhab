@@ -1,0 +1,9 @@
+{
+  String URL=createURL() + "/" + XML_PATH+ "?"+ SUFFIX_PASSWORD+ getPassword();
+  String content=HttpUtil.executeUrl(GET,URL,this.timeOut);
+  content=XmlUtils.getContentOfElement(content,SUFFIX_DIMMER + number);
+  double dimmer_value=Double.parseDouble(XmlUtils.getContentOfElement(content,"Value"));
+  double calc=Math.round(dimmer_value / 2.54);
+  String string_value=String.valueOf((int)calc);
+  return string_value;
+}
