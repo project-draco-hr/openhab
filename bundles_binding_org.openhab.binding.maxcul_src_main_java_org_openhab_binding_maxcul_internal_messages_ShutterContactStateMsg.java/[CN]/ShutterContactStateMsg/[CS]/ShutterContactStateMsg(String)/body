@@ -1,0 +1,15 @@
+{
+  super(rawMsg);
+  logger.debug(this.msgType + " Payload Len -> " + this.payload.length);
+  if (this.payload.length == SHUTTER_CONTACT_STATE_PAYLOAD_LEN) {
+    boolean isOpen=extractBitFromByte(this.payload[0],1);
+    ;
+    if (!isOpen)     state=ShutterContactState.CLOSED;
+ else     state=ShutterContactState.OPEN;
+    rfError=extractBitFromByte(this.payload[0],6);
+    batteryLow=extractBitFromByte(this.payload[0],7);
+  }
+ else {
+    logger.error("Got " + this.msgType + " message with incorrect length!");
+  }
+}

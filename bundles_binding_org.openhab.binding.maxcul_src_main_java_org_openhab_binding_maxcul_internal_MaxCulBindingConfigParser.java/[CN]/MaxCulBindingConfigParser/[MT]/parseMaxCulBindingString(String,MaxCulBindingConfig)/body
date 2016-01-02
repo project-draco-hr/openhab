@@ -14,6 +14,10 @@
     logger.debug("Credit Monitor binding found");
     cfg.setDeviceType(MaxCulDevice.CREDIT_MONITOR);
   }
+ else   if (bindingConfigStr.startsWith("LedMode")) {
+    logger.debug("LED Mode binding found");
+    cfg.setDeviceType(MaxCulDevice.LED_MODE);
+  }
  else   if (configParts.length < 2) {
     throw new BindingConfigParseException("MaxCul configuration requires a configuration of at least the format <device_type>:<serial_num> for a MAX! device.");
   }
@@ -49,7 +53,7 @@ case RADIATOR_THERMOSTAT_PLUS:
 cfg.setFeature(MaxCulFeature.THERMOSTAT);
 break;
 case SHUTTER_CONTACT:
-cfg.setFeature(MaxCulFeature.SWITCH);
+cfg.setFeature(MaxCulFeature.CONTACT);
 break;
 case WALL_THERMOSTAT:
 cfg.setFeature(MaxCulFeature.THERMOSTAT);
@@ -57,6 +61,7 @@ break;
 case CREDIT_MONITOR:
 case PAIR_MODE:
 case LISTEN_MODE:
+case LED_MODE:
 case CUBE:
 case UNKNOWN:
 break;
