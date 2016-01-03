@@ -24,6 +24,7 @@ zController.pollNode(node);
 }
 }
  else {
+List<Integer> nif=new ArrayList<Integer>();
 for (int i=6; i < length + 3; i++) {
 int data=incomingMessage.getMessagePayloadByte(i);
 if (data == 0xef) {
@@ -35,6 +36,7 @@ if (commandClass != null) {
 node.addCommandClass(commandClass);
 }
 }
+node.updateNIF(nif);
 }
 zController.notifyEventListeners(new ZWaveNodeInfoEvent(nodeId));
 ZWaveWakeUpCommandClass wakeUp=(ZWaveWakeUpCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP);
