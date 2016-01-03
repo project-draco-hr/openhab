@@ -1,0 +1,9 @@
+{
+  String message=" PKT:SID=10;PC=165;MT=8;MGID=0;MID=1;MD=FFFFFF000000FF;5f552ffb";
+  SHCMessage shcMessage=new SHCMessage(message,packet);
+  List<Type> values=shcMessage.getData().getOpenHABTypes();
+  assertEquals("Major",255,((DecimalType)values.get(0)).intValue());
+  assertEquals("Minor",255,((DecimalType)values.get(1)).intValue());
+  assertEquals("Patch",255,((DecimalType)values.get(2)).intValue());
+  assertEquals("Hash",255,((DecimalType)values.get(3)).intValue());
+}

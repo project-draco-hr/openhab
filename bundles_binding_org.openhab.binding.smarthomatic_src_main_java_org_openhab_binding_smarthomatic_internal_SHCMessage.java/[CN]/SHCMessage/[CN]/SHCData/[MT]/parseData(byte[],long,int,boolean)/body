@@ -1,0 +1,27 @@
+{
+  int bits2skip=startBit;
+  long bits2add=bits;
+  int result=0;
+  for (  byte b : data) {
+    for (int mask=0x80; mask != 0x00; mask>>=1) {
+      boolean bitvalue=(b & mask) != 0;
+      if (bits2add < 0) {
+      }
+ else       if (bits2skip > 0) {
+        bits2skip--;
+      }
+ else {
+        if (bitvalue) {
+          result=result + (int)Math.pow(2,bits2add - 1);
+        }
+        bits2add--;
+      }
+    }
+  }
+  if (signed) {
+    if (result >= (int)Math.pow(2,bits - 1)) {
+      result=result - (int)Math.pow(2,bits);
+    }
+  }
+  return result;
+}

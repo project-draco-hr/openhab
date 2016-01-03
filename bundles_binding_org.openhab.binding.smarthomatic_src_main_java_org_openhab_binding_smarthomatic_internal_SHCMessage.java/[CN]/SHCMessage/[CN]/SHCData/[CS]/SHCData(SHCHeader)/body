@@ -1,0 +1,22 @@
+{
+  byte[] data=header.getMessageData();
+  MessageGroup group=null;
+  Message message=null;
+  int messageType=header.getMessageType();
+  if (messageType == 8 || messageType == 10) {
+    for (    MessageGroup messageGroup : packet.getMessageGroup()) {
+      if (messageGroup.getMessageGroupID() == header.getMessageGroupID()) {
+        group=messageGroup;
+        break;
+      }
+    }
+    for (    Message message1 : group.getMessage()) {
+      if (message1.getMessageID() == header.getMessageID()) {
+        message=message1;
+        break;
+      }
+    }
+    int startBit=0;
+    startBit=getDataValues(startBit,message.getDataValue(),data);
+  }
+}

@@ -1,0 +1,41 @@
+{
+switch (event.getEventType()) {
+case SerialPortEvent.BI:
+case SerialPortEvent.OE:
+case SerialPortEvent.FE:
+case SerialPortEvent.PE:
+case SerialPortEvent.CD:
+case SerialPortEvent.CTS:
+case SerialPortEvent.DSR:
+case SerialPortEvent.RI:
+case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+    break;
+case SerialPortEvent.DATA_AVAILABLE:
+  StringBuilder sb=new StringBuilder();
+byte[] readBuffer=new byte[100];
+try {
+do {
+  while (inputStream.available() > 0) {
+    int bytes=inputStream.read(readBuffer);
+    sb.append(new String(readBuffer,0,bytes));
+  }
+  try {
+    Thread.sleep(100);
+  }
+ catch (  InterruptedException e) {
+  }
+}
+ while (inputStream.available() > 0);
+String result=sb.toString();
+String logResult=result.replaceAll("\n","\\\\n").replaceAll("\r","\\\\r").substring(0,40);
+logger.info("Received message '{}'... on serial port {}",new String[]{logResult,port});
+if (eventWorker != null) {
+  eventWorker.eventOccured(result);
+}
+}
+ catch (IOException e) {
+logger.debug("Error receiving data on serial port {}: {}",new String[]{port,e.getMessage()});
+}
+break;
+}
+}

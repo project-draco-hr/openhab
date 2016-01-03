@@ -1,0 +1,12 @@
+{
+  bindingEventWorker=sew;
+  serialDevice=new SerialDevice(port,baud);
+  serialDevice.setEventWorker(this);
+  try {
+    serialDevice.initialize();
+  }
+ catch (  InitializationException e) {
+    logger.error("Port cannot be opened. Port: {}",port);
+    logger.error("initialization exception",e);
+  }
+}

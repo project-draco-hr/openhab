@@ -1,0 +1,21 @@
+{
+  if (baseStation != null) {
+    logger.info("Smarthomatic Binding activated. BaseStation= {}",baseStation.toString());
+  }
+  Bundle bundle=SmarthomaticActivator.getContext().getBundle();
+  URL fileURL=bundle.getEntry("packet_layout.xml");
+  Packet packet=null;
+  try {
+    InputStream inputStream=fileURL.openConnection().getInputStream();
+    JAXBContext jaxbContext=JAXBContext.newInstance(Packet.class);
+    Unmarshaller jaxbUnmarshaller=jaxbContext.createUnmarshaller();
+    packet=(Packet)jaxbUnmarshaller.unmarshal(inputStream);
+  }
+ catch (  IOException e1) {
+    e1.printStackTrace();
+  }
+catch (  JAXBException e) {
+    e.printStackTrace();
+  }
+  this.packet=packet;
+}

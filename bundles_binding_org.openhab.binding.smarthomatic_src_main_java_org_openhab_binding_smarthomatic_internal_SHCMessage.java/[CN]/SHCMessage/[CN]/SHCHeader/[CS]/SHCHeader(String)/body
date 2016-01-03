@@ -1,0 +1,40 @@
+{
+  StringTokenizer dataTok=new StringTokenizer(data,";");
+  String[] tokens=new String[dataTok.countTokens()];
+  Map<String,String> tokensMap=new HashMap<String,String>();
+  int i=0;
+  while (dataTok.hasMoreTokens()) {
+    String nextToken=dataTok.nextToken();
+    tokens[i++]=nextToken;
+    String[] split=nextToken.split("=");
+    if (split.length == 2) {
+      tokensMap.put(split[0].trim(),split[1].trim());
+    }
+  }
+  String crc=tokens[tokens.length - 1].trim();
+  CRC32 crc32=new CRC32();
+  String substring=data.substring(0,data.lastIndexOf(";") + 1);
+  crc32.update(substring.getBytes());
+  long value=crc32.getValue();
+  String decode=Long.toHexString(value);
+  decode=fillStringWithLeadingZeros(decode,crc.length());
+  if (!crc.equals(decode)) {
+    RuntimeException runtimeException=new RuntimeException("SHC Binding CRC Error");
+    logger.error("SHC Binding CRC Error calculated CRC: {} found  CRC: {}",runtimeException,decode,crc);
+    throw runtimeException;
+  }
+  SenderID=Integer.parseInt(tokensMap.get(SENDER_ID));
+  MessageType=Integer.parseInt(tokensMap.get(MESSAGE_TYPE));
+  if (MessageType == 0 || MessageType == 1 || MessageType == 2 || MessageType == 8 || MessageType == 10) {
+    MessageGroupID=Integer.parseInt(tokensMap.get(MESSAGE_GROUP_ID));
+    MessageID=Integer.parseInt(tokensMap.get(MESSAGE_ID));
+  }
+  if (MessageType == 1 || MessageType == 2 || MessageType == 8 || MessageType == 10) {
+    MessageData=DatatypeConverter.parseHexBinary(tokensMap.get(MESSAGE_DATA));
+  }
+  logger.trace("BaseStation SenderID:       {}",SenderID);
+  logger.trace("BaseStation MessageType:    {}",MessageType);
+  logger.trace("BaseStation MessageGroupID: {}",MessageGroupID);
+  logger.trace("BaseStation MessageID:      {}",MessageID);
+  logger.trace("BaseStation MessageData:    {}",MessageData);
+}

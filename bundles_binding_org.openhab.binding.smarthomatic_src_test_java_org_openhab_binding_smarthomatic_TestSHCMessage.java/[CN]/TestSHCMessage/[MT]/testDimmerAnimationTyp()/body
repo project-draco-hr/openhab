@@ -1,0 +1,9 @@
+{
+  String message=" PKT:SID=13;PC=534;MT=10;MGID=60;MID=2;MD=40f4006000000000000000000000000000;5817ba52";
+  SHCMessage shcMessage=new SHCMessage(message,packet);
+  List<Type> values=shcMessage.getData().getOpenHABTypes();
+  assertEquals("AnimationMode",1,((DecimalType)values.get(0)).intValue());
+  assertEquals("TimeoutSec",976,((DecimalType)values.get(1)).intValue());
+  assertEquals("StartBrightness",0,((DecimalType)values.get(2)).intValue());
+  assertEquals("EndBrightness",96,((DecimalType)values.get(3)).intValue());
+}
