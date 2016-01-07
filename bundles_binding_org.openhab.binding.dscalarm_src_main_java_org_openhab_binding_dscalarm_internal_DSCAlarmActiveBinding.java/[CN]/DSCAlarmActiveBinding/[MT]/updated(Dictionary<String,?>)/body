@@ -1,22 +1,41 @@
 {
   logger.debug("updated(): Configuration updated, config {}",config != null ? true : false);
   if (config != null) {
+    String deviceType=null;
+    if (StringUtils.isNotBlank((String)config.get("deviceType"))) {
+      if (deviceType.equals("it100")) {
+        connectorType=DSCAlarmConnectorType.IT100;
+      }
+ else       if (deviceType.equals("envisalink")) {
+        connectorType=DSCAlarmConnectorType.ENVISALINK;
+      }
+ else {
+        logger.error("updated(): Device type not configured correctly!");
+        return;
+      }
+    }
     if (StringUtils.isNotBlank((String)config.get("serialPort"))) {
       serialPort=(String)config.get("serialPort");
     }
     if (StringUtils.isNotBlank((String)config.get("ip"))) {
       ipAddress=(String)config.get("ip");
     }
+    try {
+      if (StringUtils.isNotBlank((String)config.get("tcpPort")))       tcpPort=Integer.parseInt((String)config.get("tcpPort"));
+    }
+ catch (    NumberFormatException numberFormatException) {
+      tcpPort=4025;
+      logger.error("updated(): TCP Port not configured correctly!");
+      return;
+    }
     if (serialPort != null && ipAddress != null) {
       logger.error("updated(): Can only configure one connection type at a time: Serial Port or Ip Address!");
       return;
     }
     if (serialPort != null) {
-      connectorType=DSCAlarmConnectorType.SERIAL;
+      if (connectorType == null)       connectorType=DSCAlarmConnectorType.IT100;
       try {
-        if (StringUtils.isNotBlank((String)config.get("baud"))) {
-          baudRate=Integer.parseInt((String)config.get("baud"));
-        }
+        if (StringUtils.isNotBlank((String)config.get("baud")))         baudRate=Integer.parseInt((String)config.get("baud"));
       }
  catch (      NumberFormatException numberFormatException) {
         baudRate=0;
@@ -24,8 +43,8 @@
         return;
       }
     }
-    if (ipAddress != null) {
-      connectorType=DSCAlarmConnectorType.TCP;
+    if (ipAddress != null && connectorType == null) {
+      connectorType=DSCAlarmConnectorType.ENVISALINK;
     }
     logger.debug("updated(): Connector Type: {}",connectorType);
     if (StringUtils.isNotBlank((String)config.get("password"))) {
