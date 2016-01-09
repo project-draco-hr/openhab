@@ -1,4 +1,9 @@
 {
   List<Request> configuration=getHeatPumpConfiguration();
-  configParser.marshal(configuration,new File(XMLLocation));
+  File config=new File("target/testconfig.xml");
+  configParser.marshal(configuration,config);
+  List<Request> configuration2=configParser.unmarshal(config);
+  Request firstRequest=configuration2.get(0);
+  Assert.assertEquals("Version",firstRequest.getName());
+  Assert.assertEquals((byte)0xfd,firstRequest.getRequestByte());
 }
