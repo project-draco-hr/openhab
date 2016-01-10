@@ -21,7 +21,9 @@
   while (!interrupted) {
     try {
       byte[] data=connector.receiveDatagram();
-      logger.debug("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
+      if (logger.isDebugEnabled()) {
+        logger.debug("Received data (len={}): {}",data.length,DatatypeConverter.printHexBinary(data));
+      }
       Hashtable<Integer,Short> regValues=NibeHeatPumpDataParser.ParseData(data);
       if (regValues != null) {
         Enumeration<Integer> keys=regValues.keys();
@@ -41,19 +43,24 @@
  else {
             if (variableInfo.dataType == NibeHeatPumpDataParser.NibeDataType.U32 || variableInfo.dataType == NibeHeatPumpDataParser.NibeDataType.S32) {
               logger.debug("{}:32bit dataType",key);
-              int keyValue=(int)regValues.get(key) & 0xffff;
-              int keyPlusOneValue=(int)regValues.get(key + 1) & 0xffff;
-{
-{
-                }
+              int keyValue, keyPlusOneValue;
+              try {
+                keyValue=(int)regValues.get(key) & 0xffff;
+                keyPlusOneValue=(int)regValues.get(key + 1) & 0xffff;
               }
-              logger.debug(key + ":" + Integer.toHexString(keyValue)+ " "+ Integer.toHexString(keyPlusOneValue));
+ catch (              Exception ex) {
+                logger.error("Received bad data key={}; skipping.",key);
+                continue;
+              }
+              if (logger.isDebugEnabled()) {
+                logger.debug("{}: {} {}",key,Integer.toHexString(keyValue),Integer.toHexString(keyPlusOneValue));
+              }
               value=(int)keyPlusOneValue << 16 | keyValue;
             }
             value=value / variableInfo.factor;
             BigDecimal bd=new BigDecimal(value).setScale((int)Math.log10(variableInfo.factor),RoundingMode.HALF_EVEN);
             org.openhab.core.types.State state=new DecimalType(bd);
-            logger.debug("{}={}",key + ":" + variableInfo.variable,value);
+            logger.debug("{}:{}={}",key,variableInfo.variable,value);
             for (            NibeHeatPumpBindingProvider provider : providers) {
               for (              String itemName : provider.getItemNames()) {
                 int itemId=provider.getItemId(itemName);
