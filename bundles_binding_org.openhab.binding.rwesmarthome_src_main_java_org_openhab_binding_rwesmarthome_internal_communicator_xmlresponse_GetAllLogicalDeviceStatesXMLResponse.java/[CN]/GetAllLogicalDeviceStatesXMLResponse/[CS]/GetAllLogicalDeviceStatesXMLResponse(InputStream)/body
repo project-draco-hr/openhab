@@ -140,7 +140,7 @@
           String itemName=provider.getItemNameByIdAndParam(deviceId,"smokedetector");
           if (itemName != null) {
             context.getEventPublisher().postUpdate(itemName,getBooleanValueFromElements(element,"IsSmokeAlarm") ? new StringType("ON") : new StringType("OFF"));
-            logger.debug("Updated item '{}' to '{}'",itemName,getBooleanValueFromElements(element,"IsSmokeAlarm"));
+            logger.debug("Updated item '{}' to '{}'",itemName,getBooleanValueFromElements(element,"IsSmokeAlarm") ? "ON" : "OFF");
           }
  else {
             logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"smokedetector");
@@ -178,6 +178,126 @@
             }
  else {
               logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"variable");
+            }
+          }
+ else           if (cache.get("PowerInWatt") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"powerinwatt");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("PowerInWatt")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("PowerInWatt"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"powerinwatt");
+            }
+          }
+          if (cache.get("TotalEnergy") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"totalenergy");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("TotalEnergy")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("TotalEnergy"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"totalenergy");
+            }
+          }
+          if (cache.get("EnergyPerMonthInKWh") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energypermonthinkwh");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyPerMonthInKWh")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyPerMonthInKWh"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energypermonthinkwh");
+            }
+          }
+          if (cache.get("EnergyPerMonthInEuro") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energypermonthineuro");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyPerMonthInEuro")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyPerMonthInEuro"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energypermonthineuro");
+            }
+          }
+          if (cache.get("EnergyPerDayInKWh") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energyperdayinkwh");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyPerDayInKWh")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyPerDayInKWh"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energyperdayinkwh");
+            }
+          }
+          if (cache.get("EnergyPerDayInEuro") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energyperdayineuro");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyPerDayInEuro")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyPerDayInEuro"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energyperdayineuro");
+            }
+          }
+          if (cache.get("PowerConsumptionWatt") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"powerinwatt");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("PowerConsumptionWatt")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("PowerConsumptionWatt"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"powerinwatt");
+            }
+          }
+          if (cache.get("AbsoluteEnergyConsumption") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"totalenergy");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("AbsoluteEnergyConsumption")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("AbsoluteEnergyConsumption"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"totalenergy");
+            }
+          }
+          if (cache.get("EnergyConsumptionMonthKWh") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energypermonthinkwh");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyConsumptionMonthKWh")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyConsumptionMonthKWh"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energypermonthinkwh");
+            }
+          }
+          if (cache.get("EnergyConsumptionMonthEuro") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energypermonthineuro");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyConsumptionMonthEuro")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyConsumptionMonthEuro"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energypermonthineuro");
+            }
+          }
+          if (cache.get("EnergyConsumptionDayKWh") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energyperdayinkwh");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyConsumptionDayKWh")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyConsumptionDayKWh"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energyperdayinkwh");
+            }
+          }
+          if (cache.get("EnergyConsumptionDayEuro") != null) {
+            String itemName=provider.getItemNameByIdAndParam(deviceId,"energyperdayineuro");
+            if (itemName != null) {
+              context.getEventPublisher().postUpdate(itemName,new DecimalType(cache.get("EnergyConsumptionDayEuro")));
+              logger.debug("Updated item '{}' to '{}'",itemName,cache.get("EnergyConsumptionDayEuro"));
+            }
+ else {
+              logger.debug("Updated item {} [{},{}] ignored.",deviceType,deviceId,"energyperdayineuro");
             }
           }
         }

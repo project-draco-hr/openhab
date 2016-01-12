@@ -33,7 +33,7 @@
     }
  else     if (LogicalDevice.Type_SmokeDetectorSensor.equals(ld.getType())) {
       validParams="smokedetector";
-      exampleConfig.add("Switch\trweSmokeDetector" + ld.getId().substring(30) + "\t\"Rauchmelder "+ ld.getLocation().getName()+ "\"\t<fire>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=smokedetector\"}\n");
+      exampleConfig.add("String\trweSmokeDetector" + ld.getId().substring(30) + "\t\"Rauchmelder "+ ld.getLocation().getName()+ " [%s]\"\t<fire>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=smokedetector\"}\n");
     }
  else     if (LogicalDevice.Type_AlarmActuator.equals(ld.getType())) {
       validParams="alarm";
@@ -46,6 +46,38 @@
  else     if (LogicalDevice.Type_GenericActuator_Value.equals(ld.getType())) {
       validParams="variable";
       exampleConfig.add("Switch\trweVariable" + ld.getId().substring(30) + "\t\"Variable "+ ld.getName()+ "\"\t<switch>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=variable\"}\n");
+    }
+ else     if (LogicalDevice.Type_TwoWayMeterEnergyConsumptionSensor.equals(ld.getType())) {
+      validParams="totalenergy, energypermonthinkwh, energypermonthineuro, energyperdayinkwh, energyperdayineuro";
+      exampleConfig.add("Number\trweEnergyConsumptionTotal" + ld.getId().substring(30) + "\t\t\"EnergyConsumption total "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=totalenergy\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionMonthKWh" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per month "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionMonthEuro" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per month "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthineuro\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionDayKWh" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per day "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionDayEuro" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per day "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayineuro\"}\n");
+    }
+ else     if (LogicalDevice.Type_TwoWayMeterEnergyFeedSensor.equals(ld.getType())) {
+      validParams="totalenergy, energypermonthinkwh, energypermonthineuro, energyperdayinkwh, energyperdayineuro";
+      exampleConfig.add("Number\trweEnergyFeedTotal" + ld.getId().substring(30) + "\t\t\"EnergyFeed total "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=totalenergy\"}\n");
+      exampleConfig.add("Number\trweEnergyFeedMonthKWh" + ld.getId().substring(30) + "\t\t\"EnergyFeed per month "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyFeedMonthEuro" + ld.getId().substring(30) + "\t\t\"EnergyFeed per month "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthineuro\"}\n");
+      exampleConfig.add("Number\trweEnergyFeedDayKWh" + ld.getId().substring(30) + "\t\t\"EnergyFeed per day "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyFeedDayEuro" + ld.getId().substring(30) + "\t\t\"EnergyFeed per day "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayineuro\"}\n");
+    }
+ else     if (LogicalDevice.Type_TwoWayMeterPowerConsumptionSensor.equals(ld.getType())) {
+      validParams="powerinwatt";
+      exampleConfig.add("Number\trwePowerConsumption" + ld.getId().substring(30) + "\t\t\"PowerConsumption"+ ld.getLocation().getName()+ " [%.2f W]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=powerinwatt\"}\n");
+    }
+ else     if (LogicalDevice.Type_PowerConsumptionSensor.equals(ld.getType())) {
+      validParams="powerinwatt";
+      exampleConfig.add("Number\trwePowerConsumption" + ld.getId().substring(30) + "\t\t\"PowerConsumption"+ ld.getLocation().getName()+ " [%.2f W]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=powerinwatt\"}\n");
+    }
+ else     if (LogicalDevice.Type_EnergyConsumptionSensor.equals(ld.getType())) {
+      validParams="totalenergy, energypermonthinkwh, energypermonthineuro, energyperdayinkwh, energyperdayineuro";
+      exampleConfig.add("Number\trweEnergyConsumptionTotal" + ld.getId().substring(30) + "\t\t\"EnergyConsumption total "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=totalenergy\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionMonthKWh" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per month "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionMonthEuro" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per month "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energypermonthineuro\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionDayKWh" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per day "+ ld.getLocation().getName()+ " [%.3f kWh]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayinkwh\"}\n");
+      exampleConfig.add("Number\trweEnergyConsumptionDayEuro" + ld.getId().substring(30) + "\t\t\"EnergyConsumption per day "+ ld.getLocation().getName()+ " [%.2f ???]\"\t<energy>\t(rwe) {"+ context.getBindingType()+ "=\"id="+ ld.getId()+ ",param=energyperdayineuro\"}\n");
     }
  else     if (LogicalDevice.Type_ThermostatActuator.equals(ld.getType())) {
       continue;
