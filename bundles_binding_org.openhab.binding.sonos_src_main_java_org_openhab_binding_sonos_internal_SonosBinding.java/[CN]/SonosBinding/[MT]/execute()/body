@@ -29,7 +29,7 @@
     }
     for (    SonosBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
-        for (        String sonosID : ((SonosBindingProvider)provider).getSonosID(itemName)) {
+        for (        String sonosID : provider.getSonosID(itemName)) {
           if (!sonosZonePlayerCache.contains(sonosID)) {
             Pattern SONOS_UDN_PATTERN=Pattern.compile("RINCON_(\\w{17})");
             Matcher matcher=SONOS_UDN_PATTERN.matcher(sonosID);
@@ -47,7 +47,7 @@
     for (    SonosCommandType sonosCommandType : SonosCommandType.getPolling()) {
       for (      SonosBindingProvider provider : providers) {
         for (        String itemName : provider.getItemNames(sonosCommandType.getSonosCommand())) {
-          for (          Command aCommand : ((SonosBindingProvider)provider).getCommands(itemName,sonosCommandType.getSonosCommand())) {
+          for (          Command aCommand : provider.getCommands(itemName,sonosCommandType.getSonosCommand())) {
             SonosZonePlayer thePlayer=sonosZonePlayerCache.getById(provider.getSonosID(itemName,aCommand));
             if (thePlayer != null) {
               RemoteDevice theDevice=thePlayer.getDevice();
