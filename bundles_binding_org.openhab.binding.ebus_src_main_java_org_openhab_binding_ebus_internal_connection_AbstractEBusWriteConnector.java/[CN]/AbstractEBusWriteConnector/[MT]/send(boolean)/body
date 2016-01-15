@@ -65,7 +65,9 @@
           byte crc=EBusUtils.crc8_tab(nn2,(byte)0);
           if (nn2 > 16) {
             logger.warn("slave data to long, invalid!");
-            if (!resend(secondTry))             return;
+            if (!resend(secondTry)) {
+              return;
+            }
           }
           while (nn2 > 0) {
             byte d=(byte)(readByte(true) & 0xFF);
@@ -79,7 +81,9 @@
           sendBuffer.put(crc2);
           if (crc2 != crc) {
             logger.warn("Slave CRC wrong, resend!");
-            if (!resend(secondTry))             return;
+            if (!resend(secondTry)) {
+              return;
+            }
           }
           writeByte(EBusTelegram.ACK_OK);
           sendBuffer.put(EBusTelegram.ACK_OK);
@@ -89,7 +93,9 @@
       }
  else       if (ack == EBusTelegram.ACK_FAIL) {
         sendBuffer.clear();
-        if (!resend(secondTry))         return;
+        if (!resend(secondTry)) {
+          return;
+        }
       }
  else       if (ack == EBusTelegram.SYN) {
         logger.debug("No answer from slave for telegram: {}",EBusUtils.toHexDumpString(sendBuffer));
@@ -99,7 +105,9 @@
  else {
         logger.debug("Received wrong telegram: {}",EBusUtils.toHexDumpString(sendBuffer));
         sendBuffer.clear();
-        if (!resend(secondTry))         return;
+        if (!resend(secondTry)) {
+          return;
+        }
       }
     }
   }

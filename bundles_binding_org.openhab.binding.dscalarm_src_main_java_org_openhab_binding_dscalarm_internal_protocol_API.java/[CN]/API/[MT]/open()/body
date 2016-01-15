@@ -23,10 +23,14 @@ break;
 dscAlarmConnector.open();
 connected=dscAlarmConnector.isConnected();
 if (connected) {
-if (connectorType == DSCAlarmConnectorType.TCP) sendCommand(APICode.NetworkLogin);
+if (connectorType == DSCAlarmConnectorType.TCP) {
+sendCommand(APICode.NetworkLogin);
+}
 connected=dscAlarmConnector.isConnected();
 }
-if (!connected) logger.error("open(): Unable to Make API Connection!");
+if (!connected) {
+logger.error("open(): Unable to Make API Connection!");
+}
 logger.debug("open(): Connected = {}, Connection Type: {}",connected ? true : false,connectorType);
 return connected;
 }

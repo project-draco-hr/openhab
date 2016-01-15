@@ -1,0 +1,8 @@
+{
+  String expectedUsername="userna/!&%)(me";
+  String expectedPassword="password67612/&%!$";
+  String testUrl="http://" + expectedUsername + ":"+ expectedPassword+ "@www.domain.org/123/user";
+  UsernamePasswordCredentials credentials=(UsernamePasswordCredentials)HttpUtil.extractCredentials(testUrl);
+  Assert.assertEquals(expectedUsername,credentials.getUserName());
+  Assert.assertEquals(expectedPassword,credentials.getPassword());
+}

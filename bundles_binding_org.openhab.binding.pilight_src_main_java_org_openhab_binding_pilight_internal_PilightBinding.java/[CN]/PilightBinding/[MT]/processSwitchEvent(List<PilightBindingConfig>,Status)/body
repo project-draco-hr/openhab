@@ -5,7 +5,9 @@
   }
  else   if (type.equals(DeviceType.DIMMER)) {
     BigDecimal dimLevel=BigDecimal.ZERO;
-    if (status.getValues().get("dimlevel") != null)     dimLevel=getPercentageFromDimLevel(status.getValues().get("dimlevel"));
+    if (status.getValues().get("dimlevel") != null) {
+      dimLevel=getPercentageFromDimLevel(status.getValues().get("dimlevel"));
+    }
  else {
       dimLevel=state.equals(OnOffType.ON) ? new BigDecimal("100") : BigDecimal.ZERO;
     }

@@ -1,6 +1,8 @@
 {
   boolean tmpinit=initialized;
-  if (tmpinit)   initialized=false;
+  if (tmpinit) {
+    initialized=false;
+  }
   List<ItemsVO> al;
   HashMap<Integer,String> tableIds=new HashMap<Integer,String>();
   al=getItemIDTableNames();
@@ -33,7 +35,9 @@
         oldNewTablenames.add(new ItemVO(oldName,newName));
         logger.warn("JDBC::formatTableNames: Table '{}' will be renamed to '{}'",oldName,newName);
       }
- else       logger.warn("JDBC::formatTableNames: Table oldName='{}' newName='{}' nothing to rename",oldName,newName);
+ else {
+        logger.warn("JDBC::formatTableNames: Table oldName='{}' newName='{}' nothing to rename",oldName,newName);
+      }
     }
  else {
       logger.error("JDBC::formatTableNames: Table '{}' could NOT be renamed to '{}'",oldName,newName);

@@ -1,6 +1,8 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  if (StringUtils.isEmpty(bindingConfig))   throw new BindingConfigParseException("Null config for " + item.getName() + " - expecting an OpenPaths name");
+  if (StringUtils.isEmpty(bindingConfig)) {
+    throw new BindingConfigParseException("Null config for " + item.getName() + " - expecting an OpenPaths name");
+  }
   OpenPathsBindingConfig openPathsBindingConfig=new OpenPathsBindingConfig(bindingConfig);
   addBindingConfig(item,openPathsBindingConfig);
 }

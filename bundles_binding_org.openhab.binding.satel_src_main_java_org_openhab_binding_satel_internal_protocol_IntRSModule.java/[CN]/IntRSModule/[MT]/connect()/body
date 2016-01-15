@@ -2,7 +2,7 @@
   logger.info("Connecting to INT-RS module at {}",this.port);
   try {
     CommPortIdentifier portIdentifier=CommPortIdentifier.getPortIdentifier(this.port);
-    SerialPort serialPort=(SerialPort)portIdentifier.open("org.openhab.binding.satel",2000);
+    SerialPort serialPort=portIdentifier.open("org.openhab.binding.satel",2000);
     serialPort.setSerialPortParams(19200,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
     serialPort.enableReceiveTimeout(this.getTimeout());
     serialPort.addEventListener(new SerialPortEventListener(){

@@ -38,11 +38,21 @@ case UNIT:
         int roomNum=(unit.getProperties().getNumber() + 7) / 8;
         String str=((StringType)command).toString().toLowerCase();
         int linkNum=0;
-        if (str.contains("scene a"))         linkNum=0;
- else         if (str.contains("scene b"))         linkNum=1;
- else         if (str.contains("scene c"))         linkNum=2;
- else         if (str.contains("scene d"))         linkNum=3;
- else         break;
+        if (str.contains("scene a")) {
+          linkNum=0;
+        }
+ else         if (str.contains("scene b")) {
+          linkNum=1;
+        }
+ else         if (str.contains("scene c")) {
+          linkNum=2;
+        }
+ else         if (str.contains("scene d")) {
+          linkNum=3;
+        }
+ else {
+          break;
+        }
         param1=0;
         param2=((roomNum * 6) - 3) + linkNum;
         cmd=OmniLinkCmd.CMD_UNIT_UPB_LINK_ON.getNumber();
@@ -70,8 +80,12 @@ case THERMO_COOL_POINT:
  else   if (command instanceof DecimalType) {
     Thermostat thermo=(Thermostat)config.getDevice();
     cmd=OmniLinkCmd.CMD_THERMO_SET_COOL_POINT.getNumber();
-    if (thermo.isCelsius())     param1=MessageUtils.CToOmni(((DecimalType)command).intValue());
- else     param1=MessageUtils.FtoOmni(((DecimalType)command).intValue());
+    if (thermo.isCelsius()) {
+      param1=MessageUtils.CToOmni(((DecimalType)command).intValue());
+    }
+ else {
+      param1=MessageUtils.FtoOmni(((DecimalType)command).intValue());
+    }
   }
  else {
     logger.debug("Could not find matching command for " + command);
@@ -93,8 +107,12 @@ cmd=OmniLinkCmd.CMD_THERMO_RAISE_LOWER_HEAT.getNumber();
  else if (command instanceof DecimalType) {
 Thermostat thermo=(Thermostat)config.getDevice();
 cmd=OmniLinkCmd.CMD_THERMO_SET_HEAT_POINT.getNumber();
-if (thermo.isCelsius()) param1=MessageUtils.CToOmni(((DecimalType)command).intValue());
- else param1=MessageUtils.FtoOmni(((DecimalType)command).intValue());
+if (thermo.isCelsius()) {
+  param1=MessageUtils.CToOmni(((DecimalType)command).intValue());
+}
+ else {
+  param1=MessageUtils.FtoOmni(((DecimalType)command).intValue());
+}
 }
  else {
 logger.debug("Could not find matching command for " + command);

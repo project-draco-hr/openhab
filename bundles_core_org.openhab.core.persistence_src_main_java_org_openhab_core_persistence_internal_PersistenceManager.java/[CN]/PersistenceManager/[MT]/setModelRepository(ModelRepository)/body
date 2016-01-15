@@ -1,0 +1,9 @@
+{
+  this.modelRepository=modelRepository;
+  modelRepository.addModelRepositoryChangeListener(this);
+  for (  String modelName : modelRepository.getAllModelNamesOfType("persist")) {
+    String serviceName=modelName.substring(0,modelName.length() - ".persist".length());
+    stopEventHandling(serviceName);
+    startEventHandling(serviceName);
+  }
+}

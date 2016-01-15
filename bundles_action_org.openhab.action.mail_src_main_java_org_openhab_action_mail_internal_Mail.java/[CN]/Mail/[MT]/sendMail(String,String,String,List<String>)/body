@@ -41,8 +41,12 @@ catch (        EmailException e) {
       for (      String toAddress : toList) {
         email.addTo(toAddress);
       }
-      if (!StringUtils.isEmpty(subject))       email.setSubject(subject);
-      if (!StringUtils.isEmpty(message))       email.setMsg(message);
+      if (!StringUtils.isEmpty(subject)) {
+        email.setSubject(subject);
+      }
+      if (!StringUtils.isEmpty(message)) {
+        email.setMsg(message);
+      }
       email.send();
       logger.debug("Sent email to '{}' with subject '{}'.",to,subject);
       success=true;

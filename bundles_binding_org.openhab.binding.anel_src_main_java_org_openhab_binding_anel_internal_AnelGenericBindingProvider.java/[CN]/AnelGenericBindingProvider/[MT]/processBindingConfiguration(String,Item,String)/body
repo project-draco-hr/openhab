@@ -1,8 +1,12 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  if (bindingConfig == null || bindingConfig.trim().isEmpty())   return;
+  if (bindingConfig == null || bindingConfig.trim().isEmpty()) {
+    return;
+  }
   final String[] segments=bindingConfig.trim().split(":");
-  if (segments.length != 2)   throw new BindingConfigParseException("Invalid binding format '" + bindingConfig + "', expected: '<anelId>:<property>'");
+  if (segments.length != 2) {
+    throw new BindingConfigParseException("Invalid binding format '" + bindingConfig + "', expected: '<anelId>:<property>'");
+  }
   final String deviceId=segments[0];
   final String commandType=segments[1];
   try {

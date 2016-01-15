@@ -3,7 +3,9 @@
     List<String> matchingItems=provider.hasMessage(theMessage);
     for (    String itemName : matchingItems) {
       XplBindingConfig config=provider.getConfig(itemName);
-      if (config == null)       continue;
+      if (config == null) {
+        continue;
+      }
       String current=theMessage.getNamedValue(config.NamedParameter);
       Item item=provider.getItem(itemName);
       if (item != null) {

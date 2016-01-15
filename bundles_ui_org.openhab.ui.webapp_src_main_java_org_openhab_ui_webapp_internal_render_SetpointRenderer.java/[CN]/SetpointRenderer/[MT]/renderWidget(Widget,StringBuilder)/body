@@ -1,0 +1,47 @@
+{
+  Setpoint sp=(Setpoint)w;
+  State state=itemUIRegistry.getState(w);
+  String newLowerState=state.toString();
+  String newHigherState=state.toString();
+  BigDecimal step=sp.getStep();
+  if (step == null) {
+    step=BigDecimal.ONE;
+  }
+  BigDecimal minValue=sp.getMinValue();
+  if (minValue == null) {
+    minValue=BigDecimal.ZERO;
+  }
+  BigDecimal maxValue=sp.getMaxValue();
+  if (maxValue == null) {
+    maxValue=BigDecimal.valueOf(100);
+  }
+  if (state instanceof DecimalType) {
+    DecimalType actState=(DecimalType)state;
+    BigDecimal newLower=actState.toBigDecimal().subtract(step);
+    BigDecimal newHigher=actState.toBigDecimal().add(step);
+    if (newLower.compareTo(minValue) < 0) {
+      newLower=minValue;
+    }
+    if (newHigher.compareTo(maxValue) > 0) {
+      newHigher=maxValue;
+    }
+    newLowerState=newLower.toString();
+    newHigherState=newHigher.toString();
+  }
+  String snippetName="setpoint";
+  String snippet=getSnippet(snippetName);
+  snippet=StringUtils.replace(snippet,"%id%",itemUIRegistry.getWidgetId(w));
+  snippet=StringUtils.replace(snippet,"%icon%",escapeURLPath(itemUIRegistry.getIcon(w)));
+  snippet=StringUtils.replace(snippet,"%item%",w.getItem());
+  snippet=StringUtils.replace(snippet,"%state%",state.toString());
+  snippet=StringUtils.replace(snippet,"%newlowerstate%",newLowerState);
+  snippet=StringUtils.replace(snippet,"%newhigherstate%",newHigherState);
+  snippet=StringUtils.replace(snippet,"%label%",getLabel(w));
+  snippet=StringUtils.replace(snippet,"%servletname%",WebAppServlet.SERVLET_PATH);
+  snippet=StringUtils.replace(snippet,"%minValue%",minValue.toString());
+  snippet=StringUtils.replace(snippet,"%maxValue%",maxValue.toString());
+  snippet=StringUtils.replace(snippet,"%step%",step.toString());
+  snippet=processColor(w,snippet);
+  sb.append(snippet);
+  return null;
+}

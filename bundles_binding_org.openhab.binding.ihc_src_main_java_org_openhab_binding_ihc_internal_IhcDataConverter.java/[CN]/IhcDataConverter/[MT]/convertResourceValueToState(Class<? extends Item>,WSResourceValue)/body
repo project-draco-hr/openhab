@@ -81,8 +81,12 @@
     }
   }
  else   if (itemType == RollershutterItem.class) {
-    if (value.getClass() == WSIntegerValue.class)     state=new PercentType(((WSIntegerValue)value).getInteger());
- else     throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+    if (value.getClass() == WSIntegerValue.class) {
+      state=new PercentType(((WSIntegerValue)value).getInteger());
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + value.getClass().toString() + " to NumberItem");
+    }
   }
   return state;
 }

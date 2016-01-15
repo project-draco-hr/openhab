@@ -17,8 +17,12 @@
       byte[] data=new byte[]{(byte)getIntParameter("d1",0),(byte)getIntParameter("d2",0),(byte)getIntParameter("d3",0)};
       m=dev.makeExtendedMessage((byte)0x0f,(byte)direc,(byte)level,data);
       logger.info("{}: was an extended message for device {}",nm(),dev.getAddress());
-      if (ext == 1)       m.setCRC();
- else       if (ext == 2)       m.setCRC2();
+      if (ext == 1) {
+        m.setCRC();
+      }
+ else       if (ext == 2) {
+        m.setCRC2();
+      }
     }
  else {
       m=dev.makeStandardMessage((byte)0x0f,(byte)direc,(byte)level,s_getGroup(conf));

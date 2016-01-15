@@ -3,7 +3,7 @@
     int mask=getIntParameter("mask",0xFFFF);
     int rawValue=extractValue(msg);
     int cooked=(rawValue & mask) >> getIntParameter("rshift",0);
-    double value=(double)transform(cooked);
+    double value=transform(cooked);
     double dvalue=getDoubleParameter("offset",0) + value * getDoubleParameter("factor",1.0);
     m_feature.publish(new DecimalType(dvalue),StateChangeType.CHANGED);
   }

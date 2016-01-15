@@ -15,17 +15,31 @@
     return packet.getProtocolMode();
   }
  else   if (packet instanceof MultiPacket) {
-    if (interest == InterestType.KEYID)     return ((MultiPacket)packet).getKeyID();
- else     if (interest == InterestType.INPUTID)     return ((MultiPacket)packet).getInputID();
- else     if (interest == InterestType.USERNAME)     return ((MultiPacket)packet).getUsername();
- else     if (interest == InterestType.TERMINALNAME)     return ((MultiPacket)packet).getFsName();
- else     if (interest == InterestType.USERSTATUS)     return ((MultiPacket)packet).getUserstatus();
+    if (interest == InterestType.KEYID) {
+      return ((MultiPacket)packet).getKeyID();
+    }
+ else     if (interest == InterestType.INPUTID) {
+      return ((MultiPacket)packet).getInputID();
+    }
+ else     if (interest == InterestType.USERNAME) {
+      return ((MultiPacket)packet).getUsername();
+    }
+ else     if (interest == InterestType.TERMINALNAME) {
+      return ((MultiPacket)packet).getFsName();
+    }
+ else     if (interest == InterestType.USERSTATUS) {
+      return ((MultiPacket)packet).getUserstatus();
+    }
   }
  else   if (packet instanceof HomePacket) {
-    if (interest == InterestType.RELAYID)     return ((HomePacket)packet).getRelayID();
+    if (interest == InterestType.RELAYID) {
+      return ((HomePacket)packet).getRelayID();
+    }
   }
  else   if (packet instanceof RarePacket) {
-    if (interest == InterestType.RELAYID)     return ((RarePacket)packet).getRelayID();
+    if (interest == InterestType.RELAYID) {
+      return ((RarePacket)packet).getRelayID();
+    }
   }
   return null;
 }

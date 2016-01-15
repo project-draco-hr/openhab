@@ -18,14 +18,18 @@
  else {
         responseObject=getResponseObject(request);
       }
-      if (responseObject != null)       return new BroadcastAction(ACTION.CONTINUE,responseObject);
- else       return new BroadcastAction(ACTION.ABORT,message);
+      if (responseObject != null) {
+        return new BroadcastAction(ACTION.CONTINUE,responseObject);
+      }
+ else {
+        return new BroadcastAction(ACTION.ABORT,message);
+      }
     }
   }
 );
   broadcaster.getBroadcasterConfig().addFilter(new ResponseObjectFilter());
   stateChangeListener=new StateChangeListener(){
-    public void stateUpdated(    Item item,    State state){
+    @Override public void stateUpdated(    Item item,    State state){
       if (item instanceof GroupItem && getRelevantItemNames().containsKey(item.getName())) {
         Collection<ItemBean> beans=new LinkedList<ItemBean>();
         for (        ReturnType rt : getRelevantItemNames().get(item.getName())) {
@@ -41,7 +45,7 @@
         }
       }
     }
-    public void stateChanged(    final Item item,    State oldState,    State newState){
+    @Override public void stateChanged(    final Item item,    State oldState,    State newState){
       broadcaster.broadcast(item);
     }
   }

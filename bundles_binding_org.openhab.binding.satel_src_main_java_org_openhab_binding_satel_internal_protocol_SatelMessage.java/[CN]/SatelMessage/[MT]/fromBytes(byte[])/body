@@ -10,6 +10,8 @@
     return null;
   }
   SatelMessage message=new SatelMessage(buffer[0],new byte[buffer.length - 3]);
-  if (message.payload.length > 0)   System.arraycopy(buffer,1,message.payload,0,buffer.length - 3);
+  if (message.payload.length > 0) {
+    System.arraycopy(buffer,1,message.payload,0,buffer.length - 3);
+  }
   return message;
 }

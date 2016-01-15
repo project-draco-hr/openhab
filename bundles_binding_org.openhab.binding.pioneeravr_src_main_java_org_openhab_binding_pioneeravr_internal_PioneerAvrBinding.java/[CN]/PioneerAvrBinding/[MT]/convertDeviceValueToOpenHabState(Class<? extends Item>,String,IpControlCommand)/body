@@ -3,7 +3,9 @@
   try {
     int index;
     String payloadSubstring=data.substring(cmdType.getResponse().length());
-    if (payloadSubstring.length() == 0)     payloadSubstring="1";
+    if (payloadSubstring.length() == 0) {
+      payloadSubstring="1";
+    }
     if (cmdType.getCommandRef() == IpControlCommandRef.DISPLAY_INFO_QUERY) {
       IpControlDisplayInformation displayInfo=new IpControlDisplayInformation(payloadSubstring);
       payloadSubstring=displayInfo.getInfoText();

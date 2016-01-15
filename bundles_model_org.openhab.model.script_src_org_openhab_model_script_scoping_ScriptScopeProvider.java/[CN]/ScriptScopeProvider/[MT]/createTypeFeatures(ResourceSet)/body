@@ -1,0 +1,8 @@
+{
+  List<IEObjectDescription> descriptions=new ArrayList<IEObjectDescription>();
+  IJvmTypeProvider provider=typeProviderFactory.findOrCreateTypeProvider(rs);
+  for (  Type type : stateAndCommandProvider.getAllTypes()) {
+    descriptions.add(EObjectDescription.create(type.toString(),provider.findTypeByName(type.getClass().getCanonicalName())));
+  }
+  return descriptions;
+}

@@ -37,20 +37,26 @@
     params.setDatabits(7);
     params.setParity("None");
     params.setStopbits(2);
-    if (Modbus.debug)     System.out.println("Encoding [" + params.getEncoding() + "]");
+    if (Modbus.debug) {
+      System.out.println("Encoding [" + params.getEncoding() + "]");
+    }
     con=new SerialConnection(params);
     con.open();
     req=new ReadInputDiscretesRequest(ref,count);
     req.setUnitID(unitid);
     req.setHeadless();
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusSerialTransaction(con);
     trans.setRequest(req);
     int k=0;
     do {
       trans.execute();
       res=(ReadInputDiscretesResponse)trans.getResponse();
-      if (Modbus.debug)       System.out.println("Response: " + res.getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + res.getHexMessage());
+      }
       BitVector inputs=res.getDiscretes();
       byte ret[]=new byte[inputs.size()];
       for (int i=0; i < count; i++) {

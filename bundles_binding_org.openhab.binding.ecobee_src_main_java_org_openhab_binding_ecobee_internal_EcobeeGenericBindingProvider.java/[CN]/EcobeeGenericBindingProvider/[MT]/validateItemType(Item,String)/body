@@ -1,7 +1,9 @@
 {
   logger.trace("validateItemType called with bindingConfig={}",bindingConfig);
   Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
-  if (!matcher.matches() || matcher.groupCount() != 2)   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  if (!matcher.matches() || matcher.groupCount() != 2) {
+    throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  }
   String property=matcher.group(2);
   logger.trace("validateItemType called with property={}",property);
 }

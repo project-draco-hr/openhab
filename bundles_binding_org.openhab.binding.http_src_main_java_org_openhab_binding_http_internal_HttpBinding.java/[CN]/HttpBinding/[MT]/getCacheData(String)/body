@@ -1,13 +1,17 @@
 {
 synchronized (itemCacheLock) {
-    if (!itemCache.containsKey(cacheId))     return null;
+    if (!itemCache.containsKey(cacheId)) {
+      return null;
+    }
     CacheConfig cacheConfig=itemCache.get(cacheId);
     long cacheAge=System.currentTimeMillis() - cacheConfig.lastUpdate;
     boolean cacheNeedsUpdate=cacheAge >= cacheConfig.updateInterval;
     if (cacheNeedsUpdate) {
       logger.debug("updating cache for '{}' ('{}')",cacheId,cacheConfig.url);
       cacheConfig.data=HttpUtil.executeUrl("GET",cacheConfig.url,cacheConfig.headers,null,null,timeout);
-      if (cacheConfig.data != null)       cacheConfig.lastUpdate=System.currentTimeMillis();
+      if (cacheConfig.data != null) {
+        cacheConfig.lastUpdate=System.currentTimeMillis();
+      }
     }
     return cacheConfig.data;
   }

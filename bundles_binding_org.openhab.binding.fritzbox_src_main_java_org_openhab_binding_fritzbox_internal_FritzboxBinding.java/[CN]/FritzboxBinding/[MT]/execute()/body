@@ -1,6 +1,10 @@
 {
-  if (password == null)   return;
- else   if (password.trim().isEmpty())   return;
+  if (password == null) {
+    return;
+  }
+ else   if (password.trim().isEmpty()) {
+    return;
+  }
   try {
     TelnetClient client=null;
     for (    FritzboxBindingProvider provider : providers) {
@@ -16,7 +20,9 @@
  else         if (type.startsWith("query")) {
           query=type.substring(type.indexOf(":") + 1).trim();
         }
- else         continue;
+ else {
+          continue;
+        }
         if (client == null) {
           client=new TelnetClient();
           client.connect(ip);
@@ -37,8 +43,12 @@
         Class<? extends Item> itemType=provider.getItemType(item);
         org.openhab.core.types.State state=null;
         if (itemType.isAssignableFrom(SwitchItem.class)) {
-          if (answer.equals("1"))           state=OnOffType.ON;
- else           state=OnOffType.OFF;
+          if (answer.equals("1")) {
+            state=OnOffType.ON;
+          }
+ else {
+            state=OnOffType.OFF;
+          }
         }
  else         if (itemType.isAssignableFrom(NumberItem.class)) {
           state=new DecimalType(answer);
@@ -46,10 +56,14 @@
  else         if (itemType.isAssignableFrom(StringItem.class)) {
           state=new StringType(answer);
         }
-        if (state != null)         eventPublisher.postUpdate(item,state);
+        if (state != null) {
+          eventPublisher.postUpdate(item,state);
+        }
       }
     }
-    if (client != null)     client.disconnect();
+    if (client != null) {
+      client.disconnect();
+    }
   }
  catch (  Exception e) {
     logger.warn("Could not get item state ",e);

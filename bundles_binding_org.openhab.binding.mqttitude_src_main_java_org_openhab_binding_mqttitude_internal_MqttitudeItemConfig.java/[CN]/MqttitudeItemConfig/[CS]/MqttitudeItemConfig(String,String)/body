@@ -1,6 +1,8 @@
 {
   String[] config=bindingConfig.split(":");
-  if (config.length < 2)   throw new BindingConfigParseException("Invalid Mqttitude binding configuration '" + bindingConfig + "' for item "+ itemName+ ". Expecting '<broker>:<topic>[:<region>]'.");
+  if (config.length < 2) {
+    throw new BindingConfigParseException("Invalid Mqttitude binding configuration '" + bindingConfig + "' for item "+ itemName+ ". Expecting '<broker>:<topic>[:<region>]'.");
+  }
   this.itemName=itemName;
   this.broker=StringUtils.trim(config[0]);
   this.topic=StringUtils.trim(config[1]);

@@ -9,7 +9,9 @@
   if (url == null || url.length() < 9) {
     return props;
   }
-  if (url.contains("\\"))   url=url.replaceAll("\\\\","/");
+  if (url.contains("\\")) {
+    url=url.replaceAll("\\\\","/");
+  }
   if (url.contains(";")) {
     url=url.replaceFirst(";","?");
     url=url.replaceAll(";","&");
@@ -59,11 +61,19 @@
         path=stringBeforeSubstr(gp,st) + st;
       }
     }
-    if (dbURI.getScheme() != null && dbURI.getScheme().length() == 1)     path=dbURI.getScheme() + ":" + path;
+    if (dbURI.getScheme() != null && dbURI.getScheme().length() == 1) {
+      path=dbURI.getScheme() + ":" + path;
+    }
     props.put("serverPath",path);
   }
-  if (dbURI.getPath() != null)   props.put("databaseName",stringAfterLastSubstr(dbURI.getPath(),"/"));
-  if (dbURI.getPort() != -1)   props.put("portNumber",dbURI.getPort() + "");
-  if (dbURI.getHost() != null)   props.put("serverName",dbURI.getHost());
+  if (dbURI.getPath() != null) {
+    props.put("databaseName",stringAfterLastSubstr(dbURI.getPath(),"/"));
+  }
+  if (dbURI.getPort() != -1) {
+    props.put("portNumber",dbURI.getPort() + "");
+  }
+  if (dbURI.getHost() != null) {
+    props.put("serverName",dbURI.getHost());
+  }
   return props;
 }

@@ -4,8 +4,12 @@
     if (bindingConfig.getItemType().equals(SwitchItem.class) || bindingConfig.getItemType().equals(DimmerItem.class)) {
       OnOffType state=OnOffType.valueOf(dev.getState().toUpperCase());
       if (dev.getDimlevel() != null && dev.getDimlevel() > 0) {
-        if (state.equals(OnOffType.ON))         return new PercentType(getPercentageFromDimLevel(dev.getDimlevel().toString()));
- else         return new PercentType(0);
+        if (state.equals(OnOffType.ON)) {
+          return new PercentType(getPercentageFromDimLevel(dev.getDimlevel().toString()));
+        }
+ else {
+          return new PercentType(0);
+        }
       }
       return state;
     }

@@ -13,7 +13,7 @@
   }
   Enumeration<String> keys=config.keys();
   while (keys.hasMoreElements()) {
-    String key=(String)keys.nextElement();
+    String key=keys.nextElement();
     if ("service.pid".equals(key)) {
       continue;
     }
@@ -51,7 +51,11 @@
       logger.warn("Unexpected or unsupported configuration: " + key + ". Ignoring.");
     }
   }
-  if (StringUtils.isEmpty(host))   throw new ConfigurationException("host","No Squeeze Server host specified - this property is mandatory");
-  if (playersById.size() == 0)   throw new ConfigurationException("host","No Squeezebox players specified - there must be at least one player");
+  if (StringUtils.isEmpty(host)) {
+    throw new ConfigurationException("host","No Squeeze Server host specified - this property is mandatory");
+  }
+  if (playersById.size() == 0) {
+    throw new ConfigurationException("host","No Squeezebox players specified - there must be at least one player");
+  }
   connect();
 }

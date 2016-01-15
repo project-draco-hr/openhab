@@ -15,9 +15,11 @@
       if (ctrlMode != ThermostatControlMode.TEMPORARY) {
         int mTemp=(this.payload[3] & 0x1);
         mTemp<<=8;
-        mTemp|=(((int)this.payload[4]) & 0xff);
+        mTemp|=((this.payload[4]) & 0xff);
         measuredTemperature=mTemp / 10.0;
-        if (measuredTemperature < 4.5)         measuredTemperature=null;
+        if (measuredTemperature < 4.5) {
+          measuredTemperature=null;
+        }
       }
     }
  else     if (this.payload.length == THERMOSTAT_STATE_TIME_PAYLOAD_LEN) {

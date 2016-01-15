@@ -4,7 +4,9 @@
     for (    DaikinBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         DaikinBindingConfig bindingConfig=provider.getBindingConfig(itemName);
-        if (!bindingConfig.getId().equals(host.getId()))         continue;
+        if (!bindingConfig.getId().equals(host.getId())) {
+          continue;
+        }
         DaikinCommandType commandType=bindingConfig.getCommandType();
         eventPublisher.postUpdate(itemName,getState(host,commandType));
       }

@@ -1,10 +1,10 @@
 {
   StringBuffer buf=new StringBuffer(data.length * 2);
   for (int i=off; i < length; i++) {
-    if (((int)data[i] & 0xff) < 0x10) {
+    if ((data[i] & 0xff) < 0x10) {
       buf.append("0");
     }
-    buf.append(Long.toString((int)data[i] & 0xff,16));
+    buf.append(Long.toString(data[i] & 0xff,16));
     if (i < data.length - 1) {
       buf.append(" ");
     }

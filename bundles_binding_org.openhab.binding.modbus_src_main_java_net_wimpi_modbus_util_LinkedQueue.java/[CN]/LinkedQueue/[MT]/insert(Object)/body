@@ -5,6 +5,8 @@ synchronized (m_Tail) {
       m_Tail.m_NextNode=p;
       m_Tail=p;
     }
-    if (m_WaitingForTake > 0)     m_PutLock.notify();
+    if (m_WaitingForTake > 0) {
+      m_PutLock.notify();
+    }
   }
 }

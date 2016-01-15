@@ -1,0 +1,18 @@
+{
+  Date date=null;
+  try {
+    try {
+      date=new SimpleDateFormat(DATE_PATTERN_WITH_TZ).parse(calendarValue);
+    }
+ catch (    ParseException fpe2) {
+      date=new SimpleDateFormat(DATE_PATTERN).parse(calendarValue);
+    }
+  }
+ catch (  ParseException fpe) {
+    throw new IllegalArgumentException(calendarValue + " is not in a valid format.",fpe);
+  }
+  if (date != null) {
+    calendar=Calendar.getInstance();
+    calendar.setTime(date);
+  }
+}

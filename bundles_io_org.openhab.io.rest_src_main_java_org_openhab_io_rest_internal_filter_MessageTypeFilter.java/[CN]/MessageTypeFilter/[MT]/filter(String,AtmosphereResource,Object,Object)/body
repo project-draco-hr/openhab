@@ -1,0 +1,13 @@
+{
+  final HttpServletRequest request=resource.getRequest();
+  ResponseTypeHelper responseTypeHelper=new ResponseTypeHelper();
+  String responseType=responseTypeHelper.getResponseType(request);
+  try {
+    Object responseObject=responseType.equals(MediaTypeHelper.APPLICATION_X_JAVASCRIPT) ? new JSONWithPadding(message,responseTypeHelper.getQueryParam(request,"callback")) : message;
+    return new BroadcastAction(ACTION.CONTINUE,Response.ok(responseObject,responseType).build());
+  }
+ catch (  Exception e) {
+    logger.error(e.getMessage());
+    return new BroadcastAction(ACTION.ABORT,message);
+  }
+}

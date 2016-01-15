@@ -1,11 +1,15 @@
 {
-  if (Thread.interrupted())   throw new InterruptedException();
+  if (Thread.interrupted()) {
+    throw new InterruptedException();
+  }
 synchronized (this) {
     if (!inuse_) {
       inuse_=true;
       return true;
     }
- else     if (msecs <= 0)     return false;
+ else     if (msecs <= 0) {
+      return false;
+    }
  else {
       long waitTime=msecs;
       long start=System.currentTimeMillis();
@@ -18,7 +22,9 @@ synchronized (this) {
           }
  else {
             waitTime=msecs - (System.currentTimeMillis() - start);
-            if (waitTime <= 0)             return false;
+            if (waitTime <= 0) {
+              return false;
+            }
           }
         }
       }

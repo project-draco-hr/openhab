@@ -7,8 +7,12 @@
   String itemName=filter.getItemName();
   Item item=getItemFromRegistry(itemName);
   String sortOrder;
-  if (filter.getOrdering() == Ordering.ASCENDING)   sortOrder="ASC";
- else   sortOrder="DESC";
+  if (filter.getOrdering() == Ordering.ASCENDING) {
+    sortOrder="ASC";
+  }
+ else {
+    sortOrder="DESC";
+  }
   boolean hasBeginDate=false;
   boolean hasEndDate=false;
   String queryString="SELECT n FROM " + JpaPersistentItem.class.getSimpleName() + " n WHERE n.realName = :itemName";
@@ -28,13 +32,17 @@
     logger.debug("Creating query...");
     Query query=em.createQuery(queryString);
     query.setParameter("itemName",item.getName());
-    if (hasBeginDate)     query.setParameter("beginDate",filter.getBeginDate());
-    if (hasEndDate)     query.setParameter("endDate",filter.getEndDate());
+    if (hasBeginDate) {
+      query.setParameter("beginDate",filter.getBeginDate());
+    }
+    if (hasEndDate) {
+      query.setParameter("endDate",filter.getEndDate());
+    }
     query.setFirstResult(filter.getPageNumber() * filter.getPageSize());
     query.setMaxResults(filter.getPageSize());
     logger.debug("Creating query...done");
     logger.debug("Retrieving result list...");
-    @SuppressWarnings("unchecked") List<JpaPersistentItem> result=(List<JpaPersistentItem>)query.getResultList();
+    @SuppressWarnings("unchecked") List<JpaPersistentItem> result=query.getResultList();
     logger.debug("Retrieving result list...done");
     List<HistoricItem> historicList=JpaHistoricItem.fromResultList(result,item);
     if (historicList != null) {

@@ -9,7 +9,9 @@
         try {
           logger.debug("Sending command {}/{}/{}",new Object[]{cmd.getCommand(),cmd.getParameter1(),cmd.getParameter2()});
           omniWorker.getOmniConnection().controllerCommand(cmd.getCommand(),cmd.getParameter1(),cmd.getParameter2());
-          if (config.getObjectType() == OmniLinkItemType.AUDIOZONE_KEY)           audioUpdateLock.notifyAll();
+          if (config.getObjectType() == OmniLinkItemType.AUDIOZONE_KEY) {
+            audioUpdateLock.notifyAll();
+          }
         }
  catch (        IOException e) {
           logger.error("Could not send command",e);

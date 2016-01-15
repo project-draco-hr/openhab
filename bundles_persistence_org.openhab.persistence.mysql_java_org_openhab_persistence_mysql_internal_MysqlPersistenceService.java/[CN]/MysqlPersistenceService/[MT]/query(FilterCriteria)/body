@@ -3,7 +3,9 @@
     logger.debug("Query aborted on item {} - mySQL not initialised!",filter.getItemName());
     return Collections.emptyList();
   }
-  if (!isConnected())   connectToDatabase();
+  if (!isConnected()) {
+    connectToDatabase();
+  }
   if (!isConnected()) {
     logger.debug("Query aborted on item {} - mySQL not connected!",filter.getItemName());
     return Collections.emptyList();
@@ -31,13 +33,21 @@
   }
   String filterString=new String();
   if (filter.getBeginDate() != null) {
-    if (filterString.isEmpty())     filterString+=" WHERE";
- else     filterString+=" AND";
+    if (filterString.isEmpty()) {
+      filterString+=" WHERE";
+    }
+ else {
+      filterString+=" AND";
+    }
     filterString+=" TIME>'" + mysqlDateFormat.format(filter.getBeginDate()) + "'";
   }
   if (filter.getEndDate() != null) {
-    if (filterString.isEmpty())     filterString+=" WHERE";
- else     filterString+=" AND";
+    if (filterString.isEmpty()) {
+      filterString+=" WHERE";
+    }
+ else {
+      filterString+=" AND";
+    }
     filterString+=" TIME<'" + mysqlDateFormat.format(filter.getEndDate().getTime()) + "'";
   }
   if (filter.getOrdering() == Ordering.ASCENDING) {
@@ -46,13 +56,17 @@
  else {
     filterString+=" ORDER BY Time DESC";
   }
-  if (filter.getPageSize() != 0x7fffffff)   filterString+=" LIMIT " + filter.getPageNumber() * filter.getPageSize() + "," + filter.getPageSize();
+  if (filter.getPageSize() != 0x7fffffff) {
+    filterString+=" LIMIT " + filter.getPageNumber() * filter.getPageSize() + "," + filter.getPageSize();
+  }
   try {
     long timerStart=System.currentTimeMillis();
     Statement st=connection.createStatement();
     String queryString=new String();
     queryString="SELECT Time, Value FROM " + table;
-    if (!filterString.isEmpty())     queryString+=filterString;
+    if (!filterString.isEmpty()) {
+      queryString+=filterString;
+    }
     logger.debug("mySQL: query:" + queryString);
     st.setFetchSize(50);
     ResultSet rs=st.executeQuery(queryString);
@@ -61,18 +75,32 @@
     State state;
     while (rs.next()) {
       count++;
-      if (item instanceof NumberItem)       state=new DecimalType(rs.getDouble(2));
- else       if (item instanceof ColorItem)       state=new HSBType(rs.getString(2));
- else       if (item instanceof DimmerItem)       state=new PercentType(rs.getInt(2));
- else       if (item instanceof SwitchItem)       state=OnOffType.valueOf(rs.getString(2));
- else       if (item instanceof ContactItem)       state=OpenClosedType.valueOf(rs.getString(2));
- else       if (item instanceof RollershutterItem)       state=new PercentType(rs.getInt(2));
+      if (item instanceof NumberItem) {
+        state=new DecimalType(rs.getDouble(2));
+      }
+ else       if (item instanceof ColorItem) {
+        state=new HSBType(rs.getString(2));
+      }
+ else       if (item instanceof DimmerItem) {
+        state=new PercentType(rs.getInt(2));
+      }
+ else       if (item instanceof SwitchItem) {
+        state=OnOffType.valueOf(rs.getString(2));
+      }
+ else       if (item instanceof ContactItem) {
+        state=OpenClosedType.valueOf(rs.getString(2));
+      }
+ else       if (item instanceof RollershutterItem) {
+        state=new PercentType(rs.getInt(2));
+      }
  else       if (item instanceof DateTimeItem) {
         Calendar calendar=Calendar.getInstance();
         calendar.setTimeInMillis(rs.getTimestamp(2).getTime());
         state=new DateTimeType(calendar);
       }
- else       state=new StringType(rs.getString(2));
+ else {
+        state=new StringType(rs.getString(2));
+      }
       MysqlItem mysqlItem=new MysqlItem(itemName,state,rs.getTimestamp(1));
       items.add(mysqlItem);
     }

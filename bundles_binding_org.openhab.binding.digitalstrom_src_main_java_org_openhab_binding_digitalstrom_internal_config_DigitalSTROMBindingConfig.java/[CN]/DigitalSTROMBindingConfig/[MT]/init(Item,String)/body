@@ -9,9 +9,15 @@
       String keyStr=pairs[0].trim();
       String valueStr=pairs[1].trim();
       configKey=parseKey(keyStr);
-      if (configKey == null)       throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: key is NULL");
-      if (valueStr.equals(""))       throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: value is NULL");
- else       parseValue(configKey,valueStr);
+      if (configKey == null) {
+        throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: key is NULL");
+      }
+      if (valueStr.equals("")) {
+        throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: value is NULL");
+      }
+ else {
+        parseValue(configKey,valueStr);
+      }
     }
  else {
       throw new BindingConfigParseException("ERROR in item: " + item.getName() + " configuration: you have used the symbol ':' more than one time ");

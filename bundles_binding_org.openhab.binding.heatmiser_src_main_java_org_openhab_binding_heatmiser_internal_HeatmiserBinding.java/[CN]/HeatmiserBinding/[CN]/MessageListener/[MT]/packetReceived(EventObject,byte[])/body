@@ -1,6 +1,8 @@
 {
   thermostatPacket=new HeatmiserThermostat();
-  if (thermostatPacket.setData(packet) == false)   return;
+  if (thermostatPacket.setData(packet) == false) {
+    return;
+  }
   for (  HeatmiserThermostat thermostat : thermostatTable) {
     if (thermostat.getAddress() == thermostatPacket.getAddress()) {
       thermostat.setData(packet);

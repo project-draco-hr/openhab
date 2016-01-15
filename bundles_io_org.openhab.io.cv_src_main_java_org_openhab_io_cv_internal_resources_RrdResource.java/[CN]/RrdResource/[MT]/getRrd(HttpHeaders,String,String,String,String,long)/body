@@ -1,5 +1,7 @@
 {
-  if (logger.isDebugEnabled())   logger.debug("Received GET request at '{}' for rrd '{}'.",uriInfo.getPath(),itemName);
+  if (logger.isDebugEnabled()) {
+    logger.debug("Received GET request at '{}' for rrd '{}'.",uriInfo.getPath(),itemName);
+  }
   String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes());
   if (responseType != null) {
     ConsolFun consilidationFunction=ConsolFun.valueOf(consFunction);
@@ -8,7 +10,9 @@
     startTime.setTime(times[0] * 1000L);
     Date endTime=new Date();
     endTime.setTime(times[1] * 1000L);
-    if (itemName.endsWith(".rrd"))     itemName=itemName.substring(0,itemName.length() - 4);
+    if (itemName.endsWith(".rrd")) {
+      itemName=itemName.substring(0,itemName.length() - 4);
+    }
     String[] parts=itemName.split(":");
     String service="rrd4j";
     if (parts.length == 2) {

@@ -1,7 +1,7 @@
 {
   InsteonDevice dev=f.getDevice();
   try {
-    int cmd2=(int)(msg.getByte("command2") & 0xff);
+    int cmd2=msg.getByte("command2") & 0xff;
     if (cmd2 == 0xfe) {
       cmd2=0xff;
     }
@@ -15,7 +15,9 @@
     }
  else {
       int level=cmd2 * 100 / 255;
-      if (level == 0)       level=1;
+      if (level == 0) {
+        level=1;
+      }
       logger.info("{}: set device {} to level {}",nm(),dev.getAddress(),level);
       m_feature.publish(new PercentType(level),StateChangeType.CHANGED);
     }

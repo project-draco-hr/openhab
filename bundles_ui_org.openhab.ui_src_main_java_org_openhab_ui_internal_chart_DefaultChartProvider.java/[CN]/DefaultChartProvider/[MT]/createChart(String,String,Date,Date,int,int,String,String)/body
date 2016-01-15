@@ -1,0 +1,84 @@
+{
+  QueryablePersistenceService persistenceService;
+  int seriesCounter=0;
+  Chart chart=new ChartBuilder().width(width).height(height).build();
+  long period=(endTime.getTime() - startTime.getTime()) / 1000;
+  String pattern="HH:mm";
+  if (period <= 600) {
+    pattern="mm:ss";
+  }
+ else   if (period <= 86400) {
+    pattern="HH:mm";
+  }
+ else   if (period <= 604800) {
+    pattern="EEE d";
+  }
+ else {
+    pattern="d MMM";
+  }
+  chart.getStyleManager().setDatePattern(pattern);
+  chart.getStyleManager().setAxisTickLabelsFont(new Font("SansSerif",Font.PLAIN,11));
+  chart.getStyleManager().setChartPadding(5);
+  chart.getStyleManager().setPlotBackgroundColor(new Color(254,254,254));
+  chart.getStyleManager().setLegendBackgroundColor(new Color(224,224,224,160));
+  chart.getStyleManager().setChartBackgroundColor(new Color(224,224,224,224));
+  chart.getStyleManager().setLegendFont(new Font("SansSerif",Font.PLAIN,10));
+  chart.getStyleManager().setLegendSeriesLineLength(10);
+  chart.getStyleManager().setXAxisMin(startTime.getTime());
+  chart.getStyleManager().setXAxisMax(endTime.getTime());
+  persistenceService=null;
+  if (service != null) {
+    persistenceService=getPersistenceServices().get(service);
+  }
+ else {
+    Set<Entry<String,QueryablePersistenceService>> serviceEntry=getPersistenceServices().entrySet();
+    if (serviceEntry != null && serviceEntry.size() != 0)     persistenceService=serviceEntry.iterator().next().getValue();
+  }
+  if (persistenceService == null) {
+    throw new IllegalArgumentException("Persistence service not found '" + service + "'.");
+  }
+  if (items != null) {
+    String[] itemNames=items.split(",");
+    for (    String itemName : itemNames) {
+      Item item=itemUIRegistry.getItem(itemName);
+      if (addItem(chart,persistenceService,startTime,endTime,item,seriesCounter))       seriesCounter++;
+    }
+  }
+  if (groups != null) {
+    String[] groupNames=groups.split(",");
+    for (    String groupName : groupNames) {
+      Item item=itemUIRegistry.getItem(groupName);
+      if (item instanceof GroupItem) {
+        GroupItem groupItem=(GroupItem)item;
+        for (        Item member : groupItem.getMembers()) {
+          if (addItem(chart,persistenceService,startTime,endTime,member,seriesCounter))           seriesCounter++;
+        }
+      }
+ else {
+        throw new ItemNotFoundException("Item '" + item.getName() + "' defined in groups is not a group.");
+      }
+    }
+  }
+  if (seriesCounter == 0) {
+    chart.getStyleManager().setLegendVisible(false);
+    Collection<Date> xData=new ArrayList<Date>();
+    Collection<Number> yData=new ArrayList<Number>();
+    xData.add(startTime);
+    yData.add(0);
+    xData.add(endTime);
+    yData.add(0);
+    Series series=chart.addSeries("NONE",xData,yData);
+    series.setMarker(SeriesMarker.NONE);
+    series.setLineStyle(new BasicStroke(0f));
+  }
+  if (legendPosition < 0) {
+    chart.getStyleManager().setLegendPosition(LegendPosition.InsideNW);
+  }
+ else {
+    chart.getStyleManager().setLegendPosition(LegendPosition.InsideSW);
+  }
+  BufferedImage lBufferedImage=new BufferedImage(chart.getWidth(),chart.getHeight(),BufferedImage.TYPE_INT_ARGB);
+  Graphics2D lGraphics2D=lBufferedImage.createGraphics();
+  chart.paint(lGraphics2D);
+  return lBufferedImage;
+}

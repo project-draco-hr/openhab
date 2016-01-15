@@ -1,7 +1,11 @@
 {
-  if (!isReady())   return false;
+  if (!isReady()) {
+    return false;
+  }
   SqueezePlayer player=squeezeServer.getPlayer(playerId);
-  if (player == null)   return false;
+  if (player == null) {
+    return false;
+  }
   logger.trace("***START SPEECH**** Player: '{}'",playerId);
   int playerVolume=player.getUnmuteVolume();
   boolean playerPowered=player.isPowered();
@@ -20,7 +24,9 @@
   logger.trace("Current Playing Time '{}'",currPlayingTime);
   logger.trace("Current Shuffle Mode '{}'",currPlaylistShuffle);
   logger.trace("Current Repeat Mode '{}'",currPlaylistRepeat);
-  if (playerMode == Mode.play)   squeezeServer.pause(playerId);
+  if (playerMode == Mode.play) {
+    squeezeServer.pause(playerId);
+  }
   if (playerMuted) {
     logger.trace("Setting player state: unmuted");
     squeezeServer.unMute(playerId);
@@ -29,7 +35,9 @@
     logger.trace("Setting player state: volume {}",volume);
     squeezeServer.setVolume(playerId,volume);
   }
-  if (currPlaylistRepeat != 0)   squeezeServer.setRepeatMode(playerId,0);
+  if (currPlaylistRepeat != 0) {
+    squeezeServer.setRepeatMode(playerId,0);
+  }
   if (currPlaylistShuffle != 0) {
     squeezeServer.setShuffleMode(playerId,0);
     currPlaylistIndex=0;

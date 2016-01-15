@@ -1,0 +1,55 @@
+{
+  logger.debug("Servlet request received!");
+  String sitemapName=(String)req.getParameter("sitemap");
+  String widgetId=(String)req.getParameter("w");
+  boolean async="true".equalsIgnoreCase((String)req.getParameter("__async"));
+  boolean poll="true".equalsIgnoreCase((String)req.getParameter("poll"));
+  if (sitemapName == null)   sitemapName="default";
+  StringBuilder result=new StringBuilder();
+  Sitemap sitemap=sitemapProvider.getSitemap(sitemapName);
+  try {
+    if (sitemap == null) {
+      throw new RenderException("Sitemap '" + sitemapName + "' could not be found");
+    }
+    logger.debug("reading sitemap {}",sitemap.getName());
+    if (widgetId == null || widgetId.isEmpty() || widgetId.equals("Home")) {
+      String label=sitemap.getLabel() != null ? sitemap.getLabel() : sitemapName;
+      EList<Widget> children=sitemap.getChildren();
+      if (poll && waitForChanges(children) == false) {
+        res.getWriter().append(getTimeoutResponse()).close();
+        return;
+      }
+      result.append(renderer.processPage("Home",sitemapName,label,sitemap.getChildren(),async));
+    }
+ else     if (!widgetId.equals("Colorpicker")) {
+      Widget w=renderer.getItemUIRegistry().getWidget(sitemap,widgetId);
+      if (w != null) {
+        if (!(w instanceof LinkableWidget)) {
+          throw new RenderException("Widget '" + w + "' can not have any content");
+        }
+        EList<Widget> children=renderer.getItemUIRegistry().getChildren((LinkableWidget)w);
+        if (poll && waitForChanges(children) == false) {
+          res.getWriter().append(getTimeoutResponse()).close();
+          return;
+        }
+        String label=renderer.getItemUIRegistry().getLabel(w);
+        if (label == null)         label="undefined";
+        result.append(renderer.processPage(renderer.getItemUIRegistry().getWidgetId(w),sitemapName,label,children,async));
+      }
+    }
+ else     if (widgetId.equals("Colorpicker")) {
+      result.append("<root></root>");
+    }
+  }
+ catch (  RenderException e) {
+    throw new ServletException(e.getMessage(),e);
+  }
+  if (async) {
+    res.setContentType("application/xml;charset=UTF-8");
+  }
+ else {
+    res.setContentType("text/html;charset=UTF-8");
+  }
+  res.getWriter().append(result);
+  res.getWriter().close();
+}

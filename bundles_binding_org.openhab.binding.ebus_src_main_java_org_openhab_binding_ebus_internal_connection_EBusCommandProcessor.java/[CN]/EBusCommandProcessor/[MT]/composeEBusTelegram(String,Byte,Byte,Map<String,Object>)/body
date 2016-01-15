@@ -7,14 +7,14 @@
   TelegramConfiguration commandCfg=configurationProvider.getCommandById(commandId);
   if (commandCfg != null) {
     if (dst == null && StringUtils.isNotEmpty(commandCfg.getDst())) {
-      dst=EBusUtils.toByte((String)commandCfg.getDst());
+      dst=EBusUtils.toByte(commandCfg.getDst());
     }
     if (dst == null) {
       logger.error("Unable to send command, destination adress is missing. Set \"dst\" in item.cfg ...");
       return null;
     }
-    byte[] bytesData=EBusUtils.toByteArray((String)commandCfg.getData());
-    byte[] bytesCmd=EBusUtils.toByteArray((String)commandCfg.getCommand());
+    byte[] bytesData=EBusUtils.toByteArray(commandCfg.getData());
+    byte[] bytesCmd=EBusUtils.toByteArray(commandCfg.getCommand());
     buffer=new byte[bytesData.length + 6];
     buffer[0]=src;
     buffer[1]=dst;
@@ -58,7 +58,7 @@
     for (    Entry<String,TelegramValue> value : valuesConfig.entrySet()) {
       if (StringUtils.equals(value.getValue().getType(),"crc-kw")) {
         byte b=0;
-        int pos=(Integer)value.getValue().getPos() - 6;
+        int pos=value.getValue().getPos() - 6;
         for (int i=0; i < bytesData.length; i++) {
           if (i != pos) {
             b=EBusUtils.crc8(bytesData[i],b,(byte)0x5C);

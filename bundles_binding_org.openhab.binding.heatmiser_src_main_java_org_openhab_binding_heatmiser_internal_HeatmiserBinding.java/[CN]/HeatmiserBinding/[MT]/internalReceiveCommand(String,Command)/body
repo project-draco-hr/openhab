@@ -19,8 +19,12 @@
     if (thermostat.getAddress() == address) {
       logger.debug("Heatmiser command found thermostat: {}",thermostat);
       byte[] commandPacket=thermostat.formatCommand(function,command);
-      if (commandPacket == null)       logger.debug("Heatmiser command packet null");
- else       connector.sendMessage(commandPacket);
+      if (commandPacket == null) {
+        logger.debug("Heatmiser command packet null");
+      }
+ else {
+        connector.sendMessage(commandPacket);
+      }
       return;
     }
   }

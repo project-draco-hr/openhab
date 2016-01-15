@@ -2,8 +2,8 @@
   if (isProperlyConfigured()) {
     SappBindingProvider provider=getFirstSappBindingProvider();
     if (provider != null) {
-      if (((SappBindingProvider)provider).getSappUpdatePendingRequests().areUpdatePendingRequestsPresent()) {
-        Set<String> toBeProcessed=((SappBindingProvider)provider).getSappUpdatePendingRequests().getAndClearPendingUpdateRequests();
+      if (provider.getSappUpdatePendingRequests().areUpdatePendingRequestsPresent()) {
+        Set<String> toBeProcessed=provider.getSappUpdatePendingRequests().getAndClearPendingUpdateRequests();
         initializeAllItemsInProvider(provider,toBeProcessed);
       }
  else {

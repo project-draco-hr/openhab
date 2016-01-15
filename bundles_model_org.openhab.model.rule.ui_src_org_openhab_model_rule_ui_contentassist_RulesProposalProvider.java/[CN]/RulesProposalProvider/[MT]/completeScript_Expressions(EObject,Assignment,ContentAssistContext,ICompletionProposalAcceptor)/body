@@ -1,0 +1,8 @@
+{
+  super.completeScript_Expressions(model,assignment,context,acceptor);
+  if (model == null || model instanceof Rule) {
+    Function<IEObjectDescription,ICompletionProposal> proposalFactory=getProposalFactory(getFeatureCallRuleName(),context);
+    IScope scope=getScopeProvider().createSimpleFeatureCallScope(model,XbasePackage.Literals.XABSTRACT_FEATURE_CALL__FEATURE,context.getResource(),false,-1);
+    createLocalVariableAndImplicitProposals(model,context,acceptor);
+  }
+}

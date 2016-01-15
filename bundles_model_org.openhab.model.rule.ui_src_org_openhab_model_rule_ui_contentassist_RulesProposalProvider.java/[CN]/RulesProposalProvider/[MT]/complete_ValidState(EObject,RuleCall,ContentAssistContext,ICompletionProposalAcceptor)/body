@@ -1,0 +1,8 @@
+{
+  super.complete_ValidState(model,ruleCall,context,acceptor);
+  for (  State state : stateAndCommandProvider.getAllStates()) {
+    if (state.toString().startsWith(context.getPrefix())) {
+      acceptor.accept(createCompletionProposal(state.toString(),context));
+    }
+  }
+}

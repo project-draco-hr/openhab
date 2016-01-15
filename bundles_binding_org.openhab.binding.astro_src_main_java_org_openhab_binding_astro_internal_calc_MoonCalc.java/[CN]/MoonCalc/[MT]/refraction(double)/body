@@ -2,8 +2,12 @@
   int pressure=1015;
   int temperature=10;
   double altdeg=alt * SunCalc.RAD2DEG;
-  if (altdeg < -2 || altdeg >= 90)   return 0;
-  if (altdeg > 15)   return 0.00452 * pressure / ((273 + temperature) * Math.tan(alt));
+  if (altdeg < -2 || altdeg >= 90) {
+    return 0;
+  }
+  if (altdeg > 15) {
+    return 0.00452 * pressure / ((273 + temperature) * Math.tan(alt));
+  }
   double y=alt;
   double d=0.0;
   double p=(pressure - 80.0) / 930.0;

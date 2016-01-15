@@ -2,8 +2,12 @@
   logger.debug("{} EnumerateListener was called, type {}",LoggerConstants.TFINIT,enumerationType);
   modelLock.lock();
   try {
-    if (enumerationType == IPConnection.ENUMERATION_TYPE_DISCONNECTED)     removeDevice(uid);
- else     addDevice(uid,connectedUid,deviceIdentifier);
+    if (enumerationType == IPConnectionBase.ENUMERATION_TYPE_DISCONNECTED) {
+      removeDevice(uid);
+    }
+ else {
+      addDevice(uid,connectedUid,deviceIdentifier);
+    }
   }
   finally {
     modelLock.unlock();

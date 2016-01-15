@@ -21,7 +21,9 @@
       if (needsUpdate) {
         logger.debug("item '{}' is about to be refreshed now",itemName);
         int consumptionValue=-1;
-        if (itemConf.consumption == null || itemConf.consumption.equals(ConsumptionConfig.OUTPUT_CURRENT))         itemConf.consumption=ConsumptionConfig.ACTIVE_POWER;
+        if (itemConf.consumption == null || itemConf.consumption.equals(ConsumptionConfig.OUTPUT_CURRENT)) {
+          itemConf.consumption=ConsumptionConfig.ACTIVE_POWER;
+        }
 switch (itemConf.consumption) {
 case ACTIVE_POWER:
           List<CachedMeteringValue> consumptionList=digitalSTROM.getLatest(getSessionToken(),MeteringTypeEnum.consumption,".meters(" + itemConf.dsmid.getValue().toLowerCase() + ")",null);

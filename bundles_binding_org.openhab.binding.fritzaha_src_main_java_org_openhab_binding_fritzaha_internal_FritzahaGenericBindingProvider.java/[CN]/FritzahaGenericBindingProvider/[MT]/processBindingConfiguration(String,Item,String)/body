@@ -51,10 +51,18 @@
       }
  else       if ("energy".equalsIgnoreCase(configParts[2])) {
         if (configParts.length > 3) {
-          if ("mins".equalsIgnoreCase(configParts[3]))           timedef=TimeDef.MINUTES;
- else           if ("day".equalsIgnoreCase(configParts[3]))           timedef=TimeDef.DAY;
- else           if ("month".equalsIgnoreCase(configParts[3]))           timedef=TimeDef.MONTH;
- else           if ("year".equalsIgnoreCase(configParts[3]))           timedef=TimeDef.YEAR;
+          if ("mins".equalsIgnoreCase(configParts[3])) {
+            timedef=TimeDef.MINUTES;
+          }
+ else           if ("day".equalsIgnoreCase(configParts[3])) {
+            timedef=TimeDef.DAY;
+          }
+ else           if ("month".equalsIgnoreCase(configParts[3])) {
+            timedef=TimeDef.MONTH;
+          }
+ else           if ("year".equalsIgnoreCase(configParts[3])) {
+            timedef=TimeDef.YEAR;
+          }
  else {
             timedef=TimeDef.YEAR;
             logger.warn("Timedef of item " + item + "is set to default YEAR. "+ "Please check your syntax. Shall be year, month, day or mins.");
@@ -75,7 +83,9 @@
  else {
     logger.warn("Could not configure item " + item + " - Unsupported item type");
   }
-  if (config != null)   addBindingConfig(item,config);
+  if (config != null) {
+    addBindingConfig(item,config);
+  }
  else {
     logger.error("Could not configure item " + item + " - An error occurred");
   }

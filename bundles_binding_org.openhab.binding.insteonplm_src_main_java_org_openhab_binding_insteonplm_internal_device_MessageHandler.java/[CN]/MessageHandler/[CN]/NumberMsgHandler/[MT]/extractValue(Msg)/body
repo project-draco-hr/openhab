@@ -4,10 +4,10 @@
     logger.error("{} handler misconfigured, missing low_byte!",nm());
     return 0;
   }
-  int value=(int)(msg.getByte(lowByte) & 0xFF);
+  int value=msg.getByte(lowByte) & 0xFF;
   String highByte=getStringParameter("high_byte","");
   if (highByte != "") {
-    value|=((int)(msg.getByte(highByte) & 0xFF)) << 8;
+    value|=(msg.getByte(highByte) & 0xFF) << 8;
   }
   return (value);
 }

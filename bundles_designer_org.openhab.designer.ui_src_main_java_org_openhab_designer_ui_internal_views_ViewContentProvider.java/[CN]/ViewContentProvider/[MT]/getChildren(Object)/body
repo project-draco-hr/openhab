@@ -1,0 +1,19 @@
+{
+  if (parent instanceof IFolder) {
+    IFolder folder=(IFolder)parent;
+    try {
+      IResource[] resources=folder.members();
+      List<IResource> children=new ArrayList<IResource>(resources.length);
+      for (      IResource child : resources) {
+        if (!child.getName().startsWith(".")) {
+          children.add(child);
+        }
+      }
+      return children.toArray(new IResource[children.size()]);
+    }
+ catch (    CoreException e) {
+      logger.warn("Error getting children for folder '{}'",folder.getName(),e);
+    }
+  }
+  return new Object[0];
+}

@@ -1,0 +1,14 @@
+{
+  logger.info(getName() + " has been started");
+  while (!shutdown) {
+    try {
+      execute();
+    }
+ catch (    RuntimeException e) {
+      logger.error("Error while executing background thread " + getName(),e);
+    }
+    pause(refreshInterval);
+  }
+  refreshThread=null;
+  logger.info(getName() + " has been shut down");
+}

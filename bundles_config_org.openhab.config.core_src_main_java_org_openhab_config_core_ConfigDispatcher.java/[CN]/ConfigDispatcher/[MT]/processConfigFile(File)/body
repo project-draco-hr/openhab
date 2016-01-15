@@ -1,0 +1,30 @@
+{
+  ConfigurationAdmin configurationAdmin=(ConfigurationAdmin)ConfigActivator.configurationAdminTracker.getService();
+  if (configurationAdmin != null) {
+    Map<Configuration,Dictionary> configsToUpdate=new HashMap<Configuration,Dictionary>();
+    Map<Configuration,Dictionary> configMap=new HashMap<Configuration,Dictionary>();
+    List<String> lines=IOUtils.readLines(new FileInputStream(configFile));
+    for (    String line : lines) {
+      String[] contents=parseLine(configFile.getPath(),line);
+      if (contents == null)       continue;
+      String pid=contents[0];
+      String property=contents[1];
+      String value=contents[2];
+      Configuration configuration=configurationAdmin.getConfiguration(pid,null);
+      if (configuration != null) {
+        Dictionary configProperties=configMap.get(configuration);
+        if (configProperties == null) {
+          configProperties=new Properties();
+          configMap.put(configuration,configProperties);
+        }
+        if (!value.equals(configProperties.get(property))) {
+          configProperties.put(property,value);
+          configsToUpdate.put(configuration,configProperties);
+        }
+      }
+    }
+    for (    Entry<Configuration,Dictionary> entry : configsToUpdate.entrySet()) {
+      entry.getKey().update(entry.getValue());
+    }
+  }
+}

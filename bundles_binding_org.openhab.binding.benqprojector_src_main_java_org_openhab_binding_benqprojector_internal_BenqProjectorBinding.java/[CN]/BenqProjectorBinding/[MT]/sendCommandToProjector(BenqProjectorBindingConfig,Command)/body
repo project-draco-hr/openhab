@@ -26,7 +26,9 @@ if (c instanceof DecimalType) {
  else   if (volLevel < this.MIN_VOLUME) {
     volLevel=this.MIN_VOLUME;
   }
-  if (currentVol == volLevel)   cmdSent=true;
+  if (currentVol == volLevel) {
+    cmdSent=true;
+  }
   while (currentVol != volLevel) {
     if (currentVol < volLevel) {
       transport.sendCommandExpectResponse(cfg.mode.getItemModeCommandSetString("+"));

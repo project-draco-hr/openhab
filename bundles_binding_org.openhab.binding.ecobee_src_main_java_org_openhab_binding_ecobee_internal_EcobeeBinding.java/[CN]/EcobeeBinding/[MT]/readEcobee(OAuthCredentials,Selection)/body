@@ -6,7 +6,9 @@
     final Status status=response.getStatus();
     if (status.isAccessTokenExpired()) {
       logger.debug("Access token has expired: {}",status);
-      if (oauthCredentials.refreshTokens())       readEcobee(oauthCredentials,selection);
+      if (oauthCredentials.refreshTokens()) {
+        readEcobee(oauthCredentials,selection);
+      }
     }
  else {
       logger.error(status.getMessage());

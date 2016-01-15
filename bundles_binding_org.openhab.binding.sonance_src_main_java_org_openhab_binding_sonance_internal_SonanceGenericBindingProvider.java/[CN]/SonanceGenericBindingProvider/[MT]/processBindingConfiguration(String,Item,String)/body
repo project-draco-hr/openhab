@@ -7,10 +7,20 @@
   }
   config.ip=configParts[0].trim();
   config.port=Integer.parseInt(configParts[1].trim());
-  if (configParts.length == 4)   config.group=configParts[3].trim();
-  if (configParts[2].trim().equals("mute"))   config.type=Type.MUTE;
-  if (configParts[2].trim().equals("volume"))   config.type=Type.VOLUME;
-  if (configParts[2].trim().equals("power"))   config.type=Type.POWER;
-  if (config.type == null)   throw new BindingConfigParseException("Third part most be mute, volume or power");
+  if (configParts.length == 4) {
+    config.group=configParts[3].trim();
+  }
+  if (configParts[2].trim().equals("mute")) {
+    config.type=Type.MUTE;
+  }
+  if (configParts[2].trim().equals("volume")) {
+    config.type=Type.VOLUME;
+  }
+  if (configParts[2].trim().equals("power")) {
+    config.type=Type.POWER;
+  }
+  if (config.type == null) {
+    throw new BindingConfigParseException("Third part most be mute, volume or power");
+  }
   addBindingConfig(item,config);
 }

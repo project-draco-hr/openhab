@@ -1,0 +1,10 @@
+{
+  final String responseType=MediaTypeHelper.getResponseMediaType(headers.getAcceptableMediaTypes(),type);
+  if (responseType != null) {
+    final Object responseObject=ResponseHelper.wrapContentIfNeccessary(callback,responseType,getRootBean());
+    return Response.ok(responseObject,responseType).build();
+  }
+ else {
+    return Response.notAcceptable(null).build();
+  }
+}

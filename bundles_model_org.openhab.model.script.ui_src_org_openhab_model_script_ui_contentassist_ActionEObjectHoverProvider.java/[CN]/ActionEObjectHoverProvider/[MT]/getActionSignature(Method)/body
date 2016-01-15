@@ -1,0 +1,19 @@
+{
+  StringBuilder sb=new StringBuilder();
+  sb.append("<b>");
+  sb.append(m.getName());
+  sb.append("(");
+  List<String> params=new ArrayList<String>();
+  int i=0;
+  for (  Class<?> paramType : m.getParameterTypes()) {
+    ParamDoc paramDoc=getParamDoc(m,i);
+    String paramName=paramDoc != null ? paramDoc.name() : "p" + i;
+    params.add(paramType.getSimpleName() + " " + paramName);
+    i++;
+  }
+  sb.append(StringUtils.join(params,", "));
+  sb.append(") : ");
+  sb.append(m.getReturnType().getName());
+  sb.append("</b>");
+  return sb.toString();
+}

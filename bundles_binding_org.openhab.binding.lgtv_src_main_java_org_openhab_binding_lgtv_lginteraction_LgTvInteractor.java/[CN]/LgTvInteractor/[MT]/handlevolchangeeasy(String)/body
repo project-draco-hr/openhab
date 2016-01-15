@@ -6,7 +6,9 @@
     String ns=sval.substring(0,pos);
     val=Integer.parseInt(ns);
   }
- else   val=Integer.parseInt(sval);
+ else {
+    val=Integer.parseInt(sval);
+  }
   if (ispaired()) {
     res=getvolumeinfo(0);
     String currentvol=quickfind(res,"level");
@@ -16,7 +18,9 @@
     LgTvCommand volup=LgTvCommand.valueOf("VOLUME_UP");
     LgTvCommand voldown=LgTvCommand.valueOf("VOLUME_DOWN");
     String usecommand=todo > 0 ? volup.getLgSendCommand() : voldown.getLgSendCommand();
-    if (todo < 0)     todo=todo * -1;
+    if (todo < 0) {
+      todo=todo * -1;
+    }
     for (int i=0; i < todo; i++) {
       handlekeyinput(usecommand);
     }

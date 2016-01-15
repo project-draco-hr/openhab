@@ -1,0 +1,20 @@
+{
+  ConfigDispatcher.setConfigFolder(configFolder.getAbsolutePath());
+  IWorkspaceRunnable runnable=new IWorkspaceRunnable(){
+    public void run(    IProgressMonitor monitor) throws CoreException {
+      IProject defaultProject=ResourcesPlugin.getWorkspace().getRoot().getProject("config");
+      if (!defaultProject.exists()) {
+        initialize(defaultProject);
+      }
+      if (configFolder != null) {
+        folder=defaultProject.getFolder("config");
+        if (folder.exists()) {
+          folder.delete(true,null);
+        }
+        folder.createLink(configFolder.toURI(),IResource.ALLOW_MISSING_LOCAL,null);
+      }
+    }
+  }
+;
+  ResourcesPlugin.getWorkspace().run(runnable,null);
+}

@@ -2,12 +2,20 @@
   String remoteaddr=req.getRemoteAddr();
   int start=remoteaddr.indexOf(":");
   String t;
-  if (start > -1)   t=remoteaddr.substring(0,start);
- else   t=remoteaddr;
+  if (start > -1) {
+    t=remoteaddr.substring(0,start);
+  }
+ else {
+    t=remoteaddr;
+  }
   remoteaddr=t;
   start=remoteaddr.indexOf("/");
-  if (start > -1)   t=remoteaddr.substring(start + 1,remoteaddr.length());
- else   t=remoteaddr;
+  if (start > -1) {
+    t=remoteaddr.substring(start + 1,remoteaddr.length());
+  }
+ else {
+    t=remoteaddr;
+  }
   remoteaddr=t;
   PrintWriter out=res.getWriter();
   res.setStatus(200);
@@ -37,9 +45,13 @@
           }
         }
       }
- else       logger.error("itemregistry=null or bindingprovider=null");
+ else {
+        logger.error("itemregistry=null or bindingprovider=null");
+      }
     }
- else     out.println("command: " + value);
+ else {
+      out.println("command: " + value);
+    }
   }
  else {
     String url=req.getRequestURL().toString();

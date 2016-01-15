@@ -3,7 +3,9 @@
     byte rawX10=msg.getByte("rawX10");
     int cmd=(rawX10 & 0x0f);
     MessageHandler h=m_feature.getMsgHandlers().get(cmd);
-    if (h == null)     h=m_feature.getDefaultMsgHandler();
+    if (h == null) {
+      h=m_feature.getDefaultMsgHandler();
+    }
     logger.debug("{}:{}->{} {}",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName(),msg);
     if (h.matches(msg)) {
       h.handleMessage(-1,(byte)cmd,msg,m_feature,port);

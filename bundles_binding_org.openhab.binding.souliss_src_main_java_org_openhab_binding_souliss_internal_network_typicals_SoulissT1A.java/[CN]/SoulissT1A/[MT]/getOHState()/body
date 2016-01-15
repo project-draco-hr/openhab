@@ -1,8 +1,12 @@
 {
-  String sOHState=StateTraslator.statesSoulissToOH(this.getNote(),this.getType(),(short)this.getState(iBit));
+  String sOHState=StateTraslator.statesSoulissToOH(this.getNote(),this.getType(),this.getState(iBit));
   if (sOHState != null) {
-    if (this.getNote().equals("ContactItem"))     return OpenClosedType.valueOf(sOHState);
- else     return OnOffType.valueOf(sOHState);
+    if (this.getNote().equals("ContactItem")) {
+      return OpenClosedType.valueOf(sOHState);
+    }
+ else {
+      return OnOffType.valueOf(sOHState);
+    }
   }
   return null;
 }

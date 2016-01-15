@@ -3,9 +3,13 @@
   FritzahaBindingProvider commandProvider=null;
   FritzahaSwitchedOutlet switchDevice=null;
   for (  FritzahaBindingProvider currentProvider : providers) {
-    if (!currentProvider.getItemNames().contains(itemName))     continue;
+    if (!currentProvider.getItemNames().contains(itemName)) {
+      continue;
+    }
     FritzahaDevice device=currentProvider.getDeviceConfig(itemName);
-    if (!(device instanceof FritzahaSwitchedOutlet))     continue;
+    if (!(device instanceof FritzahaSwitchedOutlet)) {
+      continue;
+    }
     switchDevice=(FritzahaSwitchedOutlet)device;
     commandProvider=currentProvider;
     break;

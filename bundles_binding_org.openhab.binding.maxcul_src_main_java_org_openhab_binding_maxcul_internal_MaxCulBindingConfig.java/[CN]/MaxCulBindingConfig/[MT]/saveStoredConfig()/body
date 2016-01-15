@@ -4,7 +4,9 @@
     File cfgDir=new File(getUserPersistenceDataFolder());
     if (!cfgFile.exists()) {
       try {
-        if (!cfgDir.exists())         cfgDir.mkdirs();
+        if (!cfgDir.exists()) {
+          cfgDir.mkdirs();
+        }
         cfgFile.createNewFile();
       }
  catch (      IOException e) {
@@ -28,5 +30,7 @@
     }
     logger.debug("Successfully wrote pairing info for " + this.getSerialNumber());
   }
- else   logger.error("Tried saving configuration for " + this.getSerialNumber() + " which is not paired.");
+ else {
+    logger.error("Tried saving configuration for " + this.getSerialNumber() + " which is not paired.");
+  }
 }

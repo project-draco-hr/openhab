@@ -1,0 +1,10 @@
+{
+  Collection<Item> items;
+  items=itemMap.get(provider);
+  if (items != null) {
+    items.remove(item);
+  }
+  for (  ItemRegistryChangeListener listener : listeners) {
+    listener.itemRemoved(item);
+  }
+}

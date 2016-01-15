@@ -46,9 +46,9 @@
     String heatpumpExtendedState=getExtendeStateString(heatpumpValues) + ": " + formatHours(heatpumpValues[120]);
     handleEventType(new StringType(heatpumpExtendedState),HeatpumpCommandType.TYPE_HEATPUMP_EXTENDED_STATE);
     int[] heatpumpParams=connector.getParams();
-    handleEventType(new DecimalType((double)heatpumpParams[PARAM_HEATING_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_HEATING_TEMPERATURE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_HEATING_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_HEATING_TEMPERATURE);
     handleEventType(new DecimalType(heatpumpParams[PARAM_HEATING_OPERATION_MODE]),HeatpumpCommandType.TYPE_HEATING_OPERATION_MODE);
-    handleEventType(new DecimalType((double)heatpumpParams[PARAM_WARMWATER_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_WARMWATER_TEMPERATURE);
+    handleEventType(new DecimalType(heatpumpParams[PARAM_WARMWATER_TEMPERATURE] / 10.),HeatpumpCommandType.TYPE_WARMWATER_TEMPERATURE);
     handleEventType(new DecimalType(heatpumpParams[PARAM_WARMWATER_OPERATION_MODE]),HeatpumpCommandType.TYPE_WARMWATER_OPERATION_MODE);
     handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_OPERATION_MODE]),HeatpumpCommandType.TYPE_COOLING_OPERATION_MODE);
     handleEventType(new DecimalType(heatpumpParams[PARAM_COOLING_RELEASE_TEMP] / 10.),HeatpumpCommandType.TYPE_COOLING_RELEASE_TEMPERATURE);

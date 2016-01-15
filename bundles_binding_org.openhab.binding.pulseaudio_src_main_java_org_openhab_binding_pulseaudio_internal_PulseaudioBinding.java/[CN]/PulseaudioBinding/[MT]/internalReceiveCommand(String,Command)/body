@@ -37,8 +37,12 @@
     if (command instanceof IncreaseDecreaseType) {
       int volume=audioItem.getVolume();
       logger.debug(audioItemName + " volume is " + volume);
-      if (command.equals(IncreaseDecreaseType.INCREASE))       volume=Math.min(100,volume + 5);
-      if (command.equals(IncreaseDecreaseType.DECREASE))       volume=Math.max(0,volume - 5);
+      if (command.equals(IncreaseDecreaseType.INCREASE)) {
+        volume=Math.min(100,volume + 5);
+      }
+      if (command.equals(IncreaseDecreaseType.DECREASE)) {
+        volume=Math.max(0,volume - 5);
+      }
       logger.debug("setting " + audioItemName + " volume to "+ volume);
       client.setVolumePercent(audioItem,volume);
       updateState=new PercentType(volume);
@@ -120,7 +124,9 @@ break;
 }
 }
 }
-if (!updateState.equals(UnDefType.UNDEF)) eventPublisher.postUpdate(itemName,updateState);
+if (!updateState.equals(UnDefType.UNDEF)) {
+eventPublisher.postUpdate(itemName,updateState);
+}
 }
  else if (command instanceof StringType) {
 client.sendCommand(command.toString());

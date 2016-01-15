@@ -2,7 +2,9 @@
   logger.trace("Connecting to {}" + baseURL);
   clearState();
   String xmlDoc=fetchStateFromController();
-  if (xmlDoc == null)   return;
+  if (xmlDoc == null) {
+    return;
+  }
   for (  AutelisBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
       Item item=provider.getItem(itemName);

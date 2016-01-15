@@ -1,6 +1,6 @@
 {
   return new Answer<DatagramPacket>(){
-    public DatagramPacket answer(    InvocationOnMock invocation) throws InterruptedException, BrokenBarrierException {
+    @Override public DatagramPacket answer(    InvocationOnMock invocation) throws InterruptedException, BrokenBarrierException {
       Object[] args=invocation.getArguments();
       byte[] sentData=((DatagramPacket)args[0]).getData();
       String sentAsString=new String(sentData,0,sentData.length);

@@ -52,7 +52,9 @@ case WALL_THERMOSTAT_CONTROL:
       }
     }
   }
-if (isBroadcast == false) this.messageHandler.sendAck(wallThermCtrlMsg);
+if (isBroadcast == false) {
+  this.messageHandler.sendAck(wallThermCtrlMsg);
+}
 break;
 case SET_TEMPERATURE:
 SetTemperatureMsg setTempMsg=new SetTemperatureMsg(data);
@@ -66,7 +68,9 @@ eventPublisher.postUpdate(itemName,new DecimalType(setTempMsg.getDesiredTemperat
 }
 }
 }
-if (isBroadcast == false) this.messageHandler.sendAck(setTempMsg);
+if (isBroadcast == false) {
+this.messageHandler.sendAck(setTempMsg);
+}
 break;
 case THERMOSTAT_STATE:
 ThermostatStateMsg thermStateMsg=new ThermostatStateMsg(data);
@@ -92,7 +96,9 @@ eventPublisher.postUpdate(itemName,new DecimalType(thermStateMsg.getValvePos()))
 }
 }
 }
-if (isBroadcast == false) this.messageHandler.sendAck(thermStateMsg);
+if (isBroadcast == false) {
+this.messageHandler.sendAck(thermStateMsg);
+}
 break;
 case WALL_THERMOSTAT_STATE:
 WallThermostatStateMsg wallThermStateMsg=new WallThermostatStateMsg(data);
@@ -115,7 +121,9 @@ eventPublisher.postUpdate(itemName,new DecimalType(wallThermStateMsg.getControlM
 }
 }
 }
-if (isBroadcast == false) this.messageHandler.sendAck(wallThermStateMsg);
+if (isBroadcast == false) {
+this.messageHandler.sendAck(wallThermStateMsg);
+}
 break;
 case TIME_INFO:
 TimeInfoMsg timeMsg=new TimeInfoMsg(data);
@@ -138,7 +146,9 @@ eventPublisher.postUpdate(itemName,pbMsg.getBatteryLow() ? OnOffType.ON : OnOffT
 }
 }
 }
-if (isBroadcast == false) this.messageHandler.sendAck(pbMsg);
+if (isBroadcast == false) {
+this.messageHandler.sendAck(pbMsg);
+}
 break;
 case SHUTTER_CONTACT_STATE:
 ShutterContactStateMsg shutterContactStateMsg=new ShutterContactStateMsg(data);
@@ -160,7 +170,9 @@ eventPublisher.postUpdate(itemName,shutterContactStateMsg.getBatteryLow() ? OnOf
 }
 }
 }
-if (isBroadcast == false) this.messageHandler.sendAck(shutterContactStateMsg);
+if (isBroadcast == false) {
+this.messageHandler.sendAck(shutterContactStateMsg);
+}
 break;
 default :
 logger.debug("Unhandled message type " + msgType.toString());

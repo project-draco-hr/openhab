@@ -56,7 +56,9 @@ if (eventPublisher != null) {
         }
       }
  else       if (entry.getValue().type == StringItem.class) {
-        if (entry.getValue().base64)         result=Base64.encodeBase64String(result.getBytes());
+        if (entry.getValue().base64) {
+          result=Base64.encodeBase64String(result.getBytes());
+        }
         eventPublisher.postUpdate(entry.getKey(),new StringType(result));
       }
  else       if (entry.getValue().type == SwitchItem.class && result.trim().isEmpty()) {

@@ -2,7 +2,9 @@
   ModbusSerialListener listener=null;
   SimpleProcessImage spi=new SimpleProcessImage();
   String portname=args[0];
-  if (Modbus.debug)   System.out.println("jModbus ModbusSerial Slave");
+  if (Modbus.debug) {
+    System.out.println("jModbus ModbusSerial Slave");
+  }
   try {
     spi=new SimpleProcessImage();
     spi.addDigitalOut(new SimpleDigitalOut(true));
@@ -24,7 +26,9 @@
     params.setStopbits(1);
     params.setEncoding("ascii");
     params.setEcho(false);
-    if (Modbus.debug)     System.out.println("Encoding [" + params.getEncoding() + "]");
+    if (Modbus.debug) {
+      System.out.println("Encoding [" + params.getEncoding() + "]");
+    }
     listener=new ModbusSerialListener(params);
     listener.setListening(true);
   }

@@ -14,10 +14,18 @@
   }
   byteBuffer.put((byte)frequency);
   byte modeFlags=0;
-  if (startBit)   modeFlags=(byte)(modeFlags | 1);
-  if (repeatStartBit)   modeFlags=(byte)(modeFlags | 2);
-  if (rc5)   modeFlags=(byte)(modeFlags | 4);
-  if (rc6)   modeFlags=(byte)(modeFlags | 8);
+  if (startBit) {
+    modeFlags=(byte)(modeFlags | 1);
+  }
+  if (repeatStartBit) {
+    modeFlags=(byte)(modeFlags | 2);
+  }
+  if (rc5) {
+    modeFlags=(byte)(modeFlags | 4);
+  }
+  if (rc6) {
+    modeFlags=(byte)(modeFlags | 8);
+  }
   byteBuffer.put(modeFlags);
   for (int i=0; i < pulsePairs.size(); i++) {
     byteBuffer.putShort((short)Math.round(pulsePairs.get(i).Pause / 8));

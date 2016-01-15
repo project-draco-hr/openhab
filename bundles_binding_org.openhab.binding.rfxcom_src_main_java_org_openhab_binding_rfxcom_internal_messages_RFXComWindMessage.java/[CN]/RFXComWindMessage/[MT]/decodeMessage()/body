@@ -19,11 +19,15 @@
     short temp=(short)Math.abs(temperature * 10);
     data[12]=(byte)((temp >> 8) & 0xFF);
     data[13]=(byte)(temp & 0xFF);
-    if (temperature < 0)     data[12]|=0x80;
+    if (temperature < 0) {
+      data[12]|=0x80;
+    }
     short chill=(short)Math.abs(chillFactor * 10);
     data[14]=(byte)((chill >> 8) & 0xFF);
     data[15]=(byte)(chill & 0xFF);
-    if (chillFactor < 0)     data[14]|=0x80;
+    if (chillFactor < 0) {
+      data[14]|=0x80;
+    }
   }
   data[16]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
   return data;

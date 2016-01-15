@@ -31,7 +31,9 @@ String HSB[]=command.toString().split(",");
 short RGB[]=HSBtoRGB(Float.parseFloat(HSB[0]),Float.parseFloat(HSB[1]),Float.parseFloat(HSB[2]));
 T16.commandSEND(StateTraslator.commandsOHtoSOULISS(T.getType(),command.getClass().getSimpleName()),RGB[0],RGB[1],RGB[2]);
 }
- else T16.commandSEND(StateTraslator.commandsOHtoSOULISS(T.getType(),command.toString()));
+ else {
+T16.commandSEND(StateTraslator.commandsOHtoSOULISS(T.getType(),command.toString()));
+}
 break;
 case Constants.Souliss_T19:
 SoulissT19 T19=(SoulissT19)T;
@@ -43,7 +45,9 @@ T19.commandSEND(Constants.Souliss_T1n_Set,Short.parseShort(String.valueOf(percen
 int decimalToShort=(((DecimalType)command).shortValue() * 254 / 100);
 T19.commandSEND(Constants.Souliss_T1n_Set,Short.parseShort(String.valueOf(decimalToShort)));
 }
- else T19.commandSEND(StateTraslator.commandsOHtoSOULISS(T.getType(),command.toString()));
+ else {
+T19.commandSEND(StateTraslator.commandsOHtoSOULISS(T.getType(),command.toString()));
+}
 break;
 case Constants.Souliss_T21:
 SoulissT21 T21=(SoulissT21)T;

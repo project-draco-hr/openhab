@@ -10,7 +10,9 @@
     }
     int group=(msg.isCleanup() ? msg.getByte("command2") : a.getLowByte()) & 0xff;
     MessageHandler h=m_feature.getMsgHandlers().get(cmd1 & 0xFF);
-    if (h == null)     h=m_feature.getDefaultMsgHandler();
+    if (h == null) {
+      h=m_feature.getDefaultMsgHandler();
+    }
     logger.debug("all link message: {}",msg);
     if (!h.isDuplicate(msg)) {
       logger.debug("all link message is no duplicate: {}/{}",h.matchesGroup(group),h.matches(msg));

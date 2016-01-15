@@ -6,7 +6,9 @@
   }
   for (  PanasonicTVBindingProvider provider : this.providers) {
     PanasonicTVBindingConfig config=provider.getBindingConfigForItem(itemName);
-    if (config == null)     continue;
+    if (config == null) {
+      continue;
+    }
     int response=sendCommand(config);
     if (response != 200) {
       logger.warn("Command " + config.getCommand() + " to TV with IP "+ registeredTVs.get(config.getTv())+ " failed with HTTP Reponse Code "+ response);

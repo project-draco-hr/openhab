@@ -4,14 +4,20 @@
     logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
     return;
   }
-  if ("true".equalsIgnoreCase(arguments.get("meter_reset")))   return;
+  if ("true".equalsIgnoreCase(arguments.get("meter_reset"))) {
+    return;
+  }
   String meterScale=arguments.get("meter_scale");
   String meterZero=arguments.get("meter_zero");
   ZWaveMeterValueEvent meterEvent=(ZWaveMeterValueEvent)event;
-  if (meterScale != null && MeterScale.getMeterScale(meterScale) != meterEvent.getMeterScale())   return;
+  if (meterScale != null && MeterScale.getMeterScale(meterScale) != meterEvent.getMeterScale()) {
+    return;
+  }
   Object val=event.getValue();
   if (meterZero != null) {
-    if (((BigDecimal)val).doubleValue() <= Double.parseDouble(meterZero))     val=BigDecimal.ZERO;
+    if (((BigDecimal)val).doubleValue() <= Double.parseDouble(meterZero)) {
+      val=BigDecimal.ZERO;
+    }
   }
   State state=converter.convertFromValueToState(val);
   this.getEventPublisher().postUpdate(item.getName(),state);

@@ -1,0 +1,23 @@
+{
+  if ("xml".equals(typeParam)) {
+    return MediaType.APPLICATION_XML;
+  }
+ else   if ("json".equals(typeParam)) {
+    return MediaType.APPLICATION_JSON;
+  }
+ else   if ("jsonp".equals(typeParam)) {
+    return APPLICATION_X_JAVASCRIPT;
+  }
+  for (  MediaType type : acceptedTypes) {
+    if (type.isCompatible(MediaType.APPLICATION_XML_TYPE)) {
+      return MediaType.APPLICATION_XML;
+    }
+ else     if (type.isCompatible(MediaType.APPLICATION_JSON_TYPE)) {
+      return MediaType.APPLICATION_JSON;
+    }
+ else     if (type.toString().equals(APPLICATION_X_JAVASCRIPT)) {
+      return APPLICATION_X_JAVASCRIPT;
+    }
+  }
+  return null;
+}

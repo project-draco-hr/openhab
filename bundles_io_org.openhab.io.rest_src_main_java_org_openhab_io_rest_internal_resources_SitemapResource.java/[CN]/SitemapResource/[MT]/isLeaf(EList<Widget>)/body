@@ -1,0 +1,17 @@
+{
+  for (  Widget w : children) {
+    if (w instanceof Frame) {
+      if (isLeaf(((Frame)w).getChildren())) {
+        return false;
+      }
+    }
+ else     if (w instanceof LinkableWidget) {
+      LinkableWidget linkableWidget=(LinkableWidget)w;
+      ItemUIRegistry itemUIRegistry=RESTApplication.getItemUIRegistry();
+      if (itemUIRegistry.getChildren(linkableWidget).size() > 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}

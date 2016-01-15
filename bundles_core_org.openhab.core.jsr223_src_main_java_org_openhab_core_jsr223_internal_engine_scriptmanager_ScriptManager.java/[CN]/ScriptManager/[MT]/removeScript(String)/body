@@ -1,0 +1,10 @@
+{
+  if (scripts.containsKey(scriptName)) {
+    Script script=scripts.remove(scriptName);
+    List<Rule> allRules=script.getRules();
+    triggerManager.removeRuleModel(allRules);
+    for (    Rule rule : allRules) {
+      ruleMap.remove(rule);
+    }
+  }
+}

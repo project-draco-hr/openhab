@@ -6,7 +6,9 @@
   disconnect();
   ArrayList<ZWaveEventListener> copy=new ArrayList<ZWaveEventListener>(this.zwaveEventListeners);
   for (  Object listener : copy.toArray()) {
-    if (!(listener instanceof ZWaveNode))     continue;
+    if (!(listener instanceof ZWaveNode)) {
+      continue;
+    }
     this.zwaveEventListeners.remove(listener);
   }
   this.zwaveNodes.clear();

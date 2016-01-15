@@ -29,7 +29,7 @@
   if (portIdentifier.isCurrentlyOwned()) {
     throw new Exception("Serial port '" + portName + "' is in use.");
   }
-  port=(SerialPort)portIdentifier.open(this.getClass().getSimpleName(),CONNECT_TIMEOUT);
+  port=portIdentifier.open(this.getClass().getSimpleName(),CONNECT_TIMEOUT);
   log.info("Connected to serial port '{}'",portIdentifier.getName());
   port.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
   port.notifyOnDataAvailable(true);

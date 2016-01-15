@@ -54,7 +54,9 @@ if (splitDomain[4].equals("parameters")) {
 List<ZWaveDbConfigurationParameter> configList=database.getProductConfigParameters();
 for (ZWaveDbConfigurationParameter parameter : configList) {
 record=new OpenHABConfigurationRecord(domain,"configuration" + parameter.Index,database.getLabel(parameter.Label),true);
-if (parameter != null) record.value=parameter.Default;
+if (parameter != null) {
+record.value=parameter.Default;
+}
 try {
 record.type=OpenHABConfigurationRecord.TYPE.valueOf(parameter.Type.toUpperCase());
 }
@@ -414,7 +416,9 @@ record.type=OpenHABConfigurationRecord.TYPE.valueOf(parameter.Type.toUpperCase()
 record.type=OpenHABConfigurationRecord.TYPE.LONG;
 }
 if (parameter.Item != null) {
-for (ZWaveDbConfigurationListItem item : parameter.Item) record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
+for (ZWaveDbConfigurationListItem item : parameter.Item) {
+record.addValue(Integer.toString(item.Value),database.getLabel(item.Label));
+}
 }
 record.minimum=parameter.Minimum;
 record.maximum=parameter.Maximum;

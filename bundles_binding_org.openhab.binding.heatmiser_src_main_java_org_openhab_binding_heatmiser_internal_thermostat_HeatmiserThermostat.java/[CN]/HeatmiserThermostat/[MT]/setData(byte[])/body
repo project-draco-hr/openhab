@@ -1,15 +1,25 @@
 {
-  if (in.length < 9)   return false;
+  if (in.length < 9) {
+    return false;
+  }
   data=in;
   frameLength=getInt(1);
-  if (in.length != frameLength)   return false;
+  if (in.length != frameLength) {
+    return false;
+  }
   int crc=getInt(frameLength - 2);
-  if (crc != checkCRC(data))   return false;
+  if (crc != checkCRC(data)) {
+    return false;
+  }
   address=data[3];
   function=data[4];
-  if (function == 1)   return false;
+  if (function == 1) {
+    return false;
+  }
   dcbStart=getInt(5);
-  if (dcbStart != 0)   return false;
+  if (dcbStart != 0) {
+    return false;
+  }
 switch (data[13]) {
 case 0:
     dcbModel=Models.DT;

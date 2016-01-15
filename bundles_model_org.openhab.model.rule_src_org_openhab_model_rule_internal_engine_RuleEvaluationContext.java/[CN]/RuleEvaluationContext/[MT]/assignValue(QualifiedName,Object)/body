@@ -1,0 +1,13 @@
+{
+  try {
+    super.assignValue(qualifiedName,value);
+  }
+ catch (  IllegalStateException e) {
+    if (globalContext != null) {
+      globalContext.assignValue(qualifiedName,value);
+    }
+ else {
+      throw e;
+    }
+  }
+}

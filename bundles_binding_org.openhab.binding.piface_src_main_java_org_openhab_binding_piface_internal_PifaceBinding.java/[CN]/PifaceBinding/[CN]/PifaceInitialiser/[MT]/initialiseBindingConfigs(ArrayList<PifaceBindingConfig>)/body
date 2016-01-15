@@ -3,7 +3,9 @@
   for (  PifaceBindingConfig bindingConfig : clonedList) {
     try {
       PifaceNode node=pifaceNodes.get(bindingConfig.getPifaceId());
-      if (node == null)       continue;
+      if (node == null) {
+        continue;
+      }
       if (bindingConfig.getBindingType() == BindingType.IN) {
         int value=sendDigitalRead(node,bindingConfig.getPinNumber());
         updateItemStates(bindingConfig,value);

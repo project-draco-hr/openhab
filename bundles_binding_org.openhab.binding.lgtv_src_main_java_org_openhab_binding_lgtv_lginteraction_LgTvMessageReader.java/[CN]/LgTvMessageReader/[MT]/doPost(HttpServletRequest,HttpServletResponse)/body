@@ -14,12 +14,20 @@
   String remoteaddr=req.getRemoteAddr();
   int start=remoteaddr.indexOf(":");
   String t;
-  if (start > -1)   t=remoteaddr.substring(0,start);
- else   t=remoteaddr;
+  if (start > -1) {
+    t=remoteaddr.substring(0,start);
+  }
+ else {
+    t=remoteaddr;
+  }
   remoteaddr=t;
   start=remoteaddr.indexOf("/");
-  if (start > -1)   t=remoteaddr.substring(start + 1,remoteaddr.length());
- else   t=remoteaddr;
+  if (start > -1) {
+    t=remoteaddr.substring(start + 1,remoteaddr.length());
+  }
+ else {
+    t=remoteaddr;
+  }
   remoteaddr=t;
   logger.debug("httphandler called from remoteaddr=" + remoteaddr + " result="+ sb.toString());
   LgTvEventChannelChanged myevent=new LgTvEventChannelChanged();
@@ -44,6 +52,8 @@
  else   if (eventname.equals("byebye")) {
     sendtohandlers(event,remoteaddr,"BYEBYE_SEEN=1");
   }
- else   logger.debug("warning - unhandled event");
+ else {
+    logger.debug("warning - unhandled event");
+  }
   responseBody.close();
 }

@@ -2,22 +2,30 @@
 synchronized (this) {
     if (!bPopSuspend) {
       t=System.currentTimeMillis();
-      if (packetsList.size() <= 1)       iDelay=SEND_MIN_DELAY;
- else       iDelay=SEND_DELAY;
+      if (packetsList.size() <= 1) {
+        iDelay=SEND_MIN_DELAY;
+      }
+ else {
+        iDelay=SEND_DELAY;
+      }
       int iPacket=0;
       boolean bFlagWhile=true;
       while (!(iPacket >= packetsList.size()) && bFlagWhile) {
         if (packetsList.get(iPacket).sent) {
           iPacket++;
         }
- else         bFlagWhile=false;
+ else {
+          bFlagWhile=false;
+        }
       }
       boolean tFlag=(t - t_prec) >= SEND_DELAY;
-      if (iPacket >= packetsList.size())       tFlag=false;
+      if (iPacket >= packetsList.size()) {
+        tFlag=false;
+      }
       if (packetsList.size() > 0 && tFlag) {
         t_prec=System.currentTimeMillis();
         SocketAndPacket sp=packetsList.get(iPacket);
-        if (packetsList.get(iPacket).packet.getData()[7] == (byte)ConstantsUDP.Souliss_UDP_function_force) {
+        if (packetsList.get(iPacket).packet.getData()[7] == ConstantsUDP.Souliss_UDP_function_force) {
           packetsList.get(iPacket).setSent(true);
           packetsList.get(iPacket).setTime(System.currentTimeMillis());
         }

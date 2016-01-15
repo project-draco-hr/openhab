@@ -9,9 +9,11 @@
       String uri=getUri(incremental);
       logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
       Future<Response> f=getAsyncHttpClient().prepareGet(uri).execute();
-      Response r=(Response)f.get();
+      Response r=f.get();
       Map<String,Object> json=readJson(r.getResponseBody("UTF-8"));
-      if (json.containsKey("error"))       throw new IOException(json.get("error").toString());
+      if (json.containsKey("error")) {
+        throw new IOException(json.get("error").toString());
+      }
       connected=true;
       processResponse(json,incremental);
       int c=getMiosUnit().getRefreshCount();

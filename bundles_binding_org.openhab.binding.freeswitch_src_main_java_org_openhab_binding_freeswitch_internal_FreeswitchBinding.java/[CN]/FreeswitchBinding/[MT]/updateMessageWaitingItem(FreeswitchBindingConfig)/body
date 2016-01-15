@@ -1,6 +1,8 @@
 {
   MWIModel model=mwiCache.get(config.getArgument());
-  if (model == null)   return;
+  if (model == null) {
+    return;
+  }
   if (config.getItemType().isAssignableFrom(SwitchItem.class)) {
     eventPublisher.postUpdate(config.getItemName(),model.mwi ? OnOffType.ON : OnOffType.OFF);
   }

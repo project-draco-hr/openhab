@@ -1,0 +1,15 @@
+{
+  final String clientId=request.getHeader(HeaderConfig.X_ATMOSPHERE_TRACKING_ID);
+  if (clientId == null || clientId.isEmpty()) {
+    return false;
+  }
+  final CacheEntry entry=ResourceStateChangeListener.getCachedEntries().get(clientId);
+  if (entry != null && entry.getData() instanceof PageBean) {
+    final PageBean firedEntity=(PageBean)entry.getData();
+    final PageBean responsePageBean=(PageBean)responseEntity;
+    if (firedEntity == null || firedEntity.icon != responsePageBean.icon || firedEntity.title != responsePageBean.title) {
+      return true;
+    }
+  }
+  return false;
+}

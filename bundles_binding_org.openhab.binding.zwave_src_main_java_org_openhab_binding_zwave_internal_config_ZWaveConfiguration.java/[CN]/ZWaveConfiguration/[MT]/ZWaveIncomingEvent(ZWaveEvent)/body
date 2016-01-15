@@ -14,7 +14,9 @@
     return;
   }
   if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) {
-    if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_INTERVAL_REPORT)     return;
+    if (((ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)event).getEvent() != ZWaveWakeUpCommandClass.WAKE_UP_INTERVAL_REPORT) {
+      return;
+    }
     ZWaveNodeSerializer nodeSerializer=new ZWaveNodeSerializer();
     nodeSerializer.SerializeNode(zController.getNode(event.getNodeId()));
     PendingCfg.Remove(ZWaveCommandClass.CommandClass.WAKE_UP.getKey(),event.getNodeId());

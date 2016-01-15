@@ -8,7 +8,9 @@
     final byte[] testdata73c=new byte[]{(byte)0x64,(byte)0x85,(byte)0xFD,(byte)0x0A,(byte)0x18,(byte)0x73,(byte)0x00,(byte)0xA0,(byte)0x10,(byte)0x00,(byte)0x14,(byte)0x00,(byte)0x21,(byte)0x00,(byte)0x0A,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0xE3,(byte)0x00,(byte)0x02,(byte)0x02,(byte)0x01,(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x40,(byte)0x07,(byte)0x9D,(byte)0xB7};
     final byte[] testdata73d=new byte[]{(byte)0x64,(byte)0x85,(byte)0xFD,(byte)0x0A,(byte)0x18,(byte)0x73,(byte)0x00,(byte)0xA0,(byte)0x90,(byte)0x00,(byte)0x14,(byte)0x00,(byte)0x21,(byte)0x00,(byte)0x0A,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0xE3,(byte)0x00,(byte)0x02,(byte)0x02,(byte)0x01,(byte)0x01,(byte)0x00,(byte)0x00,(byte)0x00,(byte)0x40,(byte)0x07,(byte)0xAB,(byte)0x5B};
     final byte[][] messages=new byte[][]{testdata21,testdata71,testdata73a,testdata73b,testdata73c,testdata73d};
-    if (++counter >= messages.length)     counter=0;
+    if (++counter >= messages.length) {
+      counter=0;
+    }
     byte[] message=messages[counter];
     int msgLen=0;
     if (message[0] == (byte)0x64) {
@@ -18,7 +20,9 @@
     int msgCRC=toInt(message[5 + msgLen],message[5 + msgLen + 1]);
     if (msgCRC == calculatedCRC) {
       byte[] data=new byte[5 + msgLen];
-      for (int j=0; j < (5 + msgLen); j++)       data[j]=message[j];
+      for (int j=0; j < (5 + msgLen); j++) {
+        data[j]=message[j];
+      }
       return data;
     }
  else {

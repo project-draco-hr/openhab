@@ -7,7 +7,9 @@
     logger.warn("NODE {}: No converter found for item = {} endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
     return;
   }
-  if (setpointType != null && SetpointType.getSetpointType(Integer.parseInt(setpointType)) != setpointEvent.getSetpointType())   return;
+  if (setpointType != null && SetpointType.getSetpointType(Integer.parseInt(setpointType)) != setpointEvent.getSetpointType()) {
+    return;
+  }
   Object val=event.getValue();
   if (scale != null && Integer.parseInt(scale) != setpointEvent.getScale()) {
     if (setpointEvent.getScale() == 0) {

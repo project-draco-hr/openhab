@@ -17,7 +17,9 @@
       newPath+=queryName;
       newPath+="=";
       newPath+=URLEncoder.encode(requestQueryJson.getString(queryName),"UTF-8");
-      if (queryIterator.hasNext())       newPath+="&";
+      if (queryIterator.hasNext()) {
+        newPath+="&";
+      }
     }
     URI requestUri=new URI(newPath);
     logger.debug("Request method is " + requestMethod);

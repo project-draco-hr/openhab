@@ -39,14 +39,18 @@
     conn.connect();
     req=new ReadInputDiscretesRequest(ref,count);
     req.setUnitID(0);
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusUDPTransaction(conn);
     trans.setRequest(req);
     int k=0;
     do {
       trans.execute();
       res=(ReadInputDiscretesResponse)trans.getResponse();
-      if (Modbus.debug)       System.out.println("Response: " + res.getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + res.getHexMessage());
+      }
       System.out.println("Digital Inputs Status=" + res.getDiscretes().toString());
       k++;
     }

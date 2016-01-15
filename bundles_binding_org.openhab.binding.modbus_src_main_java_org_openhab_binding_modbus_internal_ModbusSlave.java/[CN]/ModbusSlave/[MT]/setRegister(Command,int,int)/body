@@ -7,23 +7,39 @@ synchronized (storage) {
     newValue=(Register)((InputRegister[])storage)[readRegister];
   }
   if (command instanceof IncreaseDecreaseType) {
-    if (command.equals(IncreaseDecreaseType.INCREASE))     newValue.setValue(newValue.getValue() + 1);
- else     if (command.equals(IncreaseDecreaseType.DECREASE))     newValue.setValue(newValue.getValue() - 1);
+    if (command.equals(IncreaseDecreaseType.INCREASE)) {
+      newValue.setValue(newValue.getValue() + 1);
+    }
+ else     if (command.equals(IncreaseDecreaseType.DECREASE)) {
+      newValue.setValue(newValue.getValue() - 1);
+    }
   }
  else   if (command instanceof UpDownType) {
-    if (command.equals(UpDownType.UP))     newValue.setValue(newValue.getValue() + 1);
- else     if (command.equals(UpDownType.DOWN))     newValue.setValue(newValue.getValue() - 1);
+    if (command.equals(UpDownType.UP)) {
+      newValue.setValue(newValue.getValue() + 1);
+    }
+ else     if (command.equals(UpDownType.DOWN)) {
+      newValue.setValue(newValue.getValue() - 1);
+    }
   }
  else   if (command instanceof DecimalType) {
     newValue.setValue(((DecimalType)command).intValue());
   }
  else   if (command instanceof OnOffType) {
-    if (command.equals(OnOffType.ON))     newValue.setValue(1);
- else     if (command.equals(OnOffType.OFF))     newValue.setValue(0);
+    if (command.equals(OnOffType.ON)) {
+      newValue.setValue(1);
+    }
+ else     if (command.equals(OnOffType.OFF)) {
+      newValue.setValue(0);
+    }
   }
  else   if (command instanceof OpenClosedType) {
-    if (command.equals(OpenClosedType.OPEN))     newValue.setValue(1);
- else     if (command.equals(OpenClosedType.CLOSED))     newValue.setValue(0);
+    if (command.equals(OpenClosedType.OPEN)) {
+      newValue.setValue(1);
+    }
+ else     if (command.equals(OpenClosedType.CLOSED)) {
+      newValue.setValue(0);
+    }
   }
   ModbusRequest request=null;
   if (writeMultipleRegisters) {

@@ -5,7 +5,7 @@
     if (attachmentUrl == null) {
       ChatManager chatmanager=ChatManager.getInstanceFor(conn);
       Chat newChat=chatmanager.createChat(to,new MessageListener(){
-        public void processMessage(        Chat chat,        Message message){
+        @Override public void processMessage(        Chat chat,        Message message){
           logger.debug("Received message on XMPP: {}",message.getBody());
         }
       }

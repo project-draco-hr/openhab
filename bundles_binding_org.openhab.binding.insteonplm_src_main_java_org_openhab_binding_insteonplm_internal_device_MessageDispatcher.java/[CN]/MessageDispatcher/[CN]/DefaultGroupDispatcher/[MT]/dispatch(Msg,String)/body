@@ -33,7 +33,9 @@
   if (key != -1) {
     for (    DeviceFeature f : m_feature.getConnectedFeatures()) {
       MessageHandler h=f.getMsgHandlers().get(key);
-      if (h == null)       h=f.getDefaultMsgHandler();
+      if (h == null) {
+        h=f.getDefaultMsgHandler();
+      }
       if (h.matches(msg)) {
         if (!isConsumed) {
           logger.debug("{}:{}->{} DIRECT",f.getDevice().getAddress(),f.getName(),h.getClass().getSimpleName());

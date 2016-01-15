@@ -4,7 +4,7 @@ synchronized (bindingConfigs) {
       Iterable<KNXBindingConfig> configList=Iterables.filter(Iterables.concat(bindingConfigs.values()),KNXBindingConfig.class);
       Iterable<KNXBindingConfigItem> configItemList=Iterables.filter(Iterables.concat(configList),KNXBindingConfigItem.class);
       Iterable<KNXBindingConfigItem> bindingConfigs=Iterables.filter(configItemList,new Predicate<KNXBindingConfigItem>(){
-        public boolean apply(        KNXBindingConfigItem input){
+        @Override public boolean apply(        KNXBindingConfigItem input){
           if (input == null) {
             return false;
           }
@@ -17,7 +17,7 @@ synchronized (bindingConfigs) {
       }
 );
       Iterable<Datapoint> datapoints=Iterables.transform(bindingConfigs,new Function<KNXBindingConfigItem,Datapoint>(){
-        public Datapoint apply(        KNXBindingConfigItem configItem){
+        @Override public Datapoint apply(        KNXBindingConfigItem configItem){
           return configItem.mainDataPoint;
         }
       }

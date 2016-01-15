@@ -3,7 +3,9 @@
   text=newText;
   logger.debug("setText: " + newText);
   try {
-    if (text == null || text.equals(""))     tinkerforgeDevice.clearDisplay();
+    if (text == null || text.equals("")) {
+      tinkerforgeDevice.clearDisplay();
+    }
  else     if (text.startsWith(positionPrefix)) {
       int indexOfSuffix=text.indexOf(positonSuffix);
       if (indexOfSuffix == -1 || indexOfSuffix > positionPrefix.length() + 3) {
@@ -24,7 +26,9 @@
           }
  else {
             String text2show=text.substring(indexOfSuffix + 1);
-            if (text2show.length() == 0)             text2show="                    ";
+            if (text2show.length() == 0) {
+              text2show="                    ";
+            }
             tinkerforgeDevice.writeLine(lineNum,inLinePostition,text2show);
           }
         }
@@ -39,12 +43,16 @@
       int lineSize=19;
       int lineNum=0;
       for (int i=0; i < text.length(); i+=lineSize) {
-        if (lineNum > 3)         break;
+        if (lineNum > 3) {
+          break;
+        }
         tinkerforgeDevice.writeLine((short)lineNum,(short)0,text.substring(i,Math.min(text.length(),i + lineSize)));
         lineNum++;
       }
     }
-    if (eNotificationRequired())     eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MBRICKLET_LCD2_0X4__TEXT,oldText,text));
+    if (eNotificationRequired()) {
+      eNotify(new ENotificationImpl(this,Notification.SET,ModelPackage.MBRICKLET_LCD2_0X4__TEXT,oldText,text));
+    }
   }
  catch (  TimeoutException e) {
     TinkerforgeErrorHandler.handleError(this,TinkerforgeErrorHandler.TF_TIMEOUT_EXCEPTION,e);

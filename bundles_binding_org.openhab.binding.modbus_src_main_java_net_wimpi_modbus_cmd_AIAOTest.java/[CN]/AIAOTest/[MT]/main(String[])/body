@@ -34,7 +34,9 @@
     con=new TCPMasterConnection(addr);
     con.setPort(port);
     con.connect();
-    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    if (Modbus.debug) {
+      System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    }
     ai_req=new ReadInputRegistersRequest(ai_ref,1);
     ao_req=new WriteSingleRegisterRequest();
     ao_req.setReference(ao_ref);
@@ -54,7 +56,9 @@
         new_out.setValue(new_in);
         ao_trans.execute();
         last_out=new_in;
-        if (Modbus.debug)         System.out.println("Updated Register with value from Input Register.");
+        if (Modbus.debug) {
+          System.out.println("Updated Register with value from Input Register.");
+        }
       }
     }
  while (true);

@@ -1,0 +1,16 @@
+{
+  try {
+    if (commandLine.contains(CMD_LINE_DELIMITER)) {
+      String[] cmdArray=commandLine.split(CMD_LINE_DELIMITER);
+      Runtime.getRuntime().exec(cmdArray);
+      logger.info("executed commandLine '{}'",Arrays.asList(cmdArray));
+    }
+ else {
+      Runtime.getRuntime().exec(commandLine);
+      logger.info("executed commandLine '{}'",commandLine);
+    }
+  }
+ catch (  IOException e) {
+    logger.error("couldn't execute commandLine '" + commandLine + "'",e);
+  }
+}

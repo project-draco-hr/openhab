@@ -6,7 +6,7 @@
     if (level > 0) {
       level=getMaxLightLevel(conf,level);
       byte cmd2=encode(ramptime,level);
-      Msg m=dev.makeStandardMessage((byte)0x0f,getOnCmd(),(byte)cmd2);
+      Msg m=dev.makeStandardMessage((byte)0x0f,getOnCmd(),cmd2);
       dev.enqueueMessage(m,m_feature);
       logger.info("{}: sent msg to set {} to {} with {} second ramp time.",nm(),dev.getAddress(),level,ramptime);
     }

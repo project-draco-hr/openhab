@@ -6,7 +6,9 @@
     logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
     return;
   }
-  if (alarmType != null && AlarmType.getAlarmType(Integer.parseInt(alarmType)) != alarmEvent.getAlarmType())   return;
+  if (alarmType != null && AlarmType.getAlarmType(Integer.parseInt(alarmType)) != alarmEvent.getAlarmType()) {
+    return;
+  }
   State state=converter.convertFromValueToState(event.getValue());
   this.getEventPublisher().postUpdate(item.getName(),state);
 }

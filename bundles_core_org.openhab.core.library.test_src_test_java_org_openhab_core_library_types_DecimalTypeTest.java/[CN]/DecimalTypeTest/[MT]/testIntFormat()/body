@@ -1,0 +1,18 @@
+{
+  DecimalType dt;
+  dt=new DecimalType("87");
+  assertEquals("87",dt.format("%d"));
+  dt=new DecimalType("87");
+  assertEquals(" 87",dt.format("%3d"));
+  dt=new DecimalType("87");
+  assertEquals("0x57",dt.format("%#x"));
+  dt=new DecimalType("87.5");
+  try {
+    dt.format("%x");
+    fail();
+  }
+ catch (  Exception e) {
+  }
+  dt=new DecimalType("11.0");
+  assertEquals("11",dt.format("%d"));
+}

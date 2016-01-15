@@ -9,22 +9,30 @@
 switch (dscAlarmDeviceType) {
 case PANEL:
       Panel panel=panelMap.get(panelId);
-    if (panel != null)     panel.updateProperties(item,config,state,description);
+    if (panel != null) {
+      panel.updateProperties(item,config,state,description);
+    }
   break;
 case PARTITION:
 partitionId=config.getPartitionId();
 Partition partition=partitionMap.get(partitionId);
-if (partition != null) partition.updateProperties(item,config,state,description);
+if (partition != null) {
+partition.updateProperties(item,config,state,description);
+}
 break;
 case ZONE:
 partitionId=config.getPartitionId();
 zoneId=config.getZoneId();
 Zone zone=zoneMap.get(zoneId);
-if (zone != null) zone.updateProperties(item,config,state,description);
+if (zone != null) {
+zone.updateProperties(item,config,state,description);
+}
 break;
 case KEYPAD:
 Keypad keypad=keypadMap.get(keypadId);
-if (keypad != null) keypad.updateProperties(item,config,state,description);
+if (keypad != null) {
+keypad.updateProperties(item,config,state,description);
+}
 break;
 default :
 logger.debug("updateDeviceProperties(): Item properties not updated.");

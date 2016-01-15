@@ -1,0 +1,12 @@
+{
+  String testLabel="Label [%3x]";
+  Widget w=mock(Widget.class);
+  Item item=mock(Item.class);
+  when(w.getLabel()).thenReturn(testLabel);
+  when(w.getItem()).thenReturn("Item");
+  when(registry.getItem("Item")).thenReturn(item);
+  when(item.getState()).thenReturn(new DecimalType(20));
+  when(item.getStateAs(DecimalType.class)).thenReturn(new DecimalType(20));
+  String label=uiRegistry.getLabel(w);
+  assertEquals("Label [ 14]",label);
+}

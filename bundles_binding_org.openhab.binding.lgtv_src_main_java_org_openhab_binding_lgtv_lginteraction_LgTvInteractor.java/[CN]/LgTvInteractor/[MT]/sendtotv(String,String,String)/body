@@ -5,7 +5,9 @@
   Integer responsecode=-1;
   conf_tv_url="http://" + lgip + ":"+ Integer.toString(lgport);
   logger.debug("sendtotv: url=" + conf_tv_url + " typ="+ typ+ " command="+ command+ " s="+ s);
-  if (connectionstatus != lgtvconnectionstatus.CS_PAIRED)   logger.error("sendtotv but connection status is " + connectionstatus.name());
+  if (connectionstatus != lgtvconnectionstatus.CS_PAIRED) {
+    logger.error("sendtotv but connection status is " + connectionstatus.name());
+  }
   BufferedReader rd=null;
   StringBuilder sb=null;
   String line=null;
@@ -58,8 +60,12 @@ catch (  IOException e) {
     setconnectionstatus(lgtvconnectionstatus.CS_NOTCONNECTED);
   }
   returnmessage+=Integer.toString(responsecode);
-  if (connectionstatus != lgtvconnectionstatus.CS_NOTCONNECTED)   seensuccessfulinteraction();
-  if (connection != null)   connection.disconnect();
+  if (connectionstatus != lgtvconnectionstatus.CS_NOTCONNECTED) {
+    seensuccessfulinteraction();
+  }
+  if (connection != null) {
+    connection.disconnect();
+  }
   rd=null;
   sb=null;
   wr=null;
