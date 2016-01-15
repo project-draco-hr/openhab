@@ -20,9 +20,15 @@
     jd+=.0161 * SN(2 * m1) - .0097 * SN(2 * f1) + .0073 * e * SN(m1 - m) - .005 * e * SN(m1 + m) - .0023 * SN(m1 - 2 * f1) + .0021 * e * SN(2 * m);
     jd+=.0012 * SN(m1 + 2 * f1) + .0006 * e * SN(2 * m1 + m) - .0004 * SN(3 * m1) - .0003 * e * SN(m + 2 * f1) + .0003 * SN(a1) - .0002 * e * SN(m - 2 * f1) - .0002 * e * SN(2 * m1 - m) - .0002 * SN(o);
     if (typ == ECLIPSE_TYPE_MOON) {
-      if ((1.0248 - u - Math.abs(g)) / .545 <= 0)       jd=0;
-      if (mode == ECLIPSE_MODE_PARTIAL && (1.0128 - u - Math.abs(g)) / .545 > 0 && (.4678 - u) * (.4678 - u) - g * g > 0)       jd=0;
-      if (mode == ECLIPSE_MODE_TOTAL && ((1.0128 - u - Math.abs(g)) / .545 <= 0 != (.4678 - u) * (.4678 - u) - g * g <= 0))       jd=0;
+      if ((1.0248 - u - Math.abs(g)) / .545 <= 0) {
+        jd=0;
+      }
+      if (mode == ECLIPSE_MODE_PARTIAL && (1.0128 - u - Math.abs(g)) / .545 > 0 && (.4678 - u) * (.4678 - u) - g * g > 0) {
+        jd=0;
+      }
+      if (mode == ECLIPSE_MODE_TOTAL && ((1.0128 - u - Math.abs(g)) / .545 <= 0 != (.4678 - u) * (.4678 - u) - g * g <= 0)) {
+        jd=0;
+      }
     }
  else {
       if (Math.abs(g) > 1.5433 + u) {

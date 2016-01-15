@@ -2,7 +2,9 @@
   ObjectMapper mapper=new ObjectMapper();
   Map<String,Object> treeData=mapper.readValue(root,Map.class);
   Object data=treeData.get("SecurityToken");
-  if (data == null)   throw new InvalidDataException("Could not find SecurityToken in JSON data");
+  if (data == null) {
+    throw new InvalidDataException("Could not find SecurityToken in JSON data");
+  }
   securityToken=data.toString();
   logger.trace("myq securityToken: {}",securityToken);
 }

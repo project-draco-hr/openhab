@@ -9,17 +9,25 @@
   XPath xpath=XPathFactory.newInstance().newXPath();
   InputSource inputSource=new InputSource(is);
   xpath.setNamespaceContext(new NamespaceContext(){
-    public String getNamespaceURI(    String prefix){
-      if (prefix == null)       throw new NullPointerException("Null prefix");
- else       if ("SOAP-ENV".equals(prefix))       return "http://schemas.xmlsoap.org/soap/envelope/";
- else       if ("ns1".equals(prefix))       return "utcs";
- else       if ("ns2".equals(prefix))       return "utcs.values";
+    @Override public String getNamespaceURI(    String prefix){
+      if (prefix == null) {
+        throw new NullPointerException("Null prefix");
+      }
+ else       if ("SOAP-ENV".equals(prefix)) {
+        return "http://schemas.xmlsoap.org/soap/envelope/";
+      }
+ else       if ("ns1".equals(prefix)) {
+        return "utcs";
+      }
+ else       if ("ns2".equals(prefix)) {
+        return "utcs.values";
+      }
       return null;
     }
-    public String getPrefix(    String uri){
+    @Override public String getPrefix(    String uri){
       return null;
     }
-    @SuppressWarnings("rawtypes") public Iterator getPrefixes(    String uri){
+    @Override @SuppressWarnings("rawtypes") public Iterator getPrefixes(    String uri){
       throw new UnsupportedOperationException();
     }
   }

@@ -1,7 +1,7 @@
 {
   XPath xpath=XPathFactory.newInstance().newXPath();
   xpath.setNamespaceContext(new NamespaceContext(){
-    public String getNamespaceURI(    String prefix){
+    @Override public String getNamespaceURI(    String prefix){
       if (prefix == null) {
         throw new NullPointerException("Null prefix");
       }
@@ -13,10 +13,10 @@
       }
       return "utcs.values";
     }
-    public String getPrefix(    String uri){
+    @Override public String getPrefix(    String uri){
       return null;
     }
-    @SuppressWarnings("rawtypes") public Iterator getPrefixes(    String uri){
+    @Override @SuppressWarnings("rawtypes") public Iterator getPrefixes(    String uri){
       throw new UnsupportedOperationException();
     }
   }

@@ -1,0 +1,17 @@
+{
+  if (percent <= 0 || percent > 100) {
+    throw new IllegalArgumentException("Percent must be in the range (0,100]!");
+  }
+  Float volume=getMasterVolume();
+  if (volume == 0) {
+    volume=0.001f;
+  }
+  float newVolume=volume * (1f + percent / 100f);
+  if (isMacOSX() && newVolume - volume < .01) {
+    newVolume+=.01;
+  }
+  if (newVolume > 1) {
+    newVolume=1;
+  }
+  setMasterVolume(newVolume);
+}

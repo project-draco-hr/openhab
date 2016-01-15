@@ -1,0 +1,32 @@
+{
+  logger.trace("received authentication request '{}'",authHeader);
+  String[] authHeaders=authHeader.trim().split(" ");
+  if (authHeaders.length == 2) {
+    String authType=StringUtils.trim(authHeaders[0]);
+    String authInfo=StringUtils.trim(authHeaders[1]);
+    if (HttpServletRequest.BASIC_AUTH.equalsIgnoreCase(authType)) {
+      String authInfoString=new String(Base64.decodeBase64(authInfo));
+      String[] authInfos=authInfoString.split(":");
+      if (authInfos.length < 2) {
+        logger.warn("authInfos '{}' must contain two elements separated by a colon",authInfoString);
+        return false;
+      }
+      String username=authInfos[0];
+      String password=authInfos[1];
+      Subject subject=authenticate(realm,username,password);
+      if (subject != null) {
+        request.setAttribute(HttpContext.AUTHENTICATION_TYPE,HttpServletRequest.BASIC_AUTH);
+        request.setAttribute(HttpContext.REMOTE_USER,username);
+        logger.trace("authentication of user '{}' succeeded!",username);
+        return true;
+      }
+    }
+ else {
+      logger.warn("we don't support '{}' authentication -> processing aborted",authType);
+    }
+  }
+ else {
+    logger.warn("authentication header '{}' must contain of two parts separated by a blank",authHeader);
+  }
+  return false;
+}

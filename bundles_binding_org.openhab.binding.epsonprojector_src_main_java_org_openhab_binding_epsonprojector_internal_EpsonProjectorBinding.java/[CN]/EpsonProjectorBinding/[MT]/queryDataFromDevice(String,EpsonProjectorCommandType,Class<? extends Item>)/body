@@ -10,7 +10,9 @@
     return null;
   }
   try {
-    if (remoteController.isConnected() == false)     remoteController.connect();
+    if (remoteController.isConnected() == false) {
+      remoteController.connect();
+    }
 switch (commmandType) {
 case AKEYSTONE:
       int autoKeystone=remoteController.getAutoKeystone();
@@ -97,8 +99,12 @@ int offsetRed=remoteController.getOffsetRed();
 return new DecimalType(offsetRed);
 case POWER:
 PowerStatus powerStatus=remoteController.getPowerStatus();
-if (powerStatus == PowerStatus.ON) return OnOffType.ON;
- else return OnOffType.OFF;
+if (powerStatus == PowerStatus.ON) {
+return OnOffType.ON;
+}
+ else {
+return OnOffType.OFF;
+}
 case POWER_STATE:
 PowerStatus powerStatus1=remoteController.getPowerStatus();
 return new StringType(powerStatus1.toString());

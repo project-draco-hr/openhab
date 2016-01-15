@@ -5,7 +5,7 @@
     DiscoveryAgent agent=localDevice.getDiscoveryAgent();
     final Object inquiryCompletedEvent=new Object();
     DiscoveryListener listener=new DiscoveryListener(){
-      public void deviceDiscovered(      RemoteDevice btDevice,      DeviceClass cod){
+      @Override public void deviceDiscovered(      RemoteDevice btDevice,      DeviceClass cod){
         if (!newDevices.contains(btDevice)) {
           newDevices.add(btDevice);
           if (!oldDevices.contains(btDevice)) {
@@ -17,9 +17,11 @@
           }
         }
       }
-      public void inquiryCompleted(      int discType){
+      @Override public void inquiryCompleted(      int discType){
         for (        RemoteDevice btDevice : oldDevices) {
-          if (newDevices.contains(btDevice))           continue;
+          if (newDevices.contains(btDevice)) {
+            continue;
+          }
           BluetoothDevice device=toBluetoothDevice(btDevice);
           logger.debug("Device out of range: {}",device.toString());
           for (          BluetoothEventHandler handler : eventHandler) {
@@ -28,7 +30,7 @@
         }
         oldDevices=new HashSet<RemoteDevice>(newDevices);
         Iterable<BluetoothDevice> devices=Iterables.transform(newDevices,new Function<RemoteDevice,BluetoothDevice>(){
-          public BluetoothDevice apply(          RemoteDevice from){
+          @Override public BluetoothDevice apply(          RemoteDevice from){
             return toBluetoothDevice(from);
           }
         }
@@ -41,9 +43,9 @@ synchronized (inquiryCompletedEvent) {
           inquiryCompletedEvent.notifyAll();
         }
       }
-      public void serviceSearchCompleted(      int transID,      int respCode){
+      @Override public void serviceSearchCompleted(      int transID,      int respCode){
       }
-      public void servicesDiscovered(      int transID,      ServiceRecord[] servRecord){
+      @Override public void servicesDiscovered(      int transID,      ServiceRecord[] servRecord){
       }
     }
 ;

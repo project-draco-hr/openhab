@@ -37,10 +37,14 @@
     con=new TCPMasterConnection(addr);
     con.setPort(port);
     con.connect();
-    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    if (Modbus.debug) {
+      System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    }
     req=new ReadInputDiscretesRequest(ref,count);
     req.setUnitID(0);
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusTCPTransaction(con);
     trans.setRequest(req);
     trans.setReconnecting(false);
@@ -48,7 +52,9 @@
     do {
       trans.execute();
       res=(ReadInputDiscretesResponse)trans.getResponse();
-      if (Modbus.debug)       System.out.println("Response: " + res.getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + res.getHexMessage());
+      }
       System.out.println("Digital Inputs Status=" + res.getDiscretes().toString());
       k++;
     }

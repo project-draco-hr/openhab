@@ -6,14 +6,20 @@
       if (serviceReference1 != null) {
         bindingprovider=(LgtvBindingProvider)bundleContext.getService(serviceReference1);
       }
- else       logger.error("lgtvbindungprovider=null");
+ else {
+        logger.error("lgtvbindungprovider=null");
+      }
       ServiceReference<?> serviceReference2=bundleContext.getServiceReference(ItemRegistry.class.getName());
       if (serviceReference2 != null) {
         itemregistry=(ItemRegistry)bundleContext.getService(serviceReference2);
       }
- else       logger.error("itemregistry=null");
+ else {
+        logger.error("itemregistry=null");
+      }
     }
- else     logger.error("bundleContext=null");
+ else {
+      logger.error("bundleContext=null");
+    }
     logger.info("lgtv servlet activate called");
     Hashtable<String,String> props=new Hashtable<String,String>();
     httpService.registerServlet(WEBAPP_ALIAS + SERVLET_NAME,this,props,createHttpContext());

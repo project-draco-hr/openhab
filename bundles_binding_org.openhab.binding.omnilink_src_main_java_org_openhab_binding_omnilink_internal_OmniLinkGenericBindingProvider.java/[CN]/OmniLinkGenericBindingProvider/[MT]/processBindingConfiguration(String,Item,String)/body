@@ -4,7 +4,9 @@
     throw new BindingConfigParseException("Omnilink configuration must contain of two parts separated by a ':'");
   }
   OmniLinkItemType type=OmniLinkItemType.getOmniLinkItemType(configParts[0]);
-  if (type == null)   throw new BindingConfigParseException("Unknown item type " + configParts[0]);
+  if (type == null) {
+    throw new BindingConfigParseException("Unknown item type " + configParts[0]);
+  }
   int number=Integer.parseInt(configParts[1]);
   OmniLinkBindingConfig config=new OmniLinkBindingConfig(type,number);
   logger.debug(" Adding item {} {}",new Object[]{config.getObjectType(),config.getNumber()});

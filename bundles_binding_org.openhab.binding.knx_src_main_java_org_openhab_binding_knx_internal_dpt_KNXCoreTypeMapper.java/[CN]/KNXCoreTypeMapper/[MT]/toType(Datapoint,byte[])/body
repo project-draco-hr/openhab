@@ -113,11 +113,15 @@ Class<? extends Type> typeClass=toTypeClass(id);
 if (typeClass == null) {
 return null;
 }
-if (typeClass.equals(PercentType.class)) return PercentType.valueOf(value.split(" ")[0]);
+if (typeClass.equals(PercentType.class)) {
+return PercentType.valueOf(value.split(" ")[0]);
+}
 if (typeClass.equals(DecimalType.class)) {
 return DecimalType.valueOf(value.split(" ")[0]);
 }
-if (typeClass.equals(StringType.class)) return StringType.valueOf(value);
+if (typeClass.equals(StringType.class)) {
+return StringType.valueOf(value);
+}
 if (typeClass.equals(DateTimeType.class)) {
 String date=formatDateTime(value,datapoint.getDPT());
 if ((date == null) || (date.isEmpty())) {

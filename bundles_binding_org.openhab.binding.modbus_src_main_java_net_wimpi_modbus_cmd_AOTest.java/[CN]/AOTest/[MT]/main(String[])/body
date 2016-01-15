@@ -36,16 +36,22 @@
     con=new TCPMasterConnection(addr);
     con.setPort(port);
     con.connect();
-    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    if (Modbus.debug) {
+      System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    }
     req=new WriteSingleRegisterRequest(ref,new SimpleRegister(count));
     req.setUnitID(0);
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusTCPTransaction(con);
     trans.setRequest(req);
     int k=0;
     do {
       trans.execute();
-      if (Modbus.debug)       System.out.println("Response: " + trans.getResponse().getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + trans.getResponse().getHexMessage());
+      }
       k++;
     }
  while (k < repeat);

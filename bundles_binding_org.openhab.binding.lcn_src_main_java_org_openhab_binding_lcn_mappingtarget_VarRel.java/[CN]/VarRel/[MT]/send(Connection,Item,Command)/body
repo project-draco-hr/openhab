@@ -10,7 +10,9 @@
       }
     }
     conn.queue(this.addr,ack,PckGenerator.varRel(this.var,this.targetLcnType,this.value.toNative(),is2013));
-    if (info != null && LcnDefs.Var.shouldPollStatusAfterCommand(this.var,is2013) && info.requestStatusVars.containsKey(this.var))     info.requestStatusVars.get(this.var).nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    if (info != null && LcnDefs.Var.shouldPollStatusAfterCommand(this.var,is2013) && info.requestStatusVars.containsKey(this.var)) {
+      info.requestStatusVars.get(this.var).nextRequestIn(ModInfo.STATUS_REQUEST_DELAY_AFTER_COMMAND_MSEC,System.nanoTime());
+    }
   }
  catch (  IllegalArgumentException ex) {
     logger.warn(String.format("Variable of type %s does not support relative commands.",this.var));

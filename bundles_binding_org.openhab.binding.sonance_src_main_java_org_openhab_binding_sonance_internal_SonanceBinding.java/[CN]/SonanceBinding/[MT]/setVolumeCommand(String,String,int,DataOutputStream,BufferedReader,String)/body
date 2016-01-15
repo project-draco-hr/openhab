@@ -1,7 +1,9 @@
 {
   char[] cbuf=new char[50];
   String lockKey=endpoint + ":" + group;
-  if (!volumeLocks.containsKey(lockKey))   volumeLocks.put(lockKey,new ReentrantLock());
+  if (!volumeLocks.containsKey(lockKey)) {
+    volumeLocks.put(lockKey,new ReentrantLock());
+  }
   try {
     volumeLocks.get(lockKey).tryLock(2,TimeUnit.SECONDS);
   }

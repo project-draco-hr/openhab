@@ -12,7 +12,9 @@
       newElement.community=new OctetString(inMatcher.group(2).toString());
       newElement.oid=new OID(inMatcher.group(3).toString());
       newElement.refreshInterval=Integer.valueOf(inMatcher.group(4)).intValue();
-      if (inMatcher.groupCount() == 5)       newElement.setTransformationRule(inMatcher.group(5));
+      if (inMatcher.groupCount() == 5) {
+        newElement.setTransformationRule(inMatcher.group(5));
+      }
       config.put(IN_BINDING_KEY,newElement);
     }
  else {
@@ -36,7 +38,9 @@
         newElement.community=new OctetString(inMatcher.group(3).toString());
         newElement.oid=new OID(inMatcher.group(4).toString());
         newElement.refreshInterval=Integer.valueOf(inMatcher.group(5)).intValue();
-        if (inMatcher.groupCount() == 6)         newElement.setTransformationRule(inMatcher.group(6));
+        if (inMatcher.groupCount() == 6) {
+          newElement.setTransformationRule(inMatcher.group(6));
+        }
         config.put(IN_BINDING_KEY,newElement);
       }
     }

@@ -1,0 +1,21 @@
+{
+  PersistenceModel persistModel=(PersistenceModel)modelRepository.getModel(modelName + ".persist");
+  if (persistModel != null) {
+    for (    Strategy strategy : persistModel.getStrategies()) {
+      if (strategy instanceof CronStrategy) {
+        CronStrategy cronStrategy=(CronStrategy)strategy;
+        String cronExpression=cronStrategy.getCronExpression();
+        JobKey jobKey=new JobKey(strategy.getName(),modelName);
+        try {
+          JobDetail job=newJob(PersistItemsJob.class).usingJobData(PersistItemsJob.JOB_DATA_PERSISTMODEL,cronStrategy.eResource().getURI().trimFileExtension().path()).usingJobData(PersistItemsJob.JOB_DATA_STRATEGYNAME,cronStrategy.getName()).withIdentity(jobKey).build();
+          Trigger quartzTrigger=newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
+          scheduler.scheduleJob(job,quartzTrigger);
+          logger.debug("Scheduled strategy {} with cron expression {}",new String[]{jobKey.toString(),cronExpression});
+        }
+ catch (        SchedulerException e) {
+          logger.error("Failed to schedule job for strategy {} with cron expression {}",new String[]{jobKey.toString(),cronExpression},e);
+        }
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@
         qi.msg=msg;
       }
       TimerTask task=new TimerTask(){
-        public void run(){
+        @Override public void run(){
           SenderQueueItem topItem=sendQueue.remove();
           logger.debug("Checking credit");
           if (enoughCredit(topItem.msg.requiredCredit(),topItem.msg.isFastSend())) {

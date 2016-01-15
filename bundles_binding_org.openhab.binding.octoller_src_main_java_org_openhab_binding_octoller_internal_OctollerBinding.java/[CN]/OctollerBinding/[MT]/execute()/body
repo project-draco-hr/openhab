@@ -2,8 +2,10 @@
   logger.debug("execute() method is called!");
   for (  OctollerBindingProvider provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      OctollerBindingConfig config=(OctollerBindingConfig)provider.getConfig(itemName);
-      if (config == null)       continue;
+      OctollerBindingConfig config=provider.getConfig(itemName);
+      if (config == null) {
+        continue;
+      }
       try {
         Connection con=new Connection(config.GatewayHost);
         String result=con.doCommand(con.buildCommandString(config,"",""));

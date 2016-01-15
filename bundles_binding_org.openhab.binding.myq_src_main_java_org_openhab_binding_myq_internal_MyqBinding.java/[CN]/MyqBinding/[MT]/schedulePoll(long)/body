@@ -1,5 +1,7 @@
 {
-  if (pollFuture != null && !pollFuture.isCancelled())   pollFuture.cancel(false);
+  if (pollFuture != null && !pollFuture.isCancelled()) {
+    pollFuture.cancel(false);
+  }
   logger.trace("rapidRefreshFuture scheduleing for {} millis",millis);
   pollFuture=pollService.scheduleAtFixedRate(new Runnable(){
     @Override public void run(){

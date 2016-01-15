@@ -1,0 +1,28 @@
+{
+  if (StringUtils.isNotBlank(nonProxyHosts)) {
+    String givenHost=urlString;
+    try {
+      URL url=new URL(urlString);
+      givenHost=url.getHost();
+    }
+ catch (    MalformedURLException e) {
+      logger.error("the given url {} is malformed",urlString);
+    }
+    String[] hosts=nonProxyHosts.split("\\|");
+    for (    String host : hosts) {
+      if (host.contains("*")) {
+        String hostRegexp=host.replaceAll("\\.","\\\\.");
+        hostRegexp=hostRegexp.replaceAll("\\*",".*");
+        if (givenHost.matches(hostRegexp)) {
+          return false;
+        }
+      }
+ else {
+        if (givenHost.equals(host)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}

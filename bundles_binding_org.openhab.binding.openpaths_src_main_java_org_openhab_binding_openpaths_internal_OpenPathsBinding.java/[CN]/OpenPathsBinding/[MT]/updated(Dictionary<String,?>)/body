@@ -4,7 +4,7 @@
   if (config != null) {
     Enumeration<String> keys=config.keys();
     while (keys.hasMoreElements()) {
-      String key=(String)keys.nextElement();
+      String key=keys.nextElement();
       String value=(String)config.get(key);
       if ("service.pid".equals(key)) {
         continue;
@@ -103,7 +103,9 @@
         }
       }
     }
-    if (!locations.containsKey("home"))     throw new ConfigurationException("home.lat","No location specified for 'home'");
+    if (!locations.containsKey("home")) {
+      throw new ConfigurationException("home.lat","No location specified for 'home'");
+    }
     setProperlyConfigured(true);
   }
 }

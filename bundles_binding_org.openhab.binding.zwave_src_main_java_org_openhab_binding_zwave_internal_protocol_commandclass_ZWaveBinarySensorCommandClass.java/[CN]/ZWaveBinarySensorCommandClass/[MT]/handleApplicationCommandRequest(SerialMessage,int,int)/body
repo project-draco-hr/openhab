@@ -14,7 +14,9 @@ if (this.getVersion() > 1 && serialMessage.getMessagePayload().length > offset +
 logger.debug("Processing Sensor Type {}",serialMessage.getMessagePayloadByte(offset + 2));
 sensorType=SensorType.getSensorType(serialMessage.getMessagePayloadByte(offset + 2));
 logger.debug("Sensor Type is {}",sensorType);
-if (sensorType == null) sensorType=SensorType.UNKNOWN;
+if (sensorType == null) {
+sensorType=SensorType.UNKNOWN;
+}
 }
 logger.debug("NODE {}: Sensor Binary report, type={}, value={}",this.getNode().getNodeId(),sensorType.getLabel(),value);
 ZWaveBinarySensorValueEvent zEvent=new ZWaveBinarySensorValueEvent(this.getNode().getNodeId(),endpoint,sensorType,value);

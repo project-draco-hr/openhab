@@ -1,9 +1,11 @@
 {
-  if (StringUtils.isEmpty(imagePath))   return;
+  if (StringUtils.isEmpty(imagePath)) {
+    return;
+  }
   final FilesPrepareDownload fanart=new FilesPrepareDownload(client,httpUri);
   fanart.setImagePath(imagePath);
   fanart.execute(new Runnable(){
-    public void run(){
+    @Override public void run(){
       String url=String.format("http://%s:%d/%s",xbmc.getHostname(),xbmc.getPort(),fanart.getPath());
       updateProperty(property,url);
     }

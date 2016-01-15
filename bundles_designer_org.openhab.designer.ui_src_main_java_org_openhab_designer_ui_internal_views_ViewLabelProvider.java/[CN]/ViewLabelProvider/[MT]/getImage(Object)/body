@@ -1,0 +1,33 @@
+{
+  if (obj instanceof IFolder) {
+    IFolder folder=(IFolder)obj;
+    String name=folder.getName().toLowerCase();
+    Image image=imageCache.get(name);
+    if (image == null) {
+      ImageDescriptor imageDesc=UIActivator.getImageDescriptor("icons/" + name + ".png");
+      if (imageDesc != null) {
+        image=imageDesc.createImage();
+        imageCache.put(name,image);
+        return image;
+      }
+    }
+ else {
+      return image;
+    }
+    return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+  }
+ else   if (obj instanceof IFile) {
+    IFile file=(IFile)obj;
+    String fileExt=file.getFileExtension();
+    Image image=imageCache.get(fileExt);
+    if (image == null) {
+      ImageDescriptor imageDesc=PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor("." + fileExt);
+      image=imageDesc.createImage();
+      imageCache.put(fileExt,image);
+    }
+    return image;
+  }
+ else {
+    return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
+  }
+}

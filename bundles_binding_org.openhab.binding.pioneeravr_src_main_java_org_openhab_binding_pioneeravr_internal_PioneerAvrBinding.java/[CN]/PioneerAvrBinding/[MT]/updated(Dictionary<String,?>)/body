@@ -6,7 +6,7 @@
       deviceConfigCache=new HashMap<String,DeviceConfig>();
     }
     while (keys.hasMoreElements()) {
-      String key=(String)keys.nextElement();
+      String key=keys.nextElement();
       if ("service.pid".equals(key)) {
         continue;
       }
@@ -32,8 +32,12 @@
         deviceConfig.port=Integer.valueOf(value);
       }
  else       if ("checkconn".equals(configKey)) {
-        if (value.equals("0"))         deviceConfig.connectionCheckActive=false;
- else         deviceConfig.connectionCheckActive=true;
+        if (value.equals("0")) {
+          deviceConfig.connectionCheckActive=false;
+        }
+ else {
+          deviceConfig.connectionCheckActive=true;
+        }
       }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");

@@ -6,18 +6,26 @@
   if (m_mdbb != null) {
     m_mdbb=null;
   }
-  if (m_readThread != null)   m_readThread.interrupt();
-  if (m_writeThread != null)   m_writeThread.interrupt();
+  if (m_readThread != null) {
+    m_readThread.interrupt();
+  }
+  if (m_writeThread != null) {
+    m_writeThread.interrupt();
+  }
   logger.debug("waiting for read thread to exit for port {}",m_logName);
   try {
-    if (m_readThread != null)     m_readThread.join();
+    if (m_readThread != null) {
+      m_readThread.join();
+    }
   }
  catch (  InterruptedException e) {
     logger.debug("got interrupted waiting for read thread to exit.");
   }
   logger.debug("waiting for write thread to exit for port {}",m_logName);
   try {
-    if (m_writeThread != null)     m_writeThread.join();
+    if (m_writeThread != null) {
+      m_writeThread.join();
+    }
   }
  catch (  InterruptedException e) {
     logger.debug("got interrupted waiting for write thread to exit.");

@@ -1,0 +1,14 @@
+{
+  IPreferencesService service=Platform.getPreferencesService();
+  Preferences node=service.getRootNode().node(ConfigurationScope.SCOPE).node(CoreActivator.PLUGIN_ID);
+  try {
+    if (node != null) {
+      node.put(DesignerCoreConstants.CONFIG_FOLDER_PREFERENCE,folderPath);
+      node.flush();
+      return;
+    }
+  }
+ catch (  BackingStoreException e) {
+  }
+  logger.warn("Could not save folder '{}' to preferences.",folderPath);
+}

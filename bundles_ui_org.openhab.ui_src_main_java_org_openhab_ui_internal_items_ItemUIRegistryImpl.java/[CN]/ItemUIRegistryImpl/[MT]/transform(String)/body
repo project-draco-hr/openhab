@@ -1,0 +1,25 @@
+{
+  if (label.contains("[") && label.endsWith("]")) {
+    Matcher matcher=EXTRACT_TRANSFORMFUNCTION_PATTERN.matcher(label);
+    if (matcher.find()) {
+      String type=matcher.group(1);
+      String pattern=matcher.group(2);
+      String value=matcher.group(3);
+      TransformationService transformation=TransformationHelper.getTransformationService(UIActivator.getContext(),type);
+      if (transformation != null) {
+        try {
+          label=label.substring(0,label.indexOf("[") + 1) + transformation.transform(pattern,value) + "]";
+        }
+ catch (        TransformationException e) {
+          logger.error("transformation throws exception [transformation=" + transformation + ", value="+ value+ "]",e);
+          label=label.substring(0,label.indexOf("[") + 1) + value + "]";
+        }
+      }
+ else {
+        logger.warn("couldn't transform value in label because transformationService of type '{}' is unavailable",type);
+        label=label.substring(0,label.indexOf("[") + 1) + value + "]";
+      }
+    }
+  }
+  return label;
+}

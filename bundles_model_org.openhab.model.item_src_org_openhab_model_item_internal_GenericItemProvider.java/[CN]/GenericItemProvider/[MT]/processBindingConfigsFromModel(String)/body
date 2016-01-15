@@ -1,0 +1,18 @@
+{
+  logger.debug("Processing binding configs for items from model '{}'",modelName);
+  if (modelRepository != null) {
+    ItemModel model=(ItemModel)modelRepository.getModel(modelName);
+    if (model == null) {
+      return;
+    }
+    for (    BindingConfigReader reader : bindingConfigReaders.values()) {
+      reader.removeConfigurations(modelName);
+    }
+    for (    ModelItem modelItem : model.getItems()) {
+      Item item=createItemFromModelItem(modelItem);
+      if (item != null) {
+        internalDispatchBindings(modelName,item,modelItem.getBindings());
+      }
+    }
+  }
+}

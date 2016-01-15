@@ -21,10 +21,18 @@
         Element logDevEl=(Element)nlLogicalDevices.item(i);
         LogicalDevice logDev=new LogicalDevice(getTextValueFromElements(logDevEl,"Id"),locations.get(getTextValueFromAttribute(logDevEl,"LCID")),getTextValueFromAttribute(logDevEl,"xsi:type"),getTextValueFromAttribute(logDevEl,"Name"));
         if (LogicalDevice.Type_GenericActuator.equals(logDev.getType())) {
-          if ("Value".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_Value);
- else           if ("EmailNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_Email);
- else           if ("SMSNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_SMS);
- else           if ("NextTimeEvent".equals(getTextValueFromElements(logDevEl,"SDPpN")))           logDev.setType(LogicalDevice.Type_GenericActuator_SunriseSunset);
+          if ("Value".equals(getTextValueFromElements(logDevEl,"SDPpN"))) {
+            logDev.setType(LogicalDevice.Type_GenericActuator_Value);
+          }
+ else           if ("EmailNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN"))) {
+            logDev.setType(LogicalDevice.Type_GenericActuator_Email);
+          }
+ else           if ("SMSNumberAvailable".equals(getTextValueFromElements(logDevEl,"SDPpN"))) {
+            logDev.setType(LogicalDevice.Type_GenericActuator_SMS);
+          }
+ else           if ("NextTimeEvent".equals(getTextValueFromElements(logDevEl,"SDPpN"))) {
+            logDev.setType(LogicalDevice.Type_GenericActuator_SunriseSunset);
+          }
         }
         logicalDevices.put(logDev.getId(),logDev);
       }

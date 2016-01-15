@@ -20,7 +20,9 @@
           continue;
         }
         String transformedResponse=response;
-        if (transformation.length() > 0)         transformedResponse=transformResponse(response,transformation);
+        if (transformation.length() > 0) {
+          transformedResponse=transformResponse(response,transformation);
+        }
         Class<? extends Item> itemType=provider.getItemType(itemName);
         State state=createState(itemType,transformedResponse);
         if (state != null) {

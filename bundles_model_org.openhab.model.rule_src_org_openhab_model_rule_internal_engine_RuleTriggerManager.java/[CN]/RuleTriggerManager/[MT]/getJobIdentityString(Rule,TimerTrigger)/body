@@ -1,0 +1,12 @@
+{
+  String jobIdentity=EcoreUtil.getURI(rule).trimFragment().appendFragment(rule.getName()).toString();
+  if (trigger != null) {
+    if (trigger.getTime() != null) {
+      jobIdentity+="#" + trigger.getTime();
+    }
+ else     if (trigger.getCron() != null) {
+      jobIdentity+="#" + trigger.getCron();
+    }
+  }
+  return jobIdentity;
+}

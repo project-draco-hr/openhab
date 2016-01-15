@@ -5,7 +5,7 @@
   try {
     portIdentifier=CommPortIdentifier.getPortIdentifier(port);
     try {
-      serialPort=(SerialPort)portIdentifier.open("openhab",3000);
+      serialPort=portIdentifier.open("openhab",3000);
       serialPort.setSerialPortParams(9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
       inputStream=new DataInputStream(new BufferedInputStream(serialPort.getInputStream()));
       outputStream=serialPort.getOutputStream();

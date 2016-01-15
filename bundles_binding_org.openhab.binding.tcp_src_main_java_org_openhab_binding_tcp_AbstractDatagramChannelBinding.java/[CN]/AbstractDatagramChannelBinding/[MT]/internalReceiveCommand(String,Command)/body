@@ -8,11 +8,11 @@
     List<Command> commands=provider.getQualifiedCommands(itemName,command);
     for (    Command someCommand : commands) {
       Channel theChannel=null;
-      if (useAddressMask && (((P)provider).getHost(itemName,someCommand).equals("*") || ((P)provider).getPortAsString(itemName,someCommand).equals("*"))) {
-        theChannel=channels.get(itemName,someCommand,((P)provider).getDirection(itemName,someCommand),((P)provider).getHost(itemName,someCommand),((P)provider).getPortAsString(itemName,someCommand));
+      if (useAddressMask && (provider.getHost(itemName,someCommand).equals("*") || provider.getPortAsString(itemName,someCommand).equals("*"))) {
+        theChannel=channels.get(itemName,someCommand,provider.getDirection(itemName,someCommand),provider.getHost(itemName,someCommand),provider.getPortAsString(itemName,someCommand));
       }
  else {
-        theChannel=channels.get(itemName,someCommand,((P)provider).getDirection(itemName,someCommand),new InetSocketAddress(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand)));
+        theChannel=channels.get(itemName,someCommand,provider.getDirection(itemName,someCommand),new InetSocketAddress(provider.getHost(itemName,someCommand),provider.getPort(itemName,someCommand)));
       }
       DatagramChannel theDatagramChannel=null;
       if (theChannel != null) {

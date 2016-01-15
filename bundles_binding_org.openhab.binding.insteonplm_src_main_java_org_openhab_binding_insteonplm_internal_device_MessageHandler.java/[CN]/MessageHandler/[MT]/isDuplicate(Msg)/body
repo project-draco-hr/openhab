@@ -4,13 +4,13 @@
     MsgType t=MsgType.s_fromValue(msg.getByte("messageFlags"));
     int hops=msg.getHopsLeft();
     if (t == MsgType.ALL_LINK_BROADCAST) {
-      int group=(int)(msg.getAddress("toAddress").getLowByte() & 0xff);
+      int group=msg.getAddress("toAddress").getLowByte() & 0xff;
       byte cmd1=msg.getByte("command1");
       GroupMessage gm=(cmd1 == 0x06) ? GroupMessage.SUCCESS : GroupMessage.BCAST;
       isDuplicate=!updateGroupState(group,hops,gm);
     }
  else     if (t == MsgType.ALL_LINK_CLEANUP) {
-      int group=(int)(msg.getByte("command2") & 0xff);
+      int group=msg.getByte("command2") & 0xff;
       isDuplicate=!updateGroupState(group,hops,GroupMessage.CLEAN);
     }
   }

@@ -1,0 +1,25 @@
+{
+  String snippet=getSnippet("selection");
+  snippet=StringUtils.replace(snippet,"%icon%",escapeURLPath(itemUIRegistry.getIcon(w)));
+  snippet=StringUtils.replace(snippet,"%label_header%",getLabel(w));
+  String state=itemUIRegistry.getState(w).toString();
+  Selection selection=(Selection)w;
+  StringBuilder rowSB=new StringBuilder();
+  for (  Mapping mapping : selection.getMappings()) {
+    String rowSnippet=getSnippet("selection_row");
+    rowSnippet=StringUtils.replace(rowSnippet,"%item%",w.getItem() != null ? w.getItem() : "");
+    rowSnippet=StringUtils.replace(rowSnippet,"%cmd%",mapping.getCmd() != null ? mapping.getCmd() : "");
+    rowSnippet=StringUtils.replace(rowSnippet,"%label%",mapping.getLabel() != null ? mapping.getLabel() : "");
+    if (state.equals(mapping.getCmd())) {
+      rowSnippet=StringUtils.replace(rowSnippet,"%checked%","checked=\"true\"");
+    }
+ else {
+      rowSnippet=StringUtils.replace(rowSnippet,"%checked%","");
+    }
+    rowSB.append(rowSnippet);
+  }
+  snippet=StringUtils.replace(snippet,"%rows%",rowSB.toString());
+  snippet=processColor(w,snippet);
+  sb.append(snippet);
+  return null;
+}

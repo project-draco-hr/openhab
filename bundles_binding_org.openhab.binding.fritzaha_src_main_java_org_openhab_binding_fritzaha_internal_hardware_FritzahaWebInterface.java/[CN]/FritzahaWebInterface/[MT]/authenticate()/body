@@ -13,7 +13,9 @@
   sid=sidmatch.group(1);
   Matcher accmatch=ACCESS_PATTERN.matcher(loginXml);
   if (accmatch.find()) {
-    if (accmatch.group(1) == "2")     logger.info("Resuming FritzBox connection with SID " + sid);
+    if (accmatch.group(1) == "2") {
+      logger.info("Resuming FritzBox connection with SID " + sid);
+    }
     return sid;
   }
   Matcher challengematch=CHALLENGE_PATTERN.matcher(loginXml);
@@ -36,7 +38,9 @@
   sid=sidmatch.group(1);
   accmatch=ACCESS_PATTERN.matcher(loginXml);
   if (accmatch.find()) {
-    if (accmatch.group(1) == "2")     logger.info("Established FritzBox connection with SID " + sid);
+    if (accmatch.group(1) == "2") {
+      logger.info("Established FritzBox connection with SID " + sid);
+    }
     return sid;
   }
   logger.error("User " + username + " has no access to FritzBox home automation functions");

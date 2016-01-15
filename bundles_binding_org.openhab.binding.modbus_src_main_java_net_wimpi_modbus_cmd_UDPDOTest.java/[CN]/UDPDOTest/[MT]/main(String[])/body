@@ -38,13 +38,17 @@
     conn.connect();
     req=new WriteCoilRequest(ref,set);
     req.setUnitID(0);
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusUDPTransaction(conn);
     trans.setRequest(req);
     int k=0;
     do {
       trans.execute();
-      if (Modbus.debug)       System.out.println("Response: " + trans.getResponse().getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + trans.getResponse().getHexMessage());
+      }
       k++;
     }
  while (k < repeat);

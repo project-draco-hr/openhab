@@ -1,0 +1,29 @@
+{
+  if (triggerManager != null) {
+    Iterable<Rule> startupRules=triggerManager.getRules(STARTUP);
+    List<Rule> executedRules=Lists.newArrayList();
+    for (    Rule rule : startupRules) {
+      try {
+        Script script=scriptEngine.newScriptFromXExpression(rule.getScript());
+        logger.debug("Executing startup rule '{}'",rule.getName());
+        RuleEvaluationContext context=new RuleEvaluationContext();
+        context.setGlobalContext(RuleContextHelper.getContext(rule));
+        script.execute(context);
+        executedRules.add(rule);
+      }
+ catch (      ScriptExecutionException e) {
+        String causeMessage=getCauseMessage(e);
+        if (e.getCause() instanceof ItemNotFoundException || causeMessage.contains("cannot be resolved to an item or type")) {
+          logger.debug("Not all required items in place yet for rule {}, trying again later: {}",new Object[]{rule.getName(),causeMessage});
+        }
+ else {
+          logger.error("Error during the execution of startup rule '{}': {}",new Object[]{rule.getName(),causeMessage});
+          executedRules.add(rule);
+        }
+      }
+    }
+    for (    Rule rule : executedRules) {
+      triggerManager.removeRule(STARTUP,rule);
+    }
+  }
+}

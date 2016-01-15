@@ -3,5 +3,7 @@
   if (!(KNXConnection.getIgnoreLocalSourceEvents() && e.getSourceAddr().toString().equalsIgnoreCase(KNXConnection.getLocalSourceAddr()))) {
     readFromKNX(e);
   }
- else   logger.warn("Ignoring local Event, received from my local Source address {} for Group address {}.",e.getSourceAddr().toString(),e.getDestination().toString());
+ else {
+    logger.warn("Ignoring local Event, received from my local Source address {} for Group address {}.",e.getSourceAddr().toString(),e.getDestination().toString());
+  }
 }

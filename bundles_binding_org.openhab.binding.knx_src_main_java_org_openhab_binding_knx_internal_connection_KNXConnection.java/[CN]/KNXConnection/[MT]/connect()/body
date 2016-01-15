@@ -13,7 +13,7 @@
       return false;
     }
     NetworkLinkListener linkListener=new NetworkLinkListener(){
-      public void linkClosed(      CloseEvent e){
+      @Override public void linkClosed(      CloseEvent e){
         if (!(CloseEvent.USER_REQUEST == e.getInitiator()) && !sShutdown) {
           sLogger.warn("KNX link has been lost (reason: {} on object {})",e.getReason(),e.getSource().toString());
           for (          KNXConnectionListener listener : KNXConnection.sConnectionListeners) {
@@ -27,9 +27,9 @@
           }
         }
       }
-      public void indication(      FrameEvent e){
+      @Override public void indication(      FrameEvent e){
       }
-      public void confirmation(      FrameEvent e){
+      @Override public void confirmation(      FrameEvent e){
       }
     }
 ;

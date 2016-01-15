@@ -34,7 +34,9 @@
     con=new TCPMasterConnection(addr);
     con.setPort(port);
     con.connect();
-    if (Modbus.debug)     System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    if (Modbus.debug) {
+      System.out.println("Connected to " + addr.toString() + ":"+ con.getPort());
+    }
     di_req=new ReadInputDiscretesRequest(di_ref,1);
     do_req=new WriteCoilRequest();
     do_req.setReference(do_ref);
@@ -55,7 +57,9 @@
         do_req.setCoil(new_in);
         do_trans.execute();
         last_out=new_in;
-        if (Modbus.debug)         System.out.println("Updated coil with state from DI.");
+        if (Modbus.debug) {
+          System.out.println("Updated coil with state from DI.");
+        }
       }
     }
  while (true);

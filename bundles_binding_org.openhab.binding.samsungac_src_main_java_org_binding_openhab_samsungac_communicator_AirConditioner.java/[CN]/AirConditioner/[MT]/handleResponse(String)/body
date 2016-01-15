@@ -6,7 +6,9 @@
       continue;
     }
     if (ResponseParser.isNotLoggedInResponse(line)) {
-      if (TOKEN_STRING != null)       return;
+      if (TOKEN_STRING != null) {
+        return;
+      }
       writeLine("<Request Type=\"GetToken\" />");
       continue;
     }
@@ -46,7 +48,9 @@
       if (matcher.groupCount() == 2) {
         try {
           CommandEnum cmd=CommandEnum.valueOf(matcher.group(0));
-          if (cmd != null)           statusMap.put(cmd,matcher.group(1));
+          if (cmd != null) {
+            statusMap.put(cmd,matcher.group(1));
+          }
         }
  catch (        IllegalStateException e) {
         }

@@ -6,9 +6,13 @@
     String transmitMethod=getTransmitMethod(bindingConfigLc);
     String dimMethod=getDimMethod(bindingConfigLc);
     if (address != null) {
-      if (transmitMethod == null)       transmitMethod="pl";
-      if (dimMethod == null)       dimMethod="xdim";
-      BindingConfig mochadX10BindingConfig=(BindingConfig)new MochadX10BindingConfig(item.getName(),item.getClass(),transmitMethod,dimMethod,address);
+      if (transmitMethod == null) {
+        transmitMethod="pl";
+      }
+      if (dimMethod == null) {
+        dimMethod="xdim";
+      }
+      BindingConfig mochadX10BindingConfig=new MochadX10BindingConfig(item.getName(),item.getClass(),transmitMethod,dimMethod,address);
       addBindingConfig(item,mochadX10BindingConfig);
     }
  else {

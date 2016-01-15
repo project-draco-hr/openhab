@@ -12,7 +12,7 @@
         if (index >= dataBufferMaxLen) {
           state=States.SEARCHING;
         }
-        if (state == States.SEARCHING && (int)(tmpData[i] & 0xff) == 0x81) {
+        if (state == States.SEARCHING && (tmpData[i] & 0xff) == 0x81) {
           state=States.LENGTH1;
           index=0;
           dataBuffer[index++]=tmpData[i];
@@ -31,14 +31,20 @@
           dataBuffer[index++]=tmpData[i];
           if (index == msgLen) {
             byte[] msg=new byte[msgLen];
-            for (int j=0; j < msgLen; j++)             msg[j]=dataBuffer[j];
+            for (int j=0; j < msgLen; j++) {
+              msg[j]=dataBuffer[j];
+            }
             HeatmiserResponseEvent event=new HeatmiserResponseEvent(this);
-            if (connectionStateCount <= 2)             connectionStateCount=0;
- else             connectionStateCount-=2;
+            if (connectionStateCount <= 2) {
+              connectionStateCount=0;
+            }
+ else {
+              connectionStateCount-=2;
+            }
             try {
               Iterator<HeatmiserEventListener> iterator=_listeners.iterator();
               while (iterator.hasNext()) {
-                ((HeatmiserEventListener)iterator.next()).packetReceived(event,msg);
+                iterator.next().packetReceived(event,msg);
               }
             }
  catch (            Exception e) {

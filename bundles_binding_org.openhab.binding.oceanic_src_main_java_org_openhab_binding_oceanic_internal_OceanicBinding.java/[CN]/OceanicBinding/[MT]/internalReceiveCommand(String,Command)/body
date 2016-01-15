@@ -1,7 +1,7 @@
 {
   OceanicBindingProvider provider=findFirstMatchingBindingProvider(itemName);
-  String serialPort=((OceanicBindingProvider)provider).getSerialPort(itemName);
-  OceanicValueSelector valueSelector=OceanicValueSelector.getValueSelector(((OceanicBindingProvider)provider).getValueSelector(itemName),ValueSelectorType.SET);
+  String serialPort=provider.getSerialPort(itemName);
+  OceanicValueSelector valueSelector=OceanicValueSelector.getValueSelector(provider.getValueSelector(itemName),ValueSelectorType.SET);
   SerialDevice serialDevice=serialDevices.get(serialPort);
   if (valueSelector.name().contains("set")) {
     String commandAsString=command.toString();

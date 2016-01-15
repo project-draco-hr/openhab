@@ -3,7 +3,9 @@
     int datalen=data[4];
     int msglen=5 + datalen;
     byte checksum=0;
-    for (int i=2; i < msglen; i++)     checksum^=data[i];
+    for (int i=2; i < msglen; i++) {
+      checksum^=data[i];
+    }
     byte msgChecksum=data[msglen];
     if (checksum == msgChecksum || (checksum == (byte)0x5C && msgChecksum == (byte)0xC5)) {
       if (datalen > 0x50) {
@@ -19,7 +21,9 @@
         for (int i=5; i < (msglen - 1); i+=4) {
           int id=((data[i + 1] & 0xFF) << 8 | (data[i + 0] & 0xFF));
           short value=(short)((data[i + 3] & 0xFF) << 8 | (data[i + 2] & 0xFF));
-          if (id != 0xFFFF)           values.put(id,value);
+          if (id != 0xFFFF) {
+            values.put(id,value);
+          }
         }
       }
  catch (      ArrayIndexOutOfBoundsException e) {

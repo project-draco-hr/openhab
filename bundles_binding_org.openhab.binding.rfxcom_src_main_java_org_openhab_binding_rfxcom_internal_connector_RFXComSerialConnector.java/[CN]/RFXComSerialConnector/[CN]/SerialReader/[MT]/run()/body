@@ -31,7 +31,9 @@
           dataBuffer[index++]=tmpData[i];
           if (index == msgLen) {
             byte[] msg=new byte[msgLen];
-            for (int j=0; j < msgLen; j++)             msg[j]=dataBuffer[j];
+            for (int j=0; j < msgLen; j++) {
+              msg[j]=dataBuffer[j];
+            }
             RFXComMessageReceivedEvent event=new RFXComMessageReceivedEvent(this);
             try {
               Iterator<RFXComEventListener> iterator=_listeners.iterator();

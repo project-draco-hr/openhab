@@ -1,10 +1,10 @@
 {
   for (  P provider : providers) {
     for (    String itemName : provider.getItemNames()) {
-      for (      Command aCommand : ((P)provider).getAllCommands(itemName)) {
-        String remoteHost=((P)provider).getHost(itemName,aCommand);
-        String remotePort=((P)provider).getPortAsString(itemName,aCommand);
-        Direction direction=((P)provider).getDirection(itemName,aCommand);
+      for (      Command aCommand : provider.getAllCommands(itemName)) {
+        String remoteHost=provider.getHost(itemName,aCommand);
+        String remotePort=provider.getPortAsString(itemName,aCommand);
+        Direction direction=provider.getDirection(itemName,aCommand);
         InetSocketAddress remoteAddress=null;
         if (!(remoteHost.equals("*") || remotePort.equals("*"))) {
           remoteAddress=new InetSocketAddress(remoteHost,Integer.parseInt(remotePort));
@@ -12,11 +12,11 @@
         Channel newChannel=null;
         Channel existingChannel=null;
         if (useAddressMask && (remoteHost.equals("*") || remotePort.equals("*"))) {
-          newChannel=new Channel(itemName,aCommand,remoteHost,remotePort,((P)provider).getDirection(itemName,aCommand),false,null,false,null);
+          newChannel=new Channel(itemName,aCommand,remoteHost,remotePort,provider.getDirection(itemName,aCommand),false,null,false,null);
           existingChannel=channels.get(itemName,aCommand,direction,remoteHost,remotePort);
         }
  else {
-          newChannel=new Channel(itemName,aCommand,remoteAddress,((P)provider).getDirection(itemName,aCommand),false,null,false,null);
+          newChannel=new Channel(itemName,aCommand,remoteAddress,provider.getDirection(itemName,aCommand),false,null,false,null);
           existingChannel=channels.get(itemName,aCommand,direction,remoteAddress);
         }
         if (existingChannel == null) {
@@ -150,7 +150,7 @@ synchronized (selector) {
   }
   Iterator<SelectionKey> it=selector.selectedKeys().iterator();
   while (it.hasNext()) {
-    SelectionKey selKey=(SelectionKey)it.next();
+    SelectionKey selKey=it.next();
     it.remove();
     if (selKey.isValid()) {
       if (selKey == listenerKey) {

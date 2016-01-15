@@ -19,8 +19,8 @@ synchronized (m_InBuffer) {
         }
         int len=m_ByteInOut.size();
         logger.debug("Received: {}",ModbusUtil.toHex(m_InBuffer,0,len));
-        if (((int)m_InBuffer[len - 1] & 0xff) != ModbusUtil.calculateLRC(m_InBuffer,0,len - 1)) {
-          logger.debug("LRC is wrong: received={} calculated={}",((int)m_InBuffer[len - 1] & 0xff),ModbusUtil.calculateLRC(m_InBuffer,0,len - 1));
+        if ((m_InBuffer[len - 1] & 0xff) != ModbusUtil.calculateLRC(m_InBuffer,0,len - 1)) {
+          logger.debug("LRC is wrong: received={} calculated={}",(m_InBuffer[len - 1] & 0xff),ModbusUtil.calculateLRC(m_InBuffer,0,len - 1));
           continue;
         }
         m_ByteIn.reset(m_InBuffer,m_ByteInOut.size());

@@ -9,7 +9,9 @@
     int level=(pc.intValue() * 32) / 100;
     byte cmdCode=(level >= 16) ? X10.Command.PRESET_DIM_2.code() : X10.Command.PRESET_DIM_1.code();
     level=level % 16;
-    if (level <= 0)     level=0;
+    if (level <= 0) {
+      level=0;
+    }
     houseCode=(byte)s_X10CodeForLevel[level];
     cmdCode|=(houseCode << 4);
     Msg mcmd=dev.makeX10Message(cmdCode,(byte)0x80);

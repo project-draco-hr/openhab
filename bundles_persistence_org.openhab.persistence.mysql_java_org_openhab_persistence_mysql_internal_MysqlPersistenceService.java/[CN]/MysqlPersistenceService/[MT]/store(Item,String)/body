@@ -1,7 +1,13 @@
 {
-  if (item.getState() instanceof UnDefType)   return;
-  if (initialized == false)   return;
-  if (!isConnected())   connectToDatabase();
+  if (item.getState() instanceof UnDefType) {
+    return;
+  }
+  if (initialized == false) {
+    return;
+  }
+  if (!isConnected()) {
+    connectToDatabase();
+  }
   if (!isConnected()) {
     logger.warn("mySQL: No connection to database. Can not persist item '{}'! " + "Will retry connecting to database when error count:{} equals errReconnectThreshold:{}",item,errCnt,errReconnectThreshold);
     return;

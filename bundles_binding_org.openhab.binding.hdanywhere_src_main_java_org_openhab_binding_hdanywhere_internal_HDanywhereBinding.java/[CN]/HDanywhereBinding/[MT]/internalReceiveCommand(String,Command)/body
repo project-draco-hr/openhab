@@ -33,13 +33,13 @@
             State state=TypeParser.parseState(stateTypeList,m.group(1));
             if (!portMappingCache.containsKey(aHost + ":" + aPort)) {
               portMappingCache.put(aHost + ":" + aPort,Integer.valueOf(m.group(1)));
-              eventPublisher.postUpdate(itemName,(State)state);
+              eventPublisher.postUpdate(itemName,state);
             }
  else {
               int cachedValue=portMappingCache.get(aHost + ":" + aPort);
               if (cachedValue != Integer.valueOf(m.group(1))) {
                 portMappingCache.put(aHost + ":" + aPort,Integer.valueOf(m.group(1)));
-                eventPublisher.postUpdate(itemName,(State)state);
+                eventPublisher.postUpdate(itemName,state);
               }
             }
           }

@@ -33,7 +33,9 @@ strStatus=partitionProperties.getStateDescription(StateType.GENERAL_STATE);
 publisher.postUpdate(item.getName(),new StringType(strStatus));
 break;
 case PARTITION_ARM_MODE:
-if (apiCode == 652) state=Integer.parseInt(apiMessage.getMode()) + 1;
+if (apiCode == 652) {
+state=Integer.parseInt(apiMessage.getMode()) + 1;
+}
 partitionProperties.setState(StateType.ARM_STATE,state,strStatus);
 strStatus=partitionProperties.getStateDescription(StateType.ARM_STATE);
 if (item instanceof NumberItem) {

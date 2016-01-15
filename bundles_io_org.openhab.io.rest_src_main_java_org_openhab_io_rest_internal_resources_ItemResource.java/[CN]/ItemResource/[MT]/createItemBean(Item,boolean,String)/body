@@ -1,0 +1,21 @@
+{
+  ItemBean bean;
+  if (item instanceof GroupItem && drillDown) {
+    GroupItem groupItem=(GroupItem)item;
+    GroupItemBean groupBean=new GroupItemBean();
+    Collection<ItemBean> members=new HashSet<ItemBean>();
+    for (    Item member : groupItem.getMembers()) {
+      members.add(createItemBean(member,false,uriPath));
+    }
+    groupBean.members=members.toArray(new ItemBean[members.size()]);
+    bean=groupBean;
+  }
+ else {
+    bean=new ItemBean();
+  }
+  bean.name=item.getName();
+  bean.state=item.getState().toString();
+  bean.type=item.getClass().getSimpleName();
+  bean.link=UriBuilder.fromUri(uriPath).path(ItemResource.PATH_ITEMS).path(bean.name).build().toASCIIString();
+  return bean;
+}

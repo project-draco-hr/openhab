@@ -1,6 +1,8 @@
 {
   running=true;
-  if (akmSocket == null)   throw new IllegalStateException("Cannot access socket. You must call" + " call initializeListener(..) first!");
+  if (akmSocket == null) {
+    throw new IllegalStateException("Cannot access socket. You must call" + " call initializeListener(..) first!");
+  }
   while (running) {
     try {
       if (akmReader.ready()) {
@@ -8,7 +10,9 @@
         String line=akmReader.readLine();
         logger.debug("Reading from socket: " + line);
         String[] elements=line.split(deliminator);
-        if (elements.length > 5)         return;
+        if (elements.length > 5) {
+          return;
+        }
         String id=elements[2];
         String action=elements[3];
         String packetValid=elements[4];

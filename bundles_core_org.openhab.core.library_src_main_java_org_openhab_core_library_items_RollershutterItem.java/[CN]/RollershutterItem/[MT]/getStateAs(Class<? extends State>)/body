@@ -1,0 +1,19 @@
+{
+  if (typeClass == UpDownType.class) {
+    if (state.equals(PercentType.ZERO)) {
+      return UpDownType.UP;
+    }
+ else     if (state.equals(PercentType.HUNDRED)) {
+      return UpDownType.DOWN;
+    }
+ else {
+      return UnDefType.UNDEF;
+    }
+  }
+ else   if (typeClass == DecimalType.class) {
+    if (state instanceof PercentType) {
+      return new DecimalType(((PercentType)state).toBigDecimal().divide(new BigDecimal(100),8,RoundingMode.UP));
+    }
+  }
+  return super.getStateAs(typeClass);
+}

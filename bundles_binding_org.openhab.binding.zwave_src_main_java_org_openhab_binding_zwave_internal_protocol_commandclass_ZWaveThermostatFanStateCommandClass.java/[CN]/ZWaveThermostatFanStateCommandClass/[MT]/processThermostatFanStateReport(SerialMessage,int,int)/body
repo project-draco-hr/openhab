@@ -6,7 +6,9 @@
     logger.error("NODE {}: Unknown fan state Type = {}, ignoring report.",this.getNode().getNodeId(),value);
     return;
   }
-  if (!fanStateTypes.contains(fanStateType))   fanStateTypes.add(fanStateType);
+  if (!fanStateTypes.contains(fanStateType)) {
+    fanStateTypes.add(fanStateType);
+  }
   dynamicDone=true;
   logger.debug("NODE {}: Thermostat fan state  Report value = {}",this.getNode().getNodeId(),fanStateType.getLabel());
   ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),value);

@@ -2,10 +2,10 @@
   int m=serialMessage.getMessagePayloadByte(offset + 1);
   mode=SwitchAllMode.fromInteger(m);
   if (mode != null) {
-    logger.debug("NODE {}: Switch All report, {}.",(Object)this.getNode().getNodeId(),mode.getDescription());
+    logger.debug("NODE {}: Switch All report, {}.",this.getNode().getNodeId(),mode.getDescription());
   }
  else {
-    logger.debug("NODE {}: Switch All unsupported mode.",(Object)this.getNode().getNodeId());
+    logger.debug("NODE {}: Switch All unsupported mode.",this.getNode().getNodeId());
     return;
   }
   ZWaveSwitchAllModeEvent zEvent=new ZWaveSwitchAllModeEvent(this.getNode().getNodeId(),endpoint,new Integer(m));

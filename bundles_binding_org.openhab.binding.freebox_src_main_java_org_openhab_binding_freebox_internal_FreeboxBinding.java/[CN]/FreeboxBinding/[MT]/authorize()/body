@@ -28,7 +28,9 @@
  else {
     authorizeStatus=TrackAuthorizeStatus.GRANTED;
   }
-  if (authorizeStatus != TrackAuthorizeStatus.GRANTED)   throw new FreeboxException(authorizeStatus.toString());
+  if (authorizeStatus != TrackAuthorizeStatus.GRANTED) {
+    throw new FreeboxException(authorizeStatus.toString());
+  }
   logger.debug("Apptoken valide : [" + appToken + "]");
   loginManager.setAppToken(appToken);
   loginManager.openSession();

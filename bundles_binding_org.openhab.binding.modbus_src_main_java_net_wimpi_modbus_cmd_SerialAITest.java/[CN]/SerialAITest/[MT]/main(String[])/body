@@ -39,20 +39,26 @@
     params.setStopbits(1);
     params.setEncoding("ascii");
     params.setEcho(false);
-    if (Modbus.debug)     System.out.println("Encoding [" + params.getEncoding() + "]");
+    if (Modbus.debug) {
+      System.out.println("Encoding [" + params.getEncoding() + "]");
+    }
     con=new SerialConnection(params);
     con.open();
     req=new ReadInputRegistersRequest(ref,count);
     req.setUnitID(unitid);
     req.setHeadless();
-    if (Modbus.debug)     System.out.println("Request: " + req.getHexMessage());
+    if (Modbus.debug) {
+      System.out.println("Request: " + req.getHexMessage());
+    }
     trans=new ModbusSerialTransaction(con);
     trans.setRequest(req);
     int k=0;
     do {
       trans.execute();
       res=(ReadInputRegistersResponse)trans.getResponse();
-      if (Modbus.debug)       System.out.println("Response: " + res.getHexMessage());
+      if (Modbus.debug) {
+        System.out.println("Response: " + res.getHexMessage());
+      }
       for (int n=0; n < res.getWordCount(); n++) {
         System.out.println("Word " + n + "="+ res.getRegisterValue(n));
       }

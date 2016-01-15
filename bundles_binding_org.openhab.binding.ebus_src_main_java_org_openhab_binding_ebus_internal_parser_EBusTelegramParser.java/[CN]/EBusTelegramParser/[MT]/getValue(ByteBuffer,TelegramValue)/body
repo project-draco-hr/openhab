@@ -5,8 +5,12 @@
   if (pos > byteBuffer.position()) {
     logger.warn("eBus buffer pos error! Can happen ...");
   }
-  if (type.equals("uint"))   type="word";
-  if (type.equals("byte"))   type="uchar";
+  if (type.equals("uint")) {
+    type="word";
+  }
+  if (type.equals("byte")) {
+    type="uchar";
+  }
   byte[] bytes=null;
   if (type.equals("data2b") || type.equals("data2c") || type.equals("word")) {
     bytes=new byte[]{byteBuffer.get(pos),byteBuffer.get(pos - 1)};

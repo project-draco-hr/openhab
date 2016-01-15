@@ -1,0 +1,22 @@
+{
+  new Thread(){
+    @Override public void run(){
+      try {
+        player.play();
+      }
+ catch (      Exception e) {
+        throw new RuntimeException(e.getMessage());
+      }
+ finally {
+        if (shoutCastSocket != null) {
+          try {
+            shoutCastSocket.close();
+          }
+ catch (          IOException e) {
+          }
+        }
+      }
+    }
+  }
+.start();
+}

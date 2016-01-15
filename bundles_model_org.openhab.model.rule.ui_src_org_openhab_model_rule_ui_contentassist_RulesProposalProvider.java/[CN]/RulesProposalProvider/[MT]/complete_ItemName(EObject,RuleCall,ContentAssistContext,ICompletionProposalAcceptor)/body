@@ -1,0 +1,9 @@
+{
+  super.complete_ItemName(model,ruleCall,context,acceptor);
+  ItemRegistry itemRegistry=RuleModelUIActivator.itemRegistryTracker.getService();
+  for (  Item item : itemRegistry.getItems()) {
+    if (item.getName().startsWith(context.getPrefix())) {
+      acceptor.accept(createCompletionProposal(item.getName(),context));
+    }
+  }
+}

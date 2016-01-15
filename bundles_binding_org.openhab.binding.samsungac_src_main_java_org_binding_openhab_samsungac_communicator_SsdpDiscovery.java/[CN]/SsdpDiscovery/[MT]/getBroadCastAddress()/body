@@ -4,7 +4,9 @@
   addresses.add(InetAddress.getByName("255.255.255.255"));
   while (interfaces.hasMoreElements()) {
     NetworkInterface networkInterface=interfaces.nextElement();
-    if (networkInterface.isLoopback() || !networkInterface.supportsMulticast())     continue;
+    if (networkInterface.isLoopback() || !networkInterface.supportsMulticast()) {
+      continue;
+    }
     for (    InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
       InetAddress broadcast=interfaceAddress.getBroadcast();
       if (broadcast != null) {

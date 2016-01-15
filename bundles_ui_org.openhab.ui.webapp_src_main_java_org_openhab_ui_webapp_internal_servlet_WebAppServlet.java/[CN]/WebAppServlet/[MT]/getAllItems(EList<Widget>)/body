@@ -1,0 +1,25 @@
+{
+  Set<GenericItem> items=new HashSet<GenericItem>();
+  if (itemRegistry != null) {
+    for (    Widget widget : widgets) {
+      String itemName=widget.getItem();
+      if (itemName != null) {
+        try {
+          Item item=itemRegistry.getItem(itemName);
+          if (item instanceof GenericItem) {
+            final GenericItem gItem=(GenericItem)item;
+            items.add(gItem);
+          }
+        }
+ catch (        ItemNotFoundException e) {
+        }
+      }
+ else {
+        if (widget instanceof Frame) {
+          items.addAll(getAllItems(((Frame)widget).getChildren()));
+        }
+      }
+    }
+  }
+  return items;
+}

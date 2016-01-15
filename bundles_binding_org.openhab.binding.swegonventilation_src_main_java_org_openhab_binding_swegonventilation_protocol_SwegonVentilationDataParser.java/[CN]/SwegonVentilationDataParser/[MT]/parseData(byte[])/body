@@ -6,7 +6,9 @@
     byte dataLen=data[4];
     byte msgType=data[5];
     byte[] d=new byte[dataLen - 3];
-    for (int i=8; i < (data.length - 3); i++)     d[i - 8]=data[i];
+    for (int i=8; i < (data.length - 3); i++) {
+      d[i - 8]=data[i];
+    }
 switch (msgType) {
 case (byte)0x21:
       return parseMessage21(d);

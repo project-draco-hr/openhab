@@ -1,8 +1,12 @@
 {
   for (  DaikinBindingProvider provider : providers) {
-    if (!provider.providesBindingFor(itemName))     continue;
+    if (!provider.providesBindingFor(itemName)) {
+      continue;
+    }
     DaikinBindingConfig bindingConfig=provider.getBindingConfig(itemName);
-    if (!hosts.containsKey(bindingConfig.getId()))     continue;
+    if (!hosts.containsKey(bindingConfig.getId())) {
+      continue;
+    }
     IDaikin host=hosts.get(bindingConfig.getId());
     DaikinCommandType commandType=bindingConfig.getCommandType();
     if (!commandType.isExecutable()) {

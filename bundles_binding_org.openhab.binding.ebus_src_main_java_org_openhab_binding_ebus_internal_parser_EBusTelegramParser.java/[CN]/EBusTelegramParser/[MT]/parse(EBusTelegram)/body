@@ -30,7 +30,7 @@
     if (registryEntry.getDebug() != null) {
       debugLevel=registryEntry.getDebug();
       if (debugWriter != null && debugWriteMode.contains("debug")) {
-        debugWriter.writeTelegram(telegram,"DEBUG:" + (String)registryEntry.getComment());
+        debugWriter.writeTelegram(telegram,"DEBUG:" + registryEntry.getComment());
       }
     }
     if (debugWriter != null && debugWriteMode.equals("all")) {
@@ -65,11 +65,15 @@
       }
       if (debugLevel >= 2) {
         loggerAnalyses.debug("    >>> " + format);
-        if (alias != null)         loggerAnalyses.debug("      >>> " + alias);
+        if (alias != null) {
+          loggerAnalyses.debug("      >>> " + alias);
+        }
       }
  else {
         loggerAnalyses.trace("    >>> " + format);
-        if (alias != null)         loggerAnalyses.trace("      >>> " + alias);
+        if (alias != null) {
+          loggerAnalyses.trace("      >>> " + alias);
+        }
       }
       valueRegistry.put(uniqueKey,value);
       valueRegistryShortKeys.put(entry.getKey(),value);
@@ -80,7 +84,9 @@
         }
       }
     }
-    if (registryEntry.getComputedValues() == null)     continue;
+    if (registryEntry.getComputedValues() == null) {
+      continue;
+    }
     Map<String,TelegramValue> cvalues=registryEntry.getComputedValues();
     for (    Entry<String,TelegramValue> entry : cvalues.entrySet()) {
       String uniqueKey=(classKey != "" ? classKey + "." : "") + (idKey != "" ? idKey + "." : "") + entry.getKey();

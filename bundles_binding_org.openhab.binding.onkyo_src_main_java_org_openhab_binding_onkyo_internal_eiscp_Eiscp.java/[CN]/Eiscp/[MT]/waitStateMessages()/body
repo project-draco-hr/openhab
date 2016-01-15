@@ -3,10 +3,18 @@
     OnkyoStatusUpdateEvent event=new OnkyoStatusUpdateEvent(this);
     logger.trace("Waiting status messages");
     while (true) {
-      if (inStream.readByte() != 'I')       continue;
-      if (inStream.readByte() != 'S')       continue;
-      if (inStream.readByte() != 'C')       continue;
-      if (inStream.readByte() != 'P')       continue;
+      if (inStream.readByte() != 'I') {
+        continue;
+      }
+      if (inStream.readByte() != 'S') {
+        continue;
+      }
+      if (inStream.readByte() != 'C') {
+        continue;
+      }
+      if (inStream.readByte() != 'P') {
+        continue;
+      }
       final int headerSize=(inStream.readByte() & 0xFF) << 24 | (inStream.readByte() & 0xFF) << 16 | (inStream.readByte() & 0xFF) << 8 | (inStream.readByte() & 0xFF);
       logger.trace("Header size: {}",headerSize);
       if (headerSize != 16) {
@@ -56,7 +64,7 @@
       try {
         Iterator<OnkyoEventListener> iterator=_listeners.iterator();
         while (iterator.hasNext()) {
-          ((OnkyoEventListener)iterator.next()).statusUpdateReceived(event,receiverIP,new String(message));
+          iterator.next().statusUpdateReceived(event,receiverIP,new String(message));
         }
       }
  catch (      Exception e) {

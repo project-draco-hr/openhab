@@ -2,9 +2,13 @@
   ZWaveBindingConfig bindingConfiguration=provider.getZwaveBindingConfig(itemName);
   ZWaveCommandClass commandClass;
   String commandClassName=bindingConfiguration.getArguments().get("command");
-  if (bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval())   return 0;
+  if (bindingConfiguration.getRefreshInterval() != null && 0 == bindingConfiguration.getRefreshInterval()) {
+    return 0;
+  }
   ZWaveNode node=this.controller.getNode(bindingConfiguration.getNodeId());
-  if (node == null)   return 0;
+  if (node == null) {
+    return 0;
+  }
   if (commandClassName != null) {
     if (commandClassName.equalsIgnoreCase("info")) {
       return infoConverter.getRefreshInterval();

@@ -30,8 +30,14 @@
     String label=o.getName() + " [%d%%]";
     SiteItem light=new SiteItem(name,o.getName(),label);
     items.append(String.format(itemString,"Dimmer",name + "_Switch",label,group,objnum));
-    if (isRoomController)     items.append(String.format(itemString,"String",name + "_String",o.getName() + " [%s]",group,objnum));
-    if (isInRoom)     rooms.get(currentRoomName).add(light);
- else     lights.add(light);
+    if (isRoomController) {
+      items.append(String.format(itemString,"String",name + "_String",o.getName() + " [%s]",group,objnum));
+    }
+    if (isInRoom) {
+      rooms.get(currentRoomName).add(light);
+    }
+ else {
+      lights.add(light);
+    }
   }
 }

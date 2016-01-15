@@ -5,7 +5,7 @@
     desiredTemperature=(this.payload[0] & 0x7F) / 2.0;
     int mTemp=(this.payload[0] & 0x80);
     mTemp<<=1;
-    mTemp|=(((int)this.payload[1]) & 0xff);
+    mTemp|=((this.payload[1]) & 0xff);
     measuredTemperature=mTemp / 10.0;
   }
  else   if (this.payload.length == WALL_THERMOSTAT_CONTROL_SET_POINT_ONLY_PAYLOAD_LEN) {

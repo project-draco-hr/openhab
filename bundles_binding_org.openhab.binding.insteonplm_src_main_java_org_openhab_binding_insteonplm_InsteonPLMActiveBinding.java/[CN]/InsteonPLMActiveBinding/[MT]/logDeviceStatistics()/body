@@ -2,7 +2,9 @@
   logger.info(String.format("devices: %3d configured, %3d polling, msgs received: %5d",m_devices.size(),Poller.s_instance().getSizeOfQueue(),m_messagesReceived));
   m_messagesReceived=0;
   for (  InsteonDevice dev : m_devices.values()) {
-    if (dev.isModem())     continue;
+    if (dev.isModem()) {
+      continue;
+    }
     if (m_deadDeviceTimeout > 0 && dev.getPollOverDueTime() > m_deadDeviceTimeout) {
       logger.info("device {} has not responded to polls for {} sec",dev.toString(),dev.getPollOverDueTime() / 3600);
     }

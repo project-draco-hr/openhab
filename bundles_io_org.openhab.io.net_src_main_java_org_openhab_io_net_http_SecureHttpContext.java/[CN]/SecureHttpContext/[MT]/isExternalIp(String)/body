@@ -1,0 +1,15 @@
+{
+  InetAddress remoteIp=InetAddress.getByName(remoteAddr);
+  if (remoteIp.isLoopbackAddress()) {
+    return false;
+  }
+  boolean isExternal=true;
+  for (  IpAddressMatcher ipAddressMatcher : ipAddressMatchers) {
+    if (ipAddressMatcher.matches(remoteAddr)) {
+      isExternal=false;
+      break;
+    }
+  }
+  logger.trace("http request is originated by '{}' which is identified as '{}'",remoteAddr,isExternal ? "external" : "internal");
+  return isExternal;
+}

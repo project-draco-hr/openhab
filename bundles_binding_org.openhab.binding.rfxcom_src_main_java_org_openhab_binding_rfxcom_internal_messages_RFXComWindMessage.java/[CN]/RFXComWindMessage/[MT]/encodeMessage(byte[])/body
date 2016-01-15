@@ -12,9 +12,13 @@
   if (subType == SubType.TFA) {
     windAvSpeed=(short)((data[8] & 0xFF) << 8 | (data[9] & 0xFF)) * 0.1;
     temperature=(short)((data[12] & 0x7F) << 8 | (data[13] & 0xFF)) * 0.1;
-    if ((data[12] & 0x80) != 0)     temperature=-temperature;
+    if ((data[12] & 0x80) != 0) {
+      temperature=-temperature;
+    }
     chillFactor=(short)((data[14] & 0x7F) << 8 | (data[15] & 0xFF)) * 0.1;
-    if ((data[14] & 0x80) != 0)     chillFactor=-chillFactor;
+    if ((data[14] & 0x80) != 0) {
+      chillFactor=-chillFactor;
+    }
   }
  else {
     windAvSpeed=0;

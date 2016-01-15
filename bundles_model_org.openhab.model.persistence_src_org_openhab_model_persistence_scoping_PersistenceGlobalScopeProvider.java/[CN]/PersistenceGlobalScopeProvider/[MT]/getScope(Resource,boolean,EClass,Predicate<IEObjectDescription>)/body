@@ -1,0 +1,11 @@
+{
+  IScope parentScope=super.getScope(resource,ignoreCase,type,predicate);
+  List<IEObjectDescription> descs=Lists.newArrayList();
+  for (  EObject eObj : res.getContents()) {
+    if (eObj instanceof Strategy) {
+      Strategy strategy=(Strategy)eObj;
+      descs.add(EObjectDescription.create(strategy.getName(),strategy));
+    }
+  }
+  return new SimpleScope(parentScope,descs);
+}

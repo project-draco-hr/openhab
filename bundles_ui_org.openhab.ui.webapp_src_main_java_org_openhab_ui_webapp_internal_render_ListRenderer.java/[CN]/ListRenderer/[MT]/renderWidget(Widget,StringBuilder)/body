@@ -1,0 +1,15 @@
+{
+  String snippet=getSnippet("list");
+  snippet=snippet.replaceAll("%label%",getLabel(w));
+  String rowSnippet=getSnippet("list_row");
+  String state=itemUIRegistry.getState(w).toString();
+  String[] rowContents=state.split(((List)w).getSeparator());
+  StringBuilder rowSB=new StringBuilder();
+  for (  String row : rowContents) {
+    rowSB.append(StringUtils.replace(rowSnippet,"%title%",row));
+  }
+  snippet=StringUtils.replace(snippet,"%rows%",rowSB.toString());
+  snippet=processColor(w,snippet);
+  sb.append(snippet);
+  return null;
+}

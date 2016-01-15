@@ -1,0 +1,10 @@
+{
+  final List<Issue> validate=validate(model);
+  Iterable<Issue> issues=filter(validate,new Predicate<Issue>(){
+    public boolean apply(    Issue input){
+      return Severity.ERROR == input.getSeverity();
+    }
+  }
+);
+  return issues;
+}

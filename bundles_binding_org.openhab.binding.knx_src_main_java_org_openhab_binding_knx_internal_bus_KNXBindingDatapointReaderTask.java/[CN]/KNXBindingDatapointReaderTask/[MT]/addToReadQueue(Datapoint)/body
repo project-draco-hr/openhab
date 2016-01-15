@@ -6,5 +6,7 @@
     readQueue.put(datapoint);
     dpReadRetries.put(datapoint,retries);
   }
- else   if (retries == -1)   sLogger.warn("Autorefresh: Give up, could not read address '{}' after '{}' retries.",datapoint.getMainAddress().toString(),KNXConnection.getReadRetriesLimit());
+ else   if (retries == -1) {
+    sLogger.warn("Autorefresh: Give up, could not read address '{}' after '{}' retries.",datapoint.getMainAddress().toString(),KNXConnection.getReadRetriesLimit());
+  }
 }

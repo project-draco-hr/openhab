@@ -13,7 +13,9 @@ synchronized (m_requestQueues) {
       m_requestQueueHash.remove(dev);
     }
     long expTime=q.getExpirationTime();
-    if (expTime > time)     q.setExpirationTime(time);
+    if (expTime > time) {
+      q.setExpirationTime(time);
+    }
     m_requestQueues.add(q);
     m_requestQueueHash.put(dev,q);
     m_requestQueues.notify();

@@ -6,10 +6,18 @@
   XplBindingConfig config=new XplBindingConfig();
   config.Message=xPL_Utils.createMessage();
   config.Message.setTarget(configParts[0]);
-  if (configParts[1].equalsIgnoreCase("TRIGGER"))   config.Message.setType(xPL_MessageI.MessageType.TRIGGER);
- else   if (configParts[1].equalsIgnoreCase("STATUS"))   config.Message.setType(xPL_MessageI.MessageType.STATUS);
- else   if (configParts[1].equalsIgnoreCase("COMMAND"))   config.Message.setType(xPL_MessageI.MessageType.COMMAND);
- else   config.Message.setType(xPL_MessageI.MessageType.UNKNOWN);
+  if (configParts[1].equalsIgnoreCase("TRIGGER")) {
+    config.Message.setType(xPL_MessageI.MessageType.TRIGGER);
+  }
+ else   if (configParts[1].equalsIgnoreCase("STATUS")) {
+    config.Message.setType(xPL_MessageI.MessageType.STATUS);
+  }
+ else   if (configParts[1].equalsIgnoreCase("COMMAND")) {
+    config.Message.setType(xPL_MessageI.MessageType.COMMAND);
+  }
+ else {
+    config.Message.setType(xPL_MessageI.MessageType.UNKNOWN);
+  }
   config.Message.setSchema(configParts[2]);
   String theName=null;
   String theValue=null;

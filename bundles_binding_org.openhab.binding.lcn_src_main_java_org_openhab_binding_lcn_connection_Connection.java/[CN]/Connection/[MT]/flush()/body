@@ -5,7 +5,9 @@
       Iterator<SendData> iter=this.sendQueue.iterator();
       while (iter.hasNext()) {
         try {
-          if (!((SendData)iter.next()).write(this.sendBuffer,this.localSegId))           break;
+          if (!iter.next().write(this.sendBuffer,this.localSegId)) {
+            break;
+          }
         }
  catch (        UnsupportedEncodingException ex) {
         }

@@ -1,0 +1,18 @@
+{
+  String result;
+  TransformationService service=TransformationHelper.getTransformationService(TransformationActivator.getContext(),type);
+  if (service != null) {
+    try {
+      result=service.transform(function,value);
+    }
+ catch (    TransformationException e) {
+      logger.error("Error executing the transformation '" + type + "': "+ e.getMessage());
+      result=value;
+    }
+  }
+ else {
+    logger.warn("No transformation service '" + type + "' could be found.");
+    result=value;
+  }
+  return result;
+}

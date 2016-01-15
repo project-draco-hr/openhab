@@ -1,0 +1,14 @@
+{
+  if (itemRegistry != null) {
+    try {
+      Item item=itemRegistry.getItem(itemName);
+      if (item instanceof GroupItem) {
+        GroupItem groupItem=(GroupItem)item;
+        groupItem.send(command);
+      }
+    }
+ catch (    ItemNotFoundException e) {
+      logger.debug("Received command for non-existing item: {}",e.getMessage());
+    }
+  }
+}

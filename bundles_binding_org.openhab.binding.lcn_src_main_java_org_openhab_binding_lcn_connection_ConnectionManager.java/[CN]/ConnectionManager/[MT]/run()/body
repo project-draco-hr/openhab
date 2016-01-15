@@ -8,7 +8,7 @@
       if (timeoutMSec <= 0 || this.selector.select(timeoutMSec) == 0) {
 synchronized (sync) {
           this.callback.runOnRefreshThreadAsync(new LcnBindingNotification(){
-            public void execute(){
+            @Override public void execute(){
               for (              Connection conn : ConnectionManager.this.connectionsById.values()) {
                 if (!conn.isChannelConnected() && !conn.isChannelConnecting()) {
                   logger.warn(String.format("Channel \"%s\" was closed unexpectedly (reconnecting...).",conn.getSets().getId()));
@@ -31,7 +31,7 @@ synchronized (sync) {
           final SelectionKey key=iter.next();
 synchronized (sync) {
             this.callback.runOnRefreshThreadAsync(new LcnBindingNotification(){
-              public void execute(){
+              @Override public void execute(){
                 Connection conn=(Connection)key.attachment();
                 try {
                   if (key.isConnectable()) {

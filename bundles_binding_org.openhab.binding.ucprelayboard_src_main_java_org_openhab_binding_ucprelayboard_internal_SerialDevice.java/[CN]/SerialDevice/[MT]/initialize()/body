@@ -2,7 +2,7 @@
   try {
     portId=CommPortIdentifier.getPortIdentifier(config.getPort());
     if (portId != null) {
-      serialPort=(SerialPort)portId.open("openHAB",2000);
+      serialPort=portId.open("openHAB",2000);
       serialPort.setSerialPortParams(config.getBaud(),SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
       inputStream=serialPort.getInputStream();
       outputStream=serialPort.getOutputStream();

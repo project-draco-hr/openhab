@@ -32,7 +32,9 @@
   }
   if (key != -1 || m_feature.isStatusFeature()) {
     MessageHandler h=m_feature.getMsgHandlers().get(key);
-    if (h == null)     h=m_feature.getDefaultMsgHandler();
+    if (h == null) {
+      h=m_feature.getDefaultMsgHandler();
+    }
     if (h.matches(msg)) {
       if (!isConsumed) {
         logger.debug("{}:{}->{} DIRECT",m_feature.getDevice().getAddress(),m_feature.getName(),h.getClass().getSimpleName());

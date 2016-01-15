@@ -10,7 +10,7 @@
     if (cde != null) {
 switch (cde) {
 case FHT_DESIRED_TEMP:
-        double desiredTemperature=((double)Integer.parseInt(argument,16)) / 2.0;
+        double desiredTemperature=(Integer.parseInt(argument,16)) / 2.0;
       receivedNewDesiredTemperature(device,desiredTemperature);
     break;
 case FHT_MEASURED_TEMP_LOW:
@@ -19,7 +19,7 @@ break;
 case FHT_MEASURED_TEMP_HIGH:
 Integer lowtemp=valueCache.get(device + "lowtemp");
 if (lowtemp != null) {
-double temperature=(double)lowtemp + ((double)Integer.parseInt(argument,16)) * 256.0;
+double temperature=(double)lowtemp + (Integer.parseInt(argument,16)) * 256.0;
 temperature/=10.0;
 receivedNewMeasuredTemperature(device,temperature);
 }
@@ -36,7 +36,7 @@ case FHT_ACTUATOR_5:
 case FHT_ACTUATOR_6:
 case FHT_ACTUATOR_7:
 case FHT_ACTUATOR_8:
-double valve=(((double)Integer.parseInt(argument,16)) / 255.0) * 100.0;
+double valve=((Integer.parseInt(argument,16)) / 255.0) * 100.0;
 receivedNewValveOpening(device,cde.getId(),valve);
 break;
 default :

@@ -1,0 +1,25 @@
+{
+  if (modelRepository != null) {
+    for (    String modelName : modelRepository.getAllModelNamesOfType("items")) {
+      ItemModel model=(ItemModel)modelRepository.getModel(modelName);
+      if (model != null) {
+        for (        ModelItem modelItem : model.getItems()) {
+          for (          ModelBinding modelBinding : modelItem.getBindings()) {
+            for (            String bindingType : bindingTypes) {
+              if (bindingType.equals(modelBinding.getType())) {
+                Item item=createItemFromModelItem(modelItem);
+                internalDispatchBindings(reader,modelName,item,modelItem.getBindings());
+              }
+            }
+          }
+        }
+      }
+ else {
+        logger.debug("Model repository returned NULL for model named '{}'",modelName);
+      }
+    }
+  }
+ else {
+    logger.warn("ModelRepository is NULL > dispatch bindings aborted!");
+  }
+}

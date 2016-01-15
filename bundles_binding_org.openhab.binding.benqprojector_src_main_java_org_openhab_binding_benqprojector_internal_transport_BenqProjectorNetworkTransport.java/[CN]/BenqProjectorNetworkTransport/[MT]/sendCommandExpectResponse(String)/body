@@ -16,8 +16,12 @@
       }
     }
  catch (    Exception e) {
-      if (e instanceof SocketTimeoutException)       logger.warn("Timed out reading response from projector");
- else       if (e instanceof IOException)       logger.error("IO Exception while reading response from projector: " + e.getMessage());
+      if (e instanceof SocketTimeoutException) {
+        logger.warn("Timed out reading response from projector");
+      }
+ else       if (e instanceof IOException) {
+        logger.error("IO Exception while reading response from projector: " + e.getMessage());
+      }
       if (retryAttempt == false) {
         this.closeConnection();
         if (this.networkConnect()) {

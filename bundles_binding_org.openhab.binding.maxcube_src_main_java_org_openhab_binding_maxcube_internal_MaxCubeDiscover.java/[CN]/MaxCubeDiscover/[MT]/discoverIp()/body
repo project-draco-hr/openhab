@@ -11,7 +11,7 @@
     byte[] sendData="eQ3Max*\0**********I".getBytes();
     Enumeration<NetworkInterface> interfaces=NetworkInterface.getNetworkInterfaces();
     while (interfaces.hasMoreElements()) {
-      NetworkInterface networkInterface=(NetworkInterface)interfaces.nextElement();
+      NetworkInterface networkInterface=interfaces.nextElement();
       if (networkInterface.isLoopback() || !networkInterface.isUp()) {
         continue;
       }
@@ -68,13 +68,17 @@ catch (  Exception e) {
   }
  finally {
     try {
-      if (bcReceipt != null)       bcReceipt.close();
+      if (bcReceipt != null) {
+        bcReceipt.close();
+      }
     }
  catch (    Exception e) {
       logger.debug(e.toString());
     }
     try {
-      if (bcSend != null)       bcSend.close();
+      if (bcSend != null) {
+        bcSend.close();
+      }
     }
  catch (    Exception e) {
       logger.debug(e.toString());

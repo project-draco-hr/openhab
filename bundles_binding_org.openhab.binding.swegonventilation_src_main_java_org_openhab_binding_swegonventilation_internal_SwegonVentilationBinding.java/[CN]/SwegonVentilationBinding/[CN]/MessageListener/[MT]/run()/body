@@ -1,9 +1,15 @@
 {
   logger.debug("Swegon ventilation system message listener started");
   SwegonVentilationConnector connector;
-  if (simulator == true)   connector=new SwegonVentilationSimulator();
- else   if (serialPort != null)   connector=new SwegonVentilationSerialConnector(serialPort);
- else   connector=new SwegonVentilationUDPConnector(udpPort);
+  if (simulator == true) {
+    connector=new SwegonVentilationSimulator();
+  }
+ else   if (serialPort != null) {
+    connector=new SwegonVentilationSerialConnector(serialPort);
+  }
+ else {
+    connector=new SwegonVentilationUDPConnector(udpPort);
+  }
   try {
     connector.connect();
   }

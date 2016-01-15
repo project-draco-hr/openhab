@@ -1,7 +1,9 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
   String[] parts=parseConfigString(bindingConfig);
-  if (parts.length != 3)   throw new BindingConfigParseException("item config must have addr:prodKey#feature format");
+  if (parts.length != 3) {
+    throw new BindingConfigParseException("item config must have addr:prodKey#feature format");
+  }
   InsteonAddress addr=new InsteonAddress(parts[0]);
   String[] params=parts[2].split(",");
   String feature=params[0];

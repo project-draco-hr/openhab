@@ -11,14 +11,16 @@
   sqlTypes.put("SWITCHITEM","CHAR(3)");
   Iterator<String> keys=config.keySet().iterator();
   while (keys.hasNext()) {
-    String key=(String)keys.next();
+    String key=keys.next();
     Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
     if (!matcher.matches()) {
       continue;
     }
     matcher.reset();
     matcher.find();
-    if (!matcher.group(1).equals("sqltype"))     continue;
+    if (!matcher.group(1).equals("sqltype")) {
+      continue;
+    }
     String itemType=matcher.group(2).toUpperCase() + "ITEM";
     String value=(String)config.get(key);
     sqlTypes.put(itemType,value);

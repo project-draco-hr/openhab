@@ -26,11 +26,21 @@
       }
       String attrName=matcher.group(2);
       String value=(String)config.get(key);
-      if (attrName.equals("ip"))       coupler.setIp(value);
- else       if (attrName.equals("modbus"))       coupler.setModbus(Integer.parseInt(value));
- else       if (attrName.equals("ftp"))       coupler.setFTP(Integer.parseInt(value));
- else       if (attrName.equals("username"))       coupler.setUsername(value);
- else       if (attrName.equals("password"))       coupler.setPassword(value);
+      if (attrName.equals("ip")) {
+        coupler.setIp(value);
+      }
+ else       if (attrName.equals("modbus")) {
+        coupler.setModbus(Integer.parseInt(value));
+      }
+ else       if (attrName.equals("ftp")) {
+        coupler.setFTP(Integer.parseInt(value));
+      }
+ else       if (attrName.equals("username")) {
+        coupler.setUsername(value);
+      }
+ else       if (attrName.equals("password")) {
+        coupler.setPassword(value);
+      }
     }
     for (    FBCoupler coupler : Collections.synchronizedMap(couplers).values()) {
       coupler.setup();

@@ -1,0 +1,19 @@
+{
+  DimmerItem dimmer1=new DimmerItem("TestDimmer1");
+  dimmer1.setState(new DecimalType("42"));
+  DimmerItem dimmer2=new DimmerItem("TestDimmer2");
+  dimmer2.setState(new DecimalType("0"));
+  SwitchItem switch1=new SwitchItem("TestSwitch1");
+  switch1.setState(OnOffType.ON);
+  SwitchItem switch2=new SwitchItem("TestSwitch2");
+  switch2.setState(OnOffType.OFF);
+  items.add(dimmer1);
+  items.add(dimmer2);
+  items.add(switch1);
+  items.add(switch2);
+  function=new ArithmeticGroupFunction.Or(OnOffType.ON,OnOffType.OFF);
+  State state=function.calculate(items);
+  State decimalState=function.getStateAs(items,DecimalType.class);
+  Assert.assertEquals(OnOffType.ON,state);
+  Assert.assertEquals(new DecimalType("2"),decimalState);
+}

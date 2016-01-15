@@ -2,10 +2,16 @@
   String decoded=new String(payload);
   logger.trace("Message received on topic {}: {}",topic,decoded);
   Map<String,String> jsonPayload=readJsonPayload(decoded);
-  if (jsonPayload == null)   return;
+  if (jsonPayload == null) {
+    return;
+  }
   String type=jsonPayload.get("_type");
-  if (StringUtils.isEmpty(type))   return;
-  if (!type.equals("location") && !type.equals("transition"))   return;
+  if (StringUtils.isEmpty(type)) {
+    return;
+  }
+  if (!type.equals("location") && !type.equals("transition")) {
+    return;
+  }
   for (  MqttitudeItemConfig itemConfig : getItemConfigs()) {
     logger.trace("Checking item {}...",itemConfig.getItemName());
     if (StringUtils.isEmpty(itemConfig.getRegion())) {

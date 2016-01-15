@@ -4,7 +4,9 @@
     for (    String currentItem : currentProvider.getItemNames()) {
       FritzahaDevice currentDevice=currentProvider.getDeviceConfig(currentItem);
       String currentHostId=currentDevice.getHost();
-      if (!hostCache.containsKey(currentHostId))       continue;
+      if (!hostCache.containsKey(currentHostId)) {
+        continue;
+      }
       FritzahaWebInterface currentHost=hostCache.get(currentHostId).getConnection();
       if (currentDevice instanceof FritzahaSwitchedOutlet) {
         FritzahaSwitchedOutlet currentSwitch=(FritzahaSwitchedOutlet)currentDevice;

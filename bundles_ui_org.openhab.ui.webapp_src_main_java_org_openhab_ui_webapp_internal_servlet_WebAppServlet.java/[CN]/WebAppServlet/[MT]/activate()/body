@@ -1,0 +1,14 @@
+{
+  try {
+    Hashtable<String,String> props=new Hashtable<String,String>();
+    httpService.registerServlet(SERVLET_NAME,this,props,createHttpContext());
+    httpService.registerResources(WEBAPP_ALIAS,"web",null);
+    logger.info("Started Classic UI at " + SERVLET_PATH);
+  }
+ catch (  NamespaceException e) {
+    logger.error("Error during servlet startup",e);
+  }
+catch (  ServletException e) {
+    logger.error("Error during servlet startup",e);
+  }
+}

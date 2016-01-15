@@ -1,6 +1,8 @@
 {
   IhcBindingConfig config=(IhcBindingConfig)bindingConfigs.get(itemName);
   IhcOutCommandConfig outConfig=(config != null && config.outCommandMap != null) ? config.outCommandMap.get(cmd) : null;
-  if (outConfig == null)   outConfig=(config != null && config.outCommandMap != null) ? config.outCommandMap.get(null) : null;
+  if (outConfig == null) {
+    outConfig=(config != null && config.outCommandMap != null) ? config.outCommandMap.get(null) : null;
+  }
   return (outConfig != null) ? outConfig.value : null;
 }

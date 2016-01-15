@@ -11,6 +11,8 @@
     logger.info("{}: device {} was turned on {}. " + "Sending poll request to get actual level",nm(),a,mode);
     m_feature.publish(PercentType.HUNDRED,StateChangeType.ALWAYS);
     Msg m=f.makePollMsg();
-    if (m != null)     f.getDevice().enqueueDelayedMessage(m,f,1000);
+    if (m != null) {
+      f.getDevice().enqueueDelayedMessage(m,f,1000);
+    }
   }
 }
