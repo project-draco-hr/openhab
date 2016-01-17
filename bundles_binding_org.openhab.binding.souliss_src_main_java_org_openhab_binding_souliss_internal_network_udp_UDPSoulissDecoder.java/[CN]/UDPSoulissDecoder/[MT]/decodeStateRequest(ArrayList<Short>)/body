@@ -13,9 +13,7 @@ synchronized (this) {
         try {
           String sHex=Integer.toHexString(typ.getType());
           String sRes=SoulissNetworkParameter.getPropTypicalBytes(sHex.toUpperCase());
-          if (sRes != null) {
-            iNumBytes=Integer.parseInt(sRes);
-          }
+          if (sRes != null)           iNumBytes=Integer.parseInt(sRes);
         }
  catch (        NumberFormatException e) {
           e.printStackTrace();
@@ -67,21 +65,15 @@ synchronized (this) {
           ((SoulissT31)typ).setSetpointValue(val);
           bDecoded_forLOG=true;
         }
-        if (typ.getType() != 152 && typ.getType() != 153) {
-          if (iNumBytes == 4) {
-            logger.debug("decodeStateRequest: {} ({}) = {}. RGB= {}, {}, {}",typ.getName(),Short.valueOf(typ.getType()),((SoulissT16)typ).getState(),((SoulissT16)typ).getStateRED(),((SoulissT16)typ).getStateGREEN(),((SoulissT16)typ).getStateBLU());
+        if (typ.getType() != 152 && typ.getType() != 153)         if (iNumBytes == 4)         logger.debug("decodeStateRequest: {} ({}) = {}. RGB= {}, {}, {}",typ.getName(),Short.valueOf(typ.getType()),((SoulissT16)typ).getState(),((SoulissT16)typ).getStateRED(),((SoulissT16)typ).getStateGREEN(),((SoulissT16)typ).getStateBLU());
+ else         if (iNumBytes == 5) {
+          logger.debug("decodeStateRequest: {} ({}). Thermostat= {}, Temp.Measured= {}, Temp.SetPoint= {}",typ.getName(),Short.valueOf(typ.getType()),((SoulissT31)typ).getRawCommandState(),((SoulissT31)typ).getTemperatureMeasuredValue(),((SoulissT31)typ).getSetpointValue());
+        }
+ else         if (bDecoded_forLOG) {
+          if (typ.getType() == 0x1A) {
+            logger.debug("decodeStateRequest: {} (0x{}) = {}",typ.getName(),Integer.toHexString(typ.getType()),Integer.toBinaryString(((SoulissT1A)typ).getRawState()));
           }
- else           if (iNumBytes == 5) {
-            logger.debug("decodeStateRequest: {} ({}). Thermostat= {}, Temp.Measured= {}, Temp.SetPoint= {}",typ.getName(),Short.valueOf(typ.getType()),((SoulissT31)typ).getRawCommandState(),((SoulissT31)typ).getTemperatureMeasuredValue(),((SoulissT31)typ).getSetpointValue());
-          }
- else           if (bDecoded_forLOG) {
-            if (typ.getType() == 0x1A) {
-              logger.debug("decodeStateRequest: {} (0x{}) = {}",typ.getName(),Integer.toHexString(typ.getType()),Integer.toBinaryString(((SoulissT1A)typ).getRawState()));
-            }
- else {
-              logger.debug("decodeStateRequest: {} (0x{}) = {}",typ.getName(),Integer.toHexString(typ.getType()),Float.valueOf(val));
-            }
-          }
+ else           logger.debug("decodeStateRequest: {} (0x{}) = {}",typ.getName(),Integer.toHexString(typ.getType()),Float.valueOf(val));
         }
       }
     }
