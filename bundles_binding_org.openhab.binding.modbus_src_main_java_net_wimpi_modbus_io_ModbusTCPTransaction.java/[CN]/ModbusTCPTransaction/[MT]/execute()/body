@@ -32,9 +32,6 @@
     if (m_Response instanceof ExceptionResponse) {
       throw new ModbusSlaveException(((ExceptionResponse)m_Response).getExceptionCode());
     }
-    if (isReconnecting()) {
-      m_Connection.close();
-    }
     if (isCheckingValidity()) {
       checkValidity();
     }
@@ -43,6 +40,9 @@
     throw new ModbusIOException("Thread acquiring lock was interrupted.");
   }
  finally {
+    if (isReconnecting() && m_Connection != null) {
+      m_Connection.close();
+    }
     m_TransactionLock.release();
   }
 }
