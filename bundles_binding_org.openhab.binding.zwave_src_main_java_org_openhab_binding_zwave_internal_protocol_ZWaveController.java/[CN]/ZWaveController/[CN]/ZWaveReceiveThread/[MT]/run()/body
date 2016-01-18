@@ -29,7 +29,12 @@ synchronized (serialPort.getOutputStream()) {
       }
 switch (nextByte) {
 case SOF:
-        sendAllowed.acquire();
+        try {
+          sendAllowed.acquire();
+        }
+ catch (        InterruptedException e) {
+          logger.debug("Interrupted waiting for 'sendAllowed.acquire'.");
+        }
       SOFCount++;
     int messageLength;
   try {

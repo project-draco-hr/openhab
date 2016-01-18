@@ -1,4 +1,5 @@
 {
+  logger.debug("Disconnecting from serial port...");
   if (sendThread != null) {
     sendThread.interrupt();
     try {
@@ -30,7 +31,6 @@
     transactionCompleted.release(transactionCompleted.availablePermits());
   }
   transactionCompleted.drainPermits();
-  logger.trace("Transaction completed permit count -> {}",transactionCompleted.availablePermits());
   if (this.serialPort != null) {
     this.serialPort.close();
     this.serialPort=null;
