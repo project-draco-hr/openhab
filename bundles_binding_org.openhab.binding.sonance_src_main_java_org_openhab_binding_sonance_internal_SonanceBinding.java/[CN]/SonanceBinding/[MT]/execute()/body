@@ -25,6 +25,9 @@
  else           if (provider.isVolume(itemName)) {
             sendVolumeCommand(itemName,SonanceConsts.VOLUME_QUERY + group,outputStreamCache.get(key),bufferedReaderCache.get(key));
           }
+ else           if (provider.isPower(itemName)) {
+            sendPowerCommand(itemName,SonanceConsts.POWER_QUERY,outputStreamCache.get(key),bufferedReaderCache.get(key));
+          }
         }
  catch (        UnknownHostException e) {
           logger.error("UnknownHostException occured when connecting to amplifier {}:{}.",ip,port);

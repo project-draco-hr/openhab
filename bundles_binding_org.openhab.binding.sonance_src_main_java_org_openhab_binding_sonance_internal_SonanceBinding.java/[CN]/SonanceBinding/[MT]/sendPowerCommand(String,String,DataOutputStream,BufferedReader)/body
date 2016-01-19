@@ -14,12 +14,6 @@
     logger.debug("Setting power item {} on ON",itemName);
   }
  else {
-    logger.debug("Error sending power command {}, received this: {}",command,result);
-    if (command.equals(SonanceConsts.POWER_OFF)) {
-      eventPublisher.postUpdate(itemName,OnOffType.ON);
-    }
- else {
-      eventPublisher.postUpdate(itemName,OnOffType.OFF);
-    }
+    logger.trace("Error sending power command {}, received this: {}",command,result);
   }
 }
