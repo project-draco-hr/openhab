@@ -23,10 +23,16 @@
         if (transformation.length() > 0) {
           transformedResponse=transformResponse(response,transformation);
         }
-        Class<? extends Item> itemType=provider.getItemType(itemName);
-        State state=createState(itemType,transformedResponse);
+        List<Class<? extends State>> acceptedDataTypes=provider.getAcceptedDataTypes(itemName);
+        State state=null;
+        if (acceptedDataTypes != null) {
+          state=TypeParser.parseState(acceptedDataTypes,transformedResponse);
+        }
         if (state != null) {
           eventPublisher.postUpdate(itemName,state);
+        }
+ else {
+          logger.debug("Couldn't create state for value '{}'",transformedResponse);
         }
         lastUpdateMap.put(itemName,System.currentTimeMillis());
       }
