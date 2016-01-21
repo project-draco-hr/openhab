@@ -4,34 +4,27 @@
     provider=providers.iterator().next();
   }
   if (provider == null) {
-    if (logger.isErrorEnabled()) {
-      logger.error("doesn't find matching binding provider [itemName={}, type={}]",itemName,type);
-    }
+    logger.error("doesn't find matching binding provider [itemName={}, type={}]",itemName,type);
     return false;
   }
   String urtsiDeviceId=provider.getDeviceId(itemName);
   UrtsiDevice urtsiDevice=idToDeviceMap.get(urtsiDeviceId);
   if (urtsiDevice == null) {
-    if (logger.isErrorEnabled()) {
-      logger.error("No serial port has been configured for urtsi device id '" + urtsiDeviceId + "'");
-    }
+    logger.error("No serial port has been configured for urtsi device id '{}'",urtsiDeviceId);
     return false;
   }
   int channel=provider.getChannel(itemName);
   int address=provider.getAddress(itemName);
-  if (urtsiDevice != null) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Send to URTSI for item: " + itemName + "; Type: "+ type);
-    }
-    String actionKey=null;
-    if (type instanceof UpDownType) {
+  logger.debug("Send to URTSI for item: {}; Type: {}",itemName,type);
+  String actionKey=null;
+  if (type instanceof UpDownType) {
 switch ((UpDownType)type) {
 case UP:
-        actionKey=COMMAND_UP;
-      break;
+      actionKey=COMMAND_UP;
+    break;
 case DOWN:
-    actionKey=COMMAND_DOWN;
-  break;
+  actionKey=COMMAND_DOWN;
+break;
 }
 }
  else if (type instanceof StopMoveType) {
@@ -43,21 +36,16 @@ default :
 break;
 }
 }
-if (logger.isDebugEnabled()) {
-logger.debug("Action key: " + actionKey);
-}
+logger.debug("Action key: {}",actionKey);
 if (actionKey != null) {
 String channelString=String.format("%02d",channel);
 String addressString=String.format("%02d",address);
 String command=addressString + channelString + actionKey;
 boolean executedSuccessfully=urtsiDevice.writeString(command);
 if (!executedSuccessfully) {
-if (logger.isErrorEnabled()) {
-logger.error("Command has not been processed [itemName={}, command={}]",itemName,command);
-}
+logger.warn("Command has not been processed [itemName={}, command={}]",itemName,command);
 }
 return executedSuccessfully;
-}
 }
 return false;
 }

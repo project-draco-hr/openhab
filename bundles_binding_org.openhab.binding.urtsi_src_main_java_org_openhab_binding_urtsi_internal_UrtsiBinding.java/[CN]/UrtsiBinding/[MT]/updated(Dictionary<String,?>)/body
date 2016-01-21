@@ -4,11 +4,11 @@
     Enumeration<String> keys=config.keys();
     while (keys.hasMoreElements()) {
       String key=keys.nextElement();
-      logger.debug("Processing key '" + key + "'");
-      if (key != "service.pid") {
+      logger.debug("Processing key '{}'",key);
+      if (!key.equals("service.pid") && !key.equals("component.name")) {
         Matcher matcher=EXTRACT_URTSI_CONFIG_PATTERN.matcher(key);
         if (!matcher.matches()) {
-          logger.debug("given config key '" + key + "' does not follow the expected pattern '<id>.port'");
+          logger.debug("given config key '{}' does not follow the expected pattern '<id>.port'",key);
         }
  else {
           matcher.reset();

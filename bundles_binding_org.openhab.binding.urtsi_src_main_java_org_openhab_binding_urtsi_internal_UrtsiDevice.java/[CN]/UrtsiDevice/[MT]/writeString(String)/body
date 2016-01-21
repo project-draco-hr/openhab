@@ -1,0 +1,61 @@
+{
+  logger.debug("Writing '{}' to serial port {}",msg,port);
+  final long earliestNextExecution=lastCommandTime + interval;
+  while (earliestNextExecution > System.currentTimeMillis()) {
+    try {
+      Thread.sleep(100);
+    }
+ catch (    InterruptedException ex) {
+      return false;
+    }
+  }
+  try {
+    final List<Boolean> listenerResult=new ArrayList<Boolean>();
+    serialPort.addEventListener(new SerialPortEventListener(){
+      @Override public void serialEvent(      SerialPortEvent event){
+        if (event.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+          final StringBuilder sb=new StringBuilder();
+          final byte[] readBuffer=new byte[20];
+          try {
+            do {
+              while (inputStream.available() > 0) {
+                final int bytes=inputStream.read(readBuffer);
+                sb.append(new String(readBuffer,0,bytes));
+              }
+              try {
+                Thread.sleep(100);
+              }
+ catch (              InterruptedException e) {
+              }
+            }
+ while (inputStream.available() > 0);
+            final String result=sb.toString();
+            if (result.equals(msg)) {
+              listenerResult.add(true);
+            }
+          }
+ catch (          IOException e) {
+            logger.debug("Error receiving data on serial port {}: {}",port,e.getMessage());
+          }
+        }
+      }
+    }
+);
+    serialPort.notifyOnDataAvailable(true);
+    outputStream.write(msg.getBytes());
+    outputStream.flush();
+    lastCommandTime=System.currentTimeMillis();
+    final long timeout=lastCommandTime + 1000;
+    while (listenerResult.isEmpty() && System.currentTimeMillis() < timeout) {
+      Thread.sleep(100);
+    }
+    return !listenerResult.isEmpty();
+  }
+ catch (  Exception e) {
+    logger.error("Error writing '{}' to serial port {}: {}",msg,port,e.getMessage());
+  }
+ finally {
+    serialPort.removeEventListener();
+  }
+  return false;
+}
