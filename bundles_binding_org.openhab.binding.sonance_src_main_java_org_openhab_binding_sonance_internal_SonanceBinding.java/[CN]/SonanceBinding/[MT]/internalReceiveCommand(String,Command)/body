@@ -40,10 +40,11 @@
       }
  else {
         try {
-          setVolumeCommand(itemName,group,Integer.parseInt(command.toString()),outToServer,i,ip + ":" + port);
+          Double d=Double.parseDouble(command.toString());
+          setVolumeCommand(itemName,group,d.intValue(),outToServer,i,ip + ":" + port);
         }
  catch (        NumberFormatException nfe) {
-          logger.error("I don't know what to do with the command \"{}\"",command);
+          logger.error("I don't know what to do with the volume command \"{}\" ({})",command,nfe.getMessage());
         }
       }
     }

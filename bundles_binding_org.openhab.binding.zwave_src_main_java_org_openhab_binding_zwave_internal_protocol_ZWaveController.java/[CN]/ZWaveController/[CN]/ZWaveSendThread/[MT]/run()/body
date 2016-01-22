@@ -12,6 +12,7 @@
         logger.debug("Took message from queue for sending. Queue length = {}",sendQueue.size());
       }
  catch (      InterruptedException e1) {
+        logger.error("InterruptedException during Z-Wave thread: sendQueue.take {}",e1);
         break;
       }
       if (lastSentMessage == null) {
@@ -78,6 +79,7 @@ synchronized (serialPort.getOutputStream()) {
         logger.trace("Acquired. Transaction completed permit count -> {}",transactionCompleted.availablePermits());
       }
  catch (      InterruptedException e) {
+        logger.error("InterruptedException during Z-Wave thread: tryAcquire",e);
         break;
       }
     }
