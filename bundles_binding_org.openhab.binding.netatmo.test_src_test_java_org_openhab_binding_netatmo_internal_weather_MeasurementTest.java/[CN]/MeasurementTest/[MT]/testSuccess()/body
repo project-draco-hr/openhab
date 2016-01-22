@@ -1,0 +1,21 @@
+{
+  final MeasurementRequestStub request=createRequest("/getmeasure.json");
+  request.addMeasure(NetatmoMeasureType.TEMPERATURE);
+  request.addMeasure(NetatmoMeasureType.HUMIDITY);
+  final MeasurementResponse response=request.execute();
+  assertFalse(response.isError());
+  assertNull(response.getError());
+  assertEquals("access_token=" + ACCESS_TOKEN + "&scale=max&date_end=last&device_id="+ DEVICE_ID+ "&module_id="+ MODULE_ID+ "&type=Humidity,Temperature",request.getContent());
+  final List<Body> bodyList=response.getBody();
+  assertNotNull(bodyList);
+  assertEquals(1,bodyList.size());
+  final Body body=bodyList.get(0);
+  final List<List<BigDecimal>> valuesList=body.getValues();
+  assertNotNull(valuesList);
+  assertEquals(1,valuesList.size());
+  final List<BigDecimal> values=valuesList.get(0);
+  assertNotNull(values);
+  assertEquals(2,values.size());
+  assertEquals(new BigDecimal("77"),values.get(0));
+  assertEquals(new BigDecimal("19.3"),values.get(1));
+}

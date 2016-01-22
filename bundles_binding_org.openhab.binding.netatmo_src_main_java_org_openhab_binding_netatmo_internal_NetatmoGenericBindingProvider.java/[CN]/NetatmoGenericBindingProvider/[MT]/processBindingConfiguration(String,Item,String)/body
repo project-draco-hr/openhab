@@ -3,11 +3,30 @@
   super.processBindingConfiguration(context,item,bindingConfig);
   final NetatmoBindingConfig config=new NetatmoBindingConfig();
   final String[] configParts=bindingConfig.split("#");
-  String measureTypeString;
+  String deviceType=NETATMO_WEATHER;
+  if (configParts.length > 0) {
+    final String[] sPart=configParts[0].split("=");
+switch (sPart.length) {
+case 1:
+      break;
+case 2:
+    deviceType=sPart[0];
+  if (!(NETATMO_CAMERA.equals(deviceType) || NETATMO_WEATHER.equals(deviceType))) {
+    throw new BindingConfigParseException("The choosen name of the devicetype for the netatmo binding configuration is unknown - please verify your *.items file");
+  }
+configParts[0]=sPart[1];
+break;
+default :
+throw new BindingConfigParseException("A netatmo binding configuration must start with the devicetype followed by '=', without weatherstation is default - please verify your *.items file");
+}
+}
+if (NETATMO_WEATHER.equals(deviceType)) {
+config.bWeather=true;
+String measureTypeString;
 switch (configParts.length) {
 case 2:
-    config.deviceId=configParts[0];
-  measureTypeString=configParts[1];
+config.deviceId=configParts[0];
+measureTypeString=configParts[1];
 break;
 case 3:
 config.deviceId=configParts[0];
@@ -21,7 +40,7 @@ config.moduleId=configParts[2];
 measureTypeString=configParts[3];
 break;
 default :
-throw new BindingConfigParseException("A Netatmo binding configuration must consist of two, three or four parts - please verify your *.items file");
+throw new BindingConfigParseException("A Netatmo weather station binding configuration must consist of two, three or four parts - please verify your *.items file");
 }
 final String[] measureTypeParts=measureTypeString.split(",");
 switch (measureTypeParts.length) {
@@ -35,6 +54,33 @@ config.netatmoScale=NetatmoScale.fromString(measureTypeParts[1]);
 break;
 default :
 throw new BindingConfigParseException("The last part of the Netatmo binding configuration must be 'type' or 'type,scale'" + " - please verify your *.items file");
+}
+}
+ else if (NETATMO_CAMERA.equals(deviceType)) {
+config.bCamera=true;
+switch (configParts.length) {
+case 2:
+config.homeId=configParts[0];
+config.attribute=NetatmoCameraAttributes.fromString(configParts[1]);
+break;
+case 3:
+config.homeId=configParts[0];
+String sTmp=configParts[1];
+final String[] sItem=sTmp.split(":");
+if (sItem.length == 6) {
+config.cameraId=sTmp;
+}
+ else {
+config.personId=sTmp;
+}
+config.attribute=NetatmoCameraAttributes.fromString(configParts[2]);
+break;
+default :
+throw new BindingConfigParseException("A Netatmo camera binding configuration must consist of two or three parts - please verify your *.items file");
+}
+}
+ else {
+throw new BindingConfigParseException("The choosen name of the devicetype for the netatmo binding configuration is unknown - please verify your *.items file");
 }
 logger.debug("Adding binding: {}",config);
 addBindingConfig(item,config);

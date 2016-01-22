@@ -1,0 +1,28 @@
+{
+  final GetHomeDataRequestStub request=createRequest("/gethomedata.json");
+  final GetHomeDataResponse response=request.execute();
+  assertFalse(response.isError());
+  assertEquals("access_token=" + ACCESS_TOKEN,request.getContent());
+  assertEquals("ok",response.getStatus());
+  List<Home> myHomes=response.getHomes();
+  assertEquals(1,myHomes.size());
+  assertEquals(myHomes.get(0).getName(),"Home Tom");
+  Place myPlace=myHomes.get(0).getPlace();
+  assertEquals(myPlace.getTimezone(),"Europe/Stockholm");
+  List<Person> myPersons=myHomes.get(0).getPersons();
+  assertEquals(4,myPersons.size());
+  assertEquals("13e843a4-2bcb-4d52-855c-1c5570663f76",myPersons.get(2).getId());
+  assertEquals("Tom",myPersons.get(3).getPseudo());
+  Face myFace=myPersons.get(0).getFace();
+  assertEquals("55e598250a6e6e6170cf7cfb",myFace.getId());
+  List<Event> myEvents=myHomes.get(0).getEvents();
+  assertEquals(1,myEvents.size());
+  assertEquals("70:ee:50:13:8b:35",myEvents.get(0).getCamera_id());
+  Snapshot mySnapshot=myEvents.get(0).getSnapshot();
+  assertEquals("8bbbe58c7b4fba061e8c29c2b7a57e6d16956b06c6ebd992e01267e755f7df72",mySnapshot.getKey());
+  List<Camera> myCameras=myHomes.get(0).getCameras();
+  assertEquals(2,myCameras.size());
+  assertEquals("disconnected",myCameras.get(1).getStatus());
+  User myUsr=response.getUser();
+  assertEquals("en-US",myUsr.getLang());
+}

@@ -1,0 +1,11 @@
+{
+  final String content=String.format(CONTENT,this.accessToken);
+  String json=null;
+  try {
+    json=executeQuery(content);
+    return JSON.readValue(json,GetHomeDataResponse.class);
+  }
+ catch (  final Exception e) {
+    throw newException("Could not execute get home data request!",e,URL,content,json);
+  }
+}

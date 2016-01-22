@@ -28,17 +28,17 @@
       }
       String value=(String)config.get(configKeyTail);
       if (CONFIG_CLIENT_ID.equals(configKeyTail)) {
-        credentials.clientId=value;
+        credentials.setClientId(value);
       }
  else       if (CONFIG_CLIENT_SECRET.equals(configKeyTail)) {
-        credentials.clientSecret=value;
+        credentials.setClientSecret(value);
       }
  else       if (CONFIG_REFRESH_TOKEN.equals(configKeyTail)) {
-        credentials.refreshToken=value;
+        credentials.setRefreshToken(value);
       }
  else       if (CONFIG_PRESSURE_UNIT.equals(configKeyTail)) {
         try {
-          pressureUnit=NetatmoPressureUnit.fromString(value);
+          weatherBinding.setPressureUnit(NetatmoPressureUnit.fromString(value));
         }
  catch (        IllegalArgumentException e) {
           throw new ConfigurationException(configKey,"the value '" + value + "' is not valid for the configKey '"+ configKey+ "'");
@@ -46,7 +46,7 @@
       }
  else       if (CONFIG_UNIT_SYSTEM.equals(configKeyTail)) {
         try {
-          unitSystem=NetatmoUnitSystem.fromString(value);
+          weatherBinding.setUnitSystem(NetatmoUnitSystem.fromString(value));
         }
  catch (        IllegalArgumentException e) {
           throw new ConfigurationException(configKey,"the value '" + value + "' is not valid for the configKey '"+ configKey+ "'");

@@ -1,3 +1,10 @@
 {
-  return "NetatmoBindingConfig [userid=" + this.userid + ", deviceId="+ this.deviceId+ ", moduleId="+ this.moduleId+ ", measure="+ this.measureType.getMeasure()+ "]";
+  String sReturn="NetatmoBindingConfig";
+  if (bWeather) {
+    sReturn+=" weather=true [userid=" + this.userid + ", deviceId="+ this.deviceId+ ", moduleId="+ this.moduleId+ ", measure="+ (this.measureType != null ? this.measureType.getMeasure() : null)+ "]";
+  }
+  if (bCamera) {
+    sReturn+=" camera=true [homeId=" + this.homeId + ", personId="+ this.personId+ ", cameraId="+ this.cameraId+ ", attribute="+ this.attribute+ "]";
+  }
+  return sReturn;
 }
