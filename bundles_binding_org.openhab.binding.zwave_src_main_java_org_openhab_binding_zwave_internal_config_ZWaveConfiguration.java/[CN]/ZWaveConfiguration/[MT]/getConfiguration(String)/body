@@ -194,7 +194,7 @@ record=new OpenHABConfigurationRecord(domain,"Location","Location",false);
 record.value=node.getLocation();
 records.add(record);
 ZWaveSwitchAllCommandClass switchAllCommandClass=(ZWaveSwitchAllCommandClass)node.getCommandClass(ZWaveCommandClass.CommandClass.SWITCH_ALL);
-if (switchAllCommandClass != null) {
+if ((ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.SWITCH_ALL) != null) {
 record=new OpenHABConfigurationRecord(domain,"SwitchAll","Switch All",false);
 record.type=OpenHABConfigurationRecord.TYPE.LIST;
 record.addValue("0","Exclude from All On and All Off groups");
@@ -204,24 +204,20 @@ record.addValue("255","Include in All On and All Off groups");
 record.value=String.valueOf(switchAllCommandClass.getMode());
 records.add(record);
 }
-if (node.getManufacturer() != Integer.MAX_VALUE) {
-if (database.FindProduct(node.getManufacturer(),node.getDeviceType(),node.getDeviceId(),node.getApplicationVersion()) == true) {
-if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.CONFIGURATION.getKey()) == true) {
+if ((ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.CONFIGURATION) != null) {
 record=new OpenHABConfigurationRecord(domain + "parameters/","Configuration Parameters");
 record.addAction("Refresh","Refresh");
 records.add(record);
 }
-if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.ASSOCIATION.getKey()) == true) {
+if ((ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.ASSOCIATION) != null) {
 record=new OpenHABConfigurationRecord(domain + "associations/","Association Groups");
 record.addAction("Refresh","Refresh");
 records.add(record);
 }
-if (database.doesProductImplementCommandClass(ZWaveCommandClass.CommandClass.WAKE_UP.getKey()) == true) {
+if ((ZWaveConfigurationCommandClass)node.getCommandClass(CommandClass.WAKE_UP) != null) {
 record=new OpenHABConfigurationRecord(domain + "wakeup/","Wakeup Period");
 record.addAction("Refresh","Refresh");
 records.add(record);
-}
-}
 }
 if (nodeId == zController.getOwnNodeId()) {
 record=new OpenHABConfigurationRecord(domain + "controller/","Controller");
