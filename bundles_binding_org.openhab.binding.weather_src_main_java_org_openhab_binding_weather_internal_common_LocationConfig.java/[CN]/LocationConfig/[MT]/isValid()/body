@@ -1,3 +1,10 @@
 {
-  return providerName != null && language != null && updateInterval != null && latitude != null && longitude != null && locationId != null;
+  boolean valid=providerName != null && language != null && updateInterval != null && locationId != null;
+  if (providerName == ProviderName.YAHOO) {
+    valid=valid && woeid != null;
+  }
+ else {
+    valid=valid && latitude != null && longitude != null;
+  }
+  return valid;
 }
