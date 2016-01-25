@@ -1,0 +1,29 @@
+{
+  final Matcher matcher=CONFIG_BINDING_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    bombOut(bindingConfig);
+  }
+  matcher.reset();
+  if (matcher.find()) {
+    int address=1;
+    int channel=1;
+    if (matcher.group(5) != null) {
+      channel=Integer.valueOf(matcher.group(5));
+      if (matcher.group(2) == null) {
+        bombOut(bindingConfig);
+      }
+      address=Integer.valueOf(matcher.group(2));
+    }
+ else {
+      if (matcher.group(2) == null) {
+        bombOut(bindingConfig);
+      }
+      channel=Integer.valueOf(matcher.group(2));
+    }
+    final UrtsiItemConfiguration urtsiConfig=new UrtsiItemConfiguration(matcher.group(1),channel,address);
+    addBindingConfig(item,urtsiConfig);
+  }
+ else {
+    bombOut(bindingConfig);
+  }
+}
