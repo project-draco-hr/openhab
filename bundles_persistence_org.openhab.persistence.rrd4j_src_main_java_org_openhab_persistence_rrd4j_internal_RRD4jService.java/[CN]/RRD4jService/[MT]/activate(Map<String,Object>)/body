@@ -14,7 +14,7 @@
   Iterator<String> keys=config.keySet().iterator();
   while (keys.hasNext()) {
     String key=keys.next();
-    if (key.equals("service.pid")) {
+    if (key.equals("service.pid") || key.equals("component.name")) {
       continue;
     }
     String[] subkeys=key.split("\\.");
@@ -63,7 +63,7 @@
       logger.debug("Created {}",rrdDef.toString());
     }
  else {
-      logger.info("Removing invalid defintion {}",rrdDef.toString());
+      logger.info("Removing invalid definition {}",rrdDef.toString());
       rrdDefs.remove(rrdDef.name);
     }
   }
