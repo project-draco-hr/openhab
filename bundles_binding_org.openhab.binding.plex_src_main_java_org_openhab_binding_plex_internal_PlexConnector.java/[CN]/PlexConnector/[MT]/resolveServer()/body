@@ -1,0 +1,18 @@
+{
+  MediaContainer container=getDocument(API_RESOURCES_URL,MediaContainer.class);
+  if (container != null) {
+    for (    Device devices : container.getDevices()) {
+      for (      Connection deviceConnection : devices.getConnections()) {
+        boolean uriSet=(connection.getUri() != null);
+        boolean portEqual=String.valueOf(connection.getPort()).equals(deviceConnection.getPort());
+        boolean hostEqual=connection.getHost().equals(deviceConnection.getAddress());
+        if (!uriSet && portEqual && hostEqual) {
+          connection.setUri(deviceConnection.getUri());
+        }
+      }
+    }
+  }
+  if (connection.getUri() == null) {
+    connection.setUri(String.format("http://%s:%d",connection.getHost(),connection.getPort()));
+  }
+}
