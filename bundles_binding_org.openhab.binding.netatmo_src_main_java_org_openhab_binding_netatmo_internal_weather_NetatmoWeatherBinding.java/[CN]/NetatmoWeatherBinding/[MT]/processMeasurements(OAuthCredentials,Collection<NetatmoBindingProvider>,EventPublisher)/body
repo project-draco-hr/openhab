@@ -1,0 +1,25 @@
+{
+  DeviceMeasureValueMap deviceMeasureValueMap=new DeviceMeasureValueMap();
+  for (  final MeasurementRequest request : createMeasurementRequests(providers)) {
+    final MeasurementResponse response=request.execute();
+    logger.debug("Request: {}",request);
+    logger.debug("Response: {}",response);
+    if (response.isError()) {
+      final NetatmoError error=response.getError();
+      if (error.isAccessTokenExpired() || error.isTokenNotVaid()) {
+        logger.debug("Token is expired or is not valid, refreshing: code = {} message = {}",error.getCode(),error.getMessage());
+        oauthCredentials.refreshAccessToken();
+        execute(oauthCredentials,providers,eventPublisher);
+        return null;
+      }
+ else {
+        logger.error("Error sending measurement request: code = {} message = {}",error.getCode(),error.getMessage());
+        throw new NetatmoException(error.getMessage());
+      }
+    }
+ else {
+      processMeasurementResponse(request,response,deviceMeasureValueMap);
+    }
+  }
+  return deviceMeasureValueMap;
+}

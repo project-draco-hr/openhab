@@ -1,0 +1,117 @@
+{
+  final Map<String,Home> homeMap=new HashMap<String,Home>();
+  final Map<String,Map<String,Person>> homeKnownPersons=new HashMap<String,Map<String,Person>>();
+  final Map<String,Map<String,Person>> homeUnKnownPersons=new HashMap<String,Map<String,Person>>();
+  final Map<String,Set<Event>> homeEvents=new HashMap<String,Set<Event>>();
+  final Map<String,Map<String,Camera>> homeCameras=new HashMap<String,Map<String,Camera>>();
+  for (  final Home home : response.getHomes()) {
+    final String homeId=home.getId();
+    homeMap.put(homeId,home);
+    logger.debug("Response Home: ID=" + home.getId() + " NAME="+ home.getName()+ " PLACE="+ home.getPlace().toString());
+    for (    final Camera camera : home.getCameras()) {
+      if (!homeCameras.containsKey(homeId)) {
+        homeCameras.put(homeId,new HashMap<String,Camera>());
+      }
+      homeCameras.get(homeId).put(camera.getId(),camera);
+      logger.debug("Response Camera: ID=" + camera.getId() + " STATUS="+ camera.getStatus()+ " SDSTATUS="+ camera.getSd_status()+ " ALIMSTATUS="+ camera.getAlim_status());
+    }
+    for (    final Person person : home.getPersons()) {
+      if (!homeKnownPersons.containsKey(homeId)) {
+        homeKnownPersons.put(homeId,new HashMap<String,Person>());
+      }
+      if (!homeUnKnownPersons.containsKey(homeId)) {
+        homeUnKnownPersons.put(homeId,new HashMap<String,Person>());
+        homeUnKnownPersons.get(homeId).put("UNKNOWN",null);
+      }
+      String pseudo=person.getPseudo();
+      if (pseudo != null) {
+        homeKnownPersons.get(homeId).put(person.getId(),person);
+        logger.debug("Response Known Person: ID=" + person.getId() + " ("+ pseudo+ ") AWAY="+ person.getOut_of_sight().toString()+ " LASTSEEN="+ (person.getLastSeen() != null ? person.getLastSeen().toString() : "unknown"));
+      }
+ else {
+        homeUnKnownPersons.get(homeId).put(person.getId(),person);
+        if (!configuredHomeUnKnownPersons.containsKey(homeId)) {
+          configuredHomeUnKnownPersons.put(homeId,new HashMap<String,Person>());
+        }
+        configuredHomeUnKnownPersons.get(homeId).put(person.getId(),person);
+        logger.debug("Response UnKnown Person: ID=" + person.getId() + " AWAY="+ person.getOut_of_sight().toString()+ " LASTSEEN="+ (person.getLastSeen() != null ? person.getLastSeen().toString() : "unknown"));
+      }
+    }
+    for (    final Event event : home.getEvents()) {
+      if (!homeEvents.containsKey(homeId)) {
+        homeEvents.put(homeId,new HashSet<Event>());
+      }
+      homeEvents.get(homeId).add(event);
+      logger.debug("Response Event: ID=" + event.getId() + " TYPE="+ event.getType()+ " MESSAGE="+ event.getMessage()+ " TIME="+ (event.getTime() != null ? event.getTime().toString() : "unknown"));
+    }
+  }
+  for (  final NetatmoBindingProvider provider : providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      final String homeId=provider.getHomeId(itemName);
+      if (homeId != null) {
+        final String personId=provider.getPersonId(itemName);
+        final String cameraId=provider.getCameraId(itemName);
+        if (personId != null) {
+          if ("UNKNOWN".equals(personId)) {
+            if (homeUnKnownPersons.containsKey(homeId) && homeUnKnownPersons.get(homeId).containsKey(personId)) {
+              homeUnKnownPersons.get(homeId).remove(personId);
+            }
+          }
+ else {
+            if (!configuredHomeKnownPersons.containsKey(homeId)) {
+              configuredHomeKnownPersons.put(homeId,new HashMap<String,Person>());
+            }
+            if (homeKnownPersons.containsKey(homeId) && homeKnownPersons.get(homeId).containsKey(personId)) {
+              configuredHomeKnownPersons.get(homeId).put(personId,homeKnownPersons.get(homeId).get(personId));
+              homeKnownPersons.get(homeId).remove(personId);
+            }
+          }
+        }
+ else         if (cameraId != null) {
+          if (!configuredhomeCameras.containsKey(homeId)) {
+            configuredhomeCameras.put(homeId,new HashMap<String,Camera>());
+          }
+          if (homeCameras.containsKey(homeId) && homeCameras.get(homeId).containsKey(cameraId)) {
+            configuredhomeCameras.get(homeId).put(cameraId,homeCameras.get(homeId).get(cameraId));
+            homeCameras.get(homeId).remove(cameraId);
+          }
+        }
+ else {
+          if (homeMap.containsKey(homeId)) {
+            configuredHomeMap.put(homeId,homeMap.get(homeId));
+            homeMap.remove(homeId);
+          }
+        }
+      }
+    }
+  }
+  final StringBuilder message=new StringBuilder();
+  for (  Entry<String,Home> entry : homeMap.entrySet()) {
+    final String homeId=entry.getKey();
+    message.append("\t HOME: " + homeId + " ("+ entry.getValue().getName()+ ")\n");
+  }
+  for (  Entry<String,Map<String,Person>> entry : homeKnownPersons.entrySet()) {
+    final String homeId=entry.getKey();
+    for (    Entry<String,Person> entry2 : entry.getValue().entrySet()) {
+      final String personId=entry2.getKey();
+      message.append("\t PERSON: " + homeId + "#"+ personId+ " ("+ entry2.getValue().getPseudo()+ ")\n");
+    }
+  }
+  for (  Entry<String,Map<String,Person>> entry : homeUnKnownPersons.entrySet()) {
+    final String homeId=entry.getKey();
+    if (entry.getValue().containsKey("UNKNOWN")) {
+      message.append("\t PERSON: " + homeId + "#UNKNOWN\n");
+    }
+  }
+  for (  Entry<String,Map<String,Camera>> entry : homeCameras.entrySet()) {
+    final String homeId=entry.getKey();
+    for (    Entry<String,Camera> entry2 : entry.getValue().entrySet()) {
+      final String cameraId=entry2.getKey();
+      message.append("\t CAMERA: " + homeId + "#"+ cameraId+ " ("+ entry2.getValue().getName()+ ")\n");
+    }
+  }
+  if (message.length() > 0) {
+    message.insert(0,"The following Items from Netatmo Camera are not yet configured:\n");
+    logger.info(message.toString());
+  }
+}

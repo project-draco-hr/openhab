@@ -5,170 +5,27 @@
     if (oauthCredentials.noAccessToken()) {
       oauthCredentials.refreshAccessToken();
     }
-    try {
-      if (oauthCredentials.firstExecution) {
-        processGetStationsData(oauthCredentials);
-      }
-      DeviceMeasureValueMap deviceMeasureValueMap=processMeasurements(oauthCredentials);
-      if (deviceMeasureValueMap == null) {
-        return;
-      }
-      for (      final NetatmoBindingProvider provider : this.providers) {
-        for (        final String itemName : provider.getItemNames()) {
-          final String deviceId=provider.getDeviceId(itemName);
-          final String moduleId=provider.getModuleId(itemName);
-          final NetatmoMeasureType measureType=provider.getMeasureType(itemName);
-          final NetatmoScale scale=provider.getNetatmoScale(itemName);
-          State state=null;
-switch (measureType) {
-case MODULENAME:
-            if (moduleId == null)             for (            Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
-              if (device.getId().equals(deviceId)) {
-                state=new StringType(device.getModuleName());
-                break;
-              }
-            }
- else {
-              for (              Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
-                for (                Module module : device.getModules()) {
-                  if (module.getId().equals(moduleId)) {
-                    state=new StringType(module.getModuleName());
-                    break;
-                  }
-                }
-              }
-            }
+    boolean bWeather=false;
+    boolean bCamera=false;
+    for (    final NetatmoBindingProvider provider : providers) {
+      for (      final String itemName : provider.getItemNames()) {
+        final String sItemType=provider.getItemType(itemName);
+        if (NETATMO_WEATHER.equals(sItemType)) {
+          bWeather=true;
+        }
+ else         if (NETATMO_CAMERA.equals(sItemType)) {
+          bCamera=true;
+        }
+        if (bWeather && bCamera) {
           break;
-case TIMESTAMP:
-        state=deviceMeasureValueMap.timeStamp;
-      break;
-case TEMPERATURE:
-case CO2:
-case HUMIDITY:
-case NOISE:
-case PRESSURE:
-case RAIN:
-case MIN_TEMP:
-case MAX_TEMP:
-case MIN_HUM:
-case MAX_HUM:
-case MIN_PRESSURE:
-case MAX_PRESSURE:
-case MIN_NOISE:
-case MAX_NOISE:
-case MIN_CO2:
-case MAX_CO2:
-case SUM_RAIN:
-case WINDSTRENGTH:
-case WINDANGLE:
-case GUSTSTRENGTH:
-case GUSTANGLE:
-{
-      BigDecimal value=getValue(deviceMeasureValueMap,measureType,createKey(deviceId,moduleId,scale));
-      if (value != null) {
-        if (NetatmoMeasureType.isTemperature(measureType)) {
-          value=unitSystem.convertTemp(value);
         }
- else         if (NetatmoMeasureType.isRain(measureType)) {
-          value=unitSystem.convertRain(value);
-        }
- else         if (NetatmoMeasureType.isPressure(measureType)) {
-          value=pressureUnit.convertPressure(value);
-        }
- else         if (NetatmoMeasureType.isWind(measureType)) {
-          value=unitSystem.convertWind(value);
-        }
-        state=new DecimalType(value);
       }
     }
-  break;
-case DATE_MIN_TEMP:
-case DATE_MAX_TEMP:
-case DATE_MIN_HUM:
-case DATE_MAX_HUM:
-case DATE_MIN_PRESSURE:
-case DATE_MAX_PRESSURE:
-case DATE_MIN_NOISE:
-case DATE_MAX_NOISE:
-case DATE_MIN_CO2:
-case DATE_MAX_CO2:
-case DATE_MAX_GUST:
-{
-  final BigDecimal value=getValue(deviceMeasureValueMap,measureType,createKey(deviceId,moduleId,scale));
-  if (value != null) {
-    final Calendar calendar=GregorianCalendar.getInstance();
-    calendar.setTimeInMillis(value.longValue() * 1000);
-    state=new DateTimeType(calendar);
+    if (bWeather) {
+      weatherBinding.execute(oauthCredentials,this.providers,this.eventPublisher);
+    }
+    if (bCamera) {
+      cameraBinding.execute(oauthCredentials,this.providers,this.eventPublisher);
+    }
   }
-}
-break;
-case BATTERYVP:
-case RFSTATUS:
-for (Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
-for (Module module : device.getModules()) {
-if (module.getId().equals(moduleId)) {
-switch (measureType) {
-case BATTERYVP:
-    state=new DecimalType(module.getBatteryLevel());
-  break;
-case RFSTATUS:
-state=new DecimalType(module.getRfLevel());
-break;
-case MODULENAME:
-state=new StringType(module.getModuleName());
-break;
-}
-}
-}
-}
-break;
-case ALTITUDE:
-case LATITUDE:
-case LONGITUDE:
-case WIFISTATUS:
-case COORDINATE:
-case STATIONNAME:
-for (Device device : oauthCredentials.getStationsDataResponse.getDevices()) {
-if (device.getId().equals(deviceId)) {
-if (stationPositions.get(device) == null) {
-DecimalType altitude=DecimalType.ZERO;
-if (device.getAltitude() != null) {
-altitude=new DecimalType(device.getAltitude());
-}
-stationPositions.put(device,new PointType(new DecimalType(new BigDecimal(device.getLatitude()).setScale(6,BigDecimal.ROUND_HALF_UP)),new DecimalType(new BigDecimal(device.getLongitude()).setScale(6,BigDecimal.ROUND_HALF_UP)),altitude));
-}
-switch (measureType) {
-case LATITUDE:
-state=stationPositions.get(device).getLatitude();
-break;
-case LONGITUDE:
-state=stationPositions.get(device).getLongitude();
-break;
-case ALTITUDE:
-state=new DecimalType(Math.round(unitSystem.convertAltitude(stationPositions.get(device).getAltitude().doubleValue())));
-break;
-case WIFISTATUS:
-state=new DecimalType(device.getWifiLevel());
-break;
-case COORDINATE:
-state=stationPositions.get(device);
-break;
-case STATIONNAME:
-state=new StringType(device.getStationName());
-break;
-}
-}
-}
-break;
-}
-if (state != null) {
-this.eventPublisher.postUpdate(itemName,state);
-}
-}
-}
-}
- catch (NetatmoException ne) {
-logger.error(ne.getMessage());
-}
-}
 }

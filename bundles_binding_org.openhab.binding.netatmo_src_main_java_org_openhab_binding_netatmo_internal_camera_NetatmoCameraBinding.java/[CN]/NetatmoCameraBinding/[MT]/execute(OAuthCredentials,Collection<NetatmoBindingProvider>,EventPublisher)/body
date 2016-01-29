@@ -1,0 +1,186 @@
+{
+  logger.debug("Querying Netatmo camera API");
+  try {
+    oauthCredentials.refreshAccessToken();
+    configuredHomeKnownPersons.clear();
+    configuredHomeUnKnownPersons.clear();
+    configuredHomeMap.clear();
+    configuredhomeCameras.clear();
+    processGetHomeData(oauthCredentials,providers,eventPublisher);
+    for (    final NetatmoBindingProvider provider : providers) {
+      for (      final String itemName : provider.getItemNames()) {
+        final String homeId=provider.getHomeId(itemName);
+        final NetatmoCameraAttributes attribute=provider.getAttribute(itemName);
+        State state=null;
+        if (homeId != null) {
+          final String personId=provider.getPersonId(itemName);
+          final String cameraId=provider.getCameraId(itemName);
+          if (personId != null) {
+            if ("UNKNOWN".equals(personId)) {
+              final StringBuilder message=new StringBuilder();
+              int i=0;
+switch (attribute) {
+case HOME_UNKNWOWN_HOME_COUNT:
+                if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+                  for (                  Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+                    final Person person=entry.getValue();
+                    if (!person.getOut_of_sight()) {
+                      i++;
+                    }
+                  }
+                }
+              state=new DecimalType(i);
+            break;
+case HOME_UNKNWOWN_AWAY_COUNT:
+          if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+            for (            Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+              final Person person=entry.getValue();
+              if (person.getOut_of_sight()) {
+                i++;
+              }
+            }
+          }
+        state=new DecimalType(i);
+      break;
+case HOME_UNKNWOWN_OUTOFSIGHT_LIST:
+    if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+      for (      Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+        final Person person=entry.getValue();
+        if (message.length() > 1) {
+          message.append("#");
+        }
+        message.append(person.getOut_of_sight());
+      }
+    }
+  state=new StringType(message.toString());
+break;
+case HOME_UNKNWOWN_LASTSEEN_LIST:
+if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+for (Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+  final Person person=entry.getValue();
+  if (message.length() > 1) {
+    message.append("#");
+  }
+  final Calendar calendar=Calendar.getInstance();
+  calendar.setTimeInMillis(person.getLastSeen().getTime() * 1000);
+  message.append(calendar);
+}
+}
+state=new StringType(message.toString());
+break;
+case HOME_UNKNWOWN_FACE_ID_LIST:
+if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+for (Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+final Person person=entry.getValue();
+if (message.length() > 1) {
+message.append("#");
+}
+message.append(person.getFace().getId());
+}
+}
+state=new StringType(message.toString());
+break;
+case HOME_UNKNWOWN_FACE_KEY_LIST:
+if (configuredHomeUnKnownPersons.containsKey(homeId)) {
+for (Entry<String,Person> entry : configuredHomeUnKnownPersons.get(homeId).entrySet()) {
+final Person person=entry.getValue();
+if (message.length() > 1) {
+message.append("#");
+}
+message.append(person.getFace().getKey());
+}
+}
+state=new StringType(message.toString());
+break;
+default :
+break;
+}
+}
+ else {
+Person person=null;
+if (configuredHomeKnownPersons.containsKey(homeId)) {
+person=configuredHomeKnownPersons.get(homeId).get(personId);
+}
+if (person != null) {
+switch (attribute) {
+case HOME_PERSON_OUTOFSIGHT:
+if (person.getOut_of_sight()) {
+state=OnOffType.OFF;
+}
+ else {
+state=OnOffType.ON;
+}
+break;
+case HOME_PERSON_PSEUDO:
+state=new StringType(person.getPseudo());
+break;
+case HOME_PERSON_LASTSEEN:
+final Calendar calendar=Calendar.getInstance();
+calendar.setTimeInMillis(person.getLastSeen().getTime() * 1000);
+state=new DateTimeType(calendar);
+break;
+case HOME_PERSON_FACE_ID:
+state=new StringType(person.getFace().getId());
+break;
+case HOME_PERSON_FACE_KEY:
+state=new StringType(person.getFace().getKey());
+break;
+default :
+break;
+}
+}
+}
+}
+ else if (cameraId != null) {
+Camera camera=null;
+if (configuredhomeCameras.containsKey(homeId)) {
+camera=configuredhomeCameras.get(homeId).get(cameraId);
+}
+if (camera != null) {
+switch (attribute) {
+case HOME_CAMERA_NAME:
+state=new StringType(camera.getName());
+break;
+case HOME_CAMERA_STATUS:
+state=new StringType(camera.getStatus());
+break;
+case HOME_CAMERA_SD_STATUS:
+state=new StringType(camera.getSd_status());
+break;
+case HOME_CAMERA_ALIM_STATUS:
+state=new StringType(camera.getAlim_status());
+break;
+default :
+break;
+}
+}
+}
+ else {
+Home home=configuredHomeMap.get(homeId);
+if (home != null) {
+switch (attribute) {
+case HOME_NAME:
+state=new StringType(home.getName());
+break;
+case HOME_PLACE_COUNTRY:
+state=new StringType(home.getPlace().getCountry());
+break;
+case HOME_PLACE_TIMEZONE:
+state=new StringType(home.getPlace().getTimezone());
+break;
+default :
+break;
+}
+}
+}
+}
+if (state != null) {
+eventPublisher.postUpdate(itemName,state);
+}
+}
+}
+}
+ catch (NetatmoException ne) {
+logger.error(ne.getMessage());
+}
+}

@@ -1,0 +1,22 @@
+{
+  GetHomeDataRequest homeDataRequest=new GetHomeDataRequest(oauthCredentials.getAccessToken());
+  logger.debug("Request: {}",homeDataRequest);
+  GetHomeDataResponse homeDataResponse=homeDataRequest.execute();
+  logger.debug("Response: {}",homeDataResponse);
+  if (homeDataResponse.isError()) {
+    final NetatmoError error=homeDataResponse.getError();
+    if (error.isAccessTokenExpired() || error.isTokenNotVaid()) {
+      logger.debug("Token is expired or is not valid, refreshing: code = {} message = {}",error.getCode(),error.getMessage());
+      oauthCredentials.refreshAccessToken();
+      execute(oauthCredentials,providers,eventPublisher);
+    }
+ else {
+      logger.error("Error processing home list: code = {} message = {}",error.getCode(),error.getMessage());
+      throw new NetatmoException(error.getMessage());
+    }
+    return;
+  }
+ else {
+    processGetHomeDataResponse(homeDataResponse,providers);
+  }
+}
