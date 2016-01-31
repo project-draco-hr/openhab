@@ -8,6 +8,9 @@
  else       if (item instanceof ContactItem) {
         return value == 0.0d ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
       }
+ else       if (item instanceof DimmerItem || item instanceof RollershutterItem) {
+        return new PercentType((int)Math.round(value * 100));
+      }
     }
  catch (    ItemNotFoundException e) {
       logger.debug("Could not find item '{}' in registry",itemName);
