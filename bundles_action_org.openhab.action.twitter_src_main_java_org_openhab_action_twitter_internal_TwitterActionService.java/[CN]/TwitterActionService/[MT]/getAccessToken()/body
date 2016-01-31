@@ -3,12 +3,13 @@
     String accessToken=loadToken(getTokenFile(),"accesstoken");
     String accessTokenSecret=loadToken(getTokenFile(),"accesstokensecret");
     if (StringUtils.isEmpty(accessToken) || StringUtils.isEmpty(accessTokenSecret)) {
+      File pinFile=new File("twitter.pin");
       RequestToken requestToken=Twitter.client.getOAuthRequestToken();
       logger.info("################################################################################################");
       logger.info("# Twitter-Integration: U S E R   I N T E R A C T I O N   R E Q U I R E D !!");
       logger.info("# 1. Open URL '{}'",requestToken.getAuthorizationURL());
       logger.info("# 2. Grant openHAB access to your Twitter account");
-      logger.info("# 3. Create an empty file 'twitter.pin' in your openHAB home directory");
+      logger.info("# 3. Create an empty file 'twitter.pin' in your openHAB home directory at " + pinFile.getAbsolutePath());
       logger.info("# 4. Add the line 'pin=<authpin>' to the twitter.pin file");
       logger.info("# 5. openHAB will automatically detect the file and complete the authentication process");
       logger.info("# NOTE: You will only have 5 mins before openHAB gives up waiting for the pin!!!");
@@ -23,7 +24,6 @@
         }
  catch (        InterruptedException e) {
         }
-        File pinFile=new File("twitter.pin");
         authPin=loadToken(pinFile,"pin");
         if (waitedFor > 300000) {
           logger.info("Took too long to enter your Twitter authorisation pin! Please use OSGi " + "console to restart the org.openhab.io.net-Bundle and re-initiate the authorization process!");
