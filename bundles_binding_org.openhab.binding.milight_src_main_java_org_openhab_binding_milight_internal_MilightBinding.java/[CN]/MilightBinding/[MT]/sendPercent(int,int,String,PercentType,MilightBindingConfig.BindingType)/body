@@ -20,7 +20,7 @@
       logger.debug("milight: dim from '{}' with command '{}' via '{}' steps.",oldPercent.toString(),command.toString(),repeatCount);
       if (command.compareTo(oldPercent) > 0) {
         for (int i=0; i < repeatCount; i++) {
-          Thread.sleep(50);
+          Thread.sleep(100);
           if (BindingType.brightness.equals(type)) {
             sendIncrease(bulb,rgbwSteps,bridgeId);
           }
@@ -31,7 +31,7 @@
       }
  else       if (command.compareTo(oldPercent) < 0) {
         for (int i=0; i < repeatCount; i++) {
-          Thread.sleep(50);
+          Thread.sleep(100);
           if (BindingType.brightness.equals(type)) {
             sendDecrease(bulb,rgbwSteps,bridgeId);
           }
