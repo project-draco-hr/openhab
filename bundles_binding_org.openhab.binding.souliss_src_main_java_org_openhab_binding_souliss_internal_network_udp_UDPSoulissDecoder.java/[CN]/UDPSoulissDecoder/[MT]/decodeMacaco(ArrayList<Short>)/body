@@ -2,38 +2,38 @@
   int functionalCode=macacoPck.get(0);
   logger.debug("decodeMacaco: Received functional code: 0x" + Integer.toHexString(functionalCode));
 switch (functionalCode) {
-case ConstantsUDP.Souliss_UDP_function_ping_resp:
-    logger.info("function_ping_resp");
+case (byte)ConstantsUDP.Souliss_UDP_function_ping_resp:
+    logger.debug("function_ping_resp");
   decodePing(macacoPck);
 break;
-case ConstantsUDP.Souliss_UDP_function_subscribe_resp:
-case ConstantsUDP.Souliss_UDP_function_poll_resp:
+case (byte)ConstantsUDP.Souliss_UDP_function_subscribe_resp:
+case (byte)ConstantsUDP.Souliss_UDP_function_poll_resp:
 logger.debug("Souliss_UDP_function_subscribe_resp / Souliss_UDP_function_poll_resp");
 decodeStateRequest(macacoPck);
 break;
 case ConstantsUDP.Souliss_UDP_function_typreq_resp:
-logger.info("** TypReq answer");
+logger.debug("** TypReq answer");
 decodeTypRequest(macacoPck);
 break;
-case ConstantsUDP.Souliss_UDP_function_health_resp:
-logger.info("function_health_resp");
+case (byte)ConstantsUDP.Souliss_UDP_function_health_resp:
+logger.debug("function_health_resp");
 decodeHealthRequest(macacoPck);
 break;
 case (byte)ConstantsUDP.Souliss_UDP_function_db_struct_resp:
-logger.info("function_db_struct_resp");
+logger.debug("function_db_struct_resp");
 decodeDBStructRequest(macacoPck);
 break;
 case 0x83:
-logger.info("Functional code not supported");
+logger.debug("Functional code not supported");
 break;
 case 0x84:
-logger.info("Data out of range");
+logger.debug("Data out of range");
 break;
 case 0x85:
-logger.info("Subscription refused");
+logger.debug("Subscription refused");
 break;
 default :
-logger.info("Unknown functional code");
+logger.debug("Unknown functional code");
 break;
 }
 }
