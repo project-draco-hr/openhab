@@ -1,6 +1,10 @@
 {
   logger.debug("Refreshing access token.");
-  final RefreshTokenRequest request=new RefreshTokenRequest(this.getClientId(),this.getClientSecret(),this.getRefreshToken());
+  if (this.getWeather() == false && this.getCamera() == false) {
+    logger.debug("There are not any items configured for this binding!");
+    return;
+  }
+  final RefreshTokenRequest request=new RefreshTokenRequest(this.getClientId(),this.getClientSecret(),this.getRefreshToken(),this.getWeather(),this.getCamera());
   logger.debug("Request: {}",request);
   final RefreshTokenResponse response=request.execute();
   logger.debug("Response: {}",response);
