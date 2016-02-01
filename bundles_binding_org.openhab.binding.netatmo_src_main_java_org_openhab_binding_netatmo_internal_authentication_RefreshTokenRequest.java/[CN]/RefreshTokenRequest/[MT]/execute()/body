@@ -1,5 +1,15 @@
 {
-  final String content=String.format(CONTENT,this.refreshToken,this.clientId,this.clientSecret);
+  final StringBuffer buf=new StringBuffer(CONTENT);
+  if (weather) {
+    buf.append(READ_STATION);
+  }
+  if (camera) {
+    if (weather) {
+      buf.append(" ");
+    }
+    buf.append(READ_CAMERA);
+  }
+  final String content=String.format(buf.toString(),this.refreshToken,this.clientId,this.clientSecret);
   String json=null;
   try {
     json=executeQuery(content);

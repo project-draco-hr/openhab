@@ -1,10 +1,6 @@
 {
   logger.debug("Querying Netatmo API");
   for (  String userid : credentialsCache.keySet()) {
-    OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
-    if (oauthCredentials.noAccessToken()) {
-      oauthCredentials.refreshAccessToken();
-    }
     boolean bWeather=false;
     boolean bCamera=false;
     for (    final NetatmoBindingProvider provider : providers) {
@@ -20,6 +16,12 @@
           break;
         }
       }
+    }
+    OAuthCredentials oauthCredentials=getOAuthCredentials(userid);
+    oauthCredentials.setWeather(bWeather);
+    oauthCredentials.setCamera(bCamera);
+    if (oauthCredentials.noAccessToken()) {
+      oauthCredentials.refreshAccessToken();
     }
     if (bWeather) {
       weatherBinding.execute(oauthCredentials,this.providers,this.eventPublisher);
