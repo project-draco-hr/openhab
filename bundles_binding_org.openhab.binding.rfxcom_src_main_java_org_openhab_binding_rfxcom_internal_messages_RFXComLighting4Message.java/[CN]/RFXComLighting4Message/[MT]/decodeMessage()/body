@@ -1,15 +1,14 @@
 {
-  byte[] data=new byte[11];
+  byte[] data=new byte[10];
   data[0]=0x09;
   data[1]=RFXComBaseMessage.PacketType.LIGHTING4.toByte();
   data[2]=subType.toByte();
   data[3]=seqNbr;
-  data[4]=(byte)((sensorId >> 16) & 0xFF);
-  data[5]=(byte)((sensorId >> 8) & 0xFF);
-  data[6]=(byte)(((sensorId >> 4) & 0xFF) | command.ordinal() & 0x0F);
+  data[4]=(byte)((sensorId >> 12) & 0xFF);
+  data[5]=(byte)((sensorId >> 4) & 0xFF);
+  data[6]=(byte)(((sensorId << 4) & 0xF0) | (command.ordinal() & 0x0F));
   data[7]=(byte)((pulse >> 8) & 0xFF);
   data[8]=(byte)((pulse >> 0) & 0xFF);
-  data[9]=0;
-  data[10]=0;
+  data[9]=(byte)((signalLevel & 0x0F) << 4);
   return data;
 }
