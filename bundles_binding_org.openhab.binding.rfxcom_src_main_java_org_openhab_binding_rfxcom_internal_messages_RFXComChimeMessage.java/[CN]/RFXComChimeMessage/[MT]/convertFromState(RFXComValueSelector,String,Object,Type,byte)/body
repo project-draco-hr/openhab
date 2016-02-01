@@ -1,3 +1,18 @@
 {
-  throw new RFXComException("Not supported");
+  this.subType=((SubType)subType);
+  seqNbr=seqNumber;
+  String[] ids=id.split("\\.");
+  sensorId=Integer.parseInt(ids[0]);
+switch (valueSelector) {
+case CHIME_SOUND:
+    if (type instanceof DecimalType) {
+      chimeSound=(int)((DecimalType)type).intValue();
+    }
+ else {
+      throw new RFXComException("Can't convert " + type + " to chime sound");
+    }
+  break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
 }
