@@ -1,0 +1,90 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (valueSelector.getItemClass() == NumberItem.class) {
+    if (valueSelector == RFXComValueSelector.SIGNAL_LEVEL) {
+      state=new DecimalType(signalLevel);
+    }
+ else     if (valueSelector == RFXComValueSelector.COMMAND) {
+      state=new DecimalType(commandId);
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + valueSelector + " to NumberItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == StringItem.class) {
+    if (valueSelector == RFXComValueSelector.RAW_DATA) {
+      state=new StringType(DatatypeConverter.printHexBinary(rawMessage));
+    }
+ else {
+      throw new NumberFormatException("Can't convert " + valueSelector + " to StringItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == ContactItem.class) {
+    if (valueSelector == RFXComValueSelector.COMMAND) {
+      if (subType == SubType.MERTIK_G6RH4T1) {
+switch (command) {
+case OFF:
+case STOP:
+          state=OpenClosedType.OPEN;
+        break;
+case ON:
+      state=OpenClosedType.CLOSED;
+    break;
+default :
+  break;
+}
+}
+ else {
+switch (command) {
+case OFF:
+case RUNUP_OFF2ND:
+case STOP:
+state=OpenClosedType.CLOSED;
+break;
+case ON:
+case RUNDOWN_ON2ND:
+state=OpenClosedType.OPEN;
+break;
+default :
+break;
+}
+}
+}
+}
+ else if (valueSelector.getItemClass() == SwitchItem.class) {
+if (valueSelector == RFXComValueSelector.COMMAND) {
+if (subType == SubType.MERTIK_G6RH4T1) {
+switch (command) {
+case OFF:
+case STOP:
+state=OnOffType.OFF;
+break;
+case ON:
+state=OnOffType.ON;
+break;
+default :
+break;
+}
+}
+ else {
+switch (command) {
+case OFF:
+case RUNUP_OFF2ND:
+case STOP:
+state=OnOffType.OFF;
+break;
+case ON:
+case RUNDOWN_ON2ND:
+state=OnOffType.ON;
+break;
+default :
+break;
+}
+}
+}
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to "+ valueSelector.getItemClass());
+}
+return state;
+}

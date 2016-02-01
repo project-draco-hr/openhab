@@ -1,0 +1,34 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (valueSelector.getItemClass() == NumberItem.class) {
+    if (valueSelector == RFXComValueSelector.SIGNAL_LEVEL) {
+      state=new DecimalType(signalLevel);
+    }
+ else     if (valueSelector == RFXComValueSelector.BATTERY_LEVEL) {
+      state=new DecimalType(batteryLevel);
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to NumberItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == DateTimeItem.class) {
+    if (valueSelector == RFXComValueSelector.DATE_TIME) {
+      state=new DateTimeType(dateTime);
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == StringItem.class) {
+    if (valueSelector == RFXComValueSelector.RAW_DATA) {
+      state=new StringType(DatatypeConverter.printHexBinary(rawMessage));
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
+    }
+  }
+ else {
+    throw new RFXComException("Can't convert " + valueSelector + " to "+ valueSelector.getItemClass());
+  }
+  return state;
+}

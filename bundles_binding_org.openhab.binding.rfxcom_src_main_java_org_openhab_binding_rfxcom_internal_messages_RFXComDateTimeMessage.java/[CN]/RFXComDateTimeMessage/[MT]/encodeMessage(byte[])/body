@@ -1,0 +1,25 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  yy=(int)(data[6] & 0xFF);
+  MM=(int)(data[7] & 0xFF);
+  dd=(int)(data[8] & 0xFF);
+  dow=(int)(data[9] & 0xFF);
+  HH=(int)(data[10] & 0xFF);
+  mm=(int)(data[11] & 0xFF);
+  ss=(int)(data[12] & 0xFF);
+  dateTime="20" + yy;
+  dateTime+="-" + MM;
+  dateTime+="-" + dd;
+  dateTime+="T" + HH;
+  dateTime+=":" + mm;
+  dateTime+=":" + ss;
+  signalLevel=(byte)((data[13] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[13] & 0x0F);
+}
