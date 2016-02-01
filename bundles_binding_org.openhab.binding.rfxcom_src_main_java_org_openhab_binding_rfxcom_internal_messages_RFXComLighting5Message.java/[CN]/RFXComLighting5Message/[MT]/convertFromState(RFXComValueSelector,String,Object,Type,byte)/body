@@ -5,33 +5,44 @@
   sensorId=Integer.parseInt(ids[0]);
   unitcode=Byte.parseByte(ids[1]);
 switch (valueSelector) {
-case COMMAND:
-    if (type instanceof OnOffType) {
-      command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
-      dimmingLevel=0;
+case SHUTTER:
+    if (type instanceof OpenClosedType) {
+      command=(type == OpenClosedType.CLOSED ? Commands.CLOSE_RELAY : Commands.OPEN_RELAY);
+    }
+ else     if (type instanceof StopMoveType) {
+      command=Commands.STOP_RELAY;
     }
  else {
-      throw new RFXComException("Can't convert " + type + " to Command");
+      throw new NumberFormatException("Can't convert " + type + " to Command");
     }
   break;
-case DIMMING_LEVEL:
+case COMMAND:
 if (type instanceof OnOffType) {
   command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
   dimmingLevel=0;
 }
- else if (type instanceof PercentType) {
-  command=Commands.SET_LEVEL;
-  dimmingLevel=(byte)getDimLevelFromPercentType((PercentType)type);
-  if (dimmingLevel == 0) {
-    command=Commands.OFF;
-  }
-}
- else if (type instanceof IncreaseDecreaseType) {
-  command=Commands.SET_LEVEL;
-  dimmingLevel=5;
-}
  else {
   throw new RFXComException("Can't convert " + type + " to Command");
+}
+break;
+case DIMMING_LEVEL:
+if (type instanceof OnOffType) {
+command=(type == OnOffType.ON ? Commands.ON : Commands.OFF);
+dimmingLevel=0;
+}
+ else if (type instanceof PercentType) {
+command=Commands.SET_LEVEL;
+dimmingLevel=(byte)getDimLevelFromPercentType((PercentType)type);
+if (dimmingLevel == 0) {
+command=Commands.OFF;
+}
+}
+ else if (type instanceof IncreaseDecreaseType) {
+command=Commands.SET_LEVEL;
+dimmingLevel=5;
+}
+ else {
+throw new RFXComException("Can't convert " + type + " to Command");
 }
 break;
 default :
