@@ -1,0 +1,7 @@
+{
+  given(manager.getOpenCULHandler(config)).willReturn(newCul);
+  sut=new CULLifecycleManager(MODE,listener,manager,null,config);
+  sut.open();
+  then(listener).should().open(newCul);
+  assertReady();
+}

@@ -1,0 +1,20 @@
+{
+  if (allConfig != null) {
+    String deviceName=(String)allConfig.get(KEY_DEVICE_NAME);
+    if (StringUtils.isEmpty(deviceName)) {
+      throw new ConfigurationException(KEY_DEVICE_NAME,"The device name can't be empty");
+    }
+    Matcher deviceMatcher=DEVICE_PATTERN.matcher(deviceName);
+    if (!deviceMatcher.matches()) {
+      throw new ConfigurationException(KEY_DEVICE_NAME,"Invalid device name '" + deviceName + "'. Must be 'DEVICETYPE:ADDRESS'");
+    }
+    String deviceType=deviceMatcher.group("type");
+    CULConfigFactory configFactory=culManager.getConfigFactory(deviceType);
+    if (configFactory == null) {
+      throw new ConfigurationException(KEY_DEVICE_NAME,"Invalid device type '" + deviceType + "'");
+    }
+    String deviceAddress=deviceMatcher.group("address");
+    config=configFactory.create(deviceType,deviceAddress,mode,allConfig);
+    open();
+  }
+}

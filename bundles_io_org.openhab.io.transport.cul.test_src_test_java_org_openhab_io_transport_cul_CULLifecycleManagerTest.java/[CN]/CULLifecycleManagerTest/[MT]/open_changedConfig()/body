@@ -1,0 +1,9 @@
+{
+  given(cul.getConfig()).willReturn(differentConfig);
+  given(manager.getOpenCULHandler(config)).willReturn(newCul);
+  sut.open();
+  then(listener).should().close(cul);
+  then(manager).should().close(cul);
+  then(listener).should().open(newCul);
+  assertReady();
+}

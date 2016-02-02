@@ -1,2 +1,11 @@
 {
+  culHandlerLifecycle=new CULLifecycleManager(CULMode.SLOW_RF,new CULLifecycleListener(){
+    @Override public void open(    CULHandler cul) throws CULCommunicationException {
+      cul.send("it" + wavelength);
+      cul.send("isr" + repititions);
+    }
+    @Override public void close(    CULHandler cul){
+    }
+  }
+);
 }

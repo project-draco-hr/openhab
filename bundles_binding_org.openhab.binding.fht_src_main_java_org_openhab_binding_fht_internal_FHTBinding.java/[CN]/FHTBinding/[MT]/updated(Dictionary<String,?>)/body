@@ -1,4 +1,5 @@
 {
+  boolean properlyConfigured=false;
   if (config != null) {
     String refreshIntervalString=(String)config.get("refresh");
     if (StringUtils.isNotBlank(refreshIntervalString)) {
@@ -30,16 +31,8 @@
  else {
       unscheduleJob(requestReportJobKey);
     }
-    String deviceName=parseMandatoryValue(KEY_DEVICE,config);
-    String baudRateString=parseMandatoryValue(KEY_BAUD_RATE,config);
-    if (StringUtils.isNotBlank(baudRateString)) {
-      properties.put(KEY_BAUD_RATE,baudRateString);
-    }
-    String parityString=parseMandatoryValue(KEY_PARITY,config);
-    if (StringUtils.isNotBlank(parityString)) {
-      properties.put(KEY_PARITY,parityString);
-    }
-    setNewDeviceName(deviceName);
-    setProperlyConfigured(true);
+    culHandlerLifecycle.config(config);
+    properlyConfigured=true;
   }
+  setProperlyConfigured(properlyConfigured);
 }

@@ -1,0 +1,19 @@
+{
+  if (handler != null) {
+synchronized (openDevices) {
+      if (!handler.hasListeners()) {
+        openDevices.remove(handler);
+        try {
+          handler.send("X00");
+        }
+ catch (        CULCommunicationException e) {
+          logger.warn("Couldn't reset rf mode to X00");
+        }
+        handler.close();
+      }
+ else {
+        logger.warn("Can't close device because it still has listeners");
+      }
+    }
+  }
+}

@@ -1,2 +1,12 @@
 {
+  culHandlerLifecycle=new CULLifecycleManager(CULMode.SLOW_RF,new CULLifecycleListener(){
+    @Override public void open(    CULHandler cul) throws CULCommunicationException {
+      cul.registerListener(FHTBinding.this);
+      cul.send("T01" + housecode);
+    }
+    @Override public void close(    CULHandler cul){
+      cul.unregisterListener(FHTBinding.this);
+    }
+  }
+);
 }
