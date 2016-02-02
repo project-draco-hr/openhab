@@ -1,17 +1,20 @@
 {
   int level=this.rfStatus.intValue();
-  int result=4;
-  if (level < RF_STATUS_THRESHOLD_3) {
+  int result;
+  if (level <= RF_STATUS_FULL_SIGNAL) {
+    result=5;
+  }
+ else   if (level <= RF_STATUS_HIGH_SIGNAL) {
+    result=4;
+  }
+ else   if (level <= RF_STATUS_MEDIUM_SIGNAL) {
     result=3;
   }
- else   if (level < RF_STATUS_THRESHOLD_2) {
+ else   if (level <= RF_STATUS_LOW_SIGNAL) {
     result=2;
   }
- else   if (level < RF_STATUS_THRESHOLD_1) {
+ else {
     result=1;
-  }
- else   if (level < RF_STATUS_THRESHOLD_0) {
-    result=0;
   }
   return result;
 }
