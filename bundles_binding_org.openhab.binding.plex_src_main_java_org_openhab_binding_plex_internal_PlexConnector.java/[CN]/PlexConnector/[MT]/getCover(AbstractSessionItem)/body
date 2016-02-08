@@ -1,0 +1,16 @@
+{
+  String cover=null;
+  if (!isBlank(item.getGrandparentThumb()) && !item.getClass().equals(Track.class)) {
+    cover=item.getGrandparentThumb();
+  }
+ else   if (!isBlank(item.getThumb())) {
+    cover=item.getThumb();
+  }
+  if (!isBlank(cover)) {
+    cover=String.format("%s%s",connection.getUri().toString(),cover);
+    if (connection.hasToken()) {
+      cover=cover + "?X-Plex-Token=" + connection.getToken();
+    }
+  }
+  return cover;
+}
