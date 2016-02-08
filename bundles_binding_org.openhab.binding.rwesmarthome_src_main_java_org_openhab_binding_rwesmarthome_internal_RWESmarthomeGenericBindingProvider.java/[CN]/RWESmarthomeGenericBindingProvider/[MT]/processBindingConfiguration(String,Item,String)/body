@@ -4,7 +4,7 @@
   bindingConfig=StringUtils.trimToEmpty(bindingConfig);
   String[] configstrings=bindingConfig.split("[,]");
   Pattern patternForId=Pattern.compile("^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$");
-  Pattern patternForParam=Pattern.compile("^(temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm)$");
+  Pattern patternForParam=Pattern.compile("^(temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm|totalenergy|energypermonthinkwh|energypermonthineuro|energyperdayinkwh|energyperdayineuro|powerinwatt)$");
   for (  String configstring : configstrings) {
     String[] configParts=StringUtils.trimToEmpty(configstring).split("[=]");
     if (configParts.length != 2) {
@@ -20,7 +20,7 @@
     }
  else     if ("param".equalsIgnoreCase(key)) {
       if (!patternForParam.matcher(value).matches()) {
-        throw new BindingConfigParseException("Invalid configuration: 'param' must be one of the following: temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm");
+        throw new BindingConfigParseException("Invalid configuration: 'param' must be one of the following: temperature|humidity|settemperature|variable|contact|switch|operationmodeauto|luminance|smokedetector|dimmer|dimmerinverted|rollershutter|rollershutterinverted|alarm|totalenergy|energypermonthinkwh|energypermonthineuro|energyperdayinkwh|energyperdayineuro|powerinwatt");
       }
       config.setDeviceParam(value);
     }

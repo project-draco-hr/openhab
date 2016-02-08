@@ -1,7 +1,7 @@
 {
-  for (  RWESmarthomeBindingProvider provider : context.getProviders()) {
-    RWESmarthomeBindingConfig config=provider.getBindingConfigFor(itemName);
-    try {
+  try {
+    for (    RWESmarthomeBindingProvider provider : context.getProviders()) {
+      RWESmarthomeBindingConfig config=provider.getBindingConfigFor(itemName);
       if ("switch".equals(config.getDeviceParam())) {
         boolean on=command.equals(OnOffType.ON);
         logger.debug("Switching '{}' to '{}'",itemName,command);
@@ -43,8 +43,12 @@
         setVariableState(config.getDeviceId(),on);
       }
     }
- catch (    RWESmarthomeSessionExpiredException e) {
-      logger.error("Error handling command",e);
-    }
+  }
+ catch (  RWESmarthomeSessionExpiredException e) {
+    logger.info("Session expired while executing command '{}' for item '{}'. Restart binding...",command,itemName);
+    stop();
+    start();
+    logger.info("Retrying command '{}' for item '{}'...",command,itemName);
+    sendCommand(itemName,command);
   }
 }
