@@ -1,0 +1,15 @@
+{
+  boolean succes=false;
+  try {
+    Timeline.sendPin(token,pin);
+    succes=true;
+  }
+ catch (  PebbleException e) {
+    logger.error("Error in communication with Pebble\n",e);
+  }
+catch (  IOException e) {
+    logger.error("Error in communication with Pebble\n",e);
+  }
+  logger.debug("Sending pin with id {} " + ((succes) ? "succeeded" : "failed"),pin.getId());
+  return succes;
+}

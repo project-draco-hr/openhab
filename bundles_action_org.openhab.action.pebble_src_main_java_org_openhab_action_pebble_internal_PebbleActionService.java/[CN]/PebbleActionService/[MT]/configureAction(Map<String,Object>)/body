@@ -1,0 +1,22 @@
+{
+  for (  Entry<String,Object> entry : configuration.entrySet()) {
+    String key=entry.getKey();
+    String value=entry.getValue().toString();
+    String[] parts=key.split("\\.");
+    if (parts.length == 2) {
+      String name=parts[0].trim();
+      if (!StringUtils.isBlank(name) && !name.equals("component") && !name.equals("service")) {
+        String property=parts[1].trim();
+        PebbleInstance instance=Pebble.getInstance(name);
+        if (instance == null) {
+          instance=new PebbleInstance(name);
+        }
+        if (property.equals("token")) {
+          instance.setToken(value);
+        }
+        Pebble.setInstance(instance);
+      }
+    }
+  }
+  isProperlyConfigured=true;
+}
