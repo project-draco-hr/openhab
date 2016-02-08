@@ -1,0 +1,10 @@
+{
+  String command=PlexProperty.PAUSE.getName();
+  PlexSession session=getSessionByMachineId(config.getMachineIdentifier());
+  if (session != null) {
+    if (PlexPlayerState.Paused.equals(session.getState())) {
+      command=PlexProperty.PLAY.getName();
+    }
+  }
+  return command;
+}
