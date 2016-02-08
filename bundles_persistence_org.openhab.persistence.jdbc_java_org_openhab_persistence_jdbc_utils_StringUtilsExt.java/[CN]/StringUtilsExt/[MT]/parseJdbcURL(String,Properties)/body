@@ -31,10 +31,10 @@
   props.put("dbShortcut",protAndDb[1]);
   URI dbURI=null;
   try {
-    dbURI=new URI(stringAfterSubstr(url,":",1));
+    dbURI=new URI(stringAfterSubstr(url,":",1).replaceFirst(" ",""));
     if (dbURI.getScheme() != null) {
       props.put("scheme",dbURI.getScheme());
-      dbURI=new URI(stringAfterSubstr(url,":",2));
+      dbURI=new URI(stringAfterSubstr(url,":",2).replaceFirst(" ",""));
     }
   }
  catch (  URISyntaxException e) {
