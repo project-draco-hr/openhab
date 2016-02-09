@@ -1,38 +1,48 @@
 {
-  int value;
-  int minima;
-  int spread;
-  int threshold0;
-  int threshold1;
-  int threshold2;
-  int threshold3;
+  int full;
+  int high;
+  int medium;
+  int low;
   if (this.type.equalsIgnoreCase(TYPE_MODULE_1)) {
-    threshold0=BATTERY_MODULE_1_THRESHOLD_0;
-    threshold1=BATTERY_MODULE_1_THRESHOLD_1;
-    threshold2=BATTERY_MODULE_1_THRESHOLD_2;
-    threshold3=BATTERY_MODULE_1_THRESHOLD_3;
+    full=BATTERY_MODULE_1_FULL;
+    high=BATTERY_MODULE_1_HIGH;
+    medium=BATTERY_MODULE_1_MEDIUM;
+    low=BATTERY_MODULE_1_LOW;
   }
  else   if (this.type.equalsIgnoreCase(TYPE_MODULE_2)) {
-    threshold0=BATTERY_MODULE_2_THRESHOLD_0;
-    threshold1=BATTERY_MODULE_2_THRESHOLD_1;
-    threshold2=BATTERY_MODULE_2_THRESHOLD_2;
-    threshold3=BATTERY_MODULE_2_THRESHOLD_3;
+    full=BATTERY_MODULE_2_FULL;
+    high=BATTERY_MODULE_2_HIGH;
+    medium=BATTERY_MODULE_2_MEDIUM;
+    low=BATTERY_MODULE_2_LOW;
   }
  else   if (this.type.equalsIgnoreCase(TYPE_MODULE_3)) {
-    threshold0=BATTERY_MODULE_3_THRESHOLD_0;
-    threshold1=BATTERY_MODULE_3_THRESHOLD_1;
-    threshold2=BATTERY_MODULE_3_THRESHOLD_2;
-    threshold3=BATTERY_MODULE_3_THRESHOLD_3;
+    full=BATTERY_MODULE_3_FULL;
+    high=BATTERY_MODULE_3_HIGH;
+    medium=BATTERY_MODULE_3_MEDIUM;
+    low=BATTERY_MODULE_3_LOW;
   }
  else {
-    threshold0=BATTERY_MODULE_4_THRESHOLD_0;
-    threshold1=BATTERY_MODULE_4_THRESHOLD_1;
-    threshold2=BATTERY_MODULE_4_THRESHOLD_2;
-    threshold3=BATTERY_MODULE_4_THRESHOLD_3;
+    full=BATTERY_MODULE_4_FULL;
+    high=BATTERY_MODULE_4_HIGH;
+    medium=BATTERY_MODULE_4_MEDIUM;
+    low=BATTERY_MODULE_4_LOW;
   }
-  value=Math.min(this.batteryVp,threshold0);
-  minima=threshold3 + threshold2 - threshold1;
-  spread=threshold0 - minima;
-  double percent=100 * (value - minima) / spread;
-  return new Double(percent);
+  int batteryVp=this.batteryVp;
+  int result;
+  if (batteryVp >= full) {
+    result=5;
+  }
+ else   if (batteryVp >= high) {
+    result=4;
+  }
+ else   if (batteryVp >= medium) {
+    result=3;
+  }
+ else   if (batteryVp >= low) {
+    result=2;
+  }
+ else {
+    result=1;
+  }
+  return result;
 }
