@@ -1,8 +1,9 @@
 {
   logger.debug("Querying Netatmo Weather API");
   try {
-    if (bOAuthCredentialsFirstExecution) {
-      processGetStationsData(oauthCredentials,providers,eventPublisher);
+    GetStationsDataResponse stationsDataResponse=processGetStationsData(oauthCredentials,providers,eventPublisher);
+    if (stationsDataResponse == null) {
+      return;
     }
     DeviceMeasureValueMap deviceMeasureValueMap=processMeasurements(oauthCredentials,providers,eventPublisher);
     if (deviceMeasureValueMap == null) {
