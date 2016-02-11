@@ -32,12 +32,32 @@ throw new RFXComException("Unexpected mood: " + command);
 throw new RFXComException("Can't convert " + valueSelector + " to NumberItem");
 }
 }
- else if (valueSelector.getItemClass() == DimmerItem.class || valueSelector.getItemClass() == RollershutterItem.class) {
+ else if (valueSelector.getItemClass() == RollershutterItem.class) {
+if (valueSelector == RFXComValueSelector.COMMAND || valueSelector == RFXComValueSelector.SHUTTER) {
+switch (command) {
+case CLOSE_RELAY:
+state=OpenClosedType.CLOSED;
+break;
+case OPEN_RELAY:
+state=OpenClosedType.OPEN;
+break;
+default :
+break;
+}
+}
+ else if (valueSelector == RFXComValueSelector.DIMMING_LEVEL) {
+state=RFXComLighting5Message.getPercentTypeFromDimLevel(dimmingLevel);
+}
+ else {
+throw new NumberFormatException("Can't convert " + valueSelector + " to RollershutterItem");
+}
+}
+ else if (valueSelector.getItemClass() == DimmerItem.class) {
 if (valueSelector == RFXComValueSelector.DIMMING_LEVEL) {
 state=RFXComLighting5Message.getPercentTypeFromDimLevel(dimmingLevel);
 }
  else {
-throw new RFXComException("Can't convert " + valueSelector + " to DimmerItem/RollershutterItem");
+throw new RFXComException("Can't convert " + valueSelector + " to DimmerItem");
 }
 }
  else if (valueSelector.getItemClass() == SwitchItem.class) {
@@ -45,9 +65,11 @@ if (valueSelector == RFXComValueSelector.COMMAND) {
 switch (command) {
 case OFF:
 case GROUP_OFF:
+case CLOSE_RELAY:
 state=OnOffType.OFF;
 break;
 case ON:
+case OPEN_RELAY:
 state=OnOffType.ON;
 break;
 case SET_LEVEL:
@@ -64,9 +86,11 @@ if (valueSelector == RFXComValueSelector.CONTACT) {
 switch (command) {
 case OFF:
 case GROUP_OFF:
+case CLOSE_RELAY:
 state=OpenClosedType.CLOSED;
 break;
 case ON:
+case OPEN_RELAY:
 state=OpenClosedType.OPEN;
 break;
 case SET_LEVEL:
