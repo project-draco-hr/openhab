@@ -1,0 +1,32 @@
+{
+  int max;
+  int min;
+  if (this.type.equalsIgnoreCase(TYPE_MODULE_1)) {
+    max=BATTERY_MODULE_1_RANGE_MAX;
+    min=BATTERY_MODULE_1_RANGE_MIN;
+  }
+ else   if (this.type.equalsIgnoreCase(TYPE_MODULE_2)) {
+    max=BATTERY_MODULE_2_RANGE_MAX;
+    min=BATTERY_MODULE_2_RANGE_MIN;
+  }
+ else   if (this.type.equalsIgnoreCase(TYPE_MODULE_3)) {
+    max=BATTERY_MODULE_3_RANGE_MAX;
+    min=BATTERY_MODULE_3_RANGE_MIN;
+  }
+ else {
+    max=BATTERY_MODULE_4_RANGE_MAX;
+    min=BATTERY_MODULE_4_RANGE_MIN;
+  }
+  int percent;
+  int batteryVp=this.batteryVp;
+  if (batteryVp >= max) {
+    percent=100;
+  }
+ else   if (batteryVp <= min) {
+    percent=0;
+  }
+ else {
+    percent=(int)Math.round(((batteryVp - min) * 100.0) / (max - min));
+  }
+  return percent;
+}
