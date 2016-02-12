@@ -1,7 +1,7 @@
 {
-  stationsDataRequest=new GetStationsDataRequest(oauthCredentials.getAccessToken());
+  GetStationsDataRequest stationsDataRequest=new GetStationsDataRequest(oauthCredentials.getAccessToken());
   logger.debug("Request: {}",stationsDataRequest);
-  stationsDataResponse=stationsDataRequest.execute();
+  GetStationsDataResponse stationsDataResponse=stationsDataRequest.execute();
   logger.debug("Response: {}",stationsDataResponse);
   if (stationsDataResponse.isError()) {
     final NetatmoError error=stationsDataResponse.getError();
@@ -14,10 +14,10 @@
       logger.error("Error processing device list: code = {} message = {}",error.getCode(),error.getMessage());
       throw new NetatmoException(error.getMessage());
     }
-    return;
+    return null;
   }
  else {
     processGetStationsDataResponse(stationsDataResponse,providers);
-    bOAuthCredentialsFirstExecution=false;
   }
+  return stationsDataResponse;
 }
