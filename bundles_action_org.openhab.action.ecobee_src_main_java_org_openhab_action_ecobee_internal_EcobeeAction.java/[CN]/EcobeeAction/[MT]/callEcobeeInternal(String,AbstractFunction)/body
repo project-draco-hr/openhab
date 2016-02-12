@@ -1,0 +1,11 @@
+{
+  try {
+    logger.debug("Attempting to call Ecobee function '{}' against selection '{}'",function,selection);
+    EcobeeActionProvider actionProvider=getActionProvider(selection);
+    return actionProvider.callEcobee(selection,function);
+  }
+ catch (  Exception ex) {
+    logger.error(ex.getMessage(),ex);
+    return false;
+  }
+}
