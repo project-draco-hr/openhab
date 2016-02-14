@@ -7,11 +7,13 @@
   for (  String name : names) {
     String value=(String)config.get(name + ".serialPort");
     String serialPort=value != null ? value : MeterConfig.DEFAULT_SERIAL_PORT;
+    value=(String)config.get(name + ".initMessage");
+    byte[] initMessage=value != null ? DatatypeConverter.parseHexBinary(value) : null;
     value=(String)config.get(name + ".baudRateChangeDelay");
     int baudRateChangeDelay=value != null ? Integer.valueOf(value) : MeterConfig.DEFAULT_BAUD_RATE_CHANGE_DELAY;
     value=(String)config.get(name + ".echoHandling");
     boolean echoHandling=value != null ? Boolean.valueOf(value) : MeterConfig.DEFAULT_ECHO_HANDLING;
-    Meter meterConfig=createIec6205621MeterConfig(name,new MeterConfig(serialPort,baudRateChangeDelay,echoHandling));
+    Meter meterConfig=createIec6205621MeterConfig(name,new MeterConfig(serialPort,initMessage,baudRateChangeDelay,echoHandling));
     if (meterDeviceConfigurtions.put(meterConfig.getName(),meterConfig) != null) {
       logger.info("Recreated reader {} with  {}!",meterConfig.getName(),meterConfig.getConfig());
     }
