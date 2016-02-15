@@ -1,0 +1,13 @@
+{
+  super.setVar(key,value);
+  if (compoundVars.contains(key)) {
+    logger.trace("setVar parsing key={}, value={}",key,value);
+    String[] results=value.toString().split("\\|");
+    for (int i=0; i < results.length; i++) {
+      String[] nameValue=(results[i]).split("\\=");
+      if (nameValue.length == 2) {
+        super.setVar(key + "_" + nameValue[0],nameValue[1]);
+      }
+    }
+  }
+}

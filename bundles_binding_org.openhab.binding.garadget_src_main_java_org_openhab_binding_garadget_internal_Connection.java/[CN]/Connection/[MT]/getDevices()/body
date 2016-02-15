@@ -1,0 +1,18 @@
+{
+  final Map<String,GaradgetDevice> devices=new HashMap<String,GaradgetDevice>();
+  sendCommand(null,"getDevices",null,new HttpResponseHandler(){
+    @Override public void handleResponse(    int statusCode,    String responseBody){
+      try {
+        GaradgetDevice[] deviceList=JSON.readValue(responseBody,GaradgetDevice[].class);
+        for (int i=0; i < deviceList.length; i++) {
+          devices.put(deviceList[i].getId(),deviceList[i]);
+        }
+      }
+ catch (      Exception e) {
+        logger.warn("Unable to parse getDevices response.",e);
+      }
+    }
+  }
+);
+  return devices;
+}

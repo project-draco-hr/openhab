@@ -1,0 +1,47 @@
+{
+  final String varName=subscriber.getVarName();
+  if (varName.equals(DOOR_STATUS + "_status") && getVar(varName) != null) {
+    final String status=getVar(varName).toString();
+    for (    Class<? extends State> type : subscriber.getAcceptedDataTypes()) {
+      if (OpenClosedType.class == type) {
+        if (status.equals("open")) {
+          return OpenClosedType.OPEN;
+        }
+ else         if (status.equals("closed")) {
+          return OpenClosedType.CLOSED;
+        }
+      }
+ else       if (UpDownType.class == type) {
+        if (status.equals("open")) {
+          return UpDownType.UP;
+        }
+ else         if (status.equals("closed")) {
+          return UpDownType.DOWN;
+        }
+      }
+ else       if (OnOffType.class == type) {
+        if (status.equals("open")) {
+          return OnOffType.ON;
+        }
+ else         if (status.equals("closed")) {
+          return OnOffType.OFF;
+        }
+      }
+ else       if (PercentType.class == type) {
+        if (status.equals("open")) {
+          return PercentType.ZERO;
+        }
+ else         if (status.equals("closed")) {
+          return PercentType.HUNDRED;
+        }
+ else {
+          return PercentType.valueOf("50");
+        }
+      }
+ else       if (StringType.class == type) {
+        return StringType.valueOf(status);
+      }
+    }
+  }
+  return super.getVarState(subscriber);
+}

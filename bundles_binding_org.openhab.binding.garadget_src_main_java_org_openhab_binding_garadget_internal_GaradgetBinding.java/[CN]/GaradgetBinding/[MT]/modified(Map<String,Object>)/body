@@ -1,0 +1,21 @@
+{
+  String granularityString=(String)configuration.get(CONFIG_GRANULARITY);
+  granularity=isNotBlank(granularityString) ? Long.parseLong(granularityString) : DEFAULT_GRANULARITY;
+  String refreshIntervalString=(String)configuration.get(CONFIG_REFRESH);
+  refreshInterval=isNotBlank(refreshIntervalString) ? Long.parseLong(refreshIntervalString) : DEFAULT_REFRESH;
+  String quickPollIntervalString=(String)configuration.get(CONFIG_QUICKPOLL);
+  quickPollInterval=isNotBlank(quickPollIntervalString) ? Long.parseLong(quickPollIntervalString) : DEFAULT_QUICKPOLL;
+  String timeoutString=(String)configuration.get(CONFIG_TIMEOUT);
+  int timeout=isNotBlank(timeoutString) ? Integer.parseInt(timeoutString) : DEFAULT_TIMEOUT;
+  String username=(String)configuration.get("username");
+  String password=(String)configuration.get("password");
+  if (isNotBlank(username) && isNotBlank(password)) {
+    connection=new Connection(username,password,timeout);
+    connection.login();
+    schedulePoll(0);
+    setProperlyConfigured(true);
+  }
+ else {
+    setProperlyConfigured(false);
+  }
+}

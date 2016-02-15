@@ -1,0 +1,67 @@
+{
+  if (!pollTimeExpired()) {
+    return;
+  }
+  schedulePoll(refreshInterval);
+  logger.trace("Polling Garadget devices");
+  if (connection == null) {
+    logger.debug("No connection defined; please check username and password.");
+    return;
+  }
+  devices=connection.getDevices();
+  Map<String,TreeSet<String>> pollMap=new HashMap<String,TreeSet<String>>();
+  for (  GaradgetBindingProvider provider : providers) {
+    for (    String itemName : provider.getItemNames()) {
+      GaradgetBindingConfig deviceConfig=getConfigForItemName(itemName);
+      if (deviceConfig != null) {
+        for (        GaradgetSubscriber subscriber : deviceConfig.getSubscribers()) {
+          TreeSet<String> varNames=pollMap.get(subscriber.getDeviceId());
+          if (varNames == null) {
+            varNames=new TreeSet<String>();
+            pollMap.put(subscriber.getDeviceId(),varNames);
+          }
+          final String varName=subscriber.getVarName();
+          if (varName.startsWith(GaradgetDevice.DOOR_STATUS)) {
+            varNames.add(GaradgetDevice.DOOR_STATUS);
+          }
+ else           if (varName.startsWith(GaradgetDevice.DOOR_CONFIG)) {
+            varNames.add(GaradgetDevice.DOOR_CONFIG);
+          }
+ else           if (varName.startsWith(GaradgetDevice.NET_CONFIG)) {
+            varNames.add(GaradgetDevice.NET_CONFIG);
+          }
+ else           if (AbstractDevice.isVar(varName)) {
+            varNames.add(varName);
+          }
+        }
+      }
+    }
+  }
+  for (  final String deviceId : pollMap.keySet()) {
+    final GaradgetDevice device=devices.get(deviceId);
+    final TreeSet<String> varNames=pollMap.get(deviceId);
+    for (    final String varName : varNames) {
+      connection.sendCommand(device,varName,null,new HttpResponseHandler(){
+        @Override public void handleResponse(        int statusCode,        String responseBody){
+          if (statusCode == HttpStatus.SC_OK) {
+            device.setVar(varName,responseBody);
+          }
+        }
+      }
+);
+    }
+  }
+  for (  final GaradgetBindingProvider provider : providers) {
+    for (    final String itemName : provider.getItemNames()) {
+      GaradgetBindingConfig deviceConfig=getConfigForItemName(itemName);
+      if (deviceConfig != null) {
+        for (        final GaradgetSubscriber subscriber : deviceConfig.getSubscribers()) {
+          AbstractDevice device=devices.get(subscriber.getDeviceId());
+          if (device != null) {
+            eventPublisher.postUpdate(itemName,device.getState(subscriber));
+          }
+        }
+      }
+    }
+  }
+}

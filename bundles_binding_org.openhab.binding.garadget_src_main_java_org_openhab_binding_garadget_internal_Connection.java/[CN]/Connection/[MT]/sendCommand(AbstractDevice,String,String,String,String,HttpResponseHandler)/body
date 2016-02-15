@@ -1,0 +1,83 @@
+{
+  String url=null;
+  String httpMethod=null;
+  String content=null;
+  String contentType=null;
+  Properties headers=new Properties();
+  logger.trace("sendCommand: funcName={}",funcName);
+switch (funcName) {
+case "createToken":
+    httpMethod=HTTP_POST;
+  url=TOKEN_URL;
+content=command;
+contentType=APPLICATION_FORM_URLENCODED;
+break;
+case "deleteToken":
+httpMethod=HTTP_DELETE;
+url=String.format(ACCESS_TOKENS_URL,tokens.accessToken);
+break;
+case "getDevices":
+httpMethod=HTTP_GET;
+url=String.format(GET_DEVICES_URL,tokens.accessToken);
+break;
+default :
+url=String.format(DEVICE_FUNC_URL,device.getId(),funcName,tokens.accessToken);
+if (command == null) {
+httpMethod=HTTP_GET;
+}
+ else {
+httpMethod=HTTP_POST;
+content=command;
+contentType=APPLICATION_JSON;
+}
+break;
+}
+HttpClient client=new HttpClient();
+if (!url.contains("access_token=")) {
+Credentials credentials=new UsernamePasswordCredentials(user,pass);
+client.getParams().setAuthenticationPreemptive(true);
+client.getState().setCredentials(AuthScope.ANY,credentials);
+}
+HttpMethod method=createHttpMethod(httpMethod,url);
+method.getParams().setSoTimeout(timeout);
+method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,new DefaultHttpMethodRetryHandler(3,false));
+for (String httpHeaderKey : headers.stringPropertyNames()) {
+method.addRequestHeader(new Header(httpHeaderKey,headers.getProperty(httpHeaderKey)));
+logger.trace("Header key={}, value={}",httpHeaderKey,headers.getProperty(httpHeaderKey));
+}
+try {
+if (method instanceof EntityEnclosingMethod && content != null) {
+EntityEnclosingMethod eeMethod=(EntityEnclosingMethod)method;
+eeMethod.setRequestEntity(new StringRequestEntity(content,contentType,null));
+logger.trace("content='{}', contentType='{}'",content,contentType);
+}
+if (logger.isDebugEnabled()) {
+try {
+logger.debug("About to execute '{}'",method.getURI());
+}
+ catch (URIException e) {
+logger.debug(e.getMessage());
+}
+}
+int statusCode=client.executeMethod(method);
+if (statusCode >= HttpStatus.SC_BAD_REQUEST) {
+logger.debug("Method failed: " + method.getStatusLine());
+}
+String responseBody=IOUtils.toString(method.getResponseBodyAsStream());
+if (!responseBody.isEmpty()) {
+logger.debug("Body of response: {}",responseBody);
+}
+if (proc != null) {
+proc.handleResponse(statusCode,responseBody);
+}
+}
+ catch (HttpException he) {
+logger.warn("Fatal protocol violation: {}",he.toString());
+}
+catch (IOException ioe) {
+logger.warn("Fatal transport error: {}",ioe.toString());
+}
+ finally {
+method.releaseConnection();
+}
+}
