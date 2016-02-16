@@ -1,0 +1,14 @@
+{
+  String message=" PKT:SID=150;PC=1688;MT=8;MGID=1;MID=1;MD=a50000000004;584ea808";
+  SHCMessage shcMessage=new SHCMessage(message,packet);
+  List<Type> values=shcMessage.getData().getOpenHABTypes();
+  assertEquals(8,values.size());
+  assertEquals(OnOffType.ON,values.get(0));
+  assertEquals(OnOffType.OFF,values.get(1));
+  assertEquals(OnOffType.ON,values.get(2));
+  assertEquals(OnOffType.OFF,values.get(3));
+  assertEquals(OnOffType.OFF,values.get(4));
+  assertEquals(OnOffType.ON,values.get(5));
+  assertEquals(OnOffType.OFF,values.get(6));
+  assertEquals(OnOffType.ON,values.get(7));
+}

@@ -1,0 +1,26 @@
+{
+  String transformedResponse=response;
+  if (transformation == null) {
+    return transformedResponse;
+  }
+  try {
+    String[] parts=splitTransformationConfig(transformation);
+    String transformationType=parts[0];
+    String transformationFunction=parts[1];
+    TransformationService transformationService=TransformationHelper.getTransformationService(SmarthomaticActivator.getContext(),transformationType);
+    if (transformationService != null) {
+      transformedResponse=transformationService.transform(transformationFunction,response);
+    }
+ else {
+      transformedResponse=response;
+      logger.warn("couldn't transform response because transformationService of type '{}' is unavailable",transformationType);
+    }
+  }
+ catch (  TransformationException te) {
+    logger.error("transformation throws exception [transformation= {}, response= {}]",transformation,response);
+    logger.error("received transformation exception",te);
+    transformedResponse=response;
+  }
+  logger.debug("transformed response is '{}'",transformedResponse);
+  return transformedResponse;
+}

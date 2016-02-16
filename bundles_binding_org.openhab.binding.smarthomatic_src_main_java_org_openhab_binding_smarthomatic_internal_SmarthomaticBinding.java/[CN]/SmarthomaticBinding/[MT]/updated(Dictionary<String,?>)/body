@@ -1,0 +1,44 @@
+{
+  if (config != null) {
+    String refreshIntervalString=(String)config.get("refresh");
+    if (StringUtils.isNotBlank(refreshIntervalString)) {
+      refreshInterval=Long.parseLong(refreshIntervalString);
+    }
+    boolean changed=false;
+    if (serialPortname != (String)config.get("serialPort")) {
+      serialPortname=(String)config.get("serialPort");
+      changed=true;
+    }
+    String dummy=(String)config.get("baud");
+    try {
+      if (serialBaudrate != Integer.parseInt(dummy)) {
+        serialBaudrate=Integer.parseInt(dummy);
+        changed=true;
+      }
+    }
+ catch (    NumberFormatException e) {
+      logger.info("reading exception");
+    }
+    if (changed | (baseStation == null)) {
+      if (baseStation != null)       baseStation.closeSerialPort();
+      baseStation=new BaseStation(serialPortname,serialBaudrate,this);
+      logger.debug("Smarthomatic Binding:update creates new basestation");
+    }
+    Enumeration<String> keys=config.keys();
+    for (int i=0; i < config.size(); i++) {
+      String key=keys.nextElement();
+      StringTokenizer tokens=new StringTokenizer(key,":");
+      if (tokens.nextToken().equals("device")) {
+        if (tokens.hasMoreElements()) {
+          dummy=tokens.nextToken();
+          int deviceID=Integer.parseInt(dummy);
+          String name=(String)config.get(key);
+          SmarthomaticGenericBindingProvider.addDevice(name,deviceID);
+          logger.debug("Smarthomatic device {} can be indexed by name {}",new String[]{dummy,name});
+        }
+      }
+      logger.debug("KEY: {}",key);
+    }
+    setProperlyConfigured(true);
+  }
+}

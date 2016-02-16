@@ -1,0 +1,7 @@
+{
+  String message=" PKT:SID=11;PC=68029;MT=8;MGID=10;MID=3;MD=FFFFBFFFFFFF;a6819187";
+  SHCMessage shcMessage=new SHCMessage(message,packet);
+  List<Type> values=shcMessage.getData().getOpenHABTypes();
+  assertEquals(131071,((DecimalType)values.get(0)).intValue());
+  assertEquals(32767,((DecimalType)values.get(1)).intValue());
+}
