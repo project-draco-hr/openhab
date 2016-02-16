@@ -4,9 +4,12 @@
   }
   boolean p=pingDB();
   if (p) {
+    logger.debug("JDBC::checkDBAcessability, first try connection: {}",p);
     return (p && !(conf.getErrReconnectThreshold() > 0 && errCnt <= conf.getErrReconnectThreshold()));
   }
  else {
-    return (pingDB() && !(conf.getErrReconnectThreshold() > 0 && errCnt <= conf.getErrReconnectThreshold()));
+    p=pingDB();
+    logger.debug("JDBC::checkDBAcessability, second try connection: {}",p);
+    return (p && !(conf.getErrReconnectThreshold() > 0 && errCnt <= conf.getErrReconnectThreshold()));
   }
 }
