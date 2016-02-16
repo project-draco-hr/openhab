@@ -1,7 +1,9 @@
 {
   SmarthomaticBindingConfig config=new SmarthomaticBindingConfig();
   Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
-  if (!matcher.matches())   throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  }
   bindingConfig=matcher.group(1);
   config.setItemName(item.getName());
   config.setItem(item);
