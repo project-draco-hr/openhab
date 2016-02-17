@@ -1,0 +1,21 @@
+{
+  try {
+    HttpURLConnection connection=(HttpURLConnection)new URL(uri).openConnection();
+    connection.setRequestMethod(method);
+    connection.setConnectTimeout(REQUEST_TIMEOUT_MS);
+    connection.setReadTimeout(REQUEST_TIMEOUT_MS);
+    connection.addRequestProperty("Content-Type",CONTENT_TYPE_XML);
+    if (request != null) {
+      connection.setDoOutput(true);
+      connection.getOutputStream().write(request.getBytes());
+    }
+    InputStream is=connection.getInputStream();
+    String ret=IOUtils.toString(is);
+    connection.disconnect();
+    return ret;
+  }
+ catch (  IOException e) {
+    logger.debug("HTTP communication error",e);
+  }
+  return null;
+}
