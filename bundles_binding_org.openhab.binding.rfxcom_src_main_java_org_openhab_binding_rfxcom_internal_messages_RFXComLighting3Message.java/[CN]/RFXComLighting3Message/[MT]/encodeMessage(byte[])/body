@@ -1,0 +1,19 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  dimmingLevel=data[6];
+  commandId=data[7];
+  command=Commands.UNKNOWN;
+  for (  Commands loCmd : Commands.values()) {
+    if (loCmd.toByte() == commandId) {
+      command=loCmd;
+      break;
+    }
+  }
+  signalLevel=(byte)((data[11] & 0xF0) >> 4);
+}

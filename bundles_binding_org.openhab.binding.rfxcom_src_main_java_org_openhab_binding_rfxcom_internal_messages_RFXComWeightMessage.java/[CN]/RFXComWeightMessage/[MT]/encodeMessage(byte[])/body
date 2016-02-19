@@ -1,0 +1,13 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  weight=((data[6] & 0xFF) << 8 | (data[7] & 0xFF)) / 10.0;
+  signalLevel=(byte)((data[8] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[8] & 0x0F);
+}

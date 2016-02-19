@@ -1,0 +1,20 @@
+{
+  byte[] data=new byte[16];
+  data[0]=0x0F;
+  data[1]=RFXComBaseMessage.PacketType.POWER.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=(byte)voltage;
+  data[7]=(byte)(((int)(instantAmps * 100.0) >> 8) & 0xFF);
+  data[8]=(byte)((int)(instantAmps * 100.0) & 0xFF);
+  data[9]=(byte)(((int)(instantPower * 10.0) >> 8) & 0xFF);
+  data[10]=(byte)((int)(instantPower * 10.0) & 0xFF);
+  data[11]=(byte)(((int)(instantEnergy * 100.0) >> 8) & 0xFF);
+  data[12]=(byte)((int)(instantEnergy * 100.0) & 0xFF);
+  data[13]=(byte)((int)(powerFactor * 100.0) & 0xFF);
+  data[14]=(byte)frequency;
+  data[15]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}

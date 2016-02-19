@@ -1,0 +1,18 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  voltage=data[6];
+  instantAmps=((data[7] & 0xFF) << 8 | (data[8] & 0xFF)) / 100.0;
+  instantPower=((data[9] & 0xFF) << 8 | (data[10] & 0xFF)) / 10.0;
+  instantEnergy=((data[11] & 0xFF) << 8 | (data[12] & 0xFF)) / 100.0;
+  powerFactor=data[13] / 100.0;
+  frequency=data[14];
+  signalLevel=(byte)((data[15] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[15] & 0x0F);
+}

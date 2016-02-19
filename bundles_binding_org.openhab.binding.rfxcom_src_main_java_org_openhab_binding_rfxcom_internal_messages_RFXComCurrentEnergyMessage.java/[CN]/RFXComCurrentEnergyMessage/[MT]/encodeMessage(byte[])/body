@@ -1,0 +1,18 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
+  count=data[6];
+  channel1Amps=((data[7] & 0xFF) << 8 | (data[8] & 0xFF)) / 10.0;
+  channel2Amps=((data[9] & 0xFF) << 8 | (data[10] & 0xFF)) / 10.0;
+  channel3Amps=((data[11] & 0xFF) << 8 | (data[12] & 0xFF)) / 10.0;
+  totalUsage=((data[13] & 0xFF) << 40 | (data[14] & 0xFF) << 32 | (data[15] & 0xFF) << 24 | (data[16] & 0xFF) << 16 | (data[17] & 0xFF) << 8 | (data[18] & 0xFF));
+  totalUsage=totalUsage / TOTAL_USAGE_CONVERSION_FACTOR;
+  signalLevel=(byte)((data[19] & 0xF0) >> 4);
+  batteryLevel=(byte)(data[19] & 0x0F);
+}

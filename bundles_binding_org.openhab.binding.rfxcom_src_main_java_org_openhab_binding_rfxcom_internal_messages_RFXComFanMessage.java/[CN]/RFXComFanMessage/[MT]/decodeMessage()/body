@@ -1,0 +1,13 @@
+{
+  byte[] data=new byte[9];
+  data[0]=0x08;
+  data[1]=RFXComBaseMessage.PacketType.FAN.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId >> 16) & 0xFF);
+  data[5]=(byte)((sensorId >> 8) & 0xFF);
+  data[6]=(byte)(sensorId & 0xFF);
+  data[7]=(byte)commandId;
+  data[8]=(byte)(((signalLevel & 0x0F) << 4));
+  return data;
+}
