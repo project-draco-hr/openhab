@@ -1,0 +1,40 @@
+{
+  if (connection == null) {
+    logger.warn("Command '{}' not sent for item '{}'; no connection.",command,itemName);
+    return;
+  }
+  try {
+    final GaradgetDevice device=devices.get(publisher.getDeviceId());
+    if (device == null) {
+      logger.warn("No device found with ID: {}",publisher.getDeviceId());
+      return;
+    }
+    if ("setState".equals(publisher.getFuncName())) {
+      if (command.equals(OnOffType.ON) || command.equals(UpDownType.UP) || command.equals(PercentType.ZERO)) {
+        command=new StringType("open");
+      }
+ else       if (command.equals(OnOffType.OFF) || command.equals(UpDownType.DOWN) || command.equals(PercentType.HUNDRED)) {
+        command=new StringType("close");
+      }
+ else       if (command.equals(StopMoveType.STOP) || command instanceof PercentType) {
+        command=new StringType("stop");
+      }
+    }
+    String json=String.format("{ \"arg\": \"%s\" }\r\n",command.toString());
+    connection.sendCommand(device,publisher.getFuncName(),json,new HttpResponseHandler(){
+      @Override public void handleResponse(      int statusCode,      String responseBody){
+        if (statusCode == HttpStatus.SC_OK) {
+          logger.debug("Calling function '{}' returned '{}'",publisher.getFuncName(),responseBody);
+          schedulePoll(quickPollInterval);
+        }
+ else {
+          logger.warn("Failed to call function '{}', status code={}",publisher.getFuncName(),statusCode);
+        }
+      }
+    }
+);
+  }
+ catch (  Exception ex) {
+    logger.warn("Exception in commandGaradget:",ex);
+  }
+}
