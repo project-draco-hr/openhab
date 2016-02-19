@@ -1,0 +1,16 @@
+{
+  String errors="";
+  for (  PacketType p : PacketType.values()) {
+    if (p != PacketType.UNKNOWN) {
+      try {
+        RFXComMessageInterface intf=RFXComMessageFactory.getMessageInterface(p);
+      }
+ catch (      Exception e) {
+        errors+="\n\t" + e.getMessage();
+      }
+    }
+  }
+  if (errors.length() > 0) {
+    throw new Exception("Packet messages not implemented : " + errors);
+  }
+}
