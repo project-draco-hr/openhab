@@ -23,7 +23,7 @@
       logger.error("item {} could not be found",itemName);
     }
   }
-  if (time == null) {
+  if (time == null && config.getType() != CalDavType.DISABLE) {
     eventPublisher.postUpdate(itemNamePreview,org.openhab.core.types.UnDefType.UNDEF);
     return;
   }

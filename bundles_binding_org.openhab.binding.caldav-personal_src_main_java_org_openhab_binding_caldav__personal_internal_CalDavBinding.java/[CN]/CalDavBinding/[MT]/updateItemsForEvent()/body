@@ -10,10 +10,11 @@
   Map<Integer,List<CalDavEvent>> eventCache=new HashMap<Integer,List<CalDavEvent>>();
   for (  String item : bindingProvider.getItemNames()) {
     CalDavConfig config=bindingProvider.getConfig(item);
-    List<CalDavEvent> events=eventCache.get(config.getCalendar().hashCode());
+    List<CalDavEvent> events=eventCache.get(config.getUniqueEventListKey());
     if (events == null) {
-      events=this.calDavLoader.getEvents(new CalDavQuery(config.getCalendar(),DateTime.now(),Sort.ASCENDING));
-      eventCache.put(config.getCalendar().hashCode(),events);
+      CalDavQuery query=getQueryForConfig(config);
+      events=this.calDavLoader.getEvents(query);
+      eventCache.put(config.getUniqueEventListKey(),events);
     }
     this.updateItem(item,config,events);
   }

@@ -48,7 +48,11 @@ catch (          ParserException e) {
       }
     }
   }
- catch (  Exception e) {
+ catch (  SardineException e) {
+    log.error("error while loading calendar entries: " + e.getMessage() + " ("+ e.getStatusCode()+ " - "+ e.getResponsePhrase()+ ")",e);
+    throw new JobExecutionException("error while loading calendar entries",e,false);
+  }
+catch (  Exception e) {
     log.error("error while loading calendar entries: " + e.getMessage(),e);
     throw new JobExecutionException("error while loading calendar entries",e,false);
   }

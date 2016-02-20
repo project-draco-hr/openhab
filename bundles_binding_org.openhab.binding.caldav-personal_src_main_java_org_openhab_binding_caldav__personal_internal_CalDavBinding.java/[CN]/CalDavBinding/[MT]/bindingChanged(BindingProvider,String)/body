@@ -6,6 +6,6 @@
   if (config == null) {
     return;
   }
-  final List<CalDavEvent> events=this.calDavLoader.getEvents(new CalDavQuery(this.calendars,DateTime.now(),Sort.ASCENDING));
+  final List<CalDavEvent> events=this.calDavLoader.getEvents(getQueryForConfig(config));
   this.updateItem(itemName,config,events);
 }
