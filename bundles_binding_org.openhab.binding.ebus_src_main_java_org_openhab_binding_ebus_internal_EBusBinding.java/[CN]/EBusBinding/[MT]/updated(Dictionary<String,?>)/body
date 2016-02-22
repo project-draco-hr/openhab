@@ -25,7 +25,7 @@
  else {
         logger.debug("Load eBus Parser Configuration \"{}\" ...",elem.trim());
         String filename="src/main/resources/" + elem.trim() + "-configuration.json";
-        Bundle bundle=Activator.getInstance().getBundle();
+        Bundle bundle=FrameworkUtil.getBundle(EBusBinding.class);
         configurationUrl=bundle.getResource(filename);
         if (configurationUrl == null) {
           logger.error("Unable to load file {} ...",elem.trim() + "-configuration.json");
@@ -39,7 +39,32 @@
       throw new ConfigurationException("hostname","Set property serialPort or hostname, not both!");
     }
     if (StringUtils.isNotEmpty((String)properties.get("serialPort"))) {
-      connector=new EBusSerialConnector((String)properties.get("serialPort"));
+      try {
+        @SuppressWarnings("unchecked") Class<AbstractEBusWriteConnector> _tempClass=(Class<AbstractEBusWriteConnector>)EBusBinding.class.getClassLoader().loadClass("org.openhab.binding.ebus.internal.connection.EBusSerialConnector");
+        Constructor<AbstractEBusWriteConnector> constructor=_tempClass.getDeclaredConstructor(String.class);
+        connector=constructor.newInstance((String)properties.get("serialPort"));
+      }
+ catch (      ClassNotFoundException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      NoSuchMethodException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      SecurityException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      InstantiationException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      IllegalAccessException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      IllegalArgumentException e) {
+        logger.error(e.toString(),e);
+      }
+catch (      InvocationTargetException e) {
+        logger.error(e.toString(),e);
+      }
     }
  else     if (StringUtils.isNotEmpty((String)properties.get("hostname"))) {
       connector=new EBusTCPConnector((String)properties.get("hostname"),Integer.parseInt((String)properties.get("port")));
