@@ -32,7 +32,7 @@
       futureMap.remove(itemName).cancel(true);
     }
     if (scheduler == null) {
-      scheduler=Executors.newScheduledThreadPool(2);
+      scheduler=Executors.newScheduledThreadPool(2,new WorkerThreadFactory("ebus-scheduler"));
     }
     logger.debug("Add polling item {} with refresh rate {} to scheduler ...",itemName,refreshRate);
     int randomInitDelay=(int)(Math.random() * (30 - 4) + 4);
