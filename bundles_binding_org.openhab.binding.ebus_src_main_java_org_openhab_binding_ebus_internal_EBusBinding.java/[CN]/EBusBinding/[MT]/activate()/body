@@ -2,31 +2,4 @@
   super.activate();
   logger.debug("eBus binding has been started.");
   checkConfigurationProvider();
-  new Thread(){
-    @Override public void run(){
-      try {
-        sleep(15000);
-        if (connector == null) {
-          logger.warn("eBus connector still not started, started it yet!");
-          Configuration configuration=configurationAdminService.getConfiguration("org.openhab.ebus",null);
-          if (configuration != null) {
-            updated(configuration.getProperties());
-            for (            EBusBindingProvider provider : EBusBinding.this.providers) {
-              commandProcessor.allBindingsChanged(provider);
-            }
-          }
-        }
-      }
- catch (      InterruptedException e) {
-        logger.error(e.toString(),e);
-      }
-catch (      ConfigurationException e) {
-        logger.error(e.toString(),e);
-      }
-catch (      IOException e) {
-        logger.error(e.toString(),e);
-      }
-    }
-  }
-.start();
 }
