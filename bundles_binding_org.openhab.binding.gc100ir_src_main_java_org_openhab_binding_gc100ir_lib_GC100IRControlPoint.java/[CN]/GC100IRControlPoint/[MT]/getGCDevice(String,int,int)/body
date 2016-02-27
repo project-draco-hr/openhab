@@ -1,0 +1,16 @@
+{
+  if ((ipAddress == null) || (module == 0) || (connector == 0)) {
+    return null;
+  }
+synchronized (deviceLastDisTimeMap) {
+    for (    GC100IRDevice device : deviceLastDisTimeMap.keySet()) {
+      if (device == null) {
+        continue;
+      }
+      if (ipAddress.equals(device.getIPAddressString()) && module == device.getModule() && connector == device.getConnector()) {
+        return device;
+      }
+    }
+  }
+  return null;
+}

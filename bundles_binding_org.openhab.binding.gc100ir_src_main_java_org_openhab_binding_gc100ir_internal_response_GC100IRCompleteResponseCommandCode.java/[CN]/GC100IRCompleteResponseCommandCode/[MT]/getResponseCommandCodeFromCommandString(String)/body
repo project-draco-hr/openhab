@@ -1,0 +1,10 @@
+{
+  if (!commandString.startsWith(GC100IRCommandCode.COMPLETED_SUCCESSFULLY.getCommand())) {
+    throw new IllegalArgumentException("The command string " + commandString + " is not a valid completeir command");
+  }
+  String[] sections=commandString.split(",");
+  if (sections.length != 3) {
+    throw new IllegalArgumentException("The command string " + commandString + " is not a valid completeir command");
+  }
+  return new GC100IRCompleteResponseCommandCode(sections[1],sections[2]);
+}

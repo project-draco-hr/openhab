@@ -1,0 +1,20 @@
+{
+  if (!gc100Provider.providesBindingFor(itemName)) {
+    return;
+  }
+  String gc100Instance=gc100Provider.getGC100InstanceName(itemName);
+  int module=gc100Provider.getGC100Module(itemName);
+  int connector=gc100Provider.getGC100Connector(itemName);
+  String code=gc100Provider.getCode(itemName);
+  GC100ItemBean itemBean=new GC100ItemBean();
+  itemBean.setGC100Instance(gc100Instance);
+  itemBean.setModule(module);
+  itemBean.setConnector(connector);
+  itemBean.setCode(code);
+  GC100ItemUtility GC100ItemUtility=org.openhab.binding.gc100ir.util.GC100ItemUtility.getInstance();
+  GC100ItemUtility.addItem(itemName,itemBean);
+  GC100IRConnector gc100Connector=getGC100Connector(gc100Instance);
+  if (gc100Connector == null) {
+    logger.error("Connection failed with " + gc100Instance);
+  }
+}

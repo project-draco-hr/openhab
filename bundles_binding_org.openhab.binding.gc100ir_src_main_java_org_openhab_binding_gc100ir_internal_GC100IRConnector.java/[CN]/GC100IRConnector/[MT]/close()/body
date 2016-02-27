@@ -1,0 +1,12 @@
+{
+  HashMap<String,GC100ItemBean> items=gc100ItemUtility.getAllItems();
+  if (!items.isEmpty()) {
+    for (    String itemName : items.keySet()) {
+      GC100ItemBean itemBean=items.get(itemName);
+      if (gc100ControlPoint.isGC100ItemConnected(gc100.getHostname())) {
+        gc100ControlPoint.disconnectTarget(gc100.getHostname(),itemBean.getModule(),itemBean.getConnector());
+        logger.warn("Closing connection with item: {} of module: {} connector: {}",itemName,itemBean.getModule(),itemBean.getConnector());
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  List<String> deviceList=new ArrayList<String>();
+  Socket socket=new Socket(sourceAddress,GC100IRControlPoint.CONNECT_PORT);
+  SocketAddress socketAddress=socket.getRemoteSocketAddress();
+  if (socket.isConnected()) {
+    logger.info("Connected Successfully to {}",socketAddress);
+  }
+  DataOutputStream outToServer=new DataOutputStream(socket.getOutputStream());
+  BufferedReader inFromServer=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+  byte[] commandInBytes=getDevices.getBytes();
+  outToServer.write(commandInBytes);
+  int c;
+  StringBuilder response=new StringBuilder();
+  while ((c=inFromServer.read()) != '\0') {
+    response.append((char)c);
+    if (c == 13) {
+      deviceList.add(response.toString());
+      response=new StringBuilder();
+    }
+    if (response.toString().equals(END_LIST_DEVICES)) {
+      break;
+    }
+  }
+  StringBuilder temp=new StringBuilder();
+  for (  String deviceStr : deviceList) {
+    temp.append(deviceStr);
+  }
+  try {
+    socket.close();
+  }
+ catch (  SocketException e) {
+    logger.warn("Socket Exception occurred",e);
+  }
+  return temp.toString();
+}

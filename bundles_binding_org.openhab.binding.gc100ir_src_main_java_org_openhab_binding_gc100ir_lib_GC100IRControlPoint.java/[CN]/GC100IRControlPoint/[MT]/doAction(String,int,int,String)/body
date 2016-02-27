@@ -1,0 +1,77 @@
+{
+  if (code == null) {
+    return null;
+  }
+  GC100IRDevice device=getGCDevice(ipAddressString,module,connector);
+  if (device == null) {
+    logger.warn("Unable to get GC 100 Device for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+    return null;
+  }
+  GC100IRConnection tcpIPSocket=device.getTCPIPSocket();
+  if (tcpIPSocket == null) {
+    if (connectTarget(ipAddressString,module,connector)) {
+      device=getGCDevice(ipAddressString,module,connector);
+      if (device == null) {
+        logger.warn("Unable to get GC 100 Device for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+        return null;
+      }
+      tcpIPSocket=device.getTCPIPSocket();
+      if (tcpIPSocket == null) {
+        logger.warn("Unable to get TCP IP Socket for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+        return null;
+      }
+    }
+  }
+  if (tcpIPSocket == null) {
+    logger.warn("Unable to get TCP IP Socket for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+    return null;
+  }
+  String deviceType=tcpIPSocket.getDeviceType();
+  if (deviceType == null) {
+    logger.warn("Unable to get Device Type for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+    return null;
+  }
+  try {
+    if (deviceType.equals(DEVICE_TYPE_IR)) {
+      Socket socket=tcpIPSocket.getSocket();
+      if (socket == null) {
+        logger.warn("Unable to get Socket for IP Address '{}', module '{}' and connector '{}'.",ipAddressString,module,connector);
+        return null;
+      }
+      if (!tcpIPSocket.isConnected()) {
+        tcpIPSocket.connect();
+      }
+      DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+      BufferedReader in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      while (in.ready()) {
+        in.read();
+      }
+      out.write(code.getBytes());
+      StringBuilder response=new StringBuilder();
+      int count=0;
+      while (!in.ready()) {
+        count++;
+        try {
+          Thread.sleep(100);
+        }
+ catch (        InterruptedException e) {
+          logger.warn("InterruptedException",e);
+        }
+        if (count > 20) {
+          return null;
+        }
+      }
+      while (true) {
+        response.append((char)in.read());
+        if (!in.ready()) {
+          break;
+        }
+      }
+      return responseOfDevice(response.toString());
+    }
+  }
+ catch (  IOException e) {
+    logger.warn("IOException",e);
+  }
+  return null;
+}

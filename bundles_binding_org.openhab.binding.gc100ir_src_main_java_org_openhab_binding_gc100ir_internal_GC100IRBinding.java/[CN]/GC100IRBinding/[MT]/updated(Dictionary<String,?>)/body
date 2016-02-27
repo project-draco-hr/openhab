@@ -1,0 +1,26 @@
+{
+  if (config == null) {
+    return;
+  }
+  Map<String,GC100IRHost> hosts=new HashMap<String,GC100IRHost>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    String[] parts=key.split("\\.");
+    String hostname=parts[0];
+    GC100IRHost host=hosts.get(hostname);
+    if (host == null) {
+      host=new GC100IRHost();
+    }
+    String value=((String)config.get(key)).trim();
+    if ("host".equals(parts[1])) {
+      host.setHostname(value);
+    }
+    hosts.put(hostname,host);
+  }
+  nameHostMapper=hosts;
+  registerAllWatches();
+}
