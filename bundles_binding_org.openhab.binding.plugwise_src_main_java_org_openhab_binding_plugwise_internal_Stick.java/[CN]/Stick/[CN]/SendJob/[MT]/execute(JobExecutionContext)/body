@@ -2,7 +2,6 @@
   JobDataMap dataMap=context.getJobDetail().getJobDataMap();
   theStick=(Stick)dataMap.get("Stick");
   if (theStick.isInitialised()) {
-    logger.debug("SendJob: {} messages in the sendQ ",theStick.sendQueue.size());
     Message message=theStick.sendQueue.poll();
     while (message != null) {
       sendMessage(message);
@@ -10,9 +9,8 @@
         Thread.sleep(theStick.interval);
       }
  catch (      InterruptedException e) {
-        logger.debug("An exception occurred while putting the Plugwise SendJob thread to sleep : {}",e.getMessage());
+        logger.debug("SendJob interrupted while sleeping");
       }
-      logger.debug("SendJob: in loop: {} messages in the sendQ ",theStick.sendQueue.size());
       message=theStick.sendQueue.poll();
     }
   }
