@@ -1,0 +1,49 @@
+{
+  org.openhab.core.types.State state=UnDefType.UNDEF;
+  if (valueSelector.getItemClass() == SwitchItem.class) {
+    throw new RFXComException("Can't convert " + valueSelector + " to SwitchItem");
+  }
+ else   if (valueSelector.getItemClass() == ContactItem.class) {
+    if (valueSelector == RFXComValueSelector.CONTACT) {
+      state=((buttonStatus & BUTTON_0_BIT) == 0) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+    }
+ else     if (valueSelector == RFXComValueSelector.CONTACT_1) {
+      state=((buttonStatus & BUTTON_1_BIT) == 0) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+    }
+ else     if (valueSelector == RFXComValueSelector.CONTACT_2) {
+      state=((buttonStatus & BUTTON_2_BIT) == 0) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+    }
+ else     if (valueSelector == RFXComValueSelector.CONTACT_3) {
+      state=((buttonStatus & BUTTON_3_BIT) == 0) ? OpenClosedType.CLOSED : OpenClosedType.OPEN;
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to ContactItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == StringItem.class) {
+    if (valueSelector == RFXComValueSelector.RAW_DATA) {
+      state=new StringType(DatatypeConverter.printHexBinary(rawMessage));
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == NumberItem.class) {
+    if (valueSelector == RFXComValueSelector.SIGNAL_LEVEL) {
+      state=new DecimalType(signalLevel);
+    }
+ else     if (valueSelector == RFXComValueSelector.BATTERY_LEVEL) {
+      state=new DecimalType(batteryLevel);
+    }
+ else {
+      throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
+    }
+  }
+ else   if (valueSelector.getItemClass() == DateTimeItem.class) {
+    state=new DateTimeType();
+  }
+ else {
+    throw new RFXComException("Can't convert " + valueSelector + " to "+ valueSelector.getItemClass());
+  }
+  return state;
+}
