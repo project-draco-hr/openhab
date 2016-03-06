@@ -20,6 +20,21 @@
               continue;
             }
           }
+          if (query.getFilterName() != null) {
+            if (!calDavEvent.getName().matches(query.getFilterName())) {
+              continue;
+            }
+          }
+          if (query.getFilterCategory() != null) {
+            if (calDavEvent.getCategoryList() == null) {
+              continue;
+            }
+ else {
+              if (!calDavEvent.getCategoryList().containsAll(query.getFilterCategory())) {
+                continue;
+              }
+            }
+          }
           eventList.add(calDavEvent);
         }
       }

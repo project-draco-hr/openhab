@@ -1,5 +1,5 @@
 {
-  List<CalDavEvent> events=calDavLoader.getEvents(new CalDavQuery(this.readCalendars,DateTime.now(),DateTime.now()));
+  List<CalDavEvent> events=calDavLoader.getEvents(new CalDavQuery(this.readCalendars,DateTime.now(),Sort.ASCENDING));
   Map<String,EventUtils.EventContent> map=new HashMap<String,EventUtils.EventContent>();
   for (  CalDavEvent calDavEvent : events) {
     final List<EventUtils.EventContent> parseContent=EventUtils.parseContent(calDavEvent,this.itemRegistry,null);
