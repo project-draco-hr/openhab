@@ -1,11 +1,11 @@
 {
   if (message != null && isInitialised()) {
     try {
-      logger.debug("sendMessage: Stick send message: {}",message.toString());
+      logger.debug("Adding to sendQueue: {}",message);
       sendQueue.put(message);
     }
  catch (    InterruptedException e) {
-      logger.error("Error sending Plugwise message: {}",message.toString());
+      logger.error("Interrupted while adding to sendQueue: {}",message);
     }
   }
 }

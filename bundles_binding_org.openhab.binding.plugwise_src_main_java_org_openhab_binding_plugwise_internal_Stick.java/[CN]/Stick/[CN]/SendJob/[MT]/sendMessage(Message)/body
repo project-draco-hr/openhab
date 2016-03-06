@@ -2,22 +2,19 @@
   if (message != null) {
     if (message.getAttempts() < theStick.maxRetries) {
       message.increaseAttempts();
-      logger.debug("sendMessage: Sending Plugwise protocol data unit: attempts: {} MAC:{} command:{} sequence:{} full HEX:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.toHexString()});
       String packedString=PROTOCOL_HEADER + message.toHexString() + PROTOCOL_TRAILER;
       ByteBuffer bytebuffer=ByteBuffer.allocate(packedString.length());
       bytebuffer.put(packedString.getBytes());
       bytebuffer.rewind();
-      logger.debug("sendMessage: Locking the queues");
       theStick.queueLock.lock();
       try {
-        logger.debug("sendMessage: Writing message to the outputchannel of the stick : {}",message.toString());
+        logger.debug("Sending: {} as {}",message,message.toHexString());
         theStick.outputChannel.write(bytebuffer);
       }
  catch (      IOException e) {
-        logger.error("Error writing '{}' to serial port {}: {}",new String[]{packedString,theStick.port,e.getMessage()});
+        logger.error("Error writing '{}' to serial port {}: {}",packedString,theStick.port,e.getMessage());
       }
       Message lastMessage=null;
-      logger.debug("sendMessage: Entering loop for lastMessage");
       while (lastMessage == null) {
         theStick.receiveLock.lock();
         Iterator<Message> messageIterator=theStick.receivedQueue.iterator();
@@ -26,7 +23,7 @@
           if (aMessage.getType().equals(MessageType.ACKNOWLEDGEMENT)) {
             if (!((AcknowledgeMessage)aMessage).isExtended()) {
               lastMessage=aMessage;
-              logger.debug("sendMessage: Removing an ACK from the RecQ: {}",lastMessage.toString());
+              logger.debug("Removing from receivedQueue: {}",lastMessage);
               theStick.receivedQueue.remove(lastMessage);
               break;
             }
@@ -34,34 +31,31 @@
         }
         theStick.receiveLock.unlock();
       }
-      logger.debug("sendMessage: Exiting loop for lastMessage");
       AcknowledgeMessage ack=(AcknowledgeMessage)lastMessage;
       if (!ack.isSuccess()) {
         if (ack.isError()) {
-          logger.error("Error sending Plugwise message: Negative ACK: {}",packedString);
+          logger.error("Error sending: Negative ACK: {}",packedString);
         }
       }
  else {
         message.setSequenceNumber(ack.getSequenceNumber());
         try {
-          logger.debug("sendMessage: putting message in the senTq : {}",message.toString());
+          logger.debug("Adding to sentQueue: {}",message);
           if (theStick.sentQueue.size() == maxBufferSize) {
             Message someMessage=theStick.sentQueue.poll();
-            logger.debug("Flushing a message from the sentQueue: {}",someMessage);
+            logger.debug("Flushing from sentQueue: {}",someMessage);
           }
           theStick.sentQueue.put(message);
-          logger.debug("sendMessage: there are now {} msg in the senTq",theStick.sentQueue.size());
         }
  catch (        InterruptedException e) {
-          logger.error("Error storing Plugwise message in the sent queue: {}",message.toString());
+          logger.error("Interrupted while adding to sentQueue: {}",message);
         }
       }
-      logger.debug("sendMessage: Unlocking the queues");
       theStick.queueLock.unlock();
       return true;
     }
  else {
-      logger.error("Giving finally up on Plugwise protocol data unit after attempts: {} MAC:{} command:{} sequence:{} payload:{}",new String[]{Integer.toString(message.getAttempts()),message.getMAC(),message.getType().toString(),Integer.toString(message.getSequenceNumber()),message.getPayLoad()});
+      logger.error("Giving finally up on Plugwise protocol data unit after attempts: {} MAC:{} command:{} sequence:{} payload:{}",message.getAttempts(),message.getMAC(),message.getType(),message.getSequenceNumber(),message.getPayLoad());
     }
   }
   return false;
