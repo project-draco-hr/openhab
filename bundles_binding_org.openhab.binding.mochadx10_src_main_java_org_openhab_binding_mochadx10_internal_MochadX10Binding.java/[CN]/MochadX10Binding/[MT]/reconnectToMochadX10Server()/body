@@ -1,5 +1,11 @@
 {
-  disconnectFromMochadX10Server();
-  connectToMochadX10Server();
-  logger.debug("Reconnected to Mochad X10 server");
+  if (!isShuttingDown) {
+    logger.trace("reconnectToMochadX10Server called");
+    disconnectFromMochadX10Server();
+    connectToMochadX10Server();
+    logger.trace("Reconnected to Mochad X10 server");
+  }
+ else {
+    logger.trace("Aborting reconnect to Mochad X10 server as deactivate in progress");
+  }
 }
