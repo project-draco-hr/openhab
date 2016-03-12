@@ -1,0 +1,13 @@
+{
+  logger.debug("Data listener started");
+  try {
+    serialPort.addEventListener(this);
+    serialPort.notifyOnDataAvailable(true);
+  }
+ catch (  TooManyListenersException e) {
+    logger.debug("Too Many Listeners Exception: {}",e.getMessage());
+  }
+  super.run();
+  serialPort.removeEventListener();
+  logger.debug("Data listener stopped");
+}

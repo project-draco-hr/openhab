@@ -1,0 +1,16 @@
+{
+  super.processBindingConfiguration(context,item,bindingConfig);
+  String selector[]=StringUtils.split(StringUtils.trim(bindingConfig),':');
+  try {
+    PowerMaxSelectorType selectorType=PowerMaxSelectorType.fromString(selector[0]);
+    String selectorParam=null;
+    if (selector.length == 2) {
+      selectorParam=selector[1];
+    }
+    PowerMaxBindingConfig config=new PowerMaxBindingConfig(selectorType,selectorParam,item);
+    addBindingConfig(item,config);
+  }
+ catch (  IllegalArgumentException e) {
+    throw new BindingConfigParseException("item '" + item.getName() + "': parse error of string "+ bindingConfig);
+  }
+}

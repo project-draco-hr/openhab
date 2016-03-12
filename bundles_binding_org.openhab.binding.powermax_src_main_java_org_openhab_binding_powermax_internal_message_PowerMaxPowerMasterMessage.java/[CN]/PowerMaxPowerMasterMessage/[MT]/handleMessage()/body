@@ -1,0 +1,12 @@
+{
+  super.handleMessage();
+  byte[] message=getRawData();
+  byte msgType=message[2];
+  byte subType=message[3];
+  if ((msgType == 0x03) && (subType == 0x39)) {
+    PowerMaxCommDriver comm=PowerMaxCommDriver.getTheCommDriver();
+    comm.sendMessage(PowerMaxSendType.POWERMASTER_ZONE_STAT1);
+    comm.sendMessage(PowerMaxSendType.POWERMASTER_ZONE_STAT2);
+  }
+  return null;
+}

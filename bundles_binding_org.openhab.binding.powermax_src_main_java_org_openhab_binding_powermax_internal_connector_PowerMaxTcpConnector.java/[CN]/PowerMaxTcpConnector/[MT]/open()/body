@@ -1,0 +1,29 @@
+{
+  logger.debug("open(): Opening TCP Connection");
+  try {
+    tcpSocket=new Socket();
+    SocketAddress TPIsocketAddress=new InetSocketAddress(ipAddress,tcpPort);
+    tcpSocket.connect(TPIsocketAddress,connectTimeout);
+    setInput(tcpSocket.getInputStream());
+    setOutput(tcpSocket.getOutputStream());
+    setReaderThread(new PowerMaxReaderThread(getInput(),this));
+    getReaderThread().start();
+    setConnected(true);
+  }
+ catch (  UnknownHostException exception) {
+    logger.debug("open(): Unknown Host Exception: {}",exception.getMessage());
+    setConnected(false);
+  }
+catch (  SocketException socketException) {
+    logger.debug("open(): Socket Exception: {}",socketException.getMessage());
+    setConnected(false);
+  }
+catch (  IOException ioException) {
+    logger.debug("open(): IO Exception: {}",ioException.getMessage());
+    setConnected(false);
+  }
+catch (  Exception exception) {
+    logger.debug("open(): Exception: {}",exception.getMessage());
+    setConnected(false);
+  }
+}

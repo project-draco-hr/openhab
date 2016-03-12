@@ -1,0 +1,7 @@
+{
+  super.handleMessage();
+  byte[] message=getRawData();
+  int waitTime=message[4] & 0x000000FF;
+  PowerMaxCommDriver.getTheCommDriver().sendMessageLater(PowerMaxSendType.DOWNLOAD,waitTime);
+  return null;
+}

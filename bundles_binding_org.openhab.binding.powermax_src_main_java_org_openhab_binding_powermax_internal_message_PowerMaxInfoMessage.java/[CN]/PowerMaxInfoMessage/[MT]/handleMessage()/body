@@ -1,0 +1,28 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=new PowerMaxState();
+  byte[] message=getRawData();
+  PowerMaxPanelType panelType=null;
+  try {
+    panelType=PowerMaxPanelType.fromCode(message[7]);
+  }
+ catch (  IllegalArgumentException e) {
+    logger.warn("PowerMax alarm binding: unknwon panel type for code {}",message[7] & 0x000000FF);
+    panelType=null;
+  }
+  logger.debug("Reading panel settings");
+  updatedState.setDownloadMode(true);
+  PowerMaxCommDriver comm=PowerMaxCommDriver.getTheCommDriver();
+  comm.sendMessage(PowerMaxSendType.DL_PANELFW);
+  comm.sendMessage(PowerMaxSendType.DL_SERIAL);
+  comm.sendMessage(PowerMaxSendType.DL_ZONESTR);
+  if (isAutoSyncTime()) {
+    comm.sendSetTime();
+  }
+  if ((panelType != null) && panelType.isPowerMaster()) {
+    comm.sendMessage(PowerMaxSendType.DL_MR_SIRKEYZON);
+  }
+  comm.sendMessage(PowerMaxSendType.START);
+  comm.sendMessage(PowerMaxSendType.EXIT);
+  return updatedState;
+}

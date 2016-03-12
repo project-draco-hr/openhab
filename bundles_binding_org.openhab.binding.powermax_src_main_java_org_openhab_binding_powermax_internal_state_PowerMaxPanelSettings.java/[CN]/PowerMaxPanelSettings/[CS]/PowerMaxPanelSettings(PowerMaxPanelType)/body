@@ -1,0 +1,50 @@
+{
+  rawSettings=new Byte[0x100][];
+  for (int i=0; i < 0x100; i++) {
+    rawSettings[i]=null;
+  }
+  panelType=defaultPanelType;
+  sensorTypes=new HashMap<Byte,String>();
+  if (panelType.isPowerMaster()) {
+    sensorTypes.put((byte)0x01,"Motion");
+    sensorTypes.put((byte)0x04,"Camera");
+    sensorTypes.put((byte)0x16,"Smoke");
+    sensorTypes.put((byte)0x1A,"Temperature");
+    sensorTypes.put((byte)0x2A,"Magnet");
+    sensorTypes.put((byte)0xFE,"Wired");
+  }
+ else {
+    sensorTypes.put((byte)0x03,"Motion");
+    sensorTypes.put((byte)0x04,"Motion");
+    sensorTypes.put((byte)0x05,"Magnet");
+    sensorTypes.put((byte)0x06,"Magnet");
+    sensorTypes.put((byte)0x07,"Magnet");
+    sensorTypes.put((byte)0x0A,"Smoke");
+    sensorTypes.put((byte)0x0B,"Gas");
+    sensorTypes.put((byte)0x0C,"Motion");
+    sensorTypes.put((byte)0x0F,"Wired");
+  }
+  zoneNames=new String[]{"Attic","Back door","Basement","Bathroom","Bedroom","Child room","Closet","Den","Dining room","Downstairs","Emergency","Fire","Front door","Garage","Garage door","Guest room","Hall","Kitchen","Laundry room","Living room","Master bathroom","Master bedroom","Office","Upstairs","Utility room","Yard","Custom 1","Custom 2","Custom 3","Custom4","Custom 5","Not Installed"};
+  phoneNumbers=new String[]{null,null,null,null};
+  bellTime=4;
+  silentPanic=false;
+  quickArm=false;
+  bypassEnabled=false;
+  partitionsEnabled=false;
+  pinCodes=null;
+  panelEprom=null;
+  panelSoftware=null;
+  panelSerial=null;
+  int zoneCnt=panelType.getWireless() + panelType.getWired();
+  zoneSettings=new PowerMaxZoneSettings[zoneCnt];
+  for (int i=0; i < zoneCnt; i++) {
+    zoneSettings[i]=null;
+  }
+  x10Settings=new PowerMaxX10Settings[NB_PGM_X10_DEVICES];
+  for (int i=0; i < NB_PGM_X10_DEVICES; i++) {
+    x10Settings[i]=null;
+  }
+  keypad1wEnrolled=null;
+  keypad2wEnrolled=null;
+  sirensEnrolled=null;
+}

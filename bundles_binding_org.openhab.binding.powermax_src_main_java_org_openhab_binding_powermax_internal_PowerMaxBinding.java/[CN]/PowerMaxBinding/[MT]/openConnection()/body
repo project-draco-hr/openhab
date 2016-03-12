@@ -1,0 +1,18 @@
+{
+  PowerMaxCommDriver.initTheCommDriver(serialPort,ipAddress,tcpPort);
+  PowerMaxCommDriver comm=PowerMaxCommDriver.getTheCommDriver();
+  if (comm != null) {
+    comm.addEventListener(this);
+    connected=comm.open();
+    if (serialPort != null) {
+      logger.info("PowerMax alarm binding: serial connection ({}): {}",serialPort,connected ? "connected" : "disconnected");
+    }
+ else     if (ipAddress != null) {
+      logger.info("PowerMax alarm binding: TCP connection (IP {} port {}): {}",ipAddress,tcpPort,connected ? "connected" : "disconnected");
+    }
+  }
+ else {
+    connected=false;
+  }
+  logger.debug("openConnection(): {}",connected ? "connected" : "disconnected");
+}

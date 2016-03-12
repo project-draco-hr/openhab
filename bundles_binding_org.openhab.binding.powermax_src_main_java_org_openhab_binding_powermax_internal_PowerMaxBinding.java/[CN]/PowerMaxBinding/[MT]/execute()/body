@@ -1,0 +1,68 @@
+{
+  logger.debug("PowerMax alarm Execute");
+  if (!isProperlyConfigured()) {
+    logger.debug("execute(): not yet properly configured");
+    return;
+  }
+  long now=System.currentTimeMillis();
+  PowerMaxPanelSettings settings=PowerMaxPanelSettings.getThePanelSettings();
+  PowerMaxState updateState=null;
+  if ((currentState != null) && (settings != null)) {
+    for (int i=1; i <= settings.getNbZones(); i++) {
+      if ((settings.getZoneSettings(i) != null) && settings.getZoneSettings(i).getSensorType().equalsIgnoreCase("Motion") && (currentState.isSensorTripped(i) == Boolean.TRUE)&& (currentState.getSensorLastTripped(i) != null)&& ((now - currentState.getSensorLastTripped(i)) > motionOffDelay)) {
+        if (updateState == null) {
+          updateState=new PowerMaxState();
+        }
+        updateState.setSensorTripped(i,false);
+      }
+    }
+  }
+  if (updateState != null) {
+    updateItemsFromAlarmState(PowerMaxSelectorType.ZONE_STATUS,updateState);
+    currentState.merge(updateState);
+  }
+  if (PowerMaxCommDriver.getTheCommDriver() != null) {
+    connected=PowerMaxCommDriver.getTheCommDriver().isConnected();
+  }
+  if (connected && (currentState.isPowerlinkMode() != null) && currentState.isPowerlinkMode().equals(Boolean.TRUE)&& (currentState.getLastKeepAlive() != null)&& ((now - currentState.getLastKeepAlive()) > ONE_MINUTE)) {
+    PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.RESTORE);
+    currentState.setLastKeepAlive(now);
+  }
+  if (!connected) {
+    logger.debug("execute(): trying to reconnect...");
+    closeConnection();
+    if (triggerItemsUpdate) {
+      logger.debug("execute(): items update enabled");
+      itemUpdateDisabled=false;
+      triggerItemsUpdate=false;
+    }
+    currentState=new PowerMaxState();
+    openConnection();
+    if (connected) {
+      if (forceStandardMode) {
+        currentState.setPowerlinkMode(false);
+        updateItemsFromAlarmState(PowerMaxSelectorType.PANEL_MODE,currentState);
+        settings=PowerMaxPanelSettings.getThePanelSettings();
+        settings.process(false,panelType,null);
+        updateItemsFromPanelSettings();
+        logger.info("PowerMax alarm binding: running in Standard mode");
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.ZONESNAME);
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.ZONESTYPE);
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.STATUS);
+      }
+ else {
+        PowerMaxCommDriver.getTheCommDriver().startDownload();
+      }
+    }
+ else {
+      logger.debug("execute(): reconnection failed");
+    }
+  }
+ else   if (triggerItemsUpdate) {
+    logger.debug("execute(): update all items");
+    itemUpdateDisabled=false;
+    triggerItemsUpdate=false;
+    updateItemsFromAlarmState(currentState);
+    updateItemsFromPanelSettings();
+  }
+}

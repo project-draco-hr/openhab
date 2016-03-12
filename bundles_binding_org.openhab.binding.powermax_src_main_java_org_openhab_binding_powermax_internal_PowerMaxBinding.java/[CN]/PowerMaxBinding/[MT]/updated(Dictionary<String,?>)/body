@@ -1,0 +1,82 @@
+{
+  logger.debug("updated(): updating configuration");
+  closeConnection();
+  serialPort=null;
+  ipAddress=null;
+  tcpPort=0;
+  motionOffDelay=DEFAULT_MOTION_OFF_DELAY;
+  allowArming=false;
+  allowDisarming=false;
+  forceStandardMode=false;
+  panelType=PowerMaxPanelType.POWERMAX_PRO;
+  autoSyncTime=false;
+  pinCode=null;
+  PowerMaxReceiveType.POWERLINK.setHandlerClass(PowerMaxPowerlinkMessage.class);
+  if (config != null) {
+    if (StringUtils.isNotBlank((String)config.get("serialPort"))) {
+      serialPort=(String)config.get("serialPort");
+    }
+    if (StringUtils.isNotBlank((String)config.get("ip"))) {
+      ipAddress=(String)config.get("ip");
+    }
+    if (serialPort == null && ipAddress == null) {
+      logger.warn("PowerMax alarm binding: one connection type (Serial Port or IP Address) must be defined");
+      this.setProperlyConfigured(false);
+      throw new ConfigurationException(null,"one connection type (Serial Port or IP Address) must be defined");
+    }
+    if (serialPort != null && ipAddress != null) {
+      logger.warn("PowerMax alarm binding: can only configure one connection type at a time: Serial Port or IP Address");
+      this.setProperlyConfigured(false);
+      throw new ConfigurationException(null,"can only configure one connection type at a time: Serial Port or IP Address");
+    }
+    if (ipAddress != null) {
+      if (StringUtils.isNotBlank((String)config.get("tcpPort"))) {
+        try {
+          tcpPort=Integer.parseInt((String)config.get("tcpPort"));
+        }
+ catch (        NumberFormatException numberFormatException) {
+          tcpPort=0;
+          logger.warn("PowerMax alarm binding: TCP port not configured correctly (number expected)");
+          this.setProperlyConfigured(false);
+          throw new ConfigurationException("tcpPort","TCP port not configured correctly (number expected)");
+        }
+      }
+    }
+    if (StringUtils.isNotBlank((String)config.get("motionOffDelay"))) {
+      try {
+        motionOffDelay=Integer.parseInt((String)config.get("motionOffDelay")) * 60000;
+      }
+ catch (      NumberFormatException numberFormatException) {
+        motionOffDelay=DEFAULT_MOTION_OFF_DELAY;
+        logger.warn("PowerMax alarm binding: motion off delay not configured correctly (number expected)");
+      }
+    }
+    if (StringUtils.isNotBlank((String)config.get("allowArming"))) {
+      allowArming=Boolean.valueOf((String)config.get("allowArming"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("allowDisarming"))) {
+      allowDisarming=Boolean.valueOf((String)config.get("allowDisarming"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("forceStandardMode"))) {
+      forceStandardMode=Boolean.valueOf((String)config.get("forceStandardMode"));
+      PowerMaxReceiveType.POWERLINK.setHandlerClass(forceStandardMode ? PowerMaxBaseMessage.class : PowerMaxPowerlinkMessage.class);
+    }
+    if (StringUtils.isNotBlank((String)config.get("panelType"))) {
+      try {
+        panelType=PowerMaxPanelType.fromLabel((String)config.get("panelType"));
+      }
+ catch (      IllegalArgumentException exception) {
+        panelType=PowerMaxPanelType.POWERMAX_PRO;
+        logger.warn("PowerMax alarm binding: panel type not configured correctly");
+      }
+    }
+    PowerMaxPanelSettings.initPanelSettings(panelType);
+    if (StringUtils.isNotBlank((String)config.get("autoSyncTime"))) {
+      autoSyncTime=Boolean.valueOf((String)config.get("autoSyncTime"));
+    }
+    if (StringUtils.isNotBlank((String)config.get("pinCode"))) {
+      pinCode=(String)config.get("pinCode");
+    }
+    this.setProperlyConfigured(true);
+  }
+}

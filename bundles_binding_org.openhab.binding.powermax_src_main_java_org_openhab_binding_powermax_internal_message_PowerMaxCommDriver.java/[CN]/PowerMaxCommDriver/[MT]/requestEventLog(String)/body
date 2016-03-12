@@ -1,0 +1,19 @@
+{
+  logger.debug("requestEventLog()");
+  boolean done=false;
+  if ((pinCode == null) || (pinCode.length() != 4)) {
+    logger.warn("PowerMax alarm binding: requested event log rejected due to invalid PIN code");
+  }
+ else {
+    try {
+      byte[] dynPart=new byte[3];
+      dynPart[0]=(byte)Integer.parseInt(pinCode.substring(0,2),16);
+      dynPart[1]=(byte)Integer.parseInt(pinCode.substring(2,4),16);
+      done=sendMessage(new PowerMaxBaseMessage(PowerMaxSendType.EVENTLOG,dynPart),false,0);
+    }
+ catch (    NumberFormatException e) {
+      logger.warn("PowerMax alarm binding: requested event log rejected due to invalid PIN code");
+    }
+  }
+  return done;
+}

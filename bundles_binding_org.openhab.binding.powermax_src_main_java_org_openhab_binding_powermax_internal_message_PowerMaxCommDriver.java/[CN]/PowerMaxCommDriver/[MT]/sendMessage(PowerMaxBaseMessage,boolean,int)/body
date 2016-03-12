@@ -1,0 +1,57 @@
+{
+  if ((waitTime > 0) && (msg != null)) {
+    logger.debug("sendMessage(): delay ({} s) sending message (type {})",waitTime,msg.getSendType().toString());
+    Timer timer=new Timer();
+    timer.schedule(new DelayedSendTask(msg),waitTime * 1000);
+    return true;
+  }
+  if (msg == null) {
+    msg=msgQueue.peek();
+    if (msg == null) {
+      logger.debug("sendMessage(): nothing to send");
+      return false;
+    }
+  }
+  long delay=WAITING_DELAY_FOR_RESPONSE - (System.currentTimeMillis() - connector.getWaitingForResponse());
+  PowerMaxBaseMessage msgToSend=msg;
+  if (!immediate) {
+    msgToSend=msgQueue.peek();
+    if (msgToSend != msg) {
+      logger.debug("sendMessage(): add message in queue (type {})",msg.getSendType().toString());
+      msgQueue.offer(msg);
+      msgToSend=msgQueue.peek();
+    }
+    if ((msgToSend != msg) && (delay > 0)) {
+      return true;
+    }
+ else     if ((msgToSend == msg) && (delay > 0)) {
+      if (delay < 100) {
+        delay=100;
+      }
+      logger.debug("sendMessage(): delay ({} ms) sending message (type {})",delay,msgToSend.getSendType().toString());
+      Timer timer=new Timer();
+      timer.schedule(new DelayedSendTask(null),delay);
+      return true;
+    }
+ else {
+      msgToSend=msgQueue.poll();
+    }
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("sendMessage(): sending {} message {}",msgToSend.getSendType().toString(),DatatypeConverter.printHexBinary(msgToSend.getRawData()));
+  }
+  boolean done=sendMessage(msgToSend.getRawData());
+  if (done) {
+    lastSendMsg=msgToSend;
+    connector.setWaitingForResponse(System.currentTimeMillis());
+    if (!immediate && (msgQueue.peek() != null)) {
+      logger.debug("sendMessage(): delay sending next message (type {})",msgQueue.peek().getSendType().toString());
+      Timer timer=new Timer();
+      timer.schedule(new DelayedSendTask(null),WAITING_DELAY_FOR_RESPONSE);
+    }
+  }
+ else {
+    logger.debug("sendMessage(): failed");
+  }
+  return done;
+}

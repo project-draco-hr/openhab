@@ -1,0 +1,12 @@
+{
+  boolean done=false;
+  if (isConnected()) {
+    data[data.length - 2]=computeCRC(data,data.length);
+    connector.sendMessage(data);
+    done=connector.isConnected();
+  }
+ else {
+    logger.debug("sendMessage(): aborted (not connected)");
+  }
+  return done;
+}

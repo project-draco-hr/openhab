@@ -1,0 +1,32 @@
+{
+  String str=super.toString();
+  byte[] message=getRawData();
+  int eventNum=message[3] & 0x000000FF;
+  str+="\n - event number = " + eventNum;
+  if (eventNum == 1) {
+    int eventCnt=message[2] & 0x000000FF;
+    str+="\n - event count = " + eventCnt;
+  }
+ else {
+    int second=message[4] & 0x000000FF;
+    int minute=message[5] & 0x000000FF;
+    int hour=message[6] & 0x000000FF;
+    int day=message[7] & 0x000000FF;
+    int month=message[8] & 0x000000FF;
+    int year=(message[9] & 0x000000FF) + 2000;
+    byte eventZone=message[10];
+    byte logEvent=message[11];
+    String logEventStr=((logEvent & 0x000000FF) < logEventTable.length) ? logEventTable[logEvent & 0x000000FF] : "UNKNOWN";
+    String logUserStr=((eventZone & 0x000000FF) < logUserTable.length) ? logUserTable[eventZone & 0x000000FF] : "UNKNOWN";
+    if (PowerMaxPanelSettings.getThePanelSettings().getPanelType().getPartitions() > 1) {
+      str+="\n - event " + eventNum + " date & time = "+ String.format("%02d/%02d/%04d %02d:%02d",day,month,year,hour,minute);
+      str+="\n - event " + eventNum + " partition = "+ String.format("%02X",second);
+    }
+ else {
+      str+="\n - event " + eventNum + " date & time = "+ String.format("%02d/%02d/%04d %02d:%02d:%02d",day,month,year,hour,minute,second);
+    }
+    str+="\n - event " + eventNum + " zone code = "+ String.format("%08X - %s",eventZone,logUserStr);
+    str+="\n - event " + eventNum + " event code = "+ String.format("%08X - %s",logEvent,logEventStr);
+  }
+  return str;
+}

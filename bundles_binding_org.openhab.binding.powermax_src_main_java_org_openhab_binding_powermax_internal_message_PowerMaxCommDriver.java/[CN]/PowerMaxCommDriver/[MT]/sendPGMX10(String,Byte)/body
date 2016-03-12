@@ -1,0 +1,25 @@
+{
+  logger.debug("sendPGMX10(): action = {}, device = {}",action,device);
+  boolean done=false;
+  HashMap<String,Byte> codes=new HashMap<String,Byte>();
+  codes.put("OFF",(byte)0x00);
+  codes.put("ON",(byte)0x01);
+  codes.put("DIM",(byte)0x0A);
+  codes.put("BRIGHT",(byte)0x0B);
+  Byte code=codes.get(action);
+  if (code == null) {
+    logger.warn("PowerMax alarm binding: invalid PGM/X10 command: {}",action);
+  }
+ else   if ((device != null) && ((device < 1) || (device >= PowerMaxPanelSettings.getThePanelSettings().getNbPGMX10Devices()))) {
+    logger.warn("PowerMax alarm binding: invalid X10 device id: {}",device);
+  }
+ else {
+    int val=(device == null) ? 1 : (1 << device);
+    byte[] dynPart=new byte[3];
+    dynPart[0]=code;
+    dynPart[1]=(byte)(val & 0x000000FF);
+    dynPart[2]=(byte)(val >> 8);
+    done=sendMessage(new PowerMaxBaseMessage(PowerMaxSendType.X10PGM,dynPart),false,0);
+  }
+  return done;
+}

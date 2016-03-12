@@ -1,0 +1,22 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=null;
+  byte[] message=getRawData();
+  byte subType=message[2];
+  PowerMaxCommDriver comm=PowerMaxCommDriver.getTheCommDriver();
+  if (subType == 0x03) {
+    comm.sendAck(this,(byte)0x02);
+    updatedState=new PowerMaxState();
+    updatedState.setLastKeepAlive(System.currentTimeMillis());
+  }
+ else   if (subType == 0x0A && message[4] == 0x01) {
+    logger.info("PowerMax alarm binding: Enrolling Powerlink");
+    comm.enrollPowerlink();
+    updatedState=new PowerMaxState();
+    updatedState.setDownloadSetupRequired(true);
+  }
+ else {
+    comm.sendAck(this,(byte)0x02);
+  }
+  return updatedState;
+}

@@ -1,0 +1,33 @@
+{
+  if ((data == null) || (data.length < 3)) {
+    return;
+  }
+  int start=0;
+  int end=data.length - 3;
+  int index=data[0] & 0x000000FF;
+  int page=data[1] & 0x000000FF;
+  int pageMin=page + (index + start) / 0x100;
+  int indexPageMin=(index + start) % 0x100;
+  int pageMax=page + (index + end) / 0x100;
+  int indexPageMax=(index + end) % 0x100;
+  index=2;
+  for (int i=pageMin; i <= pageMax; i++) {
+    start=0;
+    end=0xFF;
+    if (i == pageMin) {
+      start=indexPageMin;
+    }
+    if (i == pageMax) {
+      end=indexPageMax;
+    }
+    if (rawSettings[i] == null) {
+      rawSettings[i]=new Byte[0x100];
+      for (int j=0; j < 0x100; j++) {
+        rawSettings[i][j]=null;
+      }
+    }
+    for (int j=start; j <= end; j++) {
+      rawSettings[i][j]=data[index++];
+    }
+  }
+}

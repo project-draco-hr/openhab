@@ -1,0 +1,46 @@
+{
+  if (itemUpdateDisabled) {
+    logger.debug("updateItemsFromPanelSettings(): items update disabled");
+    return;
+  }
+  if (provider == null) {
+    for (    PowerMaxBindingProvider prov : providers) {
+      if (prov != null) {
+        updateItemsFromPanelSettings(prov,name,selector);
+      }
+    }
+  }
+ else {
+    PowerMaxPanelSettings settings=PowerMaxPanelSettings.getThePanelSettings();
+    for (    String itemName : provider.getItemNames()) {
+      if ((name == null) || itemName.equals(name)) {
+        String value=null;
+        PowerMaxBindingConfig config=provider.getConfig(itemName);
+        if ((selector == null) || (selector == config.getSelectorType())) {
+switch (config.getSelectorType()) {
+case PANEL_TYPE:
+            value=(settings.getPanelType() != null) ? settings.getPanelType().getLabel() : null;
+          break;
+case PANEL_SERIAL:
+        value=settings.getPanelSerial();
+      break;
+case PANEL_EPROM:
+    value=settings.getPanelEprom();
+  break;
+case PANEL_SOFTWARE:
+value=settings.getPanelSoftware();
+break;
+default :
+break;
+}
+}
+if (value != null) {
+State itemState=TypeParser.parseState(config.getAcceptedDataTypes(),value);
+if (itemState != null) {
+eventPublisher.postUpdate(itemName,itemState);
+}
+}
+}
+}
+}
+}

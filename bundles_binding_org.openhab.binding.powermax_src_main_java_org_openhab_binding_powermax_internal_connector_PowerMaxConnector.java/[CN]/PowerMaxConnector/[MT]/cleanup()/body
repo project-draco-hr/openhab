@@ -1,0 +1,17 @@
+{
+  logger.debug("cleanup(): cleaning up Connection");
+  if (readerThread != null) {
+    logger.debug("Interrupt reader thread");
+    readerThread.interrupt();
+  }
+  if (input != null) {
+    IOUtils.closeQuietly(input);
+  }
+  if (output != null) {
+    IOUtils.closeQuietly(output);
+  }
+  readerThread=null;
+  input=null;
+  output=null;
+  logger.debug("cleanup(): Connection Cleanup");
+}
