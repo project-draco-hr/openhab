@@ -2,7 +2,7 @@
   logger.trace("execute() method is called!");
   try {
     clientSocket.setBroadcast(true);
-    clientSocket.setSoTimeout(10000);
+    clientSocket.setSoTimeout(120000);
     byte[] receiveData=new byte[14];
     DatagramPacket receivePacket=new DatagramPacket(receiveData,receiveData.length);
     clientSocket.receive(receivePacket);
@@ -50,8 +50,11 @@
       }
     }
   }
- catch (  Exception e) {
-    logger.warn("Error in execute: {}, Message: {}",e.getClass().getName(),e.getMessage());
+ catch (  SocketTimeoutException te) {
+    logger.info("Receive timeout on CoE socket, retrying ...");
+  }
+catch (  Exception e) {
+    logger.error("Error in execute: ",e);
   }
   logger.trace("TACmi execute() finished");
 }
