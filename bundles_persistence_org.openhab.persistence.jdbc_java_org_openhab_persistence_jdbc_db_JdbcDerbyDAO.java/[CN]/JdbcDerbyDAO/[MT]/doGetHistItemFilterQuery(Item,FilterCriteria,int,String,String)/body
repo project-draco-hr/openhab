@@ -1,9 +1,10 @@
 {
   String sql=histItemFilterQueryProvider(filter,numberDecimalcount,table,name);
-  logger.debug("JDBC::doGetHistItemFilterQuery sql={}",sql);
   List<Object[]> m=Yank.queryObjectArrays(sql,null);
+  logger.debug("JDBC::doGetHistItemFilterQuery gor Array length={}",m.size());
   List<HistoricItem> items=new ArrayList<HistoricItem>();
   for (int i=0; i < m.size(); i++) {
+    logger.debug("JDBC::doGetHistItemFilterQuery 0='{}' 1='{}'",m.get(i)[0],m.get(i)[1]);
     items.add(new JdbcItem(item.getName(),getState(item,m.get(i)[1]),objectAsDate(m.get(i)[0])));
   }
   return items;
