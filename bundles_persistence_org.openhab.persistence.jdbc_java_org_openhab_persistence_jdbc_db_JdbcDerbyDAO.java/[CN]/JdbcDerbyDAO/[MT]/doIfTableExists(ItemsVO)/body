@@ -1,0 +1,5 @@
+{
+  String sql=StringUtilsExt.replaceArrayMerge(SQL_IF_TABLE_EXISTS,new String[]{"#searchTable#"},new String[]{vo.getItemsManageTable().toUpperCase()});
+  logger.debug("JDBC::doIfTableExists sql={}",sql);
+  return Yank.queryScalar(sql,String.class,null) != null;
+}
