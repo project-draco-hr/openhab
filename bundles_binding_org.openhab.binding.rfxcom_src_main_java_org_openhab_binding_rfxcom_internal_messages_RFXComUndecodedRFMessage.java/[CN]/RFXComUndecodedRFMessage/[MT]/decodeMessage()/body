@@ -1,0 +1,12 @@
+{
+  final int rawLen=Math.min(rawData.length,33);
+  byte[] data=new byte[4 + rawLen];
+  data[0]=(byte)(data.length - 1);
+  data[1]=RFXComBaseMessage.PacketType.UNDECODED_RF_MESSAGE.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  for (int i=0; i < rawLen; i++) {
+    data[i + 4]=rawData[i];
+  }
+  return data;
+}

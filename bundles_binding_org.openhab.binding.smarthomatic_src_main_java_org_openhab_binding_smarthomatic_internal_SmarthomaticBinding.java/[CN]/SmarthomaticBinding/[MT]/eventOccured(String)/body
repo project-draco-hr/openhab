@@ -1,0 +1,35 @@
+{
+  StringTokenizer strTok=new StringTokenizer(message,"\n");
+  String data=null;
+  int i=0;
+  while (strTok.hasMoreTokens()) {
+    String s=strTok.nextToken();
+    if (s.contains(SHCMessage.DATA_FLAG)) {
+      data=s;
+      logger.debug("<BaseStation data>[{}]: {}",i,data);
+    }
+  }
+  if (data != null) {
+    SHCMessage shcMessage=new SHCMessage(data,packet);
+    SHCHeader shcHeader=shcMessage.getHeader();
+    logger.debug("BaseStation SenderID: {} MsgType: {} MsgGroupID: {} MsgID: {} MsgData: {}",shcHeader.getSenderID(),shcHeader.getMessageType(),shcHeader.getMessageGroupID(),shcHeader.getMessageID(),shcHeader.getMessageData());
+    SHCData info=shcMessage.getData();
+    if (info != null) {
+      logger.debug(info.toString());
+    }
+    for (    SmarthomaticBindingProvider provider : this.providers) {
+      for (      String itemName : provider.getItemNames()) {
+        if (shcHeader.getSenderID() == provider.getDeviceId(itemName) && shcHeader.getMessageGroupID() == provider.getMessageGroupId(itemName) && shcHeader.getMessageID() == provider.getMessageId(itemName)) {
+          Type type=shcMessage.openHABStateFromSHCMessage(provider.getItem(itemName)).get(provider.getMessagePartId(itemName));
+          String transformed=processTransformation(provider.getConfigParam(itemName,"transformation"),type.toString());
+          if (type instanceof DecimalType) {
+            type=DecimalType.valueOf(transformed);
+          }
+          if (isDataTypeSupported(provider.getItem(itemName),type)) {
+            eventPublisher.postUpdate(itemName,(State)type);
+          }
+        }
+      }
+    }
+  }
+}

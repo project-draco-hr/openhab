@@ -1,0 +1,40 @@
+{
+  SmarthomaticBindingConfig config=new SmarthomaticBindingConfig();
+  Matcher matcher=CONFIG_PATTERN.matcher(bindingConfig);
+  if (!matcher.matches()) {
+    throw new BindingConfigParseException("Config for item '" + item.getName() + "' could not be parsed.");
+  }
+  bindingConfig=matcher.group(1);
+  config.setItemName(item.getName());
+  config.setItem(item);
+  matcher=TRANSFORMATION_PATTERN.matcher(bindingConfig);
+  if (matcher.matches()) {
+    bindingConfig=matcher.group(1);
+    String transformation=matcher.group(2);
+    config.getConfigParams().put("transformation",transformation);
+  }
+  StringTokenizer confItems=new StringTokenizer(bindingConfig,",");
+  while (confItems.hasMoreTokens()) {
+    String[] token=confItems.nextToken().split("=");
+    String key=token[0];
+    String value=token[1];
+    config.getConfigParams().put(key,value);
+    key=key.replaceAll("\\s","");
+    if ("deviceId".equals(key)) {
+      config.setDeviceId(value.replaceAll("\\s",""));
+    }
+ else     if ("messageGroupId".equals(key)) {
+      config.setMessageGroupId(value.replaceAll("\\s",""));
+    }
+ else     if ("messageId".equals(key)) {
+      config.setMessageId(value.replaceAll("\\s",""));
+    }
+ else     if ("messagePart".equals(key)) {
+      config.setMessagePartId(value.replaceAll("\\s",""));
+    }
+ else     if ("messageItem".equals(key)) {
+      config.setMessageItemId(value.replaceAll("\\s",""));
+    }
+  }
+  return config;
+}

@@ -1,0 +1,15 @@
+{
+  if (!gc100ControlPoint.isGC100ItemConnected(gc100.getHostname())) {
+    this.connected=false;
+  }
+  HashMap<String,GC100ItemBean> items=gc100ItemUtility.getAllItems();
+  if (!items.isEmpty()) {
+    for (    String itemName : items.keySet()) {
+      GC100ItemBean itemBean=items.get(itemName);
+      if (!gc100ControlPoint.connectTarget(gc100.getHostname(),itemBean.getModule(),itemBean.getConnector())) {
+        logger.warn("Problem in connecting {} GC100 Module: {} of Connector: {}",gc100.getHostname(),itemBean.getModule(),itemBean.getConnector());
+      }
+    }
+  }
+  return this.connected;
+}

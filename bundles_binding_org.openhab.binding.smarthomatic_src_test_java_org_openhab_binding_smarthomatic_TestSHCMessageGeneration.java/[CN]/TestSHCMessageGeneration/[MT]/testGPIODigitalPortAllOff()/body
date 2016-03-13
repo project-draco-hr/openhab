@@ -1,0 +1,11 @@
+{
+  HashMap<Integer,String> test_msg=new HashMap<Integer,String>();
+  test_msg.put(0,"s0002000e010100");
+  test_msg.put(255,"s0002000e0101ff");
+  test_msg.put(170,"s0002000e0101aa");
+  test_msg.put(85,"s0002000e010155");
+  for (  int key : test_msg.keySet()) {
+    cmd=base.prepareCommand(14,1,1,0,new DecimalType(key));
+    assertEquals(test_msg.get(key),cmd);
+  }
+}

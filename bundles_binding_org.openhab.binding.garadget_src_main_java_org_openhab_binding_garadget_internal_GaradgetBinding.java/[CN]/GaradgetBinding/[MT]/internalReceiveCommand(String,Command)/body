@@ -1,0 +1,12 @@
+{
+  logger.trace("Garadget binding received command '{}' for item '{}'",command,itemName);
+  final GaradgetBindingConfig deviceConfig=getConfigForItemName(itemName);
+  if (deviceConfig != null) {
+    for (    GaradgetPublisher publisher : deviceConfig.getPublishers()) {
+      commandGaradget(itemName,publisher,command);
+    }
+  }
+ else {
+    logger.debug("Item '{}' has no garadget config; ignoring command '{}'",itemName,command);
+  }
+}

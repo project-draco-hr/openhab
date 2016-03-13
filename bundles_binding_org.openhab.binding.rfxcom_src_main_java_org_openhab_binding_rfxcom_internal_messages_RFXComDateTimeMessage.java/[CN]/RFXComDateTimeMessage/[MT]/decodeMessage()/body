@@ -1,0 +1,18 @@
+{
+  byte[] data=new byte[13];
+  data[0]=0x0D;
+  data[1]=RFXComBaseMessage.PacketType.DATE_TIME.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=(byte)((sensorId & 0xFF00) >> 8);
+  data[5]=(byte)(sensorId & 0x00FF);
+  data[6]=(byte)(yy & 0x00FF);
+  data[7]=(byte)(MM & 0x00FF);
+  data[8]=(byte)(dd & 0x00FF);
+  data[9]=(byte)(dow & 0x00FF);
+  data[10]=(byte)(HH & 0x00FF);
+  data[11]=(byte)(mm & 0x00FF);
+  data[12]=(byte)(ss & 0x00FF);
+  data[13]=(byte)(((signalLevel & 0x0F) << 4) | (batteryLevel & 0x0F));
+  return data;
+}

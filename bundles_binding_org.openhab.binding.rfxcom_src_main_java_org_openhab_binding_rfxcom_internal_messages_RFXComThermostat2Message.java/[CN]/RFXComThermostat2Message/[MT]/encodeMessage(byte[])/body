@@ -1,0 +1,19 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  unitcode=data[4];
+  commandId=data[5];
+  command=Commands.UNKNOWN;
+  for (  Commands loCmd : Commands.values()) {
+    if (loCmd.toByte() == commandId) {
+      command=loCmd;
+      break;
+    }
+  }
+  signalLevel=(byte)((data[9] & 0xF0) >> 4);
+}

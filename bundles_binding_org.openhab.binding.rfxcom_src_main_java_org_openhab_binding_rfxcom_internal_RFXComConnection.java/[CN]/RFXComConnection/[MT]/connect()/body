@@ -5,6 +5,7 @@
   logger.debug("Reset controller");
   connector.sendMessage(RFXComMessageFactory.CMD_RESET);
   Thread.sleep(1000);
+  connector.clearReceiveBuffer();
   if (setMode != null) {
     try {
       logger.debug("Set mode: {}",DatatypeConverter.printHexBinary(setMode));

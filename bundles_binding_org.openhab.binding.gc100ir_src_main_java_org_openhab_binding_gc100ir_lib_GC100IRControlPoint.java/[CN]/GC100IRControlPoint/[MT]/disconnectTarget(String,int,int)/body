@@ -1,0 +1,15 @@
+{
+  Set<GC100IRDevice> deviceSet=null;
+synchronized (deviceLastDisTimeMap) {
+    deviceSet=deviceLastDisTimeMap.keySet();
+  }
+  if ((deviceSet == null) || (deviceSet.size() == 0)) {
+    return;
+  }
+  for (  GC100IRDevice gcDevice : deviceSet) {
+    String ipAddressOfDevice=gcDevice.getIPAddressString();
+    if (ipAddressOfDevice.equals(ipAddress)) {
+      deviceLastDisTimeMap.remove(gcDevice);
+    }
+  }
+}

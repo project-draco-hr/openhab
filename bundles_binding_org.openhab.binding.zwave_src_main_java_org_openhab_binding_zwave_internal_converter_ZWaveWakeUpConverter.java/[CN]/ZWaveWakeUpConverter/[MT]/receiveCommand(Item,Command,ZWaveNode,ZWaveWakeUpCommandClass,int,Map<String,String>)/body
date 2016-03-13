@@ -1,0 +1,18 @@
+{
+  ZWaveCommandConverter<?,?> converter=this.getCommandConverter(command.getClass());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item={}, type={}, endpoint={}, ignoring command.",node.getNodeId(),item.getName(),command.getClass().getSimpleName(),endpointId);
+    return;
+  }
+  SerialMessage serialMessage=commandClass.setInterval((Integer)converter.convertFromCommandToValue(item,command));
+  if (serialMessage == null) {
+    logger.warn("NODE {}: Generating message failed for command class = {}, endpoint = {}",node.getNodeId(),commandClass.getCommandClass().getLabel(),endpointId);
+    return;
+  }
+  this.getController().sendData(serialMessage);
+  serialMessage=commandClass.getIntervalMessage();
+  this.getController().sendData(serialMessage);
+  if (command instanceof State) {
+    this.getEventPublisher().postUpdate(item.getName(),(State)command);
+  }
+}

@@ -1,0 +1,35 @@
+{
+  if ((getDevicesResponse == null)) {
+    return;
+  }
+  StringTokenizer st=new StringTokenizer(getDevicesResponse,"\r ,");
+  String configURL=ipAddress;
+  if (configURL == null) {
+    return;
+  }
+  Date date=new Date();
+  Map<String,String> gcProps=new HashMap<String,String>();
+  while (st.hasMoreTokens()) {
+    if (st.nextToken().equals("device")) {
+      int m=Integer.parseInt(st.nextToken());
+      gcProps.put("module",String.valueOf(m));
+      int c=Integer.parseInt(st.nextToken());
+      gcProps.put("connector",String.valueOf(c));
+      String deviceType=st.nextToken();
+      gcProps.put("deviceType",deviceType);
+      for (int i=1; i <= c; i++) {
+        GC100IRDevice gcDevice=new GC100IRDevice(gc100ControlPoint,configURL,m,i,deviceType);
+        try {
+          gcProps.put("inetAddress",gcDevice.getInetAddress().toString());
+        }
+ catch (        UnknownHostException e) {
+          logger.error("UnknownHostException :",e);
+        }
+        deviceGCPropsMap.put(gcDevice,gcProps);
+synchronized (deviceLastDisTimeMap) {
+          deviceLastDisTimeMap.put(gcDevice,date.getTime());
+        }
+      }
+    }
+  }
+}

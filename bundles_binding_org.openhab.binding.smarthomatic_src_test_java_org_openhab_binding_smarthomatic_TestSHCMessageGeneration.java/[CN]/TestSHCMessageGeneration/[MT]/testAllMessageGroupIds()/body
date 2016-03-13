@@ -1,0 +1,27 @@
+{
+  HashMap<Integer,Integer> sup_msggroupids=new HashMap<Integer,Integer>();
+  sup_msggroupids.put(1,1);
+  sup_msggroupids.put(1,5);
+  sup_msggroupids.put(1,6);
+  sup_msggroupids.put(60,10);
+  sup_msggroupids.put(60,11);
+  sup_msggroupids.put(60,1);
+  sup_msggroupids.put(60,2);
+  for (int msggroupid=0; msggroupid < 256; msggroupid++) {
+    int msgid=0;
+    boolean is_supported=false;
+    if (sup_msggroupids.containsKey(msggroupid)) {
+      msgid=sup_msggroupids.get(msggroupid);
+      is_supported=true;
+    }
+    cmd=base.prepareCommand(0,msggroupid,msgid,0,new DecimalType(0));
+    if (is_supported) {
+      int strlen=cmd.length();
+      assertEquals("Length = " + strlen,true,strlen > 0);
+      assertEquals(msggroupid,Integer.parseInt(cmd.substring(9,11),16));
+    }
+ else {
+      assertEquals("",cmd);
+    }
+  }
+}

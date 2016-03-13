@@ -55,6 +55,15 @@
  else       if (paramKey.equals(PROP_DISABLE_CERTIFICATE_VERIFICATION)) {
         calDavConfig.setDisableCertificateVerification(BooleanUtils.toBoolean(value));
       }
+ else       if (paramKey.equals(PROP_CHARSET)) {
+        try {
+          Charset.forName(value);
+          calDavConfig.setCharset(value);
+        }
+ catch (        UnsupportedCharsetException e) {
+          log.error("charset not valid: {}",value);
+        }
+      }
     }
     for (    String id : configMap.keySet()) {
       if (configMap.get(id).getUrl() == null) {

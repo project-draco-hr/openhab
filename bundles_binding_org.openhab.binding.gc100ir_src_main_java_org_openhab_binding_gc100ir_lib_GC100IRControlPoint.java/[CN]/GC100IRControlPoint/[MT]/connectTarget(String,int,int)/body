@@ -1,0 +1,109 @@
+{
+  if (gc100host == null || module <= 0 || connector <= 0) {
+    logger.warn("hostname, module or connector is invalid");
+    return false;
+  }
+  Set<GC100IRDevice> deviceSet=deviceLastDisTimeMap.keySet();
+  if ((deviceSet == null) || (deviceSet.size() == 0)) {
+    logger.warn("deviceSet is null or its size is 0.");
+    return false;
+  }
+  GC100IRDevice gcDevice=null;
+  for (  GC100IRDevice gcDev : deviceSet) {
+    String ipOfDevice=gcDev.getIPAddressString();
+    if (ipOfDevice.equals(gc100host)) {
+      if ((module != gcDev.getModule()) || (connector != gcDev.getConnector())) {
+        continue;
+      }
+      gcDevice=gcDev;
+      break;
+    }
+  }
+  if (gcDevice == null) {
+    logger.warn("gcDevice is null.");
+    return false;
+  }
+  GC100IRConnection tcpIpSoc=gcDevice.getTCPIPSocket();
+  if (tcpIpSoc != null) {
+    if (!tcpIpSoc.isConnected()) {
+      try {
+        tcpIpSoc.connect();
+        return true;
+      }
+ catch (      IOException e) {
+        logger.error("IOException : ",e);
+      }
+    }
+  }
+  InetAddress ipAddress;
+  try {
+    ipAddress=gcDevice.getInetAddress();
+  }
+ catch (  UnknownHostException e) {
+    logger.warn("UnknownHostException : ",e);
+    return false;
+  }
+  String deviceType=gcDevice.getConnectorType();
+  Socket socket=null;
+  try {
+synchronized (socketList) {
+      for (      GC100IRConnection tcpIpSocket : socketList) {
+        if (tcpIpSocket == null) {
+          continue;
+        }
+        InetAddress tcpInetAddress=tcpIpSocket.getInetAddress();
+        int tcpPort=tcpIpSocket.getPort();
+        if (tcpInetAddress.equals(ipAddress) && (tcpPort == CONNECT_PORT)) {
+          String tcpIPString=tcpIpSocket.getInetAddress().toString();
+          if (tcpIPString.startsWith("/")) {
+            tcpIPString=tcpIPString.substring(1);
+          }
+          if (gc100host != null && gc100host.equals(tcpIPString) && (module == tcpIpSocket.getModule()) && (connector == tcpIpSocket.getConnector())) {
+            if (!tcpIpSocket.isConnected()) {
+              tcpIpSocket.connect();
+            }
+            return true;
+          }
+          if (socket == null) {
+            if (!tcpIpSocket.isConnected()) {
+              tcpIpSocket.connect();
+            }
+            socket=tcpIpSocket.getSocket();
+          }
+        }
+      }
+    }
+    String gchost=null;
+    if (ipAddress != null && ipAddress.toString().startsWith("/")) {
+      gchost=ipAddress.toString().substring(1);
+    }
+ else     if (ipAddress != null) {
+      gchost=ipAddress.toString();
+    }
+    if (socket != null) {
+      GC100IRConnection tcpIpSocket=new GC100IRConnection(ipAddress,gchost,CONNECT_PORT,module,connector,deviceType,socket);
+synchronized (FLOW_CONTROL_VALUE_FLOW_HARDWARE) {
+        socketList.add(tcpIpSocket);
+      }
+      gcDevice.setTCPIPSocket(tcpIpSocket);
+      return true;
+    }
+ else {
+      GC100IRConnection tcpIpSocket=new GC100IRConnection(ipAddress,gchost,CONNECT_PORT,module,connector,deviceType);
+      if (tcpIpSocket.connect()) {
+synchronized (FLOW_CONTROL_VALUE_FLOW_HARDWARE) {
+          socketList.add(tcpIpSocket);
+        }
+        gcDevice.setTCPIPSocket(tcpIpSocket);
+        return true;
+      }
+    }
+  }
+ catch (  UnknownHostException e) {
+    logger.error("UnknownHostException :",e);
+  }
+catch (  IOException e) {
+    logger.error("IOException :",e);
+  }
+  return false;
+}

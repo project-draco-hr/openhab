@@ -1,0 +1,10 @@
+{
+  for (int pin=0; pin < 8; pin++) {
+    cmd=base.prepareCommand(14,1,5,0,new DecimalType(pin * 2));
+    assertEquals(pin * 2,Integer.parseInt(cmd.substring(13,14),16));
+    assertEquals(14,cmd.length());
+    cmd=base.prepareCommand(14,1,5,0,new DecimalType(pin * 2 + 1));
+    assertEquals(pin * 2 + 1,Integer.parseInt(cmd.substring(13,14),16));
+    assertEquals(14,cmd.length());
+  }
+}

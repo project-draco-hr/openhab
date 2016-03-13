@@ -1,6 +1,6 @@
 {
-  byte[] data=new byte[13];
-  data[0]=0x0D;
+  byte[] data=new byte[14];
+  data[0]=(byte)(data.length - 1);
   data[1]=RFXComBaseMessage.PacketType.INTERFACE_MESSAGE.toByte();
   data[2]=subType.toByte();
   data[3]=seqNbr;
@@ -31,9 +31,16 @@
   data[9]|=enableACPackets ? 0x04 : 0x00;
   data[9]|=enableARCPackets ? 0x02 : 0x00;
   data[9]|=enableX10Packets ? 0x01 : 0x00;
-  data[10]=hardwareVersion1;
-  data[11]=hardwareVersion2;
-  data[12]=0;
-  data[13]=0;
+  if (isNewFormat()) {
+    data[10]|=enableHomeConfortPackets ? 0x02 : 0x00;
+    data[10]|=enableKeeLoqPackets ? 0x01 : 0x00;
+    data[11]=hardwareVersion1;
+    data[12]=hardwareVersion2;
+    data[13]=outputPower;
+  }
+ else {
+    data[10]=hardwareVersion1;
+    data[11]=hardwareVersion2;
+  }
   return data;
 }

@@ -1,0 +1,25 @@
+{
+  if (value == null) {
+    return UnDefType.NULL;
+  }
+ else   if (value instanceof Boolean) {
+    for (    Class<? extends State> dataType : subscriber.getAcceptedDataTypes()) {
+      if (dataType == OnOffType.class) {
+        return (Boolean)value ? OnOffType.ON : OnOffType.OFF;
+      }
+ else       if (dataType == OpenClosedType.class) {
+        return (Boolean)value ? OpenClosedType.OPEN : OpenClosedType.CLOSED;
+      }
+    }
+  }
+ else   if (value instanceof Date) {
+    for (    Class<? extends State> dataType : subscriber.getAcceptedDataTypes()) {
+      if (dataType == DateTimeType.class) {
+        Calendar cal=Calendar.getInstance();
+        cal.setTime((Date)value);
+        return new DateTimeType(cal);
+      }
+    }
+  }
+  return TypeParser.parseState(subscriber.getAcceptedDataTypes(),value.toString());
+}

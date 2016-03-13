@@ -3,29 +3,48 @@
     return;
   }
  else {
-    logger.info("Disconnected so we'll try again");
+    logger.debug("Disconnected so we'll try again");
     disconnect();
   }
-  try {
-    SSLContext ctx=SSLContext.getInstance("TLS");
-    final TrustManager[] trustAllCerts=new TrustManager[]{new X509TrustManager(){
-      public X509Certificate[] getAcceptedIssuers(){
-        return null;
-      }
-      public void checkClientTrusted(      X509Certificate[] arg0,      String arg1) throws CertificateException {
-      }
-      public void checkServerTrusted(      X509Certificate[] arg0,      String arg1) throws CertificateException {
-      }
+  if (CERTIFICATE_FILE_NAME != null && new File(CERTIFICATE_FILE_NAME).isFile()) {
+    if (CERTIFICATE_PASSWORD == null) {
+      CERTIFICATE_PASSWORD="";
     }
-};
-    ctx.init(null,trustAllCerts,null);
-    socket=(SSLSocket)ctx.getSocketFactory().createSocket(IP,PORT);
-    socket.setSoTimeout(10000);
-    socket.startHandshake();
-    logger.debug("Connected again...");
+    try {
+      SSLClient client=new SSLClient();
+      client.addTrustMaterial(TrustMaterial.DEFAULT);
+      client.setCheckHostname(false);
+      client.setKeyMaterial(new KeyMaterial(CERTIFICATE_FILE_NAME,CERTIFICATE_PASSWORD.toCharArray()));
+      client.setConnectTimeout(10000);
+      socket=(SSLSocket)client.createSocket(IP,PORT);
+      socket.setSoTimeout(30000);
+      socket.startHandshake();
+    }
+ catch (    Exception e) {
+      throw new Exception("Could not connect using certificate: " + CERTIFICATE_FILE_NAME,e);
+    }
   }
- catch (  Exception e) {
-    throw new Exception("Cannot connect to " + IP + ":"+ PORT,e);
+ else {
+    try {
+      SSLContext ctx=SSLContext.getInstance("TLS");
+      final TrustManager[] trustAllCerts=new TrustManager[]{new X509TrustManager(){
+        public X509Certificate[] getAcceptedIssuers(){
+          return null;
+        }
+        public void checkClientTrusted(        X509Certificate[] arg0,        String arg1) throws CertificateException {
+        }
+        public void checkServerTrusted(        X509Certificate[] arg0,        String arg1) throws CertificateException {
+        }
+      }
+};
+      ctx.init(null,trustAllCerts,null);
+      socket=(SSLSocket)ctx.getSocketFactory().createSocket(IP,PORT);
+      socket.setSoTimeout(10000);
+      socket.startHandshake();
+    }
+ catch (    Exception e) {
+      throw new Exception("Cannot connect to " + IP + ":"+ PORT,e);
+    }
   }
   handleResponse();
 }

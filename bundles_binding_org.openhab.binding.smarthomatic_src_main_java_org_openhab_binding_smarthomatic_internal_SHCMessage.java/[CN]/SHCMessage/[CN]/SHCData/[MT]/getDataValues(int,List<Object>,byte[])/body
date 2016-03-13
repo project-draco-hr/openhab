@@ -1,0 +1,36 @@
+{
+  for (  Object object : dataValues) {
+    if (object instanceof UIntValue) {
+      UIntValue value=(UIntValue)object;
+      Integer result=parseData(data,value.getBits(),startBit,false);
+      openHABTypes.add(new DecimalType(result));
+      startBit+=value.getBits();
+    }
+ else     if (object instanceof IntValue) {
+      IntValue value=(IntValue)object;
+      Integer result=parseData(data,value.getBits(),startBit,true);
+      openHABTypes.add(new DecimalType(result));
+      startBit+=value.getBits();
+    }
+ else     if (object instanceof BoolValue) {
+      Integer value=parseData(data,1,startBit,false);
+      if (value > 0) {
+        openHABTypes.add(OnOffType.ON);
+      }
+ else {
+        openHABTypes.add(OnOffType.OFF);
+      }
+      startBit+=1;
+    }
+ else     if (object instanceof Array) {
+      Array value=(Array)object;
+      for (int i=0; i < value.getLength(); i++) {
+        startBit=getDataValues(startBit,value.getArrayDataValue(),data);
+      }
+    }
+ else {
+      throw new NotImplementedException();
+    }
+  }
+  return startBit;
+}

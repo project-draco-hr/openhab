@@ -1,0 +1,18 @@
+{
+  try {
+    String gc100Instance=getGC100InstanceName(itemName);
+    GC100IRConnector connector=getGC100Connector(gc100Instance);
+    if (connector == null) {
+      logger.warn("Received command ({}) for item {} but no GC100 connector found for {}, ignoring",command.toString(),itemName,gc100Instance);
+      return;
+    }
+    if (!connector.isConnected()) {
+      logger.warn("Received command ({}) for item {} but the connection to the GC100 instance {} is down, ignoring",command.toString(),itemName,gc100Instance);
+      return;
+    }
+    connector.invokeCommand(itemName);
+  }
+ catch (  Exception e) {
+    logger.error("Error handling command",e);
+  }
+}

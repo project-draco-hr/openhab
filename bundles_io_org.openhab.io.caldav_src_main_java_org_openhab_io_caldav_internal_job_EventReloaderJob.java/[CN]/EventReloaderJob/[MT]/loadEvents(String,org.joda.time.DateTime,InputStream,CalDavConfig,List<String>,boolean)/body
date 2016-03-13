@@ -1,6 +1,7 @@
 {
   CalendarBuilder builder=new CalendarBuilder();
-  BufferedReader in=new BufferedReader(new InputStreamReader(inputStream),50);
+  InputStreamReader is=new InputStreamReader(inputStream,config.getCharset());
+  BufferedReader in=new BufferedReader(is,50);
   final UnfoldingReader uin=new UnfoldingReader(in,50,true);
   Calendar calendar=builder.build(uin);
   uin.close();
@@ -63,6 +64,7 @@
       if (vEvent.getDescription() != null) {
         event.setContent(vEvent.getDescription().getValue());
       }
+      event.getCategoryList().addAll(readCategory(vEvent));
       event.setFilename(filename);
       log.trace("adding event: " + event.getShortName());
       eventContainer.getEventList().add(event);

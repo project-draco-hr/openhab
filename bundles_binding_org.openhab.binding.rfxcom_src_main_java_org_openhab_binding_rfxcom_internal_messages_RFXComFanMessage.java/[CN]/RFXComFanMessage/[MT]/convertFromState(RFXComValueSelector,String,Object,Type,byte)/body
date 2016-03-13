@@ -1,0 +1,18 @@
+{
+  this.subType=((SubType)subType);
+  seqNbr=seqNumber;
+  String[] ids=id.split("\\.");
+  sensorId=Integer.parseInt(ids[0]);
+switch (valueSelector) {
+case COMMAND:
+    if (type instanceof DecimalType) {
+      commandId=(int)((DecimalType)type).intValue();
+    }
+ else {
+      throw new RFXComException("Can't convert " + type + " to command");
+    }
+  break;
+default :
+throw new RFXComException("Can't convert " + type + " to "+ valueSelector);
+}
+}

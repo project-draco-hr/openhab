@@ -19,13 +19,13 @@ if (circlePlus11 != null) {
 }
 break;
 case TIMEOUT:
-logger.error("Timeout sending Plugwise message : {}",((AcknowledgeMessage)message).toString());
+logger.error("Timeout while sending: {}",message);
 Iterator<Message> messageIterator=sentQueue.iterator();
 Message aMessage=null;
 while (messageIterator.hasNext()) {
 aMessage=messageIterator.next();
 if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
-logger.debug("processMessage: timeout : removing a msg from the senTq: {}",aMessage.toString());
+logger.debug("Timeout: removing from the sentQueue: {}",aMessage);
 sentQueue.remove(aMessage);
 break;
 }

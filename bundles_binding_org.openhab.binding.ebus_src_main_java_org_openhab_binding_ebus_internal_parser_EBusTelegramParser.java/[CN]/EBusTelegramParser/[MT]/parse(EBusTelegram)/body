@@ -43,6 +43,10 @@
       String uniqueKey=(classKey != "" ? classKey + "." : "") + (idKey != "" ? idKey + "." : "") + entry.getKey();
       settings=entry.getValue();
       Object value=getValue(byteBuffer,entry.getValue());
+      if (value == null) {
+        logger.trace("Returned value is null, skip ...");
+        continue;
+      }
       if (settings.getCsript() != null) {
         try {
           HashMap<String,Object> bindings=new HashMap<String,Object>();

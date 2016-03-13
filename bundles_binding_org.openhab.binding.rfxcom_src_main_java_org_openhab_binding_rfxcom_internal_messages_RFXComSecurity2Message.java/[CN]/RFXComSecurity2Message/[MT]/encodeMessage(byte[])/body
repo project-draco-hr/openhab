@@ -1,0 +1,13 @@
+{
+  super.encodeMessage(data);
+  try {
+    subType=SubType.values()[super.subType];
+  }
+ catch (  Exception e) {
+    subType=SubType.UNKNOWN;
+  }
+  sensorId=(data[11] & 0x0F) << 24 | (data[10] & 0xFF) << 16 | (data[9] & 0xFF) << 8 | (data[8] & 0xFF);
+  buttonStatus=(data[11] & 0xF0) >> 4;
+  batteryLevel=(byte)((data[28] & 0xF0) >> 4);
+  signalLevel=(byte)(data[28] & 0x0F);
+}

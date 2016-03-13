@@ -1,0 +1,17 @@
+{
+  String content=String.format("grant_type=password&username=%1$s&password=%2$s&expires_in=0",urlEncode(username),urlEncode(password));
+  sendCommand(null,"createToken","particle","particle",content,new HttpResponseHandler(){
+    @Override public void handleResponse(    int statusCode,    String responseBody){
+      logger.trace("Processing login: statusCode={}, responseBody={}",statusCode,responseBody);
+      if (statusCode == HttpStatus.SC_OK) {
+        try {
+          tokens=JSON.readValue(responseBody,TokenResponse.class);
+        }
+ catch (        Exception e) {
+          logger.warn("Unable to parse token response.",e);
+        }
+      }
+    }
+  }
+);
+}

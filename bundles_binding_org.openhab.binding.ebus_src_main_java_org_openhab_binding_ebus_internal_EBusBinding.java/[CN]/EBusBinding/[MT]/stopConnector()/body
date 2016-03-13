@@ -1,4 +1,13 @@
 {
+  if (debugWriter != null) {
+    try {
+      debugWriter.close();
+      debugWriter=null;
+    }
+ catch (    IOException e) {
+      logger.error("error!",e);
+    }
+  }
   if (connector != null && connector.isAlive()) {
     logger.info("Shutdown old eBus connector thread ...");
     connector.interrupt();

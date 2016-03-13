@@ -1,0 +1,10 @@
+{
+  for (  SmarthomaticBindingProvider provider : this.providers) {
+    if (provider.providesBindingFor(itemName)) {
+      if (baseStation != null) {
+        baseStation.sendCommand(provider.getDeviceId(itemName),provider.getMessageGroupId(itemName),provider.getMessageId(itemName),0,command);
+      }
+    }
+  }
+  logger.debug("internalReceiveCommand() is called! {},{}",new String[]{itemName,command.toString()});
+}

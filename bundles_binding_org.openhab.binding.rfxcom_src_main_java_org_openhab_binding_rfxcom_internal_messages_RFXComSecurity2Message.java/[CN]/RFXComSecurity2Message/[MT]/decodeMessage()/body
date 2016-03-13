@@ -1,0 +1,33 @@
+{
+  byte[] data=new byte[29];
+  data[0]=(byte)(data.length - 1);
+  data[1]=RFXComBaseMessage.PacketType.SECURITY2.toByte();
+  data[2]=subType.toByte();
+  data[3]=seqNbr;
+  data[4]=0;
+  data[5]=0;
+  data[6]=0;
+  data[7]=0;
+  data[8]=(byte)(sensorId & 0xff);
+  data[9]=(byte)((sensorId >> 8) & 0xff);
+  data[10]=(byte)((sensorId >> 16) & 0xff);
+  data[11]=(byte)((buttonStatus & 0x0f) << 4 | ((sensorId >> 24) & 0x0f));
+  data[12]=0;
+  data[13]=0;
+  data[14]=0;
+  data[15]=0;
+  data[16]=0;
+  data[17]=0;
+  data[18]=0;
+  data[19]=0;
+  data[20]=0;
+  data[21]=0;
+  data[22]=0;
+  data[23]=0;
+  data[24]=0;
+  data[25]=0;
+  data[26]=0;
+  data[27]=0;
+  data[28]=(byte)(((batteryLevel & 0x0F) << 4) | (signalLevel & 0x0F));
+  return data;
+}
