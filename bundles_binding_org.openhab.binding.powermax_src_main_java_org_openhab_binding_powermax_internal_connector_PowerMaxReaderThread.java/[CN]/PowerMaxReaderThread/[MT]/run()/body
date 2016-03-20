@@ -1,0 +1,70 @@
+{
+  logger.debug("Data listener started");
+  final int dataBufferMaxLen=0xC0;
+  byte[] dataBuffer=new byte[dataBufferMaxLen];
+  int index=0;
+  int msgLen=0;
+  boolean variableLen=false;
+  try {
+    byte[] tmpData=new byte[20];
+    int len=-1;
+    while (((len=in.read(tmpData)) > 0) && !interrupted) {
+      for (int i=0; i < len; i++) {
+        if (index >= dataBufferMaxLen) {
+          if (logger.isDebugEnabled()) {
+            byte[] logData=Arrays.copyOf(dataBuffer,index);
+            logger.debug("Truncating message {}",DatatypeConverter.printHexBinary(logData));
+          }
+          index=0;
+        }
+        if (index == 0 && tmpData[i] == 0x0D) {
+          dataBuffer[index++]=tmpData[i];
+        }
+ else         if (index > 0) {
+          dataBuffer[index++]=tmpData[i];
+          if (index == 2) {
+            try {
+              PowerMaxReceiveType msgType=PowerMaxReceiveType.fromCode(tmpData[i]);
+              msgLen=msgType.getLength();
+              variableLen=((tmpData[i] & 0x000000FF) > 0x10) && (msgLen == 0);
+            }
+ catch (            IllegalArgumentException arg0) {
+              msgLen=0;
+              variableLen=false;
+            }
+          }
+ else           if (index == 5 && variableLen) {
+            msgLen=(tmpData[i] & 0x000000FF) + 7;
+          }
+ else           if ((msgLen == 0 && tmpData[i] == 0x0A) || (index == msgLen)) {
+            if (tmpData[i] != 0x0A && dataBuffer[index - 1] == 0x43) {
+              msgLen++;
+            }
+ else             if (checkCRC(dataBuffer,index)) {
+              byte[] msg=new byte[index];
+              msg=Arrays.copyOf(dataBuffer,index);
+              connector.setWaitingForResponse(System.currentTimeMillis());
+              connector.handleIncomingMessage(msg);
+              index=0;
+            }
+ else             if (msgLen == 0) {
+              logger.debug("Message length is now {} but message is apparently not complete",index + 1);
+            }
+ else {
+              connector.setWaitingForResponse(System.currentTimeMillis());
+              index=0;
+            }
+          }
+        }
+      }
+    }
+  }
+ catch (  InterruptedIOException e) {
+    Thread.currentThread().interrupt();
+    logger.debug("Interrupted via InterruptedIOException");
+  }
+catch (  IOException e) {
+    logger.debug("Reading failed: {}",e.getMessage());
+  }
+  logger.debug("Data listener stopped");
+}

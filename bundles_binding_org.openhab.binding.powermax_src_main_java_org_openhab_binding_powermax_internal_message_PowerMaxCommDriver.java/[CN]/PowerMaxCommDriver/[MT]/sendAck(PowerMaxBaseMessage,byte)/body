@@ -1,0 +1,19 @@
+{
+  int code=msg.getCode();
+  byte[] rawData=msg.getRawData();
+  byte[] ackData;
+  if ((code >= 0x80) || ((code < 0x10) && (rawData[rawData.length - 3] == 0x43))) {
+    ackData=new byte[]{0x0D,ackType,0x43,0x00,0x0A};
+  }
+ else {
+    ackData=new byte[]{0x0D,ackType,0x00,0x0A};
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("sendAck(): sending message {}",DatatypeConverter.printHexBinary(ackData));
+  }
+  boolean done=sendMessage(ackData);
+  if (!done) {
+    logger.debug("sendAck(): failed");
+  }
+  return done;
+}

@@ -1,0 +1,14 @@
+{
+  logger.debug("close(): Closing TCP Connection");
+  super.cleanup();
+  try {
+    if (tcpSocket != null) {
+      tcpSocket.close();
+    }
+  }
+ catch (  IOException ioException) {
+    logger.debug("close(): Closing connection error: {}",ioException.getMessage());
+  }
+  tcpSocket=null;
+  setConnected(false);
+}

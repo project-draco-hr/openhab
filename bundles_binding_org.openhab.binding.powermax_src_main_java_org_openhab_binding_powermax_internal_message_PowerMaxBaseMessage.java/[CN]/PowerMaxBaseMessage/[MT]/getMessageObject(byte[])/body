@@ -1,0 +1,24 @@
+{
+  Class<?> cl;
+  try {
+    cl=PowerMaxReceiveType.fromCode(message[1]).getHandlerClass();
+  }
+ catch (  IllegalArgumentException e) {
+    cl=PowerMaxBaseMessage.class;
+  }
+  try {
+    return (PowerMaxBaseMessage)cl.getConstructor(byte[].class).newInstance(message);
+  }
+ catch (  InstantiationException e) {
+    return new PowerMaxBaseMessage(message);
+  }
+catch (  IllegalAccessException e) {
+    return new PowerMaxBaseMessage(message);
+  }
+catch (  NoSuchMethodException e) {
+    return new PowerMaxBaseMessage(message);
+  }
+catch (  InvocationTargetException e) {
+    return new PowerMaxBaseMessage(message);
+  }
+}

@@ -1,0 +1,35 @@
+{
+  logger.debug("sendZoneBypass(): bypass = {}, zone = {}",bypass ? "true" : "false",zone);
+  boolean done=false;
+  if ((pinCode == null) || (pinCode.length() != 4)) {
+    logger.warn("PowerMax alarm binding: zone bypass rejected due to invalid PIN code");
+  }
+ else   if ((zone < 1) || (zone > PowerMaxPanelSettings.getThePanelSettings().getNbZones())) {
+    logger.warn("PowerMax alarm binding: invalid zone number: {}",zone);
+  }
+ else {
+    try {
+      int val=(1 << (zone - 1));
+      byte[] dynPart=new byte[10];
+      dynPart[0]=(byte)Integer.parseInt(pinCode.substring(0,2),16);
+      dynPart[1]=(byte)Integer.parseInt(pinCode.substring(2,4),16);
+      int i;
+      for (i=2; i < 10; i++) {
+        dynPart[i]=0;
+      }
+      i=bypass ? 2 : 6;
+      dynPart[i++]=(byte)(val & 0x000000FF);
+      dynPart[i++]=(byte)((val >> 8) & 0x000000FF);
+      dynPart[i++]=(byte)((val >> 16) & 0x000000FF);
+      dynPart[i++]=(byte)((val >> 24) & 0x000000FF);
+      done=sendMessage(new PowerMaxBaseMessage(PowerMaxSendType.BYPASS,dynPart),false,0);
+      if (done) {
+        done=sendMessage(new PowerMaxBaseMessage(PowerMaxSendType.BYPASSTAT),false,0);
+      }
+    }
+ catch (    NumberFormatException e) {
+      logger.warn("PowerMax alarm binding: zone bypass rejected due to invalid PIN code");
+    }
+  }
+  return done;
+}

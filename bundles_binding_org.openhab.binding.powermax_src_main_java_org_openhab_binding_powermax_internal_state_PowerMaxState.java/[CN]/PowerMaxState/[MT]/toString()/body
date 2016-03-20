@@ -1,0 +1,70 @@
+{
+  String str="";
+  if (powerlinkMode != null) {
+    str+="\n - powerlink mode = " + (powerlinkMode ? "yes" : "no");
+  }
+  if (downloadMode != null) {
+    str+="\n - download mode = " + (downloadMode ? "yes" : "no");
+  }
+  for (int i=1; i <= zones.length; i++) {
+    if (isSensorTripped(i) != null) {
+      str+=String.format("\n - sensor zone %d %s",i,isSensorTripped(i) ? "tripped" : "untripped");
+    }
+    if (getSensorLastTripped(i) != null) {
+      str+=String.format("\n - sensor zone %d last trip %d",i,getSensorLastTripped(i));
+    }
+    if (isSensorLowBattery(i) != null) {
+      str+=String.format("\n - sensor zone %d %s",i,isSensorLowBattery(i) ? "low battery" : "battery ok");
+    }
+    if (isSensorBypassed(i) != null) {
+      str+=String.format("\n - sensor zone %d %sbypassed",i,isSensorBypassed(i) ? "" : "not ");
+    }
+    if (isSensorArmed(i) != null) {
+      str+=String.format("\n - sensor zone %d %s",i,isSensorArmed(i) ? "armed" : "disarmed");
+    }
+  }
+  for (int i=0; i < pgmX10DevicesStatus.length; i++) {
+    if (getPGMX10DeviceStatus(i) != null) {
+      str+=String.format("\n - %s status = %s",(i == 0) ? "PGM device" : String.format("X10 device %d",i),getPGMX10DeviceStatus(i) ? "ON" : "OFF");
+    }
+  }
+  if (ready != null) {
+    str+="\n - ready = " + (ready ? "yes" : "no");
+  }
+  if (bypass != null) {
+    str+="\n - bypass = " + (bypass ? "yes" : "no");
+  }
+  if (alarmActive != null) {
+    str+="\n - alarm active = " + (alarmActive ? "yes" : "no");
+  }
+  if (trouble != null) {
+    str+="\n - trouble = " + (trouble ? "yes" : "no");
+  }
+  if (alertInMemory != null) {
+    str+="\n - alert in memory = " + (alertInMemory ? "yes" : "no");
+  }
+  if (statusStr != null) {
+    str+="\n - status = " + statusStr;
+  }
+  if (armMode != null) {
+    str+="\n - arm mode = " + armMode;
+  }
+  if (lastKeepAlive != null) {
+    str+="\n - last keep alive = " + lastKeepAlive;
+  }
+  if (panelStatus != null) {
+    str+="\n - panel status = " + panelStatus;
+  }
+  if (alarmType != null) {
+    str+="\n - alarm type = " + alarmType;
+  }
+  if (troubleType != null) {
+    str+="\n - trouble type = " + troubleType;
+  }
+  for (int i=1; i <= getEventLogSize(); i++) {
+    if (getEventLog(i) != null) {
+      str+="\n - event log " + i + " = "+ getEventLog(i);
+    }
+  }
+  return str;
+}

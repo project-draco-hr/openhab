@@ -1,0 +1,71 @@
+{
+  if (update.isPowerlinkMode() != null) {
+    powerlinkMode=update.isPowerlinkMode();
+  }
+  if (update.isDownloadMode() != null) {
+    downloadMode=update.isDownloadMode();
+  }
+  for (int i=1; i <= zones.length; i++) {
+    if (update.isSensorTripped(i) != null) {
+      setSensorTripped(i,update.isSensorTripped(i));
+    }
+    if (update.getSensorLastTripped(i) != null) {
+      setSensorLastTripped(i,update.getSensorLastTripped(i));
+    }
+    if (update.isSensorLowBattery(i) != null) {
+      setSensorLowBattery(i,update.isSensorLowBattery(i));
+    }
+    if (update.isSensorBypassed(i) != null) {
+      setSensorBypassed(i,update.isSensorBypassed(i));
+    }
+    if (update.isSensorArmed(i) != null) {
+      setSensorArmed(i,update.isSensorArmed(i));
+    }
+  }
+  for (int i=0; i < pgmX10DevicesStatus.length; i++) {
+    if (update.getPGMX10DeviceStatus(i) != null) {
+      setPGMX10DeviceStatus(i,update.getPGMX10DeviceStatus(i));
+    }
+  }
+  if (update.isReady() != null) {
+    ready=update.isReady();
+  }
+  if (update.isBypass() != null) {
+    bypass=update.isBypass();
+  }
+  if (update.isAlarmActive() != null) {
+    alarmActive=update.isAlarmActive();
+  }
+  if (update.isTrouble() != null) {
+    trouble=update.isTrouble();
+  }
+  if (update.isAlertInMemory() != null) {
+    alertInMemory=update.isAlertInMemory();
+  }
+  if (update.getStatusStr() != null) {
+    statusStr=update.getStatusStr();
+  }
+  if (update.getArmMode() != null) {
+    armMode=update.getArmMode();
+  }
+  if (update.getLastKeepAlive() != null) {
+    lastKeepAlive=update.getLastKeepAlive();
+  }
+  if (update.getPanelStatus() != null) {
+    panelStatus=update.getPanelStatus();
+  }
+  if (update.getAlarmType() != null) {
+    alarmType=update.getAlarmType();
+  }
+  if (update.getTroubleType() != null) {
+    troubleType=update.getTroubleType();
+  }
+  if (update.getEventLogSize() > getEventLogSize()) {
+    setEventLogSize(update.getEventLogSize());
+  }
+  for (int i=1; i <= getEventLogSize(); i++) {
+    if (update.getEventLog(i) != null) {
+      setEventLog(i,update.getEventLog(i));
+    }
+  }
+}

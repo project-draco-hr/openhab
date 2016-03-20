@@ -1,0 +1,46 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=new PowerMaxState();
+  byte[] message=getRawData();
+  int eventNum=message[3] & 0x000000FF;
+  eventNum--;
+  if (eventNum == 0) {
+    int eventCnt=message[2] & 0x000000FF;
+    updatedState.setEventLogSize(eventCnt - 1);
+  }
+ else {
+    int second=message[4] & 0x000000FF;
+    int minute=message[5] & 0x000000FF;
+    int hour=message[6] & 0x000000FF;
+    int day=message[7] & 0x000000FF;
+    int month=message[8] & 0x000000FF;
+    int year=(message[9] & 0x000000FF) + 2000;
+    byte eventZone=message[10];
+    byte logEvent=message[11];
+    String logEventStr=((logEvent & 0x000000FF) < logEventTable.length) ? logEventTable[logEvent & 0x000000FF] : "UNKNOWN";
+    String logUserStr=((eventZone & 0x000000FF) < logUserTable.length) ? logUserTable[eventZone & 0x000000FF] : "UNKNOWN";
+    String eventStr;
+    if (PowerMaxPanelSettings.getThePanelSettings().getPanelType().getPartitions() > 1) {
+      String part;
+      if ((second & 0x01) == 0x01) {
+        part="Part. 1";
+      }
+ else       if ((second & 0x02) == 0x02) {
+        part="Part. 2";
+      }
+ else       if ((second & 0x04) == 0x04) {
+        part="Part. 3";
+      }
+ else {
+        part="Panel";
+      }
+      eventStr=String.format("%02d/%02d/%04d %02d:%02d / %s: %s (%s)",day,month,year,hour,minute,part,logEventStr,logUserStr);
+    }
+ else {
+      eventStr=String.format("%02d/%02d/%04d %02d:%02d:%02d: %s (%s)",day,month,year,hour,minute,second,logEventStr,logUserStr);
+    }
+    updatedState.setEventLogSize(eventNum);
+    updatedState.setEventLog(eventNum,eventStr);
+  }
+  return updatedState;
+}

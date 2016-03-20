@@ -1,0 +1,28 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=new PowerMaxState();
+  byte[] message=getRawData();
+  int index=message[2] & 0x000000FF;
+  int page=message[3] & 0x000000FF;
+  int length=0;
+  if (getReceiveType() == PowerMaxReceiveType.SETTINGS) {
+    length=message.length - 6;
+    updatedState.setUpdateSettings(Arrays.copyOfRange(message,2,2 + 2 + length));
+  }
+ else   if (getReceiveType() == PowerMaxReceiveType.SETTINGS_ITEM) {
+    length=message[4] & 0x000000FF;
+    byte[] data=new byte[length + 2];
+    int i=0;
+    for (int j=2; j <= 3; j++) {
+      data[i++]=message[j];
+    }
+    for (int j=0; j < length; j++) {
+      data[i++]=message[j + 5];
+    }
+    updatedState.setUpdateSettings(data);
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("Received Powermax setting page {} index {} length {}",String.format("%02X (%d)",page,page),String.format("%02X (%d)",index,index),String.format("%02X (%d)",length,length));
+  }
+  return updatedState;
+}

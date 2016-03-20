@@ -1,0 +1,30 @@
+{
+  String str=super.toString();
+  byte[] message=getRawData();
+  byte eventType=message[3];
+  str+="\n - event type = " + String.format("%02X",eventType);
+  if (eventType == 0x02) {
+    int zoneStatus=(message[4] & 0x000000FF) | ((message[5] << 8) & 0x0000FF00) | ((message[6] << 16) & 0x00FF0000)| ((message[7] << 24) & 0xFF000000);
+    int batteryStatus=(message[8] & 0x000000FF) | ((message[9] << 8) & 0x0000FF00) | ((message[10] << 16) & 0x00FF0000)| ((message[11] << 24) & 0xFF000000);
+    str+="\n - zone status = " + String.format("%08X",zoneStatus);
+    str+="\n - battery status = " + String.format("%08X",batteryStatus);
+  }
+ else   if (eventType == 0x04) {
+    byte sysStatus=message[4];
+    byte sysFlags=message[5];
+    byte eventZone=message[6];
+    byte zoneEType=message[7];
+    int x10Status=(message[10] & 0x000000FF) | ((message[11] << 8) & 0x0000FF00);
+    String zoneETypeStr=((zoneEType & 0x000000FF) < eventTypeTable.length) ? eventTypeTable[zoneEType & 0x000000FF] : "UNKNOWN";
+    str+="\n - system status = " + String.format("%02X",sysStatus);
+    str+="\n - system flags = " + String.format("%02X",sysFlags);
+    str+="\n - event zone = " + eventZone;
+    str+=String.format("\n - zone event type = %02X (%s)",zoneEType,zoneETypeStr);
+    str+="\n - X10 status = " + String.format("%04X",x10Status);
+  }
+ else   if (eventType == 0x06) {
+    int zoneBypass=(message[8] & 0x000000FF) | ((message[9] << 8) & 0x0000FF00) | ((message[10] << 16) & 0x00FF0000)| ((message[11] << 24) & 0xFF000000);
+    str+="\n - zone bypass = " + String.format("%08X",zoneBypass);
+  }
+  return str;
+}

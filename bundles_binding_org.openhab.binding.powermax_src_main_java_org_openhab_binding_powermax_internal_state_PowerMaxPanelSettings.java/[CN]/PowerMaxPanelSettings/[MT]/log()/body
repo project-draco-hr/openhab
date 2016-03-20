@@ -1,0 +1,57 @@
+{
+  String str="\nPanel is of type " + panelType.getLabel();
+  int zoneCnt=panelType.getWireless() + panelType.getWired();
+  int partitionCnt=panelType.getPartitions();
+  int sirenCnt=panelType.getSirens();
+  int keypad1wCnt=panelType.getKeypads1w();
+  int keypad2wCnt=panelType.getKeypads2w();
+  if (!partitionsEnabled) {
+    partitionCnt=1;
+  }
+  for (int i=0; i < phoneNumbers.length; i++) {
+    if (phoneNumbers[i] != null) {
+      str+=String.format("\nPhone number %d: %s",i + 1,phoneNumbers[i]);
+    }
+  }
+  str+=String.format("\nBell time: %d minutes",bellTime);
+  str+=String.format("\nSilent panic: %s",silentPanic ? "enabled" : "disabled");
+  str+=String.format("\nQuick arm: %s",quickArm ? "enabled" : "disabled");
+  str+=String.format("\nZone bypass: %s",bypassEnabled ? "enabled" : "disabled");
+  str+=String.format("\nEPROM: %s",(panelEprom != null) ? panelEprom : "Undefined");
+  str+=String.format("\nSW: %s",(panelSoftware != null) ? panelSoftware : "Undefined");
+  str+=String.format("\nSerial: %s",(panelSerial != null) ? panelSerial : "Undefined");
+  str+=String.format("\nUse partitions: %s",partitionsEnabled ? "enabled" : "disabled");
+  str+=String.format("\nNumber of partitions: %d",partitionCnt);
+  for (int i=0; i < zoneCnt; i++) {
+    if (zoneSettings[i] != null) {
+      String partStr="";
+      for (int j=1; j <= partitionCnt; j++) {
+        if (zoneSettings[i].isInPartition(j)) {
+          partStr+=j + " ";
+        }
+      }
+      str+=String.format("\nZone %d %s: %s (chime = %s; sensor type = %s; partitions = %s)",i + 1,zoneSettings[i].getName(),zoneSettings[i].getType(),zoneSettings[i].getChime(),zoneSettings[i].getSensorType(),partStr);
+    }
+  }
+  for (int i=0; i < NB_PGM_X10_DEVICES; i++) {
+    if (x10Settings[i] != null && x10Settings[i].isEnabled()) {
+      str+=String.format("\n%s: %s enabled",(i == 0) ? "PGM" : ("X10 " + i),(x10Settings[i].getName() != null) ? x10Settings[i].getName() : "");
+    }
+  }
+  for (int i=1; i <= sirenCnt; i++) {
+    if (isSirenEnrolled(i)) {
+      str+=String.format("\nSiren %d enrolled",i);
+    }
+  }
+  for (int i=1; i <= keypad1wCnt; i++) {
+    if (isKeypad1wEnrolled(i)) {
+      str+=String.format("\nKeypad 1w %d enrolled",i);
+    }
+  }
+  for (int i=1; i <= keypad2wCnt; i++) {
+    if (isKeypad2wEnrolled(i)) {
+      str+=String.format("\nKeypad 2w %d enrolled",i);
+    }
+  }
+  logger.info("PowerMax alarm binding:" + str);
+}

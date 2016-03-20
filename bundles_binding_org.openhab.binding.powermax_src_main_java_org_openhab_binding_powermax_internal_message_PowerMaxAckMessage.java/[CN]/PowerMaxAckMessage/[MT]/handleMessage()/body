@@ -1,0 +1,10 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=null;
+  if (PowerMaxCommDriver.getTheCommDriver().getLastSendMsg().getSendType() == PowerMaxSendType.EXIT) {
+    updatedState=new PowerMaxState();
+    updatedState.setPowerlinkMode(true);
+    updatedState.setDownloadMode(false);
+  }
+  return updatedState;
+}

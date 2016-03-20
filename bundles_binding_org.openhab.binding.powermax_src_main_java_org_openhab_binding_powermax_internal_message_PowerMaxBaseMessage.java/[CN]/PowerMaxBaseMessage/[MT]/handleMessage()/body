@@ -1,0 +1,9 @@
+{
+  if (isAckRequired()) {
+    PowerMaxCommDriver.getTheCommDriver().sendAck(this,(byte)0x02);
+  }
+  if (logger.isDebugEnabled()) {
+    logger.debug("{}message handled by class {}: {}",(receiveType == null) ? "Unsupported " : "",this.getClass().getSimpleName(),this.toString());
+  }
+  return null;
+}

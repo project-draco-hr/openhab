@@ -1,0 +1,124 @@
+{
+  if (state == null) {
+    return;
+  }
+  if (itemUpdateDisabled) {
+    logger.debug("updateItemsFromAlarmState(): items update disabled");
+    return;
+  }
+  if (provider == null) {
+    for (    PowerMaxBindingProvider prov : providers) {
+      if (prov != null) {
+        updateItemsFromAlarmState(prov,name,selector,state);
+      }
+    }
+  }
+ else {
+    for (    String itemName : provider.getItemNames()) {
+      if ((name == null) || itemName.equals(name)) {
+        String value=null;
+        String value2=null;
+        PowerMaxBindingConfig config=provider.getConfig(itemName);
+        Integer num=config.getSelectorIntParam();
+        if ((selector == null) || (selector == config.getSelectorType())) {
+switch (config.getSelectorType()) {
+case PANEL_MODE:
+            value=state.getPanelMode();
+          break;
+case PARTITION_STATUS:
+        value=state.getStatusStr();
+      break;
+case PARTITION_READY:
+    if (state.isReady() != null) {
+      value=state.isReady() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+    }
+  break;
+case PARTITION_BYPASS:
+if (state.isBypass() != null) {
+  value=state.isBypass() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case PARTITION_ALARM:
+if (state.isAlarmActive() != null) {
+value=state.isAlarmActive() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case PANEL_TROUBLE:
+if (state.isTrouble() != null) {
+value=state.isTrouble() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case PANEL_ALERT_IN_MEMORY:
+if (state.isAlertInMemory() != null) {
+value=state.isAlertInMemory() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case EVENT_LOG:
+if ((num != null) && (state.getEventLog(num) != null)) {
+value=state.getEventLog(num);
+}
+break;
+case PARTITION_ARMED:
+if (state.isArmed() != null) {
+value=state.isArmed() ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case PARTITION_ARM_MODE:
+value=state.getShortArmMode();
+break;
+case ZONE_STATUS:
+if ((num != null) && (state.isSensorTripped(num) != null)) {
+value=state.isSensorTripped(num) ? OpenClosedType.OPEN.toString() : OpenClosedType.CLOSED.toString();
+value2=state.isSensorTripped(num) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case ZONE_LAST_TRIP:
+if ((num != null) && (state.getSensorLastTripped(num) != null)) {
+Calendar cal=Calendar.getInstance();
+cal.setTimeInMillis(state.getSensorLastTripped(num));
+value=new DateTimeType(cal).toString();
+}
+break;
+case ZONE_BYPASSED:
+if ((num != null) && (state.isSensorBypassed(num) != null)) {
+value=state.isSensorBypassed(num) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case ZONE_ARMED:
+if ((num != null) && (state.isSensorArmed(num) != null)) {
+value=state.isSensorArmed(num) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case ZONE_LOW_BATTERY:
+if ((num != null) && (state.isSensorLowBattery(num) != null)) {
+value=state.isSensorLowBattery(num) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case PGM_STATUS:
+if (state.getPGMX10DeviceStatus(0) != null) {
+value=state.getPGMX10DeviceStatus(0) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+case X10_STATUS:
+if ((num != null) && (state.getPGMX10DeviceStatus(num) != null)) {
+value=state.getPGMX10DeviceStatus(num) ? OnOffType.ON.toString() : OnOffType.OFF.toString();
+}
+break;
+default :
+break;
+}
+}
+State itemState=null;
+if (value != null) {
+itemState=TypeParser.parseState(config.getAcceptedDataTypes(),value);
+}
+if ((itemState == null) && (value2 != null)) {
+itemState=TypeParser.parseState(config.getAcceptedDataTypes(),value2);
+}
+if (itemState != null) {
+eventPublisher.postUpdate(itemName,itemState);
+}
+}
+}
+}
+}

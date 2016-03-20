@@ -1,0 +1,11 @@
+{
+  super.handleMessage();
+  byte[] message=getRawData();
+  int rowCnt=message[3] & 0x000000FF;
+  for (int i=1; i <= 8; i++) {
+    int zoneIdx=(rowCnt - 1) * 8 + i;
+    byte zoneNameIdx=message[3 + i];
+    PowerMaxPanelSettings.getThePanelSettings().updateZoneName(zoneIdx,zoneNameIdx);
+  }
+  return null;
+}

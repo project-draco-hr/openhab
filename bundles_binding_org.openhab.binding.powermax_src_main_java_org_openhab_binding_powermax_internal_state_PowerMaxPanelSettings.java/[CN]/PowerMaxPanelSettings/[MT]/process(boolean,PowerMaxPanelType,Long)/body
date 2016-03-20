@@ -1,0 +1,273 @@
+{
+  panelType=defaultPanelType;
+  byte[] data=readSettings(PowerMaxSendType.DL_SERIAL,7,7);
+  if (data != null) {
+    try {
+      panelType=PowerMaxPanelType.fromCode(data[0]);
+    }
+ catch (    IllegalArgumentException e) {
+      logger.warn("PowerMax alarm binding: unknwon panel type for code {}",data[0] & 0x000000FF);
+      panelType=defaultPanelType;
+    }
+  }
+  sensorTypes=new HashMap<Byte,String>();
+  if (panelType.isPowerMaster()) {
+    sensorTypes.put((byte)0x01,"Motion");
+    sensorTypes.put((byte)0x04,"Camera");
+    sensorTypes.put((byte)0x16,"Smoke");
+    sensorTypes.put((byte)0x1A,"Temperature");
+    sensorTypes.put((byte)0x2A,"Magnet");
+    sensorTypes.put((byte)0xFE,"Wired");
+  }
+ else {
+    sensorTypes.put((byte)0x03,"Motion");
+    sensorTypes.put((byte)0x04,"Motion");
+    sensorTypes.put((byte)0x05,"Magnet");
+    sensorTypes.put((byte)0x06,"Magnet");
+    sensorTypes.put((byte)0x07,"Magnet");
+    sensorTypes.put((byte)0x0A,"Smoke");
+    sensorTypes.put((byte)0x0B,"Gas");
+    sensorTypes.put((byte)0x0C,"Motion");
+    sensorTypes.put((byte)0x0F,"Wired");
+  }
+  int zoneCnt=panelType.getWireless() + panelType.getWired();
+  int customCnt=panelType.getCustomZones();
+  int userCnt=panelType.getUserCodes();
+  int partitionCnt=panelType.getPartitions();
+  int sirenCnt=panelType.getSirens();
+  int keypad1wCnt=panelType.getKeypads1w();
+  int keypad2wCnt=panelType.getKeypads2w();
+  zoneNames=new String[]{"Attic","Back door","Basement","Bathroom","Bedroom","Child room","Closet","Den","Dining room","Downstairs","Emergency","Fire","Front door","Garage","Garage door","Guest room","Hall","Kitchen","Laundry room","Living room","Master bathroom","Master bedroom","Office","Upstairs","Utility room","Yard","Custom 1","Custom 2","Custom 3","Custom 4","Custom 5","Not Installed"};
+  phoneNumbers=new String[]{null,null,null,null};
+  bellTime=4;
+  silentPanic=false;
+  quickArm=false;
+  bypassEnabled=false;
+  partitionsEnabled=false;
+  pinCodes=new String[userCnt];
+  for (int i=0; i < userCnt; i++) {
+    pinCodes[i]=null;
+  }
+  panelEprom=null;
+  panelSoftware=null;
+  panelSerial=null;
+  zoneSettings=new PowerMaxZoneSettings[zoneCnt];
+  for (int i=0; i < zoneCnt; i++) {
+    zoneSettings[i]=null;
+  }
+  x10Settings=new PowerMaxX10Settings[NB_PGM_X10_DEVICES];
+  for (int i=0; i < NB_PGM_X10_DEVICES; i++) {
+    x10Settings[i]=null;
+  }
+  keypad1wEnrolled=new boolean[keypad1wCnt];
+  for (int i=0; i < keypad1wCnt; i++) {
+    keypad1wEnrolled[i]=false;
+  }
+  keypad2wEnrolled=new boolean[keypad2wCnt];
+  for (int i=0; i < keypad2wCnt; i++) {
+    keypad2wEnrolled[i]=false;
+  }
+  sirensEnrolled=new boolean[sirenCnt];
+  for (int i=0; i < sirenCnt; i++) {
+    sirensEnrolled[i]=false;
+  }
+  if (PowerlinkMode) {
+    data=readSettings(PowerMaxSendType.DL_TIME,0,5);
+    GregorianCalendar cal=new GregorianCalendar();
+    cal.set(Calendar.MILLISECOND,0);
+    cal.set(Calendar.SECOND,data[0] & 0x000000FF);
+    cal.set(Calendar.MINUTE,data[1] & 0x000000FF);
+    cal.set(Calendar.HOUR_OF_DAY,data[2] & 0x000000FF);
+    cal.set(Calendar.DAY_OF_MONTH,data[3] & 0x000000FF);
+    cal.set(Calendar.MONTH,(data[4] & 0x000000FF) - 1);
+    cal.set(Calendar.YEAR,(data[5] & 0x000000FF) + 2000);
+    long timeRead=cal.getTimeInMillis();
+    logger.debug(String.format("PowerMax alarm binding: date %02d/%02d/%04d time %02d:%02d:%02d",cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.MONTH) + 1,cal.get(Calendar.YEAR),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE),cal.get(Calendar.SECOND)));
+    if (timeSet != null) {
+      cal.setTimeInMillis(timeSet);
+      if ((timeRead - timeSet) <= 1000) {
+        logger.info("PowerMax alarm binding: time sync OK");
+      }
+ else {
+        logger.warn("PowerMax alarm binding: time sync failed !");
+      }
+    }
+    for (int i=0; i < (26 + customCnt); i++) {
+      data=readSettings(PowerMaxSendType.DL_ZONESTR,i * 16,(i + 1) * 16 - 1);
+      if ((data != null) && ((data[0] & 0x000000FF) != 0x000000FF)) {
+        zoneNames[i]=new String(data,CHARSET).trim();
+      }
+    }
+    for (int i=0; i < phoneNumbers.length; i++) {
+      data=readSettings(PowerMaxSendType.DL_PHONENRS,8 * i,8 * i + 7);
+      if (data != null) {
+        for (int j=0; j < 8; j++) {
+          if ((data[j] & 0x000000FF) != 0x000000FF) {
+            if (j == 0) {
+              phoneNumbers[i]="";
+            }
+            if (phoneNumbers[i] != null) {
+              phoneNumbers[i]+=String.format("%02X",data[j] & 0x000000FF);
+            }
+          }
+        }
+      }
+    }
+    data=readSettings(PowerMaxSendType.DL_COMMDEF,0,0x1B);
+    if (data != null) {
+      bellTime=data[3] & 0x000000FF;
+      silentPanic=(data[0x19] & 0x00000010) == 0x00000010;
+      quickArm=(data[0x1A] & 0x00000008) == 0x00000008;
+      bypassEnabled=(data[0x1B] & 0x000000C0) != 0;
+    }
+    data=readSettings(panelType.isPowerMaster() ? PowerMaxSendType.DL_MR_PINCODES : PowerMaxSendType.DL_PINCODES,0,2 * userCnt - 1);
+    if (data != null) {
+      for (int i=0; i < userCnt; i++) {
+        pinCodes[i]=String.format("%02X%02X",data[i * 2] & 0x000000FF,data[i * 2 + 1] & 0x000000FF);
+      }
+    }
+    data=readSettings(PowerMaxSendType.DL_PANELFW,0,15);
+    if (data != null) {
+      panelEprom=new String(data,CHARSET).trim();
+    }
+    data=readSettings(PowerMaxSendType.DL_PANELFW,16,31);
+    if (data != null) {
+      panelSoftware=new String(data,CHARSET).trim();
+    }
+    panelSerial="";
+    data=readSettings(PowerMaxSendType.DL_SERIAL,0,5);
+    if (data != null) {
+      for (int i=0; i <= 5; i++) {
+        if ((data[i] & 0x000000FF) != 0x000000FF) {
+          panelSerial+=String.format("%02X",data[i] & 0x000000FF);
+        }
+ else {
+          panelSerial+=".";
+        }
+      }
+    }
+    byte[] partitions=readSettings(PowerMaxSendType.DL_PARTITIONS,0,0x10 + zoneCnt);
+    if (partitions != null) {
+      partitionsEnabled=(partitions[0] & 0x000000FF) == 1;
+    }
+    if (!partitionsEnabled) {
+      partitionCnt=1;
+    }
+    data=readSettings(PowerMaxSendType.DL_ZONES,0,zoneCnt * 4 - 1);
+    byte[] zoneNr=null;
+    byte[] dataMr=null;
+    if (panelType.isPowerMaster()) {
+      zoneNr=readSettings(PowerMaxSendType.DL_MR_ZONENAMES,0,zoneCnt - 1);
+      dataMr=readSettings(PowerMaxSendType.DL_MR_ZONES,0,zoneCnt * 10 - 2);
+    }
+ else {
+      zoneNr=readSettings(PowerMaxSendType.DL_ZONENAMES,0,zoneCnt - 1);
+    }
+    if ((data != null) && (zoneNr != null)) {
+      byte[] zero3=new byte[]{0,0,0};
+      byte[] zero5=new byte[]{0,0,0,0,0};
+      for (int i=0; i < zoneCnt; i++) {
+        String zoneName=zoneNames[zoneNr[i] & 0x0000001F];
+        boolean zoneEnrolled;
+        byte zoneInfo;
+        byte sensorId;
+        String sensorType;
+        if (panelType.isPowerMaster()) {
+          zoneEnrolled=!Arrays.equals(Arrays.copyOfRange(dataMr,i * 10 + 4,i * 10 + 9),zero5);
+          zoneInfo=data[i];
+          sensorId=dataMr[i * 10 + 5];
+          sensorType=sensorTypes.get(sensorId);
+        }
+ else {
+          zoneEnrolled=!Arrays.equals(Arrays.copyOfRange(data,i * 4,i * 4 + 3),zero3);
+          zoneInfo=data[i * 4 + 3];
+          sensorId=data[i * 4 + 2];
+          sensorType=sensorTypes.get((byte)(sensorId & 0x0000000F));
+        }
+        if (zoneEnrolled) {
+          byte zoneType=(byte)(zoneInfo & 0x0000000F);
+          byte zoneChime=(byte)((zoneInfo >> 4) & 0x00000003);
+          boolean[] part=new boolean[partitionCnt];
+          if (partitionCnt > 1) {
+            for (int j=0; j < partitionCnt; j++) {
+              part[j]=(partitions != null) ? ((partitions[0x11 + i] & (1 << j)) != 0) : true;
+            }
+          }
+ else {
+            part[0]=true;
+          }
+          zoneSettings[i]=new PowerMaxZoneSettings(zoneName,zoneType,zoneChime,sensorType,part);
+        }
+      }
+    }
+    data=readSettings(PowerMaxSendType.DL_PGMX10,0,148);
+    zoneNr=readSettings(PowerMaxSendType.DL_X10NAMES,0,NB_PGM_X10_DEVICES - 2);
+    if ((data != null) && (zoneNr != null)) {
+      for (int i=0; i < NB_PGM_X10_DEVICES; i++) {
+        boolean enabled=false;
+        String zoneName=null;
+        for (int j=0; j <= 8; j++) {
+          if (data[5 + i + j * 0x10] != 0) {
+            enabled=true;
+            break;
+          }
+        }
+        if (i > 0) {
+          zoneName=zoneNames[zoneNr[i - 1] & 0x0000001F];
+        }
+        x10Settings[i]=new PowerMaxX10Settings(zoneName,enabled);
+      }
+    }
+    if (panelType.isPowerMaster()) {
+      data=readSettings(PowerMaxSendType.DL_MR_KEYPADS,0,keypad2wCnt * 10 - 1);
+      if (data != null) {
+        byte[] zero5=new byte[]{0,0,0,0,0};
+        for (int i=0; i < keypad2wCnt; i++) {
+          keypad2wEnrolled[i]=!Arrays.equals(Arrays.copyOfRange(data,i * 10 + 4,i * 10 + 9),zero5);
+        }
+      }
+      data=readSettings(PowerMaxSendType.DL_MR_SIRENS,0,sirenCnt * 10 - 1);
+      if (data != null) {
+        byte[] zero5=new byte[]{0,0,0,0,0};
+        for (int i=0; i < sirenCnt; i++) {
+          sirensEnrolled[i]=!Arrays.equals(Arrays.copyOfRange(data,i * 10 + 4,i * 10 + 9),zero5);
+        }
+      }
+    }
+ else {
+      data=readSettings(PowerMaxSendType.DL_1WKEYPAD,0,keypad1wCnt * 4 - 1);
+      if (data != null) {
+        byte[] zero2=new byte[]{0,0};
+        for (int i=0; i < keypad1wCnt; i++) {
+          keypad1wEnrolled[i]=!Arrays.equals(Arrays.copyOfRange(data,i * 4,i * 4 + 2),zero2);
+        }
+      }
+      data=readSettings(PowerMaxSendType.DL_2WKEYPAD,0,keypad2wCnt * 4 - 1);
+      if (data != null) {
+        byte[] zero3=new byte[]{0,0,0};
+        for (int i=0; i < keypad2wCnt; i++) {
+          keypad2wEnrolled[i]=!Arrays.equals(Arrays.copyOfRange(data,i * 4,i * 4 + 3),zero3);
+        }
+      }
+      data=readSettings(PowerMaxSendType.DL_SIRENS,0,sirenCnt * 4 - 1);
+      if (data != null) {
+        byte[] zero3=new byte[]{0,0,0};
+        for (int i=0; i < sirenCnt; i++) {
+          sirensEnrolled[i]=!Arrays.equals(Arrays.copyOfRange(data,i * 4,i * 4 + 3),zero3);
+        }
+      }
+    }
+  }
+ else {
+    if (!partitionsEnabled) {
+      partitionCnt=1;
+    }
+    boolean[] part=new boolean[partitionCnt];
+    for (int j=0; j < partitionCnt; j++) {
+      part[j]=true;
+    }
+    for (int i=0; i < zoneCnt; i++) {
+      zoneSettings[i]=new PowerMaxZoneSettings(null,(byte)0xFF,(byte)0xFF,null,part);
+    }
+  }
+}
