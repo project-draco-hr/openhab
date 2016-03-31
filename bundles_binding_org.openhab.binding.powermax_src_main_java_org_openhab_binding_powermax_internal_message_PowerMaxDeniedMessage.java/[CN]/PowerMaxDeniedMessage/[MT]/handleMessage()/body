@@ -1,0 +1,14 @@
+{
+  super.handleMessage();
+  PowerMaxState updatedState=null;
+  PowerMaxSendType lastSendType=PowerMaxCommDriver.getTheCommDriver().getLastSendMsg().getSendType();
+  if (lastSendType == PowerMaxSendType.EVENTLOG || lastSendType == PowerMaxSendType.ARM || lastSendType == PowerMaxSendType.BYPASS) {
+    logger.warn("PowerMax alarm binding: invalid PIN code");
+  }
+ else   if (lastSendType == PowerMaxSendType.DOWNLOAD) {
+    logger.warn("PowerMax alarm binding: openHAB Powerlink not enrolled");
+    updatedState=new PowerMaxState();
+    updatedState.setPowerlinkMode(false);
+  }
+  return updatedState;
+}

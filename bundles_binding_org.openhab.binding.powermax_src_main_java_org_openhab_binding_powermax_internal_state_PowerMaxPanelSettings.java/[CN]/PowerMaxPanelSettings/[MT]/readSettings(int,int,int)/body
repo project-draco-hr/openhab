@@ -1,0 +1,48 @@
+{
+  int pageMin=page + start / 0x100;
+  int indexPageMin=start % 0x100;
+  int pageMax=page + end / 0x100;
+  int indexPageMax=end % 0x100;
+  int index=0;
+  boolean missingData=false;
+  for (int i=pageMin; i <= pageMax; i++) {
+    int start2=0;
+    int end2=0xFF;
+    if (i == pageMin) {
+      start2=indexPageMin;
+    }
+    if (i == pageMax) {
+      end2=indexPageMax;
+    }
+    index+=end2 - start2 + 1;
+    for (int j=start2; j <= end2; j++) {
+      if ((rawSettings[i] == null) || (rawSettings[i][j] == null)) {
+        missingData=true;
+        break;
+      }
+    }
+    if (missingData) {
+      break;
+    }
+  }
+  if (missingData) {
+    logger.debug("readSettings({}, {}, {}): missing data",page,start,end);
+    return null;
+  }
+  byte[] result=new byte[index];
+  index=0;
+  for (int i=pageMin; i <= pageMax; i++) {
+    int start2=0;
+    int end2=0xFF;
+    if (i == pageMin) {
+      start2=indexPageMin;
+    }
+    if (i == pageMax) {
+      end2=indexPageMax;
+    }
+    for (int j=start2; j <= end2; j++) {
+      result[index++]=rawSettings[i][j];
+    }
+  }
+  return result;
+}

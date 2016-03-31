@@ -1,0 +1,11 @@
+{
+  long checksum=0;
+  for (int i=1; i < (len - 2); i++) {
+    checksum=checksum + (data[i] & 0x000000FF);
+  }
+  checksum=0xFF - (checksum % 0xFF);
+  if (checksum == 0xFF) {
+    checksum=0;
+  }
+  return (byte)checksum;
+}

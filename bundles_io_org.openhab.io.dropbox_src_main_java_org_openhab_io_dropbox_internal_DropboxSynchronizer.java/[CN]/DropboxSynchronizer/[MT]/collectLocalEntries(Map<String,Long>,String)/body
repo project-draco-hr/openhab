@@ -24,6 +24,9 @@
       collectLocalEntries(localEntries,file.getPath());
     }
  else {
+      if (isWindows()) {
+        normalizedPath=normalizedPath.replace('\\','/');
+      }
       localEntries.put(normalizedPath,file.lastModified());
     }
   }

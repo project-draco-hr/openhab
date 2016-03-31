@@ -1,0 +1,51 @@
+{
+  PowerMaxEvent powerMaxEvent=(PowerMaxEvent)event;
+  PowerMaxBaseMessage message=powerMaxEvent.getPowerMaxMessage();
+  if (logger.isDebugEnabled()) {
+    logger.debug("powerMaxEventReceived(): received message {}",(message.getReceiveType() != null) ? message.getReceiveType().toString() : String.format("%02X",message.getCode()));
+  }
+  if (message instanceof PowerMaxInfoMessage) {
+    ((PowerMaxInfoMessage)message).setAutoSyncTime(autoSyncTime);
+  }
+  PowerMaxState updateState=message.handleMessage();
+  if (updateState != null) {
+    if ((currentState.isPowerlinkMode() != null) && currentState.isPowerlinkMode().equals(Boolean.TRUE) && (updateState.isDownloadSetupRequired() != null)&& updateState.isDownloadSetupRequired().equals(Boolean.TRUE)) {
+      logger.info("PowerMax alarm binding: Reset");
+      PowerMaxCommDriver.getTheCommDriver().startDownload();
+      if (currentState.getLastKeepAlive() != null) {
+        currentState.setLastKeepAlive(System.currentTimeMillis());
+      }
+    }
+ else     if ((currentState.isPowerlinkMode() != null) && currentState.isPowerlinkMode().equals(Boolean.FALSE) && (updateState.getLastKeepAlive() != null)) {
+      logger.info("PowerMax alarm binding: Switching to Powerlink mode");
+      PowerMaxCommDriver.getTheCommDriver().startDownload();
+    }
+    boolean doProcessSettings=(updateState.isPowerlinkMode() != null);
+    for (int i=1; i <= PowerMaxPanelSettings.getThePanelSettings().getNbZones(); i++) {
+      if ((updateState.isSensorArmed(i) != null) && updateState.isSensorArmed(i).equals(Boolean.TRUE) && (currentState.isSensorBypassed(i) != null)&& currentState.isSensorBypassed(i).equals(Boolean.TRUE)) {
+        updateState.setSensorArmed(i,false);
+      }
+    }
+    updateState.keepOnlyDifferencesWith(currentState);
+    updateItemsFromAlarmState(updateState);
+    currentState.merge(updateState);
+    if (updateState.getUpdateSettings() != null) {
+      PowerMaxPanelSettings.getThePanelSettings().updateRawSettings(updateState.getUpdateSettings());
+    }
+    if (doProcessSettings) {
+      PowerMaxPanelSettings.getThePanelSettings().process(currentState.isPowerlinkMode(),panelType,PowerMaxCommDriver.getTheCommDriver().getSyncTimeCheck());
+      updateItemsFromPanelSettings();
+      if (currentState.isPowerlinkMode()) {
+        logger.info("PowerMax alarm binding: running in Powerlink mode");
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.RESTORE);
+      }
+ else {
+        logger.info("PowerMax alarm binding: running in Standard mode");
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.ZONESNAME);
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.ZONESTYPE);
+        PowerMaxCommDriver.getTheCommDriver().sendMessage(PowerMaxSendType.STATUS);
+      }
+      PowerMaxCommDriver.getTheCommDriver().exitDownload();
+    }
+  }
+}

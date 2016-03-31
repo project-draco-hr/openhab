@@ -1,0 +1,13 @@
+{
+  String str=super.toString();
+  byte[] message=getRawData();
+  int msgCnt=message[2] & 0x000000FF;
+  str+="\n - event count = " + msgCnt;
+  for (int i=1; i <= msgCnt; i++) {
+    byte eventZone=message[2 + 2 * i];
+    byte logEvent=message[3 + 2 * i];
+    str+="\n - event " + i + " zone code = "+ String.format("%08X",eventZone);
+    str+="\n - event " + i + " event code = "+ String.format("%08X",logEvent);
+  }
+  return str;
+}

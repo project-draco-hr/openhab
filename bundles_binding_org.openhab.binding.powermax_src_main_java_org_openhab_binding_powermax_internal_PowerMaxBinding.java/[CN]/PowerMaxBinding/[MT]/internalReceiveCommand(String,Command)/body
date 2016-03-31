@@ -1,0 +1,130 @@
+{
+  logger.debug("internalReceiveCommand({},{}) is called",itemName,command);
+  if (!isProperlyConfigured() || !connected) {
+    logger.warn("PowerMax alarm binding is not properly configured. Command is ignored.");
+    return;
+  }
+  String armMode=null;
+  String actionPGMX10=null;
+  Byte devicePGMX10=null;
+  Boolean bypass=null;
+  byte zoneNr=0;
+  String commandStr=null;
+  PowerMaxPanelSettings settings=PowerMaxPanelSettings.getThePanelSettings();
+  PowerMaxCommDriver comm=PowerMaxCommDriver.getTheCommDriver();
+  for (  PowerMaxBindingProvider provider : providers) {
+    PowerMaxBindingConfig config=provider.getConfig(itemName);
+    if (config == null) {
+      continue;
+    }
+switch (config.getSelectorType()) {
+case PARTITION_ARM_MODE:
+      if (command instanceof StringType) {
+        armMode=command.toString();
+      }
+    break;
+case PARTITION_ARMED:
+  if (command instanceof OnOffType) {
+    armMode=command.equals(OnOffType.ON) ? "Armed" : "Disarmed";
+  }
+break;
+case PGM_STATUS:
+if (command instanceof OnOffType) {
+actionPGMX10=command.toString();
+}
+break;
+case X10_STATUS:
+if (command instanceof OnOffType || command instanceof StringType) {
+actionPGMX10=command.toString();
+}
+try {
+devicePGMX10=Byte.parseByte(config.getSelectorParam());
+}
+ catch (NumberFormatException e) {
+logger.warn("PowerMax alarm binding: invalid X10 device id: {}",config.getSelectorParam());
+actionPGMX10=null;
+}
+break;
+case ZONE_BYPASSED:
+if (command instanceof OnOffType) {
+bypass=command.equals(OnOffType.ON) ? Boolean.TRUE : Boolean.FALSE;
+}
+try {
+zoneNr=Byte.parseByte(config.getSelectorParam());
+}
+ catch (NumberFormatException e) {
+logger.warn("PowerMax alarm binding: invalid zone number: {}",config.getSelectorParam());
+bypass=null;
+}
+break;
+case COMMAND:
+if (command instanceof StringType) {
+commandStr=command.toString();
+eventPublisher.postUpdate(itemName,new StringType(commandStr));
+}
+break;
+default :
+break;
+}
+if (armMode != null) {
+HashMap<String,Boolean> allowedModes=new HashMap<String,Boolean>();
+allowedModes.put("Disarmed",allowDisarming);
+allowedModes.put("Stay",allowArming);
+allowedModes.put("Armed",allowArming);
+allowedModes.put("StayInstant",allowArming);
+allowedModes.put("ArmedInstant",allowArming);
+allowedModes.put("Night",allowArming);
+allowedModes.put("NightInstant",allowArming);
+Boolean allowed=allowedModes.get(armMode);
+if ((allowed == null) || !allowed) {
+logger.warn("PowerMax alarm binding: rejected command {}",armMode);
+}
+ else {
+comm.requestArmMode(armMode,currentState.isPowerlinkMode() ? PowerMaxPanelSettings.getThePanelSettings().getFirstPinCode() : pinCode);
+}
+break;
+}
+ else if (actionPGMX10 != null) {
+comm.sendPGMX10(actionPGMX10,devicePGMX10);
+break;
+}
+ else if (bypass != null) {
+if ((currentState.isPowerlinkMode() == null) || currentState.isPowerlinkMode().equals(Boolean.FALSE)) {
+logger.warn("PowerMax alarm binding: Bypass option only supported in Powerlink mode");
+}
+ else if (!PowerMaxPanelSettings.getThePanelSettings().isBypassEnabled()) {
+logger.warn("PowerMax alarm binding: Bypass option not enabled in panel settings");
+}
+ else {
+comm.sendZoneBypass(bypass.booleanValue(),zoneNr,PowerMaxPanelSettings.getThePanelSettings().getFirstPinCode());
+}
+break;
+}
+ else if (commandStr != null) {
+if (commandStr.equalsIgnoreCase("get_event_log")) {
+comm.requestEventLog(currentState.isPowerlinkMode() ? PowerMaxPanelSettings.getThePanelSettings().getFirstPinCode() : pinCode);
+}
+ else if (commandStr.equalsIgnoreCase("download_setup")) {
+if ((currentState.isPowerlinkMode() == null) || currentState.isPowerlinkMode().equals(Boolean.FALSE)) {
+logger.warn("PowerMax alarm binding: download setup only supported in Powerlink mode");
+}
+ else {
+comm.startDownload();
+if (currentState.getLastKeepAlive() != null) {
+currentState.setLastKeepAlive(System.currentTimeMillis());
+}
+}
+}
+ else if (commandStr.equalsIgnoreCase("log_setup")) {
+settings.log();
+}
+ else if (commandStr.equalsIgnoreCase("help_items")) {
+settings.helpItems();
+}
+ else {
+logger.warn("PowerMax alarm binding: rejected command {}",commandStr);
+}
+break;
+}
+}
+}

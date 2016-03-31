@@ -1,0 +1,9 @@
+{
+  byte checksum=PowerMaxCommDriver.computeCRC(data,len);
+  byte expected=data[len - 2];
+  if (checksum != expected) {
+    byte[] logData=Arrays.copyOf(data,len);
+    logger.warn("PowerMax alarm binding: message CRC check failed (expected {}, got {}, message {})",String.format("%02X",expected),String.format("%02X",checksum),DatatypeConverter.printHexBinary(logData));
+  }
+  return (checksum == expected);
+}

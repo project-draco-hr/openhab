@@ -1,0 +1,17 @@
+{
+  this.sendType=sendType;
+  byte[] message=new byte[sendType.getMessage().length + 3];
+  int index=0;
+  message[index++]=0x0D;
+  for (int i=0; i < sendType.getMessage().length; i++) {
+    if ((param != null) && (sendType.getParamPosition() != null) && (i >= sendType.getParamPosition())&& (i < (sendType.getParamPosition() + param.length))) {
+      message[index++]=param[i - sendType.getParamPosition()];
+    }
+ else {
+      message[index++]=sendType.getMessage()[i];
+    }
+  }
+  message[index++]=0x00;
+  message[index++]=0x0A;
+  decodeMessage(message);
+}

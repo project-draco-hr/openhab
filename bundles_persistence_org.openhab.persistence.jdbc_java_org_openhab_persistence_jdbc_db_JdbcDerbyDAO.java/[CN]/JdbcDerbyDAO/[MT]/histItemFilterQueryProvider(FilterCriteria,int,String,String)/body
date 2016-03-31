@@ -1,5 +1,5 @@
 {
-  logger.debug("JDBC::getHistItemFilterQueryProvider filter = {}, numberDecimalcount = {}, table = {}, simpleName = {}",filter.toString(),numberDecimalcount,table,simpleName);
+  logger.debug("JDBC::getHistItemFilterQueryProvider filter = {}, numberDecimalcount = {}, table = {}, simpleName = {}",StringUtilsExt.filterToString(filter),numberDecimalcount,table,simpleName);
   String filterString="";
   if (filter.getBeginDate() != null) {
     filterString+=filterString.isEmpty() ? " WHERE" : " AND";
@@ -7,7 +7,7 @@
   }
   if (filter.getEndDate() != null) {
     filterString+=filterString.isEmpty() ? " WHERE" : " AND";
-    filterString+=" TIME>'" + jdbcDateFormat.print(new DateTime(filter.getEndDate().getTime())) + "'";
+    filterString+=" TIME<'" + jdbcDateFormat.print(new DateTime(filter.getEndDate().getTime())) + "'";
   }
   filterString+=(filter.getOrdering() == Ordering.ASCENDING) ? " ORDER BY time ASC" : " ORDER BY time DESC";
   if (filter.getPageSize() != 0x7fffffff) {
@@ -22,7 +22,7 @@
     queryString+="5 AS DECIMAL(31," + numberDecimalcount + "))";
   }
  else {
-    queryString+="SELECT time, value FROM " + table;
+    queryString+=" value FROM " + table.toUpperCase();
   }
   if (!filterString.isEmpty()) {
     queryString+=filterString;
