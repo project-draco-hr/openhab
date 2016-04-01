@@ -27,32 +27,20 @@ if (numBytes > MAX_STRING_LENGTH) {
 logger.warn("NODE {} : Node Name is too big; maximum is {} characters {}",this.getNode().getNodeId(),MAX_STRING_LENGTH,numBytes);
 numBytes=MAX_STRING_LENGTH;
 }
+if (charPresentation != ENCODING_ASCII) {
+logger.debug("NODE {}: Switching to using ASCII encoding",getNode().getNodeId());
+charPresentation=ENCODING_ASCII;
+}
+ByteArrayOutputStream str=new ByteArrayOutputStream();
 for (int c=0; c < numBytes; c++) {
-if (serialMessage.getMessagePayloadByte(c + offset + 2) == 0) {
-numBytes=c;
-logger.debug("NODE {} : Node name string truncated to {} characters",this.getNode().getNodeId(),numBytes);
-break;
+if (serialMessage.getMessagePayloadByte(c + offset + 2) > 32 && serialMessage.getMessagePayloadByte(c + offset + 2) < 127) {
+str.write((byte)(serialMessage.getMessagePayloadByte(c + offset + 2)));
 }
 }
-byte[] strBuffer=Arrays.copyOfRange(serialMessage.getMessagePayload(),offset + 2,offset + 2 + numBytes);
-String response=null;
 try {
-switch (charPresentation) {
-case ENCODING_ASCII:
-case ENCODING_EXTENDED_ASCII:
-response=new String(strBuffer,"ASCII");
-break;
-case ENCODING_UTF16:
-String sTemp=new String(strBuffer,"UTF-16");
-response=new String(sTemp.getBytes("UTF-8"),"UTF-8");
-break;
+return new String(str.toByteArray(),"ASCII");
 }
-}
- catch (UnsupportedEncodingException uee) {
-System.out.println("Exception: " + uee);
-}
-if (response == null) {
+ catch (UnsupportedEncodingException e) {
 return null;
 }
-return response.replaceAll("\\p{C}","?");
 }
