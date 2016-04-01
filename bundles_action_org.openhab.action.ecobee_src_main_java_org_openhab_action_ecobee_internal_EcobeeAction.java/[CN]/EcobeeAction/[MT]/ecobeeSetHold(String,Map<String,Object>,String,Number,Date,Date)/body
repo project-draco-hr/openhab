@@ -1,0 +1,58 @@
+{
+  Event event=new Event();
+  for (  String key : params.keySet()) {
+    Object value=params.get(key);
+switch (key) {
+case "isOccupied":
+      event.setOccupied((Boolean)value);
+    break;
+case "isCoolOff":
+  event.setCoolOff((Boolean)value);
+break;
+case "isHeatOff":
+event.setHeatOff((Boolean)value);
+break;
+case "coolHoldTemp":
+event.setCoolHoldTemp(Temperature.fromLocalTemperature(new BigDecimal(value.toString())));
+break;
+case "heatHoldTemp":
+event.setHeatHoldTemp(Temperature.fromLocalTemperature(new BigDecimal(value.toString())));
+break;
+case "fan":
+event.setFan(FanMode.forValue((String)value));
+break;
+case "vent":
+event.setVent(VentilatorMode.forValue((String)value));
+break;
+case "ventilatorMinOnTime":
+event.setVentilatorMinOnTime((Integer)value);
+break;
+case "isOptional":
+event.setOptional((Boolean)value);
+break;
+case "isTemperatureRelative":
+event.setTemperatureRelative((Boolean)value);
+break;
+case "coolRelativeTemp":
+event.setCoolRelativeTemp(Temperature.fromLocalTemperature(new BigDecimal(value.toString())));
+break;
+case "heatRelativeTemp":
+event.setHeatRelativeTemp(Temperature.fromLocalTemperature(new BigDecimal(value.toString())));
+break;
+case "isTemperatureAbsolute":
+event.setTemperatureAbsolute((Boolean)value);
+break;
+case "fanMinOnTime":
+event.setFanMinOnTime((Integer)value);
+break;
+case "holdClimateRef":
+event.setHoldClimateRef((String)value);
+break;
+default :
+logger.warn("Unrecognized event field '{}' with value '{}' ignored.",key,value);
+break;
+}
+}
+SetHoldFunction function=new SetHoldFunction(event,(holdType == null) ? null : HoldType.forValue(holdType),(holdHours == null) ? null : holdHours.intValue(),startDateTime,endDateTime);
+return callEcobeeInternal(selection,function);
+}

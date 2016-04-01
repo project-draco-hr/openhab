@@ -1,0 +1,80 @@
+{
+  super("setHold");
+  if (event == null) {
+    throw new IllegalArgumentException("event must not be null");
+  }
+  if (holdType == HoldType.HOLD_HOURS && holdHours == null) {
+    throw new IllegalArgumentException("holdHours must be specified when holdType='holdHours'");
+  }
+ else   if (holdType == HoldType.DATE_TIME && endDateTime == null) {
+    throw new IllegalArgumentException("endDateTime must be specified when holdType='dateTime'");
+  }
+  if (event.getHoldClimateRef() == null) {
+    if (Boolean.TRUE.equals(event.isTemperatureAbsolute()) && Boolean.TRUE.equals(event.isTemperatureRelative())) {
+      throw new IllegalArgumentException("cannot set both absolute and relative temperatures");
+    }
+    if (Boolean.TRUE.equals(event.isTemperatureAbsolute()) && (event.getCoolHoldTemp() == null || event.getHeatHoldTemp() == null)) {
+      throw new IllegalArgumentException("coolHoldTemp and heatHoldTemp must be specified when 'isTemperatureAbsolute' is true");
+    }
+    if (Boolean.TRUE.equals(event.isTemperatureRelative()) && (event.getCoolRelativeTemp() == null || event.getHeatRelativeTemp() == null)) {
+      throw new IllegalArgumentException("coolRelativeTemp and heatRelativeTemp must be specified when 'isTemperatureRelative' is true");
+    }
+  }
+  if (event.isOccupied() != null) {
+    makeParams().put("isOccupied",event.isOccupied());
+  }
+  if (event.isCoolOff() != null) {
+    makeParams().put("isCoolOff",event.isCoolOff());
+  }
+  if (event.isHeatOff() != null) {
+    makeParams().put("isHeatOff",event.isHeatOff());
+  }
+  if (event.getCoolHoldTemp() != null) {
+    makeParams().put("coolHoldTemp",event.getCoolHoldTemp());
+  }
+  if (event.getHeatHoldTemp() != null) {
+    makeParams().put("heatHoldTemp",event.getHeatHoldTemp());
+  }
+  if (event.getFan() != null) {
+    makeParams().put("fan",event.getFan());
+  }
+  if (event.getVent() != null) {
+    makeParams().put("vent",event.getVent());
+  }
+  if (event.getVentilatorMinOnTime() != null) {
+    makeParams().put("ventilatorMinOnTime",event.getVentilatorMinOnTime());
+  }
+  if (event.isOptional() != null) {
+    makeParams().put("isOptional",event.isOptional());
+  }
+  if (event.isTemperatureRelative() != null) {
+    makeParams().put("isTemperatureRelative",event.isTemperatureRelative());
+  }
+  if (event.getCoolRelativeTemp() != null) {
+    makeParams().put("coolRelativeTemp",event.getCoolRelativeTemp());
+  }
+  if (event.getHeatRelativeTemp() != null) {
+    makeParams().put("heatRelativeTemp",event.getHeatRelativeTemp());
+  }
+  if (event.isTemperatureAbsolute() != null) {
+    makeParams().put("isTemperatureAbsolute",event.isTemperatureAbsolute());
+  }
+  if (event.getFanMinOnTime() != null) {
+    makeParams().put("fanMinOnTime",event.getFanMinOnTime());
+  }
+  if (event.getHoldClimateRef() != null) {
+    makeParams().put("holdClimateRef",event.getHoldClimateRef());
+  }
+  makeParams().put("holdType",holdType);
+  if (holdHours != null) {
+    makeParams().put("holdHours",holdHours);
+  }
+  if (startDateTime != null) {
+    makeParams().put("startDate",ymd.format(startDateTime));
+    makeParams().put("startTime",hms.format(startDateTime));
+  }
+  if (endDateTime != null) {
+    makeParams().put("endDate",ymd.format(endDateTime));
+    makeParams().put("endTime",hms.format(endDateTime));
+  }
+}
