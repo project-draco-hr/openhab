@@ -1,0 +1,17 @@
+{
+  int baudRate=9600;
+  final String configuredBaudRate=(String)config.get(KEY_BAUDRATE);
+  Integer tmpBaudRate=baudrateFromConfig(configuredBaudRate);
+  if (tmpBaudRate != null) {
+    baudRate=tmpBaudRate;
+    logger.info("Update config, {} = {}",KEY_BAUDRATE,baudRate);
+  }
+  int parityMode=SerialPort.PARITY_EVEN;
+  final String configuredParity=(String)config.get(KEY_PARITY);
+  Integer parsedParityNumber=parityFromConfig(configuredParity);
+  if (parsedParityNumber != null) {
+    parityMode=parsedParityNumber;
+    logger.info("Update config, {} = {} ({})",KEY_PARITY,convertParityModeToString(parityMode),parityMode);
+  }
+  return new CULSerialConfig(deviceType,deviceAddress,mode,baudRate,parityMode);
+}

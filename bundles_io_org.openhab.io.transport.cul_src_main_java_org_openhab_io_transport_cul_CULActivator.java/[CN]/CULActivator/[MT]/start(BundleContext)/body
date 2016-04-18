@@ -1,6 +1,7 @@
 {
   context=bc;
   logger.debug("CUL transport has been started.");
-  CULManager.registerHandlerClass("serial",CULSerialHandlerImpl.class);
-  CULManager.registerHandlerClass("network",CULNetworkHandlerImpl.class);
+  CULManager manager=CULManager.getInstance();
+  manager.registerHandlerClass("serial",CULSerialHandlerImpl.class,new CULSerialConfigFactory());
+  manager.registerHandlerClass("network",CULNetworkHandlerImpl.class,new CULNetworkConfigFactory());
 }

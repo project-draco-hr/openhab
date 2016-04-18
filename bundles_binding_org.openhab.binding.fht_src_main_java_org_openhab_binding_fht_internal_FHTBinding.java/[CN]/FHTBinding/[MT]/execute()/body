@@ -8,7 +8,7 @@
     FHTDesiredTemperatureCommand waitingCommand=entry.getValue();
     String commandString="T" + waitingCommand.getAddress() + waitingCommand.getCommand();
     try {
-      cul.send(commandString);
+      culHandlerLifecycle.getCul().send(commandString);
       temperatureCommandQueue.remove(entry.getKey());
     }
  catch (    CULCommunicationException e) {

@@ -1,0 +1,17 @@
+{
+  try {
+    while (!isInterrupted()) {
+      processNextLine();
+      try {
+        Thread.sleep(10);
+      }
+ catch (      InterruptedException e) {
+        logger.debug("Error while sleeping in ReceiveThread",e);
+      }
+    }
+    logger.debug("ReceiveThread exiting.");
+  }
+ catch (  CULCommunicationException e) {
+    log.error("Connection to CUL broken, terminating receive thread for " + config.getDeviceAddress());
+  }
+}

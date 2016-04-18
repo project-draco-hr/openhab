@@ -1,0 +1,9 @@
+{
+  sut=new CULLifecycleManager(MODE,listener,manager,null,null);
+  given(allConfig.get(CULLifecycleManager.KEY_DEVICE_NAME)).willReturn("foo:bar");
+  given(manager.getConfigFactory("foo")).willReturn(configFactory);
+  given(configFactory.create("foo","bar",MODE,allConfig)).willReturn(config);
+  given(manager.getOpenCULHandler(config)).willReturn(newCul);
+  sut.config(allConfig);
+  then(listener).should().open(newCul);
+}
