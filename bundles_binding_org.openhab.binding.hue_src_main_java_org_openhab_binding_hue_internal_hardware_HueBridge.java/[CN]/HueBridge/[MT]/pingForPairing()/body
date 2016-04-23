@@ -1,9 +1,10 @@
 {
   int countdownInSeconds=100;
-  while (countdownInSeconds > 0) {
+  boolean isPaired=false;
+  while (countdownInSeconds > 0 && !isPaired) {
     logger.info("Please press the connect button on the Hue bridge. Waiting for pairing for " + countdownInSeconds + " seconds...");
     WebResource webResource=client.resource("http://" + ip + "/api");
-    String input="{\"username\":\"" + getSecret() + "\",\"devicetype\":\"openHAB_binding\"}";
+    String input="{\"devicetype\":\"openHAB_binding\"}";
     ClientResponse response=webResource.type("application/json").post(ClientResponse.class,input);
     if (response.getStatus() != 200) {
       logger.error("Failed to connect to Hue bridge with IP '" + ip + "': HTTP error code: "+ response.getStatus());
@@ -11,15 +12,14 @@
     }
     String output=response.getEntity(String.class);
     logger.debug("Received pairing response: {}",output);
-    if (output.contains("success")) {
-      logger.info("Hue bridge successfully paired!");
-      return;
-    }
-    try {
-      Thread.sleep(1000);
-      countdownInSeconds--;
-    }
- catch (    InterruptedException e) {
+    isPaired=processPairingResponse(output);
+    if (!isPaired) {
+      try {
+        Thread.sleep(RETRY_INTERVAL_IN_SEC * 1000);
+        countdownInSeconds-=RETRY_INTERVAL_IN_SEC;
+      }
+ catch (      InterruptedException e) {
+      }
     }
   }
 }

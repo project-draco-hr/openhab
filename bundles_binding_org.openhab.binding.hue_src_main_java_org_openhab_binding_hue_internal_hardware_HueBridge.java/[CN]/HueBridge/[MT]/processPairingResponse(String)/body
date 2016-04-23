@@ -1,0 +1,18 @@
+{
+  try {
+    JsonNode node=convertToJsonNode(response);
+    if (node.has("success")) {
+      String userName=node.path("success").path("username").getTextValue();
+      logger.info("########################################");
+      logger.info("# Hue bridge successfully paired!");
+      logger.info("# Please set the following secret in your openhab.cfg (and restart openHAB):");
+      logger.info("# " + userName);
+      logger.info("########################################");
+      return true;
+    }
+  }
+ catch (  IOException e) {
+    logger.error("Could not read Settings-Json from Hue Bridge.",e);
+  }
+  return false;
+}

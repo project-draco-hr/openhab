@@ -1,0 +1,12 @@
+{
+  JsonNode rootNode;
+  ObjectMapper mapper=new ObjectMapper();
+  JsonNode arrayWrappedNode=mapper.readTree(response);
+  if (arrayWrappedNode.has(0)) {
+    rootNode=arrayWrappedNode.get(0);
+  }
+ else {
+    throw new IOException("Unexpected response from hue bridge (not an array)");
+  }
+  return rootNode;
+}
