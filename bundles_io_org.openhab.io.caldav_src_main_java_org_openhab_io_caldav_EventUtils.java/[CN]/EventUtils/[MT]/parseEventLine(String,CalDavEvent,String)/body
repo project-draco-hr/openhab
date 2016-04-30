@@ -1,0 +1,26 @@
+{
+  final Matcher matcher=LINE_PATTERN.matcher(line);
+  if (matcher.matches()) {
+    final String scope=matcher.group(1);
+    final String itemName=matcher.group(3);
+    final String stateString=matcher.group(4);
+    if (itemName.trim().length() > 0 && stateString.trim().length() > 0) {
+      if (SCOPE_BEGIN.equals(scope)) {
+        return new EventLine(itemName,stateString,scope,event.getStart());
+      }
+      if (SCOPE_END.equals(scope)) {
+        return new EventLine(itemName,stateString,scope,event.getEnd());
+      }
+      if (SCOPE_BETWEEN.equals(scope)) {
+        final String timeString=matcher.group(2);
+        final DateTime time=DateTimeFormat.forPattern(EventUtils.DATE_FORMAT).parseDateTime(timeString);
+        return new EventLine(itemName,stateString,scope,time);
+      }
+    }
+  }
+ else   if (defaultItemOnBegin != null && !COMMAND_PATTERN.matcher(line).matches()) {
+    return new EventLine(defaultItemOnBegin,line,SCOPE_BEGIN,event.getStart());
+  }
+  log.error("invalid format for line: {}",line);
+  return null;
+}

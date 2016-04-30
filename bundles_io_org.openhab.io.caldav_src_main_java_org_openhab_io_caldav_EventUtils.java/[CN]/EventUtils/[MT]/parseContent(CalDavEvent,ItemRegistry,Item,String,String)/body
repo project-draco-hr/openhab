@@ -1,0 +1,45 @@
+{
+  final List<EventContent> outMap=new ArrayList<EventUtils.EventContent>();
+  if (StringUtils.isEmpty(event.getContent())) {
+    return outMap;
+  }
+  try {
+    final BufferedReader reader=new BufferedReader(new StringReader(event.getContent()));
+    String line=null;
+    while ((line=reader.readLine()) != null) {
+      Item item=itemIn;
+      final EventLine eventLine=parseEventLine(line.trim(),event,defaultItemOnBegin);
+      if (eventLine == null) {
+        continue;
+      }
+      if (expectedScope != null && !expectedScope.equals(eventLine.scope)) {
+        continue;
+      }
+      if (item == null) {
+        if (itemRegistry == null) {
+          log.error("item is null, but itemRegistry as well");
+          continue;
+        }
+        try {
+          item=itemRegistry.getItem(eventLine.itemName);
+        }
+ catch (        ItemNotFoundException e) {
+          log.error("cannot find item: {}",eventLine.itemName);
+          continue;
+        }
+      }
+      if (!item.getName().equals(eventLine.itemName)) {
+        log.trace("name of item {} does not match itemName {}",item.getName(),eventLine.itemName);
+        continue;
+      }
+      final State state=TypeParser.parseState(item.getAcceptedDataTypes(),eventLine.stateString);
+      final Command command=TypeParser.parseCommand(item.getAcceptedCommandTypes(),eventLine.stateString);
+      log.trace("add item {} to action list (scope={}, state={}, time={})",item,eventLine.scope,state,eventLine.time);
+      outMap.add(new EventContent(eventLine.scope,item,state,command,eventLine.time));
+    }
+  }
+ catch (  IOException e) {
+    log.error("cannot parse event content",e);
+  }
+  return outMap;
+}

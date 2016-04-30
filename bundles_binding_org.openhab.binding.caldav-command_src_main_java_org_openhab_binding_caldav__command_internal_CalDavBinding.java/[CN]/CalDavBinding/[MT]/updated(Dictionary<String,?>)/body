@@ -2,11 +2,14 @@
   if (properties != null) {
     logger.debug("reading configuration data...");
     String read=(String)properties.get(KEY_READ_CALENDARS);
+    this.readCalendars.clear();
     if (read != null) {
       for (      String value : read.split(",")) {
         this.readCalendars.add(value.trim());
       }
     }
+    read=(String)properties.get(KEY_DEFAULT_ITEM_ON_BEGIN);
+    this.defaultItemOnBegin=read == null ? null : read.trim();
     this.reloadCurrentLoadedEvents();
   }
 }
