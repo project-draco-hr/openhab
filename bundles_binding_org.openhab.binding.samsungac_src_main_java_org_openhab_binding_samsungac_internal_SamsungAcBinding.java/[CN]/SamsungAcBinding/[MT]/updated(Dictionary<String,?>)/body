@@ -3,15 +3,15 @@
   String refreshIntervalString=(String)config.get("refresh");
   if (StringUtils.isNotBlank(refreshIntervalString)) {
     refreshInterval=Long.parseLong(refreshIntervalString);
-    logger.info("Refresh interval set to " + refreshIntervalString + " ms");
+    logger.info("Refresh interval set to {} ms",refreshIntervalString);
   }
  else {
-    logger.info("No refresh interval configured, using default: " + refreshInterval + " ms");
+    logger.info("No refresh interval configured, using default: {} ms",refreshInterval);
   }
   Map<String,AirConditioner> hosts=new HashMap<String,AirConditioner>();
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
-    logger.debug("Configuration key is: " + key);
+    logger.debug("Configuration key is: {}",key);
     if ("service.pid".equals(key)) {
       continue;
     }
@@ -46,7 +46,7 @@
     if (discovered != null && discovered.size() > 0) {
       for (      Map<String,String> ac : discovered.values()) {
         if (ac.get("IP") != null && ac.get("MAC_ADDR") != null) {
-          logger.warn("We found air conditioner. Please put the following in your configuration file: " + "\r\n samsungac:<ACNAME>.host=" + ac.get("IP") + "\r\n samsungac:<ACNAME>.mac="+ ac.get("MAC_ADDR"));
+          logger.warn("We found air conditioner. Please put the following in your configuration file: " + "\r\n samsungac:<ACNAME>.host={}\r\n samsungac:<ACNAME>.mac={}",ac.get("IP"),ac.get("MAC_ADDR"));
         }
       }
     }

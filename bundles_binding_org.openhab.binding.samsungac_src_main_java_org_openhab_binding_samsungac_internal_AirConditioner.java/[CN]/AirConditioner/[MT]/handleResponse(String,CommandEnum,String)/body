@@ -1,0 +1,75 @@
+{
+  String line;
+  while ((line=readLine(socket)) != null) {
+    if (line == null || ResponseParser.isFirstLine(line)) {
+      continue;
+    }
+    if (ResponseParser.isNotLoggedInResponse(line)) {
+      if (TOKEN_STRING != null) {
+        return;
+      }
+      writeLine("<Request Type=\"GetToken\" />");
+      continue;
+    }
+    if (ResponseParser.isFailedAuthenticationResponse(line)) {
+      throw new Exception("failed to connect: '" + line + "'");
+    }
+    if (commandId != null && ResponseParser.isCorrectCommandResponse(line,commandId)) {
+      logger.debug("Correct command response: '{}'",line);
+      if (command != null && statusMap.get(command).equals(value)) {
+        return;
+      }
+ else {
+        logger.debug("Continue, cause '{}' is not like '{}'",value,statusMap.get(command));
+        continue;
+      }
+    }
+    if (ResponseParser.isResponseWithToken(line)) {
+      TOKEN_STRING=ResponseParser.parseTokenFromResponse(line);
+      logger.debug("Received TOKEN from AC: '{}'",TOKEN_STRING);
+      return;
+    }
+    if (ResponseParser.isReadyForTokenResponse(line)) {
+      logger.debug("NO TOKEN SET! Please switch off and on the air conditioner within 30 seconds");
+      return;
+    }
+    if (ResponseParser.isSuccessfulLoginResponse(line)) {
+      logger.debug("SuccessfulLoginResponse: '{}'",line);
+      return;
+    }
+    if (ResponseParser.isDeviceState(line)) {
+      logger.debug("Response is device state '{}'",line);
+      statusMap.clear();
+      statusMap=ResponseParser.parseStatusResponse(line);
+      continue;
+    }
+    if (ResponseParser.isDeviceControl(line)) {
+      logger.debug("DeviceControl: '{}'",line);
+      continue;
+    }
+    if (ResponseParser.isUpdateStatus(line)) {
+      logger.debug("Response is update status: '{}'",line);
+      Pattern pattern=Pattern.compile("Attr ID=\"(.*)\" Value=\"(.*)\"");
+      Matcher matcher=pattern.matcher(line);
+      if (matcher.groupCount() == 2) {
+        try {
+          matcher.find();
+          CommandEnum cmd=CommandEnum.valueOf(matcher.group(1));
+          if (cmd != null) {
+            statusMap.put(cmd,matcher.group(2));
+            logger.debug("Setting: {} to {} ",cmd.name(),matcher.group(2));
+          }
+        }
+ catch (        IllegalStateException e) {
+          logger.info("IllegalStateException when trying to update status, with response: {}",line,e);
+        }
+      }
+      continue;
+    }
+    if (commandId != null && !ResponseParser.isCorrectCommandResponse(line,commandId)) {
+      logger.debug("Response with incrorrect commandId: '{}' should have been: '{}'",line,commandId);
+      continue;
+    }
+    logger.debug("Got response:'{}'",line);
+  }
+}

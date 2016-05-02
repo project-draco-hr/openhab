@@ -1,0 +1,22 @@
+{
+  int i=1;
+  boolean commandSent=false;
+  while (i < 5 && !commandSent) {
+    try {
+      logger.debug("[{}/5] Sending command: {} to property:{} with ip:{}",i,value,property,aircon.getIpAddress());
+      Map<CommandEnum,String> status=aircon.sendCommand(property,value);
+      if (status != null) {
+        commandSent=true;
+        logger.debug("Command[{}] sent on try number {}",value,i);
+        updateAllItemsFromStatusMap(status,hostName);
+      }
+    }
+ catch (    Exception e) {
+      logger.warn("Could not send value: '{}' to property:'{}', try {}/5",value,property,i);
+      e.printStackTrace();
+    }
+ finally {
+      i++;
+    }
+  }
+}
