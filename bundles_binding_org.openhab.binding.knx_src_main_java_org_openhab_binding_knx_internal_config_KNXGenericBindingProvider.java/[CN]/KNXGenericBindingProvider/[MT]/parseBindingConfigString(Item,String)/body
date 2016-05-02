@@ -9,7 +9,6 @@
       if (datapointConfig.split("<").length > 2) {
         throw new BindingConfigParseException("Only one readable GA allowed.");
       }
-      Class<? extends Type> typeClass=item.getAcceptedCommandTypes().size() > 0 ? item.getAcceptedCommandTypes().get(i) : item.getAcceptedDataTypes().size() > 1 ? item.getAcceptedDataTypes().get(i) : item.getAcceptedDataTypes().get(0);
       String[] dataPoints=datapointConfig.split("\\+");
       for (int j=0; j < dataPoints.length; ++j) {
         String dataPoint=dataPoints[j].trim();
@@ -47,7 +46,15 @@
           }
         }
         String[] segments=dataPoint.split(":");
-        String dptID=(segments.length == 1) ? getDefaultDPTId(typeClass) : segments[0];
+        Class<? extends Type> typeClass=null;
+        String dptID=null;
+        if (segments.length == 1) {
+          typeClass=item.getAcceptedCommandTypes().size() > 0 ? item.getAcceptedCommandTypes().get(i) : item.getAcceptedDataTypes().size() > 1 ? item.getAcceptedDataTypes().get(i) : item.getAcceptedDataTypes().get(0);
+          dptID=getDefaultDPTId(typeClass);
+        }
+ else {
+          dptID=segments[0];
+        }
         if (dptID == null || dptID.trim().isEmpty()) {
           throw new BindingConfigParseException("No DPT could be determined for the type '" + typeClass.getSimpleName() + "'.");
         }
