@@ -7,10 +7,14 @@
         HashMap<String,String> values=provider.getDeviceCommands(itemName);
         for (        String cmd : values.keySet()) {
           String[] commandParts=values.get(cmd).split(":");
+          String deviceId=commandParts[0];
           String deviceCmd=commandParts[1];
+          if (!deviceConfig.deviceId.equals(deviceId)) {
+            continue;
+          }
           boolean match=false;
           if (deviceCmd.startsWith(ADVANCED_COMMAND_KEY)) {
-            if (data.startsWith(deviceCmd.substring(1,4))) {
+            if (data.startsWith(deviceCmd.substring(1))) {
               match=true;
             }
           }
