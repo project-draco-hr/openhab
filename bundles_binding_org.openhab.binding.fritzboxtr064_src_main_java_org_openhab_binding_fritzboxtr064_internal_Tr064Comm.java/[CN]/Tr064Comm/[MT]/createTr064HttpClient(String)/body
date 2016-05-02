@@ -29,6 +29,7 @@
  catch (  Exception ex) {
     logger.error(ex.getMessage());
   }
-  hc=HttpClientBuilder.create().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credp).build();
+  RequestConfig rc=RequestConfig.copy(RequestConfig.DEFAULT).setSocketTimeout(4000).setConnectTimeout(4000).setConnectionRequestTimeout(4000).build();
+  hc=HttpClientBuilder.create().setSSLSocketFactory(sslsf).setDefaultCredentialsProvider(credp).setDefaultRequestConfig(rc).build();
   return hc;
 }
