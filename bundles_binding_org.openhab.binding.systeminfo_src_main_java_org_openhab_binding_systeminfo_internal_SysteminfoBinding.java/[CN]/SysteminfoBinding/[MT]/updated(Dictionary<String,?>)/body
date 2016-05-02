@@ -1,10 +1,13 @@
 {
+  String variant=null;
   if (config != null) {
     String granularityString=(String)config.get("granularity");
     if (StringUtils.isNotBlank(granularityString)) {
       granularity=Integer.parseInt(granularityString);
     }
     logger.debug("Granularity: {} ms",granularity);
+    variant=(String)config.get("variant");
+    logger.debug("Variant: {}",variant);
     String tmp=(String)config.get("units");
     if (StringUtils.isNotBlank(tmp)) {
       if (tmp.length() != 1) {
@@ -17,6 +20,13 @@
     }
     logger.debug("Using units: {}",units);
   }
-  initializeSystemMonitor();
+  logger.debug("About to initialize system monitor...");
+  try {
+    initializeSystemMonitor(variant);
+  }
+ catch (  Throwable t) {
+    logger.error("Error initializing system monitor",t);
+  }
+  logger.debug("Initialized system monitor.");
   setProperlyConfigured(true);
 }
