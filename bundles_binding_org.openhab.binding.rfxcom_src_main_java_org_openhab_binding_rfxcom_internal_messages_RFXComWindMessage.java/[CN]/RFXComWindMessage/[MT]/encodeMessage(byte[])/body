@@ -8,9 +8,9 @@
   }
   sensorId=(data[4] & 0xFF) << 8 | (data[5] & 0xFF);
   windDirection=(short)((data[6] & 0xFF) << 8 | (data[7] & 0xFF));
+  windAvSpeed=(short)((data[8] & 0xFF) << 8 | (data[9] & 0xFF)) * 0.1;
   windSpeed=(short)((data[10] & 0xFF) << 8 | (data[11] & 0xFF)) * 0.1;
   if (subType == SubType.TFA) {
-    windAvSpeed=(short)((data[8] & 0xFF) << 8 | (data[9] & 0xFF)) * 0.1;
     temperature=(short)((data[12] & 0x7F) << 8 | (data[13] & 0xFF)) * 0.1;
     if ((data[12] & 0x80) != 0) {
       temperature=-temperature;
@@ -21,7 +21,6 @@
     }
   }
  else {
-    windAvSpeed=0;
     temperature=0;
     chillFactor=0;
   }

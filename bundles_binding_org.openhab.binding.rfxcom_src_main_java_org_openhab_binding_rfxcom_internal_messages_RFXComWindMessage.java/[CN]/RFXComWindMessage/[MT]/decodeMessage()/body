@@ -9,13 +9,13 @@
   short WindD=(short)Math.abs(windDirection);
   data[6]=(byte)((WindD >> 8) & 0xFF);
   data[7]=(byte)(WindD & 0xFF);
+  int WindAS=(short)Math.abs(windAvSpeed) * 10;
+  data[8]=(byte)((WindAS >> 8) & 0xFF);
+  data[9]=(byte)(WindAS & 0xFF);
   int WindS=(short)Math.abs(windSpeed) * 10;
   data[10]=(byte)((WindS >> 8) & 0xFF);
   data[11]=(byte)(WindS & 0xFF);
   if (subType == SubType.TFA) {
-    int WindAS=(short)Math.abs(windAvSpeed) * 10;
-    data[8]=(byte)((WindAS >> 8) & 0xFF);
-    data[9]=(byte)(WindAS & 0xFF);
     short temp=(short)Math.abs(temperature * 10);
     data[12]=(byte)((temp >> 8) & 0xFF);
     data[13]=(byte)(temp & 0xFF);
