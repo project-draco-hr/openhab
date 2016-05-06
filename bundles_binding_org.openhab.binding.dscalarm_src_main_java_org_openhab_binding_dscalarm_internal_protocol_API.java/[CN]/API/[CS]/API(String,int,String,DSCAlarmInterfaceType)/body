@@ -1,0 +1,19 @@
+{
+  if (StringUtils.isNotBlank(sPort)) {
+    serialPort=sPort;
+  }
+  if (isValidBaudRate(baud)) {
+    baudRate=baud;
+  }
+  if (StringUtils.isNotBlank(userCode)) {
+    this.dscAlarmUserCode=userCode;
+  }
+  this.dscAlarmUserCode=StringUtils.rightPad(dscAlarmUserCode,6,'0');
+  connectorType=DSCAlarmConnectorType.SERIAL;
+  if (interfaceType != null) {
+    this.interfaceType=interfaceType;
+  }
+ else {
+    this.interfaceType=DSCAlarmInterfaceType.IT100;
+  }
+}

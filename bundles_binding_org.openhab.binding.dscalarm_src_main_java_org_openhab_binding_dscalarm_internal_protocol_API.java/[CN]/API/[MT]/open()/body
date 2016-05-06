@@ -1,11 +1,11 @@
 {
 switch (connectorType) {
-case IT100:
+case SERIAL:
     if (dscAlarmConnector == null) {
       dscAlarmConnector=new SerialConnector(serialPort,baudRate);
     }
   break;
-case ENVISALINK:
+case TCP:
 if (StringUtils.isNotBlank(ipAddress)) {
   if (dscAlarmConnector == null) {
     dscAlarmConnector=new TCPConnector(ipAddress,tcpPort,TCP_CONNECTION_TIMEOUT);
@@ -23,10 +23,14 @@ break;
 dscAlarmConnector.open();
 connected=dscAlarmConnector.isConnected();
 if (connected) {
-if (connectorType == DSCAlarmConnectorType.ENVISALINK) sendCommand(APICode.NetworkLogin);
+if (interfaceType == DSCAlarmInterfaceType.ENVISALINK) {
+sendCommand(APICode.NetworkLogin);
+}
 connected=dscAlarmConnector.isConnected();
 }
-if (!connected) logger.error("open(): Unable to Make API Connection!");
-logger.debug("open(): Connected = {}, Connection Type: {}",connected ? true : false,connectorType);
+if (!connected) {
+logger.error("open(): Unable to Make API Connection!");
+}
+logger.debug("open(): Connected = {}, Connection Type: {}, Interface Type: {}",connected ? true : false,connectorType,interfaceType);
 return connected;
 }

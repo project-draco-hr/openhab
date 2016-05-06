@@ -1,17 +1,17 @@
 {
-  logger.debug("updated(): Configuration updated, config {}",config != null ? true : false);
+  logger.debug("updated(): Configuration? - {}",config != null ? true : false);
   if (config != null) {
-    String deviceType=(String)config.get("deviceType");
-    if (StringUtils.isNotBlank(deviceType)) {
-      if (deviceType.equals("it100")) {
-        connectorType=DSCAlarmConnectorType.IT100;
+    if (StringUtils.isNotBlank((String)config.get("deviceType"))) {
+      String intType=(String)config.get("deviceType");
+      if (intType.equals("it100")) {
+        interfaceType=DSCAlarmInterfaceType.IT100;
       }
- else       if (deviceType.equals("envisalink")) {
-        connectorType=DSCAlarmConnectorType.ENVISALINK;
+ else       if (intType.equals("envisalink")) {
+        interfaceType=DSCAlarmInterfaceType.ENVISALINK;
       }
  else {
-        logger.error("updated(): Device type not configured correctly!");
-        return;
+        interfaceType=null;
+        logger.error("updated(): Device type not configured!");
       }
     }
     if (StringUtils.isNotBlank((String)config.get("serialPort"))) {
@@ -21,7 +21,9 @@
       ipAddress=(String)config.get("ip");
     }
     try {
-      if (StringUtils.isNotBlank((String)config.get("tcpPort")))       tcpPort=Integer.parseInt((String)config.get("tcpPort"));
+      if (StringUtils.isNotBlank((String)config.get("tcpPort"))) {
+        tcpPort=Integer.parseInt((String)config.get("tcpPort"));
+      }
     }
  catch (    NumberFormatException numberFormatException) {
       tcpPort=4025;
@@ -33,9 +35,16 @@
       return;
     }
     if (serialPort != null) {
-      if (connectorType == null)       connectorType=DSCAlarmConnectorType.IT100;
+      if (interfaceType == null) {
+        interfaceType=DSCAlarmInterfaceType.IT100;
+      }
+      if (connectorType == null) {
+        connectorType=DSCAlarmConnectorType.SERIAL;
+      }
       try {
-        if (StringUtils.isNotBlank((String)config.get("baud")))         baudRate=Integer.parseInt((String)config.get("baud"));
+        if (StringUtils.isNotBlank((String)config.get("baud"))) {
+          baudRate=Integer.parseInt((String)config.get("baud"));
+        }
       }
  catch (      NumberFormatException numberFormatException) {
         baudRate=0;
@@ -43,10 +52,13 @@
         return;
       }
     }
-    if (ipAddress != null && connectorType == null) {
-      connectorType=DSCAlarmConnectorType.ENVISALINK;
+    if (ipAddress != null) {
+      if (interfaceType == null) {
+        interfaceType=DSCAlarmInterfaceType.ENVISALINK;
+      }
+      connectorType=DSCAlarmConnectorType.TCP;
     }
-    logger.debug("updated(): Connector Type: {}",connectorType);
+    logger.debug("updated(): Connector Type: {}, Interface Type: {}",connectorType,interfaceType);
     if (StringUtils.isNotBlank((String)config.get("password"))) {
       password=(String)config.get("password");
     }
