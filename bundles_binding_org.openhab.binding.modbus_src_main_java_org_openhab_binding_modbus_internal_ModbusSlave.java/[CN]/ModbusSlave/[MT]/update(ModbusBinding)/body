@@ -12,23 +12,23 @@
         request.setHeadless();
       }
       request.setUnitID(id);
-      ReadCoilsResponse responce=(ReadCoilsResponse)getModbusData(request);
-      local=responce.getCoils();
+      ReadCoilsResponse response=(ReadCoilsResponse)getModbusData(request);
+      local=response.getCoils();
     }
  else     if (ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
       ModbusRequest request=new ReadInputDiscretesRequest(getStart(),getLength());
-      ReadInputDiscretesResponse responce=(ReadInputDiscretesResponse)getModbusData(request);
-      local=responce.getDiscretes();
+      ReadInputDiscretesResponse response=(ReadInputDiscretesResponse)getModbusData(request);
+      local=response.getDiscretes();
     }
  else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
       ModbusRequest request=new ReadMultipleRegistersRequest(getStart(),getLength());
-      ReadMultipleRegistersResponse responce=(ReadMultipleRegistersResponse)getModbusData(request);
-      local=responce.getRegisters();
+      ReadMultipleRegistersResponse response=(ReadMultipleRegistersResponse)getModbusData(request);
+      local=response.getRegisters();
     }
  else     if (ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
       ModbusRequest request=new ReadInputRegistersRequest(getStart(),getLength());
-      ReadInputRegistersResponse responce=(ReadInputRegistersResponse)getModbusData(request);
-      local=responce.getRegisters();
+      ReadInputRegistersResponse response=(ReadInputRegistersResponse)getModbusData(request);
+      local=response.getRegisters();
     }
     if (storage == null) {
       storage=local;
@@ -45,6 +45,6 @@ synchronized (storage) {
   }
  catch (  Exception e) {
     resetConnection();
-    logger.info("ModbusSlave error getting responce from slave");
+    logger.info("ModbusSlave error getting response from slave:",e);
   }
 }

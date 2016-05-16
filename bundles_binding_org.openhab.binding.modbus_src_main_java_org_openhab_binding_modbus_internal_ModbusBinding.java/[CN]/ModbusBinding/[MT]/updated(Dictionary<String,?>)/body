@@ -18,7 +18,7 @@
           ModbusSlave.setWriteMultipleRegisters(Boolean.valueOf(config.get(key).toString()));
         }
  else {
-          logger.debug("given modbus-slave-config-key '{}' does not follow the expected pattern or 'serial.<slaveId>.<{}>'",key,VALID_COFIG_KEYS);
+          logger.debug("given modbus-slave-config-key '{}' does not follow the expected pattern or 'serial.<slaveId>.<{}>'",key,VALID_CONFIG_KEYS);
         }
         continue;
       }
@@ -98,6 +98,9 @@
       }
  else       if ("rawdatamultiplier".equals(configKey)) {
         modbusSlave.setRawDataMultiplier(Double.valueOf(value.toString()));
+      }
+ else       if ("updateunchangeditems".equals(configKey)) {
+        modbusSlave.setUpdateUnchangedItems(Boolean.valueOf(value.toString()));
       }
  else {
         throw new ConfigurationException(configKey,"the given configKey '" + configKey + "' is unknown");

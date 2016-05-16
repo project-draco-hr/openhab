@@ -8,7 +8,7 @@
   if (command instanceof IncreaseDecreaseType) {
     newValue=readCachedRegisterValue(readIndex);
     if (newValue == null) {
-      logger.warn("Not polled value for item {}. Cannot process command {}",config.getItem(),command);
+      logger.warn("Not polled value for item {}. Cannot process command {}",config.getItemName(),command);
       return;
     }
     if (command.equals(IncreaseDecreaseType.INCREASE)) {
@@ -21,7 +21,7 @@
  else   if (command instanceof UpDownType) {
     newValue=readCachedRegisterValue(readIndex);
     if (newValue == null) {
-      logger.warn("Not polled value for item {}. Cannot process command {}",config.getItem(),command);
+      logger.warn("Not polled value for item {}. Cannot process command {}",config.getItemName(),command);
       return;
     }
     if (command.equals(UpDownType.UP)) {
@@ -54,7 +54,7 @@
     }
   }
  else {
-    logger.warn("Item {} received unsupported command: {}. Not setting register.",config.getItem(),command);
+    logger.warn("Item {} received unsupported command: {}. Not setting register.",config.getItemName(),command);
     return;
   }
   ModbusRequest request=null;

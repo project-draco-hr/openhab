@@ -1,6 +1,11 @@
 {
-  Class<? extends State> c=item.getState().getClass();
-  Class<? extends Item> itemClass=item.getClass();
+  Class<? extends State> c=null;
+  if (state == null) {
+    c=UnDefType.class;
+  }
+ else {
+    c=state.getClass();
+  }
   if (c == UnDefType.class && itemClass == SwitchItem.class) {
     return b ? OnOffType.ON : OnOffType.OFF;
   }
