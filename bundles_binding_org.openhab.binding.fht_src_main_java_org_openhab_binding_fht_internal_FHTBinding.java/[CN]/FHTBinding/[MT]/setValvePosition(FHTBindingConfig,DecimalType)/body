@@ -1,0 +1,12 @@
+{
+  double valvePosition=command.doubleValue();
+  if ((valvePosition >= 0.0) && (valvePosition <= 100.0)) {
+    int temp=(int)(valvePosition * 2.55);
+    FHTDesiredTemperatureCommand commandItem=new FHTDesiredTemperatureCommand(config.getFullAddress(),"26" + ((Integer.toHexString(temp).length() == 1) ? "0" : "") + Integer.toHexString(temp));
+    logger.debug("Queuing new desired valve position");
+    temperatureCommandQueue.put(config.getFullAddress(),commandItem);
+  }
+ else {
+    logger.error("The desired valve position is outside of the valid range (0.0 - 100.0%)");
+  }
+}
