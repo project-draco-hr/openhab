@@ -1,0 +1,23 @@
+{
+  if (type == ModbusBindingProvider.TYPE_COIL) {
+    return;
+  }
+  binding=new ModbusBinding();
+  int offset=(nonZeroOffset ? 1 : 0);
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,offset,2));
+  configureSwitchItemBinding(2,SLAVE_NAME,0);
+  try {
+    binding.receiveCommand(String.format("Item%s",itemIndex + 1),command);
+  }
+ catch (  NullPointerException e) {
+    if (type != ModbusBindingProvider.TYPE_COIL) {
+      fail("Expecting NullPointerException only with coil");
+    }
+    return;
+  }
+  if (type == ModbusBindingProvider.TYPE_COIL) {
+    String msg="Should have raised NullPointerException with coil";
+    fail(msg);
+  }
+  verifyRequests(false);
+}

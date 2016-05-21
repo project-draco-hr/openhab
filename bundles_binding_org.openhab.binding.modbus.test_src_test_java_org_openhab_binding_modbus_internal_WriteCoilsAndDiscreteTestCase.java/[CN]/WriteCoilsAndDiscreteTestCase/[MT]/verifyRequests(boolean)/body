@@ -1,0 +1,50 @@
+{
+  if (expectingAssertionError) {
+    return;
+  }
+  try {
+    ArrayList<ModbusRequest> requests=modbustRequestCaptor.getAllReturnValues();
+    int expectedDOIndex=nonZeroOffset ? (itemIndex + 1) : itemIndex;
+    WriteCoilRequest writeRequest;
+    boolean writeExpected=type == ModbusBindingProvider.TYPE_COIL;
+    int expectedRequests=(writeExpected ? 1 : 0) + (readRequestExpected ? 1 : 0);
+    int expectedConnections=serverType.equals(ServerType.UDP) ? 1 : expectedRequests;
+    waitForConnectionsReceived(expectedConnections);
+    waitForRequests(expectedRequests);
+    assertThat(requests.size(),is(equalTo(expectedRequests)));
+    if (readRequestExpected) {
+      if (type == ModbusBindingProvider.TYPE_DISCRETE) {
+        assertThat(requests.get(0),is(instanceOf(ReadInputDiscretesRequest.class)));
+      }
+ else       if (type == ModbusBindingProvider.TYPE_COIL) {
+        assertThat(requests.get(0),is(instanceOf(ReadCoilsRequest.class)));
+      }
+ else {
+        throw new RuntimeException();
+      }
+    }
+    if (writeExpected) {
+      assertThat(requests.get(expectedRequests - 1),is(instanceOf(WriteCoilRequest.class)));
+      writeRequest=(WriteCoilRequest)requests.get(expectedRequests - 1);
+      assertThat(writeRequest.getCoil(),is(equalTo(expectedValue)));
+      assertThat(writeRequest.getReference(),is(equalTo(expectedDOIndex)));
+    }
+  }
+ catch (  AssertionError e) {
+    if (expectingAssertionError) {
+      System.err.println(String.format("Expected failure: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
+      return;
+    }
+ else {
+      System.err.println(String.format("Unexpected assertion error: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
+      throw new AssertionError("Got unexpected assertion error",e);
+    }
+  }
+  if (expectingAssertionError) {
+    System.err.println(String.format("Did not get assertion error (as expected): discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
+    throw new AssertionError("Did not get assertion error (as expected)");
+  }
+ else {
+    System.err.println(String.format("OK: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
+  }
+}

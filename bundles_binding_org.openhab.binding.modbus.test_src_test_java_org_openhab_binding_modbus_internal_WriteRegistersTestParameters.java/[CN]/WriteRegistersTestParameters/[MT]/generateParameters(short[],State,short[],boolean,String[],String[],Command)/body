@@ -1,0 +1,17 @@
+{
+  List<Object[]> parameters=new ArrayList<Object[]>();
+  for (  ServerType serverType : TestCaseSupport.TEST_SERVERS) {
+    for (    boolean nonZeroOffset : new Boolean[]{true,false}) {
+      for (      Command command : commands) {
+        for (        int itemIndex : new Integer[]{0,1}) {
+          for (          String type : types) {
+            for (            String valueType : valueTypes) {
+              parameters.add(new Object[]{serverType,initialRegisters,itemInitialState,nonZeroOffset,type,valueType,itemIndex,command,expectedValue,expectingAssertionError});
+            }
+          }
+        }
+      }
+    }
+  }
+  return parameters;
+}

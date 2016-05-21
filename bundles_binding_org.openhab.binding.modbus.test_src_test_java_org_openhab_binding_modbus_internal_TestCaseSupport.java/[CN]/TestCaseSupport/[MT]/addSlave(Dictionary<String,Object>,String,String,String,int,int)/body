@@ -1,0 +1,22 @@
+{
+  String protocol=null;
+  String connection;
+  if (ServerType.TCP.equals(serverType)) {
+    int port=tcpModbusPort;
+    protocol="tcp";
+    connection=String.format("%s:%d",localAddress().getHostAddress(),port);
+  }
+ else   if (ServerType.UDP.equals(serverType)) {
+    int port=udpModbusPort;
+    protocol="udp";
+    connection=String.format("%s:%d",localAddress().getHostAddress(),port);
+  }
+ else   if (ServerType.SERIAL.equals(serverType)) {
+    protocol="serial";
+    connection=String.format("%s:%d:%d:%s:%s:%s",SERIAL_PARAMETERS_CLIENT.getPortName(),SERIAL_PARAMETERS_CLIENT.getBaudRate(),SERIAL_PARAMETERS_CLIENT.getDatabits(),SERIAL_PARAMETERS_CLIENT.getParityString(),SERIAL_PARAMETERS_CLIENT.getStopbitsString(),SERIAL_PARAMETERS_CLIENT.getEncoding());
+  }
+ else {
+    throw new NotImplementedException();
+  }
+  return addSlave(config,protocol,connection,slaveName,type,valuetype,1,start,length);
+}

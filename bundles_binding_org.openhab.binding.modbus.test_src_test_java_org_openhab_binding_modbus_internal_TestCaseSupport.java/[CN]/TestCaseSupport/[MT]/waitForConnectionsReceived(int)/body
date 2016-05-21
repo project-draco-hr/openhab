@@ -1,0 +1,33 @@
+{
+  int sleepMillis=10;
+  int waited=0;
+  AssertionError lastError=new AssertionError("Connections not established in time!");
+  while (waited < MAX_WAIT_REQUESTS_MILLIS) {
+    try {
+      if (ServerType.TCP.equals(serverType)) {
+        verify(tcpConnectionFactory,times(expectedConnections)).create(any(Socket.class));
+      }
+ else       if (ServerType.UDP.equals(serverType)) {
+      }
+ else       if (ServerType.SERIAL.equals(serverType)) {
+      }
+ else {
+        throw new NotImplementedException();
+      }
+    }
+ catch (    AssertionError e) {
+      lastError=e;
+      try {
+        Thread.sleep(sleepMillis);
+        waited+=sleepMillis;
+      }
+ catch (      InterruptedException e1) {
+        throw new AssertionError("test interrupted");
+      }
+      continue;
+    }
+    return;
+  }
+  System.err.println("Connections not established in time!");
+  throw lastError;
+}

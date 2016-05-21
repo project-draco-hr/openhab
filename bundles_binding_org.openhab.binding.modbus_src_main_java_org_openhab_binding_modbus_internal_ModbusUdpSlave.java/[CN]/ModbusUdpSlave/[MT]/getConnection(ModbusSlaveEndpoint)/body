@@ -1,0 +1,11 @@
+{
+  ModbusSlaveConnection connection=super.getConnection(endpoint);
+  if (connection == null) {
+    return null;
+  }
+  if (!(connection instanceof UDPMasterConnection)) {
+    throw new IllegalStateException("Should not happen: wrong connection type for slave " + name);
+  }
+  ((ModbusUDPTransaction)transaction).setTerminal(((UDPMasterConnection)connection).getTerminal());
+  return connection;
+}

@@ -1,0 +1,10 @@
+{
+  binding=new ModbusBinding();
+  int offset=(nonZeroOffset ? 1 : 0);
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,offset,READ_COUNT));
+  configureItems();
+  binding.execute();
+  binding.receiveCommand(String.format("Item%s",itemIndex + 1),command);
+  errPrint("verifying: testWriteDigitalsAfterRead");
+  verifyRequests(true);
+}

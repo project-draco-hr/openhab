@@ -1,0 +1,32 @@
+{
+  binding=new ModbusBinding();
+  binding.updated(addSlave(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,0,READ_COUNT),SLAVE2_NAME,type,null,0,READ_COUNT));
+  configureItems(SLAVE_NAME);
+  configureItems(SLAVE2_NAME);
+  int expectedRequests=10;
+  ExecutorService pool=Executors.newFixedThreadPool(expectedRequests);
+  binding.execute();
+  pool.execute(new UpdateThread(binding));
+  pool.execute(new WriteCommandThread(binding,SLAVE_NAME,command));
+  pool.execute(new UpdateThread(binding));
+  pool.execute(new WriteCommandThread(binding,SLAVE2_NAME,command));
+  pool.execute(new WriteCommandThread(binding,SLAVE2_NAME,command));
+  pool.execute(new WriteCommandThread(binding,SLAVE2_NAME,command));
+  pool.shutdown();
+  pool.awaitTermination(artificialServerWait * 7 + 5000,TimeUnit.MILLISECONDS);
+  waitForRequests(expectedRequests);
+  ArrayList<ModbusRequest> values=modbustRequestCaptor.getAllReturnValues();
+  System.err.println(values);
+  int readCount=0;
+  int writeCount=0;
+  for (  ModbusRequest request : values) {
+    if (request instanceof ReadMultipleRegistersRequest) {
+      readCount++;
+    }
+ else     if (request instanceof WriteSingleRegisterRequest) {
+      writeCount++;
+    }
+  }
+  Assert.assertEquals(6,readCount);
+  Assert.assertEquals(4,writeCount);
+}

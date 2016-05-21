@@ -1,0 +1,22 @@
+{
+  addRegisterMethod.invoke(spi,constructBoolStore.newInstance(false));
+  addRegisterMethod.invoke(spi,constructBoolStore.newInstance(true));
+  addRegisterMethod.invoke(spi,constructBoolStore.newInstance(false));
+  binding=new ModbusBinding();
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,nonZeroOffset ? 1 : 0,2));
+  configureSwitchItemBinding(2,SLAVE_NAME,0);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  if (nonZeroOffset) {
+    verify(eventPublisher).postUpdate("Item1",OnOffType.ON);
+    verify(eventPublisher).postUpdate("Item2",OnOffType.OFF);
+  }
+ else {
+    verify(eventPublisher).postUpdate("Item1",OnOffType.OFF);
+    verify(eventPublisher).postUpdate("Item2",OnOffType.ON);
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

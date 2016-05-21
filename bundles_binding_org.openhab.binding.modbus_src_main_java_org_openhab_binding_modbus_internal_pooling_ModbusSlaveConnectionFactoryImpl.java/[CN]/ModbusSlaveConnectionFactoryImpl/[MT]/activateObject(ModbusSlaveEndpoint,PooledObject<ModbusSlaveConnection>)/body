@@ -1,0 +1,21 @@
+{
+  if (obj.getObject() == null) {
+    return;
+  }
+  try {
+    ModbusSlaveConnection connection=obj.getObject();
+    EndpointPoolConfiguration config=endpointPoolConfigs.get(endpoint);
+    if (connection.isConnected()) {
+      if (config != null) {
+        long waited=waitAtleast(lastPassivateMillis.get(endpoint),config.getPassivateBorrowMinMillis());
+        logger.trace("Waited {}ms (passivateBorrowMinMillis {}ms) before giving returning connection {} for endpoint {}, to ensure delay between transactions.",waited,config.getPassivateBorrowMinMillis(),obj.getObject(),endpoint);
+      }
+    }
+ else {
+      tryConnect(endpoint,obj,connection,config);
+    }
+  }
+ catch (  Exception e) {
+    logger.error("Error connecting connection {} for endpoint {}: {}",obj.getObject(),endpoint,e.getMessage());
+  }
+}

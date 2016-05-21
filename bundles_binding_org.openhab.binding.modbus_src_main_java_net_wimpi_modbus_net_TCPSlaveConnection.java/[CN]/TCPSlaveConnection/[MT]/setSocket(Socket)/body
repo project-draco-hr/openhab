@@ -1,10 +1,10 @@
 {
   m_Socket=socket;
   if (m_ModbusTransport == null) {
-    m_ModbusTransport=new ModbusTCPTransport(m_Socket);
+    m_ModbusTransport=this.m_TransportFactory.create(m_Socket);
   }
  else {
-    m_ModbusTransport.setSocket(m_Socket);
+    throw new IllegalStateException("socket cannot be re-set");
   }
   m_Connected=true;
 }

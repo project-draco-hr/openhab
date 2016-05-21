@@ -1,0 +1,16 @@
+{
+  SerialConnection serialConnection=new SerialConnection(parameters){
+    @Override public ModbusTransport getModbusTransport(){
+      ModbusTransport transport=spy(super.getModbusTransport());
+      try {
+        doAnswer(modbustRequestCaptor).when(transport).readRequest();
+      }
+ catch (      ModbusIOException e) {
+        throw new RuntimeException(e);
+      }
+      return transport;
+    }
+  }
+;
+  return serialConnection;
+}

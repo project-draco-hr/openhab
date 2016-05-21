@@ -1,0 +1,13 @@
+{
+  Assert.assertEquals(REFRESH_INTERVAL,binding.getRefreshInterval());
+  final ModbusGenericBindingProvider provider=new ModbusGenericBindingProvider();
+  for (int itemIndex=itemOffset; itemIndex < items + itemOffset; itemIndex++) {
+    NumberItem item=new NumberItem(String.format("%sItem%d",itemPrefix,itemIndex + 1));
+    if (initialState != null) {
+      item.setState(initialState);
+    }
+    provider.processBindingConfiguration("test.items",item,String.format("%s:%d",slaveName,itemIndex));
+  }
+  binding.setEventPublisher(eventPublisher);
+  binding.addBindingProvider(provider);
+}

@@ -1,0 +1,28 @@
+{
+  final KeyedObjectPool<ModbusSlaveEndpoint,ModbusSlaveConnection> pool=ModbusBinding.getReconstructedConnectionPoolForTesting();
+  final ModbusTCPSlaveEndpoint endpoint=new ModbusTCPSlaveEndpoint(localAddress().getHostAddress(),this.tcpModbusPort);
+  ModbusSlaveConnection borrowObject=pool.borrowObject(endpoint);
+  Thread thread=new Thread(){
+    @Override public void run(){
+      try {
+        ModbusSlaveConnection borrowObject2=pool.borrowObject(endpoint);
+        pool.returnObject(endpoint,borrowObject2);
+      }
+ catch (      Exception e) {
+        e.printStackTrace(System.err);
+      }
+    }
+  }
+;
+  thread.start();
+  thread.join(500);
+  if (!thread.isAlive()) {
+    throw new AssertionError("Thread should still be alive -- blocking since no objects");
+  }
+ else {
+    thread.interrupt();
+  }
+  pool.returnObject(endpoint,borrowObject);
+  ModbusSlaveConnection borrowObject2=pool.borrowObject(endpoint);
+  pool.returnObject(endpoint,borrowObject2);
+}

@@ -1,9 +1,6 @@
 {
   int readIndex=config.readIndex;
   int writeRegister=getStart() + config.writeIndex;
-  if (!isConnected()) {
-    return;
-  }
   Register newValue;
   if (command instanceof IncreaseDecreaseType) {
     newValue=readCachedRegisterValue(readIndex);
@@ -67,13 +64,6 @@
     request=new WriteSingleRegisterRequest(writeRegister,newValue);
   }
   request.setUnitID(getId());
-  transaction.setRequest(request);
-  try {
-    logger.debug("ModbusSlave: FC{} ref={} value={}",request.getFunctionCode(),writeRegister,newValue.getValue());
-    transaction.execute();
-  }
- catch (  Exception e) {
-    logger.debug("ModbusSlave: {}",e.getMessage());
-    return;
-  }
+  logger.debug("ModbusSlave ({}): FC{} ref={} value={}",name,request.getFunctionCode(),writeRegister,newValue.getValue());
+  executeWriteRequest(request);
 }

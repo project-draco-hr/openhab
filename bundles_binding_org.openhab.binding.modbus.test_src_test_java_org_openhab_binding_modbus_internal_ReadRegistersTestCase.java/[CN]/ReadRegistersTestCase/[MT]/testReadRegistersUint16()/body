@@ -1,0 +1,22 @@
+{
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(2));
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(-4));
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(99));
+  binding=new ModbusBinding();
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,nonZeroOffset ? 1 : 0,2));
+  configureNumberItemBinding(2,SLAVE_NAME,0);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  if (nonZeroOffset) {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(65532));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(99));
+  }
+ else {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(2));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(65532));
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

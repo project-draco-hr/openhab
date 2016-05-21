@@ -1,0 +1,12 @@
+{
+  if (connection == null) {
+    return;
+  }
+  try {
+    connectionPool.returnObject(endpoint,connection);
+  }
+ catch (  Exception e) {
+    logger.warn("ModbusSlave ({}): Error returning connection to pool for endpoint {}. Error was: {}",name,endpoint,e.getMessage());
+  }
+  logger.trace("ModbusSlave ({}): returned connection for endpoint {}",name,endpoint);
+}

@@ -1,0 +1,9 @@
+{
+  binding=new ModbusBinding();
+  int offset=(nonZeroOffset ? 1 : 0);
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,null,offset,2));
+  configureItems();
+  binding.receiveCommand(String.format("Item%s",itemIndex + 1),command);
+  errPrint("verifying: testRegistersNoReads");
+  verifyRequests(false);
+}

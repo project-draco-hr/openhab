@@ -6,7 +6,7 @@
       Socket incoming=m_ServerSocket.accept();
       logger.debug("Making new connection {}",incoming.toString());
       if (m_Listening) {
-        m_ThreadPool.execute(new TCPConnectionHandler(new TCPSlaveConnection(incoming)));
+        m_ThreadPool.execute(new TCPConnectionHandler(m_ConnectionFactory.create(incoming)));
         count();
       }
  else {

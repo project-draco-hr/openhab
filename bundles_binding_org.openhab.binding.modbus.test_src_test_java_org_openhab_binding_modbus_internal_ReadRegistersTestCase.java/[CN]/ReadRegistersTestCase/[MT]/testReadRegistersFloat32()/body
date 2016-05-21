@@ -1,0 +1,19 @@
+{
+  byte[] registerData=float32AsRegisters(123456789.95623f);
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[0],registerData[1]));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[2],registerData[3]));
+  registerData=float32AsRegisters(-123456789.1241243f);
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[0],registerData[1]));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[2],registerData[3]));
+  binding=new ModbusBinding();
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,ModbusBindingProvider.VALUE_TYPE_FLOAT32,0,4));
+  configureNumberItemBinding(2,SLAVE_NAME,0);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  verify(eventPublisher).postUpdate("Item1",new DecimalType(123456789.95623f));
+  verify(eventPublisher).postUpdate("Item2",new DecimalType(-123456789.1241243f));
+  verifyNoMoreInteractions(eventPublisher);
+}

@@ -1,0 +1,21 @@
+{
+  if (ServerType.TCP.equals(serverType)) {
+    tcpListener.stop();
+  }
+ else   if (ServerType.UDP.equals(serverType)) {
+    udpListener.stop();
+    System.err.println(udpModbusPort);
+  }
+ else   if (ServerType.SERIAL.equals(serverType)) {
+    try {
+      serialServerThread.join(100);
+    }
+ catch (    InterruptedException e) {
+      e.printStackTrace();
+    }
+    serialServerThread.interrupt();
+  }
+ else {
+    throw new NotImplementedException();
+  }
+}

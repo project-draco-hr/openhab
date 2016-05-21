@@ -1,0 +1,18 @@
+{
+  udpListener=new ModbusUDPListener(localAddress(),udpTerminalFactory);
+  for (int portCandidate=10000 + udpServerIndex.increment(); portCandidate < 20000; portCandidate++) {
+    try {
+      DatagramSocket socket=new DatagramSocket(portCandidate);
+      socket.close();
+      udpListener.setPort(portCandidate);
+      break;
+    }
+ catch (    SocketException e) {
+      continue;
+    }
+  }
+  udpListener.start();
+  waitForUDPServerStartup();
+  Assert.assertNotSame(-1,udpModbusPort);
+  Assert.assertNotSame(0,udpModbusPort);
+}

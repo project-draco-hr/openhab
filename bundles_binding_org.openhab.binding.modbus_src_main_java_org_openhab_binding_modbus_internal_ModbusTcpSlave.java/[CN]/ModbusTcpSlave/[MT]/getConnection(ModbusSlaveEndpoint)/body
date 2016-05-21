@@ -1,0 +1,11 @@
+{
+  ModbusSlaveConnection connection=super.getConnection(endpoint);
+  if (connection == null) {
+    return null;
+  }
+  if (!(connection instanceof TCPMasterConnection)) {
+    throw new IllegalStateException("Should not happen: wrong connection type for slave " + name);
+  }
+  ((ModbusTCPTransaction)transaction).setConnection((TCPMasterConnection)connection);
+  return connection;
+}

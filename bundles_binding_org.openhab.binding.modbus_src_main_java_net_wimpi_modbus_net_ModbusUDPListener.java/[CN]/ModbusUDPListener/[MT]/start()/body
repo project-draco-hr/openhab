@@ -1,11 +1,6 @@
 {
   try {
-    if (m_Interface == null) {
-      m_Terminal=new UDPSlaveTerminal(InetAddress.getLocalHost());
-    }
- else {
-      m_Terminal=new UDPSlaveTerminal(m_Interface);
-    }
+    m_Terminal=m_TerminalFactory.create(m_Interface == null ? InetAddress.getLocalHost() : m_Interface,m_Port);
     m_Terminal.setLocalPort(m_Port);
     m_Terminal.activate();
     m_Handler=new ModbusUDPHandler(m_Terminal.getModbusTransport());

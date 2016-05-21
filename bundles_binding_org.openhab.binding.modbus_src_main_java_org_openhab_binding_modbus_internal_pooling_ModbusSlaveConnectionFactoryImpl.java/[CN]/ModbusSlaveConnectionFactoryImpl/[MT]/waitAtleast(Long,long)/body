@@ -1,0 +1,14 @@
+{
+  if (lastOperation == null) {
+    return 0;
+  }
+  long millisSinceLast=System.currentTimeMillis() - lastOperation;
+  long millisToWaitStill=Math.min(waitMillis,Math.max(0,waitMillis - millisSinceLast));
+  try {
+    Thread.sleep(millisToWaitStill);
+  }
+ catch (  InterruptedException e) {
+    logger.error("wait interrupted: {}",e.getMessage());
+  }
+  return millisToWaitStill;
+}

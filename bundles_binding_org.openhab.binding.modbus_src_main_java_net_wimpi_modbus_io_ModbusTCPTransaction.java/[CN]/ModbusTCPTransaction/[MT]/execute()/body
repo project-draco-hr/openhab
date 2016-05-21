@@ -11,8 +11,8 @@
         throw new ModbusIOException("Connecting failed.");
       }
     }
-    int retryCounter=0;
-    while (retryCounter <= m_Retries) {
+    int tries=0;
+    do {
       try {
         m_Request.setTransactionID(c_TransactionID.increment());
         m_IO.writeMessage(m_Request);
@@ -20,14 +20,18 @@
         break;
       }
  catch (      ModbusIOException ex) {
-        if (retryCounter == m_Retries) {
+        tries++;
+        logger.error("execute try {}/{} error: {}. Request: {} (unit id {} & transaction {}). Address: {}:{}",tries,m_Retries,ex.getMessage(),m_Request,m_Request.getUnitID(),m_Request.getTransactionID(),m_Connection.getAddress(),m_Connection.getPort());
+        if (tries >= m_Retries) {
+          logger.error("execute reached max tries {}, throwing last error: {}. Request: {}. Address: {}:{}",m_Retries,ex.getMessage(),m_Request,m_Connection.getAddress(),m_Connection.getPort());
           throw new ModbusIOException("Executing transaction failed (tried " + m_Retries + " times)");
         }
- else {
-          retryCounter++;
-          continue;
-        }
+        Thread.sleep(m_RetryDelayMillis);
       }
+    }
+ while (true);
+    if (tries > 0) {
+      logger.info("execute eventually succeeded with {} re-tries. Request: {}. Address: {}:{}",tries,m_Request,m_Connection.getAddress(),m_Connection.getPort());
     }
     if (m_Response instanceof ExceptionResponse) {
       throw new ModbusSlaveException(((ExceptionResponse)m_Response).getExceptionCode());

@@ -1,0 +1,13 @@
+{
+  ModbusSlaveConnection connection=null;
+  long start=System.currentTimeMillis();
+  try {
+    connection=connectionPool.borrowObject(endpoint);
+  }
+ catch (  Exception e) {
+    invalidate(endpoint,connection);
+    logger.warn("ModbusSlave ({}): Error getting a new connection for endpoint {}. Error was: {}",name,endpoint,e.getMessage());
+  }
+  logger.trace("ModbusSlave ({}): borrowing connection (got {}) for endpoint {} took {} ms",name,connection,endpoint,System.currentTimeMillis() - start);
+  return connection;
+}

@@ -1,0 +1,28 @@
+{
+  byte[] registerData=int32AsRegisters(123456789);
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[0],registerData[1]));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[2],registerData[3]));
+  registerData=int32AsRegisters(-123456789);
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[0],registerData[1]));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[2],registerData[3]));
+  registerData=int32AsRegisters(123456788);
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[0],registerData[1]));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance(registerData[2],registerData[3]));
+  binding=new ModbusBinding();
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,ModbusBindingProvider.VALUE_TYPE_UINT32,nonZeroOffset ? 1 : 0,4));
+  configureNumberItemBinding(2,SLAVE_NAME,0);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  if (nonZeroOffset) {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(3440769188L));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(854263643));
+  }
+ else {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(123456789));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(4294967296L - 123456789L));
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

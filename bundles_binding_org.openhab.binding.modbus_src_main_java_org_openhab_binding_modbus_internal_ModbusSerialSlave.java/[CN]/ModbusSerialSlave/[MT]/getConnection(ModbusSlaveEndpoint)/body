@@ -1,0 +1,12 @@
+{
+  ModbusSlaveConnection connection=super.getConnection(endpoint);
+  if (connection == null) {
+    return null;
+  }
+  if (!(connection instanceof SerialConnection)) {
+    throw new IllegalStateException("Should not happen: wrong connection type for slave " + name);
+  }
+  SerialConnection serialConnection=(SerialConnection)connection;
+  ((ModbusSerialTransaction)transaction).setSerialConnection(serialConnection);
+  return connection;
+}

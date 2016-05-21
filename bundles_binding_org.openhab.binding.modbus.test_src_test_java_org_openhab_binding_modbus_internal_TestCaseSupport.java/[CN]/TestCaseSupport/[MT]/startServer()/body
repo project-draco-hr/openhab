@@ -1,0 +1,18 @@
+{
+  spi=new SimpleProcessImage();
+  ModbusCoupler.getReference().setProcessImage(spi);
+  ModbusCoupler.getReference().setMaster(false);
+  ModbusCoupler.getReference().setUnitID(SLAVE_UNIT_ID);
+  if (ServerType.TCP.equals(serverType)) {
+    startTCPServer();
+  }
+ else   if (ServerType.UDP.equals(serverType)) {
+    startUDPServer();
+  }
+ else   if (ServerType.SERIAL.equals(serverType)) {
+    startSerialServer();
+  }
+ else {
+    throw new NotImplementedException();
+  }
+}

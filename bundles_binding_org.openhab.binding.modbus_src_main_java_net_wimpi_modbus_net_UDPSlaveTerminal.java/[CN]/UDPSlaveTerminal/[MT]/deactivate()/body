@@ -2,9 +2,11 @@
   try {
     if (m_Active) {
       m_PacketReceiver.stop();
-      m_Receiver.join();
+      m_Receiver.join(m_DeactivationWaitMillis);
+      m_Receiver.interrupt();
       m_PacketSender.stop();
-      m_Sender.join();
+      m_Sender.join(m_DeactivationWaitMillis);
+      m_Sender.interrupt();
       m_Socket.close();
       m_ModbusTransport=null;
       m_Active=false;

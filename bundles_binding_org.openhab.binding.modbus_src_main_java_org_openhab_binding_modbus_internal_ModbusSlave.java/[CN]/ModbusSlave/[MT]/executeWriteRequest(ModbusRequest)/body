@@ -1,0 +1,24 @@
+{
+  ModbusSlaveEndpoint endpoint=getEndpoint();
+  ModbusSlaveConnection connection=null;
+  try {
+    connection=getConnection(endpoint);
+    if (connection == null) {
+      logger.warn("ModbusSlave ({}): not connected -- aborting request {}",name,request);
+      return;
+    }
+    transaction.setRequest(request);
+    try {
+      transaction.execute();
+    }
+ catch (    Exception e) {
+      logger.error("ModbusSlave ({}): error when executing write request ({}): {}",name,request,e.getMessage());
+      invalidate(endpoint,connection);
+      connection=null;
+      return;
+    }
+  }
+  finally {
+    returnConnection(endpoint,connection);
+  }
+}

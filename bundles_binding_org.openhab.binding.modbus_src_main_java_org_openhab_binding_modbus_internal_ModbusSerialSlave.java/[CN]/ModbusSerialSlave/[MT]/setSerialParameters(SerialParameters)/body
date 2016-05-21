@@ -1,0 +1,9 @@
+{
+  if (isEncodingValid(serialParameters.getEncoding())) {
+    this.serialParameters=serialParameters;
+  }
+ else {
+    logger.warn("Encoding '{}' is unknown. Ignoring configured serial parameters",serialParameters.getEncoding());
+  }
+  endpoint=new ModbusSerialSlaveEndpoint(this.serialParameters);
+}

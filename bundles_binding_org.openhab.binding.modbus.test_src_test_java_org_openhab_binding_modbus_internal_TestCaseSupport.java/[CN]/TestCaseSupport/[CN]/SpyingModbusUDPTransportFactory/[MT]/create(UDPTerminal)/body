@@ -1,0 +1,10 @@
+{
+  ModbusTransport transport=spy(super.create(terminal));
+  try {
+    doAnswer(modbustRequestCaptor).when(transport).readRequest();
+  }
+ catch (  ModbusIOException e) {
+    throw new RuntimeException(e);
+  }
+  return transport;
+}

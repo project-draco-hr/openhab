@@ -1,3 +1,10 @@
 {
-  m_Interface=ifc;
+  this(ifc,new UDPSlaveTerminalFactory(){
+    @Override public UDPSlaveTerminal create(    InetAddress interfac,    int port){
+      UDPSlaveTerminal terminal=new UDPSlaveTerminal(interfac);
+      terminal.setLocalPort(port);
+      return terminal;
+    }
+  }
+);
 }

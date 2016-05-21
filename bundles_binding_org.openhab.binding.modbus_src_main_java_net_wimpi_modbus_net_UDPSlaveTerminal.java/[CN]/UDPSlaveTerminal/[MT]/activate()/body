@@ -25,7 +25,7 @@
     m_Sender=new Thread(m_PacketSender);
     m_Sender.start();
     logger.debug("UDPSlaveTerminal::sender started()");
-    m_ModbusTransport=new ModbusUDPTransport(this);
+    m_ModbusTransport=m_TransportFactory.create(this);
     logger.debug("UDPSlaveTerminal::transport created");
     m_Active=true;
   }

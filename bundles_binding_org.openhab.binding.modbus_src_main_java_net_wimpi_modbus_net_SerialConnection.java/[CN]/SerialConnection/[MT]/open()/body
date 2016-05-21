@@ -1,4 +1,7 @@
 {
+  if (isOpen()) {
+    return;
+  }
   if (SystemUtils.IS_OS_LINUX) {
     File portDevFile=new File(m_Parameters.getPortName());
     if (!portDevFile.exists()) {
@@ -10,7 +13,7 @@
   }
  catch (  NoSuchPortException e) {
     final String errMsg="Could not get port identifier, maybe insufficient permissions. " + e.getMessage();
-    logger.debug(errMsg);
+    logger.error(errMsg);
     throw new Exception(errMsg);
   }
   logger.trace("Got Port Identifier");
@@ -18,8 +21,9 @@
     m_SerialPort=m_PortIdentifyer.open("Modbus Serial Master",30000);
   }
  catch (  PortInUseException e) {
-    logger.debug("open port failed: " + e.getMessage());
-    throw new Exception(e.getMessage());
+    String msg="open port failed: " + e.getMessage();
+    logger.error(msg);
+    throw new Exception(msg);
   }
   logger.trace("Got Serial Port");
   try {
@@ -27,15 +31,15 @@
   }
  catch (  Exception e) {
     m_SerialPort.close();
-    logger.debug("parameter setup failed: " + e.getMessage());
+    logger.error("parameter setup failed: " + e.getMessage());
     throw e;
   }
+  setReceiveTimeout(m_Parameters.getReceiveTimeoutMillis());
   if (Modbus.SERIAL_ENCODING_ASCII.equals(m_Parameters.getEncoding())) {
     m_Transport=new ModbusASCIITransport();
   }
  else   if (Modbus.SERIAL_ENCODING_RTU.equals(m_Parameters.getEncoding())) {
     m_Transport=new ModbusRTUTransport();
-    setReceiveTimeout(m_Parameters.getReceiveTimeout());
   }
  else   if (Modbus.SERIAL_ENCODING_BIN.equals(m_Parameters.getEncoding())) {
     m_Transport=new ModbusBINTransport();
@@ -47,8 +51,9 @@
   }
  catch (  IOException e) {
     m_SerialPort.close();
-    logger.debug(e.getMessage());
-    throw new Exception("Error opening i/o streams");
+    String msg="Error opening i/o streams: " + e.getMessage();
+    logger.error(msg);
+    throw new Exception(msg);
   }
   logger.trace("i/o Streams prepared");
   try {
@@ -56,8 +61,8 @@
   }
  catch (  TooManyListenersException e) {
     m_SerialPort.close();
-    final String errMsg="too many listeners added";
-    logger.debug("{}: {}",errMsg,e.getMessage());
+    final String errMsg="too many listeners added: " + e.getMessage();
+    logger.error(errMsg);
     throw new Exception(errMsg);
   }
   m_SerialPort.notifyOnBreakInterrupt(true);

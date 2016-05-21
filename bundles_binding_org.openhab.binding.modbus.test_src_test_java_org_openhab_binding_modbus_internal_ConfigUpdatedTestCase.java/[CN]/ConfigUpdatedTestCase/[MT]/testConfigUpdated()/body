@@ -1,0 +1,24 @@
+{
+  spi.addDigitalIn(new SimpleDigitalIn(true));
+  spi.addDigitalIn(new SimpleDigitalIn(false));
+  binding=new ModbusBinding();
+  for (int i=0; i < 2; i++) {
+    binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,ModbusBindingProvider.TYPE_DISCRETE,null,0,2));
+  }
+  configureSwitchItemBinding(2,SLAVE_NAME,0);
+  binding.execute();
+  waitForRequests(1);
+  if (!serverType.equals(ServerType.UDP)) {
+    waitForConnectionsReceived(1);
+  }
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  try {
+    verify(eventPublisher).postUpdate("Item1",OnOffType.ON);
+    verify(eventPublisher).postUpdate("Item2",OnOffType.OFF);
+  }
+ catch (  AssertionError e) {
+    throw new ExpectedFailure();
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

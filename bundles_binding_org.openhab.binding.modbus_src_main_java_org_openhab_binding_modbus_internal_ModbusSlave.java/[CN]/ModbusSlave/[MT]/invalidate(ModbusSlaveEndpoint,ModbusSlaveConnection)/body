@@ -1,0 +1,11 @@
+{
+  if (connection == null) {
+    return;
+  }
+  try {
+    connectionPool.invalidateObject(endpoint,connection);
+  }
+ catch (  Exception e) {
+    logger.warn("ModbusSlave ({}): Error invalidating connection in pool for endpoint {}. Error was: {}",name,endpoint,e.getMessage());
+  }
+}

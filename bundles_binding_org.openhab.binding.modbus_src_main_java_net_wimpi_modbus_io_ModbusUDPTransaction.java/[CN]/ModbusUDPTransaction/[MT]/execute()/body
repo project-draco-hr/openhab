@@ -13,6 +13,9 @@
     }
     m_RetryCounter=0;
     while (m_RetryCounter <= m_Retries) {
+      if (m_RetryCounter != 0) {
+        Thread.sleep(m_RetryDelayMillis);
+      }
       try {
         m_Request.setTransactionID(c_TransactionID.increment());
 synchronized (m_IO) {

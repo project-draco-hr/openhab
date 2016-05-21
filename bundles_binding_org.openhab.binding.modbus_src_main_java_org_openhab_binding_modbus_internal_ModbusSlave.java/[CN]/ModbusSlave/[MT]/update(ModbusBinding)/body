@@ -1,9 +1,4 @@
 {
-  if (!connect()) {
-    resetConnection();
-    logger.info("ModbusSlave not connected");
-    return;
-  }
   try {
     Object local=null;
     if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
@@ -13,21 +8,37 @@
       }
       request.setUnitID(id);
       ReadCoilsResponse response=(ReadCoilsResponse)getModbusData(request);
+      if (response == null) {
+        logger.debug("Could not read from the slave");
+        return;
+      }
       local=response.getCoils();
     }
  else     if (ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
       ModbusRequest request=new ReadInputDiscretesRequest(getStart(),getLength());
       ReadInputDiscretesResponse response=(ReadInputDiscretesResponse)getModbusData(request);
+      if (response == null) {
+        logger.debug("Could not read from the slave");
+        return;
+      }
       local=response.getDiscretes();
     }
  else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
       ModbusRequest request=new ReadMultipleRegistersRequest(getStart(),getLength());
       ReadMultipleRegistersResponse response=(ReadMultipleRegistersResponse)getModbusData(request);
+      if (response == null) {
+        logger.debug("Could not read from the slave");
+        return;
+      }
       local=response.getRegisters();
     }
  else     if (ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
       ModbusRequest request=new ReadInputRegistersRequest(getStart(),getLength());
       ReadInputRegistersResponse response=(ReadInputRegistersResponse)getModbusData(request);
+      if (response == null) {
+        logger.debug("Could not read from the slave");
+        return;
+      }
       local=response.getRegisters();
     }
     if (storage == null) {
@@ -44,7 +55,6 @@ synchronized (storage) {
     }
   }
  catch (  Exception e) {
-    resetConnection();
-    logger.info("ModbusSlave error getting response from slave:",e);
+    logger.error("ModbusSlave ({}) error getting response from slave",name,e);
   }
 }

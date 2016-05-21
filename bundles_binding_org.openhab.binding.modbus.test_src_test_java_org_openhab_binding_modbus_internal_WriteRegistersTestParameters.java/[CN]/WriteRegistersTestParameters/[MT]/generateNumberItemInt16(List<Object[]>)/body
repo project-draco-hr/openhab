@@ -1,0 +1,25 @@
+{
+  Command[] decimal_12345=new Command[]{new DecimalType(12345)};
+  Command[] decimal_minus_12345=new Command[]{new DecimalType(-12345)};
+  Command[] decimal_53191=new Command[]{new DecimalType(53191)};
+  short[] reg_int16_12345=new short[]{0x3039};
+  short[] reg_uint16_12345=reg_int16_12345;
+  short[] reg_int16_minus_12345=new short[]{(short)0xCFC7};
+  short[] reg_uint16_minus_12345=reg_int16_minus_12345;
+  Command[] decimal_12345_pt_5=new Command[]{new DecimalType(12345.5)};
+  Command[] decimal_minus_12345_pt_5=new Command[]{new DecimalType(-12345.5)};
+  for (  Command command : Arrays.asList(decimal_12345[0],decimal_12345_pt_5[0])) {
+    parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_int16_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_INT16},new Command[]{command}));
+  }
+  for (  Command command : Arrays.asList(decimal_minus_12345[0],decimal_minus_12345_pt_5[0])) {
+    parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_int16_minus_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_INT16},new Command[]{command}));
+  }
+  parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_int16_minus_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_INT16},decimal_53191));
+  for (  Command command : Arrays.asList(decimal_12345[0],decimal_12345_pt_5[0])) {
+    parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_uint16_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_UINT16},new Command[]{command}));
+  }
+  for (  Command command : Arrays.asList(decimal_minus_12345[0],decimal_minus_12345_pt_5[0])) {
+    parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_uint16_minus_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_UINT16},new Command[]{command}));
+  }
+  parameters.addAll(WriteRegistersTestParameters.generateParameters(new short[]{0xFFF,0xFFF,0xFFF,0xFFF,0xFFF},new DecimalType(.0),reg_uint16_minus_12345,false,new String[]{ModbusBindingProvider.TYPE_INPUT,ModbusBindingProvider.TYPE_HOLDING},new String[]{ModbusBindingProvider.VALUE_TYPE_UINT16},decimal_53191));
+}

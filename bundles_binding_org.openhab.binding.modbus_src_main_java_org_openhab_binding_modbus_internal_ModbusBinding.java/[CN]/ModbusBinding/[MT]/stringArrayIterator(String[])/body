@@ -1,0 +1,13 @@
+{
+  Iterator<String> settingIterator=new Iterator<String>(){
+    private ResettableIterator inner=IteratorUtils.arrayIterator(chunks);
+    @Override public String next(){
+      return (String)inner.next();
+    }
+    @Override public boolean hasNext(){
+      return inner.hasNext();
+    }
+  }
+;
+  return settingIterator;
+}

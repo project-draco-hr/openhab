@@ -1,0 +1,17 @@
+{
+  spi.addDigitalIn(new SimpleDigitalIn(true));
+  spi.addDigitalOut(new SimpleDigitalOut(true));
+  spi.addDigitalOut(new SimpleDigitalOut(false));
+  binding=new ModbusBinding();
+  Dictionary<String,Object> config=newLongPollBindingConfig();
+  addSlave(config,SLAVE_NAME,ModbusBindingProvider.TYPE_DISCRETE,null,0,2);
+  binding.updated(config);
+  final ModbusGenericBindingProvider provider=new ModbusGenericBindingProvider();
+  provider.processBindingConfiguration("test.items",new SwitchItem("Item1"),String.format("%s:%d",SLAVE_NAME,0));
+  binding.setEventPublisher(eventPublisher);
+  binding.addBindingProvider(provider);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verifyNoMoreInteractions(eventPublisher);
+}

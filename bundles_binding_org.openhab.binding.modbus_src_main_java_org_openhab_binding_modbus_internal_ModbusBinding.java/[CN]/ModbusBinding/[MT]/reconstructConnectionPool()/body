@@ -1,0 +1,11 @@
+{
+  connectionFactory=new ModbusSlaveConnectionFactoryImpl();
+  GenericKeyedObjectPool<ModbusSlaveEndpoint,ModbusSlaveConnection> genericKeyedObjectPool=new GenericKeyedObjectPool<ModbusSlaveEndpoint,ModbusSlaveConnection>(connectionFactory,poolConfig);
+  genericKeyedObjectPool.setSwallowedExceptionListener(new SwallowedExceptionListener(){
+    @Override public void onSwallowException(    Exception e){
+      logger.error("Connection pool swallowed unexpected exception: {}",e.getMessage());
+    }
+  }
+);
+  connectionPool=genericKeyedObjectPool;
+}

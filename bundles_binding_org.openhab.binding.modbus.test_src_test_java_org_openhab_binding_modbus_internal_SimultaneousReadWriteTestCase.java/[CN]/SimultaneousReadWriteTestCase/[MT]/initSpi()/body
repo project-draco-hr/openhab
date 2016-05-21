@@ -1,0 +1,11 @@
+{
+  int registerCount=registerInitialValues.length;
+  for (int i=0; i < registerCount; i++) {
+    if (ModbusBindingProvider.TYPE_HOLDING.equals(type)) {
+      spi.addRegister(new SimpleRegister(registerInitialValues[i]));
+    }
+ else     if (ModbusBindingProvider.TYPE_INPUT.equals(type)) {
+      spi.addInputRegister(new SimpleInputRegister(registerInitialValues[i]));
+    }
+  }
+}

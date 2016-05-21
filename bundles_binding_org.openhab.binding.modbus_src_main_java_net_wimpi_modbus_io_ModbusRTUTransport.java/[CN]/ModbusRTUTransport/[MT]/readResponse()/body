@@ -5,7 +5,9 @@
   try {
     do {
 synchronized (m_ByteIn) {
+        m_CommPort.enableReceiveThreshold(1);
         int uid=m_InputStream.read();
+        logger.trace("Managed to read at least one byte");
         if (uid != -1) {
           int fc=m_InputStream.read();
           m_ByteInOut.reset();
@@ -23,7 +25,7 @@ synchronized (m_ByteIn) {
           }
         }
  else {
-          throw new IOException("Error reading response");
+          throw new IOException("Error reading response (EOF)");
         }
         m_ByteIn.reset(m_InBuffer,dlength);
         if (response != null) {
@@ -40,5 +42,8 @@ synchronized (m_ByteIn) {
     logger.error("Last request: {}",ModbusUtil.toHex(lastRequest));
     logger.error("{}: {}",errMsg,ex.getMessage());
     throw new ModbusIOException("I/O exception - " + errMsg);
+  }
+ finally {
+    m_CommPort.disableReceiveThreshold();
   }
 }

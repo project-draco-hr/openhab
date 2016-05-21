@@ -1,0 +1,27 @@
+{
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance((byte)1,(byte)2));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance((byte)3,(byte)-4));
+  addRegisterMethod.invoke(spi,constructRegister2Byte.newInstance((byte)5,(byte)6));
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(99));
+  binding=new ModbusBinding();
+  binding.updated(addSlave(newLongPollBindingConfig(),SLAVE_NAME,type,ModbusBindingProvider.VALUE_TYPE_INT8,nonZeroOffset ? 1 : 0,2));
+  configureNumberItemBinding(4,SLAVE_NAME,0);
+  binding.execute();
+  waitForConnectionsReceived(1);
+  waitForRequests(1);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  if (nonZeroOffset) {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(-4));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(3));
+    verify(eventPublisher).postUpdate("Item3",new DecimalType(6));
+    verify(eventPublisher).postUpdate("Item4",new DecimalType(5));
+  }
+ else {
+    verify(eventPublisher).postUpdate("Item1",new DecimalType(2));
+    verify(eventPublisher).postUpdate("Item2",new DecimalType(1));
+    verify(eventPublisher).postUpdate("Item3",new DecimalType(-4));
+    verify(eventPublisher).postUpdate("Item4",new DecimalType(3));
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

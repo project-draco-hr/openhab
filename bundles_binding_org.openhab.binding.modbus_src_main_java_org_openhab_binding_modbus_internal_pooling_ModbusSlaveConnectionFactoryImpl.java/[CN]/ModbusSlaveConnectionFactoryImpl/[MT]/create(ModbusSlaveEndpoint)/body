@@ -1,0 +1,28 @@
+{
+  return endpoint.accept(new ModbusSlaveEndpointVisitor<ModbusSlaveConnection>(){
+    @Override public ModbusSlaveConnection visit(    ModbusSerialSlaveEndpoint modbusSerialSlavePoolingKey){
+      SerialConnection connection=new SerialConnection(modbusSerialSlavePoolingKey.getSerialParameters());
+      logger.trace("Created connection {} for endpoint {}",connection,modbusSerialSlavePoolingKey);
+      return connection;
+    }
+    @Override public ModbusSlaveConnection visit(    ModbusTCPSlaveEndpoint key){
+      InetAddress address=getInetAddress(key);
+      if (address == null) {
+        return null;
+      }
+      TCPMasterConnection connection=new TCPMasterConnection(address,key.getPort());
+      logger.trace("Created connection {} for endpoint {}",connection,key);
+      return connection;
+    }
+    @Override public ModbusSlaveConnection visit(    ModbusUDPSlaveEndpoint key){
+      InetAddress address=getInetAddress(key);
+      if (address == null) {
+        return null;
+      }
+      UDPMasterConnection connection=new UDPMasterConnection(address,key.getPort());
+      logger.trace("Created connection {} for endpoint {}",connection,key);
+      return connection;
+    }
+  }
+);
+}

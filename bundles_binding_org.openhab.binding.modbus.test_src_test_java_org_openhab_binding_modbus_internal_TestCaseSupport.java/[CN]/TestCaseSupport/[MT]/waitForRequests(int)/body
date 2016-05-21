@@ -1,0 +1,23 @@
+{
+  int sleepMillis=10;
+  int waited=0;
+  AssertionError lastError=new AssertionError("Connections not established in time!");
+  while (waited < MAX_WAIT_REQUESTS_MILLIS) {
+    try {
+      assertThat(modbustRequestCaptor.getAllReturnValues().size(),is(equalTo(expectedRequestCount)));
+    }
+ catch (    AssertionError e) {
+      lastError=e;
+      try {
+        Thread.sleep(sleepMillis);
+        waited+=sleepMillis;
+      }
+ catch (      InterruptedException e1) {
+        throw new AssertionError("test interrupted");
+      }
+      continue;
+    }
+    return;
+  }
+  throw lastError;
+}

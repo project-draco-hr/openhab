@@ -13,9 +13,10 @@ case 0x11:
 case 0x14:
 case 0x15:
 case 0x17:
-      bc=m_InputStream.read();
-    out.write(bc);
-  setReceiveThreshold(bc + 2);
+      setReceiveThreshold(1);
+    bc=m_InputStream.read();
+  out.write(bc);
+setReceiveThreshold(bc + 2);
 inpBytes=m_InputStream.read(inpBuf,0,bc + 2);
 out.write(inpBuf,0,inpBytes);
 m_CommPort.disableReceiveThreshold();
@@ -47,6 +48,7 @@ out.write(inpBuf,0,inpBytes);
 m_CommPort.disableReceiveThreshold();
 break;
 case 0x18:
+setReceiveThreshold(1);
 bc=m_InputStream.read();
 out.write(bc);
 bc2=m_InputStream.read();

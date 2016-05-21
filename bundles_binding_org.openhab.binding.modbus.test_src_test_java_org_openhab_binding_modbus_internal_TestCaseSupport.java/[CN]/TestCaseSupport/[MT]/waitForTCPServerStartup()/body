@@ -1,0 +1,11 @@
+{
+  int sleep_millis=5;
+  int total_try_millis=10000;
+  for (int tries=0; tries < Math.max(1,total_try_millis / sleep_millis); tries++) {
+    tcpModbusPort=tcpListener.getLocalPort();
+    if (tcpModbusPort != -1) {
+      break;
+    }
+    Thread.sleep(sleep_millis);
+  }
+}

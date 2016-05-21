@@ -1,0 +1,39 @@
+{
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(2));
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(-4));
+  addRegisterMethod.invoke(spi,constructRegisterInt.newInstance(99));
+  binding=new ModbusBinding();
+  Dictionary<String,Object> cfg=newLongPollBindingConfig();
+  for (  String valueType : new String[]{ModbusBindingProvider.VALUE_TYPE_BIT,ModbusBindingProvider.VALUE_TYPE_UINT8,ModbusBindingProvider.VALUE_TYPE_INT16}) {
+    addSlave(cfg,SLAVE_NAME + valueType,type,valueType,nonZeroOffset ? 1 : 0,2);
+  }
+  binding.updated(cfg);
+  configureSwitchItemBinding(32,SLAVE_NAME + ModbusBindingProvider.VALUE_TYPE_BIT,0,"B",null);
+  configureNumberItemBinding(4,SLAVE_NAME + ModbusBindingProvider.VALUE_TYPE_UINT8,0,"UI8",null);
+  binding.execute();
+  waitForConnectionsReceived(3);
+  waitForRequests(3);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  if (nonZeroOffset) {
+    verifyBitItems(new StringBuffer("1111111111111100").reverse().toString(),0,"B");
+    verifyBitItems(new StringBuffer("0000000001100011").reverse().toString(),16,"B");
+  }
+ else {
+    verifyBitItems(new StringBuffer("0000000000000010").reverse().toString(),0,"B");
+    verifyBitItems(new StringBuffer("1111111111111100").reverse().toString(),16,"B");
+  }
+  if (nonZeroOffset) {
+    verify(eventPublisher).postUpdate("UI8Item1",new DecimalType(0xFC));
+    verify(eventPublisher).postUpdate("UI8Item2",new DecimalType(0xFF));
+    verify(eventPublisher).postUpdate("UI8Item3",new DecimalType(0x63));
+    verify(eventPublisher).postUpdate("UI8Item4",new DecimalType(0x00));
+  }
+ else {
+    verify(eventPublisher).postUpdate("UI8Item1",new DecimalType(0x02));
+    verify(eventPublisher).postUpdate("UI8Item2",new DecimalType(0x00));
+    verify(eventPublisher).postUpdate("UI8Item3",new DecimalType(0xFC));
+    verify(eventPublisher).postUpdate("UI8Item4",new DecimalType(0xFF));
+  }
+  verifyNoMoreInteractions(eventPublisher);
+}

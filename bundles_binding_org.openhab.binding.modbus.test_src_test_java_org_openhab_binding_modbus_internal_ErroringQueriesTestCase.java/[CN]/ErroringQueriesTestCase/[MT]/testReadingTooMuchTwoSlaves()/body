@@ -1,0 +1,29 @@
+{
+  spi.addDigitalOut(new SimpleDigitalOut(true));
+  spi.addDigitalIn(new SimpleDigitalIn(true));
+  spi.addDigitalIn(new SimpleDigitalIn(false));
+  binding=new ModbusBinding();
+  Dictionary<String,Object> config=newLongPollBindingConfig();
+  addSlave(config,SLAVE_NAME,ModbusBindingProvider.TYPE_COIL,null,0,2);
+  addSlave(config,SLAVE2_NAME,ModbusBindingProvider.TYPE_DISCRETE,null,0,2);
+  binding.updated(config);
+  final ModbusGenericBindingProvider provider=new ModbusGenericBindingProvider();
+  provider.processBindingConfiguration("test.items",new SwitchItem("Item1"),String.format("%s:%d",SLAVE_NAME,0));
+  provider.processBindingConfiguration("test.items",new SwitchItem("Item2"),String.format("%s:%d",SLAVE2_NAME,1));
+  provider.processBindingConfiguration("test.items",new SwitchItem("Item3"),String.format("%s:%d",SLAVE2_NAME,2));
+  binding.setEventPublisher(eventPublisher);
+  binding.addBindingProvider(provider);
+  binding.execute();
+  waitForConnectionsReceived(2);
+  waitForRequests(2);
+  verify(eventPublisher,never()).postCommand(null,null);
+  verify(eventPublisher,never()).sendCommand(null,null);
+  try {
+    verify(eventPublisher).postUpdate("Item2",OnOffType.ON);
+    verify(eventPublisher).postUpdate("Item3",OnOffType.OFF);
+    verifyNoMoreInteractions(eventPublisher);
+  }
+ catch (  AssertionError e) {
+    throw new ExpectedFailure();
+  }
+}

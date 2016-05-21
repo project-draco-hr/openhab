@@ -1,0 +1,16 @@
+{
+  for (int bitIndex=0; bitIndex < expectedBits.length(); bitIndex++) {
+    char bit=expectedBits.charAt(bitIndex);
+    State state;
+    if (bit == '0') {
+      state=OnOffType.OFF;
+    }
+ else     if (bit == '1') {
+      state=OnOffType.ON;
+    }
+ else {
+      throw new RuntimeException("invalid testdata");
+    }
+    verify(eventPublisher).postUpdate(String.format("%sItem%d",itemPrefix,bitIndex + itemOffset + 1),state);
+  }
+}

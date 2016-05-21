@@ -1,0 +1,19 @@
+{
+  ArrayList<Object[]> parameters=new ArrayList<Object[]>();
+  for (  ServerType serverType : TEST_SERVERS) {
+    for (    boolean discreteInputInitialValue : new Boolean[]{true,false}) {
+      for (      boolean coilInitialValue : new Boolean[]{true,false}) {
+        for (        boolean nonZeroOffset : new Boolean[]{true,false}) {
+          for (          Command command : commands) {
+            for (            int itemIndex : new Integer[]{0,1}) {
+              for (              String type : new String[]{ModbusBindingProvider.TYPE_COIL,ModbusBindingProvider.TYPE_DISCRETE}) {
+                parameters.add(new Object[]{serverType,discreteInputInitialValue,coilInitialValue,nonZeroOffset,type,itemIndex,command,expectedValue});
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return parameters;
+}
