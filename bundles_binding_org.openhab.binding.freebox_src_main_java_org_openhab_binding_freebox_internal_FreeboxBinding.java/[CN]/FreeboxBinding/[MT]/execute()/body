@@ -255,7 +255,9 @@ Collections.sort(appels,comparator);
 for (FreeboxBindingProvider provider : providers) {
 Collection<String> items=provider.getItemNames();
 for (CallEntry call : appels) {
-if (call.getTimeStamp().after(lastPhoneCheck)) {
+Calendar callEndTime=call.getTimeStamp();
+callEndTime.add(Calendar.SECOND,(int)(call.getDuration()));
+if ((call.getDuration() > 0) && callEndTime.after(lastPhoneCheck)) {
 for (String itemName : items) {
 FreeboxBindingConfig bindingConfig=provider.getConfig(itemName);
 if (bindingConfig.commandParam == null || bindingConfig.commandParam.equalsIgnoreCase(call.getType())) {
@@ -278,9 +280,9 @@ break;
 }
 }
 }
+lastPhoneCheck=callEndTime;
 }
 }
-lastPhoneCheck.setTimeInMillis(System.currentTimeMillis());
 }
 }
  catch (FreeboxException e) {
