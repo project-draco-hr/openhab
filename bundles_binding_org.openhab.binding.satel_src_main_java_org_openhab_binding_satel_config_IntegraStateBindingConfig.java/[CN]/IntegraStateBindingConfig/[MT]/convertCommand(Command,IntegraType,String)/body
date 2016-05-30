@@ -1,0 +1,58 @@
+{
+  if (command instanceof OnOffType && this.objectNumbers.length == 1) {
+    boolean switchOn=((OnOffType)command == OnOffType.ON);
+    boolean force_arm=hasOptionEnabled(Options.FORCE_ARM);
+switch (this.stateType.getObjectType()) {
+case OUTPUT:
+      byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
+    boolean invertState=hasOptionEnabled(Options.INVERT_STATE);
+  return new ControlObjectCommand(switchOn ^ invertState ? OutputControl.ON : OutputControl.OFF,outputs,userCode);
+case DOORS:
+break;
+case ZONE:
+break;
+case PARTITION:
+byte[] partitions=getObjectBitset(4);
+switch ((PartitionState)this.stateType) {
+case ALARM:
+case ALARM_MEMORY:
+case FIRE_ALARM:
+case FIRE_ALARM_MEMORY:
+case VERIFIED_ALARMS:
+case WARNING_ALARMS:
+if (switchOn) {
+return null;
+}
+ else {
+return new ControlObjectCommand(PartitionControl.CLEAR_ALARM,partitions,userCode);
+}
+case ARMED:
+case REALLY_ARMED:
+return new ControlObjectCommand(switchOn ? (force_arm ? PartitionControl.FORCE_ARM_MODE_0 : PartitionControl.ARM_MODE_0) : PartitionControl.DISARM,partitions,userCode);
+case ARMED_MODE_1:
+return new ControlObjectCommand(switchOn ? (force_arm ? PartitionControl.FORCE_ARM_MODE_1 : PartitionControl.ARM_MODE_1) : PartitionControl.DISARM,partitions,userCode);
+case ARMED_MODE_2:
+return new ControlObjectCommand(switchOn ? (force_arm ? PartitionControl.FORCE_ARM_MODE_2 : PartitionControl.ARM_MODE_2) : PartitionControl.DISARM,partitions,userCode);
+case ARMED_MODE_3:
+return new ControlObjectCommand(switchOn ? (force_arm ? PartitionControl.FORCE_ARM_MODE_3 : PartitionControl.ARM_MODE_3) : PartitionControl.DISARM,partitions,userCode);
+default :
+break;
+}
+}
+}
+ else if (this.stateType.getObjectType() == ObjectType.OUTPUT && this.objectNumbers.length == 2) {
+if (command == UpDownType.UP) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16,0);
+return new ControlObjectCommand(OutputControl.ON,outputs,userCode);
+}
+ else if (command == UpDownType.DOWN) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16,1);
+return new ControlObjectCommand(OutputControl.ON,outputs,userCode);
+}
+ else if (command == StopMoveType.STOP) {
+byte[] outputs=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
+return new ControlObjectCommand(OutputControl.OFF,outputs,userCode);
+}
+}
+return null;
+}

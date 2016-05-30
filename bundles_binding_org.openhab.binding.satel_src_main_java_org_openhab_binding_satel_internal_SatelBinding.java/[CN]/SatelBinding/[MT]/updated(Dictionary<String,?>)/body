@@ -6,6 +6,13 @@
   ConfigurationDictionary configuration=new ConfigurationDictionary(config);
   this.refreshInterval=configuration.getLong("refresh",10000);
   this.userCode=configuration.getString("user_code");
+  this.textEncoding=configuration.getString("encoding","windows-1250");
+  try {
+    Charset.forName(this.textEncoding);
+  }
+ catch (  Exception e) {
+    throw new ConfigurationException("encoding","Specified character set is either incorrect or not supported: " + this.textEncoding);
+  }
   int timeout=configuration.getInt("timeout",5000);
   String host=configuration.getString("host");
   if (StringUtils.isNotBlank(host)) {

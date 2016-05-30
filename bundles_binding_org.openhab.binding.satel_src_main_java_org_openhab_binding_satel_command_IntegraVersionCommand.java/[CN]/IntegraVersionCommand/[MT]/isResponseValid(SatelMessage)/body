@@ -1,0 +1,11 @@
+{
+  if (response.getCommand() != COMMAND_CODE) {
+    logger.error("Invalid response code: {}",response.getCommand());
+    return false;
+  }
+  if (response.getPayload().length != 14) {
+    logger.error("Invalid payload length: {}",response.getPayload().length);
+    return false;
+  }
+  return true;
+}

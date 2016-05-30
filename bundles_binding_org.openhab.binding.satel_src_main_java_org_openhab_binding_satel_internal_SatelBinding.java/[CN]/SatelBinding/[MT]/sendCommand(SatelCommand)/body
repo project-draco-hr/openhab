@@ -1,0 +1,26 @@
+{
+  logger.debug("[SatelCommModule] sendCommand");
+  if (this.satelModule == null) {
+    return false;
+  }
+  if (!this.satelModule.sendCommand(command,true)) {
+    return false;
+  }
+  while (!Thread.interrupted()) {
+    try {
+synchronized (command) {
+        command.wait(this.satelModule.getTimeout());
+      }
+    }
+ catch (    InterruptedException e) {
+    }
+switch (command.getState()) {
+case SUCCEEDED:
+      return true;
+case FAILED:
+    return false;
+default :
+}
+}
+return false;
+}

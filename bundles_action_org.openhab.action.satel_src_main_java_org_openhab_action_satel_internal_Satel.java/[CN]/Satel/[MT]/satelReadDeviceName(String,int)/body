@@ -1,0 +1,26 @@
+{
+  if (!satelIsConnected()) {
+    logger.warn("Not connected to communication module or Satel binding not available.");
+    return null;
+  }
+  DeviceType devType;
+  try {
+    devType=DeviceType.valueOf(deviceType.toUpperCase());
+  }
+ catch (  Exception e) {
+    logger.warn("Invalid device type given: {}",deviceType);
+    return null;
+  }
+  ReadDeviceInfoCommand cmd=new ReadDeviceInfoCommand(devType,deviceNumber);
+  if (!SatelActionService.satelCommModule.sendCommand(cmd)) {
+    logger.warn("Unable to read device info: {}, {}",deviceType,deviceNumber);
+    return null;
+  }
+  try {
+    return cmd.getName(SatelActionService.satelCommModule.getTextEncoding());
+  }
+ catch (  UnsupportedEncodingException e) {
+    logger.error("Unsupported encoding: {}",SatelActionService.satelCommModule.getTextEncoding());
+    return null;
+  }
+}

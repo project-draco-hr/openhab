@@ -1,0 +1,15 @@
+{
+  if (response == null) {
+    return false;
+  }
+  if (response.getCommand() == COMMAND_RESULT_CODE) {
+    if (!hasCommandSucceeded(response)) {
+      return false;
+    }
+  }
+ else   if (!isResponseValid(response)) {
+    return false;
+  }
+  this.response=response;
+  return true;
+}

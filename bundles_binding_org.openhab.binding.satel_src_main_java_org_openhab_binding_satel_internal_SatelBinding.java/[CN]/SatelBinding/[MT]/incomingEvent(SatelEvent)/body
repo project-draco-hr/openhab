@@ -1,9 +1,9 @@
 {
   logger.trace("Handling incoming event: {}",event);
   if (event instanceof NewStatesEvent) {
-    List<SatelMessage> commands=getRefreshCommands((NewStatesEvent)event);
-    for (    SatelMessage message : commands) {
-      this.satelModule.sendCommand(message);
+    List<SatelCommand> commands=getRefreshCommands((NewStatesEvent)event);
+    for (    SatelCommand command : commands) {
+      this.satelModule.sendCommand(command);
     }
   }
   if (event instanceof ConnectionStatusEvent) {

@@ -1,0 +1,19 @@
+{
+  if (!satelIsConnected()) {
+    logger.warn("Not connected to communication module or Satel binding not available.");
+    return null;
+  }
+  ReadEventCommand cmd=new ReadEventCommand(eventIndex);
+  if (!SatelActionService.satelCommModule.sendCommand(cmd)) {
+    logger.error("Unable to read record for given index: {}",eventIndex);
+    return null;
+  }
+ else   if (cmd.isEmpty()) {
+    logger.warn("No record under given index: {}",eventIndex);
+    return null;
+  }
+ else {
+    EventDescription desc=getEventDescription(cmd.getEventCode(),cmd.isRestore());
+    return new Object[]{new DateTimeType(cmd.getTimestamp()),cmd.getPartition(),cmd.getEventClass(),cmd.getEventCode(),cmd.isRestore(),desc.eventText,desc.descKind,cmd.getSource(),cmd.getObject(),cmd.getUserControlNumber(),cmd.getNextIndex(),cmd.getCurrentIndex()};
+  }
+}

@@ -1,0 +1,20 @@
+{
+switch (deviceType) {
+case EXPANDER:
+    if (deviceNumber < 128) {
+      return (byte)(deviceNumber + 128);
+    }
+  break;
+case LCD:
+if (deviceNumber < 128) {
+  return (byte)(deviceNumber + 192);
+}
+break;
+case ZONE:
+case ZONE_WITH_PARTITION:
+return (byte)(deviceNumber == 256 ? 0 : deviceNumber);
+default :
+break;
+}
+return (byte)deviceNumber;
+}

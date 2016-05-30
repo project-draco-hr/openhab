@@ -1,0 +1,10 @@
+{
+  if (super.handleResponse(eventDispatcher,response)) {
+    BitSet newStates=this.controlType.getControlledStates();
+    if (newStates != null && !newStates.isEmpty()) {
+      eventDispatcher.dispatchEvent(new NewStatesEvent(newStates));
+    }
+    return true;
+  }
+  return false;
+}

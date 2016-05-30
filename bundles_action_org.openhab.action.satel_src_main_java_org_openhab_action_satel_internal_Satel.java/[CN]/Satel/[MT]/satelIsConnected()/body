@@ -1,0 +1,15 @@
+{
+  if (!SatelActionService.isProperlyConfigured) {
+    logger.debug("Satel action is not yet configured - execution aborted!");
+    return false;
+  }
+  if (SatelActionService.satelCommModule == null) {
+    logger.debug("Satel communication module not available - execution aborted!");
+    return false;
+  }
+  if (!SatelActionService.satelCommModule.isConnected()) {
+    logger.debug("Satel communication module is not connected");
+    return false;
+  }
+  return true;
+}

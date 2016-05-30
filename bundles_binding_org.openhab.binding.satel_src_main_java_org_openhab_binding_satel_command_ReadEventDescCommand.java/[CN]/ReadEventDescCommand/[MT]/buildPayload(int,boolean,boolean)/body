@@ -1,0 +1,11 @@
+{
+  int firstByte=0;
+  if (restore) {
+    firstByte|=0x04;
+  }
+  if (longDescription) {
+    firstByte|=0x80;
+  }
+  firstByte|=((eventCode >> 8) & 0x03);
+  return new byte[]{(byte)firstByte,(byte)(eventCode & 0xff)};
+}

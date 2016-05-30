@@ -1,0 +1,23 @@
+{
+  String mapKey=String.format("%d_%b",eventCode,restore);
+  EventDescription eventDesc=eventDescriptions.get(mapKey);
+  if (eventDesc != null) {
+    return eventDesc;
+  }
+  ReadEventDescCommand cmd=new ReadEventDescCommand(eventCode,restore,true);
+  if (!SatelActionService.satelCommModule.sendCommand(cmd)) {
+    logger.error("Unable to read event description: {}, {}",eventCode,restore);
+    return new EventDescription("Unable to read",0);
+  }
+ else {
+    try {
+      eventDesc=new EventDescription(cmd.getText(SatelActionService.satelCommModule.getTextEncoding()),cmd.getKind());
+      eventDescriptions.put(mapKey,eventDesc);
+      return eventDesc;
+    }
+ catch (    UnsupportedEncodingException e) {
+      logger.error("Unsupported encoding: {}",SatelActionService.satelCommModule.getTextEncoding());
+      return new EventDescription("Unsupported encoding",0);
+    }
+  }
+}

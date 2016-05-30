@@ -11,9 +11,9 @@
     SatelBindingConfig itemConfig=provider.getItemConfig(itemName);
     if (itemConfig != null) {
       logger.trace("Sending internal command for item {}: {}",itemName,command);
-      SatelMessage message=itemConfig.convertCommandToMessage(command,this.satelModule.getIntegraType(),this.userCode);
-      if (message != null) {
-        this.satelModule.sendCommand(message);
+      SatelCommand satelCmd=itemConfig.convertCommand(command,this.satelModule.getIntegraType(),this.userCode);
+      if (satelCmd != null) {
+        this.satelModule.sendCommand(satelCmd);
       }
       break;
     }
