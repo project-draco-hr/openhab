@@ -98,6 +98,8 @@
         sLogger.warn("Error when trying to read parameter 'scheduledExecutorServiceShutdownTimeout' from configuration. '{}' is not a number: using default.",scheduledExecutorServiceShutdownTimeoutString);
       }
     }
+    String shouldUseNAT=(String)config.get("useNAT");
+    sUseNAT=StringUtils.isNotBlank(shouldUseNAT) && shouldUseNAT.equalsIgnoreCase("true");
     if (sPC == null) {
       sLogger.debug("Not connected yet. Trying to connect.");
       if (!connect()) {
