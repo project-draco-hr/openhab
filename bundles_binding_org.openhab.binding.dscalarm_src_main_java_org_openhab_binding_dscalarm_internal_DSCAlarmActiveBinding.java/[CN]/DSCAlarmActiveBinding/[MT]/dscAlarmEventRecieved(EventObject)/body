@@ -25,6 +25,12 @@ if (suppressAcknowledgementMsgs) {
 }
 break;
 case SystemError:
+int errorCode=Integer.parseInt(apiData);
+if (errorCode == 23 || errorCode == 24) {
+for (int i=1; i < 9; i++) {
+updateItemType(DSCAlarmItemType.PARTITION_ARM_MODE,i,0,0);
+}
+}
 dscAlarmItemType=DSCAlarmItemType.PANEL_SYSTEM_ERROR;
 break;
 case KeypadLEDState:
@@ -41,7 +47,6 @@ break;
 case PartitionReady:
 case PartitionNotReady:
 case PartitionReadyForceArming:
-case FailureToArm:
 case SystemArmingInProgress:
 dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 break;
@@ -115,6 +120,10 @@ updateItemType(DSCAlarmItemType.PARTITION_ENTRY_DELAY,apiMessage.getPartition(),
 break;
 case ExitDelayInProgress:
 updateItemType(DSCAlarmItemType.PARTITION_EXIT_DELAY,apiMessage.getPartition(),-1,1);
+break;
+case FailureToArm:
+updateItemType(DSCAlarmItemType.PARTITION_ARM_MODE,partitionId,0,0);
+dscAlarmItemType=DSCAlarmItemType.PARTITION_STATUS;
 break;
 case UserClosing:
 case SpecialClosing:

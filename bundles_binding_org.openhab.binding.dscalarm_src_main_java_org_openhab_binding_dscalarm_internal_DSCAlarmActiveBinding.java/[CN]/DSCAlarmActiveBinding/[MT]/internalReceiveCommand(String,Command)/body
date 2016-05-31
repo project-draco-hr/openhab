@@ -78,36 +78,24 @@ partitionId=dscAlarmBindingConfig.getPartitionId();
 switch (dscAlarmBindingConfig.getDSCAlarmItemType()) {
 case PARTITION_ARM_MODE:
 if (command.toString().equals("0")) {
-if (api.sendCommand(APICode.PartitionDisarmControl,String.valueOf(partitionId))) {
-dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,0,"Partition Disarmed");
-}
+api.sendCommand(APICode.PartitionDisarmControl,String.valueOf(partitionId));
 }
  else if (command.toString().equals("1")) {
-if (api.sendCommand(APICode.PartitionArmControlAway,String.valueOf(partitionId))) {
-dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,1,"Partition Armed (Away)");
-}
+api.sendCommand(APICode.PartitionArmControlAway,String.valueOf(partitionId));
 }
  else if (command.toString().equals("2")) {
-if (api.sendCommand(APICode.PartitionArmControlStay,String.valueOf(partitionId))) {
-dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,2,"Partition Armed (Stay)");
-}
+api.sendCommand(APICode.PartitionArmControlStay,String.valueOf(partitionId));
 }
  else if (command.toString().equals("3")) {
-if (api.sendCommand(APICode.PartitionArmControlZeroEntryDelay,String.valueOf(partitionId))) {
-dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,3,"Partition Armed (Zero Entry Delay)");
-}
+api.sendCommand(APICode.PartitionArmControlZeroEntryDelay,String.valueOf(partitionId));
 }
  else if (command.toString().equals("4")) {
-if (api.sendCommand(APICode.PartitionArmControlWithUserCode,String.valueOf(partitionId))) {
-dscAlarmItemUpdate.updateDeviceProperties(item,dscAlarmBindingConfig,4,"Partition Armed (With User Code)");
-}
+api.sendCommand(APICode.PartitionArmControlWithUserCode,String.valueOf(partitionId));
 }
 break;
 default :
 break;
 }
-dscAlarmUpdateMap.put(itemName,dscAlarmBindingConfig);
-processUpdateMap();
 break;
 case ZONE:
 partitionId=dscAlarmBindingConfig.getPartitionId();
