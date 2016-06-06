@@ -1,5 +1,5 @@
 {
-  logger.info("Update received ({},{})",itemName,newState);
+  logger.debug("Update received ({},{})",itemName,newState);
   SonanceBindingProvider provider=findFirstMatchingBindingProvider(itemName);
   String group=provider.getGroup(itemName);
   String ip=provider.getIP(itemName);
@@ -43,8 +43,8 @@
  else {
         logger.error("I don't know what to do with this new state \"{}\"",newState);
       }
+      s.close();
     }
-    s.close();
   }
  catch (  IOException e) {
     logger.error("IO Exception when received internal command. Message: {}",e.getMessage());
