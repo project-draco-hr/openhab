@@ -1,9 +1,9 @@
 {
   logger.trace(getName() + " updated()");
-  Map<String,MiosUnit> units=new HashMap<String,MiosUnit>();
   if (properties == null) {
     return;
   }
+  Map<String,MiosUnit> units=new HashMap<String,MiosUnit>();
   Enumeration<String> keys=properties.keys();
   while (keys.hasMoreElements()) {
     String key=keys.nextElement();
@@ -51,6 +51,22 @@
       units.put(hackUnitName,unit);
     }
   }
+  if (nameUnitMapper != null) {
+    MiosUnitConnector connector;
+    for (    String unitName : nameUnitMapper.keySet()) {
+      connector=connectors.get(unitName);
+      if (connector != null) {
+        try {
+          connector.close();
+        }
+ catch (        Exception e) {
+        }
+      }
+    }
+  }
   nameUnitMapper=units;
-  registerAllWatches();
+  for (  BindingProvider provider : providers) {
+    logger.debug("updated: provider '{}'",provider.getClass());
+    registerProviderWatch(provider);
+  }
 }

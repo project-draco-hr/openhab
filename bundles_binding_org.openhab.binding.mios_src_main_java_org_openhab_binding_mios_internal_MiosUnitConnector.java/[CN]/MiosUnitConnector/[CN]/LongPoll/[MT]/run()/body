@@ -1,10 +1,28 @@
 {
-  long loopCount=0;
+  restart();
+  MiosUnit unit=getMiosUnit();
+  int startupDelay=unit.getStartupDelay();
+  int errorCount=unit.getErrorCount();
+  long loopCount=0l;
   do {
     try {
-      MiosUnit unit=getMiosUnit();
-      int errorCount=unit.getErrorCount();
-      boolean force=(loopCount == 0l) || (errorCount != 0) && (failures != 0) && ((failures % errorCount) == 0);
+      while (this.fullReload) {
+        int sleepTime;
+synchronized (this.fullReloadLock) {
+          sleepTime=(int)(this.lastFullReload + startupDelay - System.currentTimeMillis());
+          if (sleepTime <= 0) {
+            this.fullReload=false;
+          }
+        }
+        if (sleepTime <= 0) {
+          loopCount=0l;
+          logger.debug("run: finishing sleep cycle.");
+          break;
+        }
+        logger.debug("run: sleeping, delaying reload sleepTime={}",sleepTime);
+        Thread.sleep(sleepTime);
+      }
+      boolean force=this.fullReload || (errorCount != 0) && (failures != 0) && ((failures % errorCount) == 0);
       boolean incremental=(!force && loadTime != null && dataVersion != null);
       String uri=getUri(incremental);
       logger.debug("run: URI Built was '{}' loop '{}'",uri,loopCount);
@@ -22,7 +40,10 @@
         loopCount=(loopCount % c);
       }
     }
- catch (    Exception e) {
+ catch (    InterruptedException ie) {
+      logger.debug("run: Thread shutdown by Interrupted");
+    }
+catch (    Exception e) {
       connected=false;
       this.failures++;
       logger.debug("run: Exception Error occurred fetching/processing content: {},{}.  Total failures ({})",new Object[]{e.getMessage(),e,Integer.toString(failures)});
