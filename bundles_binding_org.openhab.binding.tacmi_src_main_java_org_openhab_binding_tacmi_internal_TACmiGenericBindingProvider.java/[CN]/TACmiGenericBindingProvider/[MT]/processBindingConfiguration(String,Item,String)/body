@@ -1,24 +1,18 @@
 {
   super.processBindingConfiguration(context,item,bindingConfig);
-  TACmiBindingConfig config=new TACmiBindingConfig();
+  TACmiBindingConfig config;
   logger.debug("Processing binding configuration: '{}'",bindingConfig);
   final String[] configParts=bindingConfig.split("#");
 switch (configParts.length) {
 case 3:
-    config.canNode=configParts[0];
-  config.portType=configParts[1];
-config.portNumber=Integer.parseInt(configParts[2]);
-break;
+    config=new TACmiBindingConfig(Integer.parseInt(configParts[0]),configParts[1],Integer.parseInt(configParts[2]),null,bindingConfig);
+  break;
 case 4:
-config.canNode=configParts[0];
-config.portType=configParts[1];
-config.portNumber=Integer.parseInt(configParts[2]);
-config.measureType=TACmiMeasureType.fromString(configParts[3]);
+config=new TACmiBindingConfig(Integer.parseInt(configParts[0]),configParts[1],Integer.parseInt(configParts[2]),TACmiMeasureType.fromString(configParts[3]),bindingConfig);
 break;
 default :
 throw new BindingConfigParseException("A TACmi binding configuration must consist of three or four parts - please verify your *.items file");
 }
-config.configurationString=bindingConfig;
 logger.debug("Adding Binding configuration: {}",config);
 addBindingConfig(item,config);
 }
