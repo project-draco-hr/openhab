@@ -1,0 +1,24 @@
+{
+  logger.debug("NODE {}: Received CLOCK command V{}",getNode().getNodeId(),getVersion());
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case CLOCK_REPORT:
+    int day=serialMessage.getMessagePayloadByte(offset + 1) >> 5;
+  int hour=serialMessage.getMessagePayloadByte(offset + 1) & 0x1f;
+int minute=serialMessage.getMessagePayloadByte(offset + 2);
+String days[]=new DateFormatSymbols().getWeekdays();
+int javaDay=day == 7 ? 1 : day + 1;
+logger.debug(String.format("NODE %d: Received clock report: %s %02d:%02d",getNode().getNodeId(),days[javaDay],hour,minute));
+Calendar cal=Calendar.getInstance();
+cal.set(Calendar.DAY_OF_WEEK,javaDay);
+cal.set(Calendar.HOUR_OF_DAY,hour);
+cal.set(Calendar.MINUTE,minute);
+Date nodeTime=cal.getTime();
+ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(getNode().getNodeId(),endpoint,getCommandClass(),nodeTime);
+getController().notifyEventListeners(zEvent);
+break;
+default :
+logger.warn(String.format("NODE %d: Unsupported Command %d for command class %s (0x%02X).",getNode().getNodeId(),command,getCommandClass().getLabel(),getCommandClass().getKey()));
+break;
+}
+}

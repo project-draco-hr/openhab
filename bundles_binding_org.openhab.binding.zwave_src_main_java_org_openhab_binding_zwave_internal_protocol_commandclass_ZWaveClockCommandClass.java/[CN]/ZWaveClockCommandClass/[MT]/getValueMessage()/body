@@ -1,0 +1,11 @@
+{
+  logger.debug("NODE {}: Creating new message for command CLOCK_GET",getNode().getNodeId());
+  SerialMessage result=new SerialMessage(getNode().getNodeId(),SerialMessageClass.SendData,SerialMessageType.Request,SerialMessageClass.ApplicationCommandHandler,SerialMessagePriority.Get);
+  ByteArrayOutputStream outputData=new ByteArrayOutputStream();
+  outputData.write(getNode().getNodeId());
+  outputData.write(2);
+  outputData.write(getCommandClass().getKey());
+  outputData.write(CLOCK_GET);
+  result.setMessagePayload(outputData.toByteArray());
+  return result;
+}

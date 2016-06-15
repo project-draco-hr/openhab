@@ -1,0 +1,14 @@
+{
+  ZWaveStateConverter<?,?> converter=getStateConverter(item,event.getValue());
+  if (converter == null) {
+    logger.warn("NODE {}: No converter found for item = {}, endpoint = {}, ignoring event.",event.getNodeId(),item.getName(),event.getEndpoint());
+    return;
+  }
+  Object val=event.getValue();
+  if (val == null) {
+    return;
+  }
+  Date date=(Date)val;
+  State state=converter.convertFromValueToState(date.getTime() - System.currentTimeMillis());
+  getEventPublisher().postUpdate(item.getName(),state);
+}
