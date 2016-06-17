@@ -1,0 +1,23 @@
+{
+  logger.debug("NODE {}: Received central scene command (v{})",this.getNode().getNodeId(),this.getVersion());
+  int command=serialMessage.getMessagePayloadByte(offset);
+switch (command) {
+case SCENE_SET:
+    int sceneId=serialMessage.getMessagePayloadByte(offset + 3);
+  int key=serialMessage.getMessagePayloadByte(offset + 2);
+logger.debug("NODE {}: Received scene {} ; key {}",this.getNode().getNodeId(),sceneId,key);
+Properties properties=new Properties();
+properties.put("key",key);
+properties.put("scene",sceneId);
+ZWaveCommandClassValueEvent zEvent=new ZWaveCommandClassValueEvent(this.getNode().getNodeId(),endpoint,this.getCommandClass(),properties);
+this.getController().notifyEventListeners(zEvent);
+break;
+case SCENE_REPORT:
+sceneCount=serialMessage.getMessagePayloadByte(offset + 1);
+logger.debug("NODE {}: Supports {} scenes",this.getNode().getNodeId(),sceneCount);
+initialiseDone=true;
+break;
+default :
+logger.warn(String.format("NODE %d: Unsupported Command %d for command class %s (0x%02X).",this.getNode().getNodeId(),command,this.getCommandClass().getLabel(),this.getCommandClass().getKey()));
+}
+}

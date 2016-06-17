@@ -1,0 +1,50 @@
+{
+  org.openhab.core.types.State itemState=null;
+  Properties properties=(Properties)event.getValue();
+  int event_scene=(Integer)properties.get("scene");
+  int event_key=(Integer)properties.get("key");
+  if (arguments.get("scene") != null) {
+    Integer scene=null;
+    try {
+      scene=Integer.parseInt(arguments.get("scene"));
+    }
+ catch (    NumberFormatException e) {
+      logger.error("NODE {}: Number format exception scene={}",event.getNodeId(),arguments.get("scene"));
+      return;
+    }
+    if (scene != null && scene != event_scene) {
+      return;
+    }
+    if (arguments.get("key") != null) {
+      Integer key=null;
+      try {
+        key=Integer.parseInt(arguments.get("key"));
+      }
+ catch (      NumberFormatException e) {
+        logger.error("NODE {}: Number format exception key={}",event.getNodeId(),arguments.get("key"));
+        return;
+      }
+      if (key != null && key != event_key) {
+        return;
+      }
+      ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event_scene);
+      if (converter == null) {
+        logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+        return;
+      }
+      itemState=converter.convertFromValueToState((event_key == key) ? 1 : 0);
+    }
+ else {
+      ZWaveStateConverter<?,?> converter=this.getStateConverter(item,event_key);
+      if (converter == null) {
+        logger.warn("No converter found for item = {}, node = {} endpoint = {}, ignoring event.",item.getName(),event.getNodeId(),event.getEndpoint());
+        return;
+      }
+      itemState=converter.convertFromValueToState(event_key);
+    }
+  }
+ else {
+    itemState=new DecimalType(event_scene);
+  }
+  this.getEventPublisher().postUpdate(item.getName(),itemState);
+}
