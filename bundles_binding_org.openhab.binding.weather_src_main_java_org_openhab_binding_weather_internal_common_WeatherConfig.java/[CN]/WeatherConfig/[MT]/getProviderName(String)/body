@@ -1,7 +1,8 @@
 {
   ProviderName providerName=ProviderName.parse(name);
   if (providerName == null) {
-    throw new ConfigurationException("weather","Provider with name '" + name + "' not found, please check your openhab.cfg!");
+    logger.warn("Provider with name '{}' not found. Check openhab.cfg.",name);
+    throw new ConfigurationException("weather","Provider with name '" + name + "' not found. Check openhab.cfg.");
   }
   return providerName;
 }

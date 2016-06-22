@@ -1,8 +1,14 @@
 {
+  if (!context.getConfig().finishedParsing()) {
+    return;
+  }
   if (context.getConfig().isValid()) {
     if (provider instanceof WeatherBindingProvider) {
       context.getJobScheduler().restart();
     }
+  }
+ else {
+    logger.debug("Binding for item '{}' changed, but unable to restart weather job " + " because weather configuration is not valid. Check openhab.cfg.",itemName);
   }
   super.bindingChanged(provider,itemName);
 }

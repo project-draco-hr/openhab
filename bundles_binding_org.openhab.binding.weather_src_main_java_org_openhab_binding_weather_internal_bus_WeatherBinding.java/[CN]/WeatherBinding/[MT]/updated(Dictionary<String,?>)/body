@@ -1,10 +1,16 @@
 {
-  if (config != null) {
-    context.getJobScheduler().stop();
-    context.getConfig().parse(config);
-    context.getConfig().dump();
-    if (context.getConfig().isValid()) {
-      context.getJobScheduler().restart();
-    }
+  if (config == null) {
+    logger.warn("Unable to find any configuration settings for weather binding. Check openhab.cfg.");
+    throw new ConfigurationException("weather","Unable to find any configuration settings for weather binding. Check openhab.cfg.");
+  }
+  context.getJobScheduler().stop();
+  context.getConfig().parse(config);
+  context.getConfig().dump();
+  if (context.getConfig().isValid()) {
+    context.getJobScheduler().restart();
+  }
+ else {
+    logger.warn("Unable to restart weather job because weather configuration is not valid. Check openhab.cfg.");
+    throw new ConfigurationException("weather","Unable to restart weather job because weather configuration is not valid. Check openhab.cfg.");
   }
 }

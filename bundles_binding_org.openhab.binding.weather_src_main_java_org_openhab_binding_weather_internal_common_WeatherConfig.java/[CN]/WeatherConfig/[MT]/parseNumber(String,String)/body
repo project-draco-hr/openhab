@@ -3,6 +3,7 @@
     return Double.parseDouble(value);
   }
  catch (  Exception ex) {
-    throw new ConfigurationException("weather","Parameter '" + key + "' empty or in wrong format, please check your openhab.cfg!");
+    logger.warn("Parameter '{}' empty or in wrong format ('{}'). Check openhab.cfg.",key,value);
+    throw new ConfigurationException("weather","Parameter '" + key + "' empty or in wrong format ('"+ value+ "'). Check openhab.cfg.");
   }
 }

@@ -1,10 +1,11 @@
 {
   if (value == null) {
-    throw new ConfigurationException("weather","Empty property '" + key + "', please check your openhab.cfg!");
+    logger.warn("Weather location setting '{}' has no value. Check openhab.cfg.",key);
+    return;
   }
   String locationId=StringUtils.substringBetween(key,".");
-  if (locationId == null) {
-    throw new ConfigurationException("weather","Malformed location property '" + key + "', please check your openhab.cfg!");
+  if (StringUtils.isBlank(locationId)) {
+    logger.warn("Weather location setting '{}' is missing its location. Check openhab.cfg.",key);
   }
   LocationConfig lc=locationConfigs.get(locationId);
   if (lc == null) {
@@ -35,6 +36,6 @@
     lc.setName(value);
   }
  else {
-    throw new ConfigurationException("weather","Unknown configuration key '" + key + "', please check your openhab.cfg!");
+    logger.debug("Unknown weather configuration setting '{}'. Check openhab.cfg.",key);
   }
 }
