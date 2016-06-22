@@ -19,7 +19,8 @@ if (circlePlus11 != null) {
 }
 break;
 case TIMEOUT:
-logger.error("Timeout while sending: {}",message);
+logger.error("Received timeout ack for: {}",message);
+sentQueueLock.lock();
 Iterator<Message> messageIterator=sentQueue.iterator();
 Message aMessage=null;
 while (messageIterator.hasNext()) {
@@ -30,6 +31,7 @@ sentQueue.remove(aMessage);
 break;
 }
 }
+sentQueueLock.unlock();
 if (aMessage != null) {
 aMessage.setSequenceNumber(0);
 sendMessage(aMessage);

@@ -1,0 +1,23 @@
+{
+  PlugwiseDevice target=stick.getDeviceByMAC(message.getMAC());
+  boolean result=false;
+  if (target != null) {
+    result=target.processMessage(message);
+  }
+ else {
+    result=stick.processMessage(message);
+  }
+  if (result) {
+    stick.sentQueueLock.lock();
+    Iterator<Message> messageIterator=stick.sentQueue.iterator();
+    while (messageIterator.hasNext()) {
+      Message aMessage=messageIterator.next();
+      if (aMessage.getSequenceNumber() == message.getSequenceNumber()) {
+        logger.debug("Removing from sentQueue: {}",aMessage);
+        stick.sentQueue.remove(aMessage);
+        break;
+      }
+    }
+    stick.sentQueueLock.unlock();
+  }
+}

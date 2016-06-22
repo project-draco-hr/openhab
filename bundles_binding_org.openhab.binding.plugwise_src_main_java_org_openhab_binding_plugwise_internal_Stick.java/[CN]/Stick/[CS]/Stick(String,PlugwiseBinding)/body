@@ -3,6 +3,8 @@
   this.port=port;
   this.binding=binding;
   plugwiseDeviceCache.add(this);
+  sendThread=new SendThread(this);
+  processMessageThread=new ProcessMessageThread(this);
   try {
     initialize();
   }

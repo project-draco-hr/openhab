@@ -50,40 +50,8 @@
     }
     throw new PlugwiseInitializationException("Serial port '" + port + "' could not be found. Available ports are:\n"+ sb);
   }
-  Scheduler sched=null;
-  try {
-    sched=StdSchedulerFactory.getDefaultScheduler();
-  }
- catch (  SchedulerException e) {
-    logger.error("Error getting a reference to the Quartz Scheduler");
-  }
-  JobDataMap map=new JobDataMap();
-  map.put("Stick",this);
-  JobDetail job=newJob(SendJob.class).withIdentity("Send-0","Plugwise").usingJobData(map).build();
-  Trigger trigger=newTrigger().withIdentity("Send-0","Plugwise").startNow().build();
-  try {
-    sched.getListenerManager().addJobListener(new SendJobListener("JobListener-" + job.getKey().toString()),KeyMatcher.keyEquals(job.getKey()));
-  }
- catch (  SchedulerException e1) {
-    logger.error("An exception occured while attaching a Quartz Send Job Listener");
-  }
-  try {
-    sched.scheduleJob(job,trigger);
-  }
- catch (  SchedulerException e) {
-    logger.error("Error scheduling a job with the Quartz Scheduler");
-  }
-  map=new JobDataMap();
-  map.put("Stick",this);
-  job=newJob(ProcessMessageJob.class).withIdentity("ProcessMessage","Plugwise").usingJobData(map).build();
-  trigger=newTrigger().withIdentity("ProcessMessage","Plugwise").startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInMilliseconds(50)).build();
-  try {
-    sched.scheduleJob(job,trigger);
-  }
- catch (  SchedulerException e) {
-    logger.error("Error scheduling a job with the Quartz Scheduler");
-  }
   initialised=true;
-  InitialiseRequestMessage message=new InitialiseRequestMessage();
-  sendMessage(message);
+  sendThread.start();
+  processMessageThread.start();
+  sendMessage(new InitialiseRequestMessage());
 }

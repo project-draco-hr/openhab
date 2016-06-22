@@ -1,0 +1,38 @@
+{
+  if (message.getAttempts() < stick.maxRetries) {
+    message.increaseAttempts();
+    String packedString=PROTOCOL_HEADER + message.toHexString() + PROTOCOL_TRAILER;
+    ByteBuffer bytebuffer=ByteBuffer.allocate(packedString.length());
+    bytebuffer.put(packedString.getBytes());
+    bytebuffer.rewind();
+    try {
+      logger.debug("Sending: {} as {}",message,message.toHexString());
+      stick.outputChannel.write(bytebuffer);
+    }
+ catch (    IOException e) {
+      logger.error("Error writing '{}' to serial port {}: {}",packedString,stick.port,e.getMessage());
+      return;
+    }
+    AcknowledgeMessage ack=stick.acknowledgedQueue.take();
+    logger.debug("Removing from acknowledgedQueue: {}",ack);
+    if (!ack.isSuccess()) {
+      if (ack.isError()) {
+        logger.error("Error sending: Negative ACK: {}",packedString);
+      }
+    }
+ else {
+      message.setSequenceNumber(ack.getSequenceNumber());
+      logger.debug("Adding to sentQueue: {}",message);
+      stick.sentQueueLock.lock();
+      if (stick.sentQueue.size() == maxBufferSize) {
+        Message someMessage=stick.sentQueue.poll();
+        logger.debug("Flushing from sentQueue: {}",someMessage);
+      }
+      stick.sentQueue.put(message);
+      stick.sentQueueLock.unlock();
+    }
+  }
+ else {
+    logger.error("Giving finally up on Plugwise protocol data unit after attempts: {} MAC:{} command:{} sequence:{} payload:{}",message.getAttempts(),message.getMAC(),message.getType(),message.getSequenceNumber(),message.getPayLoad());
+  }
+}

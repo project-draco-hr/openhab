@@ -1,0 +1,15 @@
+{
+  while (true) {
+    try {
+      Message message=stick.sendQueue.take();
+      sendMessage(message);
+      sleep(stick.interval);
+    }
+ catch (    InterruptedException e) {
+      break;
+    }
+catch (    Exception e) {
+      logger.error("SendJob: unexpected error",e);
+    }
+  }
+}

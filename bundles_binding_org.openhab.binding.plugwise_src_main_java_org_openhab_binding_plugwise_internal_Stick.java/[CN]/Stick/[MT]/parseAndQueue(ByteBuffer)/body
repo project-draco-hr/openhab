@@ -14,7 +14,7 @@
         String calculatedCRC=getCRCFromString(command + sequence + payload);
         if (calculatedCRC.equals(CRC)) {
           logger.debug("Received message: command:{} sequence:{} payload:{}",MessageType.forValue(Integer.parseInt(command,16)),Integer.parseInt(sequence,16),payload);
-          Message theMessage=null;
+          Message theMessage;
 switch (MessageType.forValue(Integer.parseInt(command,16))) {
 case ACKNOWLEDGEMENT:
             theMessage=new AcknowledgeMessage(Integer.parseInt(sequence,16),payload);
@@ -48,18 +48,20 @@ theMessage=new PowerInformationResponseMessage(Integer.parseInt(sequence,16),pay
 break;
 default :
 logger.debug("Received unrecognized command:{}",command);
-break;
+return;
 }
-;
-if (theMessage != null) {
 try {
-receiveLock.lock();
+if (theMessage instanceof AcknowledgeMessage && !((AcknowledgeMessage)theMessage).isExtended()) {
+logger.debug("Adding to acknowledgedQueue: {}",theMessage);
+acknowledgedQueue.put((AcknowledgeMessage)theMessage);
+}
+ else {
+logger.debug("Adding to receivedQueue: {}",theMessage);
 receivedQueue.put(theMessage);
-receiveLock.unlock();
+}
 }
  catch (InterruptedException e) {
-logger.error("Error queueing Plugwise protocol data unit: command:{} sequence:{} payload:{}",MessageType.forValue(Integer.parseInt(command,16)),Integer.parseInt(sequence,16),payload);
-}
+Thread.interrupted();
 }
 }
  else {
