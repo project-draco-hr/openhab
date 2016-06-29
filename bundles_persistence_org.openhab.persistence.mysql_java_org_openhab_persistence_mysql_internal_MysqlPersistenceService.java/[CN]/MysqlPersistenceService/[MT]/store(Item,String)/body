@@ -27,15 +27,26 @@
  else {
     value=item.getState().toString();
   }
+  long timeNow=Calendar.getInstance().getTimeInMillis();
+  Timestamp timestamp=new Timestamp(timeNow);
   String sqlCmd=null;
   PreparedStatement statement=null;
   try {
-    sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),?) ON DUPLICATE KEY UPDATE VALUE=?;");
-    statement=connection.prepareStatement(sqlCmd);
-    statement.setString(1,value);
-    statement.setString(2,value);
+    if (localtime) {
+      sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(?,?) ON DUPLICATE KEY UPDATE VALUE=?;");
+      statement=connection.prepareStatement(sqlCmd);
+      statement.setTimestamp(1,timestamp);
+      statement.setString(2,value);
+      statement.setString(3,value);
+    }
+ else {
+      sqlCmd=new String("INSERT INTO " + tableName + " (TIME, VALUE) VALUES(NOW(),?) ON DUPLICATE KEY UPDATE VALUE=?;");
+      statement=connection.prepareStatement(sqlCmd);
+      statement.setString(1,value);
+      statement.setString(2,value);
+    }
     statement.executeUpdate();
-    logger.debug("mySQL: Stored item '{}' as '{}'[{}] in SQL database at {}.",item.getName(),item.getState().toString(),value,(new java.util.Date()).toString());
+    logger.debug("mySQL: Stored item '{}' as '{}'[{}] in SQL database at {}.",item.getName(),item.getState().toString(),value,timestamp.toString());
     logger.debug("mySQL: query: {}",sqlCmd);
     errCnt=0;
   }
