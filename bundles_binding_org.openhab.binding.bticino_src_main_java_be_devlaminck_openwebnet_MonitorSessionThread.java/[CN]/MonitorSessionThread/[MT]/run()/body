@@ -1,11 +1,14 @@
 {
+  logger.debug("Connecting to ipaddress {} on port {}",ipAddress,port);
   pluginReference.myPlant=new MyHomeJavaConnector(ipAddress,port);
   try {
     pluginReference.myPlant.startMonitoring();
     while (!Thread.interrupted()) {
       try {
         String readFrame=pluginReference.myPlant.readMonitoring();
-        buildEventFromFrame(readFrame);
+        if (readFrame != null) {
+          buildEventFromFrame(readFrame);
+        }
       }
  catch (      InterruptedException ex) {
         logger.error("MonitorSessionThread.run, exception : " + ex.getMessage());

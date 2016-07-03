@@ -13,13 +13,12 @@
       }
       retry++;
       Thread.sleep(1000);
-      System.err.println("Monitor connection problem retry temptative: " + retry);
+      logger.error("Monitor connection problem. Attempting retry {}.",retry);
       try {
         startMonitoring();
       }
  catch (      IOException e1) {
       }
-      continue;
     }
   }
  while (result == null);

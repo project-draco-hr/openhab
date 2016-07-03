@@ -9,11 +9,32 @@ synchronized (m_lock) {
 switch (l_who) {
 case 1:
 {
-          if (OnOffType.ON.equals(command)) {
-            l_pr.addProperty("what","1");
+          if (command instanceof IncreaseDecreaseType) {
+            if (IncreaseDecreaseType.INCREASE.equals(command)) {
+              logger.debug("Light received INCREASE command.");
+              l_pr.addProperty("what","30");
+            }
+ else {
+              logger.debug("Light received DECREASE command.");
+              l_pr.addProperty("what","31");
+            }
+          }
+ else           if (command instanceof PercentType) {
+            PercentType pType=(PercentType)command;
+            int percentValue=(int)(Math.floor(pType.intValue() / 10F));
+            logger.debug("Set light value to {}",percentValue);
+            l_pr.addProperty("what",String.valueOf(percentValue));
+          }
+ else           if (command instanceof OnOffType) {
+            if (OnOffType.ON.equals(command)) {
+              l_pr.addProperty("what","1");
+            }
+ else {
+              l_pr.addProperty("what","0");
+            }
           }
  else {
-            l_pr.addProperty("what","0");
+            logger.warn("Received unknown command type for lighting: '{}'",command.getClass().getName());
           }
           break;
         }
