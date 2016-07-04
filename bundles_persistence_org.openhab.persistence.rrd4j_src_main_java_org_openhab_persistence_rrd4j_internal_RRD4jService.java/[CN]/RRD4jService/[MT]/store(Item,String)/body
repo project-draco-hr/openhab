@@ -37,20 +37,19 @@
     }
  catch (    IllegalArgumentException e) {
       if (e.getMessage().contains("at least one second step is required")) {
-        TimerTask task=new TimerTask(){
+        Runnable task=new Runnable(){
           @Override public void run(){
             store(item,name);
           }
         }
 ;
-        Timer timer=timers.get(name);
-        if (timer != null) {
-          timer.cancel();
-          timers.remove(name);
+        ScheduledFuture<?> job=scheduledJobs.get(name);
+        if (job != null) {
+          job.cancel(true);
+          scheduledJobs.remove(name);
         }
-        timer=new Timer();
-        timers.put(name,timer);
-        timer.schedule(task,1000);
+        job=scheduler.schedule(task,1,TimeUnit.SECONDS);
+        scheduledJobs.put(name,job);
       }
  else {
         logger.warn("Could not persist '{}' to rrd4j database: {}",new String[]{name,e.getMessage()});
