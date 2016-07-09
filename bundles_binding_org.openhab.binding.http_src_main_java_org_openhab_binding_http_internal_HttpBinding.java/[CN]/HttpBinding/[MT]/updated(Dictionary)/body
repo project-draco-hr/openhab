@@ -10,6 +10,10 @@ synchronized (itemCacheLock) {
       if (StringUtils.isNotBlank(granularityString)) {
         granularity=Integer.parseInt(granularityString);
       }
+      String formatString=(String)config.get(CONFIG_FORMAT);
+      if (StringUtils.isNotBlank(formatString)) {
+        format=formatString.equalsIgnoreCase("true");
+      }
       @SuppressWarnings("unchecked") Enumeration<String> keys=config.keys();
       while (keys.hasMoreElements()) {
         String key=keys.nextElement();

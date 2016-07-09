@@ -6,7 +6,9 @@
   }
   String httpMethod=provider.getHttpMethod(itemName,command);
   String url=provider.getUrl(itemName,command);
-  url=String.format(url,Calendar.getInstance().getTime(),value);
+  if (format) {
+    url=String.format(url,Calendar.getInstance().getTime(),value);
+  }
   if (isNotBlank(httpMethod) && isNotBlank(url)) {
     HttpUtil.executeUrl(httpMethod,url,provider.getHttpHeaders(itemName,command),null,null,timeout);
   }
