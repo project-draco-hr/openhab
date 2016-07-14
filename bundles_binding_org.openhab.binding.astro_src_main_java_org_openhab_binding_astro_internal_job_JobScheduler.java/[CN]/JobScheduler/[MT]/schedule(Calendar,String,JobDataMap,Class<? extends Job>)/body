@@ -6,7 +6,7 @@
         scheduler.deleteJob(jobKey);
       }
       Trigger trigger=newTrigger().withIdentity(jobName + "-Trigger",JOB_GROUP).startAt(calendar.getTime()).build();
-      JobDetail jobDetail=newJob(ItemJob.class).withIdentity(jobKey).usingJobData(jobDataMap).build();
+      JobDetail jobDetail=newJob(jobClass).withIdentity(jobKey).usingJobData(jobDataMap).build();
       scheduler.scheduleJob(jobDetail,trigger);
       logger.debug("Scheduled job with name {} at {}",jobName,sdf.format(calendar.getTime()));
     }
