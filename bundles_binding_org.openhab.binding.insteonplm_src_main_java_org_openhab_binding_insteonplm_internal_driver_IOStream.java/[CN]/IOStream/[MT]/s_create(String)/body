@@ -2,8 +2,8 @@
   if (config.startsWith("/hub2/")) {
     return makeHub2014Stream(config);
   }
- else   if (config.startsWith("/hub/")) {
-    return makeOldHubStream(config);
+ else   if (config.startsWith("/hub/") || config.startsWith("/tcp/")) {
+    return makeTCPStream(config);
   }
  else {
     return new SerialIOStream(config);
