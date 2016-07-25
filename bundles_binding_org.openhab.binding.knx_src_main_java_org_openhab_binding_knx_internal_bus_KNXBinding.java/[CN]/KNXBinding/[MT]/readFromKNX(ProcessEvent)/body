@@ -15,18 +15,17 @@
         for (        Datapoint datapoint : datapoints) {
           Type type=getType(datapoint,asdu);
           if (type != null) {
-            ignoreEventList.add(itemName + type.toString());
-            logger.trace("Added event (item='{}', type='{}') to the ignore event list",itemName,type.toString());
-            if (type instanceof Command && isCommandGA(destination)) {
-              eventPublisher.postCommand(itemName,(Command)type);
-            }
- else             if (type instanceof State) {
-              eventPublisher.postUpdate(itemName,(State)type);
+            if (type instanceof Command && isStartStopEnabled(itemName,destination,datapoint)) {
+              if (isDimmerThreadRunning(itemName) && type == IncreaseDecreaseType.INCREASE) {
+                stopDimmerThread(itemName);
+              }
+ else {
+                startDimmerThread(destination,itemName,(Command)type);
+              }
             }
  else {
-              throw new IllegalClassException("Cannot process datapoint of type " + type.toString());
+              sendTypeToItemButNotToKnx(destination,itemName,type);
             }
-            logger.trace("Processed event (item='{}', type='{}', destination='{}')",itemName,type.toString(),destination.toString());
           }
  else {
             final char[] hexCode="0123456789ABCDEF".toCharArray();

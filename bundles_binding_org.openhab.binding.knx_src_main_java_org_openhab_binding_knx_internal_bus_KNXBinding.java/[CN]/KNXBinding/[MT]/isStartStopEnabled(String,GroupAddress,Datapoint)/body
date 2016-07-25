@@ -1,0 +1,13 @@
+{
+  for (  KNXBindingProvider provider : providers) {
+    Iterable<Datapoint> datapoints=provider.getDatapoints(itemName,destination);
+    if (datapoints != null) {
+      for (      Datapoint dp : datapoints) {
+        if (dp.equals(datapoint)) {
+          return provider.isStartStopGA(destination);
+        }
+      }
+    }
+  }
+  return false;
+}

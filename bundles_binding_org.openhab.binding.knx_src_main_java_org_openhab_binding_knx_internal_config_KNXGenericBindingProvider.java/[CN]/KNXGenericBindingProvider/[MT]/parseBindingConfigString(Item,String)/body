@@ -62,7 +62,13 @@
           throw new BindingConfigParseException("DPT " + dptID + " is not supported by the KNX binding.");
         }
         String ga=(segments.length == 1) ? segments[0].trim() : segments[1].trim();
+        Boolean startStopBehavior=Boolean.FALSE;
+        if (ga.endsWith(START_STOP_MARKER_SUFFIX)) {
+          startStopBehavior=Boolean.TRUE;
+          ga=ga.substring(0,ga.length() - START_STOP_MARKER_SUFFIX.length());
+        }
         GroupAddress groupAddress=new GroupAddress(ga);
+        configItem.startStopMap.put(groupAddress,startStopBehavior);
         Datapoint dp;
         if (j != 0 || item.getAcceptedCommandTypes().size() == 0) {
           dp=new StateDP(groupAddress,item.getName(),0,dptID);

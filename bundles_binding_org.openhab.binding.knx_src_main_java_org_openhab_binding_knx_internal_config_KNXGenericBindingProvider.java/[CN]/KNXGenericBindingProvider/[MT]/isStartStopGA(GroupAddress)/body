@@ -1,0 +1,14 @@
+{
+synchronized (bindingConfigs) {
+    for (    BindingConfig config : bindingConfigs.values()) {
+      KNXBindingConfig knxConfig=(KNXBindingConfig)config;
+      for (      KNXBindingConfigItem configItem : knxConfig) {
+        Boolean startStopBehavior=configItem.startStopMap.get(groupAddress);
+        if (startStopBehavior != null) {
+          return startStopBehavior;
+        }
+      }
+    }
+  }
+  return false;
+}
