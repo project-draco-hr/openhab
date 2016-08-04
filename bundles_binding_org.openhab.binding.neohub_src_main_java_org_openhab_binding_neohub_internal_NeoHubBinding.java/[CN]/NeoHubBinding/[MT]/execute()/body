@@ -1,6 +1,9 @@
 {
   try {
     final InfoResponse response=createProtocol().info();
+    if (response == null) {
+      return;
+    }
     for (    NeoHubBindingProvider provider : providers) {
       for (      String itemName : provider.getItemNames()) {
         final String device=provider.getNeoStatDevice(itemName);
