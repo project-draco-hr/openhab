@@ -7,7 +7,7 @@
     }
     if (inMatcher.matches()) {
       SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
-      newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
+      newElement.address=parseAddress(inMatcher.group(1).toString());
       newElement.snmpVersion=SnmpConstants.version1;
       newElement.community=new OctetString(inMatcher.group(2).toString());
       newElement.oid=new OID(inMatcher.group(3).toString());
@@ -24,7 +24,7 @@
       }
       if (inMatcher.matches()) {
         SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
-        newElement.address=GenericAddress.parse("udp:" + inMatcher.group(1).toString() + "/161");
+        newElement.address=parseAddress(inMatcher.group(1).toString());
         String version=inMatcher.group(2).toString();
         if (version.equals("v3")) {
           newElement.snmpVersion=SnmpConstants.version3;
@@ -48,7 +48,7 @@
     if (outMatcher.matches()) {
       SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
       String commandAsString=outMatcher.group(1).toString();
-      newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
+      newElement.address=parseAddress(outMatcher.group(2).toString());
       newElement.snmpVersion=SnmpConstants.version1;
       newElement.community=new OctetString(outMatcher.group(3).toString());
       newElement.oid=new OID(outMatcher.group(4).toString());
@@ -66,7 +66,7 @@
       if (outMatcher.matches()) {
         SnmpBindingConfigElement newElement=new SnmpBindingConfigElement();
         String commandAsString=outMatcher.group(1).toString();
-        newElement.address=GenericAddress.parse("udp:" + outMatcher.group(2).toString() + "/161");
+        newElement.address=parseAddress(outMatcher.group(2).toString());
         String version=inMatcher.group(3).toString();
         if (version.equals("v3")) {
           newElement.snmpVersion=SnmpConstants.version3;
