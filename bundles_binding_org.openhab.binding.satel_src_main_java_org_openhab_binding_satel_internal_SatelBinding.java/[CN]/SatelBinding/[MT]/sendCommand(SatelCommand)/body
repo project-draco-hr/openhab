@@ -6,13 +6,15 @@
   if (!this.satelModule.sendCommand(command,true)) {
     return false;
   }
-  while (!Thread.interrupted()) {
+  boolean interrupted=false;
+  while (!interrupted) {
     try {
 synchronized (command) {
         command.wait(this.satelModule.getTimeout());
       }
     }
  catch (    InterruptedException e) {
+      interrupted=true;
     }
 switch (command.getState()) {
 case SUCCEEDED:

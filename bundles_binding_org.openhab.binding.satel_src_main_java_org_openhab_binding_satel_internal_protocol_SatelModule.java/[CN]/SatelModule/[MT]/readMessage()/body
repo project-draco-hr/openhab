@@ -53,13 +53,13 @@
         syncBytes=0;
       }
       if (Thread.interrupted()) {
-        return null;
+        throw new InterruptedException();
       }
     }
     return SatelMessage.fromBytes(baos.toByteArray());
   }
  catch (  IOException e) {
-    if (!Thread.interrupted()) {
+    if (!Thread.currentThread().isInterrupted()) {
       logger.error("Unexpected exception occurred during reading a message",e);
     }
   }

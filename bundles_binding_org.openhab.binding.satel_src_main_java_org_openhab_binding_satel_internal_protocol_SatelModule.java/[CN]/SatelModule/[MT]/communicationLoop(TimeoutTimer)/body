@@ -1,8 +1,9 @@
 {
   long reconnectionTime=10 * 1000;
   boolean receivedResponse=false;
+  SatelCommand command=null;
   try {
-    while (!Thread.interrupted()) {
+    while (!Thread.currentThread().isInterrupted()) {
       if (this.channel == null) {
         long connectStartTime=System.currentTimeMillis();
 synchronized (this) {
@@ -14,36 +15,34 @@ synchronized (this) {
           continue;
         }
       }
-      SatelCommand command=this.sendQueue.take();
-      SatelMessage response=null;
+      command=this.sendQueue.take();
       logger.debug("Sending message: {}",command.getRequest());
       timeoutTimer.start();
       boolean sent=this.writeMessage(command.getRequest());
       timeoutTimer.stop();
-      if (sent) {
-        command.setState(State.SENT);
-        logger.trace("Waiting for response");
-        timeoutTimer.start();
-        response=this.readMessage();
-        timeoutTimer.stop();
-        if (response != null) {
-          logger.debug("Got response: {}",response);
-          if (!receivedResponse) {
-            receivedResponse=true;
-            this.dispatchEvent(new ConnectionStatusEvent(true));
-          }
-          if (command.handleResponse(this,response)) {
-            command.setState(State.SUCCEEDED);
-          }
- else {
-            command.setState(State.FAILED);
-          }
-        }
-      }
-      if (!sent || response == null) {
-        command.setState(State.FAILED);
+      if (!sent) {
         break;
       }
+      command.setState(State.SENT);
+      logger.trace("Waiting for response");
+      timeoutTimer.start();
+      SatelMessage response=this.readMessage();
+      timeoutTimer.stop();
+      if (response == null) {
+        break;
+      }
+      logger.debug("Got response: {}",response);
+      if (!receivedResponse) {
+        receivedResponse=true;
+        this.dispatchEvent(new ConnectionStatusEvent(true));
+      }
+      if (command.handleResponse(this,response)) {
+        command.setState(State.SUCCEEDED);
+      }
+ else {
+        command.setState(State.FAILED);
+      }
+      command=null;
     }
   }
  catch (  InterruptedException e) {
@@ -53,6 +52,9 @@ catch (  Exception e) {
   }
  finally {
     timeoutTimer.stop();
+  }
+  if (command != null) {
+    command.setState(State.FAILED);
   }
   disconnect();
 }
