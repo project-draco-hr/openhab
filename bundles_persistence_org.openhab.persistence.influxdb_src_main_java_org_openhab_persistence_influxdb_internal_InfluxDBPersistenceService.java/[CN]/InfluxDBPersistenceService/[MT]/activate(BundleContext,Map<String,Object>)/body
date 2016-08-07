@@ -22,6 +22,11 @@
     dbName=DEFAULT_DB;
     logger.debug("using default db name {}",DEFAULT_DB);
   }
+  retentionPolicy=(String)config.get("retentionPolicy");
+  if (isBlank(retentionPolicy)) {
+    retentionPolicy=DEFAULT_RETENTION_POLICY;
+    logger.debug("using default retentionPolicy {}",DEFAULT_RETENTION_POLICY);
+  }
   isProperlyConfigured=true;
   connect();
   if (!checkConnection()) {

@@ -29,7 +29,7 @@
   logger.trace("storing {} in influxdb value {}, {}",name,value,item);
   Point point=Point.measurement(name).field(VALUE_COLUMN_NAME,value).time(System.currentTimeMillis(),timeUnit).build();
   try {
-    influxDB.write(dbName,"default",point);
+    influxDB.write(dbName,retentionPolicy,point);
   }
  catch (  RuntimeException e) {
     logger.error("storing failed with exception for item: {}",name);
