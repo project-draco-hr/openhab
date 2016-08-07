@@ -4,6 +4,9 @@
     if (valueSelector == RFXComValueSelector.RAW_DATA) {
       state=new StringType(DatatypeConverter.printHexBinary(rawMessage));
     }
+ else     if (valueSelector == RFXComValueSelector.DATA) {
+      state=new StringType(DatatypeConverter.printHexBinary(rawData));
+    }
  else {
       throw new RFXComException("Can't convert " + valueSelector + " to StringItem");
     }
