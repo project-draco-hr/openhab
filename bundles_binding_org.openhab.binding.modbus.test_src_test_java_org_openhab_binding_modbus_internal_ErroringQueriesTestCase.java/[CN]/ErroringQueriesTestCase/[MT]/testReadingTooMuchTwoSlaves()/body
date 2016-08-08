@@ -1,7 +1,8 @@
 {
   spi.addDigitalOut(new SimpleDigitalOut(true));
   spi.addDigitalIn(new SimpleDigitalIn(true));
-  spi.addDigitalIn(new SimpleDigitalIn(false));
+  spi.addDigitalIn(new SimpleDigitalIn(true));
+  spi.addDigitalIn(new SimpleDigitalIn(true));
   binding=new ModbusBinding();
   Dictionary<String,Object> config=newLongPollBindingConfig();
   addSlave(config,SLAVE_NAME,ModbusBindingProvider.TYPE_COIL,null,0,2);
@@ -18,12 +19,6 @@
   waitForRequests(2);
   verify(eventPublisher,never()).postCommand(null,null);
   verify(eventPublisher,never()).sendCommand(null,null);
-  try {
-    verify(eventPublisher).postUpdate("Item2",OnOffType.ON);
-    verify(eventPublisher).postUpdate("Item3",OnOffType.OFF);
-    verifyNoMoreInteractions(eventPublisher);
-  }
- catch (  AssertionError e) {
-    throw new ExpectedFailure();
-  }
+  verify(eventPublisher).postUpdate("Item2",OnOffType.ON);
+  verifyNoMoreInteractions(eventPublisher);
 }
