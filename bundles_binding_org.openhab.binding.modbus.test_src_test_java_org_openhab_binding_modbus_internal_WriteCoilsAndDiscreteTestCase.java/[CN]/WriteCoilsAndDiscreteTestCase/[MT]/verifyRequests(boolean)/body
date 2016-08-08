@@ -1,7 +1,4 @@
 {
-  if (expectingAssertionError) {
-    return;
-  }
   try {
     ArrayList<ModbusRequest> requests=modbustRequestCaptor.getAllReturnValues();
     int expectedDOIndex=nonZeroOffset ? (itemIndex + 1) : itemIndex;
@@ -31,20 +28,8 @@
     }
   }
  catch (  AssertionError e) {
-    if (expectingAssertionError) {
-      System.err.println(String.format("Expected failure: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
-      return;
-    }
- else {
-      System.err.println(String.format("Unexpected assertion error: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
-      throw new AssertionError("Got unexpected assertion error",e);
-    }
+    System.err.println(String.format("Unexpected assertion error: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
+    throw new AssertionError("Got unexpected assertion error",e);
   }
-  if (expectingAssertionError) {
-    System.err.println(String.format("Did not get assertion error (as expected): discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
-    throw new AssertionError("Did not get assertion error (as expected)");
-  }
- else {
-    System.err.println(String.format("OK: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
-  }
+  System.err.println(String.format("OK: discreteInitial=%s, coilInitial=%s, nonZeroOffset=%s, command=%s, itemIndex=%d, type=%s",discreteInitialValue,coilInitialValue,nonZeroOffset,command,itemIndex,type));
 }
