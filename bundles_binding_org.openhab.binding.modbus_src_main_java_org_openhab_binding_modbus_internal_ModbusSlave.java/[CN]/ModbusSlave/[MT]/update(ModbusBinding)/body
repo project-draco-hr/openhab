@@ -1,52 +1,49 @@
 {
   try {
     Object local=null;
-    if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
-      ModbusRequest request=new ReadCoilsRequest(getStart(),getLength());
-      if (this instanceof ModbusSerialSlave) {
-        request.setHeadless();
+    Exception localReadError=null;
+    try {
+      if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
+        ModbusRequest request=new ReadCoilsRequest(getStart(),getLength());
+        if (this instanceof ModbusSerialSlave) {
+          request.setHeadless();
+        }
+        ReadCoilsResponse response=(ReadCoilsResponse)getModbusData(request);
+        local=response.getCoils();
       }
-      request.setUnitID(id);
-      ReadCoilsResponse response=(ReadCoilsResponse)getModbusData(request);
-      if (response == null) {
-        logger.debug("Could not read from the slave");
-        return;
+ else       if (ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
+        ModbusRequest request=new ReadInputDiscretesRequest(getStart(),getLength());
+        ReadInputDiscretesResponse response=(ReadInputDiscretesResponse)getModbusData(request);
+        local=response.getDiscretes();
       }
-      local=response.getCoils();
+ else       if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
+        ModbusRequest request=new ReadMultipleRegistersRequest(getStart(),getLength());
+        ReadMultipleRegistersResponse response=(ReadMultipleRegistersResponse)getModbusData(request);
+        local=response.getRegisters();
+      }
+ else       if (ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
+        ModbusRequest request=new ReadInputRegistersRequest(getStart(),getLength());
+        ReadInputRegistersResponse response=(ReadInputRegistersResponse)getModbusData(request);
+        local=response.getRegisters();
+      }
     }
- else     if (ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
-      ModbusRequest request=new ReadInputDiscretesRequest(getStart(),getLength());
-      ReadInputDiscretesResponse response=(ReadInputDiscretesResponse)getModbusData(request);
-      if (response == null) {
-        logger.debug("Could not read from the slave");
-        return;
-      }
-      local=response.getDiscretes();
+ catch (    ModbusException e) {
+      localReadError=e;
     }
- else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
-      ModbusRequest request=new ReadMultipleRegistersRequest(getStart(),getLength());
-      ReadMultipleRegistersResponse response=(ReadMultipleRegistersResponse)getModbusData(request);
-      if (response == null) {
-        logger.debug("Could not read from the slave");
-        return;
-      }
-      local=response.getRegisters();
+catch (    ModbusConnectionException e) {
+      localReadError=e;
     }
- else     if (ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
-      ModbusRequest request=new ReadInputRegistersRequest(getStart(),getLength());
-      ReadInputRegistersResponse response=(ReadInputRegistersResponse)getModbusData(request);
-      if (response == null) {
-        logger.debug("Could not read from the slave");
-        return;
-      }
-      local=response.getRegisters();
+catch (    ModbusUnexpectedTransactionIdException e) {
+      localReadError=e;
     }
     if (storage == null) {
       storage=local;
+      readError=localReadError;
     }
  else {
 synchronized (storage) {
         storage=local;
+        readError=localReadError;
       }
     }
     Collection<String> items=binding.getItemNames();

@@ -1,0 +1,17 @@
+{
+  State newState=UnDefType.UNDEF;
+  for (  ModbusBindingProvider provider : providers) {
+    if (!provider.providesBindingFor(itemName)) {
+      continue;
+    }
+    ModbusBindingConfig config=provider.getConfig(itemName);
+    if (!config.slaveName.equals(slaveName)) {
+      continue;
+    }
+    ModbusSlave slave=modbusSlaves.get(slaveName);
+    if (slave.isPostUndefinedOnReadError() && (slave.isUpdateUnchangedItems() || !newState.equals(config.getState()))) {
+      eventPublisher.postUpdate(itemName,newState);
+      config.setState(newState);
+    }
+  }
+}

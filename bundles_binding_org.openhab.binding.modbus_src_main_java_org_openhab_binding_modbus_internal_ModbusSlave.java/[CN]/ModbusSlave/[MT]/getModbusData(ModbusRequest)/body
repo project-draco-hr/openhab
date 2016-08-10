@@ -6,23 +6,23 @@
     connection=getConnection(endpoint);
     if (connection == null) {
       logger.warn("ModbusSlave ({}) not connected -- aborting read request {}. Endpoint {}",name,request,endpoint);
-      return null;
+      throw new ModbusConnectionException(endpoint);
     }
     request.setUnitID(getId());
     transaction.setRequest(request);
     try {
       transaction.execute();
     }
- catch (    Exception e) {
+ catch (    ModbusException e) {
       logger.error("ModbusSlave ({}): Error getting modbus data for request {}. Error: {}. Endpoint {}. Connection: {}",name,request,e.getMessage(),endpoint,connection);
       invalidate(endpoint,connection);
       connection=null;
-      return null;
+      throw e;
     }
     response=transaction.getResponse();
     if ((response.getTransactionID() != transaction.getTransactionID()) && !response.isHeadless()) {
       logger.warn("ModbusSlave ({}): Transaction id of the response does not match request {}.  Endpoint {}. Connection: {}. Ignoring response.",name,request,endpoint,connection);
-      return null;
+      throw new ModbusUnexpectedTransactionIdException();
     }
   }
   finally {

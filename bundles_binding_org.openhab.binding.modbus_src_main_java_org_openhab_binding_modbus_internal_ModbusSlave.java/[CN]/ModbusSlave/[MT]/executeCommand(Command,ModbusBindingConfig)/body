@@ -1,8 +1,12 @@
 {
-  if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
-    setCoil(command,config);
+  try {
+    if (ModbusBindingProvider.TYPE_COIL.equals(getType())) {
+      setCoil(command,config);
+    }
+ else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
+      setRegister(command,config);
+    }
   }
-  if (ModbusBindingProvider.TYPE_HOLDING.equals(getType())) {
-    setRegister(command,config);
+ catch (  Exception e) {
   }
 }

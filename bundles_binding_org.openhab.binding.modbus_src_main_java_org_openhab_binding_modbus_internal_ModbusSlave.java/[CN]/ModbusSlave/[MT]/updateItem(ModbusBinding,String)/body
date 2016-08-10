@@ -1,8 +1,13 @@
 {
-  if (ModbusBindingProvider.TYPE_COIL.equals(getType()) || ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
-    binding.internalUpdateItem(name,(BitVector)storage,item);
+  if (readError == null) {
+    if (ModbusBindingProvider.TYPE_COIL.equals(getType()) || ModbusBindingProvider.TYPE_DISCRETE.equals(getType())) {
+      binding.internalUpdateItem(name,(BitVector)storage,item);
+    }
+ else     if (ModbusBindingProvider.TYPE_HOLDING.equals(getType()) || ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
+      binding.internalUpdateItem(name,(InputRegister[])storage,item);
+    }
   }
-  if (ModbusBindingProvider.TYPE_HOLDING.equals(getType()) || ModbusBindingProvider.TYPE_INPUT.equals(getType())) {
-    binding.internalUpdateItem(name,(InputRegister[])storage,item);
+ else {
+    binding.internalUpdateReadErrorItem(name,readError,item);
   }
 }

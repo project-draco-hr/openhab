@@ -5,7 +5,7 @@
     connection=getConnection(endpoint);
     if (connection == null) {
       logger.warn("ModbusSlave ({}): not connected -- aborting request {}",name,request);
-      return;
+      throw new ModbusConnectionException(endpoint);
     }
     transaction.setRequest(request);
     try {
@@ -15,7 +15,12 @@
       logger.error("ModbusSlave ({}): error when executing write request ({}): {}",name,request,e.getMessage());
       invalidate(endpoint,connection);
       connection=null;
-      return;
+      throw e;
+    }
+    ModbusResponse response=transaction.getResponse();
+    if ((response.getTransactionID() != transaction.getTransactionID()) && !response.isHeadless()) {
+      logger.warn("ModbusSlave ({}): Transaction id of the response does not match request {}.  Endpoint {}. Connection: {}. Ignoring response.",name,request,endpoint,connection);
+      throw new ModbusUnexpectedTransactionIdException();
     }
   }
   finally {
