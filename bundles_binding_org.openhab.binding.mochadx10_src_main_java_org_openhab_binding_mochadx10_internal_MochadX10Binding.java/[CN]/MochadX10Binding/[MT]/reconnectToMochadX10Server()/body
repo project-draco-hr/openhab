@@ -2,6 +2,12 @@
   if (!isShuttingDown) {
     logger.trace("reconnectToMochadX10Server called");
     disconnectFromMochadX10Server();
+    try {
+      Thread.sleep(20000);
+    }
+ catch (    InterruptedException ex) {
+      Thread.currentThread().interrupt();
+    }
     connectToMochadX10Server();
     logger.trace("Reconnected to Mochad X10 server");
   }
