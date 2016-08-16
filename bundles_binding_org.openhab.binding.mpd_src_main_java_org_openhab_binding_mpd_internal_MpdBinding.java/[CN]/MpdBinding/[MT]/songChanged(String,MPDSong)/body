@@ -16,4 +16,12 @@
       logger.debug("Updated artist: {}, {}",itemName,artist);
     }
   }
+  int songID=newSong.getId();
+  itemNames=getItemNamesByPlayerAndPlayerCommand(playerId,PlayerCommandTypeMapping.PLAYSONGID);
+  for (  String itemName : itemNames) {
+    if (StringUtils.isNotBlank(itemName)) {
+      eventPublisher.postUpdate(itemName,new DecimalType(songID));
+      logger.debug("Updated songid: {}, {}",itemName,songID);
+    }
+  }
 }

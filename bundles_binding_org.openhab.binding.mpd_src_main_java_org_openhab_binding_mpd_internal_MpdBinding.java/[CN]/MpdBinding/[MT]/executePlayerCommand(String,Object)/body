@@ -51,6 +51,12 @@ playlist.addFileOrDirectory(file);
 logger.debug("Song not found: {}",commandParams);
 }
 break;
+case PLAYSONGID:
+logger.debug("Play id {}",((DecimalType)commandParams).intValue());
+MPDSong song=new MPDSong();
+song.setId(((DecimalType)commandParams).intValue());
+player.playId(song);
+break;
 case ENABLE:
 case DISABLE:
 Integer outputId=Integer.valueOf((String)commandParams);
