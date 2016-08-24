@@ -36,8 +36,13 @@
         celius=c.reqSystemFormats().getTempFormat() > 1;
         c.enableNotifications();
         if (generateItems) {
-          OmnilinkItemGenerator gen=new OmnilinkItemGenerator(c);
-          logger.info(gen.generateItemsAndGroups());
+          try {
+            OmnilinkItemGenerator gen=new OmnilinkItemGenerator(c);
+            logger.info(gen.generateItemsAndGroups());
+          }
+ catch (          Exception e) {
+            logger.error("Could not generate items",e);
+          }
         }
         populateRefreshMapFromAllProviders();
         readAllAudioSources();
