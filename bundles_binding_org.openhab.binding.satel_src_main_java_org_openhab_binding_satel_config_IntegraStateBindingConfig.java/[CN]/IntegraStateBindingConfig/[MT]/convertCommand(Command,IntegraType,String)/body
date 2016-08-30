@@ -8,8 +8,29 @@ case OUTPUT:
     boolean invertState=hasOptionEnabled(Options.INVERT_STATE);
   return new ControlObjectCommand(switchOn ^ invertState ? OutputControl.ON : OutputControl.OFF,outputs,userCode);
 case DOORS:
-break;
+byte[] doors=getObjectBitset(8);
+byte[] dummy=new byte[(integraType == IntegraType.I256_PLUS) ? 32 : 16];
+if (switchOn) {
+return new ControlObjectCommand(DoorsControl.OPEN,ArrayUtils.addAll(dummy,doors),userCode);
+}
+ else {
+return null;
+}
 case ZONE:
+byte[] zones=getObjectBitset((integraType == IntegraType.I256_PLUS) ? 32 : 16);
+switch ((ZoneState)this.stateType) {
+case BYPASS:
+return new ControlObjectCommand(switchOn ? ZoneControl.BYPASS : ZoneControl.UNBYPASS,zones,userCode);
+case ISOLATE:
+if (switchOn) {
+return new ControlObjectCommand(ZoneControl.ISOLATE,zones,userCode);
+}
+ else {
+return null;
+}
+default :
+break;
+}
 break;
 case PARTITION:
 byte[] partitions=getObjectBitset(4);
