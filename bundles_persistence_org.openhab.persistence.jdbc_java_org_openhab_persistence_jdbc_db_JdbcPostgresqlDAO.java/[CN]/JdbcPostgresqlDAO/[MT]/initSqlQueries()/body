@@ -1,8 +1,9 @@
 {
   logger.debug("JDBC::initSqlQueries: '{}'",this.getClass().getSimpleName());
+  SQL_GET_DB="SELECT CURRENT_DATABASE()";
   SQL_IF_TABLE_EXISTS="SELECT * FROM PG_TABLES WHERE TABLENAME='#searchTable#'";
   SQL_CREATE_ITEMS_TABLE_IF_NOT="CREATE TABLE IF NOT EXISTS #itemsManageTable# (itemid SERIAL NOT NULL, #colname# #coltype# NOT NULL, CONSTRAINT #itemsManageTable#_pkey PRIMARY KEY (itemid))";
   SQL_CREATE_NEW_ENTRY_IN_ITEMS_TABLE="INSERT INTO items (itemname) SELECT itemname FROM #itemsManageTable# UNION VALUES ('#itemname#') EXCEPT SELECT itemname FROM items";
   SQL_GET_ITEM_TABLES="SELECT table_name FROM information_schema.tables WHERE table_type='BASE TABLE' AND table_schema='public' AND NOT table_name=#itemsManageTable#";
-  SQL_INSERT_ITEM_VALUE="INSERT INTO #tableName# (TIME, VALUE) VALUES( NOW(), CAST( ? as #dbType#) )";
+  SQL_INSERT_ITEM_VALUE="INSERT INTO #tableName# (TIME, VALUE) VALUES( #tablePrimaryValue#, CAST( ? as #dbType#) )";
 }

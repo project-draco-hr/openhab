@@ -1,0 +1,9 @@
+{
+  logger.debug("JDBC::initAfterFirstDbConnection: Initializing step, after db is connected.");
+  dbMeta=new DbMetaData();
+  if (dbMeta.isDbVersionGreater(5,5)) {
+    sqlTypes.put("DATETIMEITEM","TIMESTAMP(3)");
+    sqlTypes.put("tablePrimaryKey","TIMESTAMP(3)");
+    sqlTypes.put("tablePrimaryValue","NOW(3)");
+  }
+}

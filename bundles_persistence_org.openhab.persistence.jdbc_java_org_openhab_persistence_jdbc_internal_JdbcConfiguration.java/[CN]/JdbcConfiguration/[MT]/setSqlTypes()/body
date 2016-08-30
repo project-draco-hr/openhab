@@ -1,0 +1,19 @@
+{
+  @SuppressWarnings("unchecked") Enumeration<String> keys=new IteratorEnumeration(configuration.keySet().iterator());
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    Matcher matcher=EXTRACT_CONFIG_PATTERN.matcher(key);
+    if (!matcher.matches()) {
+      continue;
+    }
+    matcher.reset();
+    matcher.find();
+    if (!matcher.group(1).equals("sqltype")) {
+      continue;
+    }
+    String itemType=matcher.group(2).toUpperCase() + "ITEM";
+    String value=(String)configuration.get(key);
+    logger.debug("JDBC::updateConfig: set sqlTypes: itemType={} value={}",itemType,value);
+    dBDAO.sqlTypes.put(itemType,value);
+  }
+}

@@ -2,5 +2,5 @@
   logger.debug("JDBC::initSqlQueries: '{}'",this.getClass().getSimpleName());
   SQL_IF_TABLE_EXISTS="SELECT name FROM sqlite_master WHERE type='table' AND name='#searchTable#'";
   SQL_CREATE_ITEMS_TABLE_IF_NOT="CREATE TABLE IF NOT EXISTS #itemsManageTable# (ItemId INTEGER PRIMARY KEY AUTOINCREMENT, #colname# #coltype# NOT NULL)";
-  SQL_INSERT_ITEM_VALUE="INSERT OR IGNORE INTO #tableName# (TIME, VALUE) VALUES( DATETIME('now'), CAST( ? as #dbType#) )";
+  SQL_INSERT_ITEM_VALUE="INSERT OR IGNORE INTO #tableName# (TIME, VALUE) VALUES( #tablePrimaryValue#, CAST( ? as #dbType#) )";
 }

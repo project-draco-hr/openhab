@@ -1,0 +1,28 @@
+{
+  serviceName="none";
+  logger.debug("JDBC::updateConfig: found serviceName = '{}'",serviceName);
+  if (StringUtils.isBlank(sn) || sn.length() < 2) {
+    logger.error("JDBC::updateConfig: url Required database url like 'jdbc:<service>:<host>[:<port>;<attributes>]' - please configure the jdbc:url parameter in openhab.cfg");
+  }
+ else {
+    serviceName=sn;
+  }
+  String ddp=DB_DAO_PACKAGE + serviceName.toUpperCase().charAt(0) + serviceName.toLowerCase().substring(1)+ "DAO";
+  logger.debug("JDBC::updateConfig: Init Data Access Object Class: '{}'",ddp);
+  try {
+    dBDAO=(JdbcBaseDAO)Class.forName(ddp).newInstance();
+    logger.debug("JDBC::updateConfig: dBDAO ClassName={}",dBDAO.getClass().getName());
+  }
+ catch (  InstantiationException e) {
+    logger.error("JDBC::updateConfig: InstantiationException: {}",e.getMessage());
+  }
+catch (  IllegalAccessException e) {
+    logger.error("JDBC::updateConfig: IllegalAccessException: {}",e.getMessage());
+  }
+catch (  ClassNotFoundException e) {
+    logger.warn("JDBC::updateConfig: no Configuration for serviceName '{}' found. ClassNotFoundException: {}",serviceName,e.getMessage());
+    logger.debug("JDBC::updateConfig: using default Database Configuration: JdbcBaseDAO !!");
+    dBDAO=new JdbcBaseDAO();
+    logger.debug("JDBC::updateConfig: dBConfig done");
+  }
+}

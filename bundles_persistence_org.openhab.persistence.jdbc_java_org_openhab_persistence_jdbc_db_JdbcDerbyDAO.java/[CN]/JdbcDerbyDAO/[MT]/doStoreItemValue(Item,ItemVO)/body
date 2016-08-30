@@ -1,6 +1,6 @@
 {
   vo=storeItemValueProvider(item,vo);
-  String sql=StringUtilsExt.replaceArrayMerge(SQL_INSERT_ITEM_VALUE,new String[]{"#tableName#","#dbType#"},new String[]{vo.getTableName().toUpperCase(),vo.getDbType()});
+  String sql=StringUtilsExt.replaceArrayMerge(SQL_INSERT_ITEM_VALUE,new String[]{"#tableName#","#dbType#","#tablePrimaryValue#"},new String[]{vo.getTableName().toUpperCase(),vo.getDbType(),sqlTypes.get("tablePrimaryValue")});
   Object[] params=new Object[]{vo.getValue()};
   logger.debug("JDBC::doStoreItemValue sql={} value='{}'",sql,vo.getValue());
   Yank.execute(sql,params);
