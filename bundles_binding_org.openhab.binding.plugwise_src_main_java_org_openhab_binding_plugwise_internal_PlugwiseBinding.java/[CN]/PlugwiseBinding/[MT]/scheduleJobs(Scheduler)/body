@@ -1,0 +1,51 @@
+{
+  for (  PlugwiseBindingProvider provider : providers) {
+    for (    PlugwiseBindingConfigElement element : provider.getIntervalList()) {
+      PlugwiseCommandType type=element.getCommandType();
+      if (type.getJobClass() == null) {
+        continue;
+      }
+      if (stick.getDevice(element.getId()) == null) {
+        logger.debug("The Plugwise device with id {} is not yet defined",element.getId());
+        Pattern MAC_PATTERN=Pattern.compile("(\\w{16})");
+        Matcher matcher=MAC_PATTERN.matcher(element.getId());
+        if (matcher.matches()) {
+          List<CirclePlus> cps=stick.getDevicesByClass(CirclePlus.class);
+          if (!cps.isEmpty()) {
+            CirclePlus cp=cps.get(0);
+            if (!cp.getMAC().equals(element.getId())) {
+              PlugwiseDevice device=new Circle(element.getId(),stick,element.getId());
+              stick.plugwiseDeviceCache.add(device);
+              logger.debug("Plugwise added Circle with MAC address: {}",element.getId());
+            }
+          }
+ else {
+            logger.warn("Plugwise can not guess the device that should be added. Consider defining it in the openHAB configuration file");
+          }
+        }
+ else {
+          logger.warn("Plugwise can not add a valid device without a proper MAC address. {} can not be used",element.getId());
+        }
+      }
+      if (stick.getDevice(element.getId()) != null) {
+        String jobName=element.getId() + "-" + type.getJobClass().toString();
+        if (!isExistingJob(scheduler,jobName)) {
+          JobDataMap map=new JobDataMap();
+          map.put(STICK_JOB_DATA_KEY,stick);
+          map.put(MAC_JOB_DATA_KEY,stick.getDevice(element.getId()).MAC);
+          JobDetail job=newJob(type.getJobClass()).withIdentity(jobName,"Plugwise-" + provider.toString()).usingJobData(map).build();
+          Trigger trigger=newTrigger().withIdentity(element.getId() + "-" + type.getJobClass().toString(),"Plugwise-" + provider.toString()).startNow().withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(element.getInterval())).build();
+          try {
+            scheduler.scheduleJob(job,trigger);
+          }
+ catch (          SchedulerException e) {
+            logger.error("An exception occurred while scheduling a Plugwise Quartz Job",e);
+          }
+        }
+      }
+ else {
+        logger.error("Error scheduling a Quartz Job for a non-defined Plugwise device");
+      }
+    }
+  }
+}

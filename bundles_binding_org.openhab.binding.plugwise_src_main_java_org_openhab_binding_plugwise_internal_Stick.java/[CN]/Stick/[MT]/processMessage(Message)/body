@@ -3,19 +3,20 @@
 switch (message.getType()) {
 case ACKNOWLEDGEMENT:
       if (((AcknowledgeMessage)message).isExtended()) {
+        String cpMAC=((AcknowledgeMessage)message).getCirclePlusMAC();
 switch (((AcknowledgeMessage)message).getExtensionCode()) {
 case CIRCLEPLUS:
-          CirclePlus circlePlus11=(CirclePlus)getDeviceByMAC(((AcknowledgeMessage)message).getCirclePlusMAC());
-        if (!((AcknowledgeMessage)message).getCirclePlusMAC().equals("") && circlePlus11 == null) {
-          circlePlus11=new CirclePlus(((AcknowledgeMessage)message).getCirclePlusMAC(),this);
-          plugwiseDeviceCache.add(circlePlus11);
-          logger.debug("Added a CirclePlus with MAC {} to the cache",circlePlus11.getMAC());
+          CirclePlus cp=(CirclePlus)getDeviceByMAC(cpMAC);
+        if (!cpMAC.equals("") && cp == null) {
+          cp=new CirclePlus(cpMAC,this,cpMAC);
+          plugwiseDeviceCache.add(cp);
+          logger.debug("Added a CirclePlus with MAC {} to the cache",cp.getMAC());
         }
-      circlePlus11.updateInformation();
-    circlePlus11.calibrate();
-  circlePlus11.setClock();
-if (circlePlus11 != null) {
-  circlePlus11.roleCall(0);
+      cp.updateInformation();
+    cp.calibrate();
+  cp.setClock();
+if (cp != null) {
+  cp.roleCall(0);
 }
 break;
 case TIMEOUT:
@@ -51,17 +52,18 @@ case INITIALISE_RESPONSE:
 MAC=((InitialiseResponseMessage)message).getMAC();
 initialised=true;
 if (((InitialiseResponseMessage)message).isOnline()) {
-CirclePlus circlePlus=(CirclePlus)getDeviceByMAC(((InitialiseResponseMessage)message).getCirclePlusMAC());
-if (!((InitialiseResponseMessage)message).getCirclePlusMAC().equals("") && circlePlus == null) {
-circlePlus=new CirclePlus(((InitialiseResponseMessage)message).getCirclePlusMAC(),this);
-plugwiseDeviceCache.add(circlePlus);
-logger.debug("Added a CirclePlus with MAC {} to the cache",circlePlus.getMAC());
+String cpMAC=((InitialiseResponseMessage)message).getCirclePlusMAC();
+CirclePlus cp=(CirclePlus)getDeviceByMAC(cpMAC);
+if (!cpMAC.equals("") && cp == null) {
+cp=new CirclePlus(cpMAC,this,cpMAC);
+plugwiseDeviceCache.add(cp);
+logger.debug("Added a CirclePlus with MAC {} to the cache",cp.getMAC());
 }
-circlePlus.updateInformation();
-circlePlus.calibrate();
-circlePlus.setClock();
-if (circlePlus != null) {
-circlePlus.roleCall(0);
+cp.updateInformation();
+cp.calibrate();
+cp.setClock();
+if (cp != null) {
+cp.roleCall(0);
 }
 }
  else {

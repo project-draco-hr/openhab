@@ -1,0 +1,19 @@
+{
+  String port=(String)config.get("stick.port");
+  if (port == null) {
+    return null;
+  }
+  Stick stick=new Stick(port,this);
+  logger.debug("Plugwise added Stick connected to serial port {}",port);
+  String interval=(String)config.get("stick.interval");
+  if (interval != null) {
+    stick.setInterval(Integer.valueOf(interval));
+    logger.debug("Setting the interval to send ZigBee PDUs to {} ms",interval);
+  }
+  String retries=(String)config.get("stick.retries");
+  if (retries != null) {
+    stick.setRetries(Integer.valueOf(retries));
+    logger.debug("Setting the maximum number of attempts to send a message to ",retries);
+  }
+  return stick;
+}

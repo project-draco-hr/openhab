@@ -1,0 +1,11 @@
+{
+  Matcher matcher=REQUEST_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+    humidity=hexToHumidity(matcher.group(2));
+    temperature=hexToTemperature(matcher.group(3));
+  }
+ else {
+    logger.debug("Plugwise protocol SenseReportRequestMessage error: {} does not match",payLoad);
+  }
+}

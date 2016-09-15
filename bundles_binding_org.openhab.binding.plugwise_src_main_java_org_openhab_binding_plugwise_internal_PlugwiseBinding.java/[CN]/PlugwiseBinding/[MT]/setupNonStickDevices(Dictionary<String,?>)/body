@@ -1,0 +1,25 @@
+{
+  Set<String> deviceNames=getDeviceNamesFromConfig(config);
+  for (  String deviceName : deviceNames) {
+    if ("stick".equals(deviceName)) {
+      continue;
+    }
+    if (stick.getDeviceByName(deviceName) != null) {
+      continue;
+    }
+    String MAC=(String)config.get(deviceName + ".mac");
+    if (MAC == null || MAC.equals("")) {
+      logger.warn("Plugwise can not add device with name {} without a MAC address",deviceName);
+    }
+ else     if (stick.getDeviceByMAC(MAC) != null) {
+      logger.warn("Plugwise can not add device with name: {} and MAC address: {}, " + "the same MAC address is already used by device with name: {}",deviceName,MAC,stick.getDeviceByMAC(MAC).name);
+    }
+ else {
+      String deviceType=(String)config.get(deviceName + ".type");
+      PlugwiseDevice device=createPlugwiseDevice(deviceType,MAC,deviceName);
+      if (device != null) {
+        stick.plugwiseDeviceCache.add(device);
+      }
+    }
+  }
+}

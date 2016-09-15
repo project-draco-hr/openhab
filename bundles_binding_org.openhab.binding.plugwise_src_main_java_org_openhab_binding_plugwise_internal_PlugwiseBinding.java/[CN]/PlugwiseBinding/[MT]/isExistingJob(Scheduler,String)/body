@@ -1,0 +1,15 @@
+{
+  try {
+    for (    String group : scheduler.getJobGroupNames()) {
+      for (      JobKey jobKey : scheduler.getJobKeys(jobGroupEquals(group))) {
+        if (jobKey.getName().equals(jobName)) {
+          return true;
+        }
+      }
+    }
+  }
+ catch (  SchedulerException e1) {
+    logger.error("An exception occurred while querying the Quartz Scheduler ({})",e1.getMessage());
+  }
+  return false;
+}

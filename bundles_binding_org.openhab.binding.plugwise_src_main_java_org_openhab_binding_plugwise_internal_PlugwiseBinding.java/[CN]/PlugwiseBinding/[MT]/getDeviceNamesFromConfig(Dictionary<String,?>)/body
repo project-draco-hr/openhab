@@ -1,0 +1,19 @@
+{
+  Set<String> names=new HashSet<String>();
+  Enumeration<String> keys=config.keys();
+  while (keys.hasMoreElements()) {
+    String key=keys.nextElement();
+    if ("service.pid".equals(key)) {
+      continue;
+    }
+    Matcher matcher=EXTRACT_PLUGWISE_CONFIG_PATTERN.matcher(key);
+    if (!matcher.matches()) {
+      continue;
+    }
+    matcher.reset();
+    matcher.find();
+    String name=matcher.group(1);
+    names.add(name);
+  }
+  return names;
+}

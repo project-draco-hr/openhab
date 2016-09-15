@@ -1,12 +1,13 @@
 {
   if (message.getAttempts() < stick.maxRetries) {
     message.increaseAttempts();
-    String packedString=PROTOCOL_HEADER + message.toHexString() + PROTOCOL_TRAILER;
+    String messageHexString=message.toHexString();
+    String packedString=PROTOCOL_HEADER + messageHexString + PROTOCOL_TRAILER;
     ByteBuffer bytebuffer=ByteBuffer.allocate(packedString.length());
     bytebuffer.put(packedString.getBytes());
     bytebuffer.rewind();
     try {
-      logger.debug("Sending: {} as {}",message,message.toHexString());
+      logger.debug("Sending: {} as {}",message,messageHexString);
       stick.outputChannel.write(bytebuffer);
     }
  catch (    IOException e) {

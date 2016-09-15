@@ -1,0 +1,10 @@
+{
+  Matcher matcher=REQUEST_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+    awakeReason=AwakeReason.forValue(Integer.parseInt(matcher.group(2)));
+  }
+ else {
+    logger.debug("Plugwise protocol AnnounceAwakeRequestMessage error: {} does not match",payLoad);
+  }
+}

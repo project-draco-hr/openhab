@@ -1,0 +1,35 @@
+{
+switch (messageType) {
+case ACKNOWLEDGEMENT:
+    return new AcknowledgeMessage(sequenceNumber,payLoad);
+case NODE_AVAILABLE:
+  return new NodeAvailableMessage(sequenceNumber,payLoad);
+case INITIALISE_RESPONSE:
+return new InitialiseResponseMessage(sequenceNumber,payLoad);
+case DEVICE_ROLECALL_RESPONSE:
+return new RoleCallResponseMessage(sequenceNumber,payLoad);
+case DEVICE_CALIBRATION_RESPONSE:
+return new CalibrationResponseMessage(sequenceNumber,payLoad);
+case DEVICE_INFORMATION_RESPONSE:
+return new InformationResponseMessage(sequenceNumber,payLoad);
+case REALTIMECLOCK_GET_RESPONSE:
+return new RealTimeClockGetResponseMessage(sequenceNumber,payLoad);
+case CLOCK_GET_RESPONSE:
+return new ClockGetResponseMessage(sequenceNumber,payLoad);
+case POWER_BUFFER_RESPONSE:
+return new PowerBufferResponseMessage(sequenceNumber,payLoad);
+case POWER_INFORMATION_RESPONSE:
+return new PowerInformationResponseMessage(sequenceNumber,payLoad);
+case ANNOUNCE_AWAKE_REQUEST:
+return new AnnounceAwakeRequestMessage(sequenceNumber,payLoad);
+case BROADCAST_GROUP_SWITCH_RESPONSE:
+return new BroadcastGroupSwitchResponseMessage(sequenceNumber,payLoad);
+case MODULE_JOINED_NETWORK_REQUEST:
+return new ModuleJoinedNetworkRequestMessage(sequenceNumber,payLoad);
+case SENSE_REPORT_REQUEST:
+return new SenseReportRequestMessage(sequenceNumber,payLoad);
+default :
+logger.debug("Received unrecognized command: {}",command);
+return null;
+}
+}

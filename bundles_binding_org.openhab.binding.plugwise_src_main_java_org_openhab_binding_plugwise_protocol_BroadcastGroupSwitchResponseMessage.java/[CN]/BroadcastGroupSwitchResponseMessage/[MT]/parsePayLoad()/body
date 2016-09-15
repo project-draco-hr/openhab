@@ -1,0 +1,11 @@
+{
+  Matcher matcher=REQUEST_PATTERN.matcher(payLoad);
+  if (matcher.matches()) {
+    MAC=matcher.group(1);
+    portMask=Integer.parseInt(matcher.group(2));
+    powerState=(matcher.group(3).equals("01"));
+  }
+ else {
+    logger.debug("Plugwise protocol BroadcastGroupSwitchRequestMessage error: {} does not match",payLoad);
+  }
+}

@@ -1,0 +1,48 @@
+{
+  if (message != null) {
+    Calendar timestamp;
+switch (message.getType()) {
+case ANNOUNCE_AWAKE_REQUEST:
+      AwakeReason awakeReason=((AnnounceAwakeRequestMessage)message).getAwakeReason();
+    if (awakeReason == AwakeReason.Maintenance || awakeReason == AwakeReason.WakeupButton) {
+      updateInformation();
+    }
+  timestamp=((AnnounceAwakeRequestMessage)message).getDateTimeReceived();
+postUpdate(MAC,PlugwiseCommandType.LASTSEEN,timestamp);
+return true;
+case BROADCAST_GROUP_SWITCH_RESPONSE:
+triggeredState=((BroadcastGroupSwitchResponseMessage)message).getPowerState();
+timestamp=((BroadcastGroupSwitchResponseMessage)message).getDateTimeReceived();
+postUpdate(MAC,PlugwiseCommandType.TRIGGERED,triggeredState);
+postUpdate(MAC,PlugwiseCommandType.TRIGGEREDSTAMP,timestamp);
+postUpdate(MAC,PlugwiseCommandType.LASTSEEN,timestamp);
+return true;
+case DEVICE_INFORMATION_RESPONSE:
+stamp=new DateTime(((InformationResponseMessage)message).getYear(),((InformationResponseMessage)message).getMonth(),1,0,0).plusMinutes(((InformationResponseMessage)message).getMinutes());
+recentLogAddress=((InformationResponseMessage)message).getLogAddress();
+hardwareVersion=((InformationResponseMessage)message).getHardwareVersion();
+timestamp=((InformationResponseMessage)message).getDateTimeReceived();
+postUpdate(MAC,PlugwiseCommandType.LASTSEEN,timestamp);
+return true;
+case MODULE_JOINED_NETWORK_REQUEST:
+timestamp=((ModuleJoinedNetworkRequestMessage)message).getDateTimeReceived();
+postUpdate(MAC,PlugwiseCommandType.LASTSEEN,timestamp);
+return true;
+case SENSE_REPORT_REQUEST:
+humidity=((SenseReportRequestMessage)message).getHumidity();
+temperature=((SenseReportRequestMessage)message).getTemperature();
+timestamp=((SenseReportRequestMessage)message).getDateTimeReceived();
+postUpdate(MAC,PlugwiseCommandType.HUMIDITY,humidity);
+postUpdate(MAC,PlugwiseCommandType.TEMPERATURE,temperature);
+postUpdate(MAC,PlugwiseCommandType.HUMIDITYSTAMP,timestamp);
+postUpdate(MAC,PlugwiseCommandType.TEMPERATURESTAMP,timestamp);
+postUpdate(MAC,PlugwiseCommandType.LASTSEEN,timestamp);
+return true;
+default :
+return stick.processMessage(message);
+}
+}
+ else {
+return false;
+}
+}
