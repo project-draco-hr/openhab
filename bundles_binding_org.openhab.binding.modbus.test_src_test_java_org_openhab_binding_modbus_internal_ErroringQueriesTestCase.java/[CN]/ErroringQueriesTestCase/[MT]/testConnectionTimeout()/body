@@ -1,0 +1,30 @@
+{
+  binding=new ModbusBinding();
+  Dictionary<String,Object> config=newLongPollBindingConfig();
+  addSlave(config,ServerType.TCP,"10.255.255.1:9999:0:0:0:1:300",SLAVE_NAME,ModbusBindingProvider.TYPE_DISCRETE,null,0,0,2);
+  putSlaveConfigParameter(config,serverType,SLAVE_NAME,"postundefinedonreaderror","true");
+  binding.updated(config);
+  final ModbusGenericBindingProvider provider=new ModbusGenericBindingProvider();
+  provider.processBindingConfiguration("test.items",new SwitchItem("Item1"),String.format("%s:%d",SLAVE_NAME,0));
+  binding.setEventPublisher(eventPublisher);
+  binding.addBindingProvider(provider);
+  final CountDownLatch lock=new CountDownLatch(1);
+  Thread thread=new Thread(){
+    @Override public void run(){
+      binding.execute();
+      lock.countDown();
+    }
+  }
+;
+  try {
+    thread.start();
+    lock.await(100,TimeUnit.MILLISECONDS);
+    verifyNoMoreInteractions(eventPublisher);
+    lock.await(300,TimeUnit.MILLISECONDS);
+    verify(eventPublisher).postUpdate("Item1",UnDefType.UNDEF);
+    verifyNoMoreInteractions(eventPublisher);
+  }
+  finally {
+    thread.interrupt();
+  }
+}
