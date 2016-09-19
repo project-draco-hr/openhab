@@ -2,27 +2,33 @@
   this.thermostats_by_name=new HashMap<String,Thermostat>();
   if (this.thermostat_id_list != null) {
     for (    String id : this.thermostat_id_list) {
-      Thermostat th=dataModel.getDevices().getThermostats_by_id().get(id);
-      if (th != null) {
-        this.thermostats_by_name.put(th.getName(),th);
+      if (dataModel.getDevices() != null && dataModel.getDevices().getThermostats_by_id() != null) {
+        Thermostat th=dataModel.getDevices().getThermostats_by_id().get(id);
+        if (th != null) {
+          this.thermostats_by_name.put(th.getName(),th);
+        }
       }
     }
   }
   this.smoke_co_alarms_by_name=new HashMap<String,SmokeCOAlarm>();
   if (this.smoke_co_alarm_id_list != null) {
     for (    String id : this.smoke_co_alarm_id_list) {
-      SmokeCOAlarm sm=dataModel.getDevices().getSmoke_co_alarms_by_id().get(id);
-      if (sm != null) {
-        this.smoke_co_alarms_by_name.put(sm.getName(),sm);
+      if (dataModel.getDevices() != null && dataModel.getDevices().getSmoke_co_alarms_by_id() != null) {
+        SmokeCOAlarm sm=dataModel.getDevices().getSmoke_co_alarms_by_id().get(id);
+        if (sm != null) {
+          this.smoke_co_alarms_by_name.put(sm.getName(),sm);
+        }
       }
     }
   }
   this.cameras_by_name=new HashMap<String,Camera>();
   if (this.camera_id_list != null) {
     for (    String id : this.camera_id_list) {
-      Camera cam=dataModel.getDevices().getCameras_by_id().get(id);
-      if (cam != null) {
-        this.cameras_by_name.put(cam.getName(),cam);
+      if (dataModel.getDevices() != null && dataModel.getDevices().getCameras_by_id() != null) {
+        Camera cam=dataModel.getDevices().getCameras_by_id().get(id);
+        if (cam != null) {
+          this.cameras_by_name.put(cam.getName(),cam);
+        }
       }
     }
   }
