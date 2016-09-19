@@ -1,11 +1,8 @@
 {
-  PlugwiseDevice queryDevice=new PlugwiseDevice(null,null,name);
-  Collections.sort(plugwiseDeviceCache,nameComparator);
-  int index=Collections.binarySearch(plugwiseDeviceCache,queryDevice,nameComparator);
-  if (index >= 0) {
-    return plugwiseDeviceCache.get(index);
+  for (  PlugwiseDevice device : plugwiseDeviceCache) {
+    if (name.equals(device.getName())) {
+      return device;
+    }
   }
- else {
-    return null;
-  }
+  return null;
 }
